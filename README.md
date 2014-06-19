@@ -41,7 +41,7 @@ Alternatively you can copy and paste the files manually or use FTP to transfer t
 
 ### Building the site using Jekyll
 
-If you're familiar with [Jekyll](http://jekyllrb.com) it can make running the demos locally or deploying them to a remote server much easier. It's actally how this repo is built and how the demo app is deployed.
+If you're familiar with [Jekyll](http://jekyllrb.com) it can make running the demos locally or deploying them to a remote server much easier. It's actually how this repo is built and how the demo app is deployed.
 
 ```sh
 # Clone the repo and cd into the repo directory.
