@@ -1,0 +1,42 @@
+<link rel="import" href="ga-component.html">
+
+<polymer-element name="ga-auth" extends="ga-component" attributes="clientid">
+  <template>
+    <link rel="stylesheet" href="../assets/css/auth.css">
+    <style>
+    :host-context(.ga-embed-authorized) {
+      /* :host-context needs to come first for some reason */
+      color: #ccc;
+      font-size: 13px;
+    }
+    :host {
+      display: table-cell;
+      vertical-align: middle;
+      white-space: nowrap;
+    }
+    </style>
+    <div id="container"></div>
+  </template>
+
+  <script>
+
+    Polymer('ga-auth', {
+      embedLoad: function() {
+
+        // If multiple ga-auth elements are on the page, only allow one of
+        // them to call authorize().
+        if (gapi.analytics.auth.isAuthorized()) return;
+
+        var self = this;
+        gapi.analytics.auth.authorize({
+          container: this.$.container,
+          clientid: this.clientid,
+        });
+        gapi.analytics.auth.on('success', function() {
+          document.body.classList.add('ga-embed-authorized');
+          self.fire('ga-embed-authorize');
+        });
+      }
+    });
+  </script>
+</polymer-element>

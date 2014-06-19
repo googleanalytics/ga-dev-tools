@@ -1,0 +1,177 @@
+---
+layout: demo
+title: Interactive Charts
+summary: This demo shows how you can build an interactive dashboard that allows you click around and explore your data. Follow the insructions on the page to see how it works.
+---
+
+<main>
+  <section>
+    <div class="Instructions">
+      <h2>Instructions</h2>
+      <ul>
+        <li>Click on a row in the table below to see a timeline of sessions from that browser over the past week.</li>
+        <li>At any point you may pick a new view from the view selector and click "update" to interact with that view's data.</li>
+      </ul>
+    </div>
+  </section>
+
+  <section>
+    <div class="Component">
+      <i id="viewpicker"></i>
+      <button class="Button" id="update">Update</button>
+    </div>
+  </section>
+
+  <section>
+    <div class="Component Chart">
+      <h3 class="Chart-title">Top Browsers</h3>
+      <div id="table-chart"></div>
+    </div>
+    <div class="Component Chart">
+      <h3 class="Chart-title">Sessions Last Week</h3>
+      <div id="line-chart"></div>
+    </div>
+  </section>
+</main>
+
+{% include embed-api-snippet.html %}
+
+<!-- This demo uses the viewpicker component, which uses JavaScript promises.
+The promise.js script below polyfills promises in older browsers that don't
+support them. -->
+<script src="assets/js/promise.js"></script>
+<script src="components/viewpicker.js"></script>
+
+<script>
+gapi.analytics.ready(function() {
+
+  /**
+   * Authorize this user.
+   */
+  gapi.analytics.auth.authorize({
+    container: 'auth',
+    clientid: '{{ site.client_id }}',
+  });
+
+  /**
+   * Add a callback to add the `is-authorized` class to the body
+   * as soon as authorization is successful. This is used to help
+   * style components.
+   * Also add an event listener to a button so we only update the charts
+   * when it's clicked (as opposed to whever the user changes views).
+   */
+  gapi.analytics.auth.on('success', function(response) {
+    document.documentElement.classList.add('is-authorized');
+    document.getElementById('update').addEventListener('click', update);
+  });
+
+  /**
+   * Create a new Viewpicker instance to be rendered inside of an
+   * element with the id "viewpicker".
+   */
+  var viewpicker = new gapi.analytics.ext.Viewpicker({
+    container: 'viewpicker'
+  }).execute();
+
+  /**
+   * Create a new DataChart instance with the given query parameters
+   * and Google chart options. It will be rendered inside an element
+   * with the id "table-chart".
+   */
+  var tableChart = new gapi.analytics.googleCharts.DataChart({
+    query: {
+      'dimensions': 'ga:browser',
+      'metrics': 'ga:sessions',
+      'sort': '-ga:sessions',
+      'max-results': '9'
+    },
+    chart: {
+      type: 'TABLE',
+      container: 'table-chart'
+    }
+  });
+
+  /**
+   * Create a new DataChart instance with the given query parameters
+   * and Google chart options. It will be rendered inside an element
+   * with the id "line-chart".
+   */
+  var lineChart = new gapi.analytics.googleCharts.DataChart({
+    query: {
+      'dimensions': 'ga:date',
+      'metrics': 'ga:sessions',
+      'start-date': '7daysAgo',
+      'end-date': 'yesterday'
+    },
+    chart: {
+      type: 'LINE',
+      container: 'line-chart'
+    }
+  });
+
+
+  /**
+   * Store a refernce to the click listener variable so it can be removed
+   * later.
+   */
+  var clickListener;
+
+  /**
+   * Each time the table chart is rendered, add an event listener to its rows
+   * so that when the user clicks on a row, the line chart is updated with
+   * only the data from the browser in the clicked row.
+   */
+  tableChart.on('success', function(response) {
+
+    var tableChart = response.chart;
+    var dataTable = new google.visualization.DataTable(response.data);
+
+    if (clickListener) {
+      google.visualization.events.removeListener(clickListener);
+    }
+
+    clickListener = google.visualization.events
+        .addListener(tableChart, 'select', function() {
+
+      if (!tableChart.getSelection().length) return;
+
+      var row = tableChart.getSelection()[0].row;
+      var browser = dataTable.getValue(row, 0);
+      lineChart.set({
+        'query': {
+          'filters': 'ga:browser==' + browser
+        },
+        chart: {
+          options: {
+            title: browser
+          }
+        }
+      }).execute();
+    });
+  });
+
+  /**
+   * Run the update function the very first time the viewpicer instance
+   * emits the change event (which will happen as soon as the page loads).
+   * (After that, only run update when the button is clicked.)
+   */
+  viewpicker.once('change', update);
+
+  /**
+   * Update the charts with the viewpickers ids. If the line chart's
+   * query option has a filter property (which happens when you click on a
+   * row in the table chart) then update the line chart as well.
+   */
+  function update() {
+    var options = {
+      query: {
+        ids: viewpicker.ids
+      }
+    };
+    tableChart.set(options).execute();
+    lineChart.set(options);
+
+    if (lineChart.get().query.filters) lineChart.execute();
+  }
+});
+</script>

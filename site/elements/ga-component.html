@@ -1,0 +1,48 @@
+<!-- This code snippet loads the Embed API. Do not modify! -->
+<script>
+(function(w,d,s,g,js,fjs){
+  g=w.gapi||(w.gapi={});g.analytics={q:[],ready:function(cb){this.q.push(cb)}};
+  js=d.createElement(s);fjs=d.getElementsByTagName(s)[0];
+  js.src='https://apis.google.com/js/platform.js';
+  fjs.parentNode.insertBefore(js,fjs);js.onload=function(){g.load('analytics')};
+}(window,document,'script'));
+</script>
+<link rel="import" href="../assets/html/polymer.html">
+
+<polymer-element name="ga-component">
+  <script>
+
+    Polymer('ga-component', {
+
+      attached: function() {
+        var self = this;
+        gapi.analytics.ready(function() {
+          self.embedLoad();
+          gapi.analytics.auth.on('success', function() {
+            self.embedAuthorize();
+          })
+        });
+      },
+
+      embedLoad: function() {
+        // Override in sub-element.
+      },
+
+      embedAuthorize: function() {
+        // Override in sub-element.
+      },
+
+      getParentDashboard: function() {
+        var parent = this.parentElement;
+        while (parent.nodeName.toLowerCase() != 'ga-dashboard') {
+          parent = parent.parentElement;
+          if (parent.nodeName.toLowerCase() == 'body') {
+            throw new Error(this.nodeName.toLowerCase() +
+                ' must be a child of a ga-dashboard element');
+          }
+        }
+        return parent;
+      }
+    });
+  </script>
+</polymer-element>

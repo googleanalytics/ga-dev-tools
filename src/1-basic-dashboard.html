@@ -1,0 +1,88 @@
+---
+layout: demo
+title: Basic Dashboard
+summary: This is a simple dashboard with a timeline chart and a view selector. Choose a different view and the chart will update.
+---
+
+<main>
+  <section class="Component Chart">
+    <h3 class="Chart-title"></h3>
+    <div class="Chart-subtitle">Last 7 days</div>
+    <div id="datachart"></div>
+    <div class="Chart-controls" id="viewpicker"></div>
+  </section>
+</main>
+
+{% include embed-api-snippet.html %}
+
+<!-- This demo uses the viewpicker component, which uses JavaScript promises.
+The promise.js script below polyfills promises in older browsers that don't
+support them. -->
+<script src="assets/js/promise.js"></script>
+<script src="components/viewpicker.js"></script>
+
+<script src="components/active-users.js"></script>
+
+
+<script>
+gapi.analytics.ready(function() {
+
+  /**
+   * Authorize this user.
+   */
+  gapi.analytics.auth.authorize({
+    container: 'auth',
+    clientid: '{{ site.client_id }}',
+  });
+
+  /**
+   * Add a callback to add the `is-authorized` class to the body
+   * as soon as authorization is successful. This is used to help
+   * style components.
+   */
+  gapi.analytics.auth.on('success', function() {
+    document.documentElement.classList.add('is-authorized');
+  });
+
+  /**
+   * Create a new Viewpicker instance to be rendered inside of an
+   * element with the id "viewpicker".
+   */
+  var viewpicker = new gapi.analytics.ext.Viewpicker({
+    container: 'viewpicker'
+  }).execute();
+
+  /**
+   * Create a new DataChart instance with the given query parameters
+   * and Google chart options. It will be rendered inside an element
+   * with the id "datachert".
+   */
+  var dataChart = new gapi.analytics.googleCharts.DataChart({
+    query: {
+      'metrics': 'ga:sessions',
+      'dimensions': 'ga:date',
+      'start-date': '7daysAgo',
+      'end-date': 'yesterday'
+    },
+    chart: {
+      container: 'datachart',
+      type: 'LINE',
+      options: {
+        width: 600
+      }
+    }
+  });
+
+  /**
+   * Register a handler to run whenever the user changes the view.
+   * The handler will update the dataChart instance as well as change
+   * its chart title to reflect the newly selected view.
+   */
+  viewpicker.on('change', function(data) {
+    dataChart.set({query: data}).execute();
+    this.container.parentNode.querySelector('.Chart-title')
+        .innerHTML = data.propertyName + ' (' + data.viewName + ')';
+  });
+
+});
+</script>

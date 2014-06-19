@@ -1,0 +1,78 @@
+---
+title: Pure HTML Dashboards
+summary: With Web Components and libraries like Polymer.js you can easily build dashboards with no JavaScript at all. View the source to see how easy it can be to build a dashboad with no JavaScript at all!
+---
+
+<!doctype html>
+<html>
+<head>
+  <title>Embed API Demos &mdash; Pure HTML Dashboards</title>
+  <link rel="stylesheet" href="assets/css/main.css">
+
+  <script src="assets/js/platform.js"></script>
+  <link rel="import" href="elements/ga-auth.html">
+  <link rel="import" href="elements/ga-dashboard.html">
+  <link rel="import" href="elements/ga-chart.html">
+  <link rel="import" href="elements/ga-viewpicker.html">
+  <link rel="import" href="elements/ga-datepicker.html">
+</head>
+<body>
+
+  <header class="Banner">
+    <h1 class="Banner-title">
+      <a href="{{ site.path }}/">Embed API Demos</a>
+      <em>{{ page.title }}</em>
+    </h1>
+    <ga-auth clientid="{{ site.client_id }}"></gauth>
+  </header>
+
+  <ga-dashboard>
+
+    <section id="controls">
+      <ga-viewpicker></ga-viewpicker>
+      <ga-datepicker
+        startDate="30daysAgo"
+        endDate="14daysAgo">
+      </ga-datepicker>
+    </section>
+
+    <section id="charts">
+      <ga-chart
+        title="Timeline"
+        type="LINE"
+        metrics="ga:sessions"
+        dimensions="ga:date">
+      </ga-chart>
+
+      <ga-chart
+        title="Sessions (by country)"
+        type="GEO"
+        metrics="ga:sessions"
+        dimensions="ga:country">
+      </ga-chart>
+
+      <ga-chart
+        title="Top Browsers"
+        type="COLUMN"
+        metrics="ga:sessions"
+        dimensions="ga:browser"
+        sort="-ga:sessions"
+        maxResults="5">
+      </ga-chart>
+
+      <ga-chart
+        title="Top pages"
+        type="TABLE"
+        metrics="ga:sessions"
+        dimensions="ga:pagePath"
+        sort="-ga:sessions"
+        maxResults="8">
+      </ga-chart>
+    </section>
+
+  </ga-dashboard>
+
+{% include source-link.html %}
+
+</body>
+</html>

@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+  <meta charset="utf-8">
+  <title>Basic Dashboard &mdash; Embed API Demos</title>
+  <link href='//fonts.googleapis.com/css?family=Open+Sans:700,400,300' rel='stylesheet'>
+  <link rel="stylesheet" href="/assets/css/main.css">
+  
+</head>
+<body>
+
+<header class="Banner">
+  <h1 class="Banner-title">
+    <a href="/">Embed API Demos</a>
+    <em>Basic Dashboard</em>
+  </h1>
+  <div class="Banner-auth" id="auth"></div>
+</header>
+
+<main>
+  <section class="Component Chart">
+    <h3 class="Chart-title"></h3>
+    <div class="Chart-subtitle">Last 7 days</div>
+    <div id="datachart"></div>
+    <div class="Chart-controls" id="viewpicker"></div>
+  </section>
+</main>
+
+<!-- This code snippet loads the Embed API. Do not modify! -->
+<script>
+(function(w,d,s,g,js,fjs){
+  g=w.gapi||(w.gapi={});g.analytics={q:[],ready:function(cb){this.q.push(cb)}};
+  js=d.createElement(s);fjs=d.getElementsByTagName(s)[0];
+  js.src='https://apis.google.com/js/platform.js';
+  fjs.parentNode.insertBefore(js,fjs);js.onload=function(){g.load('analytics')};
+}(window,document,'script'));
+</script>
+
+<!-- This demo uses the viewpicker component, which uses JavaScript promises.
+The promise.js script below polyfills promises in older browsers that don't
+support them. -->
+<script src="assets/js/promise.js"></script>
+<script src="components/viewpicker.js"></script>
+
+<script src="components/active-users.js"></script>
+
+
+<script>
+gapi.analytics.ready(function() {
+
+  /**
+   * Authorize this user.
+   */
+  gapi.analytics.auth.authorize({
+    container: 'auth',
+    clientid: '623325626209-j1jm9d78ge0v4uf8b9cor31qsirungrq.apps.googleusercontent.com',
+  });
+
+  /**
+   * Add a callback to add the `is-authorized` class to the body
+   * as soon as authorization is successful. This is used to help
+   * style components.
+   */
+  gapi.analytics.auth.on('success', function() {
+    document.documentElement.classList.add('is-authorized');
+  });
+
+  /**
+   * Create a new Viewpicker instance to be rendered inside of an
+   * element with the id "viewpicker".
+   */
+  var viewpicker = new gapi.analytics.ext.Viewpicker({
+    container: 'viewpicker'
+  }).execute();
+
+  /**
+   * Create a new DataChart instance with the given query parameters
+   * and Google chart options. It will be rendered inside an element
+   * with the id "datachert".
+   */
+  var dataChart = new gapi.analytics.googleCharts.DataChart({
+    query: {
+      'metrics': 'ga:sessions',
+      'dimensions': 'ga:date',
+      'start-date': '7daysAgo',
+      'end-date': 'yesterday'
+    },
+    chart: {
+      container: 'datachart',
+      type: 'LINE',
+      options: {
+        width: 600
+      }
+    }
+  });
+
+  /**
+   * Register a handler to run whenever the user changes the view.
+   * The handler will update the dataChart instance as well as change
+   * its chart title to reflect the newly selected view.
+   */
+  viewpicker.on('change', function(data) {
+    dataChart.set({query: data}).execute();
+    this.container.parentNode.querySelector('.Chart-title')
+        .innerHTML = data.propertyName + ' (' + data.viewName + ')';
+  });
+
+});
+</script>
+
+
+<footer class="SourceLink">
+  <a
+  href="https://github.com/googleanalytics/embed-api-demos/blob/master/site/1-basic-dashboard.html">
+  View Demo Source</a>
+  &nbsp;&#8594;
+</footer>
+
+
+</body>
+</html>

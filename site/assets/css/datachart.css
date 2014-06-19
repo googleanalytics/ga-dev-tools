@@ -1,0 +1,32 @@
+.gapi-analytics-data-chart-table-styles-thr,
+.gapi-analytics-data-chart-table-styles-tr {
+  font:inherit;
+  text-align:right
+}
+.gapi-analytics-data-chart-table-styles-thr {
+  font-weight:700
+}
+.gapi-analytics-data-chart-table-styles-tr {
+  background:#f8f8f8
+}
+.gapi-analytics-data-chart-table-styles-tr-hover {
+  background-color:#fffce8
+}
+.gapi-analytics-data-chart-table-styles-tr-selected {
+  background-color:#e5f3f9
+}
+.gapi-analytics-data-chart-table-styles-th {
+  border-bottom:1px solid #e8e8e8;
+  padding:12px 8px 3px!important
+}
+.gapi-analytics-data-chart-table-styles-td {
+  padding:8px 8px 7px!important
+}
+.gapi-analytics-data-chart-table-styles-th,
+.gapi-analytics-data-chart-table-styles-td {
+  text-align:right
+}
+.gapi-analytics-data-chart-table-styles-th:first-child,
+.gapi-analytics-data-chart-table-styles-td:first-child {
+  text-align:left
+}

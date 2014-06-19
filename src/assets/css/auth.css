@@ -1,0 +1,43 @@
+.gapi-analytics-auth-styles-signinbutton {
+  display:inline-block;
+  background:#f7991c;
+  color:#fff;
+  width:200px;
+  border-radius:2px;
+  white-space:nowrap
+}
+.gapi-analytics-auth-styles-signinbutton:hover {
+  background:#ff9d27;
+  cursor:hand
+}
+.gapi-analytics-auth-styles-signinbutton-image {
+  background:url("//www.gstatic.com/analytics-api/access-analytics-iconv1.png") transparent 5px 50% no-repeat;
+  display:inline-block;
+  vertical-align:middle;
+  width:30px;
+  height:30px;
+  border-right:#db8321 1px solid
+}
+.gapi-analytics-auth-styles-signinbutton-buttonText {
+  display:inline-block;
+  vertical-align:middle;
+  padding-left:15px;
+  padding-right:15px;
+  font-size:12px;
+  font-weight:bold;
+  font-family:Roboto, arial, sans-serif
+}
+.gapi-analytics-auth-styles-userinfo {
+  width:200px;
+  height:30px;
+  font-size:12px;
+  font-weight:bold;
+  color:#0a5ae5;
+  font-family:Roboto, arial, sans-serif;
+  background:#f2f2f2;
+  text-align:center;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  line-height:30px;
+  white-space:nowrap
+}
