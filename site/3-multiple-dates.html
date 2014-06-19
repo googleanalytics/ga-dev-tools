@@ -95,7 +95,11 @@ gapi.analytics.ready(function() {
       'end-date': 'yesterday'
     },
     chart: {
-      type: 'LINE'
+      type: 'LINE',
+      options: {
+        width: '100%'
+      }
+
     }
   };
 
@@ -204,7 +208,7 @@ gapi.analytics.ready(function() {
 <footer class="SourceLink">
   <a
   href="https://github.com/googleanalytics/embed-api-demos/blob/master/site/3-multiple-dates.html">
-  View Demo Source</a>
+  View source on Github</a>
   &nbsp;&#8594;
 </footer>
 
