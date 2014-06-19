@@ -16,9 +16,9 @@ This repo showcases many of the things that are possible with the [Embed API](ht
 
 ## Custom Components Source Code
 
-* [Datepicker](https://github.com/googleanalytics/embed-api-demos/blob/master/components/datepicker.js)
-* [Viewpicker](https://github.com/googleanalytics/embed-api-demos/blob/master/components/viewpicker.js)
-* [Active Users](https://github.com/googleanalytics/embed-api-demos/blob/master/components/active-users.js)
+* [Datepicker](https://github.com/googleanalytics/embed-api-demos/blob/master/site/components/datepicker.js)
+* [Viewpicker](https://github.com/googleanalytics/embed-api-demos/blob/master/site/components/viewpicker.js)
+* [Active Users](https://github.com/googleanalytics/embed-api-demos/blob/master/site/components/active-users.js)
 
 ## Running the Demos Yourself
 
