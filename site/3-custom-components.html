@@ -1,8 +1,32 @@
----
-layout: demo
-title: Multiple Date Ranges
-summary: With custom components like the datepicker component in this example, you can easily display data from multiple date ranges side by side. View the source to see how the datepicker component was made.
----
+<!DOCTYPE html>
+<html>
+<head>
+
+  <meta charset="utf-8">
+  <title>Using Custom Components &mdash; Embed API Demos</title>
+  <link href='//fonts.googleapis.com/css?family=Open+Sans:700,400,300' rel='stylesheet'>
+  <link rel="stylesheet" href="/demos/embed-api/assets/css/main.css">
+  
+  <script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', 'UA-41425441-5', 'auto');
+    ga('send', 'pageview');
+  </script>
+  
+</head>
+<body>
+
+<header class="Banner">
+  <h1 class="Banner-title">
+    <a href="/demos/embed-api/">Embed API Demos</a>
+    <em>Using Custom Components</em>
+  </h1>
+  <div class="Banner-auth" id="auth"></div>
+</header>
 
 <main>
 
@@ -30,7 +54,15 @@ summary: With custom components like the datepicker component in this example, y
 
 </main>
 
-{% include embed-api-snippet.html %}
+<!-- This code snippet loads the Embed API. Do not modify! -->
+<script>
+(function(w,d,s,g,js,fjs){
+  g=w.gapi||(w.gapi={});g.analytics={q:[],ready:function(cb){this.q.push(cb)}};
+  js=d.createElement(s);fjs=d.getElementsByTagName(s)[0];
+  js.src='https://apis.google.com/js/platform.js';
+  fjs.parentNode.insertBefore(js,fjs);js.onload=function(){g.load('analytics')};
+}(window,document,'script'));
+</script>
 
 <!-- This demo uses the viewpicker component, which uses JavaScript promises.
 The promise.js script below polyfills promises in older browsers that don't
@@ -49,7 +81,7 @@ gapi.analytics.ready(function() {
    */
   gapi.analytics.auth.authorize({
     container: 'auth',
-    clientid: '{{ site.client_id }}',
+    clientid: '623325626209-j1jm9d78ge0v4uf8b9cor31qsirungrq.apps.googleusercontent.com',
   });
 
   /**
@@ -181,3 +213,15 @@ gapi.analytics.ready(function() {
   });
 });
 </script>
+
+
+<footer class="SourceLink">
+  <a
+  href="https://github.com/googleanalytics/embed-api-demos/blob/master/site/3-custom-components.html">
+  View source on Github</a>
+  &nbsp;&#8594;
+</footer>
+
+
+</body>
+</html>

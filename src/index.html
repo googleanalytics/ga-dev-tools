@@ -1,5 +1,4 @@
 ---
-title: Table of Contents
 layout: default
 ---
 
@@ -24,15 +23,25 @@ layout: default
   <section class="Partition">
     <div class="Partition-content">
 
-      <ul class="Demos">{% for p in site.pages %}{% if p.summary %}
-        <li>
-          <a href="{{ site.path }}{{ p.url }}">
+      <nav class="Demos">
+        <div class="Demos-column">
+          {% for p in site.pages %}{% if p.summary %}{% if forloop.index <= 3 %}
+          <a class="Demos-item" href="{{ site.path }}{{ p.url }}">
             <h3>{{ forloop.index }}. {{ p.title }}</h3>
             <p>{{ p.summary }}</p>
           </a>
-        </li>
-        {% endif %}{% endfor %}
-      </ul>
+          {% endif %}{% endif %}{% endfor %}
+        </div>
+        <div class="Demos-column">
+          {% for p in site.pages %}{% if p.summary %}{% if forloop.index > 3 %}
+          <a class="Demos-item" href="{{ site.path }}{{ p.url }}">
+            <h3>{{ forloop.index }}. {{ p.title }}</h3>
+            <p>{{ p.summary }}</p>
+          </a>
+          {% endif %}{% endif %}{% endfor %}
+        </div>
+      </nav>
+
     </div>
   </section>
 

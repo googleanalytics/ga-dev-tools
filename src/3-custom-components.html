@@ -1,22 +1,8 @@
-<!DOCTYPE html>
-<html>
-<head>
-
-  <meta charset="utf-8">
-  <title>Multiple Date Ranges &mdash; Embed API Demos</title>
-  <link href='//fonts.googleapis.com/css?family=Open+Sans:700,400,300' rel='stylesheet'>
-  <link rel="stylesheet" href="/assets/css/main.css">
-  
-</head>
-<body>
-
-<header class="Banner">
-  <h1 class="Banner-title">
-    <a href="/">Embed API Demos</a>
-    <em>Multiple Date Ranges</em>
-  </h1>
-  <div class="Banner-auth" id="auth"></div>
-</header>
+---
+layout: demo
+title: Using Custom Components
+summary: The Embed API allows you to create your own components. The datepicker components used in this example show how you can easily display data from multiple date ranges side by side.
+---
 
 <main>
 
@@ -44,15 +30,7 @@
 
 </main>
 
-<!-- This code snippet loads the Embed API. Do not modify! -->
-<script>
-(function(w,d,s,g,js,fjs){
-  g=w.gapi||(w.gapi={});g.analytics={q:[],ready:function(cb){this.q.push(cb)}};
-  js=d.createElement(s);fjs=d.getElementsByTagName(s)[0];
-  js.src='https://apis.google.com/js/platform.js';
-  fjs.parentNode.insertBefore(js,fjs);js.onload=function(){g.load('analytics')};
-}(window,document,'script'));
-</script>
+{% include embed-api-snippet.html %}
 
 <!-- This demo uses the viewpicker component, which uses JavaScript promises.
 The promise.js script below polyfills promises in older browsers that don't
@@ -71,7 +49,7 @@ gapi.analytics.ready(function() {
    */
   gapi.analytics.auth.authorize({
     container: 'auth',
-    clientid: '623325626209-j1jm9d78ge0v4uf8b9cor31qsirungrq.apps.googleusercontent.com',
+    clientid: '{{ site.client_id }}',
   });
 
   /**
@@ -203,15 +181,3 @@ gapi.analytics.ready(function() {
   });
 });
 </script>
-
-
-<footer class="SourceLink">
-  <a
-  href="https://github.com/googleanalytics/embed-api-demos/blob/master/site/3-multiple-dates.html">
-  View source on Github</a>
-  &nbsp;&#8594;
-</footer>
-
-
-</body>
-</html>

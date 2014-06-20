@@ -87,27 +87,20 @@ a:hover {
  */
 
 .Demos {
-  list-style: none;
-  margin: 0 0 -2em -3em;
-  padding: 0;
+  margin-left: -3em;
+  overflow: hidden;
 }
-
-.Demos li {
+.Demos-column {
   box-sizing: border-box;
-  margin: 0;
-  padding: 0 0 2em 3em;
+  margin-bottom: -2em;
+  padding-left: 3em;
 }
 @media (min-width: 40em) {
-  .Demos {
-    display: flex;
-    flex-wrap: wrap;
-  }
-  .Demos li {
-    xdisplay: flex;
-    flex: 1 0 50%;
+  .Demos-column {
+    float: left;
+    width: 50%;
   }
 }
-
 .Demos h3 {
   font-weight: 300;
   font-size: 1.25em;
@@ -117,13 +110,15 @@ a:hover {
 .Demos a {
   color: inherit;
   display: block;
+  margin: 0 0 2em;
   text-decoration: none;
 }
-.Demos a:hover h3 {
+.Demos a h3 {
   color: #f05721;
+}
+.Demos a:hover h3 {
   text-decoration: underline;
 }
-
 .Demos p {
   font-size: .9em;
   margin: 0;
