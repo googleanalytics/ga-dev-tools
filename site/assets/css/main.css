@@ -137,7 +137,7 @@ a:hover {
 .NextSteps li {
   line-height: 1.5;
 }
-@media (min-width: 40em) {
+@media (min-width: 48em) {
   .NextSteps li {
     border-left: 1px solid #aaa;
     display: inline-block;
@@ -386,7 +386,7 @@ a:hover {
 .Realtime-content {
   font-size: 20px;
   font-weight: 100;
-  line-height: 28px;
+  line-height: 34px;
   margin: 0 .25em;
 }
 .Realtime-value {
