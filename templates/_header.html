@@ -1,0 +1,29 @@
+<header class="Header" id="header">
+
+  <div class="Header-block">
+    <span class="Header-menu" id="header-menu">
+      <svg class="Icon" viewBox="0 0 16 16">
+        <use xlink:href="/public/images/icons.svg#icon-menu"></use>
+      </svg>
+    </span>
+
+    {% include '_logo.html' %}
+
+    <div class="Header-user" id="header-user">
+      <svg class="Icon" viewBox="0 0 16 16">
+        <use xlink:href="/public/images/icons.svg#icon-user"></use>
+      </svg>
+    </div>
+
+    <div class="u-hidden u-lg-block">
+      {% include '_titles.html' %}
+    </div>
+
+  </div>
+
+  <aside class="Header-auth" id="header-auth">
+    <div class="Header-embedApi" id="embed-api-auth-container"></div>
+    <a class="Header-logout" href="https://accounts.google.com/logout">Logout</a>
+  </aside>
+
+</header>

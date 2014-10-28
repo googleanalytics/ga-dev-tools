@@ -1,0 +1,38 @@
+{
+  "name": "ga-dev-tools",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/googleanalytics/ga-dev-tools.git"
+  },
+  "scripts": {
+    "build": "./node_modules/.bin/gulp build",
+    "watch": "./node_modules/.bin/gulp watch"
+  },
+  "devDependencies": {
+    "browserify": "^6.0.2",
+    "chart.js": "nnnick/Chart.js#v1.0.1-beta.4",
+    "gulp": "^3.8.7",
+    "gulp-autoprefixer": "0.0.8",
+    "gulp-cleancss": "^0.2.2",
+    "gulp-concat": "^2.4.0",
+    "gulp-if": "^1.2.5",
+    "gulp-jshint": "^1.8.5",
+    "gulp-rework": "^1.0.1",
+    "gulp-sourcemaps": "^1.2.4",
+    "gulp-uglify": "^1.0.1",
+    "gulp-util": "^3.0.0",
+    "highlight.js": "^8.2.0",
+    "javascript-api-utils": "googleanalytics/javascript-api-utils#0.1.0",
+    "jquery": "^2.1.1",
+    "lodash": "^2.4.1",
+    "moment": "^2.8.3",
+    "native-promise-only": "^0.7.6-a",
+    "normalize.css": "^3.0.1",
+    "rework-plugin-inline": "^1.0.1",
+    "rework-suit": "^4.0.0",
+    "router": "philipwalton/router#0.1.1",
+    "svg4everybody": "jonathantneal/svg4everybody#1.0.0",
+    "vinyl-buffer": "^1.0.0",
+    "vinyl-source-stream": "^1.0.0"
+  }
+}

@@ -1,1 +1,15 @@
+# OS or Editor folders
 .DS_Store
+Thumbs.db
+.cache
+
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+
+# npm stuff
+node_modules
+npm-debug.log
+
+# Built files
+public/

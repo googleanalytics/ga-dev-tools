@@ -1,57 +1,39 @@
-Google Analytics Embed API Demos
+Google Analytics Demos and Tools
 ================================
 
-This repo showcases many of the things that are possible with the [Embed API](https://developers.google.com/analytics/devguides/reporting/embed/v1/). Each demo builds on ideas presented in the previous demo, so you should check them out in order. If you're curious how anything is done, browse around in the code to see for yourself.
+A showcase of demos and tools built with the various Google Analytics APIs and Libraries.
+**[View the Site (https://ga-dev-tools.appspot.com)](https://ga-dev-tools.appspot.com)**
 
-#### [View Demos](http://ga-dev-tools.appspot.com/demos/embed-api/) →
+## Submitting Feedback / Reporting Bugs
 
-## Demos Source Code
+If a demo or tool is not working as you'd expect, or if you encounter an error while using the site, please [file an issue](https://github.com/googleanalytics/ga-dev-tools/issues/new) so we can fix it.
 
-* [Basic Dashboard](https://github.com/googleanalytics/embed-api-demos/blob/master/site/1-basic-dashboard.html)
-* [Multiple Views](https://github.com/googleanalytics/embed-api-demos/blob/master/site/2-multiple-views.html)
-* [Multiple Date Ranges](https://github.com/googleanalytics/embed-api-demos/blob/master/site/3-multiple-dates.html)
-* [Interactive Charts](https://github.com/googleanalytics/embed-api-demos/blob/master/site/4-interactive-charts.html)
-* [Third-Party Visualizations](https://github.com/googleanalytics/embed-api-demos/blob/master/site/5-third-party-visualizations.html)
-* [Pure HTML Dashboards](https://github.com/googleanalytics/embed-api-demos/blob/master/site/6-pure-html-dashboards.html)
+If you've discovered a bug in one of the underlying APIs (i.e. not with the site itself), please submit a bug report on the [Google Analytics issue tracker](https://code.google.com/p/analytics-issues/).
 
-## Custom Components Source Code
+If you have general analytics questions, please ask them on Stack Overflow with either the [google-analytics](http://stackoverflow.com/questions/tagged/google-analytics) or [google-analytics-api](http://stackoverflow.com/questions/tagged/google-analytics-api) tag, or on one of the [Google Analytics developer forums](https://developers.google.com/analytics/community/#developer-discussion-groups).
 
-* [Datepicker](https://github.com/googleanalytics/embed-api-demos/blob/master/site/components/datepicker.js)
-* [Viewpicker](https://github.com/googleanalytics/embed-api-demos/blob/master/site/components/viewpicker.js)
-* [Active Users](https://github.com/googleanalytics/embed-api-demos/blob/master/site/components/active-users.js)
+## Building and Running the Site Locally
 
-## Running the Demos Yourself
+The Google Analytics demos and tools site runs on [Google App Engine](https://cloud.google.com/appengine/) and is built with [node.js](http://nodejs.org/). To run the site locally you'll need to install App Engine and node if you don't already have them.
 
-To run the demos yourself, all you have to do is download the repo, navigate to the site folder, and start up a local server. Here's a really easy way:
+Once App Engine and node are installed on your system, follow these steps to build and run the site locally:
 
 ```sh
-# Clone the repo and cd into the site directory.
-git clone git@github.com:googleanalytics/embed-api-demos.git
-cd embed-api-demos/site/
+# Clone the repository.
+git clone https://github.com/googleanalytics/ga-dev-tools.git
+cd ga-dev-tools
 
-# Start running a local server at http://localhost:4000
-python -m SimpleHTTPServer 4000
+# Install the build dependencies.
+npm install
+npm run build
+
+# Run the local App Engine server.
+path/to/dev_appserver.py .
 ```
 
-Now just go to [http://localhost:4000](http://localhost:4000) in your browser and you should see the site.
+Now you should be able to load [http://localhost:8080/](http://localhost:8080/) in your browser and see the site. (Note, the client ID associated with this project has the origin `localhost:8080` whitelisted. If you load the site on another port, authentication may not work property.)
 
-Alternatively you can copy and paste the files manually or use FTP to transfer them to a remote server, though if you do that you'll have to [change the client ID](https://developers.google.com/analytics/devguides/reporting/embed/v1/devguide#client-id) to one with your site's domain set as an approved origin.
+If you're running App Engine on Windows or Mac, you can use the App Engine Launcher GUI to run the site as an alternative to running the above command.
 
-**Note:** if you copy the files into a folder that is not at the root of your server, most of the links will not work and the page will probably look broken.
+To have your system watch for changes and automatically rebuild the source files, you can run `npm run watch` in place of the `npm run build` command shown above.
 
-### Building the site using Jekyll
-
-If you're familiar with [Jekyll](http://jekyllrb.com) it can make running the demos locally or deploying them to a remote server much easier. It's actually how this repo is built and how the demo app is deployed.
-
-```sh
-# Clone the repo and cd into the repo directory.
-git clone git@github.com:googleanalytics/embed-api-demos.git
-cd embed-api-demos
-
-# Run the site locally using Jekyll
-jekyll serve
-```
-
-The `jekyll serve` command will build all the files and load up a server on your local machine. Then you can go to [http://localhost:4000](http://localhost:4000) and everything should work fine. If you run `jekyll serve -w` it will also watch for changes to your source files and rebuild the site on the fly. This makes it easy to change a few things and see the results immediately.
-
-If you need to change any of the configuration settings (like your client ID) you can set them in the [_config.yml](https://github.com/googleanalytics/embed-api-demos/blob/master/_config.yml) file and rerun the `jekyll serve` command.

@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+
+{% block head_scripts %}
+
+{{ super() }}
+
+<script>
+
+(function(w,d,s,g,js,fs){
+  g=w.gapi||(w.gapi={});g.analytics={q:[],ready:function(f){this.q.push(f);}};
+  js=d.createElement(s);fs=d.getElementsByTagName(s)[0];
+  js.src='https://apis.google.com/js/platform.js';
+  fs.parentNode.insertBefore(js,fs);js.onload=function(){g.load('analytics');};
+}(window,document,'script'));
+
+gapi.analytics.ready(function() {
+
+  // Add a state class to the body when auth is successful.
+  gapi.analytics.auth.on('success', function() {
+    document.body.classList.add('is-authorized');
+  });
+
+  // Authorize this user with the client ID in sitemap.yaml
+  gapi.analytics.auth.authorize({
+    container: 'embed-api-auth-container',
+    userInfoLabel: '\u200B',
+    clientid: '{{ site.client_id }}',
+  });
+});
+
+</script>
+{% endblock %}

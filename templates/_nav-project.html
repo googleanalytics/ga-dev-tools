@@ -1,0 +1,22 @@
+<li>
+  <a class="Nav-link{% if page.path == pr.path %} Nav-link--selected{% endif %}"
+     href="{{ pr.path }}">{{ pr.title }}
+     {% if pr.status %}
+       <span class="Nav-status">{{ pr.status }}</span>
+     {% endif %}
+  </a>
+  {% if pr.pages %}
+    <ol>
+      {% for pg in pr.pages %}
+        <li>
+          <a class="Nav-link  Nav-link--nested{% if page.path == pg.path %} Nav-link--selected{% endif %}"
+             href="{{ pg.path }}">{{ pg.title }}
+             {% if pg.status %}
+               <span class="Nav-status">{{ pg.status }}</span>
+             {% endif %}
+          </a>
+        </li>
+      {% endfor %}
+    </ol>
+  {% endif %}
+</li>

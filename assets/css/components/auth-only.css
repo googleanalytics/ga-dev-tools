@@ -1,0 +1,55 @@
+/*
+Copyright 2014 Google Inc. All rights reserved.
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+*/
+
+
+.AuthOnly {
+  height: 100%;
+  display: table;
+  position: relative;
+  width: 100%;
+}
+
+.AuthOnly:after {
+  color: var(--text-color-faded);
+  content: 'Authorize to view this demo...';
+  font-size: 1.1em;
+  font-weight: 300;
+  left: var(--gap);
+  line-height: 1.4em;
+  margin-top: -.7em;
+  position: absolute;
+  right: var(--gap);
+  text-align: center;
+  top: 50%;
+  z-index: 2;
+}
+
+.AuthOnly--tool:after {
+  content: 'Authorize to use this tool...';
+}
+
+.AuthOnly > * {
+  visibility: hidden;
+}
+
+.Site.is-authorized .AuthOnly::after,
+.Site.is-authorized .AuthOnly::before {
+  content: none;
+}
+
+.Site.is-authorized .AuthOnly > * {
+  visibility: visible;
+}

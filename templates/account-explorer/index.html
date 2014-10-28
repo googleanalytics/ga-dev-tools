@@ -1,0 +1,52 @@
+{% extends 'loginable.html' %}
+
+{% block content %}
+
+<section>
+  <h2>Overview</h2>
+  <p>Use this tool to search or browse through your accounts, properties, and views, See what
+    accounts you have access to, and find the IDs that you need for the API or
+    for another tool or service that integrates with Google Analytics.
+  </p>
+</section>
+
+<div class="Box">
+  <div class="AuthOnly AuthOnly--tool">
+    <header class="Box-header">
+      <div class="AccountExplorerSearch">
+        <h3 class="AccountExplorerSearch-title">
+          <span class="AccountExplorerSearch-icon">
+            <svg class="Icon" viewBox="0 0 16 16">
+              <use xlink:href="/public/images/icons.svg#icon-search"></use>
+            </svg>
+          </span>
+          Search for your account information&hellip;
+        </h3>
+        <input class="AccountExplorerSearch-control Control" id="search-box" placeholder="Start typing to search...">
+        <h3 class="AccountExplorerSearch-title">
+          <span class="AccountExplorerSearch-icon">
+            <svg class="Icon" viewBox="0 0 16 16">
+              <use xlink:href="/public/images/icons.svg#icon-eye"></use>
+            </svg>
+          </span>
+          &hellip;or browse through all your accounts
+        </h3>
+        <div id="view-selector-container"></div>
+      </div>
+    </header>
+    <main class="AccountExplorerResults">
+      <h3 class="AccountExplorerResults-title" id="results-title"></h3>
+      <div id="results-container"></div>
+    </main>
+  </div>
+</div>
+
+{% endblock %}
+
+{% block tech_content %}
+  The {{ project.title }} uses the <a href="{{ site.tech.embed_api.url }}"> {{ site.tech.embed_api.name }}</a> and the custom <code>ViewSelector2</code> component, which queries the <a href="{{ site.tech.management_api.url }}">{{ site.tech.management_api.name }}</a> under the hood to get a list of all accounts the current user can access.
+{% endblock %}
+
+{% block foot_scripts %}
+<script src="/public/javascript/embed-api/view-selector2.js"></script>
+{% endblock %}

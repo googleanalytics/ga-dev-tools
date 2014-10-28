@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<section>
+  <h2>Overview</h2>
+
+  <p>The <a href="{{ project.external }}">{{ project.title
+  }}</a> lists all of the dimensions and metrics available through the <a
+  href="https://developers.google.com/analytics/devguides/reporting/core/v3/">Core
+  Reporting API</a>.</p>
+
+  <figure class="Screenshot">
+    <a data-analytics-id="screenshot" href="{{ project.external }}">
+      <img src="/public/images/dimensions-metrics-explorer/screenshot.png">
+    </a>
+    <figcaption>Using the {{ project.title }} to search for "user".</figcaption>
+  </figure>
+
+  <p>The {{ project.title }} has the following features:</p>
+  <ul>
+    <li><strong>Explore all of the dimensions and metrics</strong> &mdash;
+    Search or browse by group. Select a dimension or metric for additional
+    details such as descriptions and attributes.</li>
+    <li><strong>Identify valid combinations</strong> &mdash; Learn which
+    dimensions and metrics can be used together to create valid
+    combinations.</li>
+    <li><strong>Modes</strong> &mdash; Switch modes to organize and view
+    dimensions and metrics in different ways based on API and UI names.</li>
+  </ul>
+<section>
+{% endblock %}
+
+{% block tech_content %}
+  The {{ project.title }} uses the <a href="{{ site.tech.metadata_api.url }}">{{ site.tech.metadata_api.name }}</a> to dynamically populate the list of all valid dimensions and metrics.
+{% endblock %}

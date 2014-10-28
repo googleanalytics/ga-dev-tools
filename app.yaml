@@ -1,0 +1,25 @@
+application: google.com:ga-dev-tools
+version: 2-4
+runtime: python27
+api_version: 1
+threadsafe: yes
+
+libraries:
+- name: webapp2
+  version: "2.5.2"
+- name: jinja2
+  version: "2.6"
+- name: yaml
+  version: "3.10"
+
+handlers:
+- url: /favicon\.ico
+  static_files: favicon.ico
+  upload: favicon\.ico
+  secure: always
+- url: /public
+  static_dir: public
+  secure: always
+- url: /.*
+  script: lib.app.router
+  secure: always

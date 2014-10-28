@@ -1,0 +1,99 @@
+/*
+Copyright 2014 Google Inc. All rights reserved.
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+*/
+
+
+@import '../base/variables';
+@import '../base/custom-media';
+
+
+.Titles {
+  font-weight: 300;
+  /letter-spacing: -.03em;
+  line-height: 1.2;
+  margin: 0 0 var(--gap);
+  /word-spacing: .2em;
+}
+.Titles-main,
+.Titles-sub {
+  color: inherit;
+  font: inherit;
+  margin: 0;
+}
+.Titles-main {
+  font-size: 1.4em;
+}
+.Titles-sub {
+  opacity: .6;
+  margin-top: .2em;
+}
+.Titles-action {
+  background: var(--ga-orange-dark);
+  border-radius: .25em;
+  color: #fff;
+  display: inline-block;
+  font-weight: 400;
+  margin-top: .8em;
+  padding: .3em .6em .2em;
+  vertical-align: .4em;
+}
+.Titles-action:focus,
+.Titles-action:hover {
+  text-decoration: none;
+}
+
+
+/**
+ * `--hero` modifer
+ * Creates a bigger set of titles for use in page headers. Also
+ * inlines the main and subtitle in larger medias.
+ */
+
+.Titles--hero {
+  color: var(--ga-gray);
+}
+
+.Titles--hero .Titles-main {
+  font-size: 2.25em;
+}
+.Titles--hero .Titles-sub {
+  font-size: 1.25em;
+}
+
+@media (--break-md) {
+  .Titles--hero {
+    margin: 1em 0 var(--gap);
+  }
+  .Titles--hero .Titles-main {
+    display: inline-block;
+    margin-right: .25em;
+  }
+  .Titles--hero .Titles-sub {
+    display: inline-block;
+  }
+}
+
+@media (--break-lg) {
+  .Titles--hero {
+    margin: 4em 0 0;
+  }
+  .Titles--hero .Titles-main {
+    font-size: 3em;
+    margin-right: .5em;
+  }
+  .Titles--hero .Titles-sub {
+    font-size: 1.75em;
+  }
+}

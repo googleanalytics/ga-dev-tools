@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+  {% include '_head.html' %}
+  {% block head_scripts %}
+    <script>
+      window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+      ga('create', '{{ site.tracking_id }}', 'auto');
+    </script>
+
+    {% if site.env == 'production' %}
+      <script async src="//www.google-analytics.com/analytics.js"></script>
+    {% else %}
+      <script>
+        ga(function(tracker) {
+          tracker.set('sendHitTask', function() {
+            throw 'Abort tracking in non-production environments.'
+          });
+        });
+      </script>
+      <script async src="//www.google-analytics.com/analytics_debug.js"></script>
+    {% endif %}
+  {% endblock %}
+</head>
+<body class="Site">
+
+  <aside class="Site-sidebar" id="sidebar">
+    {% include '_nav-header.html' %}
+    {% include '_nav.html' %}
+  </aside>
+
+  {##
+   # TODO(philipwalton): the statement below is needed due to a bug in Jinja.
+   # For whatever reason if the 'title and 'subtitle' variables aren't
+   # referenced in the base template, they don't work in includes.   #
+   #}
+
+  {% if title and subtitle %}{% endif %}
+
+  <main class="Site-main">
+    {% include '_header.html' %}
+    <div class="Content">
+      <div class="u-lg-hidden">
+        {% include '_titles.html' %}
+      </div>
+
+      {% block content %}{% endblock %}
+
+      {% block tech %}
+        {% if project.tech or page.tech %}
+          <aside class="TechInfo">
+            <svg class="TechInfo-icon" viewBox="0 0 16 16">
+              <use xlink:href="/public/images/icons.svg#icon-info"></use>
+            </svg>
+            <div class="TechInfo-content">
+              <h1 class="TechInfo-title">Google Analytics technology used in this {{ project.type }}</h1>
+              {% block tech_content %}{% endblock %}
+            </div>
+          </aside>
+        {% endif %}
+      {% endblock %}
+
+    </div>
+  </main>
+
+  <script src="/public/javascript/bundle.js"></script>
+
+  {% block foot_scripts %}{% endblock %}
+
+</body>
+</html>

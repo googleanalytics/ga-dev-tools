@@ -1,0 +1,45 @@
+/*
+Copyright 2014 Google Inc. All rights reserved.
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+*/
+
+
+@import './control';
+
+.AccountExplorerSearch {
+  padding: 1.5em;
+}
+
+.AccountExplorerSearch-title {
+  font-size: 1.4em;
+  font-weight: 300;
+  margin: 0 0 var(--gap-lg);
+  text-align: center;
+}
+
+.AccountExplorerSearch-control {
+  display: block;
+  height: auto;
+  margin: 0 auto 3em;
+  max-width: 32em;
+  padding: .75em 1em;
+}
+
+.AccountExplorerSearch-icon {
+  /display: inline-block;
+  display: none;
+  font-size: 1.3em;
+  margin-right: 0.5em;
+  vertical-align: middle;
+}

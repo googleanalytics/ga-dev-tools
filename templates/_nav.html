@@ -1,0 +1,29 @@
+<nav class="Nav">
+
+  <section class="Nav-section">
+    <h1 class="Nav-category">Demos</h1>
+    <ol>
+      {% for pr in site.demos %}
+        {% include '_nav-project.html' %}
+      {% endfor %}
+    </ol>
+  </section>
+
+  <section class="Nav-section">
+    <h1 class="Nav-category">Tools</h1>
+    <ol>
+      {% for pr in site.tools %}
+        {% include '_nav-project.html' %}
+      {% endfor %}
+    </ol>
+  </section>
+
+  <section class="Nav-section">
+    <h1 class="Nav-category">Resources</h1>
+    <ol>
+      <li><a class="Nav-link" href="/#about">About this Site</a></li>
+      <li><a class="Nav-link" href="/#help">Help & Feedback</a></li>
+    </ol>
+  </section>
+
+</nav>

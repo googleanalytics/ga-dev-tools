@@ -1,0 +1,55 @@
+/*
+Copyright 2014 Google Inc. All rights reserved.
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+*/
+
+
+@import '../base/custom-media';
+
+/**
+ * DateRangeSelector Component
+ */
+
+:root {
+  --DateRangeSelector-itemMinWidth: 150px;
+}
+
+.DateRangeSelector {
+  display: flex;
+  flex-wrap: wrap;
+  margin: 0 0 -1em -1em;
+}
+
+.DateRangeSelector-item {
+  margin: 0 0 1em 1em;
+  flex: 1 0 calc(100% - 1em);
+}
+
+.DateRangeSelector-item > label {
+  font-weight: 700;
+  margin: 0 .25em .25em 0;
+  display: block;
+}
+
+.DateRangeSelector-item > input {
+  width: 100%;
+}
+
+@media (--break-md) {
+  .DateRangeSelector-item {
+    flex-basis: auto;
+    min-width: var(--DateRangeSelector-itemMinWidth);
+  }
+}
+
