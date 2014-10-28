@@ -1,5 +1,10 @@
+# For production:
+# application: ga-dev-tools
+
+# For staging:
 application: google.com:ga-dev-tools
-version: 2-4
+
+version: 3
 runtime: python27
 api_version: 1
 threadsafe: yes
