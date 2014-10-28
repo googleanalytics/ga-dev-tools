@@ -6,11 +6,15 @@ A showcase of demos and tools built with the various Google Analytics APIs and L
 
 ## Submitting Feedback / Reporting Bugs
 
-If a demo or tool is not working as you'd expect, or if you encounter an error while using the site, please [file an issue](https://github.com/googleanalytics/ga-dev-tools/issues/new) so we can fix it.
+#### For the Demos & Tools site
 
-If you've discovered a bug in one of the underlying APIs (i.e. not with the site itself), please submit a bug report on the [Google Analytics issue tracker](https://code.google.com/p/analytics-issues/).
+- You may report bugs by [submitting an issue](https://github.com/googleanalytics/ga-dev-tools/issues/new).
+- You may also submit an issue to [request a new demo or tool](https://github.com/googleanalytics/ga-dev-tools/issues/new).
 
-If you have general analytics questions, please ask them on Stack Overflow with either the [google-analytics](http://stackoverflow.com/questions/tagged/google-analytics) or [google-analytics-api](http://stackoverflow.com/questions/tagged/google-analytics-api) tag, or on one of the [Google Analytics developer forums](https://developers.google.com/analytics/community/#developer-discussion-groups).
+#### For the Google Analytics platform
+
+- Documentation for all Google Analytics API, libraries and SDKs can be found on [Google Analytics Developers](http://developers.google.com/analytics).
+- If you have questions, please refer to the getting [help section](http://developers.google.com/analytics/help/) of the developers site to find the best place to get your questions answered.
 
 ## Building and Running the Site Locally
 
