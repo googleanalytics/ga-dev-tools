@@ -62,6 +62,7 @@ limitations under the License.
   text-align: center;
 }
 
+
 .Header-auth .gapi-analytics-auth-styles-signinbutton {
   background: var(--ga-orange-light);
   border-radius: 0;
@@ -91,9 +92,12 @@ limitations under the License.
   width: auto;
 }
 
+.Header-auth .gapi-analytics-auth-styles-signinbutton-image::after {
+  content: 'Click here to authorize\00a0\00a0→';
+}
+
 .Header-auth .gapi-analytics-auth-styles-signinbutton-buttonText {
-  padding: 0;
-  font: inherit;
+  display: none;
 }
 
 .Header-logout {
