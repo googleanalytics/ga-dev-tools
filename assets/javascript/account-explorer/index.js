@@ -84,9 +84,9 @@ function updateResults(results, opt_query) {
     '<thead>' +
       '<tr>' +
         '<th>Account</th>' +
-        '<th>Property</th>' +
+        '<th>Property (Tracking ID)</th>' +
         '<th>View</th>' +
-        '<th>Table ID</th>' +
+        '<th>Table ID (ids)</th>' +
       '</tr>' +
     '</thead>' +
     '<tbody id="results-body"></tbody>' +
