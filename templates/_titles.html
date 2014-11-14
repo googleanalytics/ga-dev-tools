@@ -1,13 +1,4 @@
 <div class="Titles Titles--hero">
-
-  {% if not title and not subtitle %}
-    {% set subtitle = page.title %}
-  {% endif %}
-
-  {% if not title %}
-    {% set title = project.title %}
-  {% endif %}
-
   <h1 class="Titles-main">{{ title }}</h1>
   {% if subtitle %}
     <div class="Titles-sub">{{ subtitle }}</div>

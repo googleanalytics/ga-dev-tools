@@ -1,6 +1,15 @@
 <!DOCTYPE html>
 <html>
 <head>
+
+  {%- if not title and not subtitle -%}
+    {% set subtitle = page.title %}
+  {%- endif -%}
+
+  {%- if not title -%}
+    {% set title = project.title %}
+  {%- endif -%}
+
   {% include '_head.html' %}
   {% block head_scripts %}
     <script>

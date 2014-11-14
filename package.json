@@ -6,7 +6,7 @@
   },
   "scripts": {
     "build": "./node_modules/.bin/gulp build",
-    "watch": "./node_modules/.bin/gulp watch"
+    "watch": "NODE_ENV=dev ./node_modules/.bin/gulp watch"
   },
   "devDependencies": {
     "browserify": "^6.0.2",
