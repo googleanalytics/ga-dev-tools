@@ -551,7 +551,7 @@ explorer.SegmentsDropdown.prototype.updateDropdown = function() {
       var expand_link = '';
       var segment_id = segments.values[segment];
       if (segment_id.constructor === Array) {
-          segment_id = segments.values[segment][0]
+          segment_id = segments.values[segment][0];
           definition_attr = ' definition="' + segments.values[segment][1] + '"';
           expand_link = '<a class=dd-row-link name=expand_link>Expand</a>';
       }
@@ -616,11 +616,10 @@ explorer.SegmentsDropdown.prototype.updateValues = function(results) {
 explorer.SegmentsDropdown.prototype.addRowHandlers = function() {
   var self = this;
   $('#' + this.dropdown.id + ' .dd-row')
-    .click(function(e) {;
+    .click(function(e) {
+        var segmentTxt = $(this).attr('id');
         if (e.target.name == 'expand_link') {
-          var segmentTxt = $(this).attr('definition');
-        } else {
-          var segmentTxt = $(this).attr('id');
+          segmentTxt = $(this).attr('definition');
         }
 
         // update input value and fire keyup to update query object
