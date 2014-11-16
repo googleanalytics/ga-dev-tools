@@ -89,7 +89,8 @@ explorer.queryConfig = {
     'req': false,
     'help': 'Specifies a subset of visits based on either an expression or a ' +
         'filter. The subset of visits matched happens before dimensions ' +
-        'and metrics are calculated.',
+        'and metrics are calculated. For Custom Segments, click the "Expand" ' +
+        'link to use the segment defintion rather than the id.',
     'example': 'Dynamic: <em>segment=</em>dynamic::ga:source=~twitter<br/>By ' +
         'ID: <em>segment=</em>gaid::-3',
     'anchor': '#segment'},

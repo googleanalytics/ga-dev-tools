@@ -406,6 +406,13 @@ button.submitBtn:hover span, button.submitBtnHover span {
 
 }
 
+/* links within drop down rows like the segment expander */
+.dd-row-link {
+    float: right;
+    text-align: right;
+    padding-right: 5px;
+}
+
 /* indent for the account and segments dropdown */
 .dd-item, #segment-dd .dd-row {
   padding: 2px 0 2px 15px;
