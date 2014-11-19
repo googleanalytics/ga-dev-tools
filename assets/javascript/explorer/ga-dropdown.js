@@ -552,8 +552,10 @@ explorer.SegmentsDropdown.prototype.updateDropdown = function() {
       var segment_id = segments.values[segment];
       if (segment_id.constructor === Array) {
           segment_id = segments.values[segment][0];
-          definition_attr = ' definition="' + segments.values[segment][1] + '"';
-          expand_link = '<a class=dd-row-link name=expand_link>Expand</a>';
+          if (segments.values[segment][1] !== '') {
+            definition_attr = ' definition="' + segments.values[segment][1] + '"';
+            expand_link = '<a class=dd-row-link name=expand_link>Expand</a>';
+          }
       }
       html.push([
         '<div class="dd-row"', definition_attr,
