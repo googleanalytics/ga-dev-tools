@@ -38,12 +38,10 @@ for project in data['projects']:
 
 # Set environment data if it's not already present.
 if not 'env' in data:
-  if (os.environ['SERVER_NAME'].rfind('googleplex.com') > -1 or
-      os.environ['SERVER_NAME'].rfind('localhost') > -1 or
-      os.environ['SERVER_NAME'].rfind('corp.google.com') > -1):
-    data['env'] = 'development'
-  else:
+  if ('host' in data and os.environ['SERVER_NAME'] == data['host']):
     data['env'] = 'production'
+  else:
+    data['env'] = 'development'
 
 
 # Group all demos together
