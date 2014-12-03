@@ -14,8 +14,7 @@
 
 
 var $ = require('jquery');
-var Highlight = require('highlight.js/lib/highlight');
-var hljs = new Highlight();
+var hljs = require('highlight.js/lib/highlight');
 
 hljs.registerLanguage('xml',
     require('highlight.js/lib/languages/xml.js'));
