@@ -113,7 +113,7 @@ function updateResults(results, opt_query) {
         mark(results[i].account.id) + '</div></td><td>' +
         mark(results[i].property.name) + ' <div class="AccountExplorerResults-id">' +
         mark(results[i].property.id) + '</div></td><td>' +
-        '<a href="https://www.google.com/analytics/web/#report/visitors-overview/a' +
+        '<a href="//www.google.com/analytics/web/#report/visitors-overview/a' +
         results[i].account.id + 'w' + results[i].property.internalWebPropertyId + 'p' +
         results[i].view.id + '" title="Open this view in Google Analytics">' +
         mark(results[i].view.name) + ' ' + 
