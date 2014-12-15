@@ -116,12 +116,11 @@ function updateResults(results, opt_query) {
         '<a href="//www.google.com/analytics/web/#report/visitors-overview/a' +
         results[i].account.id + 'w' + results[i].property.internalWebPropertyId + 'p' +
         results[i].view.id + '" title="Open this view in Google Analytics">' +
-        mark(results[i].view.name) + ' ' + 
+        mark(results[i].view.name) + ' ' +
         '<svg class="Icon" viewBox="0 0 16 16">' +
-          '<use xlink:href="/public/images/icons.svg#arrow-up-right"></use>' +
-        '</svg>' +
-        '</a>' +
-        ' <div class="AccountExplorerResults-id">' +
+          '<use xlink:href="/public/images/icons.svg#icon-popout"></use>' +
+        '</svg></a> ' +
+        '<div class="AccountExplorerResults-id">' +
         mark(results[i].view.id) + '</div></td><td><div ' + 'class="AccountExplorerResults-id">' +
         mark('ga:' + results[i].view.id) + '</div></td></tr>');
     }
