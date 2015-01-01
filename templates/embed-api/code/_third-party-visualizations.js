@@ -149,21 +149,24 @@ gapi.analytics.ready(function() {
    */
   function renderYearOverYearChart(ids) {
 
+    // Adjust `now` to experiment with different days, for testing only...
+    var now = moment(); // .subtract(3, 'day');
+
     var thisYear = query({
       'ids': ids,
       'dimensions': 'ga:month,ga:nthMonth',
       'metrics': 'ga:users',
-      'start-date': moment().date(1).month(0).format('YYYY-MM-DD'),
-      'end-date': moment().date(1).subtract(1, 'day').format('YYYY-MM-DD')
+      'start-date': moment(now).date(1).month(0).format('YYYY-MM-DD'),
+      'end-date': moment(now).format('YYYY-MM-DD')
     });
 
     var lastYear = query({
       'ids': ids,
       'dimensions': 'ga:month,ga:nthMonth',
       'metrics': 'ga:users',
-      'start-date': moment().subtract(1, 'year').date(1).month(0)
+      'start-date': moment(now).subtract(1, 'year').date(1).month(0)
           .format('YYYY-MM-DD'),
-      'end-date': moment().date(1).month(0).subtract(1, 'day')
+      'end-date': moment(now).date(1).month(0).subtract(1, 'day')
           .format('YYYY-MM-DD')
     });
 
