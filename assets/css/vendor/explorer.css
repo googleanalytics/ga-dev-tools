@@ -50,6 +50,10 @@ limitations under the License.
   font-size: 13px;
 }
 
+#resultTable {
+  overflow: auto;
+}
+
 /* title of the query url */
 #queryUrlHeading {
   display: block;
@@ -280,11 +284,6 @@ limitations under the License.
   background-color: lightGoldenrodYellow;
   padding: 5px;
 }
-
-#gaOutput {
-  display: inline-block;
-}
-
 
 /* style of the main data loader img */
 #loader {
