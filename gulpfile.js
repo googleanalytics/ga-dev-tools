@@ -36,7 +36,8 @@ function isProd(transform) {
 gulp.task('css', function() {
   gulp.src('./assets/css/main.css')
       .pipe(rework(suit(), inline('./assets/images'), {sourcemap: true}))
-      .pipe(prefix('last 2 version', '> 2%', 'ie 9'))
+      .pipe(prefix('> 1%', 'last 2 version', 'Safari >= 5.1',
+                   'ie >= 10', 'Firefox ESR'))
       .pipe(isProd(cleancss({keepSpecialComments: 0})))
       .pipe(gulp.dest('./public/css'));
 });
