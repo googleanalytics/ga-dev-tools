@@ -18,9 +18,11 @@ var cleancss = require('gulp-cleancss');
 var concat = require('gulp-concat');
 var gulp = require('gulp');
 var gulpIf = require('gulp-if');
+var gutil = require('gulp-util');
 var inline = require('rework-plugin-inline');
 var jshint = require('gulp-jshint');
 var path = require('path');
+var plumber = require('gulp-plumber');
 var prefix = require('gulp-autoprefixer');
 var rework = require('gulp-rework');
 var source = require('vinyl-source-stream');
@@ -33,8 +35,14 @@ function isProd(transform) {
   return gulpIf(!/^dev/.test(process.env.NODE_ENV), transform);
 }
 
+function streamError(err) {
+  gutil.beep();
+  gutil.log(err instanceof gutil.PluginError ? err.toString() : err.stack);
+}
+
 gulp.task('css', function() {
   gulp.src('./assets/css/main.css')
+      .pipe(plumber({errorHandler: streamError}))
       .pipe(rework(suit(), inline('./assets/images'), {sourcemap: true}))
       .pipe(prefix('> 1%', 'last 2 version', 'Safari >= 5.1',
                    'ie >= 10', 'Firefox ESR'))
@@ -65,8 +73,8 @@ gulp.task('lint', function() {
 });
 
 gulp.task('javascript:browserify', function() {
-  browserify('./assets/javascript', {debug: true})
-      .bundle()
+  browserify('./assets/javascript', {debug: true}).bundle()
+      .on('error', streamError)
       .pipe(source('bundle.js'))
       .pipe(buffer())
       .pipe(sourcemaps.init({loadMaps: true}))
@@ -91,6 +99,7 @@ gulp.task('javascript:explorer', function() {
         './assets/javascript/explorer/ga-app.js',
         './assets/javascript/explorer/ga-metadata.js'
       ])
+      .pipe(plumber({errorHandler: streamError}))
       .pipe(sourcemaps.init())
       .pipe(concat('explorer.js'))
       .pipe(isProd(uglify()))
@@ -112,6 +121,7 @@ gulp.task('javascript:static', function() {
   // stream once this issue is solved:
   // https://github.com/floridoo/gulp-sourcemaps/issues/37
   gulp.src('./assets/javascript/embed-api/active-users.js')
+      .pipe(plumber({errorHandler: streamError}))
       .pipe(sourcemaps.init())
       .pipe(concat('active-users.js'))
       .pipe(uglify())
@@ -119,6 +129,7 @@ gulp.task('javascript:static', function() {
       .pipe(gulp.dest('./public/javascript/embed-api'));
 
   gulp.src('./assets/javascript/embed-api/date-range-selector.js')
+      .pipe(plumber({errorHandler: streamError}))
       .pipe(sourcemaps.init())
       .pipe(concat('date-range-selector.js'))
       .pipe(uglify())
@@ -127,6 +138,7 @@ gulp.task('javascript:static', function() {
 
   browserify('./assets/javascript/embed-api/view-selector2', {debug: true})
       .bundle()
+      .on('error', streamError)
       .pipe(source('view-selector2.js'))
       .pipe(buffer())
       .pipe(sourcemaps.init({loadMaps: true}))
