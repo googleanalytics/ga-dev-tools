@@ -23,7 +23,7 @@ gapi.analytics.ready(function() {
   // Authorize this user with the client ID in sitemap.yaml
   gapi.analytics.auth.authorize({
     container: 'embed-api-auth-container',
-    userInfoLabel: '\u200B',
+    userInfoLabel: '',
     clientid: '{{ site.client_id }}',
   });
 });
