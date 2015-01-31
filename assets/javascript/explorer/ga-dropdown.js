@@ -547,9 +547,21 @@ explorer.SegmentsDropdown.prototype.updateDropdown = function() {
     // Add the segment names.
     var segments = this.values[groupName];
     for (var segment in segments.values) {
+      var definition_attr = '';
+      var expand_link = '';
+      var segment_id = segments.values[segment];
+      if (segment_id.constructor === Array) {
+          segment_id = segments.values[segment][0];
+          if (segments.values[segment][1] !== '') {
+            definition_attr = ' definition="' + segments.values[segment][1] + '"';
+            expand_link = '<a class=dd-row-link name=expand_link>Expand</a>';
+          }
+      }
       html.push([
-        '<div class="dd-row" id="', segments.values[segment], '">',
+        '<div class="dd-row"', definition_attr,
+        ' id="', segment_id, '">',
         explorer.util.htmlEscape(segment),
+        expand_link,
         '</div>'
       ].join(''));
     }
@@ -583,7 +595,7 @@ explorer.SegmentsDropdown.prototype.updateValues = function(results) {
       // we use anything that is not a number or > -1.
       var segmentId = parseInt(segment.id, 10);
       if (!segmentId || (segmentId >= -1)) {
-        customSegments[segment.name] = segment.segmentId;
+        customSegments[segment.name] = [segment.segmentId, segment.definition];
         hasCustomSegments = true;
       }
     }
@@ -606,8 +618,11 @@ explorer.SegmentsDropdown.prototype.updateValues = function(results) {
 explorer.SegmentsDropdown.prototype.addRowHandlers = function() {
   var self = this;
   $('#' + this.dropdown.id + ' .dd-row')
-    .click(function() {
+    .click(function(e) {
         var segmentTxt = $(this).attr('id');
+        if (e.target.name == 'expand_link') {
+          segmentTxt = $(this).attr('definition');
+        }
 
         // update input value and fire keyup to update query object
         $(self.input).val(segmentTxt).keyup();
