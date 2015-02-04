@@ -22,6 +22,9 @@ gapi.analytics.ready(function() {
 
   // Authorize this user with the client ID in sitemap.yaml
   gapi.analytics.auth.authorize({
+    {% if project.scopes -%}
+      scopes: ['{{ project.scopes | join("','") | safe }}'],
+    {%- endif %}
     container: 'embed-api-auth-container',
     userInfoLabel: '',
     clientid: '{{ site.client_id }}',
