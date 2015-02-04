@@ -112,7 +112,8 @@ gulp.task('javascript:static', function() {
         'node_modules/jquery/dist/jquery.min.js',
         'node_modules/jquery/dist/jquery.min.map',
         'node_modules/moment/min/moment.min.js',
-        'node_modules/chart.js/Chart.min.js'
+        'node_modules/chart.js/Chart.min.js',
+        'node_modules/Select2/select2.js'
       ])
       .pipe(gulp.dest('./public/javascript'));
 

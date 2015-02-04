@@ -1,0 +1,125 @@
+/*
+Copyright 2015 Google Inc. All rights reserved.
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+*/
+
+
+@import '../base/variables';
+
+:root {
+  --form-label-width: 10em;
+}
+
+
+.FormControl {
+  display: block;
+  margin: 0 0 1.5em;
+  max-width: 44em;
+}
+@media (--break-lg) {
+  .FormControl {
+    align-items: baseline;
+    display: flex;
+  }
+}
+
+.FormControl-label {
+  display: block;
+  font-weight: 700;
+  margin: 0 0 .25em;
+}
+.FormControl--required .FormControl-label::before,
+.FormControl--required .FormControl-label::after {
+  color: hsl(0, 70%, 55%);
+  font-weight: 700;
+}
+.FormControl--required .FormControl-label::after {
+  content: '*';
+}
+
+.FormControl-label a {
+  font-family: 'Menlo', monospace;
+  font-weight: 400;
+}
+
+@media (--break-lg) {
+  .FormControl-label {
+    flex: 0 0 var(--form-label-width);
+    padding-right: 1.5em;
+    text-align: right;
+  }
+  .FormControl--required .FormControl-label::after {
+    content: none;
+  }
+  .FormControl--required .FormControl-label::before {
+    content: '*';
+  }
+}
+
+.FormControl-body {
+  flex: 1 0 0%;
+}
+
+.FormField {
+  width: 100%;
+}
+
+input.FormField,
+select.FormField {
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  box-sizing: border-box;
+  font: inherit;
+  font-weight: 400;
+  height: calc(34em/14); /* 34px @ 14px body font */
+  line-height: calc(20em/14); /* 20px @ 14px body font */
+  padding: calc(6em/14); /* 6px @ 14px body font */
+}
+
+input.FormField:focus,
+select.FormField:focus {
+  border-color: var(--border-color-active);
+  outline: 0;
+}
+
+.FormControl-info {
+  color: var(--text-color-faded);
+  font-size: .85em;
+  line-height: 1.2;
+  margin-top: .5em;
+}
+
+
+
+.FormAction {
+  margin: var(--gap) 0;
+}
+@media (--break-lg) {
+  .FormAction {
+    margin: var(--gap-lg) 0 var(--gap-lg) var(--form-label-width);
+  }
+}
+
+.Box {
+  margin: 2em 0;
+  padding: 1em;
+}
+
+.Box:empty {
+  display: none;
+}
+
+.Button {
+  margin: 0;
+}

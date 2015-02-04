@@ -3,6 +3,8 @@
 {% block content %}
 
 <link href="//ajax.googleapis.com/ajax/libs/jqueryui/1.11.1/themes/smoothness/jquery-ui.css" rel="stylesheet"/>
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/select2/3.5.2/select2.min.css">
+
 
 <style>
 #ui-datepicker-div { display: none; }
@@ -14,6 +16,14 @@
     <h2>Overview</h2>
     <p id="intro">Sometimes you just need to explore. This tool lets you play with the <a href="{{site.tech.core_reporting_api.url}}">Core Reporting API</a> by building queries to get data from your Google Analytics views (profiles). You can use these queries in any of the client libraries to build your own tools.</p>
   </section>
+
+  <select id="select2" style="width:200px">
+    <option>One</option>
+    <option>Two</option>
+    <option>Three</option>
+    <option>Four</option>
+    <option>Five</option>
+  </select>
 
   <div id="authBar">
     <div id="queryUriDiv" class="buttonBar left">
@@ -129,4 +139,11 @@
 </script>
 
 <script src="/public/javascript/explorer.js"></script>
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/select2/3.5.2/select2.min.js"></script>
+
+<script>
+ $('#select2').select2();
+</script>
+
 {% endblock %}

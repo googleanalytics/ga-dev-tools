@@ -35,12 +35,16 @@ limitations under the License.
 @import './components/control';
 @import './components/dashboard';
 @import './components/date-range-selector';
+@import './components/doc-link';
+@import './components/error';
 @import './components/flex-grid';
+@import './components/form-control';
 @import './components/header';
 @import './components/icon';
 @import './components/logo';
 @import './components/nav';
 @import './components/nav-header';
+@import './components/s2tag';
 @import './components/screenshot';
 @import './components/site';
 @import './components/tech-info';
@@ -52,6 +56,6 @@ limitations under the License.
 @import './utilities/space.css';
 
 /* Vendor styles (which don't necessarily follow conventions) */
-@import './vendor/explorer';
 @import './vendor/highlight';
+@import './vendor/select2-overrides';
 @import './vendor/table-chart';

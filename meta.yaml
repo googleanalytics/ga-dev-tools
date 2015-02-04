@@ -46,6 +46,10 @@ links:
   github: https://github.com/googleanalytics/ga-dev-tools
 
 projects:
+- title: Query Explorer 2.0
+  type: tool
+  slug: query-explorer
+  tech: [core_reporting_api, management_api, metadata_api]
 - title: Account Explorer
   type: tool
   slug: account-explorer

@@ -1,0 +1,146 @@
+{% extends 'loginable.html' %}
+
+{% block content %}
+<section>
+  <h2>Overview</h2>
+  <p id="intro">Sometimes you just need to explore. This tool lets you play with the <a href="{{site.tech.core_reporting_api.url}}">Core Reporting API</a> by building queries to get data from your Google Analytics views (profiles). You can use these queries in any of the client libraries to build your own tools.</p>
+
+<form id="query-explorer">
+
+  <h3>Select a view</h3>
+
+  <div id="view-selector-container"></div>
+
+  <h3>Set the query parameters</h3>
+
+  <div class="FormControl FormControl--required">
+    <label class="FormControl-label">
+      <a href="https://developers.google.com/analytics/devguides/reporting/core/v3/reference#ids">ids</a>
+    </label>
+    <div class="FormControl-body">
+      <input class="FormField" id="ids" name="ids">
+    </div>
+  </div>
+
+  <div class="FormControl FormControl--required">
+    <label class="FormControl-label">
+      <a href="https://developers.google.com/analytics/devguides/reporting/core/v3/reference#startDate">start-date</a>
+    </label>
+    <div class="FormControl-body">
+      <input class="FormField" id="start-date" name="start-date" placeholder="YYYY-MM-DD" value="30daysAgo">
+    </div>
+    <!-- <aside class="FormControl-info">For relative dates, use the strings "today", "yesterday", or "NdaysAgo" where N is a positive integer.</aside> -->
+  </div>
+
+  <div class="FormControl FormControl--required">
+    <label class="FormControl-label">
+      <a href="https://developers.google.com/analytics/devguides/reporting/core/v3/reference#endDate">end-date</a>
+    </label>
+    <div class="FormControl-body">
+      <input class="FormField" id="end-date" name="end-date" placeholder="YYYY-MM-DD" value="yesterday">
+    </div>
+  </div>
+
+  <div class="FormControl FormControl--required">
+    <label class="FormControl-label">
+      <a href="https://developers.google.com/analytics/devguides/reporting/core/v3/reference#metrics">metrics</a>
+    </label>
+    <div class="FormControl-body">
+      <input class="FormField" id="metrics" name="metrics" value="ga:sessions">
+    </div>
+  </div>
+
+  <div class="FormControl">
+    <label class="FormControl-label">
+      <a href="https://developers.google.com/analytics/devguides/reporting/core/v3/reference#dimensions">dimensions</a>
+    </label>
+    <div class="FormControl-body">
+      <input class="FormField" id="dimensions" name="dimensions" value="ga:browser,ga:operatingSystem">
+    </div>
+  </div>
+
+  <div class="FormControl">
+    <label class="FormControl-label">
+      <a href="https://developers.google.com/analytics/devguides/reporting/core/v3/reference#sort">sort</a>
+    </label>
+    <div class="FormControl-body">
+      <input class="FormField" id="sort" name="sort" value="-ga:sessions">
+    </div>
+  </div>
+
+  <div class="FormControl">
+    <label class="FormControl-label">
+      <a href="https://developers.google.com/analytics/devguides/reporting/core/v3/reference#filters">filters</a>
+    </label>
+    <div class="FormControl-body">
+      <input class="FormField" id="filters" name="filters">
+    </div>
+  </div>
+
+
+  <div class="FormControl">
+    <label class="FormControl-label">
+      <a href="https://developers.google.com/analytics/devguides/reporting/core/v3/reference#segment">segment</a>
+    </label>
+    <div class="FormControl-body">
+      <input class="FormField" id="segment" name="segment" value="sessions::condition::ga:deviceCategory==mobile,ga:deviceCategory==tablet">
+      <label class="FormControl-info"><input id="segment-toggle" type="checkbox">Show segment definitions instead of IDs.</label>
+    </div>
+  </div>
+
+  <div class="FormControl">
+    <label class="FormControl-label">
+      <a href="https://developers.google.com/analytics/devguides/reporting/core/v3/reference#samplingLevel">samplingLevel</a>
+    </label>
+    <div class="FormControl-body">
+      <select class="FormField" id="samplingLevel" name="samplingLevel">
+        <option>DEFAULT</option>
+        <option value="FASTER">FASTER</option>
+        <option value="HIGHER_PRECISION">HIGHER_PRECISION</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="FormControl">
+    <label class="FormControl-label">
+      <a href="https://developers.google.com/analytics/devguides/reporting/core/v3/reference#startIndex">start-index</a>
+    </label>
+    <div class="FormControl-body">
+      <input class="FormField" id="start-index" name="start-index">
+    </div>
+  </div>
+
+  <div class="FormControl">
+    <label class="FormControl-label">
+      <a href="https://developers.google.com/analytics/devguides/reporting/core/v3/reference#maxResults">max-results</a>
+    </label>
+    <div class="FormControl-body">
+      <input class="FormField" id="max-results" name="max-results" value="20">
+    </div>
+  </div>
+
+  <div class="FormAction">
+    <button class="Button Button--action" id="get-data">Get Data</button>
+    <a download hidden class="Button" id="save-tsv">Save Results as TSV</a>
+  </div>
+
+</form>
+
+<div id="query-error-container"></div>
+
+</section>
+
+<div id="chart-container" class="Box"></div>
+
+{% endblock %}
+
+{% block tech_content %}
+  The {{ project.title }} uses the <a href="{{ site.tech.core_reporting_api.url }}">{{ site.tech.core_reporting_api.name }}</a> to query for data and create the reports. It uses the <a href="{{ site.tech.management_api.url }}">{{ site.tech.management_api.name }}</a> to get a list of accounts and segments the current user can access, and it uses the <a href="{{ site.tech.metadata_api.url }}">{{ site.tech.metadata_api.name }}</a> to populate the items in the dimensions and metrics dropdowns.
+{% endblock %}
+
+{% block foot_scripts %}
+
+<script src="/public/javascript/select2.js"></script>
+<script src="/public/javascript/embed-api/view-selector2.js"></script>
+
+{% endblock %}

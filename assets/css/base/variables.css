@@ -30,6 +30,7 @@ limitations under the License.
   --bg-color-light: #f4f2f0;
 
   --border-color: #d4d2d0;
+  --border-color-active: #3b99fc; /* #4d90fe; */
 
   --ga-gray: #75787d;
   --ga-orange-dark: #f05721;

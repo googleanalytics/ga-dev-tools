@@ -14,21 +14,40 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-
 .Button {
-  border: 1px solid #2F5BB7;
-  border-radius: 2px;
-  background: #498cf6;
-  color: #fff;
-  cursor: pointer;
+  background: hsla(0,0%,0%, .1);
+  border: 1px solid transparent;
+  border-radius: 4px;
+  box-sizing: border-box;
+  color: inherit;
   font: inherit;
-  font-weight: bold;
-  margin-left: 1em;
-  min-width: 72px;
-  padding: 6px 12px;
+  font-weight: 400;
+  line-height: calc(20em/14); /* 20px @ 14px body font */
+  padding: calc(6em/14) 1em; /* 6px @ 14px body font */
 }
-.Button:focus {
-  box-shadow: inset 0 0 0 1px #FFF;
+.Button:active,
+.Button:focus,
+.Button:hover {
+  background: hsla(0,0%,0%,.2);
   outline: none;
+  text-decoration: none;
+}
+
+.Button[disabled] {
+  opacity: .6;
+}
+
+.Button--action {
+  color: #fff;
+  background: hsl(217, 91%, 63%);
+}
+.Button--action:active,
+.Button--action:focus,
+.Button--action:hover {
+  background: hsl(217, 91%, 53%);
+}
+
+.Button + .Button {
+  margin-left: .5em;
 }
 
