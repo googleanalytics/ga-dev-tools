@@ -16,6 +16,8 @@
 /* global gapi */
 
 
+var dataStore = require('../data-store');
+
 /**
  * To fit the style of the page, customize the view selector template.
  */
@@ -48,13 +50,17 @@ module.exports = {
    */
   init: function() {
 
+    var data = dataStore.get('query-explorer');
+    var ids = data && data.ids;
+
     var viewSelector = new gapi.analytics.ext.ViewSelector2({
       container: 'view-selector-container',
+      ids: ids,
       template: VIEW_SELECTOR_TEMPLATE
     }).execute();
 
     viewSelector.on('change', function(ids) {
-      $('#ids').val(ids);
+      $('#ids').val(ids).trigger('change');
     });
 
     // TODO(philipwalton): Add an error message to the user that

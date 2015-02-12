@@ -13,6 +13,7 @@
 // limitations under the License.
 
 
+var dataStore = require('../data-store');
 var isQuerying = false;
 var serialize = require('../serialize');
 var template = require('lodash').template;
@@ -47,6 +48,28 @@ var chartOptions = {
     tableCell: 'gapi2-analytics-data-chart-td'
   }
 };
+
+
+/**
+ * Fetches any saved form data from local storage and updates the fields on the
+ * page. For each key in the returned data, if a field on the page exists with
+ * the corresponding ID, that field is set to the saved value.
+ */
+function setStateFromDataStore() {
+  var data = dataStore.get('query-explorer');
+  if (data) {
+    Object.keys(data).forEach(function(key) {
+      var $field = $('#' + key);
+      var value = data[key];
+      if ($field.is('input[type="checkbox"]')) {
+        $field.prop('checked', value)
+      }
+      else {
+        $field.val(value);
+      }
+    });
+  }
+}
 
 
 /**
@@ -112,6 +135,25 @@ function onTSVLinkClick(e) {
 
 
 /**
+ * A handler that runs any time the change event occurs on the page.
+ * This handler saves the changed data to the data store.
+ * @param {Event} e The DOM event.
+ */
+function onFieldChange(e) {
+  var $field = $(e.target);
+  var obj = {};
+  var id = $field.attr('id');
+  var value = $field.is('input[type="checkbox"]') ?
+      $field.prop('checked') : $field.val();
+
+  if (id) {
+    obj[id] = value;
+    dataStore.set('query-explorer', obj);
+  }
+}
+
+
+/**
  * Handles disabling the submit button while the query is in progress.
  */
 function toggleButtonLoadingState() {
@@ -128,7 +170,10 @@ module.exports = {
    * the TSV download button.
    */
   init: function() {
-    $('#query-explorer').on('submit', onFormSubmit);
+    setStateFromDataStore();
+
     $('#save-tsv').on('click', onTSVLinkClick);
+    $('#query-explorer').on('change', onFieldChange)
+                        .on('submit', onFormSubmit);
   }
 };

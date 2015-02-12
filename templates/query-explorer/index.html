@@ -5,128 +5,128 @@
   <h2>Overview</h2>
   <p id="intro">Sometimes you just need to explore. This tool lets you play with the <a href="{{site.tech.core_reporting_api.url}}">Core Reporting API</a> by building queries to get data from your Google Analytics views (profiles). You can use these queries in any of the client libraries to build your own tools.</p>
 
-<form id="query-explorer">
-
   <h3>Select a view</h3>
-
   <div id="view-selector-container"></div>
 
-  <h3>Set the query parameters</h3>
+  <form id="query-explorer">
 
-  <div class="FormControl FormControl--required">
-    <label class="FormControl-label">
-      <a href="https://developers.google.com/analytics/devguides/reporting/core/v3/reference#ids">ids</a>
-    </label>
-    <div class="FormControl-body">
-      <input class="FormField" id="ids" name="ids">
+    <h3>Set the query parameters</h3>
+
+    <div class="FormControl FormControl--required">
+      <label class="FormControl-label">
+        <a href="https://developers.google.com/analytics/devguides/reporting/core/v3/reference#ids">ids</a>
+      </label>
+      <div class="FormControl-body">
+        <input class="FormField" id="ids" name="ids">
+      </div>
     </div>
-  </div>
 
-  <div class="FormControl FormControl--required">
-    <label class="FormControl-label">
-      <a href="https://developers.google.com/analytics/devguides/reporting/core/v3/reference#startDate">start-date</a>
-    </label>
-    <div class="FormControl-body">
-      <input class="FormField" id="start-date" name="start-date" placeholder="YYYY-MM-DD" value="30daysAgo">
+    <div class="FormControl FormControl--required">
+      <label class="FormControl-label">
+        <a href="https://developers.google.com/analytics/devguides/reporting/core/v3/reference#startDate">start-date</a>
+      </label>
+      <div class="FormControl-body">
+        <input class="FormField" id="start-date" name="start-date" placeholder="YYYY-MM-DD" value="30daysAgo">
+      </div>
     </div>
-    <!-- <aside class="FormControl-info">For relative dates, use the strings "today", "yesterday", or "NdaysAgo" where N is a positive integer.</aside> -->
-  </div>
 
-  <div class="FormControl FormControl--required">
-    <label class="FormControl-label">
-      <a href="https://developers.google.com/analytics/devguides/reporting/core/v3/reference#endDate">end-date</a>
-    </label>
-    <div class="FormControl-body">
-      <input class="FormField" id="end-date" name="end-date" placeholder="YYYY-MM-DD" value="yesterday">
+    <div class="FormControl FormControl--required">
+      <label class="FormControl-label">
+        <a href="https://developers.google.com/analytics/devguides/reporting/core/v3/reference#endDate">end-date</a>
+      </label>
+      <div class="FormControl-body">
+        <input class="FormField" id="end-date" name="end-date" placeholder="YYYY-MM-DD" value="yesterday">
+      </div>
     </div>
-  </div>
 
-  <div class="FormControl FormControl--required">
-    <label class="FormControl-label">
-      <a href="https://developers.google.com/analytics/devguides/reporting/core/v3/reference#metrics">metrics</a>
-    </label>
-    <div class="FormControl-body">
-      <input class="FormField" id="metrics" name="metrics" value="ga:sessions">
+    <div class="FormControl FormControl--required">
+      <label class="FormControl-label">
+        <a href="https://developers.google.com/analytics/devguides/reporting/core/v3/reference#metrics">metrics</a>
+      </label>
+      <div class="FormControl-body">
+        <input class="FormField" id="metrics" name="metrics">
+      </div>
     </div>
-  </div>
 
-  <div class="FormControl">
-    <label class="FormControl-label">
-      <a href="https://developers.google.com/analytics/devguides/reporting/core/v3/reference#dimensions">dimensions</a>
-    </label>
-    <div class="FormControl-body">
-      <input class="FormField" id="dimensions" name="dimensions" value="ga:browser,ga:operatingSystem">
+    <div class="FormControl">
+      <label class="FormControl-label">
+        <a href="https://developers.google.com/analytics/devguides/reporting/core/v3/reference#dimensions">dimensions</a>
+      </label>
+      <div class="FormControl-body">
+        <input class="FormField" id="dimensions" name="dimensions">
+      </div>
     </div>
-  </div>
 
-  <div class="FormControl">
-    <label class="FormControl-label">
-      <a href="https://developers.google.com/analytics/devguides/reporting/core/v3/reference#sort">sort</a>
-    </label>
-    <div class="FormControl-body">
-      <input class="FormField" id="sort" name="sort" value="-ga:sessions">
+    <div class="FormControl">
+      <label class="FormControl-label">
+        <a href="https://developers.google.com/analytics/devguides/reporting/core/v3/reference#sort">sort</a>
+      </label>
+      <div class="FormControl-body">
+        <input class="FormField" id="sort" name="sort">
+      </div>
     </div>
-  </div>
 
-  <div class="FormControl">
-    <label class="FormControl-label">
-      <a href="https://developers.google.com/analytics/devguides/reporting/core/v3/reference#filters">filters</a>
-    </label>
-    <div class="FormControl-body">
-      <input class="FormField" id="filters" name="filters">
+    <div class="FormControl">
+      <label class="FormControl-label">
+        <a href="https://developers.google.com/analytics/devguides/reporting/core/v3/reference#filters">filters</a>
+      </label>
+      <div class="FormControl-body">
+        <input class="FormField" id="filters" name="filters">
+      </div>
     </div>
-  </div>
 
 
-  <div class="FormControl">
-    <label class="FormControl-label">
-      <a href="https://developers.google.com/analytics/devguides/reporting/core/v3/reference#segment">segment</a>
-    </label>
-    <div class="FormControl-body">
-      <input class="FormField" id="segment" name="segment" value="sessions::condition::ga:deviceCategory==mobile,ga:deviceCategory==tablet">
-      <label class="FormControl-info"><input id="segment-toggle" type="checkbox">Show segment definitions instead of IDs.</label>
+    <div class="FormControl">
+      <label class="FormControl-label">
+        <a href="https://developers.google.com/analytics/devguides/reporting/core/v3/reference#segment">segment</a>
+      </label>
+      <div class="FormControl-body">
+        <input class="FormField" id="segment" name="segment">
+        <label class="FormControl-info">
+          <input id="segment-toggle" type="checkbox">Show segment definitions instead of IDs.
+        </label>
+      </div>
     </div>
-  </div>
 
-  <div class="FormControl">
-    <label class="FormControl-label">
-      <a href="https://developers.google.com/analytics/devguides/reporting/core/v3/reference#samplingLevel">samplingLevel</a>
-    </label>
-    <div class="FormControl-body">
-      <select class="FormField" id="samplingLevel" name="samplingLevel">
-        <option>DEFAULT</option>
-        <option value="FASTER">FASTER</option>
-        <option value="HIGHER_PRECISION">HIGHER_PRECISION</option>
-      </select>
+    <div class="FormControl">
+      <label class="FormControl-label">
+        <a href="https://developers.google.com/analytics/devguides/reporting/core/v3/reference#samplingLevel">samplingLevel</a>
+      </label>
+      <div class="FormControl-body">
+        <select class="FormField" id="samplingLevel" name="samplingLevel">
+          <option value="">DEFAULT</option>
+          <option value="FASTER">FASTER</option>
+          <option value="HIGHER_PRECISION">HIGHER_PRECISION</option>
+        </select>
+      </div>
     </div>
-  </div>
 
-  <div class="FormControl">
-    <label class="FormControl-label">
-      <a href="https://developers.google.com/analytics/devguides/reporting/core/v3/reference#startIndex">start-index</a>
-    </label>
-    <div class="FormControl-body">
-      <input class="FormField" id="start-index" name="start-index">
+    <div class="FormControl">
+      <label class="FormControl-label">
+        <a href="https://developers.google.com/analytics/devguides/reporting/core/v3/reference#startIndex">start-index</a>
+      </label>
+      <div class="FormControl-body">
+        <input class="FormField" id="start-index" name="start-index">
+      </div>
     </div>
-  </div>
 
-  <div class="FormControl">
-    <label class="FormControl-label">
-      <a href="https://developers.google.com/analytics/devguides/reporting/core/v3/reference#maxResults">max-results</a>
-    </label>
-    <div class="FormControl-body">
-      <input class="FormField" id="max-results" name="max-results" value="20">
+    <div class="FormControl">
+      <label class="FormControl-label">
+        <a href="https://developers.google.com/analytics/devguides/reporting/core/v3/reference#maxResults">max-results</a>
+      </label>
+      <div class="FormControl-body">
+        <input class="FormField" id="max-results" name="max-results" value="20">
+      </div>
     </div>
-  </div>
 
-  <div class="FormAction">
-    <button class="Button Button--action" id="get-data">Get Data</button>
-    <a download hidden class="Button" id="save-tsv">Save Results as TSV</a>
-  </div>
+    <div class="FormAction">
+      <button class="Button Button--action" id="get-data">Get Data</button>
+      <a download hidden class="Button" id="save-tsv">Save Results as TSV</a>
+    </div>
 
-</form>
+  </form>
 
-<div id="query-error-container"></div>
+  <div id="query-error-container"></div>
 
 </section>
 
