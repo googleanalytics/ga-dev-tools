@@ -480,7 +480,7 @@ explorer.coreapi.displayResults = function(results) {
     $('#sampledData').hide();
   }
 
-  tableViz.draw(dataTable);
+  tableViz.draw(dataTable, {width: 'auto'});
   $('#gaOutput').show();
 
   explorer.coreapi.download();
