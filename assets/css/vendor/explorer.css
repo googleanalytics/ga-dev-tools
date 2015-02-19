@@ -743,3 +743,7 @@ form label input[type=checkbox]{
 
 /** Date Picker **/
 .ui-widget { font-size:73% !important;}
+
+.google-visualization-table-table {
+  width: 100%!important;
+}
