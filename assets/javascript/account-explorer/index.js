@@ -13,8 +13,9 @@
 // limitations under the License.
 
 
-/* global gapi */
-var $ = require('jquery');
+/* global $, gapi */
+
+
 var accountSummaries = require('javascript-api-utils/lib/account-summaries');
 
 
@@ -27,7 +28,7 @@ function setup() {
     var validIds = returnValidIds(summaries, urlHash);
     var allIds = getAllIds(summaries, validIds);
 
-    setViewSelector(summaries, allIds.viewId);
+    setViewSelector(allIds.viewId);
   });
 }
 
@@ -133,23 +134,18 @@ function updateResults(results, opt_query) {
 
 /**
  * Creates and sets the viewSelector
- * @param {Object} summaries The account summaries response.
  * @param {String} viewId The view ID to set the viewSelector to
  */
-function setViewSelector(summaries, viewId) {
+function setViewSelector(viewId) {
   var viewSelector = new gapi.analytics.ext.ViewSelector2({
-   container: 'view-selector-container'
+    container: 'view-selector-container'
   }).execute();
+
   viewSelector.set({viewId: viewId});
 
   function getIdsAndUpdateResults() {
     // Use a try/catch block in case we have sparse properties or accounts.
     try {
-      var allIds = {
-        viewId: viewSelector.view.id,
-        propertyId: viewSelector.property.id,
-        accountId: viewSelector.account.id
-      };
       var allObjects = {
         view: viewSelector.view,
         property: viewSelector.property,

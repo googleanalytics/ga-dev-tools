@@ -13,7 +13,9 @@
 // limitations under the License.
 
 
-var $ = require('jquery');
+/* global $ */
+
+
 var hljs = require('highlight.js/lib/highlight');
 
 hljs.registerLanguage('xml',

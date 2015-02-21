@@ -21,7 +21,6 @@ var gulpIf = require('gulp-if');
 var gutil = require('gulp-util');
 var inline = require('rework-plugin-inline');
 var jshint = require('gulp-jshint');
-var path = require('path');
 var plumber = require('gulp-plumber');
 var prefix = require('gulp-autoprefixer');
 var rework = require('gulp-rework');
@@ -60,14 +59,7 @@ gulp.task('lint', function() {
     './gulpfile.js',
     './assets/javascript/**/*.js'
   ])
-  .pipe(jshint({
-    browser: true,
-    boss: true,
-    expr: true,
-    node: true,
-    scripturl: true,
-    quotmark: 'single'
-  }))
+  .pipe(jshint())
   .pipe(jshint.reporter('default'))
   .pipe(jshint.reporter('fail'));
 });
@@ -110,6 +102,8 @@ gulp.task('javascript:explorer', function() {
 gulp.task('javascript:static', function() {
   // Utilties.
   gulp.src([
+        'node_modules/jquery/dist/jquery.min.js',
+        'node_modules/jquery/dist/jquery.min.map',
         'node_modules/moment/min/moment.min.js',
         'node_modules/chart.js/Chart.min.js'
       ])

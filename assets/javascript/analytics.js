@@ -13,9 +13,7 @@
 // limitations under the License.
 
 
-/* global ga */
-
-var $ = require('jquery');
+/* global $, ga */
 
 
 function setupOutBoundLinkTracking() {
@@ -44,11 +42,6 @@ function setupUncaughtExceptionTracking() {
       exFatal: false
     });
   };
-}
-
-
-function sendInitialPageview() {
-  ga('send', 'pageview');
 }
 
 

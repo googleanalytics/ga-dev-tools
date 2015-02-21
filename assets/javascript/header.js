@@ -13,7 +13,8 @@
 // limitations under the License.
 
 
-var $ = require('jquery');
+/* global $ */
+
 
 module.exports = {
 
