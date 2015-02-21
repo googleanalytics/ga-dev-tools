@@ -19,10 +19,10 @@
 var hljs = require('highlight.js/lib/highlight');
 
 hljs.registerLanguage('xml',
-    require('highlight.js/lib/languages/xml.js'));
+    require('highlight.js/lib/languages/xml'));
 
 hljs.registerLanguage('javascript',
-    require('highlight.js/lib/languages/javascript.js'));
+    require('highlight.js/lib/languages/javascript'));
 
 module.exports = {
 

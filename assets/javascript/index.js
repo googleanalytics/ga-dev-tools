@@ -13,7 +13,10 @@
 // limitations under the License.
 
 
+// Global polyfills.
+require('core-js');
 require('svg4everybody');
+
 
 var accountExplorer = require('./account-explorer');
 var analytics = require('./analytics');

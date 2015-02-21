@@ -11,6 +11,7 @@
   "devDependencies": {
     "browserify": "^6.0.2",
     "chart.js": "nnnick/Chart.js#v1.0.1-beta.4",
+    "core-js": "^0.5.4",
     "gulp": "^3.8.7",
     "gulp-autoprefixer": "0.0.8",
     "gulp-cleancss": "^0.2.2",
@@ -27,7 +28,6 @@
     "jquery": "^2.1.1",
     "lodash-node": "^3.3.0",
     "moment": "^2.8.3",
-    "native-promise-only": "^0.7.6-a",
     "normalize.css": "^3.0.1",
     "rework-plugin-inline": "^1.0.1",
     "rework-suit": "^4.0.0",
