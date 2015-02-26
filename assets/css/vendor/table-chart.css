@@ -21,7 +21,6 @@ limitations under the License.
  * Styles for gapi analytics table.
  */
 
-.gapi-analytics-data-chart-table-styles-thr,
-.gapi-analytics-data-chart-table-styles-tr {
- font: inherit !important;
+.gapi-analytics-data-chart {
+  margin-bottom: var(--gap);
 }

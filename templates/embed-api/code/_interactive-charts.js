@@ -32,7 +32,7 @@ gapi.analytics.ready(function() {
       'dimensions': 'ga:browser',
       'metrics': 'ga:sessions',
       'sort': '-ga:sessions',
-      'max-results': '7'
+      'max-results': '6'
     },
     chart: {
       type: 'TABLE',
