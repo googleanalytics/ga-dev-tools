@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<section>
+  <h2>Overview</h2>
+
+  <p>Content goes here...</p>
+
+  <label><code>https://www.google-analytics.com/r/collect?</code></label>
+  <div id="react-test"></div>
+
+{% endblock %}
+
+{% block tech_content %}
+  The {{ project.title }} tools uses the <a href="{{ site.tech.measurement_protocol_validation_server.url }}">{{ site.tech.measurement_protocol_validation_server.name }}</a> to validate Measurement Protocol hits.
+{% endblock %}

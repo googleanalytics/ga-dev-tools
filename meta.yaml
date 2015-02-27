@@ -29,6 +29,9 @@ tech:
   measurement_protocol:
     name: Measurement Protocol
     url: https://developers.google.com/analytics/devguides/collection/protocol/
+  measurement_protocol_validation_server:
+    name: Measurement Protocol Validation Server
+    url: https://developers.google.com/analytics/devguides/collection/protocol/v1/validating-hits
   metadata_api:
     name: Metadata API
     url: https://developers.google.com/analytics/devguides/reporting/metadata/
@@ -56,12 +59,6 @@ projects:
   slug: dimensions-metrics-explorer
   external: https://developers.google.com/analytics/devguides/reporting/core/dimsmets
   tech: [metadata_api]
-- title: Enhanced Ecommerce
-  type: demo
-  slug: enhanced-ecommerce
-  status: new
-  external: https://enhancedecommerce.appspot.com
-  tech: [analyticsjs, ecjs]
 - title: Embed API
   type: demo
   slug: embed-api
@@ -90,6 +87,17 @@ projects:
     slug: third-party-visualizations
     tech: [embed_api, real_time_reporting_api]
     excerpt: 'The Embed API make it easy to query data and display it in a Google Chart. But it also allows you to access the raw data so you can display it however you want. This example uses the <a href="http://www.chartjs.org/">Chart.js</a> visualization library.'
+- title: Enhanced Ecommerce
+  type: demo
+  slug: enhanced-ecommerce
+  status: new
+  external: https://enhancedecommerce.appspot.com
+  tech: [analyticsjs, ecjs]
+- title: Hit Validator
+  type: tool
+  slug: hit-validator
+  status: new
+  tech: [measurement_protocol_validation_server]
 - title: Polymer Elements
   type: demo
   slug: polymer-elements
