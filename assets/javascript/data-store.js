@@ -13,7 +13,7 @@
 // limitations under the License.
 
 
-var assign = require('lodash').assign;
+var merge = require('lodash-node/modern/object/merge');
 
 
 /**
@@ -44,7 +44,7 @@ var migrationFunctions = {
   0: function() {
     var data = JSON.parse(localStorage.getItem('mgmtData'));
     if (data && data.profileId) {
-      cache['query-explorer'] = {
+      cache['query-explorer:params'] = {
         ids: 'ga:' + data.profileId
       };
     }
@@ -111,15 +111,17 @@ module.exports = {
     return cache[project];
   },
 
+
   /**
-   * Merge the passed data object into the existing store.
+   * Store the passed data in localStorage.
+   * Note: this overwrite any previous data.
    * @param {string} project The project name.
    * @param {Object} data The data to merge.
    */
   set: function(project, data) {
     ensureCache();
-    cache[project] = cache[project] || {};
-    assign(cache[project], data);
+    cache[project] = data;
     saveCache();
   }
+
 };

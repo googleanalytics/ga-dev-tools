@@ -1,5 +1,5 @@
 /*
-Copyright 2014 Google Inc. All rights reserved.
+Copyright 2015 Google Inc. All rights reserved.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -15,7 +15,14 @@ limitations under the License.
 */
 
 
-.Control {
+.FormField {
+  width: 100%;
+}
+
+input.FormField,
+select.FormField,
+textarea.FormField {
+  background: #fff;
   border: 1px solid var(--border-color);
   border-radius: 4px;
   box-sizing: border-box;
@@ -24,10 +31,23 @@ limitations under the License.
   height: calc(34em/14); /* 34px @ 14px body font */
   line-height: calc(20em/14); /* 20px @ 14px body font */
   padding: calc(6em/14); /* 6px @ 14px body font */
-  width: 100%;
 }
 
-.Control:focus {
-  border-color: #4d90fe;
+textarea.FormField {
+  display: block;
+  height: auto;
+  resize: vertical;
+}
+
+input[type="checkbox"].FormField,
+input[type="radio"].FormField {
+  margin-right: .5em;
+}
+
+
+input.FormField:focus,
+select.FormField:focus,
+textarea.FormField:focus {
+  border-color: var(--border-color-active);
   outline: 0;
 }

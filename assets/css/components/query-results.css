@@ -1,0 +1,61 @@
+.QueryResults {
+  background: #fff;
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  margin-bottom: var(--gap);
+  padding: var(--gap);
+}
+
+.QueryResults-title {
+  color: inherit;
+  font-size: 1.5em;
+  font-weight: 300;
+  line-height: 1;
+  margin: 0 0 .667em;
+}
+
+.QueryResults-meta {
+  font-weight: 300;
+  margin: 0 0 var(--gap);
+}
+
+.QueryResults-item {
+  margin: 0 0 var(--gap);
+}
+
+.QueryResults .gapi-analytics-data-chart {
+  overflow-x: auto;
+}
+
+.QueryResults .gapi-analytics-data-chart .gapi-analytics-data-chart-styles-table-tr-head {
+  background: hsl(30, 10%, 96.7%);
+}
+
+.QueryResults .gapi-analytics-data-chart .gapi-analytics-data-chart-styles-table-th {
+  border-bottom: 1px solid #ddd;
+  border-top: 1px solid #ddd;
+  white-space: nowrap;
+}
+
+.QueryResults .gapi-analytics-data-chart .gapi-analytics-data-chart-styles-table-th:first-child {
+  border-left: 1px solid #ddd;
+}
+
+.QueryResults .gapi-analytics-data-chart .gapi-analytics-data-chart-styles-table-th:last-child {
+  border-right: 1px solid #ddd;
+}
+
+
+@media (--break-lg) {
+  .QueryResults {
+    margin-bottom: var(--gap-lg);
+    padding: var(--gap-lg);
+  }
+  .QueryResults-meta {
+    margin: 0 0 var(--gap-lg);
+  }
+
+  .QueryResults-item {
+    margin: 0 0 var(--gap-lg);
+  }
+}

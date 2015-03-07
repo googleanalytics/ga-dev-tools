@@ -17,46 +17,48 @@ limitations under the License.
 
 @import '../base/variables';
 
+
 :root {
   --form-label-width: 10em;
+  --form-control-space: 1.25em;
 }
 
 
 .FormControl {
   display: block;
-  margin: 0 0 1.5em;
-  max-width: 44em;
+  margin: 0 0 var(--form-control-space);
+  max-width: 40em;
 }
 @media (--break-lg) {
-  .FormControl {
+  .FormControl--inline {
     align-items: baseline;
     display: flex;
   }
 }
 
+.FormControl--full {
+  max-width: initial;
+}
+
 .FormControl-label {
   display: block;
-  font-weight: 700;
+  font-weight: 600;
   margin: 0 0 .25em;
 }
 .FormControl--required .FormControl-label::before,
 .FormControl--required .FormControl-label::after {
   color: hsl(0, 70%, 55%);
-  font-weight: 700;
+  display: inline-block;
+  font-weight: 600;
 }
 .FormControl--required .FormControl-label::after {
   content: '*';
+  margin-left: .5em;
 }
-
-.FormControl-label a {
-  font-family: 'Menlo', monospace;
-  font-weight: 400;
-}
-
 @media (--break-lg) {
-  .FormControl-label {
+  .FormControl--inline .FormControl-label {
     flex: 0 0 var(--form-label-width);
-    padding-right: 1.5em;
+    padding-right: var(--form-control-space);
     text-align: right;
   }
   .FormControl--required .FormControl-label::after {
@@ -64,6 +66,7 @@ limitations under the License.
   }
   .FormControl--required .FormControl-label::before {
     content: '*';
+    margin-right: .5em;
   }
 }
 
@@ -71,55 +74,24 @@ limitations under the License.
   flex: 1 0 0%;
 }
 
-.FormField {
-  width: 100%;
-}
-
-input.FormField,
-select.FormField {
-  border: 1px solid var(--border-color);
-  border-radius: 4px;
-  box-sizing: border-box;
-  font: inherit;
-  font-weight: 400;
-  height: calc(34em/14); /* 34px @ 14px body font */
-  line-height: calc(20em/14); /* 20px @ 14px body font */
-  padding: calc(6em/14); /* 6px @ 14px body font */
-}
-
-input.FormField:focus,
-select.FormField:focus {
-  border-color: var(--border-color-active);
-  outline: 0;
-}
-
 .FormControl-info {
   color: var(--text-color-faded);
+  display: block;
   font-size: .85em;
   line-height: 1.2;
   margin-top: .5em;
 }
 
 
-
-.FormAction {
-  margin: var(--gap) 0;
+.FormControl--action {
+  margin: 0 0 var(--gap);
 }
+
 @media (--break-lg) {
-  .FormAction {
-    margin: var(--gap-lg) 0 var(--gap-lg) var(--form-label-width);
+  .FormControl--action {
+    margin: 0 0 var(--gap-lg);
   }
-}
-
-.Box {
-  margin: 2em 0;
-  padding: 1em;
-}
-
-.Box:empty {
-  display: none;
-}
-
-.Button {
-  margin: 0;
+  .FormControl--action .FormControl-body {
+    margin-left: var(--form-label-width);
+  }
 }

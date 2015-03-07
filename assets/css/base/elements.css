@@ -67,6 +67,11 @@ h3 {
   color: #666;
   font-size: 1.25em;
   margin: calc(var(--gap-lg)/1.25) 0;
+
+}
+.H3--underline {
+  border-bottom: 1px solid hsl(30, 10%, 85%);
+  padding-bottom: .5em;
 }
 
 i {
@@ -95,6 +100,10 @@ code {
   font-family: "Menlo", monospace;
   font-size: .9em;
   padding: 2px 5px 1px;
+}
+
+a code {
+  color: inherit;
 }
 
 figure {

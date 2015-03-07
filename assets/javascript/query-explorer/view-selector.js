@@ -16,25 +16,26 @@
 /* global gapi */
 
 
-var dataStore = require('../data-store');
+import React from 'react';
+
 
 /**
  * To fit the style of the page, customize the view selector template.
  */
-var VIEW_SELECTOR_TEMPLATE =
-    '<div class="FormControl">' +
+const VIEW_SELECTOR_TEMPLATE =
+    '<div class="FormControl FormControl--inline">' +
     '  <label class="FormControl-label">Account</label>' +
     '  <div class="FormControl-body">' +
     '    <select class="FormField"></select>' +
     '  </div>' +
     '</div>' +
-    '<div class="FormControl">' +
+    '<div class="FormControl FormControl--inline">' +
     '  <label class="FormControl-label">Property</label>' +
     '  <div class="FormControl-body">' +
     '    <select class="FormField"></select>' +
     '  </div>' +
     '</div>' +
-    '<div class="FormControl">' +
+    '<div class="FormControl FormControl--inline">' +
     '  <label class="FormControl-label">View</label>' +
     '  <div class="FormControl-body">' +
     '    <select class="FormField"></select>' +
@@ -42,33 +43,44 @@ var VIEW_SELECTOR_TEMPLATE =
     '</div>';
 
 
-module.exports = {
+var ViewSelector = React.createClass({
+  componentDidMount: function() {
+    let self = this;
 
-  /**
-   * Initialize the view selector and attach events to watch for changes
-   * to sync the `ids` field value to the view selector's chosen view.
-   */
-  init: function() {
+    this.viewSelector_ = new gapi.analytics.ext.ViewSelector2({
+      container: this.getDOMNode(),
+      ids: this.props.ids,
+      template: this.props.template || VIEW_SELECTOR_TEMPLATE
+    })
 
-    var data = dataStore.get('query-explorer');
-    var ids = data && data.ids;
-
-    var viewSelector = new gapi.analytics.ext.ViewSelector2({
-      container: 'view-selector-container',
-      ids: ids,
-      template: VIEW_SELECTOR_TEMPLATE
-    }).execute();
-
-    viewSelector.on('change', function(ids) {
-      $('#ids').val(ids).trigger('change');
+    this.viewSelector_.on('viewChange', function(...args) {
+      self.hasSuccessfullyShownView_ = true;
+      self.props.onChange.apply(this, args)
     });
 
-    // TODO(philipwalton): Add an error message to the user that
-    // they don't have access to the selected view.
-    viewSelector.on('error', $.noop);
-
-    $('#ids').on('change', function() {
-      viewSelector.set({ids: $(this).val()}).execute();
+    // An error on the first render means somehow a view was passed
+    // to the constructor to which the user doesn't have access.
+    // In that case, render the default view. All other errors should
+    // just do nothing.
+    this.viewSelector_.on('error', function() {
+      if (!self.hasSuccessfullyShownView_) {
+        self.viewSelector_.set({ids:undefined}).execute();
+      }
     });
+
+    this.viewSelector_.execute();
+  },
+  componentWillReceiveProps: function(props) {
+    if (props.ids) {
+      this.viewSelector_.set({ids: props.ids}).execute();
+    }
+  },
+  componentWillUnmount: function() {
+    this.viewSelector_.off();
+  },
+  render: function() {
+    return (<div />);
   }
-};
+});
+
+export default ViewSelector

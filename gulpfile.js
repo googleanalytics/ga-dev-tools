@@ -50,7 +50,7 @@ gulp.task('css', function() {
   gulp.src('./assets/css/main.css')
       .pipe(plumber({errorHandler: streamError}))
       .pipe(rework(suit(), inline('./assets/images'), {sourcemap: true}))
-      .pipe(prefix('> 1%', 'last 2 version', 'Safari >= 5.1',
+      .pipe(prefix('> 1%', 'last 2 versions', 'Safari >= 5.1',
                    'ie >= 10', 'Firefox ESR'))
       .pipe(isProd(cleancss({keepSpecialComments: 0})))
       .pipe(gulp.dest('./public/css'));
@@ -72,7 +72,9 @@ gulp.task('lint', function() {
 });
 
 gulp.task('javascript:browserify', function() {
-  browserify('./assets/javascript', {debug: true}).bundle()
+  browserify('./assets/javascript', {debug: true})
+      .transform(babelify)
+      .bundle()
       .on('error', streamError)
       .pipe(source('bundle.js'))
       .pipe(buffer())

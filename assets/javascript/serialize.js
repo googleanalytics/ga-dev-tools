@@ -42,7 +42,6 @@ module.exports = {
     serialize(form).forEach(function(item) {
       obj[item.name] = item.value;
     });
-    console.log(obj);
     return obj;
   },
 
@@ -53,9 +52,10 @@ module.exports = {
    * @return {string} A query string of form fields and values.
    */
   asQueryString: function(form) {
-    return encodeURI('?' + serialize(form).map(function(item) {
-      return item.name + '=' + item.value;
-    }).join('&'));
+    return '?' + serialize(form).map(function(item) {
+      return encodeURIComponent(item.name) + '=' +
+          encodeURIComponent(item.value);
+    }).join('&');
   }
 
 };

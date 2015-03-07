@@ -30,6 +30,12 @@ limitations under the License.
   padding: var(--gap);
 }
 
+.Box-footer {
+  border-top: 1px solid var(--border-color);
+  margin: var(--gap) -var(--gap) -var(--gap);
+  padding: var(--gap);
+}
+
 @media (--break-lg) {
   .Box {
     margin-bottom: var(--gap-lg);
@@ -37,6 +43,10 @@ limitations under the License.
   }
   .Box-header {
     margin: -var(--gap-lg) -var(--gap-lg) var(--gap-lg);
+    padding: var(--gap-lg);
+  }
+  .Box-footer {
+    margin: var(--gap-lg) -var(--gap-lg) -var(--gap-lg);
     padding: var(--gap-lg);
   }
 }

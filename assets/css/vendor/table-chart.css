@@ -24,3 +24,11 @@ limitations under the License.
 .gapi-analytics-data-chart {
   margin-bottom: var(--gap);
 }
+
+.gapi-analytics-data-chart .gapi-analytics-data-chart-styles-table-tr-odd {
+  background: hsl(30, 15%, 96.7%)!important;
+}
+
+.gapi-analytics-data-chart .gapi-analytics-data-chart-styles-table-tr-over {
+  background: hsl(30, 15%, 93.3%)!important;
+}

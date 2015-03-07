@@ -1,8 +1,8 @@
 # For production:
-application: ga-dev-tools
+# application: ga-dev-tools
 
 # For staging:
-# application: google.com:ga-dev-tools
+application: google.com:ga-dev-tools
 
 version: v4-0-1
 runtime: python27
