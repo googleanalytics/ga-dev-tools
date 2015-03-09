@@ -28,3 +28,6 @@ handlers:
 - url: /.*
   script: lib.app.router
   secure: always
+
+skip_files:
+- ^node_modules
