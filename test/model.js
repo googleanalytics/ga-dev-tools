@@ -32,7 +32,7 @@ describe('Model', function() {
       fizz: 'buzz'
     };
     let model = new Model(props);
-    assert.equal(model.props, props);
+    assert.equal(model.props_, props);
   });
 
   it('creates getters and setters based on the default props', function() {
@@ -48,7 +48,20 @@ describe('Model', function() {
 
     assert.equal(model.foo, 'BAR');
     assert.equal(model.fizz, 'BUZZ');
-  })
+  });
+
+  describe('.props', function() {
+
+    it('returns all model props.', function() {
+      let props = {
+        foo: 'bar',
+        fizz: 'buzz'
+      };
+      let model = new Model(props);
+      assert.equal(model.props, props);
+    });
+
+  });
 
 
   describe('.assign', function() {
@@ -106,6 +119,21 @@ describe('Model', function() {
       assert(spy.calledThrice);
       assert(spy.getCall(2).calledWith({foo: 'bar', fizz: 'buzz'}));
       assert.equal(spy.getCall(2).thisValue, model);
+    });
+
+  });
+
+  describe('.unset', function() {
+
+    it('deletes properties from a model', function() {
+      let model = new Model({
+        foo: 'bar',
+        fizz: 'buzz'
+      });
+
+      model.unset('foo');
+      assert(!model.hasOwnProperty('foo'));
+      assert.deepEqual(model.props, {fizz: 'buzz'});
     });
 
   });

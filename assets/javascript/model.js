@@ -17,7 +17,6 @@ import assign from 'lodash/object/assign';
 import clone from 'lodash/lang/clone';
 import each from 'lodash/collection/each';
 import events from 'events';
-import omit from 'lodash/object/omit';
 
 
 export default class Model extends events.EventEmitter {
@@ -63,7 +62,9 @@ export default class Model extends events.EventEmitter {
     this.oldProps_ = clone(this.props_);
     this.changedProps_ = {};
     this.changedProps_[prop] = undefined;
-    this.props_ = omit(this.props_, prop);
+
+    delete this[prop];
+    delete this.props_[prop];
 
     this.emit('change', this.changedProps_);
   }
@@ -75,6 +76,7 @@ function defineAccessors(obj, keys) {
   each(keys, function(key) {
     if (!obj.hasOwnProperty(key)) {
       Object.defineProperty(obj, key, {
+        configurable: true,
         get: function() {
           return this.props_[key];
         },
