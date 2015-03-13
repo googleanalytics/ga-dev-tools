@@ -16,6 +16,7 @@
 import assert from 'assert';
 import events from 'events';
 import Model from '../assets/javascript/model';
+import sinon from 'sinon';
 
 
 describe('Model', function() {
@@ -79,7 +80,33 @@ describe('Model', function() {
       assert.throws(assignBlock, Error);
     });
 
-    it('emits a change event whenever its props change.');
+    it('emits a change event whenever its props change.', function() {
+      let spy = sinon.spy();
+      let model = new Model({
+        foo: 'bar',
+        fizz: 'buzz'
+      });
+
+      model.on('change', spy);
+
+      model.foo = 'BAR';
+      model.fizz = 'BUZZ';
+
+      assert(spy.calledTwice);
+      assert(spy.getCall(0).calledWith({foo: 'BAR'}));
+      assert(spy.getCall(1).calledWith({fizz: 'BUZZ'}));
+      assert.equal(spy.getCall(0).thisValue, model);
+      assert.equal(spy.getCall(1).thisValue, model);
+
+      model.assign({
+        foo: 'bar',
+        fizz: 'buzz'
+      });
+
+      assert(spy.calledThrice);
+      assert(spy.getCall(2).calledWith({foo: 'bar', fizz: 'buzz'}));
+      assert.equal(spy.getCall(2).thisValue, model);
+    });
 
   });
 

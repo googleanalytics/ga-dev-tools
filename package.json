@@ -36,6 +36,7 @@
     "rework-plugin-inline": "^1.0.1",
     "rework-suit": "^4.0.0",
     "router": "philipwalton/router#0.1.1",
+    "sinon": "^1.13.0",
     "svg4everybody": "jonathantneal/svg4everybody#1.0.0",
     "vinyl-buffer": "^1.0.0",
     "vinyl-source-stream": "^1.0.0"
