@@ -6,9 +6,12 @@
   },
   "scripts": {
     "build": "gulp build",
-    "watch": "NODE_ENV=dev gulp watch"
+    "watch": "NODE_ENV=dev gulp watch",
+    "test": "mocha --compilers js:babel/register test"
   },
   "devDependencies": {
+    "babel": "^4.7.8",
+    "babelify": "^5.0.3",
     "browserify": "^6.0.2",
     "chart.js": "nnnick/Chart.js#v1.0.1-beta.4",
     "core-js": "^0.5.4",
@@ -26,7 +29,8 @@
     "highlight.js": "^8.4.0",
     "javascript-api-utils": "googleanalytics/javascript-api-utils#0.1.0",
     "jquery": "^2.1.1",
-    "lodash-node": "^3.3.0",
+    "lodash": "^3.5.0",
+    "mocha": "^2.2.1",
     "moment": "^2.8.3",
     "normalize.css": "^3.0.1",
     "rework-plugin-inline": "^1.0.1",
