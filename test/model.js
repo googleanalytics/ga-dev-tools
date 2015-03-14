@@ -21,25 +21,22 @@ import sinon from 'sinon';
 
 describe('Model', function() {
 
+  let model, props;
+
+  beforeEach(function() {
+    props = {foo: 'bar', fizz: 'buzz'};
+    model = new Model(props);
+  })
+
   it('extends events.EventEmitter', function() {
-    let model = new Model();
     assert(model instanceof events.EventEmitter);
   });
 
   it('sets the default props on the model', function() {
-    let props = {
-      foo: 'bar',
-      fizz: 'buzz'
-    };
-    let model = new Model(props);
     assert.equal(model.props_, props);
   });
 
   it('creates getters and setters based on the default props', function() {
-    let model = new Model({
-      foo: 'bar',
-      fizz: 'buzz'
-    });
     assert.equal(model.foo, 'bar');
     assert.equal(model.fizz, 'buzz');
 
@@ -53,52 +50,64 @@ describe('Model', function() {
   describe('.props', function() {
 
     it('returns all model props.', function() {
-      let props = {
-        foo: 'bar',
-        fizz: 'buzz'
-      };
-      let model = new Model(props);
       assert.equal(model.props, props);
     });
 
   });
 
+  describe('.changedProps', function() {
 
-  describe('.assign', function() {
+    it('keeps track of the props that have changed since the last assign.',
+        function() {
+
+      model.foo = 'BAR';
+      assert.deepEqual(model.changedProps, {foo: 'BAR'});
+      model.fizz = 'BUZZ';
+      assert.deepEqual(model.changedProps, {fizz: 'BUZZ'});
+
+      model.assign({foo: 'BAAAR', fizz: 'BUZZZ'});
+      assert.deepEqual(model.changedProps, {foo: 'BAAAR', fizz: 'BUZZZ'});
+    });
+
+  });
+
+  describe('.oldProps', function() {
+
+    it('keeps track of the props as they were prior to the last assign.',
+        function() {
+
+      model.foo = 'BAR';
+      assert.deepEqual(model.oldProps, {foo: 'bar', fizz: 'buzz'});
+      model.fizz = 'BUZZ';
+      assert.deepEqual(model.oldProps, {foo: 'BAR', fizz: 'buzz'});
+
+      model.assign({foo: 'BAAAR', fizz: 'BUZZZ'});
+      assert.deepEqual(model.oldProps, {foo: 'BAR', fizz: 'BUZZ'});
+    });
+
+  });
+
+
+  describe('.assign()', function() {
 
     it('assigns multiple props simultaneously', function() {
-      let model = new Model({
-        foo: 'bar',
-        fizz: 'buzz'
-      });
       assert.equal(model.foo, 'bar');
       assert.equal(model.fizz, 'buzz');
 
-      model.assign({
-        foo: 'BAR',
-        fizz: 'BUZZ'
-      });
+      model.assign({foo: 'BAR', fizz: 'BUZZ'});
       assert.equal(model.foo, 'BAR');
       assert.equal(model.fizz, 'BUZZ');
     });
 
     it('throws if trying to assign an unrecognized prop.', function() {
       function assignBlock() {
-        let model = new Model();
-        model.assign({
-          foo: 'BAR',
-          fizz: 'BUZZ'
-        });
+        model.assign({beep: 'boop'});
       }
       assert.throws(assignBlock, Error);
     });
 
     it('emits a change event whenever its props change.', function() {
       let spy = sinon.spy();
-      let model = new Model({
-        foo: 'bar',
-        fizz: 'buzz'
-      });
 
       model.on('change', spy);
 
@@ -106,36 +115,46 @@ describe('Model', function() {
       model.fizz = 'BUZZ';
 
       assert(spy.calledTwice);
-      assert(spy.getCall(0).calledWith({foo: 'BAR'}));
-      assert(spy.getCall(1).calledWith({fizz: 'BUZZ'}));
+      assert(spy.getCall(0).calledWith(model));
+      assert(spy.getCall(1).calledWith(model));
       assert.equal(spy.getCall(0).thisValue, model);
       assert.equal(spy.getCall(1).thisValue, model);
 
-      model.assign({
-        foo: 'bar',
-        fizz: 'buzz'
-      });
+      model.assign({foo: 'BAAAR', fizz: 'BUZZZ'});
 
       assert(spy.calledThrice);
-      assert(spy.getCall(2).calledWith({foo: 'bar', fizz: 'buzz'}));
+      assert(spy.getCall(2).calledWith(model));
       assert.equal(spy.getCall(2).thisValue, model);
     });
 
   });
 
-  describe('.unset', function() {
+  describe('.unset()', function() {
 
     it('deletes properties from a model', function() {
-      let model = new Model({
-        foo: 'bar',
-        fizz: 'buzz'
-      });
-
       model.unset('foo');
       assert(!model.hasOwnProperty('foo'));
       assert.deepEqual(model.props, {fizz: 'buzz'});
     });
 
+  });
+
+  describe('.destroy()', function() {
+
+    it('nullifies its props.', function() {
+      model.destroy();
+      assert.strictEqual(model.props, null)
+    });
+
+    it('removes all event listeners.', function() {
+      let spy = sinon.spy();
+
+      model.on('change', spy);
+      assert.equal(model.listeners('change').length, 1);
+
+      model.destroy();
+      assert.equal(model.listeners('change').length, 0);
+    });
   });
 
 });

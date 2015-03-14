@@ -34,6 +34,14 @@ export default class Model extends events.EventEmitter {
     return this.props_;
   }
 
+  get changedProps() {
+    return this.changedProps_;
+  }
+
+  get oldProps() {
+    return this.oldProps_;
+  }
+
   assign(newProps) {
 
     let hasChanges = false;
@@ -52,7 +60,7 @@ export default class Model extends events.EventEmitter {
       this.props_[key] = value;
     });
 
-    if (hasChanges) this.emit('change', this.changedProps_);
+    if (hasChanges) this.emit('change', this);
   }
 
   unset(prop) {
@@ -66,7 +74,12 @@ export default class Model extends events.EventEmitter {
     delete this[prop];
     delete this.props_[prop];
 
-    this.emit('change', this.changedProps_);
+    this.emit('change', this);
+  }
+
+  destroy() {
+    this.props_ = null;
+    this.removeAllListeners();
   }
 
 }
