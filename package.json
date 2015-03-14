@@ -7,7 +7,7 @@
   "scripts": {
     "build": "gulp build",
     "watch": "NODE_ENV=dev gulp watch",
-    "test": "mocha --compilers js:babel/register test"
+    "test": "gulp test"
   },
   "devDependencies": {
     "babel": "^4.7.8",
