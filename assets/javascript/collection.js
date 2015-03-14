@@ -27,10 +27,7 @@ export default class Collection extends events.EventEmitter {
 
     // Create a reference to a bound function to handle change events.
     // A reference is need so it can be removed later.
-    this.handleChange_ = (model) => {
-      debugger;
-      this.emit('change', model);
-    }
+    this.handleChange_ = (model) => this.emit('change', model);
 
     each(models, (model) => this.add(model));
   }
@@ -44,11 +41,11 @@ export default class Collection extends events.EventEmitter {
   }
 
   get(id) {
-    return find(this.models_, {id});
+    return find(this.models_, (model) => model.props.id == id);
   }
 
   add(model) {
-    if (!model.id) throw new Error('Models must have an "id" property.');
+    if (!model.props.id) throw new Error('Models must have an "id" property.');
 
     model.on('change', this.handleChange_);
 
@@ -69,7 +66,9 @@ export default class Collection extends events.EventEmitter {
   }
 
   destroy() {
-    each(this.models_, (m) => m.removeListener('change', this.handleChange_));
+    each(this.models_, (model) =>
+        model.removeListener('change', this.handleChange_));
+
     this.removeAllListeners();
     this.models_ = null;
   }

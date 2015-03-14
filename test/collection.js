@@ -95,13 +95,13 @@ describe('Collection', function() {
 
       collection.on('change', collectionSpy);
       model4.on('change', modelSpy)
-      model4.prop = 'newValue';
+      model4.set('prop', 'newValue');
 
       assert(modelSpy.calledOnce);
       assert.equal(collectionSpy.callCount, 0);
 
       collection.add(model4);
-      model4.prop = 'newerValue';
+      model4.set('prop', 'newerValue');
       assert(modelSpy.calledTwice);
       assert(collectionSpy.calledOnce);
     });
@@ -142,12 +142,12 @@ describe('Collection', function() {
       collection.on('change', collectionSpy);
       model1.on('change', modelSpy)
 
-      model1.prop = 'newValue';
+      model1.set('prop', 'newValue');
       assert(modelSpy.calledOnce);
       assert(collectionSpy.calledOnce);
 
       collection.remove(model1);
-      model1.prop = 'newerValue';
+      model1.set('prop', 'newerValue');
       assert(modelSpy.calledTwice);
       assert(collectionSpy.calledOnce);
     });

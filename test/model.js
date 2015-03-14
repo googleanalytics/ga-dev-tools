@@ -32,21 +32,6 @@ describe('Model', function() {
     assert(model instanceof events.EventEmitter);
   });
 
-  it('sets the default props on the model', function() {
-    assert.equal(model.props_, props);
-  });
-
-  it('creates getters and setters based on the default props', function() {
-    assert.equal(model.foo, 'bar');
-    assert.equal(model.fizz, 'buzz');
-
-    model.foo = 'BAR';
-    model.fizz = 'BUZZ';
-
-    assert.equal(model.foo, 'BAR');
-    assert.equal(model.fizz, 'BUZZ');
-  });
-
   describe('.props', function() {
 
     it('returns all model props.', function() {
@@ -57,15 +42,15 @@ describe('Model', function() {
 
   describe('.changedProps', function() {
 
-    it('keeps track of the props that have changed since the last assign.',
+    it('keeps track of the props that have changed since the last set.',
         function() {
 
-      model.foo = 'BAR';
+      model.set('foo', 'BAR');
       assert.deepEqual(model.changedProps, {foo: 'BAR'});
-      model.fizz = 'BUZZ';
+      model.set('fizz', 'BUZZ');
       assert.deepEqual(model.changedProps, {fizz: 'BUZZ'});
 
-      model.assign({foo: 'BAAAR', fizz: 'BUZZZ'});
+      model.set({foo: 'BAAAR', fizz: 'BUZZZ'});
       assert.deepEqual(model.changedProps, {foo: 'BAAAR', fizz: 'BUZZZ'});
     });
 
@@ -73,37 +58,50 @@ describe('Model', function() {
 
   describe('.oldProps', function() {
 
-    it('keeps track of the props as they were prior to the last assign.',
+    it('keeps track of the props as they were prior to the last set.',
         function() {
 
-      model.foo = 'BAR';
+      model.set('foo', 'BAR');
       assert.deepEqual(model.oldProps, {foo: 'bar', fizz: 'buzz'});
-      model.fizz = 'BUZZ';
+      model.set('fizz', 'BUZZ');
       assert.deepEqual(model.oldProps, {foo: 'BAR', fizz: 'buzz'});
 
-      model.assign({foo: 'BAAAR', fizz: 'BUZZZ'});
+      model.set({foo: 'BAAAR', fizz: 'BUZZZ'});
       assert.deepEqual(model.oldProps, {foo: 'BAR', fizz: 'BUZZ'});
     });
 
   });
 
+  describe('.get()', function() {
 
-  describe('.assign()', function() {
-
-    it('assigns multiple props simultaneously', function() {
-      assert.equal(model.foo, 'bar');
-      assert.equal(model.fizz, 'buzz');
-
-      model.assign({foo: 'BAR', fizz: 'BUZZ'});
-      assert.equal(model.foo, 'BAR');
-      assert.equal(model.fizz, 'BUZZ');
+    it('gets an individual prop value.', function() {
+      assert.equal(model.get('foo'), 'bar');
+      assert.equal(model.get('fizz'), 'buzz');
     });
 
-    it('throws if trying to assign an unrecognized prop.', function() {
-      function assignBlock() {
-        model.assign({beep: 'boop'});
+    it('gets all props.', function() {
+      assert.equal(model.get(), model.props);
+    });
+
+  });
+
+
+  describe('.set()', function() {
+
+    it('assigns multiple props simultaneously', function() {
+      assert.equal(model.props.foo, 'bar');
+      assert.equal(model.props.fizz, 'buzz');
+
+      model.set({foo: 'BAR', fizz: 'BUZZ'});
+      assert.equal(model.props.foo, 'BAR');
+      assert.equal(model.props.fizz, 'BUZZ');
+    });
+
+    it('throws if trying to set an unrecognized prop.', function() {
+      function blockSet() {
+        model.set({beep: 'boop'});
       }
-      assert.throws(assignBlock, Error);
+      assert.throws(blockSet, Error);
     });
 
     it('emits a change event whenever its props change.', function() {
@@ -111,8 +109,8 @@ describe('Model', function() {
 
       model.on('change', spy);
 
-      model.foo = 'BAR';
-      model.fizz = 'BUZZ';
+      model.set('foo', 'BAR');
+      model.set('fizz', 'BUZZ');
 
       assert(spy.calledTwice);
       assert(spy.getCall(0).calledWith(model));
@@ -120,7 +118,7 @@ describe('Model', function() {
       assert.equal(spy.getCall(0).thisValue, model);
       assert.equal(spy.getCall(1).thisValue, model);
 
-      model.assign({foo: 'BAAAR', fizz: 'BUZZZ'});
+      model.set({foo: 'BAAAR', fizz: 'BUZZZ'});
 
       assert(spy.calledThrice);
       assert(spy.getCall(2).calledWith(model));

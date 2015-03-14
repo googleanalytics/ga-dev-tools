@@ -25,9 +25,6 @@ export default class Model extends events.EventEmitter {
     this.props_ = props || {};
     this.oldProps_ = {};
     this.changedProps_ = {};
-
-    // Define getters and setters for all props.
-    defineAccessors(this, Object.keys(this.props_));
   }
 
   get props() {
@@ -42,9 +39,22 @@ export default class Model extends events.EventEmitter {
     return this.oldProps_;
   }
 
-  assign(newProps) {
+  get(prop) {
+    return prop ? this.props[prop] : this.props;
+  }
+
+  set(prop, value) {
 
     let hasChanges = false;
+    let newProps = {};
+
+    // Allow setting a single key/value pair or an object or key/value paris.
+    if (typeof prop == 'string' && value) {
+      newProps[prop] = value;
+    }
+    else {
+      newProps = prop;
+    }
 
     this.oldProps_ = clone(this.props_);
     this.changedProps_ = {};
@@ -71,7 +81,6 @@ export default class Model extends events.EventEmitter {
     this.changedProps_ = {};
     this.changedProps_[prop] = undefined;
 
-    delete this[prop];
     delete this.props_[prop];
 
     this.emit('change', this);
@@ -82,23 +91,4 @@ export default class Model extends events.EventEmitter {
     this.removeAllListeners();
   }
 
-}
-
-
-function defineAccessors(obj, keys) {
-  each(keys, function(key) {
-    if (!obj.hasOwnProperty(key)) {
-      Object.defineProperty(obj, key, {
-        configurable: true,
-        get: function() {
-          return this.props_[key];
-        },
-        set: function(value) {
-          var newProps = {};
-          newProps[key] = value;
-          this.assign(newProps);
-        }
-      });
-    }
-  });
 }
