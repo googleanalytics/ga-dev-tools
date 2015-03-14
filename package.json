@@ -21,6 +21,7 @@
     "gulp-concat": "^2.4.0",
     "gulp-if": "^1.2.5",
     "gulp-jshint": "^1.8.5",
+    "gulp-mocha": "^2.0.0",
     "gulp-plumber": "^0.6.6",
     "gulp-rework": "^1.0.1",
     "gulp-sourcemaps": "^1.2.4",
