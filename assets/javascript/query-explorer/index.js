@@ -226,13 +226,16 @@ function setup() {
     let dimensions = data.dimensions;
     let segmentIds = data.segmentIds;
     let segmentDefinitions = data.segmentDefinitions
-    let segments = settings.get('useDefinition') ? segmentDefinitions : segmentIds;
+    let segments = settings.get('useDefinition') ?
+        segmentDefinitions : segmentIds;
 
     // Update the segments array when the useDefinition settings changes.
     settings.on('change', function() {
-      segments = settings.get('useDefinition') ? segmentDefinitions : segmentIds;
-      if (params.segment) {
-        let value = params.segment;
+      segments = settings.get('useDefinition') ?
+          segmentDefinitions : segmentIds;
+
+      if (params.get('segment')) {
+        let value = params.get('segment');
         let segment = find(segments, segment =>
             value == segment.segmentId || value == segment.definition);
         params.set('segment', (segment && segment.id) || value);
