@@ -22,8 +22,8 @@ import FormControl from './form-control';
 import getTagData from './tag-data';
 import Model from '../model';
 import qs from 'querystring';
-import QueryResults from './query-results';
 import React from 'react';
+import Report from './report';
 import store from '../data-store';
 import ViewSelector from './view-selector';
 
@@ -56,11 +56,7 @@ function getInitalQueryParams() {
 
 function handleViewSelectorChange(data) {
   params.set('ids', data.ids);
-  state.set({
-    selectedAccount: data.account.name,
-    selectedProperty: data.property.name,
-    selectedView: data.view.name
-  });
+  state.set('selectedAccountData', clone(data));
 }
 
 
@@ -87,13 +83,12 @@ function handleFieldChange(e) {
 
 function handleDataChartSuccess(data) {
   state.set({
-    hasReport: true,
-    lastSuccessfulReport: clone(params.get()),
-    queryResult: data.response,
-    queriedProperty: state.get('selectedProperty'),
-    queriedView: state.get('selectedView'),
     isQuerying: false,
-    hasQueryError: false
+    report: {
+      accountData: clone(state.get('selectedAccountData')),
+      params: state.get('report').params,
+      response: data.response
+    }
   });
 }
 
@@ -101,24 +96,29 @@ function handleDataChartSuccess(data) {
 function handleDataChartError(err) {
   state.set({
     isQuerying: false,
-    hasReport: false,
-    lastSuccessfullReport: clone(params.get()),
-    hasQueryError: true,
-    queryErrorCode: err.error.code,
-    queryErrorMessage: err.error.message
+    report: {
+      accountData: clone(state.get('selectedAccountData')),
+      error: err.error
+    }
   });
 }
 
 
 function handleSubmit(e) {
   e.preventDefault();
-  state.set('isQuerying', true);
+  state.set({
+    isQuerying: true,
+    report: {params: clone(params.get())}
+  });
 }
 
 
 function render(metrics, dimensions, segments) {
 
-  console.log(settings.get(), state.get(), params.get());
+  let isQuerying = state.get('isQuerying');
+  let report = state.get('report');
+  let reportError = report && report.error;
+  let reportResponse = report && report.response;
 
   React.render(
     <div>
@@ -202,20 +202,9 @@ function render(metrics, dimensions, segments) {
         </div>
       </form>
 
-      <aside className="Error" hidden={!state.get('hasQueryError')}>
-        <h3 className="Error-title">
-          Ack! There was an error ({state.get('queryErrorCode')})
-        </h3>
-        <p className="Error-message">{state.get('queryErrorMessage')}</p>
-      </aside>
-
-      <QueryResults
-        hasReport={state.get('hasReport')}
-        result={state.get('queryResult')}
-        query={params.get()}
-        isQuerying={state.get('isQuerying')}
-        property={state.get('queriedProperty')}
-        view={state.get('queriedView')}
+      <Report
+        report={report}
+        isQuerying={isQuerying}
         includeIds={settings.get('includeIds')}
         onSuccess={handleDataChartSuccess}
         onError={handleDataChartError}

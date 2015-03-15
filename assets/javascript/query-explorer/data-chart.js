@@ -27,7 +27,7 @@ const SRC_PARAM = 'query-explorer:v2';
 var DataChart = React.createClass({
   componentDidMount: function() {
     this.dataChart_ = new gapi.analytics.googleCharts.DataChart({
-      query: assign({}, this.props.query, {_src: SRC_PARAM}),
+      query: assign({}, this.props.params, {_src: SRC_PARAM}),
       chart: {
         type: 'TABLE',
         container: this.getDOMNode()
@@ -38,11 +38,11 @@ var DataChart = React.createClass({
     this.dataChart_.on('success', this.props.onSuccess.bind(this));
   },
   componentWillReceiveProps: function(props) {
-    if (props.query && props.isQuerying) {
+    if (props.params && props.isQuerying) {
 
       // The Embed API has its own defaults for these values, so we need to
       // explicitly set them in case the user doesn't.
-      let defaults = {
+      let defaultParams = {
         'start-date': '',
         'end-date': ''
       };
@@ -50,17 +50,19 @@ var DataChart = React.createClass({
       // Nullify the existing props
       // TODO(philipwalton): .set() should ideally be able to handle
       // sending it new properties without merging.
-      let nulledOldQuery = mapValues(this.dataChart_.get().query, () => null);
-      let newQuery = assign(defaults, nulledOldQuery, props.query);
+      let nulledOldParams = mapValues(this.dataChart_.get().query, () => null);
+      let newParams = assign(defaultParams, nulledOldParams, props.params);
 
-      this.dataChart_.set({query: newQuery}).execute();
+      this.dataChart_.set({query: newParams}).execute();
     }
   },
   componentWillUnmount: function() {
     this.dataChart_.off();
   },
   render: function() {
-    return (<div className={this.props.className} />);
+    return (
+      <div className={this.props.className} hidden={this.props.hidden} />
+    );
   }
 });
 

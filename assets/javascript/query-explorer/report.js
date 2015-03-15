@@ -22,38 +22,55 @@ import React from 'react';
 const API_URI_ORIGIN = 'https://www.googleapis.com/analytics/v3/data/ga?';
 
 
-var QueryResults = React.createClass({
+var Report = React.createClass({
 
   reportLink: function() {
     var query = (this.props.includeIds) ?
-        this.props.query : omit(this.props.query, 'ids');
+        this.props.report.params : omit(this.props.report.params, 'ids');
     return location.protocol + '//' + location.host +
            location.pathname + '?' + qs.stringify(query);
   },
 
   apiQueryUri: function() {
-    return API_URI_ORIGIN + qs.stringify(this.props.query);
+    return API_URI_ORIGIN + qs.stringify(this.props.report.params);
   },
 
   render: function() {
 
-    var resultsShowing = this.props.hasReport &&
-        this.props.result.dataTable.rows &&
-        this.props.result.dataTable.rows.length || 0;
+    var partials = {};
+    let report = this.props.report;
+    let error = report && report.error;
+    let accountData = report && report.accountData;
+    let response = report && report.response;
+    let params = report && report.params;
 
-    var totalResults = this.props.hasReport &&
-        this.props.result.totalResults || 0;
-
-    var sampledData = this.props.hasReport &&
-        this.props.result.containsSampledData ? 'Yes' : 'No'
-
-    return (
-      <div className="QueryResults" hidden={!this.props.hasReport}>
-        <h2 className="QueryResults-title">
-          {this.props.property} ({this.props.view})
+    if (accountData) {
+      partials.reportTitle = (
+        <h2 className="Report-title">
+          {accountData.property.name} ({accountData.view.name})
         </h2>
+      )
+    }
 
-        <aside className="QueryResults-meta">
+    if (error) {
+      partials.reportError = (
+        <aside className="Error">
+          <h3 className="Error-title">
+            Ack! There was an error ({error.code})
+          </h3>
+          <p className="Error-message">{error.message}</p>
+        </aside>
+      )
+    }
+
+    if (response) {
+      let resultsShowing = response.dataTable.rows &&
+          response.dataTable.rows.length || 0;
+      let totalResults = response.totalResults || 0;
+      let sampledData = response.containsSampledData ? 'Yes' : 'No'
+
+      partials.reportMeta = (
+        <aside className="Report-meta">
           <ul className="InlineDefinitionList">
             <li className="InlineDefinitionList-item">
               <span className="InlineDefinitionList-itemName">
@@ -76,16 +93,10 @@ var QueryResults = React.createClass({
             </li>
           </ul>
         </aside>
+      );
 
-        <DataChart
-          className="QueryResults-item"
-          query={this.props.query}
-          isQuerying={this.props.isQuerying}
-          onSuccess={this.props.onSuccess}
-          onError={this.props.onError} />
-
-
-        <div className="QueryResults-item">
+      partials.reportLink = (
+        <div className="Report-item">
           <div className="FormControl FormControl--full">
             <label className="FormControl-label">
               Direct link to this Report</label>
@@ -108,8 +119,10 @@ var QueryResults = React.createClass({
             </div>
           </div>
         </div>
+      );
 
-        <div className="QueryResults-item">
+      partials.reportQueryUri = (
+        <div className="Report-item">
           <div className="FormControl FormControl--full">
             <label className="FormControl-label">API Query URI</label>
             <div className="FormControl-body">
@@ -122,15 +135,36 @@ var QueryResults = React.createClass({
             </div>
           </div>
         </div>
+      );
 
-        <a download className="Button Button--icon" id="save-tsv">
-          Download Results as TSV
-        </a>
+      partials.reportDownloadLink = (
+        <div className="Report-item">
+          <a download className="Button Button--icon" id="save-tsv">
+            Download Results as TSV
+          </a>
+        </div>
+      );
+    }
 
+    return (
+      <div className="Report" hidden={!response && !error}>
+        {partials.reportTitle}
+        {partials.reportError}
+        {partials.reportMeta}
+        <DataChart
+          hidden={!response}
+          className="Report-item"
+          params={params}
+          isQuerying={this.props.isQuerying}
+          onSuccess={this.props.onSuccess}
+          onError={this.props.onError} />
+        {partials.reportLink}
+        {partials.reportQueryUri}
+        {partials.reportDownloadLink}
       </div>
     );
   }
 });
 
 
-export default QueryResults
+export default Report
