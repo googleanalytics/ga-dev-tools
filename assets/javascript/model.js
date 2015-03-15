@@ -49,7 +49,7 @@ export default class Model extends events.EventEmitter {
     let newProps = {};
 
     // Allow setting a single key/value pair or an object or key/value paris.
-    if (typeof prop == 'string' && value) {
+    if (typeof prop == 'string') {
       newProps[prop] = value;
     }
     else {
@@ -60,10 +60,7 @@ export default class Model extends events.EventEmitter {
     this.changedProps_ = {};
 
     each(newProps, (value, key) => {
-      if (!this.props_.hasOwnProperty(key)) {
-        throw new Error(`Cannot assign prop '${key}'; it doesn't exist.`);
-      }
-      else if (value !== this.oldProps_[key]) {
+      if (value !== this.oldProps_[key]) {
         hasChanges = true;
         this.changedProps_[key] = value;
       }

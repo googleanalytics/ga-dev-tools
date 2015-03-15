@@ -13,7 +13,7 @@
 // limitations under the License.
 
 
-var merge = require('lodash-node/modern/object/merge');
+var merge = require('lodash/object/merge');
 
 
 /**

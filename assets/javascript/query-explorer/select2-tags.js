@@ -16,9 +16,9 @@
 /* global $ */
 
 
-import assign from 'lodash-node/modern/object/assign';
-import find from 'lodash-node/modern/collection/find';
-import template from 'lodash-node/modern/string/template';
+import assign from 'lodash/object/assign';
+import find from 'lodash/collection/find';
+import template from 'lodash/string/template';
 
 
 /**

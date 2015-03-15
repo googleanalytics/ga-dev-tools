@@ -16,11 +16,11 @@
 /* global gapi */
 
 
-import clone from 'lodash-node/modern/lang/clone';
-import find from 'lodash-node/modern/collection/find';
+import clone from 'lodash/lang/clone';
+import find from 'lodash/collection/find';
 import FormControl from './form-control';
 import getTagData from './tag-data';
-import Model from './model';
+import Model from '../model';
 import qs from 'querystring';
 import QueryResults from './query-results';
 import React from 'react';
@@ -65,19 +65,19 @@ function handleViewSelectorChange(data) {
 
 
 function handleSegmentDefinitionToggle() {
-  settings.set('useDefinition', !settings.useDefinition);
+  settings.set('useDefinition', !settings.get('useDefinition'));
 }
 
 
 function handleIdsToggle() {
-  settings.set('includeIds', !settings.includeIds);
+  settings.set('includeIds', !settings.get('includeIds'));
 }
 
 
 function handleFieldChange(e) {
-  let {id, value} = e.target
+  let {id, value} = e.target;
   if (value) {
-    params.set(id, value)
+    params.set(id, value);
   }
   else {
     params.unset(id);
@@ -86,13 +86,12 @@ function handleFieldChange(e) {
 
 
 function handleDataChartSuccess(data) {
-  debugger;
   state.set({
     hasReport: true,
     lastSuccessfulReport: clone(params.get()),
     queryResult: data.response,
-    queriedProperty: state.selectedProperty,
-    queriedView: state.selectedView,
+    queriedProperty: state.get('selectedProperty'),
+    queriedView: state.get('selectedView'),
     isQuerying: false,
     hasQueryError: false
   });
@@ -119,55 +118,55 @@ function handleSubmit(e) {
 
 function render(metrics, dimensions, segments) {
 
-  console.log(state.get());
+  console.log(settings.get(), state.get(), params.get());
 
   React.render(
     <div>
       <h3 className="H3--underline">Select a view</h3>
-      <ViewSelector ids={params['ids']} onChange={handleViewSelectorChange} />
+      <ViewSelector ids={params.get('ids')} onChange={handleViewSelectorChange} />
       <h3 className="H3--underline">Set the query parameters</h3>
 
       <form onSubmit={handleSubmit}>
         <FormControl
-          value={params['ids']}
+          value={params.get('ids')}
           name="ids"
           onChange={handleFieldChange}
           placeholder="ga:XXXX"
           required />
         <FormControl
-          value={params['start-date']}
+          value={params.get('start-date')}
           name="start-date"
           onChange={handleFieldChange}
           placeholder="YYYY-MM-DD"
           required />
         <FormControl
-          value={params['end-date']}
+          value={params.get('end-date')}
           name="end-date"
           onChange={handleFieldChange}
           placeholder="YYYY-MM-DD"
           required />
         <FormControl
           name="metrics"
-          value={params['metrics']}
+          value={params.get('metrics')}
           onChange={handleFieldChange}
           tags={metrics}
           required />
         <FormControl
           name="dimensions"
-          value={params['dimensions']}
+          value={params.get('dimensions')}
           onChange={handleFieldChange}
           tags={dimensions} />
         <FormControl
           name="sort"
-          value={params['sort']}
+          value={params.get('sort')}
           onChange={handleFieldChange} />
         <FormControl
           name="filters"
-          value={params['filters']}
+          value={params.get('filters')}
           onChange={handleFieldChange} />
         <FormControl
           name="segment"
-          value={params['segment']}
+          value={params.get('segment')}
           onChange={handleFieldChange}
           tags={segments}>
           <label>
@@ -175,49 +174,49 @@ function render(metrics, dimensions, segments) {
               className="Checkbox"
               type="checkbox"
               onChange={handleSegmentDefinitionToggle}
-              checked={settings.useDefinition} />
+              checked={settings.get('useDefinition')} />
             Show segment definitions instead of IDs.
           </label>
         </FormControl>
         <FormControl
           name="samplingLevel"
-          value={params['samplingLevel']}
+          value={params.get('samplingLevel')}
           onChange={handleFieldChange} />
         <FormControl
           name="start-index"
-          value={params['start-index']}
+          value={params.get('start-index')}
           onChange={handleFieldChange} />
         <FormControl
           name="max-results"
-          value={params['max-results']}
+          value={params.get('max-results')}
           onChange={handleFieldChange} />
 
         <div className="FormControl FormControl--inline FormControl--action">
           <div className="FormControl-body">
             <button
               className="Button Button--action"
-              disabled={state.isQuerying}>
-              {state.isQuerying ?  'Loading...' : 'Run Query'}
+              disabled={state.get('isQuerying')}>
+              {state.get('isQuerying') ? 'Loading...' : 'Run Query'}
             </button>
           </div>
         </div>
       </form>
 
-      <aside className="Error" hidden={!state.hasQueryError}>
+      <aside className="Error" hidden={!state.get('hasQueryError')}>
         <h3 className="Error-title">
-          Ack! There was an error ({state.queryErrorCode})
+          Ack! There was an error ({state.get('queryErrorCode')})
         </h3>
-        <p className="Error-message">{state.queryErrorMessage}</p>
+        <p className="Error-message">{state.get('queryErrorMessage')}</p>
       </aside>
 
       <QueryResults
-        hasReport={state.hasReport}
-        result={state.queryResult}
+        hasReport={state.get('hasReport')}
+        result={state.get('queryResult')}
         query={params.get()}
-        isQuerying={state.isQuerying}
-        property={state.queriedProperty}
-        view={state.queriedView}
-        includeIds={settings.includeIds}
+        isQuerying={state.get('isQuerying')}
+        property={state.get('queriedProperty')}
+        view={state.get('queriedView')}
+        includeIds={settings.get('includeIds')}
         onSuccess={handleDataChartSuccess}
         onError={handleDataChartError}
         onIdsToggle={handleIdsToggle} />
@@ -238,11 +237,11 @@ function setup() {
     let dimensions = data.dimensions;
     let segmentIds = data.segmentIds;
     let segmentDefinitions = data.segmentDefinitions
-    let segments = settings.useDefinition ? segmentDefinitions : segmentIds;
+    let segments = settings.get('useDefinition') ? segmentDefinitions : segmentIds;
 
     // Update the segments array when the useDefinition settings changes.
     settings.on('change', function() {
-      segments = settings.useDefinition ? segmentDefinitions : segmentIds;
+      segments = settings.get('useDefinition') ? segmentDefinitions : segmentIds;
       if (params.segment) {
         let value = params.segment;
         let segment = find(segments, segment =>

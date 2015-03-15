@@ -14,7 +14,7 @@
 
 
 import DataChart from './data-chart';
-import omit from 'lodash-node/modern/object/omit';
+import omit from 'lodash/object/omit';
 import qs from 'querystring';
 import React from 'react';
 

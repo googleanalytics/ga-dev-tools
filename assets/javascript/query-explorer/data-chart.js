@@ -16,8 +16,8 @@
 /* global gapi */
 
 
-import assign from 'lodash-node/modern/object/assign';
-import mapValues from 'lodash-node/modern/object/mapValues';
+import assign from 'lodash/object/assign';
+import mapValues from 'lodash/object/mapValues';
 import React from 'react';
 
 
