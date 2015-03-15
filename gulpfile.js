@@ -12,6 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+
+require('babel/register');
+
+
+var babelify = require('babelify');
 var browserify = require('browserify');
 var buffer = require('vinyl-buffer');
 var cleancss = require('gulp-cleancss');
@@ -21,6 +26,7 @@ var gulpIf = require('gulp-if');
 var gutil = require('gulp-util');
 var inline = require('rework-plugin-inline');
 var jshint = require('gulp-jshint');
+var mocha = require('gulp-mocha');
 var plumber = require('gulp-plumber');
 var prefix = require('gulp-autoprefixer');
 var rework = require('gulp-rework');
@@ -147,10 +153,17 @@ gulp.task('javascript', [
   'javascript:explorer',
 ]);
 
+
+gulp.task('test', function() {
+  return gulp.src('test/**/*.js', {read: false})
+    .pipe(mocha());
+});
+
+
 gulp.task('watch', ['javascript', 'css', 'images'], function() {
   gulp.watch('./assets/css/**/*.css', ['css']);
   gulp.watch('./assets/images/**/*', ['images']);
   gulp.watch('./assets/javascript/**/*.js', ['javascript']);
 });
 
-gulp.task('build', ['lint', 'javascript', 'css', 'images']);
+gulp.task('build', ['lint', 'test', 'javascript', 'css', 'images']);
