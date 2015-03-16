@@ -24,7 +24,6 @@ var embedApi = require('./embed-api');
 var explorer = require('./explorer');
 var header = require('./header');
 var highlighter = require('./highlighter');
-var queryExplorer = require('./query-explorer');
 var router = require('router');
 var sidebar = require('./sidebar');
 
@@ -43,7 +42,6 @@ analytics.track();
 
 // Add routes to initialize code based on the page the user is on.
 router()
-    .case('/query-explorer/', queryExplorer.init)
     .case('/explorer/', explorer.init)
     .case('/embed-api/<page>/', embedApi.init)
     .case('/account-explorer/', accountExplorer.init)

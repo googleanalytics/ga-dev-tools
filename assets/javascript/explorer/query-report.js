@@ -23,7 +23,13 @@ import qs from 'querystring';
 import React from 'react';
 
 
-const API_URI_ORIGIN = 'https://www.googleapis.com/analytics/v3/data/ga?';
+const API_URI_BASE = 'https://www.googleapis.com/analytics/v3/data/ga?';
+
+
+const SELF_BASE = location.protocol + '//' + location.host + location.pathname;
+
+
+const TSV_PATH = SELF_BASE + 'csvhandler.csv';
 
 
 function orderQueryParams(params) {
@@ -49,8 +55,7 @@ let QueryReport = React.createClass({
   reportLink: function() {
     let params = (this.props.includeIds) ?
         this.props.report.params : omit(this.props.report.params, 'ids');
-    return location.protocol + '//' + location.host +
-           location.pathname + '?' + qs.stringify(orderQueryParams(params));
+    return SELF_BASE + '?' + qs.stringify(orderQueryParams(params));
   },
 
   apiQueryUri: function() {
@@ -58,7 +63,13 @@ let QueryReport = React.createClass({
     if (this.props.includeAccessToken) {
       params['access_token'] = gapi.auth.getToken().access_token;
     }
-    return API_URI_ORIGIN + qs.stringify(params);
+    return API_URI_BASE + qs.stringify(params);
+  },
+
+  downloadTsvLink: function() {
+    let params = orderQueryParams(this.props.report.params);
+    params['access_token'] = gapi.auth.getToken().access_token;
+    return TSV_PATH + '?' + qs.stringify(params);
   },
 
   render: function() {
@@ -179,7 +190,10 @@ let QueryReport = React.createClass({
 
       partials.reportDownloadLink = (
         <div className="QueryReport-item">
-          <a download className="Button Button--icon" id="save-tsv">
+          <a
+            download
+            href={this.downloadTsvLink()}
+            className="Button Button--icon">
             <span dangerouslySetInnerHTML={{__html: iconDownload}} />&nbsp;
             Download Results as TSV
           </a>

@@ -1,149 +1,22 @@
 {% extends 'loginable.html' %}
 
 {% block content %}
+<section>
+  <h2>Overview</h2>
+  <p id="intro">Sometimes you just need to explore. This tool lets you play with the <a href="{{site.tech.core_reporting_api.url}}">Core Reporting API</a> by building queries to get data from your Google Analytics views (profiles). You can use these queries in any of the client libraries to build your own tools.</p>
+</section>
 
-<link href="//ajax.googleapis.com/ajax/libs/jqueryui/1.11.1/themes/smoothness/jquery-ui.css" rel="stylesheet"/>
-<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/select2/3.5.2/select2.min.css">
+<div id="react-container"></div>
 
-
-<style>
-#ui-datepicker-div { display: none; }
-</style>
-
-<div id="explorer" class="hidden">
-
-  <section>
-    <h2>Overview</h2>
-    <p id="intro">Sometimes you just need to explore. This tool lets you play with the <a href="{{site.tech.core_reporting_api.url}}">Core Reporting API</a> by building queries to get data from your Google Analytics views (profiles). You can use these queries in any of the client libraries to build your own tools.</p>
-  </section>
-
-  <select id="select2" style="width:200px">
-    <option>One</option>
-    <option>Two</option>
-    <option>Three</option>
-    <option>Four</option>
-    <option>Five</option>
-  </select>
-
-  <div id="authBar">
-    <div id="queryUriDiv" class="buttonBar left">
-      <button id="queryUri" role="button" class="kd-button">
-        <img src="/public/images/explorer/globe.png"/>
-        <div class="kd-tooltip">Query URI
-          <span class="pointer"></span>
-        </div>
-      </button>
-      <div id="queryUriBubble" class="kd-bubble ga-bubble" style="display:none">
-        <div>
-          <h3>Query URI</h3>
-          <p style="margin:15px 0">This is the encoded URI for this query:</p>
-          <textarea readonly id="queryUriText" style="width:535px;height:119px"></textarea>
-          <p style="color:#222;">Use this to query the API directly over HTTP.
-             (authorization is still required)</p>
-        </div>
-        <span class="pointer" style="left: 27px;"></span>
-      </div>
-    </div> <!-- end queryUriDiv -->
-    <div id="deepDiv" class="buttonBar left">
-      <button id="shareLink" role="button" class="kd-button">
-        <img src="/public/images/explorer/link.png"/>
-        <div class="kd-tooltip">Share Report
-          <span class="pointer"></span>
-        </div>
-      </button>
-      <div id="shareBubble" class="kd-bubble ga-bubble" style="display:none">
-        <div>
-          <h3>Share Report</h3>
-          <p style="margin:15px 0;color:#666;font-size: 13px;">
-             Only the report configuration will be shared<br>
-             The view (profile) ID (ids) parameter will not be included<br>
-             No data will be shared</p>
-          <p style="margin:15px 0 5px 0">
-             Deep link to this report:</p>
-          <input id="deepLinkUrl" class="queryInput" readonly value="fooo"
-                 style="display:block;width:395px;margin:0;float:none" type="text">
-          <p style="margin:15px 0 5px 0">
-             Share this report:</p>
-          <div>
-            <div id="g-plus-div"></div>
-          </div>
-        </div>
-        <span class="pointer" style="left: 27px;"></span>
-      </div>
-    </div> <!-- end deepDiv -->
-    <div class="buttonBar right">
-      <button id="gaAuthLogin" role="button" class="kd-button">
-        Authorize Access
-        <div class="kd-tooltip">Click to authorize access
-          <span class="pointer"></span>
-        </div>
-      </button>
-      <div id="gaAuthLogout"></div>
-    </div>
-  </div>
-  <div id="accountSelector">
-    <ul class="table">
-      <li class="row">
-        <label class="asel-c1">Account</label>
-        <input type="text" class="queryInput dd_click_space" style="width:365px"
-               id="account" readonly="readonly"/>
-      </li>
-      <li class="row">
-        <label class="asel-c1">Property</label>
-        <input type="text" class="queryInput dd_click_space" style="width:365px"
-               id="webproperty" readonly="readonly"/>
-      </li>
-      <li class="row">
-        <label class="asel-c1">View (Profile)</label>
-        <input type="text" class="queryInput dd_click_space" style="width:365px"
-               id="profile" readonly="readonly"/>
-      </li>
-    </ul>
-  </div>
-
-  <div id="queryBuilder">
-    <div id="queryParams"></div>
-    <div id="gaStatus">
-      <div id="gaHelp"></div>
-    </div>
-  </div>
-  <div id="resultBar">
-    <div class="left">
-      <button id="getData" role="button" class="kd-button">Get Data</button>
-    </div>
-    <div class="left">
-      <p id="sampledData">This result is based on
-         <a href="//developers.google.com/analytics/resources/concepts/gaConceptsSampling"
-            target="_blank">sampled data</a>.</p>
-      </p>
-    </div>
-    <div class="right">
-       <a id="csvDownload" role="button" class="kd-button" style="display:none">Excel TSV</a>
-    </div>
-  </div> <!-- end resultBar -->
-  <div id="gaOutput"></div>
-  <p id="loader">
-    <img src="/public/images/explorer/big_roller.gif" alt="loading"/>Loading, Please Wait...
-  </p>
-</div>
 {% endblock %}
 
 {% block tech_content %}
-  The {{ project.title }} uses the <a href="{{ site.tech.core_reporting_api.url }}">{{ site.tech.core_reporting_api.name }}</a> to query for data and create the reports. It uses the <a href="{{ site.tech.management_api.url }}">{{ site.tech.management_api.name }}</a> to get a list of accounts and segments the current user can access, and it uses the <a href="{{ site.tech.metadata_api.url }}">{{ site.tech.metadata_api.name }}</a> to populate the items in the dimensions and metrics dropdowns.
+  The {{ project.title }} uses the <a href="{{ site.tech.embed_api.url }}">{{ site.tech.embed_api.name }}'s</a> <code>ViewSelector</code> and <code>DataChart</code> components to select the user's view and query the <a href="{{ site.tech.core_reporting_api.url }}">{{ site.tech.core_reporting_api.name }}</a>. It also uses the <a href="{{ site.tech.metadata_api.url }}">{{ site.tech.metadata_api.name }}</a> to populate the items in the dimensions and metrics dropdowns and the <a href="{{ site.tech.management_api.url }}">{{ site.tech.management_api.name }}</a> to get a list the current user's segments.
 {% endblock %}
 
 {% block foot_scripts %}
-<script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.11.1/jquery-ui.min.js"></script>
-<script src="//apis.google.com/js/plusone.js">
-  {'parsetags': 'explicit'}
-</script>
 
-<script src="/public/javascript/explorer.js"></script>
-
-<script src="//cdnjs.cloudflare.com/ajax/libs/select2/3.5.2/select2.min.js"></script>
-
-<script>
- $('#select2').select2();
-</script>
+<script src="/public/javascript/select2.js"></script>
+<script src="/public/javascript/embed-api/view-selector2.js"></script>
 
 {% endblock %}
