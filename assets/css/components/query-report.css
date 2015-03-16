@@ -1,4 +1,4 @@
-.Report {
+.QueryReport {
   background: #fff;
   border: 1px solid var(--border-color);
   border-radius: 4px;
@@ -6,7 +6,7 @@
   padding: var(--gap) var(--gap) 0;
 }
 
-.Report-title {
+.QueryReport-title {
   color: inherit;
   font-size: 1.5em;
   font-weight: 300;
@@ -14,48 +14,48 @@
   margin: 0 0 .667em;
 }
 
-.Report-meta {
+.QueryReport-meta {
   font-weight: 300;
   margin: 0 0 var(--gap);
 }
 
-.Report-item {
+.QueryReport-item {
   margin: 0 0 var(--gap);
 }
 
-.Report .gapi-analytics-data-chart {
+.QueryReport .gapi-analytics-data-chart {
   overflow-x: auto;
 }
 
-.Report .gapi-analytics-data-chart .gapi-analytics-data-chart-styles-table-tr-head {
+.QueryReport .gapi-analytics-data-chart .gapi-analytics-data-chart-styles-table-tr-head {
   background: hsl(30, 10%, 96.7%);
 }
 
-.Report .gapi-analytics-data-chart .gapi-analytics-data-chart-styles-table-th {
+.QueryReport .gapi-analytics-data-chart .gapi-analytics-data-chart-styles-table-th {
   border-bottom: 1px solid #ddd;
   border-top: 1px solid #ddd;
   white-space: nowrap;
 }
 
-.Report .gapi-analytics-data-chart .gapi-analytics-data-chart-styles-table-th:first-child {
+.QueryReport .gapi-analytics-data-chart .gapi-analytics-data-chart-styles-table-th:first-child {
   border-left: 1px solid #ddd;
 }
 
-.Report .gapi-analytics-data-chart .gapi-analytics-data-chart-styles-table-th:last-child {
+.QueryReport .gapi-analytics-data-chart .gapi-analytics-data-chart-styles-table-th:last-child {
   border-right: 1px solid #ddd;
 }
 
 
 @media (--break-lg) {
-  .Report {
+  .QueryReport {
     margin-bottom: var(--gap-lg);
     padding: var(--gap-lg) var(--gap-lg) 0;
   }
-  .Report-meta {
+  .QueryReport-meta {
     margin: 0 0 var(--gap-lg);
   }
 
-  .Report-item {
+  .QueryReport-item {
     margin: 0 0 var(--gap-lg);
   }
 }

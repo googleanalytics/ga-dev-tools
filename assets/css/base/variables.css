@@ -25,6 +25,8 @@ limitations under the License.
   --text-color-faded: #777;
   --text-color-faint: #aaa;
 
+  --info-color: hsl(200, 75%, 55%);
+
   --bg-color-dark: #333;
   --bg-color-dark-faded: #444;
   --bg-color-light: hsl(30, 10%, 95%);  /* #f4f2f0 */

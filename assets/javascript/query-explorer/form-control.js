@@ -53,22 +53,30 @@ let FormControl = React.createClass({
     let formControlInfo = this.props.children ?
         (<div className="FormControl-info">{this.props.children}</div>) : '';
 
+    let iconInfo =
+        `<svg class="Icon" viewBox="0 0 16 16">
+           <use xlink:href="/public/images/icons.svg#icon-info"></use>
+         </svg>`;
+
     return (
       <div className={className}>
-        <label className="FormControl-label">
-          <a href={REFERENCE_URL + camelCase(this.props.name)}
-             tabIndex="-1">
-             {this.props.name}
-          </a>
-        </label>
+        <label className="FormControl-label">{this.props.name}</label>
         <div className="FormControl-body">
-          <input className="FormField"
-                 ref="input"
-                 id={this.props.name}
-                 name={this.props.name}
-                 placeholder={this.props.placeholder}
-                 value={this.state.value}
-                 onChange={this.handleChange} />
+          <div className="FormFieldCombo">
+            <input
+              className="FormField FormFieldCombo-field"
+              ref="input"
+              id={this.props.name}
+              name={this.props.name}
+              placeholder={this.props.placeholder}
+              value={this.state.value}
+              onChange={this.handleChange} />
+            <a
+              className="FormFieldCombo-help"
+              href={REFERENCE_URL + camelCase(this.props.name)}
+              tabIndex="-1"
+              dangerouslySetInnerHTML={{__html: iconInfo}}></a>
+          </div>
           {formControlInfo}
         </div>
       </div>

@@ -13,7 +13,11 @@
 // limitations under the License.
 
 
+/* global gapi */
+
+import assign from 'lodash/object/assign';
 import DataChart from './data-chart';
+import isNull from 'lodash/lang/isNull';
 import omit from 'lodash/object/omit';
 import qs from 'querystring';
 import React from 'react';
@@ -22,31 +26,58 @@ import React from 'react';
 const API_URI_ORIGIN = 'https://www.googleapis.com/analytics/v3/data/ga?';
 
 
-var Report = React.createClass({
+function orderQueryParams(params) {
+  let orderedParams = {
+    'ids': null,
+    'start-date': null,
+    'end-date': null,
+    'metrics': null,
+    'dimensions': null,
+    'sort': null,
+    'filters': null,
+    'segment': null,
+    'samplingLevel': null,
+    'start-index': null,
+    'max-results': null
+  };
+  return omit(assign(orderedParams, params), isNull);
+}
+
+
+let QueryReport = React.createClass({
 
   reportLink: function() {
-    var query = (this.props.includeIds) ?
+    let params = (this.props.includeIds) ?
         this.props.report.params : omit(this.props.report.params, 'ids');
     return location.protocol + '//' + location.host +
-           location.pathname + '?' + qs.stringify(query);
+           location.pathname + '?' + qs.stringify(orderQueryParams(params));
   },
 
   apiQueryUri: function() {
-    return API_URI_ORIGIN + qs.stringify(this.props.report.params);
+    let params = orderQueryParams(this.props.report.params);
+    if (this.props.includeAccessToken) {
+      params['access_token'] = gapi.auth.getToken().access_token;
+    }
+    return API_URI_ORIGIN + qs.stringify(params);
   },
 
   render: function() {
 
-    var partials = {};
+    let partials = {};
     let report = this.props.report;
     let error = report && report.error;
     let accountData = report && report.accountData;
     let response = report && report.response;
     let params = report && report.params;
 
+    let iconDownload =
+        `<svg class="Icon" viewBox="0 0 16 16">
+           <use xlink:href="/public/images/icons.svg#icon-download"></use>
+         </svg>`;
+
     if (accountData) {
       partials.reportTitle = (
-        <h2 className="Report-title">
+        <h2 className="QueryReport-title">
           {accountData.property.name} ({accountData.view.name})
         </h2>
       )
@@ -70,7 +101,7 @@ var Report = React.createClass({
       let sampledData = response.containsSampledData ? 'Yes' : 'No'
 
       partials.reportMeta = (
-        <aside className="Report-meta">
+        <aside className="QueryReport-meta">
           <ul className="InlineDefinitionList">
             <li className="InlineDefinitionList-item">
               <span className="InlineDefinitionList-itemName">
@@ -96,7 +127,7 @@ var Report = React.createClass({
       );
 
       partials.reportLink = (
-        <div className="Report-item">
+        <div className="QueryReport-item">
           <div className="FormControl FormControl--full">
             <label className="FormControl-label">
               Direct link to this Report</label>
@@ -122,7 +153,7 @@ var Report = React.createClass({
       );
 
       partials.reportQueryUri = (
-        <div className="Report-item">
+        <div className="QueryReport-item">
           <div className="FormControl FormControl--full">
             <label className="FormControl-label">API Query URI</label>
             <div className="FormControl-body">
@@ -132,14 +163,24 @@ var Report = React.createClass({
                 value={this.apiQueryUri()}
                 readOnly>
               </textarea>
+              <label className="FormControl-info">
+                <input
+                  className="Checkbox"
+                  type="checkbox"
+                  onChange={this.props.onAccessTokenToggle}
+                  checked={this.props.includeAccessToken} />
+                  Include current <code>access_token</code> in the Query URI
+                  (will expire in ~60 minutes).
+              </label>
             </div>
           </div>
         </div>
       );
 
       partials.reportDownloadLink = (
-        <div className="Report-item">
+        <div className="QueryReport-item">
           <a download className="Button Button--icon" id="save-tsv">
+            <span dangerouslySetInnerHTML={{__html: iconDownload}} />&nbsp;
             Download Results as TSV
           </a>
         </div>
@@ -147,13 +188,13 @@ var Report = React.createClass({
     }
 
     return (
-      <div className="Report" hidden={!response && !error}>
+      <div className="QueryReport" hidden={!response && !error}>
         {partials.reportTitle}
         {partials.reportError}
         {partials.reportMeta}
         <DataChart
           hidden={!response}
-          className="Report-item"
+          className="QueryReport-item"
           params={params}
           isQuerying={this.props.isQuerying}
           onSuccess={this.props.onSuccess}
@@ -167,4 +208,4 @@ var Report = React.createClass({
 });
 
 
-export default Report
+export default QueryReport

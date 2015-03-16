@@ -15,13 +15,9 @@ limitations under the License.
 */
 
 
-:root {
-  --TechInfo-color: hsl(200, 75%, 55%);
-}
-
 .TechInfo {
   background: #fff;
-  border: 1px solid var(--TechInfo-color);
+  border: 1px solid var(--info-color);
   border-radius: 4px;
   display: flex;
   margin: var(--gap) 0;
@@ -30,7 +26,7 @@ limitations under the License.
 }
 
 .TechInfo-icon {
-  fill: var(--TechInfo-color);
+  fill: var(--info-color);
   flex: 0 0 auto;
   margin-right: 1em;
   height: 1.5em;
@@ -46,14 +42,14 @@ limitations under the License.
 }
 
 .TechInfo-title {
-  color: var(--TechInfo-color);
+  color: var(--info-color);
   font-size: 1.2em;
   font-weight: 600;
   margin: 0 0 .5em;
 }
 
 .TechInfo a {
-  color: var(--TechInfo-color);
+  color: var(--info-color);
   text-decoration: underline;
 }
 

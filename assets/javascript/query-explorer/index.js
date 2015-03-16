@@ -18,12 +18,12 @@
 
 import clone from 'lodash/lang/clone';
 import find from 'lodash/collection/find';
-import FormControl from './form-control';
 import getTagData from './tag-data';
 import Model from '../model';
 import qs from 'querystring';
+import QueryForm from './query-form';
+import QueryReport from './query-report';
 import React from 'react';
-import Report from './report';
 import store from '../data-store';
 import ViewSelector from './view-selector';
 
@@ -34,23 +34,22 @@ let settings = new Model(store.get('query-explorer:settings'));
 
 
 function getInitalQueryParams() {
-  let params = {};
+  let defaultParams = {'start-date': '30daysAgo', 'end-date': 'yesterday'};
+  let storedParams = store.get('query-explorer:params');
   let urlParams = qs.parse(location.search.slice(1));
 
-  if (urlParams['start-date'] &&
+  if (urlParams &&
+      urlParams['start-date'] &&
       urlParams['end-date'] &&
       urlParams['metrics']) {
-    params = urlParams;
+    return urlParams;
+  }
+  else if (storedParams) {
+    return storedParams;
   }
   else {
-   params = store.get('query-explorer:params');
+    return defaultParams;
   }
-
-  if (urlParams.ids) {
-    params.ids = urlParams.ids;
-  }
-
-  return params;
 }
 
 
@@ -61,12 +60,18 @@ function handleViewSelectorChange(data) {
 
 
 function handleSegmentDefinitionToggle() {
+  console.log(settings.get());
   settings.set('useDefinition', !settings.get('useDefinition'));
 }
 
 
 function handleIdsToggle() {
   settings.set('includeIds', !settings.get('includeIds'));
+}
+
+
+function handleAccessTokenToggle() {
+  settings.set('includeAccessToken', !settings.get('includeAccessToken'));
 }
 
 
@@ -98,6 +103,7 @@ function handleDataChartError(err) {
     isQuerying: false,
     report: {
       accountData: clone(state.get('selectedAccountData')),
+      params: state.get('report').params,
       error: err.error
     }
   });
@@ -108,107 +114,45 @@ function handleSubmit(e) {
   e.preventDefault();
   state.set({
     isQuerying: true,
-    report: {params: clone(params.get())}
+    report: {
+      params: clone(params.get())
+    }
   });
 }
 
 
 function render(metrics, dimensions, segments) {
 
-  let isQuerying = state.get('isQuerying');
-  let report = state.get('report');
-  let reportError = report && report.error;
-  let reportResponse = report && report.response;
-
   React.render(
     <div>
       <h3 className="H3--underline">Select a view</h3>
-      <ViewSelector ids={params.get('ids')} onChange={handleViewSelectorChange} />
+
+      <ViewSelector
+        ids={params.get('ids')}
+        onChange={handleViewSelectorChange} />
+
       <h3 className="H3--underline">Set the query parameters</h3>
 
-      <form onSubmit={handleSubmit}>
-        <FormControl
-          value={params.get('ids')}
-          name="ids"
-          onChange={handleFieldChange}
-          placeholder="ga:XXXX"
-          required />
-        <FormControl
-          value={params.get('start-date')}
-          name="start-date"
-          onChange={handleFieldChange}
-          placeholder="YYYY-MM-DD"
-          required />
-        <FormControl
-          value={params.get('end-date')}
-          name="end-date"
-          onChange={handleFieldChange}
-          placeholder="YYYY-MM-DD"
-          required />
-        <FormControl
-          name="metrics"
-          value={params.get('metrics')}
-          onChange={handleFieldChange}
-          tags={metrics}
-          required />
-        <FormControl
-          name="dimensions"
-          value={params.get('dimensions')}
-          onChange={handleFieldChange}
-          tags={dimensions} />
-        <FormControl
-          name="sort"
-          value={params.get('sort')}
-          onChange={handleFieldChange} />
-        <FormControl
-          name="filters"
-          value={params.get('filters')}
-          onChange={handleFieldChange} />
-        <FormControl
-          name="segment"
-          value={params.get('segment')}
-          onChange={handleFieldChange}
-          tags={segments}>
-          <label>
-            <input
-              className="Checkbox"
-              type="checkbox"
-              onChange={handleSegmentDefinitionToggle}
-              checked={settings.get('useDefinition')} />
-            Show segment definitions instead of IDs.
-          </label>
-        </FormControl>
-        <FormControl
-          name="samplingLevel"
-          value={params.get('samplingLevel')}
-          onChange={handleFieldChange} />
-        <FormControl
-          name="start-index"
-          value={params.get('start-index')}
-          onChange={handleFieldChange} />
-        <FormControl
-          name="max-results"
-          value={params.get('max-results')}
-          onChange={handleFieldChange} />
+      <QueryForm
+        onSubmit={handleSubmit}
+        onChange={handleFieldChange}
+        onSegmentDefinitionToggle={handleSegmentDefinitionToggle}
+        params={params.get()}
+        isQuerying={state.get('isQuerying')}
+        useDefinition={state.get('useDefinition')}
+        metrics={metrics}
+        dimensions={dimensions}
+        segments={segments} />
 
-        <div className="FormControl FormControl--inline FormControl--action">
-          <div className="FormControl-body">
-            <button
-              className="Button Button--action"
-              disabled={state.get('isQuerying')}>
-              {state.get('isQuerying') ? 'Loading...' : 'Run Query'}
-            </button>
-          </div>
-        </div>
-      </form>
-
-      <Report
-        report={report}
-        isQuerying={isQuerying}
+      <QueryReport
+        report={state.get('report')}
+        isQuerying={state.get('isQuerying')}
         includeIds={settings.get('includeIds')}
+        includeAccessToken={settings.get('includeAccessToken')}
         onSuccess={handleDataChartSuccess}
         onError={handleDataChartError}
-        onIdsToggle={handleIdsToggle} />
+        onIdsToggle={handleIdsToggle}
+        onAccessTokenToggle={handleAccessTokenToggle} />
 
     </div>,
     document.getElementById('react-container')

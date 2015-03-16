@@ -40,13 +40,14 @@ limitations under the License.
 @import './components/flex-grid';
 @import './components/form-control';
 @import './components/form-field';
+@import './components/form-field-combo';
 @import './components/header';
 @import './components/icon';
 @import './components/inline-definition-list';
 @import './components/logo';
 @import './components/nav';
 @import './components/nav-header';
-@import './components/report';
+@import './components/query-report';
 @import './components/s2tag';
 @import './components/screenshot';
 @import './components/site';
