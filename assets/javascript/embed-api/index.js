@@ -16,7 +16,7 @@
 /* global $, gapi */
 
 
-var debounce = require('lodash-node/modern/function/debounce');
+var debounce = require('lodash/function/debounce');
 
 //
 //  IMPORTANT!

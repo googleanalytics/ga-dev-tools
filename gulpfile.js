@@ -166,4 +166,5 @@ gulp.task('watch', ['javascript', 'css', 'images'], function() {
   gulp.watch('./assets/javascript/**/*.js', ['javascript']);
 });
 
-gulp.task('build', ['lint', 'test', 'javascript', 'css', 'images']);
+// Disable JSHint since it doesn't handle JSX syntax at the moment.
+gulp.task('build', [/*'lint',*/ 'test', 'javascript', 'css', 'images']);
