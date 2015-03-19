@@ -21,6 +21,7 @@ var browserify = require('browserify');
 var buffer = require('vinyl-buffer');
 var cleancss = require('gulp-cleancss');
 var concat = require('gulp-concat');
+var DeepWatch = require('deep-watch');
 var gulp = require('gulp');
 var gulpIf = require('gulp-if');
 var gutil = require('gulp-util');
@@ -161,9 +162,23 @@ gulp.task('test', function() {
 
 
 gulp.task('watch', ['javascript', 'css', 'images'], function() {
-  gulp.watch('./assets/css/**/*.css', ['css']);
-  gulp.watch('./assets/images/**/*', ['images']);
-  gulp.watch('./assets/javascript/**/*.js', ['javascript']);
+  // gulp.watch('./assets/css/**/*.css', ['css']);
+  // gulp.watch('./assets/images/**/*', ['images']);
+  // gulp.watch('./assets/javascript/**/*.js', ['javascript']);
+
+  // This is a temporary workaround until this `gulp.watch` is fixed:
+  // https://github.com/babel/babel/issues/489#issuecomment-69919417
+  var watchOptions = {
+    exclude: ['lib', 'node_modules', 'public', 'templates', 'test']
+  };
+
+  function onChange(event, filename) {
+    if (filename.indexOf('assets/css') === 0) gulp.start('css');
+    if (filename.indexOf('assets/images') === 0) gulp.start('images');
+    if (filename.indexOf('assets/javascript') === 0) gulp.start('javascript');
+  }
+
+  new DeepWatch('.', watchOptions, onChange).start();
 });
 
 // Disable JSHint since it doesn't handle JSX syntax at the moment.

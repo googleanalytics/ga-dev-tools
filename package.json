@@ -15,6 +15,7 @@
     "browserify": "^6.0.2",
     "chart.js": "nnnick/Chart.js#v1.0.1-beta.4",
     "core-js": "^0.5.4",
+    "deep-watch": "^0.1.1",
     "gulp": "^3.8.7",
     "gulp-autoprefixer": "0.0.8",
     "gulp-cleancss": "^0.2.2",
