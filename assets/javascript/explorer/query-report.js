@@ -15,6 +15,7 @@
 
 /* global gapi */
 
+
 import assign from 'lodash/object/assign';
 import DataChart from './data-chart';
 import isNull from 'lodash/lang/isNull';
@@ -88,7 +89,7 @@ let QueryReport = React.createClass({
 
     if (accountData) {
       partials.reportTitle = (
-        <h2 className="QueryReport-title">
+        <h2 id="report-start" className="QueryReport-title">
           {accountData.property.name} ({accountData.view.name})
         </h2>
       )
@@ -133,12 +134,19 @@ let QueryReport = React.createClass({
               <span className="InlineDefinitionList-itemValue">
                 {sampledData}</span>
             </li>
+            <li className="InlineDefinitionList-item">
+              <a
+                href="#report-end"
+                className="InlineDefinitionList-itemName">
+                &#8595;&nbsp; Jump to bottom</a>
+            </li>
           </ul>
         </aside>
       );
 
       partials.reportLink = (
-        <div className="QueryReport-item">
+        <div id="report-end" className="QueryReport-item">
+          <p><a href="#report-start">&#8593;&nbsp; Return to top</a></p>
           <div className="FormControl FormControl--full">
             <label className="FormControl-label">
               Direct link to this Report</label>
