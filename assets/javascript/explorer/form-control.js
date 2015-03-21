@@ -14,6 +14,7 @@
 
 
 import camelCase from 'camelcase';
+import Datepicker from './datepicker';
 import React from 'react';
 import select2Tags from './select2-tags';
 
@@ -58,19 +59,28 @@ let FormControl = React.createClass({
            <use xlink:href="/public/images/icons.svg#icon-info"></use>
          </svg>`;
 
+    let input = (this.props.type == 'date') ?
+        (
+          <Datepicker
+            name={this.props.name}
+            value={this.state.value}
+            onChange={this.handleChange} />
+        ) : (
+          <input
+            className="FormField FormFieldCombo-field"
+            name={this.props.name}
+            value={this.state.value}
+            onChange={this.handleChange}
+            ref="input" />
+        )
+
+
     return (
       <div className={className}>
         <label className="FormControl-label">{this.props.name}</label>
         <div className="FormControl-body">
           <div className="FormFieldCombo">
-            <input
-              className="FormField FormFieldCombo-field"
-              ref="input"
-              id={this.props.name}
-              name={this.props.name}
-              placeholder={this.props.placeholder}
-              value={this.state.value}
-              onChange={this.handleChange} />
+            {input}
             <a
               className="FormFieldCombo-help"
               href={REFERENCE_URL + camelCase(this.props.name)}

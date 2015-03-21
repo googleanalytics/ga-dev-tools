@@ -40,6 +40,7 @@ limitations under the License.
 @import './components/flex-grid';
 @import './components/form-control';
 @import './components/form-field';
+@import './components/form-field-add-on';
 @import './components/form-field-combo';
 @import './components/header';
 @import './components/icon';

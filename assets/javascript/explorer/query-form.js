@@ -32,12 +32,14 @@ var QueryForm = React.createClass({
           value={this.props.params['start-date']}
           name="start-date"
           onChange={this.props.onChange}
+          type="date"
           placeholder="YYYY-MM-DD"
           required />
         <FormControl
           value={this.props.params['end-date']}
           name="end-date"
           onChange={this.props.onChange}
+          type="date"
           placeholder="YYYY-MM-DD"
           required />
         <FormControl

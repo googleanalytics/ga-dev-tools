@@ -23,24 +23,9 @@ limitations under the License.
   width: 100%;
 }
 
+/* @extends .FormField */
 .FormFieldAddOn-field {
   flex: 1;
-
-  /* Copied from .FormField for the moment. TODO(philipwalton): refactor! */
-  background: #fff;
-  border: 1px solid var(--border-color);
-  border-radius: 4px;
-  box-sizing: border-box;
-  font: inherit;
-  font-weight: 400;
-  height: calc(34em/14); /* 34px @ 14px body font */
-  line-height: calc(20em/14); /* 20px @ 14px body font */
-  padding: calc(6em/14); /* 6px @ 14px body font */
-  transition: border-color .15s var(--quantum-timing);
-}
-.FormFieldAddOn-field:focus {
-  border-color: var(--border-color-active);
-  outline: 0;
 }
 
 .FormFieldAddOn-item {

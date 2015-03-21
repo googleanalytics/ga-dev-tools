@@ -16,6 +16,7 @@
 /* global gapi */
 
 
+import assign from 'lodash/object/assign';
 import clone from 'lodash/lang/clone';
 import find from 'lodash/collection/find';
 import getTagData from './tag-data';
@@ -42,10 +43,10 @@ function getInitalQueryParams() {
       urlParams['start-date'] &&
       urlParams['end-date'] &&
       urlParams['metrics']) {
-    return urlParams;
+    return assign({}, defaultParams, urlParams);
   }
   else if (storedParams) {
-    return storedParams;
+    return assign({}, defaultParams, storedParams);
   }
   else {
     return defaultParams;
@@ -75,12 +76,12 @@ function handleAccessTokenToggle() {
 
 
 function handleFieldChange(e) {
-  let {id, value} = e.target;
+  let {name, value} = e.target;
   if (value) {
-    params.set(id, value);
+    params.set(name, value);
   }
   else {
-    params.unset(id);
+    params.unset(name);
   }
 }
 
