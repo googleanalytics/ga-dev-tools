@@ -73,8 +73,8 @@
 {% endblock %}
 
 {% block foot_scripts %}
+{{ super() }}
 <script>
 {% include 'embed-api/code/_interactive-charts.js' %}
 </script>
 {% endblock %}
-

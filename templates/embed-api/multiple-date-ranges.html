@@ -71,8 +71,8 @@
 {% endblock %}
 
 {% block foot_scripts %}
+{{ super() }}
 <script>
 {% include 'embed-api/code/_multiple-date-ranges.js' %}
 </script>
 {% endblock %}
-

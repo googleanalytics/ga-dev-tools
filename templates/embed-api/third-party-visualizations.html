@@ -133,6 +133,7 @@
 
 {% block foot_scripts %}
 {% include 'embed-api/dependencies/_third-party-visualizations.html' %}
+{{ super() }}
 <script>
 {% include 'embed-api/code/_third-party-visualizations.js' %}
 </script>
