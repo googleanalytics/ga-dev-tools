@@ -15,21 +15,14 @@ limitations under the License.
 */
 
 
-@import './form-field';
-
-
-.FormFieldCombo {
-  align-items: center;
+.FlexLine {
   display: flex;
 }
 
-.FormFieldCombo-field {
-  flex: 1 0 0%;
+.FlexLine-item {
+  flex: 1 0 auto;
 }
 
-.FormFieldCombo-help {
-  color: var(--info-color);
-  flex: 0 0 auto;
-  font-size: 1.15em;
-  padding: 0 .5em;
+.FlexLine-item--flex {
+  flex-grow: 1;
 }

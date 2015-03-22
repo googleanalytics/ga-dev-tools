@@ -82,6 +82,20 @@ limitations under the License.
   margin-top: .5em;
 }
 
+.FormControl-helpIcon {
+  align-items: center;
+  color: var(--text-color-faint);
+  display: flex;
+  justify-content: center;
+  font-size: 1.15em;
+  padding: 0 .5em;
+}
+.FormControl-helpIcon:active,
+.FormControl-helpIcon:focus,
+.FormControl-helpIcon:hover {
+  color: inherit;
+  outline: 0;
+}
 
 .FormControl--action {
   margin: 0 0 var(--gap);

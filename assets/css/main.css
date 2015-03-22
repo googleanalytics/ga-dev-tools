@@ -38,10 +38,10 @@ limitations under the License.
 @import './components/doc-link';
 @import './components/error';
 @import './components/flex-grid';
+@import './components/flex-line';
 @import './components/form-control';
 @import './components/form-field';
 @import './components/form-field-add-on';
-@import './components/form-field-combo';
 @import './components/header';
 @import './components/icon';
 @import './components/inline-definition-list';

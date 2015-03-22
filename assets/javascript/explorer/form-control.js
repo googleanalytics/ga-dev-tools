@@ -79,10 +79,10 @@ let FormControl = React.createClass({
       <div className={className}>
         <label className="FormControl-label">{this.props.name}</label>
         <div className="FormControl-body">
-          <div className="FormFieldCombo">
+          <div className="FlexLine">
             {input}
             <a
-              className="FormFieldCombo-help"
+              className="FlexLine-item FormControl-helpIcon"
               href={REFERENCE_URL + camelCase(this.props.name)}
               tabIndex="-1"
               dangerouslySetInnerHTML={{__html: iconInfo}}></a>
