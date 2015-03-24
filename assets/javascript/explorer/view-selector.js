@@ -45,41 +45,47 @@ const VIEW_SELECTOR_TEMPLATE =
 
 var ViewSelector = React.createClass({
   componentDidMount: function() {
+
     let self = this;
 
-    this.viewSelector_ = new gapi.analytics.ext.ViewSelector2({
-      container: this.getDOMNode(),
-      ids: this.props.ids,
-      template: this.props.template || VIEW_SELECTOR_TEMPLATE
-    })
+    gapi.analytics.ready(function() {
 
-    this.viewSelector_.on('viewChange', function(...args) {
-      self.hasSuccessfullyShownView_ = true;
-      self.props.onChange.apply(this, args)
+      self.viewSelector_ = new gapi.analytics.ext.ViewSelector2({
+        container: self.getDOMNode(),
+        ids: self.props.ids,
+        template: self.props.template || VIEW_SELECTOR_TEMPLATE
+      })
+
+      self.viewSelector_.on('viewChange', function(...args) {
+        self.hasSuccessfullyShownView_ = true;
+        self.props.onChange.apply(self, args)
+      });
+
+      // An error on the first render means somehow a view was passed
+      // to the constructor to which the user doesn't have access.
+      // In that case, render the default view. All other errors should
+      // just do nothing.
+      self.viewSelector_.on('error', function() {
+        if (!self.hasSuccessfullyShownView_) {
+          self.viewSelector_.set({ids:undefined}).execute();
+        }
+      });
+
+      self.viewSelector_.execute();
     });
-
-    // An error on the first render means somehow a view was passed
-    // to the constructor to which the user doesn't have access.
-    // In that case, render the default view. All other errors should
-    // just do nothing.
-    this.viewSelector_.on('error', function() {
-      if (!self.hasSuccessfullyShownView_) {
-        self.viewSelector_.set({ids:undefined}).execute();
-      }
-    });
-
-    this.viewSelector_.execute();
   },
   componentWillReceiveProps: function(props) {
-    if (props.ids) {
+    if (props.ids && this.viewSelector_) {
       this.viewSelector_.set({ids: props.ids}).execute();
     }
   },
   componentWillUnmount: function() {
-    this.viewSelector_.off();
+    if (this.viewSelector_) this.viewSelector_.off();
   },
   render: function() {
-    return (<div />);
+    return (
+      <div dangerouslySetInnerHTML={{__html: VIEW_SELECTOR_TEMPLATE}} />
+    );
   }
 });
 

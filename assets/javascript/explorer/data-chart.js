@@ -26,16 +26,18 @@ const SRC_PARAM = 'query-explorer:v2';
 
 var DataChart = React.createClass({
   componentDidMount: function() {
-    this.dataChart_ = new gapi.analytics.googleCharts.DataChart({
-      query: assign({}, this.props.params, {_src: SRC_PARAM}),
-      chart: {
-        type: 'TABLE',
-        container: this.getDOMNode()
-      }
-    });
+    gapi.analytics.ready(() => {
+      this.dataChart_ = new gapi.analytics.googleCharts.DataChart({
+        query: assign({}, this.props.params, {_src: SRC_PARAM}),
+        chart: {
+          type: 'TABLE',
+          container: this.getDOMNode()
+        }
+      });
 
-    this.dataChart_.on('error', this.props.onError.bind(this));
-    this.dataChart_.on('success', this.props.onSuccess.bind(this));
+      this.dataChart_.on('error', this.props.onError.bind(this));
+      this.dataChart_.on('success', this.props.onSuccess.bind(this));
+    });
   },
   componentWillReceiveProps: function(props) {
     if (props.params && props.isQuerying) {

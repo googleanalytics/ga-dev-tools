@@ -29,6 +29,17 @@ import store from '../data-store';
 import ViewSelector from './view-selector';
 
 
+/**
+ * Store a reference here for access to the whole module.
+ */
+let metrics;
+let dimensions;
+let segments;
+
+
+/**
+ * Create model instances to store render state.
+ */
 let state = new Model();
 let params = new Model(getInitalQueryParams());
 let settings = new Model(store.get('query-explorer:settings'));
@@ -121,7 +132,7 @@ function handleSubmit(e) {
 }
 
 
-function render(metrics, dimensions, segments) {
+function render() {
 
   React.render(
     <div>
@@ -166,12 +177,10 @@ function render(metrics, dimensions, segments) {
 function setup() {
   getTagData().then(function(data) {
 
-    let metrics = data.metrics;
-    let dimensions = data.dimensions;
-    let segmentIds = data.segmentIds;
-    let segmentDefinitions = data.segmentDefinitions
-    let segments = settings.get('useDefinition') ?
-        segmentDefinitions : segmentIds;
+    metrics = data.metrics;
+    dimensions = data.dimensions;
+    segments = settings.get('useDefinition') ?
+        data.segmentDefinitions : data.segmentIds;
 
     // Update the segments array when the useDefinition settings changes.
     settings.on('change', function() {
@@ -186,22 +195,12 @@ function setup() {
       }
     });
 
-    // Save any changes and rerender.
-    settings.on('change', function() {
-      store.set('query-explorer:settings', settings.get());
-      render(metrics, dimensions, segments);
-    });
-    params.on('change', function() {
-      // TODO(philipwalton): ensure only whitelisted params are saved.
-      store.set('query-explorer:params', params.get());
-      render(metrics, dimensions, segments);
-    });
-    state.on('change', function() {
-      render(metrics, dimensions, segments);
-    });
+    // Add/remove state classes.
+    $('body').removeClass('is-loading');
+    $('body').addClass('is-ready');
 
-    // Perform the initial render.
-    render(metrics, dimensions, segments);
+    // Force render now that select2 tags are available.
+    render();
   });
 }
 
@@ -212,6 +211,24 @@ module.exports = {
    * Run setup if authorized, otherwise add an event to run on auth success.
    */
   init: function() {
+
+    // Perform the initial render.
+    render();
+
+    // Listen for changes and rerender.
+    settings.on('change', function() {
+      store.set('query-explorer:settings', settings.get());
+      render();
+    });
+    params.on('change', function() {
+      // TODO(philipwalton): ensure only whitelisted params are saved.
+      store.set('query-explorer:params', params.get());
+      render();
+    });
+    state.on('change', function() {
+      render();
+    });
+
     gapi.analytics.ready(function() {
       if (gapi.analytics.auth.isAuthorized()) {
         setup();
