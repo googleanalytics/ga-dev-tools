@@ -75,10 +75,11 @@ function getOptsFromProps(props) {
 
 export default {
   componentDidMount: function() {
-    if (this.props.tags) {
-      $(this.refs.input.getDOMNode())
-          .select2(getOptsFromProps(this.props))
-          .on('change', this.props.onChange);
+    if (this.props.hasOwnProperty('tags')) {
+      let $el = $(this.refs.input.getDOMNode());
+      $el.on('change', this.props.onChange);
+
+      if (this.props.tags) $el.select2(getOptsFromProps(this.props));
     }
   },
   componentWillReceiveProps: function(props) {
