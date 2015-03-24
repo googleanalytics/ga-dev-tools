@@ -15,10 +15,21 @@
 
 gapi.analytics.ready(function() {
 
-  // Add a state class to the body when auth is successful.
-  gapi.analytics.auth.on('success', function() {
+  document.body.classList.add('is-authorizing');
+
+  function setAuthorizedState() {
+    document.body.classList.remove('is-needingAuthorization');
+    document.body.classList.remove('is-authorizing');
     document.body.classList.add('is-authorized');
-  });
+    gapi.analytics.auth.off('error', setNeedsAuthorizingState)
+  }
+
+  function setNeedsAuthorizingState() {
+    document.body.classList.add('is-needingAuthorization');
+  }
+
+  gapi.analytics.auth.on('success', setAuthorizedState);
+  gapi.analytics.auth.once('error', setNeedsAuthorizingState);
 
   // Authorize this user with the client ID in sitemap.yaml
   gapi.analytics.auth.authorize({
