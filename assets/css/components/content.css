@@ -17,7 +17,25 @@ limitations under the License.
 
 .Content {
   margin: var(--gap);
+  transition: opacity .5s var(--quantum-timing);
 }
+
+.is-loading .Content {
+  animation: Content-fadeIn .5s var(--quantum-timing) 1;
+  pointer-events: none;
+  opacity: .333;
+}
+
+.is-ready .Content {
+  opacity: 1;
+}
+
+@keyframes Content-fadeIn {
+  0% {
+    opacity: 0;
+  }
+}
+
 
 @media (--break-lg) {
   .Content {

@@ -15,8 +15,17 @@ limitations under the License.
 */
 
 
+
+
 .FlexLine {
-  display: flex;
+  /* display: flex; */
+
+  /*
+   * TODO(philipwalton): replace the below with the above once this FF bug is
+   * fixed: https://bugzilla.mozilla.org/show_bug.cgi?id=1146442
+   */
+   display: inline-flex;
+   width: 100%;
 }
 
 .FlexLine-item {

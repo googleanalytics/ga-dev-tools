@@ -1,13 +1,26 @@
+{% set initial_state = 'is-loading' %}
+
 {% extends 'loginable.html' %}
+
+{# Add a progress bar if the page doesn't load after 1s. #}
+{% block head_scripts %}
+{{ super() }}
+<script>
+setTimeout(function() {
+  var progressBar = document.createElement('div');
+  progressBar.className = 'ProgressBar Header-progressIndicator';
+  document.getElementById('header').appendChild(progressBar);
+}, 1000);
+</script>
+{% endblock %}
 
 {% block content %}
 <section>
   <h2>Overview</h2>
-  <p id="intro">Sometimes you just need to explore. This tool lets you play with the <a href="{{site.tech.core_reporting_api.url}}">Core Reporting API</a> by building queries to get data from your Google Analytics views (profiles). You can use these queries in any of the client libraries to build your own tools.</p>
+  <p>Sometimes you just need to explore. This tool lets you play with the <a href="{{site.tech.core_reporting_api.url}}">Core Reporting API</a> by building queries to get data from your Google Analytics views (profiles). You can use these queries in any of the client libraries to build your own tools.</p>
 </section>
 
 <div id="react-container"></div>
-
 {% endblock %}
 
 {% block tech_content %}
