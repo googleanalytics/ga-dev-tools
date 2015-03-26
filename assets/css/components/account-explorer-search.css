@@ -15,7 +15,7 @@ limitations under the License.
 */
 
 
-@import './form-control';
+@import './form-field';
 
 
 .AccountExplorerSearch {
@@ -29,7 +29,7 @@ limitations under the License.
   text-align: center;
 }
 
-.AccountExplorerSearch-control {
+input.AccountExplorerSearch-field {
   display: block;
   height: auto;
   margin: 0 auto 3em;
