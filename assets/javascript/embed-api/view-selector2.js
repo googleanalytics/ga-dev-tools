@@ -270,15 +270,15 @@ gapi.analytics.ready(function() {
       '<div class="ViewSelector2">' +
       '  <div class="ViewSelector2-item">' +
       '    <label>Account</label>' +
-      '    <select></select>' +
+      '    <select class="FormField"></select>' +
       '  </div>' +
       '  <div class="ViewSelector2-item">' +
       '    <label>Property</label>' +
-      '    <select></select>' +
+      '    <select class="FormField"></select>' +
       '  </div>' +
       '  <div class="ViewSelector2-item">' +
       '    <label>View</label>' +
-      '    <select></select>' +
+      '    <select class="FormField"></select>' +
       '  </div>' +
       '</div>'
   });
