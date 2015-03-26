@@ -97,7 +97,7 @@ projects:
   tech: [management_api, metadata_api]
 - title: Query Explorer
   type: tool
-  slug: explorer
+  slug: query-explorer
   tech: [core_reporting_api, embed_api, management_api, metadata_api]
 - title: Spreadsheet Add-on
   type: tool
