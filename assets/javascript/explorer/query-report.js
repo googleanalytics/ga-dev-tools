@@ -137,7 +137,7 @@ let QueryReport = React.createClass({
             <li className="InlineDefinitionList-item">
               <a
                 href="#report-end"
-                className="InlineDefinitionList-itemName">
+                className="InlineDefinitionList-itemName A--normal">
                 &#8595;&nbsp; Jump to bottom</a>
             </li>
           </ul>

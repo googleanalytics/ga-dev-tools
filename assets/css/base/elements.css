@@ -69,7 +69,7 @@ h3 {
   margin: calc(var(--gap-lg)/1.25) 0;
 
 }
-.H3--underline {
+h3.H3--underline {
   border-bottom: 1px solid hsl(30, 10%, 85%);
   padding-bottom: .5em;
 }
@@ -82,6 +82,9 @@ i {
 a {
   color: var(--ga-orange-dark);
   text-decoration: none;
+}
+a.A--normal {
+  font-weight: 400;
 }
 
 a:hover {
