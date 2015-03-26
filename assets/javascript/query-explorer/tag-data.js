@@ -19,6 +19,10 @@
 import metadata from 'javascript-api-utils/lib/metadata';
 
 
+/**
+ * Returns a promise that is resolved with an array of all public metrics.
+ * @return {goog.Promise}
+ */
 function getMetricTags() {
   return metadata.get().then(function(columns) {
     return columns.allMetrics('public');
@@ -26,6 +30,10 @@ function getMetricTags() {
 }
 
 
+/**
+ * Returns a promise that is resolved with an array of all public dimensions.
+ * @return {goog.Promise}
+ */
 function getDimensionTags() {
   return metadata.get().then(function(columns) {
     return columns.allDimensions('public');
@@ -33,6 +41,11 @@ function getDimensionTags() {
 }
 
 
+/**
+ * Returns a promise that is resolved with an array of all segments this user
+ * can access.
+ * @return {goog.Promise}
+ */
 function getSegmentTags(useDefinition = false) {
   return gapi.client.analytics.management.segments
       .list().then(function(response) {
@@ -41,6 +54,11 @@ function getSegmentTags(useDefinition = false) {
 }
 
 
+/**
+ * Returns a promise that is resolved with an object of metrics, dimensions,
+ * segment IDs, and segment definitions in the form that select2 needs them.
+ * @return {Promise}
+ */
 export default function() {
   return Promise.all([
     getMetricTags(),

@@ -40,12 +40,6 @@ textarea.FormField {
   resize: vertical;
 }
 
-input[type="checkbox"].FormField,
-input[type="radio"].FormField {
-  margin-right: .5em;
-}
-
-
 input.FormField:focus,
 select.FormField:focus,
 textarea.FormField:focus {

@@ -13,25 +13,22 @@
 // limitations under the License.
 
 
-var merge = require('lodash/object/merge');
-
-
 /**
  * The current version of the storage schema.
  */
-var SCHEMA_VERSION = 1;
+const SCHEMA_VERSION = 1;
 
 
 /**
  * The key used to save data to local storage.
  */
-var APP_NAMESPACE = 'ga-dev-tools';
+const APP_NAMESPACE = 'ga-dev-tools';
 
 
 /**
  * A cache of the fetched data to avoid multiple local storage lookups.
  */
-var cache;
+let cache;
 
 
 /**
@@ -39,10 +36,10 @@ var cache;
  * version. When running migrations, each function is executed in order until
  * the schema is current.
  */
-var migrationFunctions = {
+let migrationFunctions = {
   // Version `0` means no schema detected or the original Query Explorer data.
   0: function() {
-    var data = JSON.parse(localStorage.getItem('mgmtData'));
+    let data = JSON.parse(localStorage.getItem('mgmtData'));
     if (data && data.profileId) {
       cache['query-explorer:params'] = {
         ids: 'ga:' + data.profileId
@@ -99,7 +96,7 @@ function saveCache() {
 }
 
 
-module.exports = {
+export default {
 
   /**
    * Get the data from local storage for a given project.
@@ -114,9 +111,9 @@ module.exports = {
 
   /**
    * Store the passed data in localStorage.
-   * Note: this overwrite any previous data.
+   * Note: this overwrites any previous data.
    * @param {string} project The project name.
-   * @param {Object} data The data to merge.
+   * @param {Object} data The data to store.
    */
   set: function(project, data) {
     ensureCache();

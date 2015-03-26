@@ -38,17 +38,7 @@ gapi.analytics.ready(function() {
       type: 'TABLE',
       container: 'main-chart-container',
       options: {
-        sort: 'enable',
-        width: '100%',
-        // 'cssClassNames': {
-        //   'headerRow': 'gapi2-analytics-data-chart-thr',
-        //   'tableRow': 'gapi2-analytics-data-chart-tr',
-        //   'oddTableRow': 'gapi2-analytics-data-chart-tr-odd',
-        //   'selectedTableRow': 'gapi2-analytics-data-chart-tr-selected',
-        //   'hoverTableRow': 'gapi2-analytics-data-chart-tr-hover',
-        //   'headerCell': 'gapi2-analytics-data-chart-th',
-        //   'tableCell': 'gapi2-analytics-data-chart-td'
-        // }
+        width: '100%'
       }
     }
   });

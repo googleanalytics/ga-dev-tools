@@ -45,6 +45,14 @@ let params = new Model(getInitalQueryParams());
 let settings = new Model(store.get('query-explorer:settings'));
 
 
+/**
+ * Gets the query params used to popular the params model.
+ * If params are found in the URL, they are used and merged with the defaults.
+ * Otherwise the datastore is checked for params from a previous session, and
+ * those are merged with the defaults.
+ * If no params exist in the URL or the datastore, the defaults are returned.
+ * @return {Object} The initial params.
+ */
 function getInitalQueryParams() {
   let defaultParams = {'start-date': '30daysAgo', 'end-date': 'yesterday'};
   let storedParams = store.get('query-explorer:params');
@@ -65,27 +73,45 @@ function getInitalQueryParams() {
 }
 
 
+/**
+ * Invoked when a user changes the ViewSelector2 instance.
+ * @param {Object} data The object emited by the ViewSelector2's "changeView"
+ * event.
+ */
 function handleViewSelectorChange(data) {
   params.set('ids', data.ids);
   state.set('selectedAccountData', clone(data));
 }
 
 
+/**
+ * Invoked when a user clicks on the segment definition checkbox.
+ */
 function handleSegmentDefinitionToggle() {
   settings.set('useDefinition', !settings.get('useDefinition'));
 }
 
 
+/**
+ * Invoked when a user clicks on the include `ids` checkbox.
+ */
 function handleIdsToggle() {
   settings.set('includeIds', !settings.get('includeIds'));
 }
 
 
+/**
+ * Invoked when a user clicks on the include `access_token` checkbox.
+ */
 function handleAccessTokenToggle() {
   settings.set('includeAccessToken', !settings.get('includeAccessToken'));
 }
 
 
+/**
+ * Invoked when a user changes any of the <QueryForm> fields.
+ * @param {Event|Object} e The native or React event.
+ */
 function handleFieldChange(e) {
   let {name, value} = e.target;
   if (value) {
@@ -97,6 +123,10 @@ function handleFieldChange(e) {
 }
 
 
+/**
+ * Invoked when the DataChart component's "success" event emits.
+ * @param {Object} data The object emitted by the DataChart's "success" event.
+ */
 function handleDataChartSuccess(data) {
   state.set({
     isQuerying: false,
@@ -109,6 +139,10 @@ function handleDataChartSuccess(data) {
 }
 
 
+/**
+ * Invoked when the DataChart component's "error" event emits.
+ * @param {Object} data The error emitted by the DataChart's "error" event.
+ */
 function handleDataChartError(err) {
   state.set({
     isQuerying: false,
@@ -121,6 +155,10 @@ function handleDataChartError(err) {
 }
 
 
+/**
+ * Invoked when a user submits the <QueryForm>.
+ * @param {Event|Object} e The native or React event.
+ */
 function handleSubmit(e) {
   e.preventDefault();
   state.set({
@@ -132,6 +170,9 @@ function handleSubmit(e) {
 }
 
 
+/**
+ * Render the Query Explorer.
+ */
 function render() {
 
   React.render(
@@ -172,7 +213,8 @@ function render() {
 
 
 /**
- * Initialize all Query Explorer modules.
+ * Get all form data for the <QueryForm> then setup the form, update the global
+ * state classes, and call `render()` when ready.
  */
 function setup() {
   getTagData().then(function(data) {
@@ -195,26 +237,6 @@ function setup() {
       }
     });
 
-    // Add/remove state classes.
-    $('body').removeClass('is-loading');
-    $('body').addClass('is-ready');
-
-    // Force render now that select2 tags are available.
-    render();
-  });
-}
-
-
-module.exports = {
-
-  /**
-   * Run setup if authorized, otherwise add an event to run on auth success.
-   */
-  init: function() {
-
-    // Perform the initial render.
-    render();
-
     // Listen for changes and rerender.
     settings.on('change', function() {
       store.set('query-explorer:settings', settings.get());
@@ -228,6 +250,26 @@ module.exports = {
     state.on('change', function() {
       render();
     });
+
+    // Add/remove state classes.
+    $('body').removeClass('is-loading');
+    $('body').addClass('is-ready');
+
+    // Force render now that select2 tags are available.
+    render();
+  });
+}
+
+
+module.exports = {
+
+  /**
+   * Perform an inital render and run `setup()` once authorized.
+   */
+  init: function() {
+
+    // Perform an initial render.
+    render();
 
     gapi.analytics.ready(function() {
       if (gapi.analytics.auth.isAuthorized()) {

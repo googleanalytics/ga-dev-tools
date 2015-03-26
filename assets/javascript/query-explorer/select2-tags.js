@@ -42,13 +42,20 @@ let s2DropdownItemTemplate = template(
     '</div>');
 
 
+/**
+ * The base options for all select2 widgets.
+ */
 let baseOpts = {
   formatSelection: s2TagTemplate,
   formatResult: s2DropdownItemTemplate,
 };
 
 
+/**
+ * The additional options for segment select2 widgets.
+ */
 let segmentsOpts = {
+
   // You can't specify no separator, so we have to
   // choose a character unlikely to appear.
   separator: '&&&',
@@ -67,11 +74,17 @@ let segmentsOpts = {
 };
 
 
+/**
+ * Returns a merged options object based on the passed props.
+ * @param {Object} props
+ * @return {Object} The select2 options.
+ */
 function getOptsFromProps(props) {
   return props.name == 'segment'
     ? assign({tags: props.tags}, baseOpts, segmentsOpts)
     : assign({tags: props.tags}, baseOpts);
 }
+
 
 export default {
   componentDidMount: function() {

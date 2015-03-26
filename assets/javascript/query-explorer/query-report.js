@@ -33,6 +33,12 @@ const SELF_BASE = location.protocol + '//' + location.host + location.pathname;
 const TSV_PATH = SELF_BASE + 'csvhandler.csv';
 
 
+/**
+ * Accepts a object of params and returns an object that will be ordered as
+ * follows when serialized to a query string.
+ * @param {Object} params The params object to order.
+ * @return {Object} The ordered params object.
+ */
 function orderQueryParams(params) {
   let orderedParams = {
     'ids': null,
@@ -53,12 +59,21 @@ function orderQueryParams(params) {
 
 let QueryReport = React.createClass({
 
+  /**
+   * Build a URL that directly links to this report
+   * @return {string}
+   */
   reportLink: function() {
     let params = (this.props.includeIds) ?
         this.props.report.params : omit(this.props.report.params, 'ids');
     return SELF_BASE + '?' + qs.stringify(orderQueryParams(params));
   },
 
+
+  /**
+   * Build a URL that can be used to query the Core Reporting API.
+   * @return {string}
+   */
   apiQueryUri: function() {
     let params = orderQueryParams(this.props.report.params);
     if (this.props.includeAccessToken) {
@@ -67,11 +82,17 @@ let QueryReport = React.createClass({
     return API_URI_BASE + qs.stringify(params);
   },
 
+
+  /**
+   * Build a URL that can download a TSV file for this report.
+   * @return {string}
+   */
   downloadTsvLink: function() {
     let params = orderQueryParams(this.props.report.params);
     params['access_token'] = gapi.auth.getToken().access_token;
     return TSV_PATH + '?' + qs.stringify(params);
   },
+
 
   render: function() {
 

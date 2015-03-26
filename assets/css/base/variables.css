@@ -29,10 +29,10 @@ limitations under the License.
 
   --bg-color-dark: #333;
   --bg-color-dark-faded: #444;
-  --bg-color-light: hsl(30, 10%, 95%);  /* #f4f2f0 */
+  --bg-color-light: hsl(30, 10%, 95%);
 
   --border-color: #d4d2d0;
-  --border-color-active: #3b99fc; /* #4d90fe; */
+  --border-color-active: #3b99fc;
 
   --ga-gray: #75787d;
   --ga-orange-dark: #f05721;

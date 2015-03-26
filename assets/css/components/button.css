@@ -28,17 +28,19 @@ limitations under the License.
   padding: calc(6em/14) 1em; /* 6px @ 14px body font */
   transition: background-color .2s var(--quantum-timing);
 }
-.Button:active,
-.Button:focus,
-.Button:hover {
+
+.Button:disabled {
+  opacity: .6;
+}
+
+.Button:active:enabled,
+.Button:focus:enabled,
+.Button:hover:enabled {
   background: hsl(30,10%,85%);
   outline: none;
   text-decoration: none;
 }
 
-.Button[disabled] {
-  opacity: .6;
-}
 
 .Button--icon {
   display: inline-flex;
@@ -55,9 +57,9 @@ limitations under the License.
   color: #fff;
   background: hsl(217, 91%, 63%);
 }
-.Button--action:active,
-.Button--action:focus,
-.Button--action:hover {
+.Button--action:active:enabled,
+.Button--action:focus:enabled,
+.Button--action:hover:enabled {
   background: hsl(217, 91%, 53%);
 }
 

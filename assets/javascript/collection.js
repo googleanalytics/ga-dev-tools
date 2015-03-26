@@ -22,6 +22,12 @@ import without from 'lodash/array/without';
 
 export default class Collection extends events.EventEmitter {
 
+  /**
+   * Create a new collect instance with the specified models.
+   * @constructor
+   * @param {Array<Model>} props The initial props for the model.
+   * @return {Collection}
+   */
   constructor(models) {
     this.models_ = [];
 
@@ -32,18 +38,39 @@ export default class Collection extends events.EventEmitter {
     each(models, (model) => this.add(model));
   }
 
+
+  /*
+   * Gets the current models.
+   * @return {Array<Model>}
+   */
   get models() {
     return this.models_;
   }
 
+
+  /*
+   * Gets size of the collect in terms of number of models.
+   * @return {number}
+   */
   get size() {
     return this.models.length;
   }
 
+
+  /*
+   * Gets a model by its `id` prop.
+   * @return {Model}
+   */
   get(id) {
     return find(this.models_, (model) => model.props.id == id);
   }
 
+
+  /*
+   * Adds a model to the collection.
+   * @emits add
+   * @return {Collection}
+   */
   add(model) {
     if (!model.props.id) throw new Error('Models must have an "id" property.');
 
@@ -54,6 +81,13 @@ export default class Collection extends events.EventEmitter {
     return this;
   }
 
+
+  /*
+   * Removes a model from the collection.
+   * @param {Model} model
+   * @emits remove
+   * @return {Collection}
+   */
   remove(model) {
     // model can be a model object or the model's ID.
     if (typeof model == 'string') model = this.get(model);
@@ -65,6 +99,11 @@ export default class Collection extends events.EventEmitter {
     return this;
   }
 
+
+  /**
+   * Destroy a collection instance, cleaning up any events added to it or that
+   * it added to its models.
+   */
   destroy() {
     each(this.models_, (model) =>
         model.removeListener('change', this.handleChange_));
