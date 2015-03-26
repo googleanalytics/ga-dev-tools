@@ -37,8 +37,7 @@ var suit = require('rework-suit');
 var uglify = require('gulp-uglify');
 
 function isProd(transform) {
-  // Assume prod unless NODE_ENV starts with 'dev'.
-  return gulpIf(!/^dev/.test(process.env.NODE_ENV), transform);
+  return gulpIf(process.env.NODE_ENV == 'production', transform);
 }
 
 function streamError(err) {
