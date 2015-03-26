@@ -36,11 +36,3 @@ limitations under the License.
   max-width: 32em;
   padding: .75em 1em;
 }
-
-.AccountExplorerSearch-icon {
-  /display: inline-block;
-  display: none;
-  font-size: 1.3em;
-  margin-right: 0.5em;
-  vertical-align: middle;
-}
