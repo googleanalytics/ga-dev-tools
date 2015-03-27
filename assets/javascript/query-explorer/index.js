@@ -261,7 +261,7 @@ function setup() {
 }
 
 
-module.exports = {
+export default {
 
   /**
    * Perform an inital render and run `setup()` once authorized.
