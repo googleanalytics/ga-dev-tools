@@ -227,7 +227,7 @@ function setup() {
     // Update the segments array when the useDefinition settings changes.
     settings.on('change', function() {
       segments = settings.get('useDefinition') ?
-          segmentDefinitions : segmentIds;
+          data.segmentDefinitions : data.segmentIds;
 
       if (params.get('segment')) {
         let value = params.get('segment');
