@@ -23,6 +23,7 @@ import getTagData from './tag-data';
 import Model from '../model';
 import qs from 'querystring';
 import QueryForm from './query-form';
+import queryParams from './query-params';
 import QueryReport from './query-report';
 import React from 'react';
 import store from '../data-store';
@@ -243,8 +244,7 @@ function setup() {
       render();
     });
     params.on('change', function() {
-      // TODO(philipwalton): ensure only whitelisted params are saved.
-      store.set('query-explorer:params', params.get());
+      store.set('query-explorer:params', queryParams.sanitize(params.get()));
       render();
     });
     state.on('change', function() {

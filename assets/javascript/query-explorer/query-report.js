@@ -21,6 +21,7 @@ import DataChart from './data-chart';
 import isNull from 'lodash/lang/isNull';
 import omit from 'lodash/object/omit';
 import qs from 'querystring';
+import queryParams from './query-params';
 import React from 'react';
 
 
@@ -33,30 +34,6 @@ const SELF_BASE = location.protocol + '//' + location.host + location.pathname;
 const TSV_PATH = SELF_BASE + 'csvhandler.csv';
 
 
-/**
- * Accepts a object of params and returns an object that will be ordered as
- * follows when serialized to a query string.
- * @param {Object} params The params object to order.
- * @return {Object} The ordered params object.
- */
-function orderQueryParams(params) {
-  let orderedParams = {
-    'ids': null,
-    'start-date': null,
-    'end-date': null,
-    'metrics': null,
-    'dimensions': null,
-    'sort': null,
-    'filters': null,
-    'segment': null,
-    'samplingLevel': null,
-    'start-index': null,
-    'max-results': null
-  };
-  return omit(assign(orderedParams, params), isNull);
-}
-
-
 let QueryReport = React.createClass({
 
   /**
@@ -66,7 +43,7 @@ let QueryReport = React.createClass({
   reportLink: function() {
     let params = (this.props.includeIds) ?
         this.props.report.params : omit(this.props.report.params, 'ids');
-    return SELF_BASE + '?' + qs.stringify(orderQueryParams(params));
+    return SELF_BASE + '?' + qs.stringify(queryParams.sanitize(params));
   },
 
 
@@ -75,7 +52,7 @@ let QueryReport = React.createClass({
    * @return {string}
    */
   apiQueryUri: function() {
-    let params = orderQueryParams(this.props.report.params);
+    let params = queryParams.sanitize(this.props.report.params);
     if (this.props.includeAccessToken) {
       params['access_token'] = gapi.auth.getToken().access_token;
     }
@@ -88,7 +65,7 @@ let QueryReport = React.createClass({
    * @return {string}
    */
   downloadTsvLink: function() {
-    let params = orderQueryParams(this.props.report.params);
+    let params = queryParams.sanitize(this.props.report.params);
     params['access_token'] = gapi.auth.getToken().access_token;
     return TSV_PATH + '?' + qs.stringify(params);
   },
