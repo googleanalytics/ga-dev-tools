@@ -35,7 +35,6 @@ limitations under the License.
 @import './components/content';
 @import './components/dashboard';
 @import './components/date-range-selector';
-@import './components/doc-link';
 @import './components/error';
 @import './components/flex-grid';
 @import './components/flex-line';
