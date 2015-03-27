@@ -19,6 +19,9 @@
 import React from 'react';
 
 
+const ANIMATION_DURATION = 200;
+
+
 let iconCalendar =
     `<svg class="Icon" viewBox="0 0 16 16">
        <use xlink:href="/public/images/icons.svg#icon-calendar"></use>
@@ -41,13 +44,14 @@ var Datepicker = React.createClass({
       changeMonth: true,
       changeYear: true,
       constrainInput: false,
+      duration: ANIMATION_DURATION,
       dateFormat: 'yy-mm-dd',
       showOn: false,
       onClose: function() {
         // Use setTimeout to avoid race conditions with the icon click event.
         setTimeout(function() {
           isShowing = false
-        }, 0);
+        }, ANIMATION_DURATION);
       }
     };
 
