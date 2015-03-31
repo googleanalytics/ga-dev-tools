@@ -20,6 +20,7 @@ import assign from 'lodash/object/assign';
 import clone from 'lodash/lang/clone';
 import find from 'lodash/collection/find';
 import getTagData from './tag-data';
+import mapValues from 'lodash/object/mapValues';
 import Model from '../model';
 import qs from 'querystring';
 import QueryForm from './query-form';
@@ -47,7 +48,7 @@ let settings = new Model(store.get('query-explorer:settings'));
 
 
 /**
- * Gets the query params used to popular the params model.
+ * Gets the query params used to populate the params model.
  * If params are found in the URL, they are used and merged with the defaults.
  * Otherwise the datastore is checked for params from a previous session, and
  * those are merged with the defaults.
@@ -59,10 +60,12 @@ function getInitalQueryParams() {
   let storedParams = store.get('query-explorer:params');
   let urlParams = qs.parse(location.search.slice(1));
 
-  if (urlParams &&
-      urlParams['start-date'] &&
-      urlParams['end-date'] &&
-      urlParams['metrics']) {
+  if (urlParams && urlParams['metrics']) {
+
+    // Some of the existing Query Explorer links have double-encoded
+    // URL params, so we need to double-decode, just in case.
+    urlParams = mapValues(urlParams, (value) => decodeURIComponent(value));
+
     return assign({}, defaultParams, urlParams);
   }
   else if (storedParams) {
