@@ -15,20 +15,10 @@
     <header class="Box-header">
       <div class="AccountExplorerSearch">
         <h3 class="AccountExplorerSearch-title">
-          <span class="AccountExplorerSearch-icon">
-            <svg class="Icon" viewBox="0 0 16 16">
-              <use xlink:href="/public/images/icons.svg#icon-search"></use>
-            </svg>
-          </span>
           Search for your account information&hellip;
         </h3>
-        <input class="AccountExplorerSearch-control Control" id="search-box" placeholder="Start typing to search...">
+        <input class="AccountExplorerSearch-field FormField" id="search-box" placeholder="Start typing to search...">
         <h3 class="AccountExplorerSearch-title">
-          <span class="AccountExplorerSearch-icon">
-            <svg class="Icon" viewBox="0 0 16 16">
-              <use xlink:href="/public/images/icons.svg#icon-eye"></use>
-            </svg>
-          </span>
           &hellip;or browse through all your accounts
         </h3>
         <div id="view-selector-container"></div>
@@ -49,4 +39,5 @@
 
 {% block foot_scripts %}
 <script src="/public/javascript/embed-api/view-selector2.js"></script>
+{{ super() }}
 {% endblock %}

@@ -41,7 +41,7 @@ section {
 
 ul {
   list-style: square;
-  padding: 0 0 0 var(--gap);
+  padding: 0 0 0 1.5em;
 }
 
 p, ul, ol, pre {
@@ -66,7 +66,12 @@ h2 {
 h3 {
   color: #666;
   font-size: 1.25em;
-  margin: 0 0 calc(var(--gap)/1.25);
+  margin: calc(var(--gap)/1.25) 0;
+
+}
+h3.H3--underline {
+  border-bottom: 1px solid hsl(30, 10%, 85%);
+  padding-bottom: .5em;
 }
 
 i {
@@ -77,6 +82,9 @@ i {
 a {
   color: var(--ga-orange-dark);
   text-decoration: none;
+}
+a.A--normal {
+  font-weight: 400;
 }
 
 a:hover {
@@ -97,6 +105,10 @@ code {
   padding: 2px 5px 1px;
 }
 
+a code {
+  color: inherit;
+}
+
 figure {
   margin: 0;
 }
@@ -106,20 +118,14 @@ img {
   height: auto;
 }
 
-input,
-select {
-  border: 1px solid var(--border-color);
-  border-radius: 4px;
-  box-sizing: border-box;
-  font: inherit;
-  font-weight: 400;
-  height: calc(34em/14); /* 34px @ 14px body font */
-  line-height: calc(20em/14); /* 20px @ 14px body font */
-  padding: calc(6em/14); /* 6px @ 14px body font */
-}
-
-input:focus,
-select:focus {
-  border-color: #4d90fe;
-  outline: 0;
+@media (--break-lg) {
+  h1 {
+    margin: 0 0 calc(var(--gap-lg)/2.5);
+  }
+  h2 {
+    margin: calc(var(--gap-lg)/1.75) 0;
+  }
+  h3 {
+    margin: calc(var(--gap-lg)/1.25) 0;
+  }
 }

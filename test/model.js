@@ -97,13 +97,6 @@ describe('Model', function() {
       assert.equal(model.props.fizz, 'BUZZ');
     });
 
-    it('throws if trying to set an unrecognized prop.', function() {
-      function blockSet() {
-        model.set({beep: 'boop'});
-      }
-      assert.throws(blockSet, Error);
-    });
-
     it('emits a change event whenever its props change.', function() {
       let spy = sinon.spy();
 

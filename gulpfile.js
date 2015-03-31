@@ -37,8 +37,7 @@ var suit = require('rework-suit');
 var uglify = require('gulp-uglify');
 
 function isProd(transform) {
-  // Assume prod unless NODE_ENV starts with 'dev'.
-  return gulpIf(!/^dev/.test(process.env.NODE_ENV), transform);
+  return gulpIf(process.env.NODE_ENV == 'production', transform);
 }
 
 function streamError(err) {
@@ -50,7 +49,7 @@ gulp.task('css', function() {
   gulp.src('./assets/css/main.css')
       .pipe(plumber({errorHandler: streamError}))
       .pipe(rework(suit(), inline('./assets/images'), {sourcemap: true}))
-      .pipe(prefix('> 1%', 'last 2 version', 'Safari >= 5.1',
+      .pipe(prefix('> 1%', 'last 2 versions', 'Safari >= 5.1',
                    'ie >= 10', 'Firefox ESR'))
       .pipe(isProd(cleancss({keepSpecialComments: 0})))
       .pipe(gulp.dest('./public/css'));
@@ -72,7 +71,9 @@ gulp.task('lint', function() {
 });
 
 gulp.task('javascript:browserify', function() {
-  browserify('./assets/javascript', {debug: true}).bundle()
+  browserify('./assets/javascript', {debug: true})
+      .transform(babelify)
+      .bundle()
       .on('error', streamError)
       .pipe(source('bundle.js'))
       .pipe(buffer())
@@ -112,7 +113,8 @@ gulp.task('javascript:static', function() {
         'node_modules/jquery/dist/jquery.min.js',
         'node_modules/jquery/dist/jquery.min.map',
         'node_modules/moment/min/moment.min.js',
-        'node_modules/chart.js/Chart.min.js'
+        'node_modules/chart.js/Chart.min.js',
+        'node_modules/Select2/select2.js'
       ])
       .pipe(gulp.dest('./public/javascript'));
 
@@ -180,6 +182,7 @@ gulp.task('watch', ['javascript', 'css', 'images'], function() {
 
   new DeepWatch('.', watchOptions, onChange).start();
 });
+
 
 // Disable JSHint since it doesn't handle JSX syntax at the moment.
 gulp.task('build', [/*'lint',*/ 'test', 'javascript', 'css', 'images']);

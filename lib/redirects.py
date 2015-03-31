@@ -18,6 +18,19 @@
 
 import webapp2
 
-class EmbedApiController(webapp2.RequestHandler):
+
+class EmbedApiRedirect(webapp2.RequestHandler):
   def get(self):
     return webapp2.redirect('/embed-api/', True)
+
+
+class QueryExplorerCsvRedirect(webapp2.RequestHandler):
+  def get(self):
+    q = '?' + self.request.query_string if self.request.query_string else ''
+    return webapp2.redirect('/query-explorer/csvhandler' + q, True)
+
+
+class QueryExplorerRedirect(webapp2.RequestHandler):
+  def get(self):
+    q = '?' + self.request.query_string if self.request.query_string else ''
+    return webapp2.redirect('/query-explorer/' + q, True)

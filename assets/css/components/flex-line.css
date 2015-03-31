@@ -1,5 +1,5 @@
 /*
-Copyright 2014 Google Inc. All rights reserved.
+Copyright 2015 Google Inc. All rights reserved.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -15,19 +15,22 @@ limitations under the License.
 */
 
 
-.Control {
-  border: 1px solid var(--border-color);
-  border-radius: 4px;
-  box-sizing: border-box;
-  font: inherit;
-  font-weight: 400;
-  height: calc(34em/14); /* 34px @ 14px body font */
-  line-height: calc(20em/14); /* 20px @ 14px body font */
-  padding: calc(6em/14); /* 6px @ 14px body font */
-  width: 100%;
+
+.FlexLine {
+  /* display: flex; */
+
+  /*
+   * TODO(philipwalton): replace the below with the above once this FF bug is
+   * fixed: https://bugzilla.mozilla.org/show_bug.cgi?id=1146442
+   */
+   display: inline-flex;
+   width: 100%;
 }
 
-.Control:focus {
-  border-color: #4d90fe;
-  outline: 0;
+.FlexLine-item {
+  flex: 1 0 auto;
+}
+
+.FlexLine-item--flex {
+  flex-grow: 1;
 }

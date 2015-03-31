@@ -14,21 +14,55 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-
 .Button {
-  border: 1px solid #2F5BB7;
-  border-radius: 2px;
-  background: #498cf6;
-  color: #fff;
+  background: hsl(30,10%,90%);
+  border: 1px solid transparent;
+  border-radius: 4px;
+  box-sizing: border-box;
+  color: inherit;
   cursor: pointer;
+  display: inline-block;
   font: inherit;
-  font-weight: bold;
-  margin-left: 1em;
-  min-width: 72px;
-  padding: 6px 12px;
-}
-.Button:focus {
-  box-shadow: inset 0 0 0 1px #FFF;
-  outline: none;
+  font-weight: 400;
+  line-height: calc(20em/14); /* 20px @ 14px body font */
+  padding: calc(6em/14) 1em; /* 6px @ 14px body font */
+  transition: background-color .2s var(--quantum-timing);
 }
 
+.Button:disabled {
+  opacity: .6;
+}
+
+.Button:active:enabled,
+.Button:focus:enabled,
+.Button:hover:enabled {
+  background: hsl(30,10%,85%);
+  outline: none;
+  text-decoration: none;
+}
+
+
+.Button--icon {
+  display: inline-flex;
+  align-items: center;
+}
+.Button--icon > .Icon {
+  font-size: 1.15em;
+  margin-right: .75em;
+}
+
+
+
+.Button--action {
+  color: #fff;
+  background: hsl(217, 91%, 63%);
+}
+.Button--action:active:enabled,
+.Button--action:focus:enabled,
+.Button--action:hover:enabled {
+  background: hsl(217, 91%, 53%);
+}
+
+.Button + .Button {
+  margin-left: .5em;
+}

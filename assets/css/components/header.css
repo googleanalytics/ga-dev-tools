@@ -1,5 +1,5 @@
 /*
-Copyright 2014 Google Inc. All rights reserved.
+Copyright 2015 Google Inc. All rights reserved.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -15,7 +15,9 @@ limitations under the License.
 */
 
 
+@import './progress-bar';
 @import './site';
+
 
 :root {
   --Header-text-color-light: #eee;
@@ -103,6 +105,37 @@ limitations under the License.
 .Header-logout {
   display: none;
 }
+
+.Header-progressIndicator {
+  bottom: -3px;
+  height: 3px;
+  left: 0;
+  position: absolute;
+  right: 0;
+  transform: scaleY(0);
+  transform-origin: 0 0;
+  transition: all .5s var(--quantum-timing);
+  visibility: hidden;
+}
+
+.is-loading .Header-progressIndicator {
+  animation: Header-showProgressIndicator .5s var(--quantum-timing) 1;
+  transform: scaleY(1);
+  visibility: visible;
+}
+
+.is-needingAuthorization .Header-progressIndicator {
+  visibility: hidden;
+  transform: scaleY(0);
+  transition: none;
+}
+
+@keyframes Header-showProgressIndicator {
+  0% {
+    transform: scaleY(0);
+  }
+}
+
 
 /* The user is signed in
    ========================================================================== */

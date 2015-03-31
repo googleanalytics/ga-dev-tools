@@ -104,6 +104,7 @@
 
 {% block foot_scripts %}
 {% include'embed-api/dependencies/_custom-components.html' %}
+{{ super() }}
 <script>
 {% include 'embed-api/code/_custom-components.js' %}
 </script>

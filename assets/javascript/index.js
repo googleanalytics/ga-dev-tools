@@ -21,7 +21,7 @@ require('svg4everybody');
 var accountExplorer = require('./account-explorer');
 var analytics = require('./analytics');
 var embedApi = require('./embed-api');
-var explorer = require('./explorer');
+var explorer = require('./query-explorer');
 var header = require('./header');
 var highlighter = require('./highlighter');
 var router = require('router');
@@ -42,7 +42,7 @@ analytics.track();
 
 // Add routes to initialize code based on the page the user is on.
 router()
-    .case('/explorer/', explorer.init)
+    .case('/query-explorer/', explorer.init)
     .case('/embed-api/<page>/', embedApi.init)
     .case('/account-explorer/', accountExplorer.init)
     .match();

@@ -21,35 +21,69 @@ import events from 'events';
 
 export default class Model extends events.EventEmitter {
 
+  /**
+   * Create a new model instance with the specified props.
+   * @constructor
+   * @param {Object} props The initial props for the model.
+   * @return {Model}
+   */
   constructor(props) {
     this.props_ = props || {};
     this.oldProps_ = {};
     this.changedProps_ = {};
   }
 
+
+  /*
+   * Gets the current model props.
+   * @return {Object}
+   */
   get props() {
     return this.props_;
   }
 
+
+  /*
+   * Gets the props that changed during the last `.set()` call.
+   * @return {Object}
+   */
   get changedProps() {
     return this.changedProps_;
   }
 
+
+  /*
+   * Gets the props as they were prior to the last `.set()` call.
+   * @return {Object}
+   */
   get oldProps() {
     return this.oldProps_;
   }
 
+
+  /*
+   * Gets all props or an individual prop value.
+   * @param {string} [prop] The optional prop name.
+   * @return {*}
+   */
   get(prop) {
     return prop ? this.props[prop] : this.props;
   }
 
+
+  /**
+   * Set a prop/value pair or an object of prop/value pairs.
+   * @param {Object|string} prop An object or individual prop name.
+   * @param {string} [value] The prop value when setting an individual prop.
+   * @emits change
+   */
   set(prop, value) {
 
     let hasChanges = false;
     let newProps = {};
 
     // Allow setting a single key/value pair or an object or key/value paris.
-    if (typeof prop == 'string' && value) {
+    if (typeof prop == 'string') {
       newProps[prop] = value;
     }
     else {
@@ -60,10 +94,7 @@ export default class Model extends events.EventEmitter {
     this.changedProps_ = {};
 
     each(newProps, (value, key) => {
-      if (!this.props_.hasOwnProperty(key)) {
-        throw new Error(`Cannot assign prop '${key}'; it doesn't exist.`);
-      }
-      else if (value !== this.oldProps_[key]) {
+      if (value !== this.oldProps_[key]) {
         hasChanges = true;
         this.changedProps_[key] = value;
       }
@@ -73,7 +104,14 @@ export default class Model extends events.EventEmitter {
     if (hasChanges) this.emit('change', this);
   }
 
+
+  /**
+   * Remove a prop from.
+   * @param {string} prop The prop to remove.
+   * @emits change
+   */
   unset(prop) {
+    
     // Don't unset if the prop doesn't exist.
     if (!this.props_.hasOwnProperty(prop)) return;
 
@@ -86,6 +124,10 @@ export default class Model extends events.EventEmitter {
     this.emit('change', this);
   }
 
+
+  /**
+   * Destroy a model instance, cleaning up any events added to it.
+   */
   destroy() {
     this.props_ = null;
     this.removeAllListeners();

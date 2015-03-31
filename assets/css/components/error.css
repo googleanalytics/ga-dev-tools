@@ -15,18 +15,24 @@ limitations under the License.
 */
 
 
-/**
- * Styles for gapi analytics table.
- */
-
-.gapi-analytics-data-chart {
-  margin-bottom: var(--gap);
+.Error {
+  background: hsl(0, 100%, 98%);
+  border: 1px solid hsla(0, 70%, 55%, .5);
+  border-radius: 4px;
+  color: hsla(0, 0%, 0%, 0.5);
+  margin: 2em 0px;
+  padding: 1em 1.5em;
 }
 
-.gapi-analytics-data-chart .gapi-analytics-data-chart-styles-table-tr-odd {
-  background: hsl(30, 15%, 96.7%)!important;
+.Error-title {
+  color: hsl(0, 70%, 55%);
+  display: inline-block;
+  font-size: 1.1em;
+  line-height: 1.5;
+  margin: 0 .5em 0 0;
 }
 
-.gapi-analytics-data-chart .gapi-analytics-data-chart-styles-table-tr-over {
-  background: hsl(30, 15%, 93.3%)!important;
+.Error-message {
+  display: inline-block;
+  margin: 0;
 }

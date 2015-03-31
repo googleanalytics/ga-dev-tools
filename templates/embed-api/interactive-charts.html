@@ -18,7 +18,7 @@
       <header class="Titles">
         <h1 class="Titles-main">Top Browsers (past 7 days)</h3>
       </header>
-      <div id="main-chart-container"></div>
+      <div id="main-chart-container" style="min-height:300px"></div>
     </li>
     <li class="FlexGrid-item">
       <header class="Titles">
@@ -73,8 +73,8 @@
 {% endblock %}
 
 {% block foot_scripts %}
+{{ super() }}
 <script>
 {% include 'embed-api/code/_interactive-charts.js' %}
 </script>
 {% endblock %}
-

@@ -1,0 +1,80 @@
+/*
+Copyright 2015 Google Inc. All rights reserved.
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+*/
+
+
+:root {
+  --ProgressBar-interval: 2s;
+  --ProgressBar-bgColor: hsl(215, 100%, 90%);
+  --ProgressBar-color: hsl(215, 100%, 60%);
+  --ProgressBar-sizeRatio: .6;
+}
+
+
+.ProgressBar {
+  background: var(--ProgressBar-bgColor);
+  overflow: hidden;
+  position: relative;
+}
+
+.ProgressBar::after,
+.ProgressBar::before {
+  background: linear-gradient(to right, var(--ProgressBar-bgColor),
+                                        var(--ProgressBar-color) 10%,
+                                        var(--ProgressBar-color));
+  content: '';
+  height: 100%;
+  position: absolute;
+  transform: translateX(-100%);
+  width: calc(100% * var(--ProgressBar-sizeRatio));
+}
+
+.ProgressBar::before {
+  animation: ProgressBar-leader
+             var(--ProgressBar-interval)
+             ease-in-out
+             infinite;
+
+}
+
+.ProgressBar::after {
+  animation: ProgressBar-follower
+             var(--ProgressBar-interval)
+             ease-in-out
+             calc(var(--ProgressBar-interval) * .5)
+             infinite;
+}
+
+
+@keyframes ProgressBar-leader {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(calc(150% / var(--ProgressBar-sizeRatio)));
+  }
+}
+
+@keyframes ProgressBar-follower {
+  0% {
+    transform: translateX(-100%);
+  }
+  60% {
+    transform: translateX(calc(150% / var(--ProgressBar-sizeRatio)));;
+  }
+  100% {
+    transform: translateX(calc(150% / var(--ProgressBar-sizeRatio)));;
+  }
+}

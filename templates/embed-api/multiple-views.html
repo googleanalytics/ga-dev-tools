@@ -75,8 +75,8 @@
 {% endblock %}
 
 {% block foot_scripts %}
+{{ super() }}
 <script>
 {% include 'embed-api/code/_multiple-views.js' %}
 </script>
 {% endblock %}
-

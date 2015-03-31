@@ -31,7 +31,7 @@
     {% endif %}
   {% endblock %}
 </head>
-<body class="Site">
+<body class="Site {{ initial_state }}">
 
   <aside class="Site-sidebar" id="sidebar">
     {% include '_nav-header.html' %}
@@ -73,9 +73,11 @@
   </main>
 
   <script src="/public/javascript/jquery.min.js"></script>
-  <script src="/public/javascript/bundle.js"></script>
 
-  {% block foot_scripts %}{% endblock %}
+  {% block foot_scripts %}
+    <script src="/public/javascript/bundle.js"></script>
+  {% endblock %}
+
 
 </body>
 </html>

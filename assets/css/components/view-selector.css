@@ -1,5 +1,5 @@
 /*
-Copyright 2014 Google Inc. All rights reserved.
+Copyright 2015 Google Inc. All rights reserved.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -88,4 +88,19 @@ limitations under the License.
   }
 }
 
+/*
+ * Force each item onto its own line
+ * regardless of the breakpoint.
+ */
+.ViewSelector2--stacked,
+.ViewSelector--stacked {
+  display: block;
+  margin: 0;
+  width: auto;
+}
 
+.ViewSelector2--stacked .ViewSelector2-item,
+/* For the old school view selector. */
+.ViewSelector--stacked table {
+  margin-left: 0;
+}

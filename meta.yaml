@@ -97,11 +97,11 @@ projects:
   tech: [management_api, metadata_api]
 - title: Query Explorer
   type: tool
-  slug: explorer
-  tech: [core_reporting_api, management_api, metadata_api]
+  slug: query-explorer
+  status: updated
+  tech: [core_reporting_api, embed_api, management_api, metadata_api]
 - title: Spreadsheet Add-on
   type: tool
   slug: spreadsheet-add-on
   external: https://chrome.google.com/webstore/detail/google-analytics/fefimfimnhjjkomigakinmjileehfopp
   tech: [core_reporting_api, management_api, mcf_reporting_api, metadata_api]
-
