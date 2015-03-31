@@ -51,7 +51,7 @@ let migrationFunctions = {
 
 
 /**
- * Ensure that the cache object is populated with data from local storaged.
+ * Ensure that the cache object is populated with data from local storage.
  * Also verify that the schema is current and upgrade if it's not.
  */
 function ensureCache() {
