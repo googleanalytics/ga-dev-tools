@@ -98,6 +98,7 @@ projects:
 - title: Query Explorer
   type: tool
   slug: query-explorer
+  status: updated
   tech: [core_reporting_api, embed_api, management_api, metadata_api]
 - title: Spreadsheet Add-on
   type: tool
