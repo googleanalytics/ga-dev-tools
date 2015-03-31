@@ -71,7 +71,10 @@ export default function() {
       metrics: data[0].map(function(metric) {
         return {
           id: metric.id,
-          text: [metric.id, metric.uiName, metric.group].join(' '),
+          text: [
+            metric.id,
+            metric.attributes.uiName,
+            metric.attributes.group].join(' '),
           name: metric.attributes.uiName,
           group: metric.attributes.group
         };
@@ -80,7 +83,10 @@ export default function() {
       dimensions: data[1].map(function(dimension) {
         return {
           id: dimension.id,
-          text: [dimension.id, dimension.uiName, dimension.group].join(' '),
+          text: [
+            dimension.id,
+            dimension.attributes.uiName,
+            dimension.attributes.group].join(' '),
           name: dimension.attributes.uiName,
           group: dimension.attributes.group
         };
