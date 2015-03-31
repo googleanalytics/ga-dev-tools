@@ -60,11 +60,17 @@ function getInitalQueryParams() {
   let storedParams = store.get('query-explorer:params');
   let urlParams = qs.parse(location.search.slice(1));
 
+  // Don't assume that the presence any query params means it's a Query
+  // Explorer URL. Only use the query params if they exist and contain at least
+  // a metric value.
   if (urlParams && urlParams['metrics']) {
 
-    // Some of the existing Query Explorer links have double-encoded
-    // URL params, so we need to double-decode, just in case.
-    urlParams = mapValues(urlParams, (value) => decodeURIComponent(value));
+    // Some of the Query Explorer links out in the wild have double-encoded
+    // URL params. Check for the substring '%253A' (a colon, double-encoded),
+    // and if found then double-decode all params.
+    if (urlParams['metrics'].indexOf('%253A')) {
+      urlParams = mapValues(urlParams, (value) => decodeURIComponent(value));
+    }
 
     return assign({}, defaultParams, urlParams);
   }
