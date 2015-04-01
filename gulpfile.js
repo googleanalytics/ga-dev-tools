@@ -1,4 +1,4 @@
-// Copyright 2014 Google Inc. All rights reserved.
+// Copyright 2015 Google Inc. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -83,30 +83,6 @@ gulp.task('javascript:browserify', function() {
       .pipe(gulp.dest('./public/javascript/'));
 });
 
-// TODO(philipwalton): refactor the explorer to use browserify.
-gulp.task('javascript:explorer', function() {
-  gulp.src([
-        './assets/javascript/explorer/ga-values.js',
-        './assets/javascript/explorer/ga-dropdown.js',
-        './assets/javascript/explorer/ga-dataquery.js',
-        './assets/javascript/explorer/ga-util.js',
-        './assets/javascript/explorer/ga-mgmt.js',
-        './assets/javascript/explorer/ga-fun.js',
-        './assets/javascript/explorer/ga-coreapi.js',
-        './assets/javascript/explorer/ga-loader.js',
-        './assets/javascript/explorer/ga-auth.js',
-        './assets/javascript/explorer/ga-pubsub.js',
-        './assets/javascript/explorer/ga-app.js',
-        './assets/javascript/explorer/ga-metadata.js'
-      ])
-      .pipe(plumber({errorHandler: streamError}))
-      .pipe(sourcemaps.init())
-      .pipe(concat('explorer.js'))
-      .pipe(isProd(uglify()))
-      .pipe(sourcemaps.write('./'))
-      .pipe(gulp.dest('./public/javascript'));
-});
-
 gulp.task('javascript:static', function() {
   // Utilties.
   gulp.src([
@@ -152,8 +128,7 @@ gulp.task('javascript:static', function() {
 
 gulp.task('javascript', [
   'javascript:browserify',
-  'javascript:static',
-  'javascript:explorer',
+  'javascript:static'
 ]);
 
 
