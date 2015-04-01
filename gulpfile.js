@@ -70,7 +70,7 @@ gulp.task('lint', function() {
   .pipe(jshint.reporter('fail'));
 });
 
-gulp.task('javascript:browserify', function() {
+gulp.task('javascript:bundle', function() {
   browserify('./assets/javascript', {debug: true})
       .transform(babelify)
       .bundle()
@@ -83,8 +83,7 @@ gulp.task('javascript:browserify', function() {
       .pipe(gulp.dest('./public/javascript/'));
 });
 
-gulp.task('javascript:static', function() {
-  // Utilties.
+gulp.task('javascript:vendor', function() {
   gulp.src([
         'node_modules/jquery/dist/jquery.min.js',
         'node_modules/jquery/dist/jquery.min.map',
@@ -93,42 +92,38 @@ gulp.task('javascript:static', function() {
         'node_modules/Select2/select2.js'
       ])
       .pipe(gulp.dest('./public/javascript'));
+});
 
-  // Embed API demo modules.
-
-  // TODO(philipwalton): the following two should be combined into a single
-  // stream once this issue is solved:
-  // https://github.com/floridoo/gulp-sourcemaps/issues/37
-  gulp.src('./assets/javascript/embed-api/active-users.js')
+gulp.task('javascript:build', function() {
+  gulp.src([
+        './assets/javascript/embed-api/components/active-users.js',
+        './assets/javascript/embed-api/components/date-range-selector.js'
+      ])
       .pipe(plumber({errorHandler: streamError}))
       .pipe(sourcemaps.init())
-      .pipe(concat('active-users.js'))
       .pipe(uglify())
       .pipe(sourcemaps.write('./'))
-      .pipe(gulp.dest('./public/javascript/embed-api'));
+      .pipe(gulp.dest('./public/javascript/embed-api/components'))
+      .pipe(gulp.dest('./build/javascript/embed-api/components'));
 
-  gulp.src('./assets/javascript/embed-api/date-range-selector.js')
-      .pipe(plumber({errorHandler: streamError}))
-      .pipe(sourcemaps.init())
-      .pipe(concat('date-range-selector.js'))
-      .pipe(uglify())
-      .pipe(sourcemaps.write('./'))
-      .pipe(gulp.dest('./public/javascript/embed-api'));
-
-  browserify('./assets/javascript/embed-api/view-selector2', {debug: true})
+  browserify('./assets/javascript/embed-api/components/view-selector2', {
+        debug: true
+      })
       .bundle()
       .on('error', streamError)
       .pipe(source('view-selector2.js'))
       .pipe(buffer())
       .pipe(sourcemaps.init({loadMaps: true}))
-      .pipe(isProd(uglify()))
+      .pipe(uglify())
       .pipe(sourcemaps.write('./'))
-      .pipe(gulp.dest('./public/javascript/embed-api'));
+      .pipe(gulp.dest('./public/javascript/embed-api/components'))
+      .pipe(gulp.dest('./build/javascript/embed-api/components'));
 });
 
 gulp.task('javascript', [
-  'javascript:browserify',
-  'javascript:static'
+  'javascript:bundle',
+  'javascript:build',
+  'javascript:vendor'
 ]);
 
 
