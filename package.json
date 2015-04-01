@@ -14,7 +14,7 @@
     "babelify": "^5.0.3",
     "browserify": "^6.0.2",
     "camelcase": "^1.0.2",
-    "chart.js": "nnnick/Chart.js#v1.0.1-beta.4",
+    "chart.js": "nnnick/Chart.js#v1.0.2",
     "core-js": "^0.5.4",
     "deep-watch": "^0.1.1",
     "gulp": "^3.8.7",
