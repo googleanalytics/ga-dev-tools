@@ -52,6 +52,14 @@ let baseOpts = {
 
 
 /**
+ * The additional options for dimensions and metrics select2 widgets.
+ */
+let dimensionsAndMetricsOpts = {
+  tokenSeparators: [',']
+};
+
+
+/**
  * The additional options for segment select2 widgets.
  */
 let segmentsOpts = {
@@ -82,7 +90,7 @@ let segmentsOpts = {
 function getOptsFromProps(props) {
   return props.name == 'segment'
     ? assign({tags: props.tags}, baseOpts, segmentsOpts)
-    : assign({tags: props.tags}, baseOpts);
+    : assign({tags: props.tags}, baseOpts, dimensionsAndMetricsOpts);
 }
 
 
