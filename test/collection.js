@@ -14,9 +14,9 @@
 
 
 import assert from 'assert';
-import Collection from '../assets/javascript/collection';
+import Collection from '../src/javascript/collection';
 import events from 'events';
-import Model from '../assets/javascript/model';
+import Model from '../src/javascript/model';
 import sinon from 'sinon';
 
 

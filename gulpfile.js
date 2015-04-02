@@ -46,9 +46,9 @@ function streamError(err) {
 }
 
 gulp.task('css', function() {
-  gulp.src('./assets/css/main.css')
+  gulp.src('./src/css/main.css')
       .pipe(plumber({errorHandler: streamError}))
-      .pipe(rework(suit(), inline('./assets/images'), {sourcemap: true}))
+      .pipe(rework(suit(), inline('./src/images'), {sourcemap: true}))
       .pipe(prefix('> 1%', 'last 2 versions', 'Safari >= 5.1',
                    'ie >= 10', 'Firefox ESR'))
       .pipe(isProd(cleancss({keepSpecialComments: 0})))
@@ -56,14 +56,14 @@ gulp.task('css', function() {
 });
 
 gulp.task('images', function() {
-  gulp.src('./assets/images/**/*')
+  gulp.src('./src/images/**/*')
       .pipe(gulp.dest('./public/images'));
 });
 
 gulp.task('lint', function() {
   return gulp.src([
     './gulpfile.js',
-    './assets/javascript/**/*.js'
+    './src/javascript/**/*.js'
   ])
   .pipe(jshint())
   .pipe(jshint.reporter('default'))
@@ -71,7 +71,7 @@ gulp.task('lint', function() {
 });
 
 gulp.task('javascript:bundle', function() {
-  browserify('./assets/javascript', {debug: true})
+  browserify('./src/javascript', {debug: true})
       .transform(babelify)
       .bundle()
       .on('error', streamError)
@@ -96,8 +96,8 @@ gulp.task('javascript:vendor', function() {
 
 gulp.task('javascript:build', function() {
   gulp.src([
-        './assets/javascript/embed-api/components/active-users.js',
-        './assets/javascript/embed-api/components/date-range-selector.js'
+        './src/javascript/embed-api/components/active-users.js',
+        './src/javascript/embed-api/components/date-range-selector.js'
       ])
       .pipe(plumber({errorHandler: streamError}))
       .pipe(sourcemaps.init())
@@ -106,7 +106,7 @@ gulp.task('javascript:build', function() {
       .pipe(gulp.dest('./public/javascript/embed-api/components'))
       .pipe(gulp.dest('./build/javascript/embed-api/components'));
 
-  browserify('./assets/javascript/embed-api/components/view-selector2', {
+  browserify('./src/javascript/embed-api/components/view-selector2', {
         debug: true
       })
       .bundle()
@@ -134,9 +134,9 @@ gulp.task('test', function() {
 
 
 gulp.task('watch', ['javascript', 'css', 'images'], function() {
-  // gulp.watch('./assets/css/**/*.css', ['css']);
-  // gulp.watch('./assets/images/**/*', ['images']);
-  // gulp.watch('./assets/javascript/**/*.js', ['javascript']);
+  // gulp.watch('./src/css/**/*.css', ['css']);
+  // gulp.watch('./src/images/**/*', ['images']);
+  // gulp.watch('./src/javascript/**/*.js', ['javascript']);
 
   // This is a temporary workaround until this `gulp.watch` is fixed:
   // https://github.com/babel/babel/issues/489#issuecomment-69919417
@@ -145,9 +145,9 @@ gulp.task('watch', ['javascript', 'css', 'images'], function() {
   };
 
   function onChange(event, filename) {
-    if (filename.indexOf('assets/css') === 0) gulp.start('css');
-    if (filename.indexOf('assets/images') === 0) gulp.start('images');
-    if (filename.indexOf('assets/javascript') === 0) gulp.start('javascript');
+    if (filename.indexOf('src/css') === 0) gulp.start('css');
+    if (filename.indexOf('src/images') === 0) gulp.start('images');
+    if (filename.indexOf('src/javascript') === 0) gulp.start('javascript');
   }
 
   new DeepWatch('.', watchOptions, onChange).start();
