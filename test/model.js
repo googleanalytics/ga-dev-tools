@@ -15,7 +15,7 @@
 
 import assert from 'assert';
 import events from 'events';
-import Model from '../assets/javascript/model';
+import Model from '../src/javascript/model';
 import sinon from 'sinon';
 
 

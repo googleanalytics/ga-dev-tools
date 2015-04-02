@@ -108,4 +108,3 @@ gapi.analytics.ready(function() {
   });
 
 });
-
