@@ -156,6 +156,7 @@ function handleDataChartSuccess(data) {
     hitType: 'event',
     eventCategory: 'query',
     eventAction: 'submit:success',
+    eventLabel: '(not set)',
     metric1: 1
   });
 }
