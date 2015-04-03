@@ -96,25 +96,28 @@ function handleViewSelectorChange(data) {
 
 /**
  * Invoked when a user clicks on the segment definition checkbox.
+ * @param {SyntheticEvent} e The React event.
  */
-function handleSegmentDefinitionToggle() {
-  settings.set('useDefinition', !settings.get('useDefinition'));
+function handleSegmentDefinitionToggle(e) {
+  settings.set('useDefinition', e.target.checked);
 }
 
 
 /**
  * Invoked when a user clicks on the include `ids` checkbox.
+ * @param {SyntheticEvent} e The React event.
  */
-function handleIdsToggle() {
-  settings.set('includeIds', !settings.get('includeIds'));
+function handleIdsToggle(e) {
+  settings.set('includeIds', e.target.checked);
 }
 
 
 /**
  * Invoked when a user clicks on the include `access_token` checkbox.
+ * @param {SyntheticEvent} e The React event.
  */
-function handleAccessTokenToggle() {
-  settings.set('includeAccessToken', !settings.get('includeAccessToken'));
+function handleAccessTokenToggle(e) {
+  settings.set('includeAccessToken', e.target.checked);
 }
 
 
