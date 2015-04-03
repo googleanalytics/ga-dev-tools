@@ -191,11 +191,11 @@ function handleDataChartError(err) {
  * @param {Event|Object} e The native or React event.
  */
 function handleSubmit(e) {
-
   e.preventDefault();
 
-  // Construct a "Query Parameter" dimension string based off this report
   let paramsClone = clone(params.get());
+
+  // Construct a "Query Parameter" dimension string based off this report
   let paramsToTrack = pick(paramsClone,
       ['start-date', 'end-date', 'metrics', 'dimensions']);
   // Don't run `encodeURIComponent` on these params because the they will
@@ -211,7 +211,7 @@ function handleSubmit(e) {
   state.set({
     isQuerying: true,
     report: {
-      params: clone(params.get())
+      params: paramsClone
     }
   });
 }
