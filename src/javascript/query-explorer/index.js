@@ -155,8 +155,8 @@ function handleDataChartSuccess(data) {
   ga('send', {
     hitType: 'event',
     eventCategory: 'query',
-    eventAction: 'submit:success',
-    eventLabel: '(not set)',
+    eventAction: 'submit',
+    eventLabel: '(200) OK',
     metric1: 1
   });
 }
@@ -179,8 +179,8 @@ function handleDataChartError(err) {
   ga('send', {
     hitType: 'event',
     eventCategory: 'query',
-    eventAction: 'submit:error',
-    eventLabel: err.error.message,
+    eventAction: 'submit',
+    eventLabel: `(${err.error.code}) ${err.error.message}`,
     metric2: 1
   });
 }
