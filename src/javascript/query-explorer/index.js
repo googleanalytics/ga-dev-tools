@@ -329,6 +329,9 @@ function setup() {
       render();
     });
 
+    // Store the initial settings on the tracker.
+    ga('set', 'dimension3', qs.stringify(settings.get()));
+
     // Add/remove state classes.
     $('body').removeClass('is-loading');
     $('body').addClass('is-ready');
