@@ -153,6 +153,7 @@ let QueryReport = React.createClass({
                 rows="3"
                 className="FormField"
                 value={this.reportLink()}
+                onFocus={this.props.onDirectLinkFocus}
                 readOnly>
               </textarea>
               <label className="FormControl-info">
@@ -178,6 +179,7 @@ let QueryReport = React.createClass({
                 rows="3"
                 className="FormField"
                 value={this.apiQueryUri()}
+                onFocus={this.props.onApiUriFocus}
                 readOnly>
               </textarea>
               <label className="FormControl-info">
@@ -199,7 +201,8 @@ let QueryReport = React.createClass({
           <a
             download
             href={this.downloadTsvLink()}
-            className="Button Button--icon">
+            className="Button Button--icon"
+            onClick={this.props.onDownloadTsvClick}>
             <span dangerouslySetInnerHTML={{__html: iconDownload}} />&nbsp;
             Download Results as TSV
           </a>

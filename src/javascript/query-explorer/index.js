@@ -13,15 +13,17 @@
 // limitations under the License.
 
 
-/* global gapi */
+/* global ga, gapi */
 
 
 import assign from 'lodash/object/assign';
 import clone from 'lodash/lang/clone';
 import find from 'lodash/collection/find';
 import getTagData from './tag-data';
+import map from 'lodash/collection/map';
 import mapValues from 'lodash/object/mapValues';
 import Model from '../model';
+import pick from 'lodash/object/pick';
 import qs from 'querystring';
 import QueryForm from './query-form';
 import queryParams from './query-params';
@@ -149,6 +151,14 @@ function handleDataChartSuccess(data) {
       response: data.response
     }
   });
+
+  ga('send', {
+    hitType: 'event',
+    eventCategory: 'query',
+    eventAction: 'submit',
+    eventLabel: '(200) OK',
+    metric1: 1
+  });
 }
 
 
@@ -165,6 +175,14 @@ function handleDataChartError(err) {
       error: err.error
     }
   });
+
+  ga('send', {
+    hitType: 'event',
+    eventCategory: 'query',
+    eventAction: 'submit',
+    eventLabel: `(${err.error.code}) ${err.error.message}`,
+    metric2: 1
+  });
 }
 
 
@@ -174,12 +192,52 @@ function handleDataChartError(err) {
  */
 function handleSubmit(e) {
   e.preventDefault();
+
+  let paramsClone = clone(params.get());
+
+  // Construct a "Query Parameter" dimension string based off this report
+  let paramsToTrack = pick(paramsClone,
+      ['start-date', 'end-date', 'metrics', 'dimensions']);
+  // Don't run `encodeURIComponent` on these params because the they will
+  // never contain characters that make parsing fail (or be ambiguous).
+  // NOTE: Manual serializing is requred until the encodeURIComponent override
+  // is supported here: https://github.com/Gozala/querystring/issues/6
+  let serializedParamsToTrack = map(paramsToTrack,
+      (value, key) => `${key}=${value}`).join('&');
+
+  // Set it on the tracker so it gets sent with all Query Explorer hits.
+  ga('set', 'dimension2', serializedParamsToTrack);
+
   state.set({
     isQuerying: true,
     report: {
-      params: clone(params.get())
+      params: paramsClone
     }
   });
+}
+
+
+/**
+ * Invoked when a user focuses on the "Direct link to this report" textarea.
+ */
+function handleDirectLinkFocus(e) {
+  ga('send', 'event', 'query direct link', 'focus');
+}
+
+
+/**
+ * Invoked when a user focuses on the "API Query URI" textarea.
+ */
+function handleApiUriFocus() {
+  ga('send', 'event', 'query api uri', 'focus');
+}
+
+
+/**
+ * Invoked when a user clicks the "Download Results as TSV" button.
+ */
+function handleDownloadTsvClick() {
+  ga('send', 'event', 'query tsv download', 'click');
 }
 
 
@@ -217,7 +275,10 @@ function render() {
         onSuccess={handleDataChartSuccess}
         onError={handleDataChartError}
         onIdsToggle={handleIdsToggle}
-        onAccessTokenToggle={handleAccessTokenToggle} />
+        onAccessTokenToggle={handleAccessTokenToggle}
+        onDirectLinkFocus={handleDirectLinkFocus}
+        onApiUriFocus={handleApiUriFocus}
+        onDownloadTsvClick={handleDownloadTsvClick} />
 
     </div>,
     document.getElementById('react-container')
@@ -250,6 +311,11 @@ function setup() {
       }
     });
 
+    // Update the tracker's "Query Explorer Settings" dimension on change.
+    settings.on('change', function() {
+      ga('set', 'dimension3', qs.stringify(settings.get()));
+    });
+
     // Listen for changes and rerender.
     settings.on('change', function() {
       store.set('query-explorer:settings', settings.get());
@@ -262,6 +328,9 @@ function setup() {
     state.on('change', function() {
       render();
     });
+
+    // Store the initial settings on the tracker.
+    ga('set', 'dimension3', qs.stringify(settings.get()));
 
     // Add/remove state classes.
     $('body').removeClass('is-loading');
