@@ -93,9 +93,9 @@ projects:
   status: new
   external: https://enhancedecommerce.appspot.com
   tech: [analyticsjs, ecjs]
-- title: Hit Validator
+- title: Hit Builder
   type: tool
-  slug: hit-validator
+  slug: hit-builder
   status: new
   tech: [measurement_protocol_validation_server]
 - title: Polymer Elements

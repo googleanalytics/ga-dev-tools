@@ -1,7 +1,7 @@
-import assign from 'lodash-node/modern/object/assign';
+import assign from 'lodash/object/assign';
 import events from 'events';
-import filter from 'lodash-node/modern/collection/filter';
-import find from 'lodash-node/modern/collection/find';
+import filter from 'lodash/collection/filter';
+import find from 'lodash/collection/find';
 import querystring from 'querystring';
 import url from 'url';
 
