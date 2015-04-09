@@ -25,10 +25,10 @@ describe('Collection', function() {
   var model1, model2, model3, model4, collection;
 
   beforeEach(function() {
-    model1 = new Model({id: '1', prop: 'value'});
-    model2 = new Model({id: '2', prop: 'value'});
-    model3 = new Model({id: '3', prop: 'value'});
-    model4 = new Model({id: '4', prop: 'value'});
+    model1 = new Model({prop: 'value'});
+    model2 = new Model({prop: 'value'});
+    model3 = new Model({prop: 'value'});
+    model4 = new Model({prop: 'value'});
     collection = new Collection([model1, model2, model3]);
   });
 
@@ -66,8 +66,8 @@ describe('Collection', function() {
 
   describe('.get()', function() {
 
-    it('gets a model by its ID.', function() {
-      assert.equal(collection.get('2'), model2);
+    it('gets a model by its uid property.', function() {
+      assert.equal(collection.get(model2.uid), model2);
     });
 
   });
@@ -115,9 +115,9 @@ describe('Collection', function() {
       assert.equal(collection.size, 2);
     });
 
-    it('accepts a model object or a model ID.', function() {
+    it('accepts a model object or a model\'s uid property.', function() {
       collection.remove(model1);
-      collection.remove('2');
+      collection.remove(model2.uid);
       assert.equal(collection.size, 1);
     });
 
@@ -130,7 +130,7 @@ describe('Collection', function() {
       assert(spy.calledOnce);
       assert(spy.calledWith(model1));
 
-      collection.remove('2');
+      collection.remove(model2.uid);
       assert(spy.calledTwice);
       assert(spy.calledWith(model2));
     });

@@ -59,11 +59,11 @@ export default class Collection extends events.EventEmitter {
 
 
   /*
-   * Gets a model by its `id` prop.
+   * Gets a model by its unique ID.
    * @return {Model}
    */
-  get(id) {
-    return find(this.models_, (model) => model.props.id == id);
+  get(uid) {
+    return find(this.models_, {uid});
   }
 
 
@@ -73,8 +73,6 @@ export default class Collection extends events.EventEmitter {
    * @return {Collection}
    */
   add(model) {
-    if (!model.props.id) throw new Error('Models must have an "id" property.');
-
     model.on('change', this.handleChange_);
 
     this.models_.push(model);
