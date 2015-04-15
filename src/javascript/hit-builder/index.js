@@ -13,50 +13,79 @@
 // limitations under the License.
 
 
-/* global $ */
+import Collection from '../collection';
+import HitElement from './hit-element';
+import Model from '../model';
+import ParamElement from './param-element';
+import ParamsCollection from './params-collection';
+import React from 'react';
 
 
-import ParamModel from './param-model';
+export default {
 
-// var ParamElementCollection = require('./param-element-collection');
-
-var HitElement = require('./hit-element');
-var ParamElement = require('./param-element');
-var React = require('react');
-var url = require('url');
-
-
-module.exports = {
   init: function() {
 
-    const HIT = 'v=1&_v=j33&a=2125927068&t=pageview&_s=1&dl=https%3A%2F%2Fdevelopers.google.com%2Fanalytics%2Fdevguides%2Freporting%2Fcore%2Fdimsmets&ul=en-us&de=UTF-8&dt=Dimensions%20%26%20Metrics%20Reference%20-%20Google%20Analytics%20%E2%80%94%20Google%20Developers&sd=24-bit&sr=1440x900&vp=602x778&je=1&fl=16.0%20r0&_utma=171161141.1863589362.1423249192.1424887816.1424887816.5&_utmz=171161141.1424887816.4.2.utmcsr%3Dcode.google.com%7Cutmccn%3D(referral)%7Cutmcmd%3Dreferral%7Cutmcct%3D%2Fapis%2Fexplorer%2F&_utmht=1424992426499&_u=QBECAAQBI~&jid=921458479&cid=1863589362.1423249192&tid=UA-41425441-2&_r=1&z=1390611190';
 
-    var model = new ParamModel();
-    var foo = 1000;
+    let state = new Model();
+    let params = new ParamsCollection();
+
+    state.on('change', render);
+
+    function updateHit(hit) {
+      if (params) params.destroy();
+
+      params = new ParamsCollection(hit)
+          .on('add', render)
+          .on('remove', render)
+          .on('change', render);
+
+      render();
+    }
+
+    function handleCreateNew() {
+      state.set('editing', true);
+    }
 
     function render() {
-      React.render(
-        <div>
-          <HitElement hitUrl={model.toQueryString()}
-                      onHitUrlChange={model.parse.bind(model)} />
+
+      function getStarted() {
+        return (
           <div>
-            {model.params.map(param => {
+            <button onClick={handleCreateNew}>Create new hit</button>
+          </div>
+        )
+      }
+
+      function paramList() {
+        let newModel = new Model({name:'', value:''});
+        return (
+          <div>
+            <HitElement
+              hitUrl={params.toQueryString()}
+              onBlur={updateHit} />
+            {params.models.map((model) => {
               return (
                 <ParamElement
-                  onParamChange={model.update.bind(model)}
-                  onParamRemove={model.remove.bind(model)}
-                  param={param}
-                  key={param.pid} />
+                  model={model}
+                  key={model.uid}
+                  onRemove={params.remove.bind(params, model)} />
               );
             })}
+            <button
+              onClick={params.add.bind(params, newModel)}>
+              + Add new</button>
           </div>
-          <button onClick={model.add.bind(model)}>+ Add new</button>
+        )
+      }
+
+      React.render(
+        <div>
+          {state.get('editing') ? paramList() : getStarted()}
         </div>,
         document.getElementById('react-test')
       );
     }
 
-    model.on('change', render);
-    model.parse(HIT);
+    updateHit();
   }
 };

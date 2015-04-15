@@ -18,7 +18,10 @@ import React from 'react';
 
 var ParamElement = React.createClass({
   getInitialState: function() {
-    return {name: this.props.param.name, value: this.props.param.value};
+    return {
+      name: this.props.model.get('name'),
+      value: this.props.model.get('value')
+    };
   },
   componentWillReceiveProps: function(props) {
     //console.log('<ParamElement> componentWillReceiveProps');
@@ -27,24 +30,33 @@ var ParamElement = React.createClass({
   handleNameChange: function(event) {
     var data = {name: event.target.value, value: this.state.value};
     this.setState(data)
-    this.props.onParamChange(this.props.param.pid, data);
+    this.props.model.set(data);
   },
   handleValueChange: function(event) {
     var data = {name: this.state.name, value: event.target.value};
     this.setState(data)
-    this.props.onParamChange(this.props.param.pid, data);
+    this.props.model.set(data);
   },
   remove: function() {
-    this.props.onParamRemove(this.props.param.pid);
+    // this.props.onParamRemove(this.props.param.pid);
+    this.props.onRemove();
   },
   render: function() {
+
+    let error = this.props.model.get('error');
+    let className = 'ParamElement' + (error ? ' ParamElement--error' : '');
+
     return (
-      <div className="ParamElement">
-        <input value={this.state.name}
-               onChange={this.handleNameChange} />
-        <input value={this.state.value}
-               onChange={this.handleValueChange} />
-        <button onClick={this.remove}>remove</button>
+      <div className={className}>
+        <input
+          value={this.state.name}
+          onChange={this.handleNameChange} />
+        <input
+          value={this.state.value}
+          onChange={this.handleValueChange} />
+        { this.props.model.get('required') ?
+            null : <button onClick={this.remove}>remove</button> }
+        { error ? <div>{error}</div> : null}
       </div>
     );
   }

@@ -2,12 +2,21 @@
 
 {% block content %}
 
+<style>
+.ParamElement {
+
+}
+.ParamElement input {
+  margin: .5em .25em;
+}
+.ParamElement--error {
+  background-color: hsla(0, 100%, 50%, .1);
+}
+</style>
+
 <section>
   <h2>Overview</h2>
 
-  <p>Content goes here...</p>
-
-  <label><code>https://www.google-analytics.com/r/collect?</code></label>
   <div id="react-test"></div>
 
 {% endblock %}

@@ -17,27 +17,30 @@ import React from 'react';
 
 
 var HitElement = React.createClass({
-  getInitialState: function() {
-    return {hitUrl: this.props.hitUrl};
-  },
-  componentWillReceiveProps: function(props) {
-    this.setState({hitUrl: props.hitUrl});
-  },
-  handleChange: function(event) {
-    this.setState({hitUrl: event.target.value});
-  },
-  handleUpdate: function(event) {
-    this.props.onHitUrlChange(event.target.value);
-  },
+  // getInitialState: function() {
+  //   return {hitUrl: this.props.hitUrl};
+  // },
+  // componentWillReceiveProps: function(props) {
+  //   this.setState({hitUrl: props.hitUrl});
+  // },
+  // handleChange: function(event) {
+  //   this.setState({hitUrl: event.target.value});
+  // },
+  // handleBlur: function() {
+  //   this.props.onBlur(this.state.hitUrl);
+  // },
   render: function() {
+    /*
     return (
-      <textarea className="Control"
-                rows="6"
-                cols="40"
-                value={this.state.hitUrl}
-                onChange={this.handleChange}
-                onBlur={this.handleUpdate} />
+      <textarea
+        rows="6"
+        cols="80"
+        value={this.state.hitUrl}
+        onChange={this.handleChange}
+        onBlur={this.handleBlur} />
     );
+    */
+    return (<div>{this.props.hitUrl}</div>)
   }
 });
 
