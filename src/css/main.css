@@ -1,5 +1,5 @@
 /*
-Copyright 2014 Google Inc. All rights reserved.
+Copyright 2015 Google Inc. All rights reserved.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -51,6 +51,8 @@ limitations under the License.
 @import './components/query-report';
 @import './components/s2tag';
 @import './components/screenshot';
+@import './components/search-suggest';
+@import './components/search-suggest-match';
 @import './components/site';
 @import './components/tech-info';
 @import './components/titles';
@@ -62,5 +64,4 @@ limitations under the License.
 
 /* Vendor styles (which don't necessarily follow conventions) */
 @import './vendor/highlight';
-@import './vendor/select2-overrides';
 @import './vendor/table-chart';

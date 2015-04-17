@@ -71,10 +71,6 @@ export default function() {
       metrics: data[0].map(function(metric) {
         return {
           id: metric.id,
-          text: [
-            metric.id,
-            metric.attributes.uiName,
-            metric.attributes.group].join(' '),
           name: metric.attributes.uiName,
           group: metric.attributes.group
         };
@@ -83,10 +79,6 @@ export default function() {
       dimensions: data[1].map(function(dimension) {
         return {
           id: dimension.id,
-          text: [
-            dimension.id,
-            dimension.attributes.uiName,
-            dimension.attributes.group].join(' '),
           name: dimension.attributes.uiName,
           group: dimension.attributes.group
         };
@@ -95,7 +87,6 @@ export default function() {
       segmentIds: data[2].map(function(segment) {
         return {
           id: segment.segmentId,
-          text: [segment.definition, segment.name, segment.type].join(' '),
           segmentId: segment.segmentId,
           definition: segment.definition,
           name: segment.name,
@@ -107,7 +98,6 @@ export default function() {
       segmentDefinitions: data[2].map(function(segment) {
         return {
           id: segment.definition,
-          text: [segment.definition, segment.name, segment.type].join(' '),
           segmentId: segment.segmentId,
           definition: segment.definition,
           name: segment.name,

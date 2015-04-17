@@ -46,13 +46,15 @@ var QueryForm = React.createClass({
           name="metrics"
           value={this.props.params.metrics}
           onChange={this.props.onChange}
-          tags={this.props.metrics}
+          type="search"
+          options={this.props.metrics}
           required />
         <FormControl
           name="dimensions"
           value={this.props.params.dimensions}
           onChange={this.props.onChange}
-          tags={this.props.dimensions} />
+          type="search"
+          options={this.props.dimensions} />
         <FormControl
           name="sort"
           value={this.props.params.sort}
@@ -65,7 +67,8 @@ var QueryForm = React.createClass({
           name="segment"
           value={this.props.params.segment}
           onChange={this.props.onChange}
-          tags={this.props.segments}>
+          type="search"
+          options={this.props.segments}>
           <label>
             <input
               className="Checkbox"

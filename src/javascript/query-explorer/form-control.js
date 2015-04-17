@@ -16,7 +16,7 @@
 import camelCase from 'camelcase';
 import Datepicker from './datepicker';
 import React from 'react';
-import select2Tags from './select2-tags';
+import SearchSuggest from './search-suggest';
 
 
 const REFERENCE_URL = 'https://developers.google.com' +
@@ -24,8 +24,6 @@ const REFERENCE_URL = 'https://developers.google.com' +
 
 
 let FormControl = React.createClass({
-
-  mixins: [select2Tags],
 
   getInitialState: function() {
     return {value: this.props.value}
@@ -59,13 +57,27 @@ let FormControl = React.createClass({
            <use xlink:href="/public/images/icons.svg#icon-info"></use>
          </svg>`;
 
-    let input = (this.props.type == 'date') ?
-        (
+    let input;
+    switch (this.props.type) {
+      case 'date':
+        input = (
           <Datepicker
             name={this.props.name}
             value={this.state.value}
             onChange={this.handleChange} />
-        ) : (
+        )
+        break;
+      case 'search':
+        input = (
+          <SearchSuggest
+            name={this.props.name}
+            value={this.state.value}
+            options={this.props.options}
+            onChange={this.handleChange} />
+        )
+        break;
+      default:
+        input = (
           <input
             className="FormField FormFieldCombo-field"
             name={this.props.name}
@@ -73,6 +85,7 @@ let FormControl = React.createClass({
             onChange={this.handleChange}
             ref="input" />
         )
+    }
 
 
     return (
