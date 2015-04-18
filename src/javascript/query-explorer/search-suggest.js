@@ -17,6 +17,7 @@
 
 
 import filter from 'lodash/collection/filter';
+import find from 'lodash/collection/find';
 import pluck from 'lodash/collection/pluck';
 import React from 'react';
 
@@ -30,29 +31,16 @@ const keyCodes = {
 }
 
 
-function findMatches(value, options) {
-  // An empty string matches all options.
-  if (!value) return options
-
-  // Match against the last portion of a comma-separated string.
-  let parts = value.split(',');
-  let str = parts[parts.length - 1].toLowerCase();
-
-  return filter(options, function(option) {
-    for (let key in option) {
-      if (option[key].toLowerCase().indexOf(str) > -1) return true;
-    }
-  });
-}
-
-
 let SearchSuggest = React.createClass({
+
+  getDefaultProps: function() {
+    return {value: '', options: []}
+  },
 
   getInitialState: function() {
     return {
-      value: this.props.value || '',
-      options: this.props.options || [],
-      matches: this.props.options || [],
+      value: this.props.value,
+      matches: this.findMatches(this.props.value),
       selectedMatchIndex: 0,
       showMatches: false
     }
@@ -61,22 +49,13 @@ let SearchSuggest = React.createClass({
   componentDidMount: function() {
     $(document).on(`click.SearchSuggest:${this.props.name}`, (e) => {
       if (!$.contains(this.getDOMNode(), e.target)) {
-        this.handleFocusOut();
+        this.setHideMatchesState();
       }
     })
   },
 
   componentWillUnmount: function() {
     $(document).off(`.SearchSuggest:${this.props.name}`);
-  },
-
-  componentWillReceiveProps: function(props) {
-    if (props.options != this.state.options) {
-      this.setState({
-        options: props.options,
-        matches: findMatches(props.value, props.options)
-      });
-    }
   },
 
   componentDidUpdate: function() {
@@ -110,26 +89,18 @@ let SearchSuggest = React.createClass({
   },
 
   handleChange: function(e) {
+    let newState = {
+      value: e.target.value,
+      matches: this.findMatches(e.target.value),
+      showMatches: true
+    }
+
+    if (this.state.selectedMatchIndex > newState.matches.length - 1) {
+      newState.selectedMatchIndex = 0;
+    }
+
+    this.setState(newState);
     this.props.onChange.call(this, e);
-
-    let value = e.target.value;
-    let matches = findMatches(value, this.state.options);
-    this.setState({value, matches, showMatches: true});
-  },
-
-  handleFocus: function(e) {
-    this.setState({showMatches: true});
-  },
-
-  handleFocusOut: function(e) {
-    // Remove a trailing comma or whitespace.
-    let value = this.state.value.replace(/,\s*$/, '');
-
-    this.setState({
-      value: value,
-      showMatches: false,
-      selectedMatchIndex: 0
-    });
   },
 
   handleKeyDown: function(e) {
@@ -140,7 +111,7 @@ let SearchSuggest = React.createClass({
     switch (e.keyCode) {
       case keyCodes.DOWN_ARROW:
         if (!this.state.showMatches) {
-          this.setState({showMatches: true});
+          this.setShowMatchesState();
         }
         else if (selectedMatchIndex < totalMatches - 1) {
           this.setState({selectedMatchIndex:  selectedMatchIndex + 1});
@@ -154,12 +125,17 @@ let SearchSuggest = React.createClass({
         e.preventDefault();
         break;
       case keyCodes.ENTER:
-        this.selectMatch(selectedMatch.id);
+        if (this.state.showMatches) {
+          this.setSelectedMatchState(selectedMatch.id);
+        }
+        else {
+          this.setShowMatchesState();
+        }
         e.preventDefault();
         break;
       case keyCodes.TAB:
       case keyCodes.ESC:
-        this.handleFocusOut();
+        this.setHideMatchesState();
         break;
     }
   },
@@ -168,10 +144,45 @@ let SearchSuggest = React.createClass({
     this.setState({selectedMatchIndex: index});
   },
 
-  selectMatch: function(id) {
-    let value = this.state.value;
-    let parts = value.split(',');
-    parts[parts.length - 1] = id;
+  setShowMatchesState: function() {
+    let {value, search} = this.parseValue(this.state.value);
+
+    // If search currently matches a known option, add a comma and assume the
+    // user is trying to select another option.
+    if (find(this.props.options, (option) => matches(option.id, search))) {
+      value = value + ',';
+    }
+
+    this.setState({
+      value: value,
+      matches: this.findMatches(value),
+      showMatches: true
+    });
+  },
+
+  setHideMatchesState: function() {
+    // Remove a trailing comma or whitespace.
+    let value = this.state.value.replace(/[,\s]+$/, '');
+
+    this.setState({
+      value: value,
+      showMatches: false,
+      selectedMatchIndex: 0
+    });
+
+    this.props.onChange.call(this, {target:{value, name: this.props.name}});
+  },
+
+  setSelectedMatchState: function(choice) {
+    let {parts, search} = this.parseValue(this.state.value);
+
+    // If the entered value (search) matches the choice, just keep it and
+    // assume that's what the user wanted.
+    if (matches(choice, search)) choice = search;
+
+    // Set the last part to the ID of the chosen option, overwriting whatever
+    // is currently there.
+    parts[parts.length - 1] = choice;
 
     this.setState({
       value: parts.join(','),
@@ -180,39 +191,37 @@ let SearchSuggest = React.createClass({
     });
   },
 
+  findMatches: function(value) {
+    let {parts, search} = this.parseValue(value);
+    let options = this.props.options;
+
+    // If there is more than one part to the value, remove options that
+    // match the existing parts.
+    if (parts.length > 1) {
+      let chosenParts = parts.slice(0, -1);
+      options = filter(options, (option) => !chosenParts.includes(option.id));
+    }
+
+    // An empty string matches all options.
+    if (!search) return options;
+
+    return filter(options, function(option) {
+      for (let key in option) {
+        if (includes(option.id, search)) return true;
+      }
+    });
+  },
+
+  parseValue: function(value) {
+    let parts = value.split(',');
+    let search = parts[parts.length - 1];
+    return {value, parts, search};
+  },
+
   render: function() {
 
     let className = 'SearchSuggest';
     if (this.state.showMatches) className += ' SearchSuggest--open';
-
-    let matches = this.state.showMatches && (
-      <ul className="SearchSuggest-matches" ref="matches">
-        {this.state.matches.map((option, index) => {
-          let className = 'SearchSuggestMatch';
-          if (this.state.selectedMatchIndex == index) {
-            className += ' SearchSuggestMatch--selected';
-          }
-          return (
-            <li
-              className={className}
-              onMouseEnter={this.handleMouseEnter.bind(this, index)}
-              onClick={this.selectMatch.bind(this, option.id)}
-              ref={option.id}
-              key={option.id}>
-              <span className="SearchSuggestMatch-category">
-                {option.group}
-              </span>
-              <div className="SearchSuggestMatch-content">
-                {option.name}
-              </div>
-              <div className="SearchSuggestMatch-extra">
-                {option.id}
-              </div>
-            </li>
-          )
-        })}
-      </ul>
-    );
 
     return (
       <div className={className}>
@@ -220,20 +229,58 @@ let SearchSuggest = React.createClass({
           className="SearchSuggest-field FormField"
           name={this.props.name}
           value={this.state.value}
+          onFocus={this.setShowMatchesState}
           onChange={this.handleChange}
-          onFocus={this.handleFocus}
-          onBlur={this.handleBlur}
           onKeyDown={this.handleKeyDown}
           autoComplete="off"
           autoCorrect="off"
           autoCapitalize="off"
           spellCheck="false"
           ref="input" />
-        {matches}
+        <ul className="SearchSuggest-matches" ref="matches">
+          {this.state.matches.map((match, index) => {
+            let className = 'SearchSuggestMatch';
+            if (this.state.selectedMatchIndex == index) {
+              className += ' SearchSuggestMatch--selected';
+            }
+            return (
+              <li
+                className={className}
+                onMouseEnter={this.handleMouseEnter.bind(this, index)}
+                onClick={this.setSelectedMatchState.bind(this, match.id)}
+                ref={match.id}
+                key={match.id}>
+                <span className="SearchSuggestMatch-category">
+                  {match.group}
+                </span>
+                <div className="SearchSuggestMatch-content">
+                  {match.name}
+                </div>
+                <div className="SearchSuggestMatch-extra">
+                  {match.id}
+                </div>
+              </li>
+            )
+          })}
+        </ul>
       </div>
     );
   }
 });
+
+
+// Match against the lowercase version and replace all 1-2 digit number
+// values with "XX" to match things like ga:dimensionXX.
+function matches(choice, search) {
+  return search.replace(/\d{1,2}/, 'XX').toLowerCase() == choice.toLowerCase();
+}
+
+// Match against the lowercase version and replace all 1-2 digit number
+// values with "XX" to match things like ga:dimensionXX.
+function includes(choice, search) {
+  return choice.toLowerCase()
+      .includes(search.replace(/\d{1,2}/, 'XX').toLowerCase());
+}
 
 
 export default SearchSuggest;

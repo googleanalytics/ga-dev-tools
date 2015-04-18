@@ -125,7 +125,8 @@ function handleAccessTokenToggle(e) {
 
 /**
  * Invoked when a user changes any of the <QueryForm> fields.
- * @param {Event|Object} e The native or React event.
+ * @param {Event|Object} e A native Event object, React event, or data object
+ *     containing the target.name and target.value properties.
  */
 function handleFieldChange(e) {
   let {name, value} = e.target;

@@ -25,6 +25,7 @@ limitations under the License.
   border: 1px solid;
   border-color: #eee var(--border-color-active) var(--border-color-active);
   border-radius: 0 0 4px 4px;
+  display: none;
   list-style: none;
   margin: -1px 0 0;
   max-height: 300px;
@@ -44,4 +45,8 @@ limitations under the License.
 .SearchSuggest--open .SearchSuggest-field {
   border-color: var(--border-color-active);
   border-radius: 4px 4px 0 0!important;
+}
+
+.SearchSuggest--open .SearchSuggest-matches {
+  display: block;
 }
