@@ -36,7 +36,7 @@
     "mocha": "^2.2.1",
     "moment": "^2.8.3",
     "normalize.css": "^3.0.1",
-    "react": "^0.12.2",
+    "react": "^0.13.2",
     "rework-plugin-inline": "^1.0.1",
     "rework-suit": "^4.0.0",
     "router": "philipwalton/router#0.1.1",

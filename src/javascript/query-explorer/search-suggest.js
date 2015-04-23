@@ -31,34 +31,44 @@ const keyCodes = {
 }
 
 
-let SearchSuggest = React.createClass({
+// TODO(philipwalton):
+// - Only allow 1 segment.
+// - Add SearchSuggest to the "sort" option.
+// - handle the "no results found" case with input border radius weirdness.
+// - Remove legacy "XX" stuff.
 
-  getDefaultProps: function() {
-    return {value: '', options: []}
-  },
+export default class SearchSuggest extends React.Component {
 
-  getInitialState: function() {
-    return {
-      value: this.props.value,
-      matches: this.findMatches(this.props.value),
+  constructor(props) {
+    super(props);
+    this.state = {
+      value: props.value,
+      matches: this.findMatches(props.value),
       selectedMatchIndex: 0,
       showMatches: false
-    }
-  },
+    };
+  }
 
-  componentDidMount: function() {
+  componentDidMount() {
     $(document).on(`click.SearchSuggest:${this.props.name}`, (e) => {
-      if (!$.contains(this.getDOMNode(), e.target)) {
+      if (this.state.showMatches == true &&
+          !$.contains(React.findDOMNode(this), e.target)) {
         this.setHideMatchesState();
       }
     })
-  },
+  }
 
-  componentWillUnmount: function() {
+  componentWillUnmount() {
     $(document).off(`.SearchSuggest:${this.props.name}`);
-  },
+  }
 
-  componentDidUpdate: function() {
+  componentWillReceiveProps(props) {
+    if (props.value != this.state.value) {
+      this.setState({value: props.value});
+    }
+  }
+
+  componentDidUpdate() {
     let matches = this.state.matches;
     let selectedMatchIndex = this.state.selectedMatchIndex;
     let selectedMatch = matches[selectedMatchIndex];
@@ -86,9 +96,9 @@ let SearchSuggest = React.createClass({
     else if (selectedMatchElementOffsetTop < containerScrollTop) {
       container.scrollTop = selectedMatchElementOffsetTop;
     }
-  },
+  }
 
-  handleChange: function(e) {
+  handleChange(e) {
     let newState = {
       value: e.target.value,
       matches: this.findMatches(e.target.value),
@@ -101,9 +111,9 @@ let SearchSuggest = React.createClass({
 
     this.setState(newState);
     this.props.onChange.call(this, e);
-  },
+  }
 
-  handleKeyDown: function(e) {
+  handleKeyDown(e) {
     let selectedMatchIndex = this.state.selectedMatchIndex;
     let selectedMatch = this.state.matches[selectedMatchIndex];
     let totalMatches = this.state.matches.length;
@@ -138,13 +148,13 @@ let SearchSuggest = React.createClass({
         this.setHideMatchesState();
         break;
     }
-  },
+  }
 
-  handleMouseEnter: function(index) {
+  handleMouseEnter(index) {
     this.setState({selectedMatchIndex: index});
-  },
+  }
 
-  setShowMatchesState: function() {
+  setShowMatchesState() {
     let {value, search} = this.parseValue(this.state.value);
 
     // If search currently matches a known option, add a comma and assume the
@@ -158,9 +168,9 @@ let SearchSuggest = React.createClass({
       matches: this.findMatches(value),
       showMatches: true
     });
-  },
+  }
 
-  setHideMatchesState: function() {
+  setHideMatchesState() {
     // Remove a trailing comma or whitespace.
     let value = this.state.value.replace(/[,\s]+$/, '');
 
@@ -171,9 +181,9 @@ let SearchSuggest = React.createClass({
     });
 
     this.props.onChange.call(this, {target:{value, name: this.props.name}});
-  },
+  }
 
-  setSelectedMatchState: function(choice) {
+  setSelectedMatchState(choice) {
     let {parts, search} = this.parseValue(this.state.value);
 
     // If the entered value (search) matches the choice, just keep it and
@@ -184,14 +194,18 @@ let SearchSuggest = React.createClass({
     // is currently there.
     parts[parts.length - 1] = choice;
 
+    let value = parts.join(',');
+
     this.setState({
-      value: parts.join(','),
+      value: value,
       selectedMatchIndex: 0,
       showMatches: false
     });
-  },
 
-  findMatches: function(value) {
+    this.props.onChange.call(this, {target:{value, name: this.props.name}});
+  }
+
+  findMatches(value) {
     let {parts, search} = this.parseValue(value);
     let options = this.props.options;
 
@@ -207,18 +221,18 @@ let SearchSuggest = React.createClass({
 
     return filter(options, function(option) {
       for (let key in option) {
-        if (includes(option.id, search)) return true;
+        if (includes(option[key], search)) return true;
       }
     });
-  },
+  }
 
-  parseValue: function(value) {
+  parseValue(value) {
     let parts = value.split(',');
     let search = parts[parts.length - 1];
     return {value, parts, search};
-  },
+  }
 
-  render: function() {
+  render() {
 
     let className = 'SearchSuggest';
     if (this.state.showMatches) className += ' SearchSuggest--open';
@@ -229,9 +243,9 @@ let SearchSuggest = React.createClass({
           className="SearchSuggest-field FormField"
           name={this.props.name}
           value={this.state.value}
-          onFocus={this.setShowMatchesState}
-          onChange={this.handleChange}
-          onKeyDown={this.handleKeyDown}
+          onFocus={this.setShowMatchesState.bind(this)}
+          onChange={this.handleChange.bind(this)}
+          onKeyDown={this.handleKeyDown.bind(this)}
           autoComplete="off"
           autoCorrect="off"
           autoCapitalize="off"
@@ -266,7 +280,13 @@ let SearchSuggest = React.createClass({
       </div>
     );
   }
-});
+}
+
+
+SearchSuggest.defaultProps = {
+  value: '',
+  options: []
+};
 
 
 // Match against the lowercase version and replace all 1-2 digit number
@@ -281,6 +301,3 @@ function includes(choice, search) {
   return choice.toLowerCase()
       .includes(search.replace(/\d{1,2}/, 'XX').toLowerCase());
 }
-
-
-export default SearchSuggest;
