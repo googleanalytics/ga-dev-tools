@@ -19,7 +19,7 @@
 import assign from 'lodash/object/assign';
 import clone from 'lodash/lang/clone';
 import find from 'lodash/collection/find';
-import getTagData from './tag-data';
+import tagData from './tag-data';
 import map from 'lodash/collection/map';
 import mapValues from 'lodash/object/mapValues';
 import Model from '../model';
@@ -91,8 +91,17 @@ function getInitalQueryParams() {
  * event.
  */
 function handleViewSelectorChange(data) {
+  let {account, property, view} = data;
+
   params.set('ids', data.ids);
   state.set('selectedAccountData', clone(data));
+
+  tagData.getMetricsAndDimensions(
+      account, property, view).then(function(data) {
+    metrics = data.metrics;
+    dimensions = data.dimensions;
+    render();
+  });
 }
 
 
@@ -101,7 +110,23 @@ function handleViewSelectorChange(data) {
  * @param {SyntheticEvent} e The React event.
  */
 function handleSegmentDefinitionToggle(e) {
-  settings.set('useDefinition', e.target.checked);
+  let useDefinition = e.target.checked
+  settings.set('useDefinition', useDefinition);
+
+  tagData.getSegments(useDefinition).then(function(results) {
+    segments = results;
+    render();
+  });
+
+  if (params.get('segment')) {
+    let value = params.get('segment');
+    let segment = find(segments, segment =>
+        value == segment.segmentId || value == segment.definition);
+
+    if (segment) params.set('segment', useDefinition ?
+        segment.definition : segment.segmentId);
+  }
+
 }
 
 
@@ -263,7 +288,7 @@ function render() {
         onSegmentDefinitionToggle={handleSegmentDefinitionToggle}
         params={params.get()}
         isQuerying={state.get('isQuerying')}
-        useDefinition={state.get('useDefinition')}
+        useDefinition={settings.get('useDefinition')}
         metrics={metrics}
         dimensions={dimensions}
         segments={segments} />
@@ -292,54 +317,33 @@ function render() {
  * state classes, and call `render()` when ready.
  */
 function setup() {
-  getTagData().then(function(data) {
 
-    metrics = data.metrics;
-    dimensions = data.dimensions;
-    segments = settings.get('useDefinition') ?
-        data.segmentDefinitions : data.segmentIds;
-
-    // Update the segments array when the useDefinition settings changes.
-    settings.on('change', function() {
-      segments = settings.get('useDefinition') ?
-          data.segmentDefinitions : data.segmentIds;
-
-      if (params.get('segment')) {
-        let value = params.get('segment');
-        let segment = find(segments, segment =>
-            value == segment.segmentId || value == segment.definition);
-        params.set('segment', (segment && segment.id) || value);
-      }
-    });
-
-    // Update the tracker's "Query Explorer Settings" dimension on change.
-    settings.on('change', function() {
-      ga('set', 'dimension3', qs.stringify(settings.get()));
-    });
-
-    // Listen for changes and rerender.
-    settings.on('change', function() {
-      store.set('query-explorer:settings', settings.get());
-      render();
-    });
-    params.on('change', function() {
-      store.set('query-explorer:params', queryParams.sanitize(params.get()));
-      render();
-    });
-    state.on('change', function() {
-      render();
-    });
-
-    // Store the initial settings on the tracker.
-    ga('set', 'dimension3', qs.stringify(settings.get()));
-
-    // Add/remove state classes.
-    $('body').removeClass('is-loading');
-    $('body').addClass('is-ready');
-
-    // Force render now that select2 tags are available.
+  tagData.getSegments(settings.get('useDefinition')).then(function(results) {
+    segments = results;
     render();
   });
+
+  // Listen for changes and rerender.
+  settings.on('change', function() {
+    store.set('query-explorer:settings', settings.get());
+    ga('set', 'dimension3', qs.stringify(settings.get()));
+    render();
+  });
+  params.on('change', function(model) {
+    store.set('query-explorer:params', queryParams.sanitize(params.get()));
+    render();
+  });
+  state.on('change', function() {
+    render();
+  });
+
+  // Store the initial settings on the tracker.
+  ga('set', 'dimension3', qs.stringify(settings.get()));
+
+  // Add/remove state classes.
+  $('body').removeClass('is-loading');
+  $('body').addClass('is-ready');
+
 }
 
 
