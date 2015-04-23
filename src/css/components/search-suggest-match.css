@@ -32,8 +32,10 @@ limitations under the License.
   font-size: .6em;
   font-weight: 700;
   letter-spacing: .1em;
-  margin: .1em 0;
+  margin: .1em 0 1.em .5em;
   text-transform: uppercase;
+  text-align: right;
+  max-width: 12em;
 }
 
 .SearchSuggestMatch-content {
