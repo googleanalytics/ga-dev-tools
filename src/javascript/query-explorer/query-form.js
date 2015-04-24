@@ -22,66 +22,6 @@ import React from 'react';
 var QueryForm = React.createClass({
 
   render: function() {
-
-    let matches = (choices, search) => {
-      for (let choice of choices) {
-        if (choice.replace(/\d{1,2}/, 'XX').toLowerCase() ==
-            search.toLowerCase()) return choice;
-      }
-    }
-
-
-    let getSortOptions = () => {
-      if (!this.props) return [];
-
-      let {params, metrics, dimensions} = this.props;
-      let metsAndDims = (metrics || []).concat(dimensions || []);
-
-      let chosenMetrics = params.metrics && params.metrics.split(',');
-      let chosenDimensions = params.dimensions && params.dimensions.split(',');
-      let choices = (chosenMetrics || []).concat(chosenDimensions || []);
-
-      let options = [];
-
-      each(metsAndDims, (option) => {
-        let choice = matches(choices, option.id);
-        if (choice) {
-          let ascending = clone(option);
-          let descending = clone(option);
-
-          ascending.name += ' (ascending)';
-          ascending.id = choice;
-          descending.name += ' (descending)';
-          descending.id = '-' + choice;
-
-          options.push(ascending);
-          options.push(descending);
-        }
-      });
-
-      for (let choice of choices) {
-        for (let option of metsAndDims) {
-          if (choice.replace(/\d{1,2}/, 'XX').toLowerCase() ==
-              option.id.replace(/\d{1,2}/, 'XX').toLowerCase()) {
-
-            let ascending = clone(option);
-            let descending = clone(option);
-
-            ascending.name += ' (ascending)';
-            ascending.id = choice;
-            descending.name += ' (descending)';
-            descending.id = '-' + choice;
-
-            options.push(ascending);
-            options.push(descending);
-          }
-        }
-      }
-
-      return options;
-    }
-
-
     return (
       <form onSubmit={this.props.onSubmit}>
         <FormControl
@@ -121,7 +61,7 @@ var QueryForm = React.createClass({
           name="sort"
           value={this.props.params.sort}
           type="search"
-          options={getSortOptions(this.props.params, this.props.metrics, this.props.dim)}
+          options={this.props.sortOptions}
           onChange={this.props.onChange} />
         <FormControl
           name="filters"

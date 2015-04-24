@@ -39,6 +39,7 @@ import ViewSelector from './view-selector';
 let metrics;
 let dimensions;
 let segments;
+let sortOptions;
 
 
 /**
@@ -100,6 +101,13 @@ function handleViewSelectorChange(data) {
       account, property, view).then(function(data) {
     metrics = data.metrics;
     dimensions = data.dimensions;
+
+    // TODO(philipwalton) This does need to happen after metrics and dimensions
+    // potentially change, but it sould probably happen in an event handler
+    // rather than here. Refactor once dimensions and metrics are moved to
+    // be properties of `state`.
+    setSortOptions();
+
     render();
   });
 }
@@ -160,6 +168,41 @@ function handleFieldChange(e) {
   }
   else {
     params.unset(name);
+  }
+}
+
+
+/**
+ * Sets or updates the options for the sort field based on the chosen
+ * metrics and dimensions.
+ */
+function setSortOptions() {
+
+  let metsAndDims = (metrics || []).concat(dimensions || []);
+  let chosenMetrics = params.get('metrics') &&
+      params.get('metrics').split(',');
+  let chosenDimensions = params.get('dimensions') &&
+      params.get('dimensions').split(',');
+  let choices = (chosenMetrics || []).concat(chosenDimensions || []);
+
+  sortOptions = [];
+
+  for (let choice of choices) {
+    for (let option of metsAndDims) {
+      if (choice.replace(/\d{1,2}/, 'XX').toLowerCase() ==
+          option.id.replace(/\d{1,2}/, 'XX').toLowerCase()) {
+
+        let ascending = clone(option);
+        let descending = clone(option);
+        descending.name += ' (descending)';
+        descending.id = '-' + choice;
+        ascending.name += ' (ascending)';
+        ascending.id = choice;
+
+        sortOptions.push(descending);
+        sortOptions.push(ascending);
+      }
+    }
   }
 }
 
@@ -291,7 +334,8 @@ function render() {
         useDefinition={settings.get('useDefinition')}
         metrics={metrics}
         dimensions={dimensions}
-        segments={segments} />
+        segments={segments}
+        sortOptions={sortOptions} />
 
       <QueryReport
         report={state.get('report')}
@@ -329,7 +373,11 @@ function setup() {
     ga('set', 'dimension3', qs.stringify(settings.get()));
     render();
   });
-  params.on('change', function(model) {
+  params.on ('change', function(model) {
+    if ('dimensions' in model.changedProps ||
+        'metrics' in model.changedProps) {
+      setSortOptions();
+    }
     store.set('query-explorer:params', queryParams.sanitize(params.get()));
     render();
   });

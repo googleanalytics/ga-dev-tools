@@ -54,7 +54,6 @@ function getSegmentTags() {
 export default {
 
   getMetricsAndDimensions(account, property, view) {
-    console.log('getMetricsAndDimensions');
     return Promise.all([
       getMetricTags(account, property, view),
       getDimensionTags(account, property, view)
@@ -79,10 +78,6 @@ export default {
 
       return {metrics, dimensions};
     });
-  },
-
-  getSortOptions() {
-
   },
 
   getSegments(useDefinition) {
