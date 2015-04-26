@@ -25,12 +25,12 @@ import mapValues from 'lodash/object/mapValues';
 import Model from '../model';
 import pick from 'lodash/object/pick';
 import qs from 'querystring';
-import QueryForm from './query-form';
+import QueryForm from './components/query-form';
 import queryParams from './query-params';
-import QueryReport from './query-report';
+import QueryReport from './components/query-report';
 import React from 'react';
 import store from '../data-store';
-import ViewSelector from './view-selector';
+import ViewSelector from './components/view-selector';
 
 
 /**
