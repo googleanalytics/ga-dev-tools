@@ -18,8 +18,9 @@
 
 import assign from 'lodash/object/assign';
 import clone from 'lodash/lang/clone';
+import Datepicker from './components/datepicker';
 import find from 'lodash/collection/find';
-import tagData from './tag-data';
+import HelpIconLink from './components/help-icon-link';
 import map from 'lodash/collection/map';
 import mapValues from 'lodash/object/mapValues';
 import Model from '../model';
@@ -30,7 +31,13 @@ import queryParams from './query-params';
 import QueryReport from './components/query-report';
 import React from 'react';
 import store from '../data-store';
+import tagData from './tag-data';
 import ViewSelector from './components/view-selector';
+
+
+import SearchSuggest from './components/search-suggest';
+import MultiSearchSuggest from './components/multi-search-suggest';
+import SortMultiSearchSuggest from './components/sort-multi-search-suggest';
 
 
 /**
@@ -325,17 +332,170 @@ function render() {
 
       <h3 className="H3--underline">Set the query parameters</h3>
 
-      <QueryForm
-        onSubmit={handleSubmit}
-        onChange={handleFieldChange}
-        onSegmentDefinitionToggle={handleSegmentDefinitionToggle}
-        params={params.get()}
-        isQuerying={state.get('isQuerying')}
-        useDefinition={settings.get('useDefinition')}
-        metrics={metrics}
-        dimensions={dimensions}
-        segments={segments}
-        sortOptions={sortOptions} />
+      <form onSubmit={handleSubmit}>
+
+        <div className="FormControl FormControl--inline FormControl--required">
+          <label className="FormControl-label">ids</label>
+          <div className="FormControl-body">
+            <div className="FlexLine">
+              <input
+                className="FormField FormFieldCombo-field"
+                name="ids"
+                value={params.get('ids')}
+                onChange={handleFieldChange} />
+              <HelpIconLink name="ids" />
+            </div>
+          </div>
+        </div>
+
+        <div className="FormControl FormControl--inline FormControl--required">
+          <label className="FormControl-label">start-date</label>
+          <div className="FormControl-body">
+            <div className="FlexLine">
+              <Datepicker
+                name="start-date"
+                value={params.get('start-date')}
+                onChange={handleFieldChange} />
+              <HelpIconLink name="start-date" />
+            </div>
+          </div>
+        </div>
+
+        <div className="FormControl FormControl--inline FormControl--required">
+          <label className="FormControl-label">end-date</label>
+          <div className="FormControl-body">
+            <div className="FlexLine">
+              <Datepicker
+                name="end-date"
+                value={params.get('end-date')}
+                onChange={handleFieldChange} />
+              <HelpIconLink name="end-date" />
+            </div>
+          </div>
+        </div>
+
+        <div className="FormControl FormControl--inline FormControl--required">
+          <label className="FormControl-label">metrics</label>
+          <div className="FormControl-body">
+            <div className="FlexLine">
+              <MultiSearchSuggest
+                name="metrics"
+                value={params.get('metrics')}
+                options={metrics}
+                onChange={handleFieldChange} />
+              <HelpIconLink name="metrics" />
+            </div>
+          </div>
+        </div>
+
+        <div className="FormControl FormControl--inline">
+          <label className="FormControl-label">dimensions</label>
+          <div className="FormControl-body">
+            <div className="FlexLine">
+              <MultiSearchSuggest
+                name="dimensions"
+                value={params.get('dimensions')}
+                options={dimensions}
+                onChange={handleFieldChange} />
+              <HelpIconLink name="dimensions" />
+            </div>
+          </div>
+        </div>
+
+        <div className="FormControl FormControl--inline">
+          <label className="FormControl-label">sort</label>
+          <div className="FormControl-body">
+            <div className="FlexLine">
+              <SortMultiSearchSuggest
+                name="sort"
+                value={params.get('sort')}
+                options={sortOptions}
+                onChange={handleFieldChange} />
+              <HelpIconLink name="sort" />
+            </div>
+          </div>
+        </div>
+
+        <div className="FormControl FormControl--inline">
+          <label className="FormControl-label">filters</label>
+          <div className="FormControl-body">
+            <div className="FlexLine">
+              <input
+                className="FormField FormFieldCombo-field"
+                name="filters"
+                value={params.get('filters')}
+                onChange={handleFieldChange} />
+              <HelpIconLink name="filters" />
+            </div>
+          </div>
+        </div>
+
+        <div className="FormControl FormControl--inline">
+          <label className="FormControl-label">segment</label>
+          <div className="FormControl-body">
+            <div className="FlexLine">
+              <MultiSearchSuggest
+                name="segment"
+                value={params.get('segment')}
+                options={segments}
+                onChange={handleFieldChange} />
+              <HelpIconLink name="segment" />
+            </div>
+          </div>
+        </div>
+
+        <div className="FormControl FormControl--inline">
+          <label className="FormControl-label">samplingLevel</label>
+          <div className="FormControl-body">
+            <div className="FlexLine">
+              <input
+                className="FormField FormFieldCombo-field"
+                name="samplingLevel"
+                value={params.get('samplingLevel')}
+                onChange={handleFieldChange} />
+              <HelpIconLink name="samplingLevel" />
+            </div>
+          </div>
+        </div>
+
+        <div className="FormControl FormControl--inline">
+          <label className="FormControl-label">start-index</label>
+          <div className="FormControl-body">
+            <div className="FlexLine">
+              <input
+                className="FormField FormFieldCombo-field"
+                name="start-index"
+                value={params.get('start-index')}
+                onChange={handleFieldChange} />
+              <HelpIconLink name="start-index" />
+            </div>
+          </div>
+        </div>
+
+        <div className="FormControl FormControl--inline">
+          <label className="FormControl-label">max-results</label>
+          <div className="FormControl-body">
+            <div className="FlexLine">
+              <input
+                className="FormField FormFieldCombo-field"
+                name="max-results"
+                value={params.get('max-results')}
+                onChange={handleFieldChange} />
+              <HelpIconLink name="max-results" />
+            </div>
+          </div>
+        </div>
+
+        <div className="FormControl FormControl--inline FormControl--action">
+          <div className="FormControl-body">
+            <button
+              className="Button Button--action"
+              disabled={state.get('isQuerying')}>
+              {state.get('isQuerying') ? 'Loading...' : 'Run Query'}
+            </button>
+          </div>
+        </div>
+      </form>
 
       <QueryReport
         report={state.get('report')}
