@@ -26,7 +26,6 @@ import mapValues from 'lodash/object/mapValues';
 import Model from '../model';
 import pick from 'lodash/object/pick';
 import qs from 'querystring';
-import QueryForm from './components/query-form';
 import queryParams from './query-params';
 import QueryReport from './components/query-report';
 import React from 'react';
@@ -434,12 +433,22 @@ function render() {
           <label className="FormControl-label">segment</label>
           <div className="FormControl-body">
             <div className="FlexLine">
-              <MultiSearchSuggest
+              <SearchSuggest
                 name="segment"
                 value={params.get('segment')}
                 options={segments}
                 onChange={handleFieldChange} />
               <HelpIconLink name="segment" />
+            </div>
+            <div className="FormControl-info">
+              <label>
+                <input
+                  className="Checkbox"
+                  type="checkbox"
+                  onChange={handleSegmentDefinitionToggle}
+                  checked={settings.get('useDefinition')} />
+                Show segment definitions instead of IDs.
+              </label>
             </div>
           </div>
         </div>

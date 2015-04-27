@@ -111,16 +111,9 @@ export default class SearchSuggest extends React.Component {
   }
 
   handleChange(e) {
-    let value = e.target.value;
-
-    // If the new value contains the old value, we only need to search
-    // through the existing matches rather than the full options set.
-    let matches = this.findMatches(value, value.includes(this.state.value) ?
-        this.state.matches : this.props.options);
-
     this.setState({
-      value,
-      matches,
+      value: e.target.value,
+      matches: this.findMatches(e.target.value),
       selectedMatchIndex: 0,
       open: true
     });
@@ -189,8 +182,11 @@ export default class SearchSuggest extends React.Component {
     this.props.onChange.call(this, {target:{value, name: this.props.name}});
   }
 
-  findMatches(search, options = this.props.options) {
-    return filter(options, (option) => this.matchesOption(search, option));
+  findMatches(value, options = this.props.options) {
+    // TODO(philipwalton): this can be optimzed further. If the value starts
+    // with the previous value as a substring, then we only need to search
+    // through the previous matches.
+    return filter(options, (option) => this.matchesOption(value, option));
   }
 
   matchesOption(search, option) {

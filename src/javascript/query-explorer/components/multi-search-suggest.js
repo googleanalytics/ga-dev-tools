@@ -22,21 +22,6 @@ import SearchSuggest from './search-suggest';
 
 export default class MultiSearchSuggest extends SearchSuggest {
 
-  handleChange(e) {
-    let value = e.target.value;
-    let prevSearch = this.parseValue(this.state.value).search;
-    let {search, selected} = this.parseValue(value);
-
-    // If the new value includes the old value, we only need to search
-    // through the existing matches rather than the full options set.
-    let options = search.includes(prevSearch) ?
-        this.state.matches : this.props.options;
-    let matches = this.findMatches(search, options, new Set(selected));
-
-    this.setState({value, matches, selectedMatchIndex: 0, open: true});
-    this.props.onChange.call(this, e);
-  }
-
   setShowMatchesState() {
     let {search} = this.parseValue(this.state.value);
 
@@ -67,7 +52,13 @@ export default class MultiSearchSuggest extends SearchSuggest {
     super.setSelectedMatchState(value);
   }
 
-  findMatches(search, options = this.props.options, selected = new Set()) {
+
+  findMatches(value, options = this.props.options) {
+    let {search, selected} = this.parseValue(value);
+
+    // Convert `selected` to a Set for faster lookup.
+    selected = new Set(selected);
+
     return filter(options, (option) =>
         this.doesNotMatchSelected(option, selected) &&
         this.matchesOption(search, option));
