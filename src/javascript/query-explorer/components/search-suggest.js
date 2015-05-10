@@ -16,6 +16,7 @@
 /* global $ */
 
 
+import ContentEditable from './content-editable';
 import filter from 'lodash/collection/filter';
 import find from 'lodash/collection/find';
 import pluck from 'lodash/collection/pluck';
@@ -23,12 +24,13 @@ import React from 'react';
 
 
 const keyCodes = {
-  ENTER: 13,
   TAB: 9,
-  DOWN_ARROW: 40,
-  UP_ARROW: 38,
+  ENTER: 13,
   ESC: 27,
-}
+  UP_ARROW: 38,
+  DOWN_ARROW: 40
+};
+
 
 export default class SearchSuggest extends React.Component {
 
@@ -36,7 +38,7 @@ export default class SearchSuggest extends React.Component {
     super(props);
     this.state = {
       value: props.value,
-      matches: this.findMatches(props.value),
+      matches: [],
       selectedMatchIndex: 0,
       open: false
     };
@@ -44,12 +46,15 @@ export default class SearchSuggest extends React.Component {
   }
 
   componentDidMount() {
+    this.setState({
+      matches: this.findMatches(this.state.value)
+    });
     $(document).on(`click.SearchSuggest:${this.props.name}`, (e) => {
       if (this.state.open == true &&
           !$.contains(React.findDOMNode(this), e.target)) {
         this.setHideMatchesState();
       }
-    })
+    });
   }
 
   componentWillUnmount() {
@@ -111,13 +116,16 @@ export default class SearchSuggest extends React.Component {
   }
 
   handleChange(e) {
+    let value = e.target.value;
+    let name = this.props.name;
+
     this.setState({
-      value: e.target.value,
-      matches: this.findMatches(e.target.value),
+      value: value,
+      matches: this.findMatches(value),
       selectedMatchIndex: 0,
       open: true
     });
-    this.props.onChange.call(this, e);
+    this.props.onChange.call(this, {target: {name, value}});
   }
 
   handleKeyDown(e) {
@@ -127,21 +135,25 @@ export default class SearchSuggest extends React.Component {
 
     switch (e.keyCode) {
       case keyCodes.DOWN_ARROW:
-        if (!this.state.open) {
-          this.setShowMatchesState();
-        }
-        else if (selectedMatchIndex < totalMatches - 1) {
+        // Don't allow a text selection when using the arrow keys to scroll
+        // through the matches.
+        e.target.selectionStart = e.target.selectionEnd
+
+        // if (!this.state.open) {
+        //   this.setShowMatchesState();
+        // }
+        if (this.state.open && selectedMatchIndex < totalMatches - 1) {
           this.isKeyboardScrolling_ = true;
           this.setState({selectedMatchIndex: selectedMatchIndex + 1});
+          e.preventDefault();
         }
-        e.preventDefault();
         break;
       case keyCodes.UP_ARROW:
-        if (selectedMatchIndex > 0) {
+        if (this.state.open && selectedMatchIndex > 0) {
           this.isKeyboardScrolling_ = true;
           this.setState({selectedMatchIndex: selectedMatchIndex - 1});
+          e.preventDefault();
         }
-        e.preventDefault();
         break;
       case keyCodes.ENTER:
         if (this.state.open && selectedMatch) {
@@ -153,6 +165,10 @@ export default class SearchSuggest extends React.Component {
         e.preventDefault();
         break;
       case keyCodes.TAB:
+        // if (this.state.open && selectedMatch) {
+        //   this.setSelectedMatchState(selectedMatch.id);
+        // }
+        // break;
       case keyCodes.ESC:
         this.setHideMatchesState();
         break;
@@ -212,6 +228,10 @@ export default class SearchSuggest extends React.Component {
     );
   }
 
+  getValueAsHTML() {
+    return this.state.value;
+  }
+
   render() {
 
     let className = 'SearchSuggest';
@@ -221,18 +241,20 @@ export default class SearchSuggest extends React.Component {
 
     return (
       <div className={className}>
-        <input
+        <ContentEditable
           className="SearchSuggest-field FormField"
           name={this.props.name}
-          value={this.state.value}
+          html={this.getValueAsHTML()}
           onFocus={this.setShowMatchesState.bind(this)}
           onChange={this.handleChange.bind(this)}
           onKeyDown={this.handleKeyDown.bind(this)}
+          onClick={this.handleClick && this.handleClick.bind(this)}
           autoComplete="off"
           autoCorrect="off"
           autoCapitalize="off"
           spellCheck="false"
           ref="input" />
+
         <ul
           className="SearchSuggest-matches"
           onScroll={this.handleScroll.bind(this)}
