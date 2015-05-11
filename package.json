@@ -40,6 +40,7 @@
     "rework-plugin-inline": "^1.0.1",
     "rework-suit": "^4.0.0",
     "router": "philipwalton/router#0.1.1",
+    "select2": "select2/select2#3.5.2",
     "sinon": "^1.14.1",
     "svg4everybody": "jonathantneal/svg4everybody#1.0.0",
     "vinyl-buffer": "^1.0.0",
