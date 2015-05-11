@@ -16,7 +16,6 @@
 /* global $ */
 
 
-import ContentEditable from './content-editable';
 import filter from 'lodash/collection/filter';
 import find from 'lodash/collection/find';
 import pluck from 'lodash/collection/pluck';
@@ -42,14 +41,19 @@ export default class SearchSuggest extends React.Component {
       selectedMatchIndex: 0,
       open: false
     };
-    this.buildOptionsMap(this.props.options);
+    // A unique namespace used to add jQuery events for just this instance.
+    this.namespace = 'SearchSuggest:' + this.props.name;
   }
 
   componentDidMount() {
     this.setState({
       matches: this.findMatches(this.state.value)
     });
-    $(document).on(`click.SearchSuggest:${this.props.name}`, (e) => {
+
+    // Select2 stops click event propagation, so we have to
+    // listen to `click` as well as `select2-opening` events.
+    let events = `click.${this.namespace} select2-opening.${this.namespace}`;
+    $(document).on(events, (e) => {
       if (this.state.open == true &&
           !$.contains(React.findDOMNode(this), e.target)) {
         this.setHideMatchesState();
@@ -63,10 +67,8 @@ export default class SearchSuggest extends React.Component {
 
   componentWillReceiveProps(props) {
     if (props.options != this.props.options) {
-      this.buildOptionsMap(props.options);
-      this.setState({
-        matches: this.findMatches(this.state.value, props.options)
-      });
+      let matches = this.findMatches(this.state.value, props.options);
+      this.setState({matches});
     }
     if (props.value != this.state.value) {
       this.setState({value: props.value});
@@ -135,17 +137,13 @@ export default class SearchSuggest extends React.Component {
 
     switch (e.keyCode) {
       case keyCodes.DOWN_ARROW:
-        // Don't allow a text selection when using the arrow keys to scroll
-        // through the matches.
-        e.target.selectionStart = e.target.selectionEnd
-
-        // if (!this.state.open) {
-        //   this.setShowMatchesState();
-        // }
         if (this.state.open && selectedMatchIndex < totalMatches - 1) {
           this.isKeyboardScrolling_ = true;
           this.setState({selectedMatchIndex: selectedMatchIndex + 1});
           e.preventDefault();
+        }
+        else {
+          this.setShowMatchesState();
         }
         break;
       case keyCodes.UP_ARROW:
@@ -165,10 +163,10 @@ export default class SearchSuggest extends React.Component {
         e.preventDefault();
         break;
       case keyCodes.TAB:
-        // if (this.state.open && selectedMatch) {
-        //   this.setSelectedMatchState(selectedMatch.id);
-        // }
-        // break;
+        if (this.state.open && selectedMatch) {
+          this.setSelectedMatchState(selectedMatch.id);
+        }
+        break;
       case keyCodes.ESC:
         this.setHideMatchesState();
         break;
@@ -212,13 +210,6 @@ export default class SearchSuggest extends React.Component {
     }
   }
 
-  buildOptionsMap(options) {
-    this.optionsMap = {};
-    for (let option of options) {
-      this.optionsMap[option.id] = option;
-    }
-  }
-
   shouldComponentUpdate(nextProps, nextState) {
     return !(
       nextState.value === this.state.value &&
@@ -226,10 +217,6 @@ export default class SearchSuggest extends React.Component {
       nextState.selectedMatchIndex === this.state.selectedMatchIndex &&
       nextState.open === this.state.open
     );
-  }
-
-  getValueAsHTML() {
-    return this.state.value;
   }
 
   render() {
@@ -241,14 +228,13 @@ export default class SearchSuggest extends React.Component {
 
     return (
       <div className={className}>
-        <ContentEditable
+        <input
           className="SearchSuggest-field FormField"
           name={this.props.name}
-          html={this.getValueAsHTML()}
-          onFocus={this.setShowMatchesState.bind(this)}
+          value={this.state.value}
+          onClick={this.setShowMatchesState.bind(this)}
           onChange={this.handleChange.bind(this)}
           onKeyDown={this.handleKeyDown.bind(this)}
-          onClick={this.handleClick && this.handleClick.bind(this)}
           autoComplete="off"
           autoCorrect="off"
           autoCapitalize="off"
@@ -287,7 +273,6 @@ export default class SearchSuggest extends React.Component {
     );
   }
 }
-
 
 SearchSuggest.defaultProps = {
   value: '',

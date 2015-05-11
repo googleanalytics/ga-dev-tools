@@ -19,6 +19,7 @@
 import assign from 'lodash/object/assign';
 import clone from 'lodash/lang/clone';
 import Datepicker from './components/datepicker';
+import filter from 'lodash/collection/filter';
 import find from 'lodash/collection/find';
 import HelpIconLink from './components/help-icon-link';
 import map from 'lodash/collection/map';
@@ -29,14 +30,11 @@ import qs from 'querystring';
 import queryParams from './query-params';
 import QueryReport from './components/query-report';
 import React from 'react';
+import SearchSuggest from './components/search-suggest';
+import Select2MultiSuggest from './components/select2-multi-suggest';
 import store from '../data-store';
 import tagData from './tag-data';
 import ViewSelector from './components/view-selector';
-
-
-import SearchSuggest from './components/search-suggest';
-import MultiSearchSuggest from './components/multi-search-suggest';
-import SortMultiSearchSuggest from './components/sort-multi-search-suggest';
 
 
 /**
@@ -185,24 +183,24 @@ function handleFieldChange(e) {
 function setSortOptions() {
 
   let metsAndDims = (metrics || []).concat(dimensions || []);
-  let chosenMetrics = params.get('metrics') &&
-      params.get('metrics').split(',');
-  let chosenDimensions = params.get('dimensions') &&
-      params.get('dimensions').split(',');
-  let choices = (chosenMetrics || []).concat(chosenDimensions || []);
+  let chosenMetrics = (params.get('metrics') || '').split(',');
+  let chosenDimensions = (params.get('dimensions') || '').split(',');
+  let chosenMetsAndDims = (chosenMetrics || []).concat(chosenDimensions || []);
 
   sortOptions = [];
 
-  for (let choice of choices) {
+  for (let choice of chosenMetsAndDims) {
     for (let option of metsAndDims) {
-      if (choice.replace(/\d{1,2}/, 'XX').toLowerCase() ==
-          option.id.replace(/\d{1,2}/, 'XX').toLowerCase()) {
+      if (choice == option.id) {
 
-        let ascending = clone(option);
         let descending = clone(option);
         descending.name += ' (descending)';
+        descending.text += ' (descending)';
         descending.id = '-' + choice;
+
+        let ascending = clone(option);
         ascending.name += ' (ascending)';
+        ascending.text += ' (ascending)';
         ascending.id = choice;
 
         sortOptions.push(descending);
@@ -377,10 +375,10 @@ function render() {
           <label className="FormControl-label">metrics</label>
           <div className="FormControl-body">
             <div className="FlexLine">
-              <MultiSearchSuggest
+              <Select2MultiSuggest
                 name="metrics"
                 value={params.get('metrics')}
-                options={metrics}
+                tags={metrics}
                 onChange={handleFieldChange} />
               <HelpIconLink name="metrics" />
             </div>
@@ -391,10 +389,10 @@ function render() {
           <label className="FormControl-label">dimensions</label>
           <div className="FormControl-body">
             <div className="FlexLine">
-              <MultiSearchSuggest
+              <Select2MultiSuggest
                 name="dimensions"
                 value={params.get('dimensions')}
-                options={dimensions}
+                tags={dimensions}
                 onChange={handleFieldChange} />
               <HelpIconLink name="dimensions" />
             </div>
@@ -405,10 +403,10 @@ function render() {
           <label className="FormControl-label">sort</label>
           <div className="FormControl-body">
             <div className="FlexLine">
-              <SortMultiSearchSuggest
+              <Select2MultiSuggest
                 name="sort"
                 value={params.get('sort')}
-                options={sortOptions}
+                tags={sortOptions}
                 onChange={handleFieldChange} />
               <HelpIconLink name="sort" />
             </div>
@@ -542,9 +540,9 @@ function setup() {
     ga('set', 'dimension3', qs.stringify(settings.get()));
     render();
   });
-  params.on ('change', function(model) {
-    if ('dimensions' in model.changedProps ||
-        'metrics' in model.changedProps) {
+  params.on('change', function(model) {
+    if ('metrics' in model.changedProps ||
+        'dimensions' in model.changedProps) {
       setSortOptions();
     }
     store.set('query-explorer:params', queryParams.sanitize(params.get()));
