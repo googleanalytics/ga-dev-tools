@@ -17,8 +17,6 @@
 
 
 import filter from 'lodash/collection/filter';
-import find from 'lodash/collection/find';
-import pluck from 'lodash/collection/pluck';
 import React from 'react';
 
 

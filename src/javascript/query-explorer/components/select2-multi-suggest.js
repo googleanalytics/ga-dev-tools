@@ -16,7 +16,6 @@
 /* global $ */
 
 
-import assign from 'lodash/object/assign';
 import filter from 'lodash/collection/filter';
 import map from 'lodash/collection/map';
 import React from 'react';
