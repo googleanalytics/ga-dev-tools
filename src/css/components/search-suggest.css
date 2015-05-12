@@ -44,9 +44,21 @@ limitations under the License.
 
 .SearchSuggest--open .SearchSuggest-field {
   border-color: var(--border-color-active);
-  border-radius: 4px 4px 0 0!important;
+  border-radius: 4px 4px 0 0;
 }
 
 .SearchSuggest--open .SearchSuggest-matches {
   display: block;
+}
+
+.SearchSuggest--above.SearchSuggest--open .SearchSuggest-matches {
+  bottom: 100%;
+  border-color: var(--border-color-active) var(--border-color-active) #eee;
+  border-radius: 4px 4px 0 0;
+  margin: 0 0 -1px;
+  top: auto;
+}
+
+.SearchSuggest--above.SearchSuggest--open .SearchSuggest-field {
+  border-radius: 0 0 4px 4px;
 }

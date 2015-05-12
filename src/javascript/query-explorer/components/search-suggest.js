@@ -16,7 +16,10 @@
 /* global $ */
 
 
+import bindAll from 'lodash/function/bindAll';
+import debounce from 'lodash/function/debounce';
 import filter from 'lodash/collection/filter';
+import map from 'lodash/collection/map';
 import React from 'react';
 
 
@@ -37,10 +40,9 @@ export default class SearchSuggest extends React.Component {
       value: props.value,
       matches: [],
       selectedMatchIndex: 0,
-      open: false
+      open: false,
+      above: false
     };
-    // A unique namespace used to add jQuery events for just this instance.
-    this.namespace = 'SearchSuggest:' + this.props.name;
   }
 
   componentDidMount() {
@@ -48,19 +50,17 @@ export default class SearchSuggest extends React.Component {
       matches: this.findMatches(this.state.value)
     });
 
-    // Select2 stops click event propagation, so we have to
-    // listen to `click` as well as `select2-opening` events.
-    let events = `click.${this.namespace} select2-opening.${this.namespace}`;
-    $(document).on(events, (e) => {
-      if (this.state.open == true &&
-          !$.contains(React.findDOMNode(this), e.target)) {
-        this.setHideMatchesState();
-      }
-    });
+    bindAll(this, ['hideMatchesIfShown', 'repositionMatchesDropdown']);
+
+    $(window).on(this.namespaceEvents('click', 'select2-opening'),
+                   this.hideMatchesIfShown);
+
+    $(window).on(this.namespaceEvents('scroll', 'resize'),
+                   debounce(this.repositionMatchesDropdown, 100));
   }
 
   componentWillUnmount() {
-    $(document).off(`.SearchSuggest:${this.props.name}`);
+    $(window).off(`.SearchSuggest:${this.props.name}`);
   }
 
   componentWillReceiveProps(props) {
@@ -182,11 +182,16 @@ export default class SearchSuggest extends React.Component {
   }
 
   setShowMatchesState() {
-    this.setState({open: true, selectedMatchIndex: 0});
+    let {spaceAbove, spaceBelow} = this.calculateDropdownSpace();
+    this.setState({
+      open: true,
+      selectedMatchIndex: 0,
+      above: spaceBelow < 0 && spaceAbove > spaceBelow
+    });
   }
 
   setHideMatchesState() {
-    this.setState({open: false});
+    this.setState({open: false, above: false});
   }
 
   setSelectedMatchState(value) {
@@ -213,8 +218,48 @@ export default class SearchSuggest extends React.Component {
       nextState.value === this.state.value &&
       nextState.matches === this.state.matches &&
       nextState.selectedMatchIndex === this.state.selectedMatchIndex &&
-      nextState.open === this.state.open
+      nextState.open === this.state.open &&
+      nextState.above === this.state.above
     );
+  }
+
+  hideMatchesIfShown(event) {
+    if (this.state.open == true &&
+        !$.contains(React.findDOMNode(this), event.target)) {
+      this.setHideMatchesState();
+    }
+  }
+
+  repositionMatchesDropdown() {
+    // Only run the below calculations if the dropdown is open.
+    if (!this.state.open) return;
+
+    let {spaceAbove, spaceBelow} = this.calculateDropdownSpace();
+
+    // Don't update the `above` state if there is space in both directions.
+    if (spaceAbove < 0 || spaceBelow < 0) {
+      this.setState({above: spaceAbove > spaceBelow});
+    }
+  }
+
+  calculateDropdownSpace() {
+    let $input = $(React.findDOMNode(this.refs.input));
+    let $dropdown = $(React.findDOMNode(this.refs.matches));
+
+    let inputTop = $input.offset().top;
+    let inputBottom = inputTop + $input.outerHeight();
+    let dropdownHeight = $dropdown.outerHeight();
+    let viewportTop = $(window).scrollTop();
+    let viewportBottom = viewportTop + $(window).height();
+    let spaceAbove = (inputTop - dropdownHeight) - viewportTop;
+    let spaceBelow = viewportBottom - (inputBottom + dropdownHeight)
+
+    return {spaceAbove, spaceBelow};
+  }
+
+  namespaceEvents(...events) {
+    let namespace = '.SearchSuggest:' + this.props.name;
+    return map(events, (event) => event + namespace).join(' ');
   }
 
   render() {
@@ -222,6 +267,9 @@ export default class SearchSuggest extends React.Component {
     let className = 'SearchSuggest';
     if (this.state.open && this.state.matches.length) {
       className += ' SearchSuggest--open';
+    }
+    if (this.state.above) {
+      className += ' SearchSuggest--above';
     }
 
     return (
