@@ -39,7 +39,7 @@ describe('queryParams', function() {
         'segment': 'gaid::-1',
         'start-date': '30daysAgo',
         'ids': 'ga:1234',
-        'max-results': 10,
+        'max-results': '10',
         'end-date': 'yesterday'
       };
       let sanitizedParams = queryParams.sanitize(dirtyParams);
@@ -52,10 +52,11 @@ describe('queryParams', function() {
       ]);
     });
 
-    it('strips out null and undefined values.', function() {
+    it('strips out non-string and empty string values.', function() {
       let dirtyParams = {
         'ids': 'ga:1234',
-        'start-date': null
+        'start-date': '',
+        'end-date': null
       };
       let sanitizedParams = queryParams.sanitize(dirtyParams);
       assert.deepEqual(sanitizedParams, {'ids': 'ga:1234'});
