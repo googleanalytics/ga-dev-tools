@@ -79,10 +79,10 @@ function getInitalQueryParams() {
       urlParams = mapValues(urlParams, (value) => decodeURIComponent(value));
     }
 
-    return assign({}, defaultParams, urlParams);
+    return queryParams.sanitize(assign({}, defaultParams, urlParams));
   }
   else if (storedParams) {
-    return assign({}, defaultParams, storedParams);
+    return queryParams.sanitize(assign({}, defaultParams, storedParams));
   }
   else {
     return defaultParams;
