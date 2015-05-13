@@ -15,28 +15,48 @@ limitations under the License.
 */
 
 
-.S2Tag {
+.SearchSuggestMatch {
+  border: solid #eee;
+  border-width: 1px 0 0;
   line-height: 1.2;
+  list-style: none;
+  padding: .5em;
+}
+.SearchSuggestMatch:first-child {
+  border: 0;
 }
 
-.S2Tag-category {
+.SearchSuggestMatch-category {
   color: #bbb;
   float: right;
   font-size: .6em;
   font-weight: 700;
   letter-spacing: .1em;
-  margin: .1em 0;
+  margin: .1em 0 1em .5em;
   text-transform: uppercase;
+  text-align: right;
+  max-width: 12em;
 }
 
-.S2Tag-content {
+.SearchSuggestMatch-content {
   font-weight: 600;
 }
 
-.S2Tag-extra {
+.SearchSuggestMatch-extra {
   color: #777;
   font-size: .8em;
   font-weight: 300;
   margin-top: .15em;
   word-wrap: break-word;
+}
+
+
+.SearchSuggestMatch--selected {
+  border-color: transparent;
+  background: var(--border-color-active);
+}
+.SearchSuggestMatch--selected .SearchSuggestMatch-category,
+.SearchSuggestMatch--selected .SearchSuggestMatch-content,
+.SearchSuggestMatch--selected .SearchSuggestMatch-extra {
+  color: #fff;
 }

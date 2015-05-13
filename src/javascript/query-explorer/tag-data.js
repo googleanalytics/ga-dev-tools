@@ -23,10 +23,9 @@ import metadata from 'javascript-api-utils/lib/metadata';
  * Returns a promise that is resolved with an array of all public metrics.
  * @return {goog.Promise}
  */
-function getMetricTags() {
-  return metadata.get().then(function(columns) {
-    return columns.allMetrics('public');
-  });
+function getMetricTags(account, property, view) {
+  return metadata.getAuthenticated(account, property, view).then(
+         (columns) => columns.allMetrics('public'));
 }
 
 
@@ -34,10 +33,9 @@ function getMetricTags() {
  * Returns a promise that is resolved with an array of all public dimensions.
  * @return {goog.Promise}
  */
-function getDimensionTags() {
-  return metadata.get().then(function(columns) {
-    return columns.allDimensions('public');
-  });
+function getDimensionTags(account, property, view) {
+  return metadata.getAuthenticated(account, property, view).then(
+         (columns) => columns.allDimensions('public'));
 }
 
 
@@ -46,75 +44,59 @@ function getDimensionTags() {
  * can access.
  * @return {goog.Promise}
  */
-function getSegmentTags(useDefinition = false) {
-  return gapi.client.analytics.management.segments
-      .list().then(function(response) {
-    return response.result.items;
-  });
+let segmentCache;
+function getSegmentTags() {
+  return segmentCache || (segmentCache = gapi.client.analytics.management
+      .segments.list().then((response) => response.result.items));
 }
 
 
-/**
- * Returns a promise that is resolved with an object of metrics, dimensions,
- * segment IDs, and segment definitions in the form that select2 needs them.
- * @return {Promise}
- */
-export default function() {
-  return Promise.all([
-    getMetricTags(),
-    getDimensionTags(),
-    getSegmentTags()
-  ])
-  .then(function(data) {
-    return {
+export default {
 
-      metrics: data[0].map(function(metric) {
+  getMetricsAndDimensions(account, property, view) {
+    return Promise.all([
+      getMetricTags(account, property, view),
+      getDimensionTags(account, property, view)
+    ])
+    .then(function(data) {
+
+      let metrics = data[0].map(function(metric) {
         return {
           id: metric.id,
-          text: [
-            metric.id,
-            metric.attributes.uiName,
-            metric.attributes.group].join(' '),
           name: metric.attributes.uiName,
           group: metric.attributes.group
         };
-      }),
+      });
 
-      dimensions: data[1].map(function(dimension) {
+      let dimensions = data[1].map(function(dimension) {
         return {
           id: dimension.id,
-          text: [
-            dimension.id,
-            dimension.attributes.uiName,
-            dimension.attributes.group].join(' '),
           name: dimension.attributes.uiName,
           group: dimension.attributes.group
         };
-      }),
+      });
 
-      segmentIds: data[2].map(function(segment) {
+      return {metrics, dimensions};
+    });
+  },
+
+  getSegments(useDefinition) {
+    return getSegmentTags().then(function(resutls) {
+      let segments = resutls.map(function(segment) {
         return {
-          id: segment.segmentId,
-          text: [segment.definition, segment.name, segment.type].join(' '),
-          segmentId: segment.segmentId,
+          id: useDefinition ? segment.definition : segment.segmentId,
           definition: segment.definition,
+          segmentId: segment.segmentId,
           name: segment.name,
           group: segment.type == 'BUILT_IN' ?
               'Built in Segment' : 'Custom Segment'
         }
-      }),
+      });
 
-      segmentDefinitions: data[2].map(function(segment) {
-        return {
-          id: segment.definition,
-          text: [segment.definition, segment.name, segment.type].join(' '),
-          segmentId: segment.segmentId,
-          definition: segment.definition,
-          name: segment.name,
-          group: segment.type == 'BUILT_IN' ?
-              'Built in Segment' : 'Custom Segment'
-        }
-      }).slice(1) // Remove the 'All Sessions' segment.
-    };
-  });
+      // Remove the 'All Sessions' segment when using definitions.
+      if (useDefinition) segments = segments.slice(1);
+
+      return segments;
+    });
+  },
 }

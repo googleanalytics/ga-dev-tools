@@ -29,6 +29,7 @@ export default class Collection extends events.EventEmitter {
    * @return {Collection}
    */
   constructor(models) {
+    super();
     this.models_ = [];
 
     // Create a reference to a bound function to handle change events.

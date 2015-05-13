@@ -32,16 +32,15 @@ export default {
 
   /**
    * Consumes an object of query parameters and returns an object that only
-   * contains whitelisted parameters in the correct order.
+   * contains whitelisted parameters with non-empty values in the correct order.
    * @param {Object} dirtyParams The params object to sanitize.
    * @return {Object} The sanitized object.
    */
   sanitize: function(dirtyParams) {
     let sanitizedParams = {};
-    
 
     PARAMS.forEach(function(param) {
-      if (dirtyParams[param] != null) {
+      if (typeof dirtyParams[param] == 'string' && dirtyParams[param].length) {
         sanitizedParams[param] = dirtyParams[param];
       }
     });

@@ -28,6 +28,7 @@ export default class Model extends events.EventEmitter {
    * @return {Model}
    */
   constructor(props) {
+    super();
     this.props_ = props || {};
     this.oldProps_ = {};
     this.changedProps_ = {};
@@ -111,7 +112,7 @@ export default class Model extends events.EventEmitter {
    * @emits change
    */
   unset(prop) {
-    
+
     // Don't unset if the prop doesn't exist.
     if (!this.props_.hasOwnProperty(prop)) return;
 

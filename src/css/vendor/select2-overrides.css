@@ -101,7 +101,7 @@ limitations under the License.
 }
 
 .select2-drop .select2-results .select2-result-label {
-  padding: .6em calc(6em/14);
+  padding: 0;
 }
 
 .select2-drop .select2-results .select2-selection-limit {
@@ -178,4 +178,3 @@ limitations under the License.
   content: '\2715';
   font-size: .9em;
 }
-

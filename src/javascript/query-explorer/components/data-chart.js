@@ -18,29 +18,36 @@
 
 import assign from 'lodash/object/assign';
 import mapValues from 'lodash/object/mapValues';
+import queryParams from '../query-params';
 import React from 'react';
 
 
 const SRC_PARAM = 'query-explorer:v2';
 
 
-var DataChart = React.createClass({
-  componentDidMount: function() {
+export default class DataChart extends React.Component {
+
+  componentDidMount() {
     gapi.analytics.ready(() => {
+      let params = queryParams.sanitize(this.props.params);
+
       this.dataChart_ = new gapi.analytics.googleCharts.DataChart({
-        query: assign({}, this.props.params, {_src: SRC_PARAM}),
+        query: assign({}, params, {_src: SRC_PARAM}),
         chart: {
           type: 'TABLE',
-          container: this.getDOMNode()
+          container: React.findDOMNode(this)
         }
       });
 
       this.dataChart_.on('error', this.props.onError.bind(this));
       this.dataChart_.on('success', this.props.onSuccess.bind(this));
     });
-  },
-  componentWillReceiveProps: function(props) {
-    if (props.params && props.isQuerying) {
+  }
+
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.params && nextProps.isQuerying) {
+
+      let newParams = queryParams.sanitize(nextProps.params);
 
       // The Embed API has its own defaults for these values, so we need to
       // explicitly set them in case the user doesn't.
@@ -53,20 +60,23 @@ var DataChart = React.createClass({
       // TODO(philipwalton): .set() should ideally be able to handle
       // sending it new properties without merging.
       let nulledOldParams = mapValues(this.dataChart_.get().query, () => null);
-      let newParams = assign(defaultParams, nulledOldParams, props.params);
+      let params = assign(defaultParams, nulledOldParams, newParams);
 
-      this.dataChart_.set({query: newParams}).execute();
+      this.dataChart_.set({query: params}).execute();
     }
-  },
-  componentWillUnmount: function() {
+  }
+
+  componentWillUnmount() {
     this.dataChart_.off();
-  },
-  render: function() {
+  }
+
+  render() {
     return (
       <div className={this.props.className} hidden={this.props.hidden} />
     );
   }
-});
+}
 
-
-export default DataChart
+DataChart.defaultProps = {
+  params: {}
+}

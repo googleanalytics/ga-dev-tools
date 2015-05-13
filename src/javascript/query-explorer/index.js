@@ -18,19 +18,23 @@
 
 import assign from 'lodash/object/assign';
 import clone from 'lodash/lang/clone';
+import Datepicker from './components/datepicker';
+import filter from 'lodash/collection/filter';
 import find from 'lodash/collection/find';
-import getTagData from './tag-data';
+import HelpIconLink from './components/help-icon-link';
 import map from 'lodash/collection/map';
 import mapValues from 'lodash/object/mapValues';
 import Model from '../model';
 import pick from 'lodash/object/pick';
 import qs from 'querystring';
-import QueryForm from './query-form';
 import queryParams from './query-params';
-import QueryReport from './query-report';
+import QueryReport from './components/query-report';
 import React from 'react';
+import SearchSuggest from './components/search-suggest';
+import Select2MultiSuggest from './components/select2-multi-suggest';
 import store from '../data-store';
-import ViewSelector from './view-selector';
+import tagData from './tag-data';
+import ViewSelector from './components/view-selector';
 
 
 /**
@@ -39,6 +43,7 @@ import ViewSelector from './view-selector';
 let metrics;
 let dimensions;
 let segments;
+let sortOptions;
 
 
 /**
@@ -74,10 +79,10 @@ function getInitalQueryParams() {
       urlParams = mapValues(urlParams, (value) => decodeURIComponent(value));
     }
 
-    return assign({}, defaultParams, urlParams);
+    return queryParams.sanitize(assign({}, defaultParams, urlParams));
   }
   else if (storedParams) {
-    return assign({}, defaultParams, storedParams);
+    return queryParams.sanitize(assign({}, defaultParams, storedParams));
   }
   else {
     return defaultParams;
@@ -91,8 +96,24 @@ function getInitalQueryParams() {
  * event.
  */
 function handleViewSelectorChange(data) {
+  let {account, property, view} = data;
+
   params.set('ids', data.ids);
   state.set('selectedAccountData', clone(data));
+
+  tagData.getMetricsAndDimensions(
+      account, property, view).then(function(data) {
+    metrics = data.metrics;
+    dimensions = data.dimensions;
+
+    // TODO(philipwalton) This does need to happen after metrics and dimensions
+    // potentially change, but it sould probably happen in an event handler
+    // rather than here. Refactor once dimensions and metrics are moved to
+    // be properties of `state`.
+    setSortOptions();
+
+    render();
+  });
 }
 
 
@@ -101,7 +122,23 @@ function handleViewSelectorChange(data) {
  * @param {SyntheticEvent} e The React event.
  */
 function handleSegmentDefinitionToggle(e) {
-  settings.set('useDefinition', e.target.checked);
+  let useDefinition = e.target.checked
+  settings.set('useDefinition', useDefinition);
+
+  tagData.getSegments(useDefinition).then(function(results) {
+    segments = results;
+    render();
+  });
+
+  if (params.get('segment')) {
+    let value = params.get('segment');
+    let segment = find(segments, segment =>
+        value == segment.segmentId || value == segment.definition);
+
+    if (segment) params.set('segment', useDefinition ?
+        segment.definition : segment.segmentId);
+  }
+
 }
 
 
@@ -125,7 +162,8 @@ function handleAccessTokenToggle(e) {
 
 /**
  * Invoked when a user changes any of the <QueryForm> fields.
- * @param {Event|Object} e The native or React event.
+ * @param {Event|Object} e A native Event object, React event, or data object
+ *     containing the target.name and target.value properties.
  */
 function handleFieldChange(e) {
   let {name, value} = e.target;
@@ -134,6 +172,41 @@ function handleFieldChange(e) {
   }
   else {
     params.unset(name);
+  }
+}
+
+
+/**
+ * Sets or updates the options for the sort field based on the chosen
+ * metrics and dimensions.
+ */
+function setSortOptions() {
+
+  let metsAndDims = (metrics || []).concat(dimensions || []);
+  let chosenMetrics = (params.get('metrics') || '').split(',');
+  let chosenDimensions = (params.get('dimensions') || '').split(',');
+  let chosenMetsAndDims = (chosenMetrics || []).concat(chosenDimensions || []);
+
+  sortOptions = [];
+
+  for (let choice of chosenMetsAndDims) {
+    for (let option of metsAndDims) {
+      if (choice == option.id) {
+
+        let descending = clone(option);
+        descending.name += ' (descending)';
+        descending.text += ' (descending)';
+        descending.id = '-' + choice;
+
+        let ascending = clone(option);
+        ascending.name += ' (ascending)';
+        ascending.text += ' (ascending)';
+        ascending.id = choice;
+
+        sortOptions.push(descending);
+        sortOptions.push(ascending);
+      }
+    }
   }
 }
 
@@ -256,16 +329,180 @@ function render() {
 
       <h3 className="H3--underline">Set the query parameters</h3>
 
-      <QueryForm
-        onSubmit={handleSubmit}
-        onChange={handleFieldChange}
-        onSegmentDefinitionToggle={handleSegmentDefinitionToggle}
-        params={params.get()}
-        isQuerying={state.get('isQuerying')}
-        useDefinition={state.get('useDefinition')}
-        metrics={metrics}
-        dimensions={dimensions}
-        segments={segments} />
+      <form onSubmit={handleSubmit}>
+
+        <div className="FormControl FormControl--inline FormControl--required">
+          <label className="FormControl-label">ids</label>
+          <div className="FormControl-body">
+            <div className="FlexLine">
+              <input
+                className="FormField FormFieldCombo-field"
+                name="ids"
+                value={params.get('ids')}
+                onChange={handleFieldChange} />
+              <HelpIconLink name="ids" />
+            </div>
+          </div>
+        </div>
+
+        <div className="FormControl FormControl--inline FormControl--required">
+          <label className="FormControl-label">start-date</label>
+          <div className="FormControl-body">
+            <div className="FlexLine">
+              <Datepicker
+                name="start-date"
+                value={params.get('start-date')}
+                onChange={handleFieldChange} />
+              <HelpIconLink name="start-date" />
+            </div>
+          </div>
+        </div>
+
+        <div className="FormControl FormControl--inline FormControl--required">
+          <label className="FormControl-label">end-date</label>
+          <div className="FormControl-body">
+            <div className="FlexLine">
+              <Datepicker
+                name="end-date"
+                value={params.get('end-date')}
+                onChange={handleFieldChange} />
+              <HelpIconLink name="end-date" />
+            </div>
+          </div>
+        </div>
+
+        <div className="FormControl FormControl--inline FormControl--required">
+          <label className="FormControl-label">metrics</label>
+          <div className="FormControl-body">
+            <div className="FlexLine">
+              <Select2MultiSuggest
+                name="metrics"
+                value={params.get('metrics')}
+                tags={metrics}
+                onChange={handleFieldChange} />
+              <HelpIconLink name="metrics" />
+            </div>
+          </div>
+        </div>
+
+        <div className="FormControl FormControl--inline">
+          <label className="FormControl-label">dimensions</label>
+          <div className="FormControl-body">
+            <div className="FlexLine">
+              <Select2MultiSuggest
+                name="dimensions"
+                value={params.get('dimensions')}
+                tags={dimensions}
+                onChange={handleFieldChange} />
+              <HelpIconLink name="dimensions" />
+            </div>
+          </div>
+        </div>
+
+        <div className="FormControl FormControl--inline">
+          <label className="FormControl-label">sort</label>
+          <div className="FormControl-body">
+            <div className="FlexLine">
+              <Select2MultiSuggest
+                name="sort"
+                value={params.get('sort')}
+                tags={sortOptions}
+                onChange={handleFieldChange} />
+              <HelpIconLink name="sort" />
+            </div>
+          </div>
+        </div>
+
+        <div className="FormControl FormControl--inline">
+          <label className="FormControl-label">filters</label>
+          <div className="FormControl-body">
+            <div className="FlexLine">
+              <input
+                className="FormField FormFieldCombo-field"
+                name="filters"
+                value={params.get('filters')}
+                onChange={handleFieldChange} />
+              <HelpIconLink name="filters" />
+            </div>
+          </div>
+        </div>
+
+        <div className="FormControl FormControl--inline">
+          <label className="FormControl-label">segment</label>
+          <div className="FormControl-body">
+            <div className="FlexLine">
+              <SearchSuggest
+                name="segment"
+                value={params.get('segment')}
+                options={segments}
+                onChange={handleFieldChange} />
+              <HelpIconLink name="segment" />
+            </div>
+            <div className="FormControl-info">
+              <label>
+                <input
+                  className="Checkbox"
+                  type="checkbox"
+                  onChange={handleSegmentDefinitionToggle}
+                  checked={settings.get('useDefinition')} />
+                Show segment definitions instead of IDs.
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <div className="FormControl FormControl--inline">
+          <label className="FormControl-label">samplingLevel</label>
+          <div className="FormControl-body">
+            <div className="FlexLine">
+              <input
+                className="FormField FormFieldCombo-field"
+                name="samplingLevel"
+                value={params.get('samplingLevel')}
+                onChange={handleFieldChange} />
+              <HelpIconLink name="samplingLevel" />
+            </div>
+          </div>
+        </div>
+
+        <div className="FormControl FormControl--inline">
+          <label className="FormControl-label">start-index</label>
+          <div className="FormControl-body">
+            <div className="FlexLine">
+              <input
+                className="FormField FormFieldCombo-field"
+                name="start-index"
+                value={params.get('start-index')}
+                onChange={handleFieldChange} />
+              <HelpIconLink name="start-index" />
+            </div>
+          </div>
+        </div>
+
+        <div className="FormControl FormControl--inline">
+          <label className="FormControl-label">max-results</label>
+          <div className="FormControl-body">
+            <div className="FlexLine">
+              <input
+                className="FormField FormFieldCombo-field"
+                name="max-results"
+                value={params.get('max-results')}
+                onChange={handleFieldChange} />
+              <HelpIconLink name="max-results" />
+            </div>
+          </div>
+        </div>
+
+        <div className="FormControl FormControl--inline FormControl--action">
+          <div className="FormControl-body">
+            <button
+              className="Button Button--action"
+              disabled={state.get('isQuerying')}>
+              {state.get('isQuerying') ? 'Loading...' : 'Run Query'}
+            </button>
+          </div>
+        </div>
+      </form>
 
       <QueryReport
         report={state.get('report')}
@@ -291,54 +528,37 @@ function render() {
  * state classes, and call `render()` when ready.
  */
 function setup() {
-  getTagData().then(function(data) {
 
-    metrics = data.metrics;
-    dimensions = data.dimensions;
-    segments = settings.get('useDefinition') ?
-        data.segmentDefinitions : data.segmentIds;
-
-    // Update the segments array when the useDefinition settings changes.
-    settings.on('change', function() {
-      segments = settings.get('useDefinition') ?
-          data.segmentDefinitions : data.segmentIds;
-
-      if (params.get('segment')) {
-        let value = params.get('segment');
-        let segment = find(segments, segment =>
-            value == segment.segmentId || value == segment.definition);
-        params.set('segment', (segment && segment.id) || value);
-      }
-    });
-
-    // Update the tracker's "Query Explorer Settings" dimension on change.
-    settings.on('change', function() {
-      ga('set', 'dimension3', qs.stringify(settings.get()));
-    });
-
-    // Listen for changes and rerender.
-    settings.on('change', function() {
-      store.set('query-explorer:settings', settings.get());
-      render();
-    });
-    params.on('change', function() {
-      store.set('query-explorer:params', queryParams.sanitize(params.get()));
-      render();
-    });
-    state.on('change', function() {
-      render();
-    });
-
-    // Store the initial settings on the tracker.
-    ga('set', 'dimension3', qs.stringify(settings.get()));
-
-    // Add/remove state classes.
-    $('body').removeClass('is-loading');
-    $('body').addClass('is-ready');
-
-    // Force render now that select2 tags are available.
+  tagData.getSegments(settings.get('useDefinition')).then(function(results) {
+    segments = results;
     render();
   });
+
+  // Listen for changes and rerender.
+  settings.on('change', function() {
+    store.set('query-explorer:settings', settings.get());
+    ga('set', 'dimension3', qs.stringify(settings.get()));
+    render();
+  });
+  params.on('change', function(model) {
+    if ('metrics' in model.changedProps ||
+        'dimensions' in model.changedProps) {
+      setSortOptions();
+    }
+    store.set('query-explorer:params', queryParams.sanitize(params.get()));
+    render();
+  });
+  state.on('change', function() {
+    render();
+  });
+
+  // Store the initial settings on the tracker.
+  ga('set', 'dimension3', qs.stringify(settings.get()));
+
+  // Add/remove state classes.
+  $('body').removeClass('is-loading');
+  $('body').addClass('is-ready');
+
 }
 
 
