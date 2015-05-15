@@ -79,7 +79,15 @@ function getInitalQueryParams() {
       urlParams = mapValues(urlParams, (value) => decodeURIComponent(value));
     }
 
-    return queryParams.sanitize(assign({}, defaultParams, urlParams));
+    // Remove the query params in the URL to prevent losing state on refresh.
+    // https://github.com/googleanalytics/ga-dev-tools/issues/61
+    if (history && history.replaceState) {
+      history.replaceState(history.state, document.title, location.pathname);
+    }
+
+    urlParams = queryParams.sanitize(assign({}, defaultParams, urlParams));
+    store.set('query-explorer:params', urlParams);
+    return urlParams;
   }
   else if (storedParams) {
     return queryParams.sanitize(assign({}, defaultParams, storedParams));
