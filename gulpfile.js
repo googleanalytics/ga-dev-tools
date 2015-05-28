@@ -13,24 +13,18 @@
 // limitations under the License.
 
 
-import assign from 'lodash/object/assign';
-import babelify from 'babelify';
 import cleancss from 'gulp-cleancss';
 import glob from 'glob';
 import gulp from 'gulp';
 import gulpIf from 'gulp-if';
 import gutil from 'gulp-util';
 import inline from 'rework-plugin-inline';
-import jshint from 'gulp-jshint';
 import mocha from 'gulp-mocha';
 import path from 'path';
 import plumber from 'gulp-plumber';
 import prefix from 'gulp-autoprefixer';
 import rework from 'gulp-rework';
-import source from 'vinyl-source-stream';
-import sourcemaps from 'gulp-sourcemaps';
 import suit from 'rework-suit';
-import uglify from 'gulp-uglify';
 import webpack from 'webpack';
 
 
@@ -56,16 +50,6 @@ gulp.task('css', function() {
 gulp.task('images', function() {
   gulp.src('src/images/**/*')
       .pipe(gulp.dest('public/images'));
-});
-
-gulp.task('lint', function() {
-  return gulp.src([
-    'gulpfile.js',
-    'src/javascript/**/*.js'
-  ])
-  .pipe(jshint())
-  .pipe(jshint.reporter('default'))
-  .pipe(jshint.reporter('fail'));
 });
 
 
@@ -189,8 +173,6 @@ gulp.task('build:embed-api-components', ['javascript'], function() {
 
 
 gulp.task('build:all', [
-  // Disable JSHint since it doesn't handle JSX syntax at the moment.
-  /*'lint',*/
   'test',
   'javascript',
   'css',
