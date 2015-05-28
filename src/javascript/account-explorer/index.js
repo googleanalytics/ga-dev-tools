@@ -1,4 +1,4 @@
-// Copyright 2014 Google Inc. All rights reserved.
+// Copyright 2015 Google Inc. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -16,7 +16,7 @@
 /* global $, gapi */
 
 
-var accountSummaries = require('javascript-api-utils/lib/account-summaries');
+import accountSummaries from 'javascript-api-utils/lib/account-summaries';
 
 
 function setup() {
@@ -257,15 +257,12 @@ function getMapFromHash() {
 }
 
 
-module.exports = {
-  init: function() {
-    gapi.analytics.ready(function() {
-      if (gapi.analytics.auth.isAuthorized()) {
-        setup();
-      }
-      else {
-        gapi.analytics.auth.once('success', setup);
-      }
-    });
+// Run setup when the Embed API is ready and the user is authorized.
+gapi.analytics.ready(function() {
+  if (gapi.analytics.auth.isAuthorized()) {
+    setup();
   }
-};
+  else {
+    gapi.analytics.auth.once('success', setup);
+  }
+});

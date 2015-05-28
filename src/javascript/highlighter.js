@@ -16,7 +16,8 @@
 /* global $ */
 
 
-var hljs = require('highlight.js/lib/highlight');
+import hljs from 'highlight.js/lib/highlight';
+
 
 hljs.registerLanguage('xml',
     require('highlight.js/lib/languages/xml'));
@@ -24,7 +25,8 @@ hljs.registerLanguage('xml',
 hljs.registerLanguage('javascript',
     require('highlight.js/lib/languages/javascript'));
 
-module.exports = {
+
+export default {
 
   highlight: function(selector) {
     $(selector).each(function() {

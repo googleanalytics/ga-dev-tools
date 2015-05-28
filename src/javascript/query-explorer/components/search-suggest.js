@@ -207,7 +207,7 @@ export default class SearchSuggest extends React.Component {
    * @param {Object} e A jQuery event.
    */
   hideMatchesOnExternalEvent(e) {
-    if (this.state.open == true &&
+    if (this.state.open === true &&
         !$.contains(React.findDOMNode(this), e.target)) {
       this.setHideMatchesState();
     }

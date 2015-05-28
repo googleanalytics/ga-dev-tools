@@ -13,31 +13,23 @@
 // limitations under the License.
 
 
-require('babel/register');
+import cleancss from 'gulp-cleancss';
+import glob from 'glob';
+import gulp from 'gulp';
+import gulpIf from 'gulp-if';
+import gutil from 'gulp-util';
+import inline from 'rework-plugin-inline';
+import mocha from 'gulp-mocha';
+import path from 'path';
+import plumber from 'gulp-plumber';
+import prefix from 'gulp-autoprefixer';
+import rework from 'gulp-rework';
+import suit from 'rework-suit';
+import webpack from 'webpack';
 
 
-var babelify = require('babelify');
-var browserify = require('browserify');
-var buffer = require('vinyl-buffer');
-var cleancss = require('gulp-cleancss');
-var concat = require('gulp-concat');
-var DeepWatch = require('deep-watch');
-var gulp = require('gulp');
-var gulpIf = require('gulp-if');
-var gutil = require('gulp-util');
-var inline = require('rework-plugin-inline');
-var jshint = require('gulp-jshint');
-var mocha = require('gulp-mocha');
-var plumber = require('gulp-plumber');
-var prefix = require('gulp-autoprefixer');
-var rework = require('gulp-rework');
-var source = require('vinyl-source-stream');
-var sourcemaps = require('gulp-sourcemaps');
-var suit = require('rework-suit');
-var uglify = require('gulp-uglify');
-
-function isProd(transform) {
-  return gulpIf(process.env.NODE_ENV == 'production', transform);
+function isProd() {
+  return process.env.NODE_ENV == 'production';
 }
 
 function streamError(err) {
@@ -46,113 +38,152 @@ function streamError(err) {
 }
 
 gulp.task('css', function() {
-  gulp.src('./src/css/main.css')
+  gulp.src('src/css/index.css')
       .pipe(plumber({errorHandler: streamError}))
-      .pipe(rework(suit(), inline('./src/images'), {sourcemap: true}))
+      .pipe(rework(suit(), inline('src/images'), {sourcemap: true}))
       .pipe(prefix('> 1%', 'last 2 versions', 'Safari >= 5.1',
                    'ie >= 10', 'Firefox ESR'))
-      .pipe(isProd(cleancss({keepSpecialComments: 0})))
+      .pipe(gulpIf(isProd(), cleancss({keepSpecialComments: 0})))
       .pipe(gulp.dest('./public/css'));
 });
 
 gulp.task('images', function() {
-  gulp.src('./src/images/**/*')
-      .pipe(gulp.dest('./public/images'));
+  gulp.src('src/images/**/*')
+      .pipe(gulp.dest('public/images'));
 });
 
-gulp.task('lint', function() {
-  return gulp.src([
-    './gulpfile.js',
-    './src/javascript/**/*.js'
-  ])
-  .pipe(jshint())
-  .pipe(jshint.reporter('default'))
-  .pipe(jshint.reporter('fail'));
-});
 
-gulp.task('javascript:bundle', function() {
-  browserify('./src/javascript', {debug: true})
-      .transform(babelify)
-      .bundle()
-      .on('error', streamError)
-      .pipe(source('bundle.js'))
-      .pipe(buffer())
-      .pipe(sourcemaps.init({loadMaps: true}))
-      .pipe(isProd(uglify()))
-      .pipe(sourcemaps.write('./'))
-      .pipe(gulp.dest('./public/javascript/'));
-});
+gulp.task('javascript:bundle', (function() {
 
-gulp.task('javascript:vendor', function() {
-  gulp.src([
-        'node_modules/jquery/dist/jquery.min.js',
-        'node_modules/jquery/dist/jquery.min.map',
-        'node_modules/moment/min/moment.min.js',
-        'node_modules/chart.js/Chart.min.js',
-        'node_modules/Select2/select2.js'
-      ])
-      .pipe(gulp.dest('./public/javascript'));
-});
+  let compiler;
 
-gulp.task('javascript:build', function() {
-  gulp.src([
-        './src/javascript/embed-api/components/active-users.js',
-        './src/javascript/embed-api/components/date-range-selector.js'
-      ])
-      .pipe(plumber({errorHandler: streamError}))
-      .pipe(sourcemaps.init())
-      .pipe(uglify())
-      .pipe(sourcemaps.write('./'))
-      .pipe(gulp.dest('./public/javascript/embed-api/components'))
-      .pipe(gulp.dest('./build/javascript/embed-api/components'));
+  function createCompiler() {
+    let sourceFiles = glob.sync('./*/index.js', {cwd: './src/javascript/'})
+    let entry = {'app': './src/javascript/index.js'};
 
-  browserify('./src/javascript/embed-api/components/view-selector2', {
-        debug: true
-      })
-      .bundle()
-      .on('error', streamError)
-      .pipe(source('view-selector2.js'))
-      .pipe(buffer())
-      .pipe(sourcemaps.init({loadMaps: true}))
-      .pipe(uglify())
-      .pipe(sourcemaps.write('./'))
-      .pipe(gulp.dest('./public/javascript/embed-api/components'))
-      .pipe(gulp.dest('./build/javascript/embed-api/components'));
-});
+    for (let filename of sourceFiles) {
+      let name = path.join('.', path.dirname(filename));
+      let filepath = './' + path.join('./src/javascript', filename);
+      entry[name] = filepath;
+    }
+
+    let plugins = [new webpack.optimize.CommonsChunkPlugin({
+      name: 'common',
+      minChunks: 2
+    })];
+
+    // Uglify in production.
+    if (isProd()) {
+      plugins.push(new webpack.optimize.UglifyJsPlugin());
+    }
+
+    return webpack({
+      entry:  entry,
+      output: {
+        path: 'public/javascript',
+        filename: '[name].js'
+      },
+      cache: {},
+      devtool: '#source-map',
+      plugins: plugins,
+      module: {
+        loaders: [
+          {
+            test: /\.js$/,
+            exclude: /node_modules/,
+            loader: 'babel-loader'
+          }
+        ]
+      }
+    });
+  }
+
+  function compile(done) {
+    (compiler || (compiler = createCompiler())).run(function(err, stats) {
+      if (err) throw new gutil.PluginError('webpack', err);
+      gutil.log('[webpack]', stats.toString({cached: true}));
+      done();
+    });
+  }
+
+  return compile;
+}()));
+
+
+gulp.task('javascript:embed-api-components', (function() {
+
+  let compiler;
+
+  function createCompiler() {
+    const COMPONENT_PATH = './javascript/embed-api/components';
+    let components = ['active-users', 'date-range-selector', 'view-selector2'];
+    let entry = {};
+
+    for (let component of components) {
+      entry[component] = './' + path.join('./src', COMPONENT_PATH, component);
+    }
+
+    return webpack({
+      entry: entry,
+      output: {
+        path: path.join('./public', COMPONENT_PATH),
+        filename: '[name].js'
+      },
+      cache: {},
+      devtool: '#source-map',
+      plugins: [new webpack.optimize.UglifyJsPlugin()],
+    });
+  }
+
+  function compile(done) {
+    (compiler || (compiler = createCompiler())).run(function(err, stats) {
+      if (err) throw new gutil.PluginError('webpack', err);
+      gutil.log('[webpack]', stats.toString({cached: true}));
+      done();
+    });
+  }
+
+  return compile;
+}()));
+
 
 gulp.task('javascript', [
   'javascript:bundle',
-  'javascript:build',
-  'javascript:vendor'
+  'javascript:embed-api-components'
 ]);
 
 
-gulp.task('test', function() {
+gulp.task('test', ['javascript'], function() {
   return gulp.src('test/**/*.js', {read: false})
-    .pipe(mocha());
+      .pipe(mocha());
 });
 
 
 gulp.task('watch', ['javascript', 'css', 'images'], function() {
-  // gulp.watch('./src/css/**/*.css', ['css']);
-  // gulp.watch('./src/images/**/*', ['images']);
-  // gulp.watch('./src/javascript/**/*.js', ['javascript']);
-
-  // This is a temporary workaround until this `gulp.watch` is fixed:
-  // https://github.com/babel/babel/issues/489#issuecomment-69919417
-  var watchOptions = {
-    exclude: ['lib', 'node_modules', 'public', 'templates', 'test']
-  };
-
-  function onChange(event, filename) {
-    if (filename.indexOf('src/css') === 0) gulp.start('css');
-    if (filename.indexOf('src/images') === 0) gulp.start('images');
-    if (filename.indexOf('src/javascript') === 0) gulp.start('javascript');
-  }
-
-  new DeepWatch('.', watchOptions, onChange).start();
+  gulp.watch('src/css/**/*.css', ['css']);
+  gulp.watch('src/images/**/*', ['images']);
+  gulp.watch('src/javascript/**/*', ['javascript']);
 });
 
 
-// Disable JSHint since it doesn't handle JSX syntax at the moment.
-gulp.task('build', [/*'lint',*/ 'test', 'javascript', 'css', 'images']);
+gulp.task('build:embed-api-components', ['javascript'], function() {
+  gulp.src('public/javascript/embed-api/components/*')
+      .pipe(gulp.dest('build/javascript/embed-api/components'));
+});
+
+
+gulp.task('build:all', [
+  'test',
+  'javascript',
+  'css',
+  'images',
+  'build:embed-api-components'
+]);
+
+
+gulp.task('build', function() {
+  // Force production mode if NODE_ENV isn't set.
+  if (!('NODE_ENV' in process.env)) process.env.NODE_ENV = 'production';
+
+  gulp.start('build:all');
+});
