@@ -1,4 +1,4 @@
-// Copyright 2014 Google Inc. All rights reserved.
+// Copyright 2015 Google Inc. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -18,14 +18,10 @@ require('core-js');
 require('svg4everybody');
 
 
-var accountExplorer = require('./account-explorer');
-var analytics = require('./analytics');
-var embedApi = require('./embed-api');
-var explorer = require('./query-explorer');
-var header = require('./header');
-var highlighter = require('./highlighter');
-var router = require('router');
-var sidebar = require('./sidebar');
+import analytics from './analytics';
+import header from './header';
+import highlighter from './highlighter';
+import sidebar from './sidebar';
 
 
 // Initiaze the header functionality.
@@ -39,10 +35,3 @@ highlighter.highlight('pre');
 
 // Setup Google Analytics tracking.
 analytics.track();
-
-// Add routes to initialize code based on the page the user is on.
-router()
-    .case('/query-explorer/', explorer.init)
-    .case('/embed-api/<page>/', embedApi.init)
-    .case('/account-explorer/', accountExplorer.init)
-    .match();

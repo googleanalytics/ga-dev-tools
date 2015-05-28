@@ -13,7 +13,7 @@
 // limitations under the License.
 
 
-/* global ga, gapi */
+/* global $, ga, gapi */
 
 
 import assign from 'lodash/object/assign';
@@ -570,23 +570,15 @@ function setup() {
 }
 
 
-export default {
-
-  /**
-   * Perform an inital render and run `setup()` once authorized.
-   */
-  init: function() {
-
-    // Perform an initial render.
-    render();
-
-    gapi.analytics.ready(function() {
-      if (gapi.analytics.auth.isAuthorized()) {
-        setup();
-      }
-      else {
-        gapi.analytics.auth.once('success', setup);
-      }
-    });
+// Run setup when the Embed API is ready and the user is authorized.
+gapi.analytics.ready(function() {
+  if (gapi.analytics.auth.isAuthorized()) {
+    setup();
   }
-};
+  else {
+    gapi.analytics.auth.once('success', setup);
+  }
+});
+
+// Perform an initial render.
+render();

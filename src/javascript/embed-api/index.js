@@ -16,7 +16,7 @@
 /* global $, gapi */
 
 
-var debounce = require('lodash/function/debounce');
+import debounce from 'lodash/function/debounce';
 
 
 //
@@ -56,8 +56,5 @@ function monkeyPatchForDemos() {
   }, 200));
 }
 
-module.exports = {
-  init: function() {
-    gapi.analytics.ready(monkeyPatchForDemos);
-  }
-};
+
+gapi.analytics.ready(monkeyPatchForDemos);
