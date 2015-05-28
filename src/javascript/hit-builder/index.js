@@ -21,71 +21,70 @@ import ParamsCollection from './params-collection';
 import React from 'react';
 
 
-export default {
+let state = new Model();
+let params = new ParamsCollection();
 
-  init: function() {
+
+state.on('change', render);
 
 
-    let state = new Model();
-    let params = new ParamsCollection();
+function updateHit(hit) {
+  if (params) params.destroy();
 
-    state.on('change', render);
+  params = new ParamsCollection(hit)
+      .on('add', render)
+      .on('remove', render)
+      .on('change', render);
 
-    function updateHit(hit) {
-      if (params) params.destroy();
+  render();
+}
 
-      params = new ParamsCollection(hit)
-          .on('add', render)
-          .on('remove', render)
-          .on('change', render);
 
-      render();
-    }
+function handleCreateNew() {
+  state.set('editing', true);
+}
 
-    function handleCreateNew() {
-      state.set('editing', true);
-    }
 
-    function render() {
+function render() {
 
-      function getStarted() {
-        return (
-          <div>
-            <button onClick={handleCreateNew}>Create new hit</button>
-          </div>
-        )
-      }
-
-      function paramList() {
-        let newModel = new Model({name:'', value:''});
-        return (
-          <div>
-            <HitElement
-              hitUrl={params.toQueryString()}
-              onBlur={updateHit} />
-            {params.models.map((model) => {
-              return (
-                <ParamElement
-                  model={model}
-                  key={model.uid}
-                  onRemove={params.remove.bind(params, model)} />
-              );
-            })}
-            <button
-              onClick={params.add.bind(params, newModel)}>
-              + Add new</button>
-          </div>
-        )
-      }
-
-      React.render(
-        <div>
-          {state.get('editing') ? paramList() : getStarted()}
-        </div>,
-        document.getElementById('react-test')
-      );
-    }
-
-    updateHit();
+  function getStarted() {
+    return (
+      <div>
+        <button onClick={handleCreateNew}>Create new hit</button>
+      </div>
+    )
   }
-};
+
+  function paramList() {
+    let newModel = new Model({name:'', value:''});
+    return (
+      <div>
+        <HitElement
+          hitUrl={params.toQueryString()}
+          onBlur={updateHit} />
+        {params.models.map((model) => {
+          return (
+            <ParamElement
+              model={model}
+              key={model.uid}
+              onRemove={params.remove.bind(params, model)} />
+          );
+        })}
+        <button
+          onClick={params.add.bind(params, newModel)}>
+          + Add new</button>
+      </div>
+    )
+  }
+
+  React.render(
+    <div>
+      {state.get('editing') ? paramList() : getStarted()}
+    </div>,
+    document.getElementById('react-test')
+  );
+}
+
+
+updateHit();
+

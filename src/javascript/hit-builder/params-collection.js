@@ -1,3 +1,18 @@
+// Copyright 2015 Google Inc. All rights reserved.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+
 import Collection from '../collection';
 import map from 'lodash/collection/map';
 import Model from '../model';
@@ -11,18 +26,10 @@ import url from 'url';
 const REQUIRED_PARAMS = ['v', 't', 'tid', 'cid'];
 
 
-class ParamsCollection extends Collection {
+export default class ParamsCollection extends Collection {
 
   constructor(hit) {
-    super(this.createModelsFromHit_(hit));
-  }
-
-  add(model) {
-    let loremIpsum = require('lorem-ipsum');
-    if (Math.random() < .5) {
-      model.set('error', loremIpsum());
-    }
-    super.add(model);
+    super(createModelsFromHit(hit));
   }
 
   toQueryString() {
@@ -50,31 +57,30 @@ class ParamsCollection extends Collection {
     })
   }
 
-  createModelsFromHit_(hit = '') {
-    // If the hit contains a "?", remove it and all characters before it.
-    let searchIndex = hit.indexOf('?');
-    if (searchIndex > -1) hit = hit.slice(searchIndex + 1);
-
-    let query = querystring.parse(hit);
-
-    // Create required models first, regardless of order in the hit.
-    let requiredModels = [];
-    for (let name of REQUIRED_PARAMS) {
-      requiredModels.push(new Model({
-        name: name,
-        value: query[name],
-        required: true
-      }));
-      delete query[name];
-    }
-
-    // Create optional models after required models.
-    let optionalModels = map(query, (value, name) =>
-        new Model({name, value, isOptional: true}));
-
-    return requiredModels.concat(optionalModels);
-  }
-
 }
 
-export default ParamsCollection;
+
+function createModelsFromHit(hit = '') {
+  // If the hit contains a "?", remove it and all characters before it.
+  let searchIndex = hit.indexOf('?');
+  if (searchIndex > -1) hit = hit.slice(searchIndex + 1);
+
+  let query = querystring.parse(hit);
+
+  // Create required models first, regardless of order in the hit.
+  let requiredModels = [];
+  for (let name of REQUIRED_PARAMS) {
+    requiredModels.push(new Model({
+      name: name,
+      value: query[name],
+      required: true
+    }));
+    delete query[name];
+  }
+
+  // Create optional models after required models.
+  let optionalModels = map(query, (value, name) =>
+      new Model({name, value, isOptional: true}));
+
+  return requiredModels.concat(optionalModels);
+}
