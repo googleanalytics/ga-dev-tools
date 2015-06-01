@@ -15,7 +15,7 @@
 
 /* global gapi */
 
-var accountSummaries = require('javascript-api-utils/lib/account-summaries');
+import accountSummaries from 'javascript-api-utils/lib/account-summaries';
 
 /**
  * A ViewSelector2 component for the Embed API.

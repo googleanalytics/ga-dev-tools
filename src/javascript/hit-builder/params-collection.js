@@ -13,7 +13,9 @@
 // limitations under the License.
 
 
+import bindAll from 'lodash/function/bindAll';
 import Collection from '../collection';
+import debounce from 'lodash/function/debounce';
 import map from 'lodash/collection/map';
 import Model from '../model';
 import querystring from 'querystring';
@@ -30,6 +32,12 @@ export default class ParamsCollection extends Collection {
 
   constructor(hit) {
     super(createModelsFromHit(hit));
+
+    // this.validate = debounce(this.validate, 500);
+    bindAll(this, [
+      'validate',
+      'toQueryString'
+    ]);
   }
 
   toQueryString() {
@@ -49,8 +57,7 @@ export default class ParamsCollection extends Collection {
     .done(function(response) {
       let result = response.hitParsingResult[0];
       console.log(result.valid ? 'Valid' : 'Error');
-      for (let m of result.parserMessage)
-          console.log(m.parameter, m.description)
+      for (let m of result.parserMessage) console.log(m);
     })
     .fail(function() {
       console.log(arguments);

@@ -22,19 +22,26 @@ import React from 'react';
 
 
 let state = new Model();
+
+// let params = new ParamsCollection();
 let params = new ParamsCollection();
 
 
 state.on('change', render);
 
 
-function updateHit(hit) {
+function updateHit(hit = 'v=1&t=pageview&tid=UA-123456-1&cid=123') {
   if (params) params.destroy();
 
   params = new ParamsCollection(hit)
       .on('add', render)
       .on('remove', render)
       .on('change', render);
+
+
+  // params.on('change', function(...args) {
+  //   this.validate();
+  // });
 
   render();
 }
@@ -59,6 +66,9 @@ function render() {
     let newModel = new Model({name:'', value:''});
     return (
       <div>
+        <div>
+          <button onClick={params.validate}>Validate hit</button>
+        </div>
         <HitElement
           hitUrl={params.toQueryString()}
           onBlur={updateHit} />

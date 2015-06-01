@@ -14,34 +14,49 @@
 
 
 import React from 'react';
+import bindAll from 'lodash/function/bindAll';
 
 
-var ParamElement = React.createClass({
-  getInitialState: function() {
-    return {
+export default class ParamElement extends React.Component {
+
+  constructor(props) {
+    super(props);
+
+    this.state = {
       name: this.props.model.get('name'),
       value: this.props.model.get('value')
-    };
-  },
-  componentWillReceiveProps: function(props) {
+    }
+
+    bindAll(this, [
+      'handleNameChange',
+      'handleValueChange',
+      'remove'
+    ]);
+  }
+
+  componentWillReceiveProps(props) {
     //console.log('<ParamElement> componentWillReceiveProps');
     //this.setState({hitUrl: props.hitUrl});
-  },
-  handleNameChange: function(event) {
-    var data = {name: event.target.value, value: this.state.value};
+  }
+
+  handleNameChange(event) {
+    let data = {name: event.target.value, value: this.state.value};
     this.setState(data)
     this.props.model.set(data);
-  },
-  handleValueChange: function(event) {
-    var data = {name: this.state.name, value: event.target.value};
+  }
+
+  handleValueChange(event) {
+    let data = {name: this.state.name, value: event.target.value};
     this.setState(data)
     this.props.model.set(data);
-  },
-  remove: function() {
+  }
+
+  remove() {
     // this.props.onParamRemove(this.props.param.pid);
     this.props.onRemove();
-  },
-  render: function() {
+  }
+
+  render() {
 
     let error = this.props.model.get('error');
     let className = 'ParamElement' + (error ? ' ParamElement--error' : '');
@@ -60,7 +75,5 @@ var ParamElement = React.createClass({
       </div>
     );
   }
-});
 
-
-module.exports = ParamElement;
+}

@@ -16,33 +16,15 @@
 import React from 'react';
 
 
-var HitElement = React.createClass({
-  // getInitialState: function() {
-  //   return {hitUrl: this.props.hitUrl};
-  // },
-  // componentWillReceiveProps: function(props) {
-  //   this.setState({hitUrl: props.hitUrl});
-  // },
-  // handleChange: function(event) {
-  //   this.setState({hitUrl: event.target.value});
-  // },
-  // handleBlur: function() {
-  //   this.props.onBlur(this.state.hitUrl);
-  // },
-  render: function() {
-    /*
-    return (
-      <textarea
-        rows="6"
-        cols="80"
-        value={this.state.hitUrl}
-        onChange={this.handleChange}
-        onBlur={this.handleBlur} />
-    );
-    */
+export default class HitElement extends React.Component {
+
+  constructor(props) {
+    super(props);
+
+    this.state = {hitUrl: this.props.hitUrl};
+  }
+
+  render() {
     return (<div>{this.props.hitUrl}</div>)
   }
-});
-
-
-module.exports = HitElement;
+}
