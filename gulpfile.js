@@ -132,6 +132,15 @@ gulp.task('javascript:embed-api-components', (function() {
       cache: {},
       devtool: '#source-map',
       plugins: [new webpack.optimize.UglifyJsPlugin()],
+      module: {
+        loaders: [
+          {
+            test: /\.js$/,
+            exclude: /node_modules/,
+            loader: 'babel-loader'
+          }
+        ]
+      }
     });
   }
 
