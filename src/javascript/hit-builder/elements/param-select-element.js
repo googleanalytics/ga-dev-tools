@@ -25,8 +25,7 @@ export default class ParamSelectElement extends ParamElement {
     if (this.props.options.includes(this.state.value)) {
       return (
         <div className={this.getClassName()}>
-          <span>{this.state.name}</span>
-
+          {this.renderLabel()}
           <select
             value={this.state.value}
             onChange={this.handleValueChange}>
@@ -34,7 +33,6 @@ export default class ParamSelectElement extends ParamElement {
               <option value={option} key={option}>{option}</option>
             ))}
           </select>
-
           {this.renderMessage()}
         </div>
       );

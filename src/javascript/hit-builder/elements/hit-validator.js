@@ -67,7 +67,7 @@ export default class HitValidator extends React.Component {
   }
 
   handleExistingHit() {
-    let hit = React.findDOMNode(this.refs.hitValue).value;
+    let hit = React.findDOMNode(this.refs.hitValue).value || DEFAULT_HIT;
 
     // TODO(philipwalton): update the collection module so this doesn't
     // have to be destroyed.
@@ -92,6 +92,9 @@ export default class HitValidator extends React.Component {
   }
 
   validateParams() {
+
+
+
     this.params.validate().then((response) => {
       let result = response.hitParsingResult[0];
 

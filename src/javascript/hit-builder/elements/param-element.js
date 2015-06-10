@@ -48,28 +48,48 @@ export default class ParamElement extends React.Component {
     this.props.onRemove();
   }
 
+  isRequired() {
+    return this.props.model.get('required');
+  }
+
   getClassName() {
     return 'ParamElement' + (this.props.message ? ' ParamElement--error' : '');
   }
 
-  renderMessage() {
-    return !this.props.message ? null : (
-      <p><small>{this.props.message.description}</small></p>
-    )
-  }
-
-  render() {
-    return (
-      <div className={this.getClassName()}>
+  renderLabel() {
+    if (this.isRequired()) {
+      return (<span><em>*</em> {this.state.name}</span>);
+    }
+    else {
+      return (
         <input
           value={this.state.name}
           onChange={this.handleNameChange} />
+      );
+    }
+  }
+
+  renderRemoveButton() {
+    if (!this.isRequired()) {
+      return (<button onClick={this.remove}>remove</button>);
+    }
+  }
+
+  renderMessage() {
+    if (this.props.message) {
+      return (<p><small>{this.props.message.description}</small></p>);
+    }
+  }
+
+  render() {
+
+    return (
+      <div className={this.getClassName()}>
+        {this.renderLabel()}
         <input
           value={this.state.value}
           onChange={this.handleValueChange} />
-        { this.props.model.get('required') ?
-            null : <button onClick={this.remove}>remove</button> }
-
+        {this.renderRemoveButton()}
         {this.renderMessage()}
       </div>
     );
