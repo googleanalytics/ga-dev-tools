@@ -25,6 +25,6 @@ export default class HitElement extends React.Component {
   }
 
   render() {
-    return (<div>{this.props.hitUrl}</div>)
+    return (<p>{this.props.hitUrl}</p>)
   }
 }

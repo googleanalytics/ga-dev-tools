@@ -14,7 +14,6 @@
 
 
 import React from 'react';
-import bindAll from 'lodash/function/bindAll';
 
 
 export default class ParamElement extends React.Component {
@@ -27,16 +26,10 @@ export default class ParamElement extends React.Component {
       value: this.props.model.get('value')
     }
 
-    bindAll(this, [
-      'handleNameChange',
-      'handleValueChange',
-      'remove'
-    ]);
-  }
-
-  componentWillReceiveProps(props) {
-    //console.log('<ParamElement> componentWillReceiveProps');
-    //this.setState({hitUrl: props.hitUrl});
+    // Bind methods.
+    this.handleNameChange = this.handleNameChange.bind(this);
+    this.handleValueChange = this.handleValueChange.bind(this);
+    this.remove = this.remove.bind(this);
   }
 
   handleNameChange(event) {
@@ -52,17 +45,22 @@ export default class ParamElement extends React.Component {
   }
 
   remove() {
-    // this.props.onParamRemove(this.props.param.pid);
     this.props.onRemove();
   }
 
+  getClassName() {
+    return 'ParamElement' + (this.props.message ? ' ParamElement--error' : '');
+  }
+
+  renderMessage() {
+    return !this.props.message ? null : (
+      <p><small>{this.props.message.description}</small></p>
+    )
+  }
+
   render() {
-
-    let error = this.props.model.get('error');
-    let className = 'ParamElement' + (error ? ' ParamElement--error' : '');
-
     return (
-      <div className={className}>
+      <div className={this.getClassName()}>
         <input
           value={this.state.name}
           onChange={this.handleNameChange} />
@@ -71,7 +69,8 @@ export default class ParamElement extends React.Component {
           onChange={this.handleValueChange} />
         { this.props.model.get('required') ?
             null : <button onClick={this.remove}>remove</button> }
-        { error ? <div>{error}</div> : null}
+
+        {this.renderMessage()}
       </div>
     );
   }

@@ -13,88 +13,29 @@
 // limitations under the License.
 
 
-import Collection from '../collection';
-import HitElement from './hit-element';
-import Model from '../model';
-import ParamElement from './param-element';
-import ParamsCollection from './params-collection';
+import HitValidator from './elements/hit-validator';
 import React from 'react';
 
 
-let state = new Model();
-
-// let params = new ParamsCollection();
-let params = new ParamsCollection();
-
-
-state.on('change', render);
-
-
-function updateHit(hit = 'v=1&t=pageview&tid=UA-123456-1&cid=123') {
-  if (params) params.destroy();
-
-  params = new ParamsCollection(hit)
-      .on('add', render)
-      .on('remove', render)
-      .on('change', render);
+// TODO
+// --------------------------------------------------------------------------
+// [x] Add preset choices for v and t params.
+// [x] Handle cases where a v and t values are not one of the preset choices.
+// [ ] Add visual error state to the params when they're invalid.
+// [ ] Don't validate until after the first blur event for each param.
+// [ ] Add links to the param docs and remove the URLs from the error messages.
+// [ ] Add an icon indicating whether or not the hit is valid.
+// [ ] Add a button to send a valid hit.
 
 
-  // params.on('change', function(...args) {
-  //   this.validate();
-  // });
-
-  render();
-}
-
-
-function handleCreateNew() {
-  state.set('editing', true);
-}
+// Nice-to-have (post v1)
+// --------------------------------------------------------------------------
+// [ ] Inline param documentation and search suggestion
+// [ ] Lookup `tid` param
+// [ ] Auto-generate a UUID for the `cid` param
 
 
-function render() {
-
-  function getStarted() {
-    return (
-      <div>
-        <button onClick={handleCreateNew}>Create new hit</button>
-      </div>
-    )
-  }
-
-  function paramList() {
-    let newModel = new Model({name:'', value:''});
-    return (
-      <div>
-        <div>
-          <button onClick={params.validate}>Validate hit</button>
-        </div>
-        <HitElement
-          hitUrl={params.toQueryString()}
-          onBlur={updateHit} />
-        {params.models.map((model) => {
-          return (
-            <ParamElement
-              model={model}
-              key={model.uid}
-              onRemove={params.remove.bind(params, model)} />
-          );
-        })}
-        <button
-          onClick={params.add.bind(params, newModel)}>
-          + Add new</button>
-      </div>
-    )
-  }
-
-  React.render(
-    <div>
-      {state.get('editing') ? paramList() : getStarted()}
-    </div>,
-    document.getElementById('react-test')
-  );
-}
-
-
-updateHit();
-
+React.render(
+  <HitValidator />,
+  document.getElementById('react-test')
+);

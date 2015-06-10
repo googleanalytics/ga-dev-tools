@@ -13,9 +13,7 @@
 // limitations under the License.
 
 
-import bindAll from 'lodash/function/bindAll';
 import Collection from '../collection';
-import debounce from 'lodash/function/debounce';
 import map from 'lodash/collection/map';
 import Model from '../model';
 import querystring from 'querystring';
@@ -33,11 +31,16 @@ export default class ParamsCollection extends Collection {
   constructor(hit) {
     super(createModelsFromHit(hit));
 
-    // this.validate = debounce(this.validate, 500);
-    bindAll(this, [
-      'validate',
-      'toQueryString'
-    ]);
+    // Bind methods.
+    this.validate = this.validate.bind(this);
+    this.toQueryString = this.toQueryString.bind(this);
+  }
+
+  // TODO(philipwalton): optimize to not be O(n).
+  has(name) {
+    for (let model of this.models) {
+      if (model.get('name') == name) return true;
+    }
   }
 
   toQueryString() {
@@ -48,26 +51,23 @@ export default class ParamsCollection extends Collection {
   }
 
   validate() {
-    $.ajax({
-      method: 'POST',
-      url: 'https://www.google-analytics.com/debug/collect',
-      data: this.toQueryString(),
-      dataType: 'json'
-    })
-    .done(function(response) {
-      let result = response.hitParsingResult[0];
-      console.log(result.valid ? 'Valid' : 'Error');
-      for (let m of result.parserMessage) console.log(m);
-    })
-    .fail(function() {
-      console.log(arguments);
-    })
+    return new Promise((resolve, reject) => {
+      $.ajax({
+        method: 'POST',
+        url: 'https://www.google-analytics.com/debug/collect',
+        data: this.toQueryString(),
+        dataType: 'json',
+        success: resolve,
+        error: reject
+      });
+    });
   }
 
 }
 
 
 function createModelsFromHit(hit = '') {
+
   // If the hit contains a "?", remove it and all characters before it.
   let searchIndex = hit.indexOf('?');
   if (searchIndex > -1) hit = hit.slice(searchIndex + 1);
