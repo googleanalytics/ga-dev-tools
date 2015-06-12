@@ -43,7 +43,8 @@ export default class HitValidator extends React.Component {
 
     // Bind methods
     this.handleCreateNew = this.handleCreateNew.bind(this);
-    this.handleExistingHit = this.handleExistingHit.bind(this);
+    this.handleEditExistingHit = this.handleEditExistingHit.bind(this);
+    this.handleExistingHitChange = this.handleExistingHitChange.bind(this);
     this.handleAddParam = this.handleAddParam.bind(this);
     this.handleParamChange = this.handleParamChange.bind(this);
 
@@ -66,20 +67,22 @@ export default class HitValidator extends React.Component {
     this.setState({editing: true});
   }
 
-  handleExistingHit() {
-    let hit = React.findDOMNode(this.refs.hitValue).value || DEFAULT_HIT;
-
+  handleEditExistingHit() {
     // TODO(philipwalton): update the collection module so this doesn't
     // have to be destroyed.
     this.params.destroy();
 
-    this.params = new ParamsCollection(hit)
+    this.params = new ParamsCollection(this.state.existingHitValue)
         .on('add', this.handleParamChange)
         .on('remove', this.handleParamChange)
         .on('change', this.handleParamChange)
 
     this.setState({editing: true});
     this.validateParams();
+  }
+
+  handleExistingHitChange(e) {
+    this.setState({existingHitValue: e.target.value});
   }
 
   handleAddParam() {
@@ -92,9 +95,6 @@ export default class HitValidator extends React.Component {
   }
 
   validateParams() {
-
-
-
     this.params.validate().then((response) => {
       let result = response.hitParsingResult[0];
 
@@ -132,14 +132,48 @@ export default class HitValidator extends React.Component {
   render() {
 
     if (!this.state.editing) {
-      let defaultHit = 'v=1&t=pageview&tid=UA-123456-1&cid=123';
+
+      let iconEdit =
+          `<svg class="Icon" viewBox="0 0 16 16">
+             <use xlink:href="/public/images/icons.svg#icon-pencil"></use>
+           </svg>`;
+
+      let iconCreate =
+          `<svg class="Icon" viewBox="0 0 16 16">
+             <use xlink:href="/public/images/icons.svg#icon-plus"></use>
+           </svg>`;
+
       return (
         <div>
-          <button onClick={this.handleCreateNew}>Create new hit</button>
-          <p>or start from and existing hit...</p>
-          <textarea ref="hitValue" rows="4" cols="80" defaultValue={defaultHit} />
+
+          <p><strong>Paste an existing hit into the text box below.</strong></p>
+
+          <div className="FormControl">
+            <textarea
+              className="FormField"
+              value={this.state.existingHitValue}
+              onChange={this.handleExistingHitChange} />
+          </div>
+
+          <div className="FormControl">
+            <button
+              className="Button Button--icon"
+              disabled={!this.state.existingHitValue}
+              onClick={this.props.handleEditExistingHit}>
+              <span dangerouslySetInnerHTML={{__html: iconEdit}} />&nbsp;
+              Edit hit
+            </button>
+          </div>
+
+          <p><strong>Or construct a new hit from scratch.</strong></p>
+
           <div>
-            <button onClick={this.handleExistingHit}>Edit hit</button>
+            <button
+              className="Button Button--icon Button--action"
+              onClick={this.handleCreateNew}>
+              <span dangerouslySetInnerHTML={{__html: iconCreate}} />&nbsp;
+              Create new hit
+            </button>
           </div>
         </div>
       )
@@ -165,7 +199,13 @@ export default class HitValidator extends React.Component {
             message={this.state.paramErrors['t']}
             onRemove={this.params.remove.bind(this.params, this.params.models[1])} />
 
-          {this.params.models.slice(2).map((model) => {
+          <ParamElement
+            model={this.params.models[2]}
+            placeholder="UA-XXXXX-Y"
+            message={this.state.paramErrors['tid']}
+            onRemove={this.params.remove.bind(this.params, this.params.models[2])} />
+
+          {this.params.models.slice(3).map((model) => {
 
             let param = model.get('name');
             let message = this.state.paramErrors[param];

@@ -88,6 +88,7 @@ export default class ParamElement extends React.Component {
         {this.renderLabel()}
         <input
           value={this.state.value}
+          placeholder={this.props.placeholder}
           onChange={this.handleValueChange} />
         {this.renderRemoveButton()}
         {this.renderMessage()}

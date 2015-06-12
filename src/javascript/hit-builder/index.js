@@ -21,10 +21,10 @@ import React from 'react';
 // --------------------------------------------------------------------------
 // [x] Add preset choices for v and t params.
 // [x] Handle cases where a v and t values are not one of the preset choices.
-// [ ] Add visual error state to the params when they're invalid.
 // [ ] Don't perform an initial validation until all required params are present.
 // [ ] Don't validate until after the first blur event for each param.
 // [ ] Add links to the param docs and remove the URLs from the error messages.
+// [ ] Add visual error state to the params when they're invalid.
 // [ ] Add an icon indicating whether or not the hit is valid.
 // [ ] Add a button to send a valid hit.
 
