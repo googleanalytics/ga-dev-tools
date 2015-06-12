@@ -15,8 +15,8 @@ limitations under the License.
 */
 
 .Button {
-  background: hsl(30,10%,87.5%);
-  border: 1px solid transparent;
+  background: transparent;
+  border: 1px solid hsla(0,0%,0%,.3);
   border-radius: 4px;
   box-sizing: border-box;
   color: inherit;
@@ -31,41 +31,37 @@ limitations under the License.
 }
 
 .Button:disabled {
-  opacity: .75;
+  opacity: .4;
 }
 
 .Button:active:enabled,
 .Button:focus:enabled,
 .Button:hover:enabled {
-  background: hsl(30,10%,80%);
+  background: hsla(30,10%,50%,.15);
   outline: none;
   text-decoration: none;
 }
 
-.Button:active:enabled,
-.Button:focus:enabled {
-  border-color: hsla(0,0%,0%,.333);
-}
 
-
-.Button--icon {
+.Button--withIcon {
   display: inline-flex;
   align-items: center;
 }
-.Button--icon > .Icon {
-  font-size: 1.15em;
-  margin-right: .75em;
-}
-
 
 .Button--action {
   color: #fff;
   background: hsl(217, 91%, 63%);
+  border-color: transparent;
 }
 .Button--action:active:enabled,
 .Button--action:focus:enabled,
 .Button--action:hover:enabled {
   background: hsl(217, 91%, 53%);
+}
+
+.Button-icon {
+  font-size: 1.15em;
+  margin-right: .6em;
 }
 
 .Button + .Button {

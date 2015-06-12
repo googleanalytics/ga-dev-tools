@@ -16,6 +16,7 @@
 import Collection from '../../collection';
 import debounce from 'lodash/function/debounce';
 import HitElement from './hit-element';
+import IconButton from '../../elements/icon-button';
 import Model from '../../model';
 import ParamElement from './param-element';
 import ParamSelectElement from './param-select-element';
@@ -132,49 +133,25 @@ export default class HitValidator extends React.Component {
   render() {
 
     if (!this.state.editing) {
-
-      let iconEdit =
-          `<svg class="Icon" viewBox="0 0 16 16">
-             <use xlink:href="/public/images/icons.svg#icon-pencil"></use>
-           </svg>`;
-
-      let iconCreate =
-          `<svg class="Icon" viewBox="0 0 16 16">
-             <use xlink:href="/public/images/icons.svg#icon-plus"></use>
-           </svg>`;
-
       return (
         <div>
-
           <p><strong>Paste an existing hit into the text box below.</strong></p>
-
           <div className="FormControl">
             <textarea
               className="FormField"
               value={this.state.existingHitValue}
               onChange={this.handleExistingHitChange} />
           </div>
-
           <div className="FormControl">
-            <button
-              className="Button Button--icon"
+            <IconButton
               disabled={!this.state.existingHitValue}
-              onClick={this.props.handleEditExistingHit}>
-              <span dangerouslySetInnerHTML={{__html: iconEdit}} />&nbsp;
-              Edit hit
-            </button>
+              onClick={this.handleEditExistingHit}
+              icon="pencil">Edit hit</IconButton>
           </div>
-
           <p><strong>Or construct a new hit from scratch.</strong></p>
-
-          <div>
-            <button
-              className="Button Button--icon Button--action"
-              onClick={this.handleCreateNew}>
-              <span dangerouslySetInnerHTML={{__html: iconCreate}} />&nbsp;
-              Create new hit
-            </button>
-          </div>
+          <IconButton
+            className="Button Button--withIcon Button--action"
+            icon="plus">Create new hit</IconButton>
         </div>
       )
     }
