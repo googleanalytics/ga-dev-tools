@@ -26,14 +26,17 @@ export default class ParamSelectElement extends ParamElement {
       return (
         <div className={this.getClassName()}>
           {this.renderLabel()}
-          <select
-            value={this.state.value}
-            onChange={this.handleValueChange}>
-            {this.props.options.map((option) => (
-              <option value={option} key={option}>{option}</option>
-            ))}
-          </select>
-          {this.renderMessage()}
+          <div className="FormControl-body">
+            <select
+              className="FormField"
+              value={this.state.value}
+              onChange={this.handleValueChange}>
+              {this.props.options.map((option) => (
+                <option value={option} key={option}>{option}</option>
+              ))}
+            </select>
+            {this.renderMessage()}
+          </div>
         </div>
       );
     }

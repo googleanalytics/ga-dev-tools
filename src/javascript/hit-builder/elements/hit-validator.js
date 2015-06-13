@@ -173,42 +173,49 @@ export default class HitValidator extends React.Component {
 
           <ParamSelectElement
             model={this.params.models[0]}
+            ref="v"
             options={['1']}
             message={this.state.paramErrors['v']}
             onRemove={this.params.remove.bind(this.params, this.params.models[0])} />
 
           <ParamSelectElement
             model={this.params.models[1]}
+            ref="t"
             options={HIT_TYPES}
             message={this.state.paramErrors['t']}
             onRemove={this.params.remove.bind(this.params, this.params.models[1])} />
 
           <ParamElement
             model={this.params.models[2]}
+            ref="tid"
             placeholder="UA-XXXXX-Y"
             message={this.state.paramErrors['tid']}
             onRemove={this.params.remove.bind(this.params, this.params.models[2])} />
 
-          {this.params.models.slice(3).map((model) => {
+          <ParamElement
+            model={this.params.models[3]}
+            ref="cid"
+            message={this.state.paramErrors['cid']}
+            onRemove={this.params.remove.bind(this.params, this.params.models[3])} />
 
-            let param = model.get('name');
-            let message = this.state.paramErrors[param];
-
+          {this.params.models.slice(4).map((model) => {
             return (
               <ParamElement
                 model={model}
                 key={model.uid}
-                message={message}
+                message={this.state.paramErrors[model.get('name')]}
                 onRemove={this.params.remove.bind(this.params, model)} />
             );
           })}
 
-          <div class="FormControl">
-            <IconButton
-              type="plus"
-              onClick={this.handleAddParam}>
-              Add parameter
-            </IconButton>
+          <div className="FormControl FormControl--inline FormControl--action">
+            <div className="FormControl-body">
+              <IconButton
+                type="plus"
+                onClick={this.handleAddParam}>
+                Add parameter
+              </IconButton>
+            </div>
           </div>
 
         </div>

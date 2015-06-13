@@ -13,6 +13,7 @@
 // limitations under the License.
 
 
+import IconButton from '../../elements/icon-button';
 import React from 'react';
 
 
@@ -21,25 +22,25 @@ export default class ParamElement extends React.Component {
   constructor(props) {
     super(props);
 
-    this.state = {
-      name: this.props.model.get('name'),
-      value: this.props.model.get('value')
-    }
-
     // Bind methods.
     this.handleNameChange = this.handleNameChange.bind(this);
     this.handleValueChange = this.handleValueChange.bind(this);
     this.remove = this.remove.bind(this);
+
+    this.state = {
+      name: this.props.model.get('name'),
+      value: this.props.model.get('value')
+    }
   }
 
-  handleNameChange(event) {
-    let data = {name: event.target.value, value: this.state.value};
+  handleNameChange(e) {
+    let data = {name: e.target.value, value: this.state.value};
     this.setState(data)
     this.props.model.set(data);
   }
 
-  handleValueChange(event) {
-    let data = {name: this.state.name, value: event.target.value};
+  handleValueChange(e) {
+    let data = {name: this.state.name, value: e.target.value};
     this.setState(data)
     this.props.model.set(data);
   }
@@ -53,45 +54,71 @@ export default class ParamElement extends React.Component {
   }
 
   getClassName() {
-    return 'ParamElement' + (this.props.message ? ' ParamElement--error' : '');
+    return 'FormControl FormControl--inline' +
+        (this.props.message ? ' FormControl--error' : '') +
+        (this.isRequired() ? ' FormControl--required' : '');
+  }
+
+  getPlaceholder() {
+    // A placeholder is needed for proper baseline alignment.
+    return this.props.placeholder || ' ';
   }
 
   renderLabel() {
     if (this.isRequired()) {
-      return (<span><em>*</em> {this.state.name}</span>);
+      return <label className="FormControl-label">{this.state.name}</label>;
     }
     else {
       return (
-        <input
-          value={this.state.name}
-          onChange={this.handleNameChange} />
+        <div className="FormControl-label">
+          <input
+            style={{maxWidth:'6em', textAlign:'right'}}
+            className="FormField"
+            value={this.state.name}
+            onChange={this.handleNameChange} />
+        </div>
       );
     }
   }
 
   renderRemoveButton() {
     if (!this.isRequired()) {
-      return (<button onClick={this.remove}>remove</button>);
+      return (
+        <IconButton
+          type="cross"
+          onClick={this.remove}>
+          remove
+        </IconButton>
+      );
     }
   }
 
   renderMessage() {
     if (this.props.message) {
-      return (<p><small>{this.props.message.description}</small></p>);
+      let linkRegex = /Please see http:\/\/goo\.gl\/a8d4RP#\w+ for details\.$/;
+      let message = this.props.message.description.replace(linkRegex, '');
+      return (
+        <div className="FormControl-info">{message}</div>
+      );
     }
   }
 
   render() {
-
     return (
       <div className={this.getClassName()}>
         {this.renderLabel()}
-        <input
-          value={this.state.value}
-          placeholder={this.props.placeholder}
-          onChange={this.handleValueChange} />
-        {this.renderRemoveButton()}
-        {this.renderMessage()}
+        <div className="FormControl-body">
+          <div className="FlexLine">
+            <input
+              className="FormField"
+              data-flex
+              value={this.state.value}
+              placeholder={this.getPlaceholder()}
+              onChange={this.handleValueChange} />
+            {this.renderRemoveButton()}
+          </div>
+          {this.renderMessage()}
+        </div>
       </div>
     );
   }
