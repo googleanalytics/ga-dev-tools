@@ -14,28 +14,17 @@
 
 
 import assign from 'lodash/object/assign';
+import Icon from './icon';
 import React from 'react';
 
 
-const ICON_PATH = '/public/images/icons.svg#icon-';
-
-
-export default class ButtonIcon extends React.Component {
-
+export default class IconButton extends React.Component {
   render() {
-
     let nodeType = this.props.href ? 'a' : 'button';
-    let icon =
-        `<svg class="Icon" viewBox="0 0 16 16">
-           <use xlink:href="${ICON_PATH}${this.props.icon}"></use>
-         </svg>`;
-
     return React.createElement(nodeType, this.props,
-        <span
-          className="Button-icon"
-          dangerouslySetInnerHTML={{__html: icon}} />,
+        <span className="Button-icon"><Icon type={this.props.type} /></span>,
         this.props.children);
   }
 }
 
-ButtonIcon.defaultProps = {className: 'Button Button--withIcon'};
+IconButton.defaultProps = {className: 'Button Button--withIcon'};

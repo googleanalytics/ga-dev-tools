@@ -16,6 +16,7 @@
 import Collection from '../../collection';
 import debounce from 'lodash/function/debounce';
 import HitElement from './hit-element';
+import Icon from '../../elements/icon';
 import IconButton from '../../elements/icon-button';
 import Model from '../../model';
 import ParamElement from './param-element';
@@ -43,7 +44,7 @@ export default class HitValidator extends React.Component {
     super(props)
 
     // Bind methods
-    this.handleCreateNew = this.handleCreateNew.bind(this);
+    this.handleCreateNewHit = this.handleCreateNewHit.bind(this);
     this.handleEditExistingHit = this.handleEditExistingHit.bind(this);
     this.handleExistingHitChange = this.handleExistingHitChange.bind(this);
     this.handleAddParam = this.handleAddParam.bind(this);
@@ -55,7 +56,8 @@ export default class HitValidator extends React.Component {
     this.state = {
       editing: false,
       generalErrors: [],
-      paramErrors: {}
+      paramErrors: {},
+      existingHitValue: 'v=1&t=pageview&tid=UA-12345-1&cid=1&dp=%2F'
     };
 
     this.params = new ParamsCollection(DEFAULT_HIT)
@@ -64,7 +66,7 @@ export default class HitValidator extends React.Component {
         .on('change', this.handleParamChange)
   }
 
-  handleCreateNew() {
+  handleCreateNewHit() {
     this.setState({editing: true});
   }
 
@@ -138,6 +140,7 @@ export default class HitValidator extends React.Component {
           <p><strong>Paste an existing hit into the text box below.</strong></p>
           <div className="FormControl">
             <textarea
+              rows="3"
               className="FormField"
               value={this.state.existingHitValue}
               onChange={this.handleExistingHitChange} />
@@ -146,12 +149,16 @@ export default class HitValidator extends React.Component {
             <IconButton
               disabled={!this.state.existingHitValue}
               onClick={this.handleEditExistingHit}
-              icon="pencil">Edit hit</IconButton>
+              type="pencil">Edit hit
+            </IconButton>
           </div>
           <p><strong>Or construct a new hit from scratch.</strong></p>
           <IconButton
             className="Button Button--withIcon Button--action"
-            icon="plus">Create new hit</IconButton>
+            onClick={this.handleCreateNewHit}
+            type="plus">
+            Create new hit
+          </IconButton>
         </div>
       )
     }
@@ -195,7 +202,15 @@ export default class HitValidator extends React.Component {
                 onRemove={this.params.remove.bind(this.params, model)} />
             );
           })}
-          <button onClick={this.handleAddParam}>+ Add new</button>
+
+          <div class="FormControl">
+            <IconButton
+              type="plus"
+              onClick={this.handleAddParam}>
+              Add parameter
+            </IconButton>
+          </div>
+
         </div>
       )
     }

@@ -13,25 +13,20 @@
 // limitations under the License.
 
 
-import camelCase from 'camelcase';
-import Icon from '../../elements/icon';
 import React from 'react';
 
 
-const REFERENCE_URL =
-    'https://developers.google.com' +
-    '/analytics/devguides/reporting/core/v3/reference#';
+const ICON_PATH = '/public/images/icons.svg#icon-';
 
 
-export default class HelpIconLink extends React.Component {
+export default class Icon extends React.Component {
   render() {
+    let useHtml = `<use xlink:href="${ICON_PATH}${this.props.type}"></use>`;
     return (
-      <a
-        className="FlexLine-item FormControl-helpIcon"
-        href={REFERENCE_URL + camelCase(this.props.name)}
-        tabIndex="-1">
-        <Icon type="info-outline" />
-      </a>
+      <svg
+        className="Icon"
+        viewBox="0 0 16 16"
+        dangerouslySetInnerHTML={{__html: useHtml}} />
     );
   }
 }
