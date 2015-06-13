@@ -27,10 +27,7 @@ limitations under the License.
    width: 100%;
 }
 
-.FlexLine-item {
-  flex: 1 0 auto;
+.FlexLine > [data-flex] {
+  flex: 1 0 0%;
 }
 
-.FlexLine-item--flex {
-  flex-grow: 1;
-}

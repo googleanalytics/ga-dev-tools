@@ -27,7 +27,7 @@ export default class HelpIconLink extends React.Component {
   render() {
     return (
       <a
-        className="FlexLine-item FormControl-helpIcon"
+        className="FormControl-helpIcon"
         href={REFERENCE_URL + camelCase(this.props.name)}
         tabIndex="-1">
         <Icon type="info-outline" />
