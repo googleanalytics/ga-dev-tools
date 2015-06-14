@@ -18,6 +18,6 @@ limitations under the License.
 .Icon {
   display: inherit;
   fill: currentColor;
-  height: 1em;
-  width: 1em;
+  height: calc(16em/14);
+  width: calc(16em/14);
 }

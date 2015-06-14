@@ -81,8 +81,8 @@ let QueryReport = React.createClass({
     let params = report && report.params;
 
     let iconDownload =
-        `<svg class="Icon" viewBox="0 0 16 16">
-           <use xlink:href="/public/images/icons.svg#icon-download"></use>
+        `<svg class="Icon" viewBox="0 0 24 24">
+           <use xlink:href="/public/images/icons.svg#icon-file-download"></use>
          </svg>`;
 
     if (accountData) {

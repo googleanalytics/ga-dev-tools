@@ -21,8 +21,10 @@ limitations under the License.
 }
 
 .NavHeader-homeLink {
+  align-items: center;
   color: var(--text-color-faded);
-  line-height: var(--ga-logo-height);
+  display: inline-flex;
+  height: var(--ga-logo-height);
 }
 .NavHeader-homeLink:hover {
   text-decoration: none;
@@ -30,8 +32,7 @@ limitations under the License.
 }
 
 .NavHeader-homeIcon {
-  font-size: 1.1em;
-  margin-right: 1em;
+  font-size: 1.3125em;
 }
 
 .NavHeader-title {
@@ -45,18 +46,24 @@ limitations under the License.
 }
 
 .NavHeader-controls {
-  border-radius: .333em;
-  color: #eee;
-  display: block;
-  font-size: 1.5em;
-  margin: calc(-1em/2-.333em) -.333em -.333em;
-  padding: .333em;
+  cursor: pointer;
+  display: flex;
   position: absolute;
-  right: calc(var(--gap)/1.5);
+  right: var(--gap);
   top: 50%;
+  transform: translateY(-50%);
 }
 
-.NavHeader-controls:hover {
+.NavHeader-controlsIcon {
+  border-radius: .333em;
+  color: #eee;
+  display: flex;
+  font-size: 1.3125em;
+  margin: -.5rem;
+  padding: .5rem;
+}
+
+.NavHeader-controlsIcon:hover {
   background: rgba(0,0,0,.2);
 }
 

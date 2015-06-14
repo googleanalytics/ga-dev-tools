@@ -23,8 +23,8 @@ const ANIMATION_DURATION = 200;
 
 
 let iconCalendar =
-    `<svg class="Icon" viewBox="0 0 16 16">
-       <use xlink:href="/public/images/icons.svg#icon-calendar"></use>
+    `<svg class="Icon" viewBox="0 0 24 24">
+       <use xlink:href="/public/images/icons.svg#icon-event"></use>
      </svg>`;
 
 
