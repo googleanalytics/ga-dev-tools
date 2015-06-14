@@ -25,7 +25,7 @@ export default class Icon extends React.Component {
     return (
       <svg
         className="Icon"
-        viewBox="0 0 16 16"
+        viewBox="0 0 24 24"
         dangerouslySetInnerHTML={{__html: useHtml}} />
     );
   }

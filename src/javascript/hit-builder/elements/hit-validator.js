@@ -149,14 +149,14 @@ export default class HitValidator extends React.Component {
             <IconButton
               disabled={!this.state.existingHitValue}
               onClick={this.handleEditExistingHit}
-              type="pencil">Edit hit
+              type="create">Edit hit
             </IconButton>
           </div>
           <p><strong>Or construct a new hit from scratch.</strong></p>
           <IconButton
             className="Button Button--withIcon Button--action"
             onClick={this.handleCreateNewHit}
-            type="plus">
+            type="arrow-forward">
             Create new hit
           </IconButton>
         </div>
@@ -211,7 +211,7 @@ export default class HitValidator extends React.Component {
           <div className="FormControl FormControl--inline FormControl--action">
             <div className="FormControl-body">
               <IconButton
-                type="plus"
+                type="add-circle"
                 onClick={this.handleAddParam}>
                 Add parameter
               </IconButton>

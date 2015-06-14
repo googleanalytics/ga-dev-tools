@@ -85,7 +85,7 @@ export default class ParamElement extends React.Component {
     if (!this.isRequired()) {
       return (
         <IconButton
-          type="cross"
+          type="remove-circle"
           onClick={this.remove}>
           remove
         </IconButton>
