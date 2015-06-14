@@ -23,8 +23,8 @@ const REFERENCE_URL =
 
 
 const INFO_ICON =
-    `<svg class="Icon" viewBox="0 0 16 16">
-      <use xlink:href="/public/images/icons.svg#icon-info"></use>
+    `<svg class="Icon" viewBox="0 0 24 24">
+      <use xlink:href="/public/images/icons.svg#icon-info-outline"></use>
     </svg>`;
 
 

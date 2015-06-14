@@ -42,16 +42,23 @@ limitations under the License.
 }
 
 .Header-menu {
-  border-radius: .333em;
-  color: #bbb;
-  font-size: 1.5em;
-  margin: calc(-1em/2-.333em) -.5em -.333em;
-  padding: .333em .5em; /* counter the margin */
+  cursor: pointer;
+  display: flex;
   position: absolute;
   top: 50%;
+  transform: translateY(-50%);
 }
 
-.Header-menu:hover {
+.Header-menuIcon {
+  border-radius: .333em;
+  color: #bbb;
+  display: flex;
+  font-size: 1.3125em;
+  margin: -.333em -.5em;
+  padding: .333em .5em;
+}
+
+.Header-menuIcon:hover {
   background: var(--Header-overlay-color);
   color: #fff;
 }
@@ -141,19 +148,24 @@ limitations under the License.
    ========================================================================== */
 
 .Site.is-authorized .Header-user {
-  border-radius: .333em;
-  color: var(--Header-text-color-light-faded);
-  display: inline-block;
-  font-size: 1.5em;
-  margin: calc(-1em/2-.333em) -.5em -.333em;
-  padding: .333em .5em;
+  cursor: pointer;
+  display: flex;
   position: absolute;
-  right: calc(var(--gap)/1.5);
-  text-align: right;
+  right: var(--gap);
   top: 50%;
+  transform: translateY(-50%);
 }
 
-.Site.is-authorized .Header-user:hover {
+.Site.is-authorized .Header-userIcon {
+  border-radius: .333em;
+  color: var(--Header-text-color-light-faded);
+  display: flex;
+  font-size: 1.3125em;
+  margin: -.333em -.5em;
+  padding: .333em .5em;
+}
+
+.Site.is-authorized .Header-userIcon:hover {
   background: var(--Header-overlay-color);
   color: #fff;
 }
@@ -180,7 +192,7 @@ limitations under the License.
   padding: 0 .5em;
 }
 
-.Header.is-open .Header-user {
+.Header.is-open .Header-userIcon {
   background: var(--Header-overlay-color);
   color: #fff;
 }
@@ -202,15 +214,18 @@ limitations under the License.
   }
 
   .Site.is-authorized .Header-user {
-    color: var(--Header-text-color-dark-faded);
-    margin: 0;
-    padding: .333em .5em;
-    right: calc(var(--gap-lg)/1.5);
-    top: calc(var(--gap-lg)/1.5);
+    right: var(--gap-lg);
+    top: var(--gap-lg);
+    transform: none;
   }
 
-  .Site.is-authorized .Header-user:hover,
-  .Header.is-open .Header-user {
+  .Site.is-authorized .Header-userIcon {
+    color: var(--Header-text-color-dark-faded);
+    margin: 0;
+  }
+
+  .Site.is-authorized .Header-userIcon:hover,
+  .Header.is-open .Header-userIcon {
     background: var(--Header-overlay-color-light);
     color: var(--Header-text-color-dark);
   }
@@ -219,10 +234,9 @@ limitations under the License.
     background: #fff;
     border-radius: .5em;
     box-shadow: 0 0 0 1px var(--Header-overlay-color-light);
-
     padding: 0 .5em;
     position: absolute;
-    line-height: 2.5em;
+    line-height: 2.4em;
     right: 6em; /* covers the width of the user icon + spacing */
     text-align: right;
     top: 2em;
