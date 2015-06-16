@@ -25,7 +25,9 @@ import ParamsCollection from '../params-collection';
 import React from 'react';
 
 
-const DEFAULT_HIT = 'v=1&t=pageview';
+// const DEFAULT_HIT = 'v=1&t=pageview';
+const DEFAULT_HIT = 'v=1&t=pageview&tid=UA-12345-1&cid=1&dp=/&dr=http://example.com';
+
 const HIT_TYPES = [
   'pageview',
   'screenview',
@@ -50,13 +52,14 @@ export default class HitValidator extends React.Component {
     this.handleAddParam = this.handleAddParam.bind(this);
     this.handleParamChange = this.handleParamChange.bind(this);
 
-    // Don't validate too much.
+    // Don't validate too frequently.
     this.validateParams = debounce(this.validateParams, 500, {leading: true});
 
     this.state = {
       editing: false,
-      generalErrors: [],
-      paramErrors: {},
+      // editing: true,
+      allMessages: [],
+      paramMessages: {},
       existingHitValue: 'v=1&t=pageview&tid=UA-12345-1&cid=1&dp=%2F'
     };
 
@@ -102,34 +105,40 @@ export default class HitValidator extends React.Component {
       let result = response.hitParsingResult[0];
 
       if (result.valid) {
-        this.setState({valid: true, paramErrors: {}, generalErrors: []});
+        this.setState({valid: true, allMessages: [], paramMessages: {}});
       }
       else {
-        let {paramErrors, generalErrors} =
+        let {allMessages, paramMessages} =
             this.getErrorsFromParserMessage(result.parserMessage);
 
-        this.setState({valid: false, paramErrors, generalErrors});
+        this.setState({valid: false, allMessages, paramMessages});
       }
-
-      console.log(result.valid ? 'Valid' : 'Error');
-      for (let m of result.parserMessage) console.log(m);
-    })
-    .catch(log);
+    });
   }
 
   getErrorsFromParserMessage(messages) {
-    let paramErrors = {};
-    let generalErrors = [];
+    let allMessages = []
+    let paramMessages = {};
 
-    for (let message of messages) {
-      if (this.params.has(message.parameter)) {
-        paramErrors[message.parameter] = message;
-      }
-      else {
-        generalErrors.push(message);
+    function processMessage(message) {
+      let linkRegex = /Please see http:\/\/goo\.gl\/a8d4RP#\w+ for details\.$/;
+      return {
+        parameter: message.parameter,
+        description: message.description.replace(linkRegex, '').trim(),
+        type: message.messageType,
+        code: message.messageCode
       }
     }
-    return {paramErrors, generalErrors};
+
+    for (let message of messages) {
+      let processedMessage = processMessage(message);
+      if (this.params.has(processedMessage.parameter)) {
+        let {parameter, description} = processedMessage;
+        paramMessages[parameter] = description;
+      }
+      allMessages.push(processedMessage);
+    }
+    return {allMessages, paramMessages};
   }
 
   render() {
@@ -163,39 +172,38 @@ export default class HitValidator extends React.Component {
       )
     }
     else {
-
       return (
         <div>
 
           <HitElement hitUrl={this.params.toQueryString()} />
 
-          <p style={{border:'1px solid',padding:'1em'}}>{this.state.generalErrors.map((e) => e.description)}</p>
+          <p style={{border:'1px solid',padding:'1em'}}>{this.state.allMessages.map((e) => e.description)}</p>
 
           <ParamSelectElement
             model={this.params.models[0]}
             ref="v"
             options={['1']}
-            message={this.state.paramErrors['v']}
+            message={this.state.paramMessages['v']}
             onRemove={this.params.remove.bind(this.params, this.params.models[0])} />
 
           <ParamSelectElement
             model={this.params.models[1]}
             ref="t"
             options={HIT_TYPES}
-            message={this.state.paramErrors['t']}
+            message={this.state.paramMessages['t']}
             onRemove={this.params.remove.bind(this.params, this.params.models[1])} />
 
           <ParamElement
             model={this.params.models[2]}
             ref="tid"
             placeholder="UA-XXXXX-Y"
-            message={this.state.paramErrors['tid']}
+            message={this.state.paramMessages['tid']}
             onRemove={this.params.remove.bind(this.params, this.params.models[2])} />
 
           <ParamElement
             model={this.params.models[3]}
             ref="cid"
-            message={this.state.paramErrors['cid']}
+            message={this.state.paramMessages['cid']}
             onRemove={this.params.remove.bind(this.params, this.params.models[3])} />
 
           {this.params.models.slice(4).map((model) => {
@@ -203,7 +211,7 @@ export default class HitValidator extends React.Component {
               <ParamElement
                 model={model}
                 key={model.uid}
-                message={this.state.paramErrors[model.get('name')]}
+                message={this.state.paramMessages[model.get('name')]}
                 onRemove={this.params.remove.bind(this.params, model)} />
             );
           })}

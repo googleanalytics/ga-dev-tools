@@ -13,8 +13,12 @@
 // limitations under the License.
 
 
-import IconButton from '../../elements/icon-button';
+import Icon from '../../elements/icon';
 import React from 'react';
+
+
+const REFERENCE_URL = 'https://developers.google.com/' +
+                      'analytics/devguides/collection/protocol/v1/parameters';
 
 
 export default class ParamElement extends React.Component {
@@ -54,9 +58,9 @@ export default class ParamElement extends React.Component {
   }
 
   getClassName() {
-    return 'FormControl FormControl--inline' +
-        (this.props.message ? ' FormControl--error' : '') +
-        (this.isRequired() ? ' FormControl--required' : '');
+    return 'HitBuilderParam' +
+        (this.props.message ? ' HitBuilderParam--error' : '') +
+        (this.isRequired() ? ' HitBuilderParam--required' : '');
   }
 
   getPlaceholder() {
@@ -66,14 +70,19 @@ export default class ParamElement extends React.Component {
 
   renderLabel() {
     if (this.isRequired()) {
-      return <label className="FormControl-label">{this.state.name}</label>;
+      return <label className="HitBuilderParam-label">{this.state.name}</label>;
     }
     else {
       return (
-        <div className="FormControl-label">
+        <div className="HitBuilderParam-label">
+          <span
+            className="HitBuilderParam-removeIcon"
+            title="Remove this parameter"
+            onClick={this.remove}>
+            <Icon type="remove-circle" />
+          </span>
           <input
-            style={{maxWidth:'6em', textAlign:'right'}}
-            className="FormField"
+            className="FormField HitBuilderParam-inputLabel"
             value={this.state.name}
             onChange={this.handleNameChange} />
         </div>
@@ -81,25 +90,9 @@ export default class ParamElement extends React.Component {
     }
   }
 
-  renderRemoveButton() {
-    if (!this.isRequired()) {
-      return (
-        <IconButton
-          type="remove-circle"
-          onClick={this.remove}>
-          remove
-        </IconButton>
-      );
-    }
-  }
-
   renderMessage() {
     if (this.props.message) {
-      let linkRegex = /Please see http:\/\/goo\.gl\/a8d4RP#\w+ for details\.$/;
-      let message = this.props.message.description.replace(linkRegex, '');
-      return (
-        <div className="FormControl-info">{message}</div>
-      );
+      return <div className="HitBuilderParam-info">{this.props.message}</div>;
     }
   }
 
