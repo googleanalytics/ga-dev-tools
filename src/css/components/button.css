@@ -15,8 +15,8 @@ limitations under the License.
 */
 
 .Button {
-  background: hsl(0,0%,92.5%);
-  border: 1px solid hsla(0,0%,0%,.1);
+  background: hsla(0,0%,0%, .075);
+  border: 1px solid transparent;
   border-radius: 4px;
   box-sizing: border-box;
   color: inherit;
@@ -37,7 +37,7 @@ limitations under the License.
 .Button:active:enabled,
 .Button:focus:enabled,
 .Button:hover:enabled {
-  background: hsl(0,0%,87.5%);
+  background: hsla(0,0%,0%, .15);
   outline: none;
   text-decoration: none;
 }
