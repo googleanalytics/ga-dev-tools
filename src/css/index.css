@@ -42,6 +42,7 @@ limitations under the License.
 @import './components/form-field';
 @import './components/form-field-add-on';
 @import './components/header';
+@import './components/hit-builder-param';
 @import './components/icon';
 @import './components/inline-definition-list';
 @import './components/logo';

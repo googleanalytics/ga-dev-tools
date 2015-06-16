@@ -208,10 +208,11 @@ export default class HitValidator extends React.Component {
             );
           })}
 
-          <div className="FormControl FormControl--inline FormControl--action">
-            <div className="FormControl-body">
+          <div className="HitBuilderParam HitBuilderParam--action">
+            <div className="HitBuilderParam-body">
               <IconButton
                 type="add-circle"
+                iconStyle={{color:'hsl(150,60%,40%)'}}
                 onClick={this.handleAddParam}>
                 Add parameter
               </IconButton>

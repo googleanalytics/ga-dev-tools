@@ -104,19 +104,23 @@ export default class ParamElement extends React.Component {
   }
 
   render() {
+    let {name, value} = this.state;
     return (
       <div className={this.getClassName()}>
         {this.renderLabel()}
-        <div className="FormControl-body">
-          <div className="FlexLine">
-            <input
-              className="FormField"
-              data-flex
-              value={this.state.value}
-              placeholder={this.getPlaceholder()}
-              onChange={this.handleValueChange} />
-            {this.renderRemoveButton()}
-          </div>
+        <div className="HitBuilderParam-body">
+          <input
+            className="FormField"
+            data-flex
+            value={value}
+            placeholder={this.getPlaceholder()}
+            onChange={this.handleValueChange} />
+          <a
+            href={`${REFERENCE_URL}#${name}`}
+            title={`Read the documentation for the "${name}" parameter.`}
+            className="HitBuilderParam-helpIcon">
+            <Icon type="info-outline" />
+          </a>
           {this.renderMessage()}
         </div>
       </div>

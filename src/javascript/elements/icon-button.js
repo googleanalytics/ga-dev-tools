@@ -22,7 +22,11 @@ export default class IconButton extends React.Component {
   render() {
     let nodeType = this.props.href ? 'a' : 'button';
     return React.createElement(nodeType, this.props,
-        <span className="Button-icon"><Icon type={this.props.type} /></span>,
+        <span
+          className="Button-icon"
+          style={this.props.iconStyle}>
+          <Icon type={this.props.type} />
+        </span>,
         this.props.children);
   }
 }
