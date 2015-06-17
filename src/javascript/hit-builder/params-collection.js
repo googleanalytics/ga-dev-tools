@@ -29,11 +29,31 @@ const REQUIRED_PARAMS = ['v', 't', 'tid', 'cid'];
 export default class ParamsCollection extends Collection {
 
   constructor(hit) {
-    super(createModelsFromHit(hit));
+    super(createModelsFromParams(getParamsFromHit(hit)));
 
     // Bind methods.
     this.validate = this.validate.bind(this);
     this.toQueryString = this.toQueryString.bind(this);
+  }
+
+  update(newHit) {
+    let params = getParamsFromHit(newHit);
+    let size = Math.max(params.length, this.size);
+
+    for (let i = 0; i < size; i++) {
+      let model = this.models[i];
+      let param = params[i];
+
+      if (model && param) {
+        model.set(param);
+      }
+      else if (!param) {
+        this.remove(model);
+      }
+      else if (!model) {
+        this.add(new Model(param))
+      }
+    }
   }
 
   // TODO(philipwalton): optimize to not be O(n).
@@ -41,6 +61,11 @@ export default class ParamsCollection extends Collection {
     for (let model of this.models) {
       if (model.get('name') == name) return true;
     }
+  }
+
+  hasRequiredParams() {
+    // This assumes the required params are the first items in the collection.
+    return REQUIRED_PARAMS.every((param, i) => this.models[i].get('value'));
   }
 
   toQueryString() {
@@ -66,8 +91,7 @@ export default class ParamsCollection extends Collection {
 }
 
 
-function createModelsFromHit(hit = '') {
-
+function getParamsFromHit(hit = '') {
   // If the hit contains a "?", remove it and all characters before it.
   let searchIndex = hit.indexOf('?');
   if (searchIndex > -1) hit = hit.slice(searchIndex + 1);
@@ -75,19 +99,24 @@ function createModelsFromHit(hit = '') {
   let query = querystring.parse(hit);
 
   // Create required models first, regardless of order in the hit.
-  let requiredModels = [];
+  let requiredParams = [];
   for (let name of REQUIRED_PARAMS) {
-    requiredModels.push(new Model({
+    requiredParams.push({
       name: name,
       value: query[name],
       required: true
-    }));
+    });
     delete query[name];
   }
 
   // Create optional models after required models.
-  let optionalModels = map(query, (value, name) =>
-      new Model({name, value, isOptional: true}));
+  let optionalParams = map(query, (value, name) =>
+      ({name, value, isOptional: true}));
 
-  return requiredModels.concat(optionalModels);
+  return requiredParams.concat(optionalParams);
+}
+
+
+function createModelsFromParams(params) {
+  return map(params, (param) => new Model(param));
 }
