@@ -25,28 +25,21 @@ const REFERENCE_URL = 'https://developers.google.com/' +
 export default class ParamSelectElement extends ParamElement {
 
   render() {
-    let {name, value} = this.state;
-
     // Only render a select if the value is one of the passed options.
-    if (this.props.options.includes(value)) {
+    if (this.props.options.includes(this.state.value)) {
       return (
         <div className={this.getClassName()}>
           {this.renderLabel()}
           <div className="HitBuilderParam-body">
             <select
               className="FormField"
-              value={value}
+              value={this.state.value}
               onChange={this.handleValueChange}>
               {this.props.options.map((option) => (
                 <option value={option} key={option}>{option}</option>
               ))}
             </select>
-            <a
-              href={`${REFERENCE_URL}#${name}`}
-              title={`Read the documentation for the "${name}" parameter.`}
-              className="HitBuilderParam-helpIcon">
-              <Icon type="info-outline" />
-            </a>
+            {this.renderHelpIcon()}
             {this.renderMessage()}
           </div>
         </div>

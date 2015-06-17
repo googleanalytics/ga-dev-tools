@@ -68,6 +68,15 @@ export default class ParamElement extends React.Component {
     return this.props.placeholder || ' ';
   }
 
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.model != this.state.model) {
+      this.setState({
+        name: nextProps.model.get('name'),
+        value: nextProps.model.get('value')
+      });
+    }
+  }
+
   renderLabel() {
     if (this.isRequired()) {
       return <label className="HitBuilderParam-label">{this.state.name}</label>;
@@ -77,6 +86,7 @@ export default class ParamElement extends React.Component {
         <div className="HitBuilderParam-label">
           <span
             className="HitBuilderParam-removeIcon"
+            tabIndex="1"
             title="Remove this parameter"
             onClick={this.remove}>
             <Icon type="remove-circle" />
@@ -90,6 +100,18 @@ export default class ParamElement extends React.Component {
     }
   }
 
+  renderHelpIcon() {
+    return (
+      <a
+        href={`${REFERENCE_URL}#${name}`}
+        tabIndex="1"
+        title={`Learn more about the "${this.state.name}" parameter.`}
+        className="HitBuilderParam-helpIcon">
+        <Icon type="info-outline" />
+      </a>
+    )
+  }
+
   renderMessage() {
     if (this.props.message) {
       return <div className="HitBuilderParam-info">{this.props.message}</div>;
@@ -97,7 +119,6 @@ export default class ParamElement extends React.Component {
   }
 
   render() {
-    let {name, value} = this.state;
     return (
       <div className={this.getClassName()}>
         {this.renderLabel()}
@@ -105,15 +126,10 @@ export default class ParamElement extends React.Component {
           <input
             className="FormField"
             data-flex
-            value={value}
+            value={this.state.value}
             placeholder={this.getPlaceholder()}
             onChange={this.handleValueChange} />
-          <a
-            href={`${REFERENCE_URL}#${name}`}
-            title={`Read the documentation for the "${name}" parameter.`}
-            className="HitBuilderParam-helpIcon">
-            <Icon type="info-outline" />
-          </a>
+          {this.renderHelpIcon()}
           {this.renderMessage()}
         </div>
       </div>
