@@ -196,7 +196,7 @@ let QueryReport = React.createClass({
         <div className="QueryReport-item">
           <IconButton
             download
-            icon="file-download"
+            type="file-download"
             href={this.downloadTsvLink()}
             className="Button Button--withIcon"
             onClick={this.props.onDownloadTsvClick}>
