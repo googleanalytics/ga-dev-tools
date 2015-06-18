@@ -17,6 +17,13 @@ limitations under the License.
 
 :root {
 
+  --ga-gray: #75787d;
+  --ga-orange-dark: hsl(16, 87%, 54%); /* #f05721; */
+  --ga-orange-light: hsl(34, 93%, 54%); /* #f7991c; */
+
+  --ga-logo-height: 32px;
+  --ga-logo-width: 316px;
+
   --gap: 1.5em;
   --gap-lg: 2em;
 
@@ -24,6 +31,12 @@ limitations under the License.
   --text-color-light: #ddd;
   --text-color-faded: #777;
   --text-color-faint: #aaa;
+
+  --error-color: hsl(0, 60%, 50%);
+  --error-color-bg: hsl(0, 60%, 97%);
+
+  --success-color: hsl(150, 60%, 40%);
+  --success-color-bg: hsl(150, 60%, 97%);
 
   --info-color: hsl(200, 75%, 55%);
 
@@ -34,12 +47,7 @@ limitations under the License.
   --border-color: #d4d2d0;
   --border-color-active: #3b99fc;
 
-  --ga-gray: #75787d;
-  --ga-orange-dark: #f05721;
-  --ga-orange-light: #f7991c;
 
-  --ga-logo-height: 32px;
-  --ga-logo-width: 316px;
 
   --sidebar-width: 260px;
   --sidebar-width-md: 280px;

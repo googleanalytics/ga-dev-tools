@@ -37,7 +37,6 @@ limitations under the License.
 }
 
 
-
 .HitBuilderParam-label {
   flex: 0 0 var(--HitBuilderParam-labelWidth);
   font-weight: 600;
@@ -61,7 +60,7 @@ limitations under the License.
 
 
 .HitBuilderParam-removeIcon {
-  color: hsl(0,60%,50%);
+  color: var(--error-color);
   cursor: pointer;
   right: var(--HitBuilderParam-labelInputWidth);
   padding: .667em;
@@ -77,7 +76,7 @@ limitations under the License.
 }
 
 .HitBuilderParam-info {
-  color: var(--text-color-faded);
+  color: var(--error-color);
   display: block;
   font-size: .85em;
   line-height: 1.2;

@@ -54,23 +54,29 @@ export default class HitElement extends React.Component {
   }
 
   render() {
+    let className = 'HitElement';
+    if (this.props.hitStatus == 'VALID') className += ' HitElement--valid';
+    if (this.props.hitStatus == 'INVALID') className += ' HitElement--invalid';
+
     return (
-      <div className="Box HitElement">
+      <section className={className}>
         {this.renderValidationStatus()}
-        <div className="HitElement-requestInfo">
-          POST /collect HTTP/1.1<br />
-          Host: www.google-analytics.com
+        <div className="HitElement-body">
+          <div className="HitElement-requestInfo">
+            POST /collect HTTP/1.1<br />
+            Host: www.google-analytics.com
+          </div>
+          <div className="HitElement-requestBody">
+            <Textarea
+              className="FormField"
+              value={this.state.value}
+              onChange={this.handleChange}
+              onFocus={this.handleFocus}
+              onBlur={this.handleBlur} />
+          </div>
+          {this.renderHitActions()}
         </div>
-        <div className="HitElement-payload">
-          <Textarea style={{wordBreak:'break-all'}}
-            className="FormField"
-            value={this.state.value}
-            onChange={this.handleChange}
-            onFocus={this.handleFocus}
-            onBlur={this.handleBlur} />
-        </div>
-        {this.renderHitActions()}
-      </div>
+      </section>
     )
   }
 
@@ -78,44 +84,47 @@ export default class HitElement extends React.Component {
     switch (this.props.hitStatus) {
       case 'VALID':
         return (
-          <div className="Box-header HitElement-status">
+          <header className="HitElement-status">
             <span
-              className="HitElement-statusIcon HitElement-statusIcon--valid">
+              className="HitElement-statusIcon">
               <Icon type="check" />
             </span>
-            <span className="HitElement-statusMessage">
-              Hit is valid!
-            </span>
-          </div>
+            <div class="HitElement-statusBody">
+              <h1 className="HitElement-statusHeading">Hit is valid!</h1>
+            </div>
+          </header>
         )
       case 'INVALID':
         return (
-          <div className="Box-header HitElement-status">
+          <header className="HitElement-status">
             <span
-              className="HitElement-statusIcon HitElement-statusIcon--invalid">
+              className="HitElement-statusIcon">
               <Icon type="error-outline" />
             </span>
-            <span className="HitElement-statusMessage">
-              Hit is invalid! Fix the following errors.
-            </span>
-            <ul>
-              {this.props.messages.map((message) => (
-                <li key={message.parameter}>{message.description}</li>
-              ))}
-            </ul>
-          </div>
+            <div className="HitElement-statusBody">
+              <h1 className="HitElement-statusHeading">Hit is invalid!</h1>
+              <ul className="HitElement-statusMessage">
+                {this.props.messages.map((message) => (
+                  <li key={message.parameter}>{message.description}</li>
+                ))}
+              </ul>
+            </div>
+          </header>
         )
       case 'PENDING':
         return (
-          <div className="Box-header HitElement-status">
+          <header className="HitElement-status">
             <span className="HitElement-statusIcon">
               <Icon type="create" />
             </span>
-            <span className="HitElement-statusMessage">
-              The hit is missing information. Please fill out all the required
-              parameters below.
-            </span>
-          </div>
+            <div className="HitElement-statusBody">
+              <h1 className="HitElement-statusHeading">
+                The hit is missing required parameters.
+              </h1>
+              <p className="HitElement-statusMessage">All the required fields
+              below must be filled out before the hit can be validated.</p>
+            </div>
+          </header>
         )
     }
   }

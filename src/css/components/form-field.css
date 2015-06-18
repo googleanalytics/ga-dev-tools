@@ -46,3 +46,7 @@ textarea.FormField:focus {
   border-color: var(--border-color-active);
   outline: 0;
 }
+
+.FormField--invalid {
+  border-color: var(--error-color)!important;
+}

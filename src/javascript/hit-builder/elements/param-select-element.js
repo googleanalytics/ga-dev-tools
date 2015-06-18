@@ -28,7 +28,7 @@ export default class ParamSelectElement extends ParamElement {
           {this.renderLabel()}
           <div className="HitBuilderParam-body">
             <select
-              className="FormField"
+              className={this.getFieldClassName()}
               value={this.state.value}
               onChange={this.handleValueChange}>
               {this.props.options.map((option) => (

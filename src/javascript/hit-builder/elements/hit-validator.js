@@ -145,7 +145,6 @@ export default class HitValidator extends React.Component {
           onBlur={this.handleHitChange}
           hitPayload={this.params.toQueryString()} />
 
-
         <ParamSelectElement
           model={this.params.models[0]}
           ref="v"

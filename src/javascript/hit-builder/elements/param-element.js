@@ -58,9 +58,12 @@ export default class ParamElement extends React.Component {
   }
 
   getClassName() {
-    return 'HitBuilderParam' +
-        (this.props.message ? ' HitBuilderParam--error' : '') +
-        (this.isRequired() ? ' HitBuilderParam--required' : '');
+    return 'HitBuilderParam' + (this.isRequired() ?
+        ' HitBuilderParam--required' : '');
+  }
+
+  getFieldClassName() {
+    return 'FormField' + (this.props.message ? ' FormField--invalid' : '');
   }
 
   getPlaceholder() {
@@ -124,7 +127,7 @@ export default class ParamElement extends React.Component {
         {this.renderLabel()}
         <div className="HitBuilderParam-body">
           <input
-            className="FormField"
+            className={this.getFieldClassName()}
             data-flex
             value={this.state.value}
             placeholder={this.getPlaceholder()}
