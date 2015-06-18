@@ -25,8 +25,8 @@ import ParamsCollection from '../params-collection';
 import React from 'react';
 
 
-// const DEFAULT_HIT = 'v=1&t=pageview';
-const DEFAULT_HIT = 'v=1&t=pageview&tid=UA-12345-1&cid=1&dp=/&dr=http://example.com';
+const DEFAULT_HIT = 'v=1&t=pageview';
+
 
 const HIT_TYPES = [
   'pageview',
@@ -46,49 +46,23 @@ export default class HitValidator extends React.Component {
     super(props)
 
     // Bind methods
-    this.handleCreateNewHit = this.handleCreateNewHit.bind(this);
-    this.handleEditExistingHit = this.handleEditExistingHit.bind(this);
-    this.handleExistingHitChange = this.handleExistingHitChange.bind(this);
     this.handleAddParam = this.handleAddParam.bind(this);
     this.handleParamChange = this.handleParamChange.bind(this);
+    this.handleHitChange = this.handleHitChange.bind(this);
 
     // Don't validate too frequently.
     this.validateParams = debounce(this.validateParams, 500, {leading: true});
 
     this.state = {
-      editing: false,
-      // editing: true,
+      hitStatus: 'PENDING',
       allMessages: [],
-      paramMessages: {},
-      existingHitValue: 'v=1&t=pageview&tid=UA-12345-1&cid=1&dp=%2F'
+      paramMessages: {}
     };
 
     this.params = new ParamsCollection(DEFAULT_HIT)
         .on('add', this.handleParamChange)
         .on('remove', this.handleParamChange)
         .on('change', this.handleParamChange)
-  }
-
-  handleCreateNewHit() {
-    this.setState({editing: true});
-  }
-
-  handleEditExistingHit() {
-    // TODO(philipwalton): update the collection module so this doesn't
-    // have to be destroyed.
-    this.params.destroy();
-
-    this.params = new ParamsCollection(this.state.existingHitValue)
-        .on('add', this.handleParamChange)
-        .on('remove', this.handleParamChange)
-        .on('change', this.handleParamChange)
-
-    this.setState({editing: true});
-    this.validateParams();
-  }
-
-  handleExistingHitChange(e) {
-    this.setState({existingHitValue: e.target.value});
   }
 
   handleAddParam() {
@@ -100,20 +74,39 @@ export default class HitValidator extends React.Component {
     this.validateParams();
   }
 
+  handleHitChange(hit) {
+    this.params.update(hit);
+  }
+
   validateParams() {
-    this.params.validate().then((response) => {
-      let result = response.hitParsingResult[0];
+    if (this.params.hasRequiredParams()) {
+      this.params.validate().then((response) => {
+        let result = response.hitParsingResult[0];
 
-      if (result.valid) {
-        this.setState({valid: true, allMessages: [], paramMessages: {}});
-      }
-      else {
-        let {allMessages, paramMessages} =
-            this.getErrorsFromParserMessage(result.parserMessage);
+        if (result.valid) {
+          this.setState({
+            hitStatus: 'VALID',
+            allMessages: [],
+            paramMessages: {}
+          });
+        }
+        else {
+          let {allMessages, paramMessages} =
+              this.getErrorsFromParserMessage(result.parserMessage);
 
-        this.setState({valid: false, allMessages, paramMessages});
-      }
-    });
+          this.setState({
+            hitStatus: 'INVALID',
+            allMessages,
+            paramMessages
+          });
+        }
+      });
+    }
+    else {
+      this.setState({
+        hitStatus: 'PENDING'
+      });
+    }
   }
 
   getErrorsFromParserMessage(messages) {
@@ -143,92 +136,66 @@ export default class HitValidator extends React.Component {
 
   render() {
 
-    if (!this.state.editing) {
-      return (
-        <div>
-          <p><strong>Paste an existing hit into the text box below.</strong></p>
-          <div className="FormControl">
-            <textarea
-              rows="3"
-              className="FormField"
-              value={this.state.existingHitValue}
-              onChange={this.handleExistingHitChange} />
-          </div>
-          <div className="FormControl">
+    return (
+      <div>
+
+        <HitElement
+          hitStatus={this.state.hitStatus}
+          messages={this.state.allMessages}
+          onBlur={this.handleHitChange}
+          hitPayload={this.params.toQueryString()} />
+
+
+        <ParamSelectElement
+          model={this.params.models[0]}
+          ref="v"
+          options={['1']}
+          message={this.state.paramMessages['v']}
+          onRemove={this.params.remove.bind(this.params, this.params.models[0])} />
+
+        <ParamSelectElement
+          model={this.params.models[1]}
+          ref="t"
+          options={HIT_TYPES}
+          message={this.state.paramMessages['t']}
+          onRemove={this.params.remove.bind(this.params, this.params.models[1])} />
+
+        <ParamElement
+          model={this.params.models[2]}
+          ref="tid"
+          placeholder="UA-XXXXX-Y"
+          message={this.state.paramMessages['tid']}
+          onRemove={this.params.remove.bind(this.params, this.params.models[2])} />
+
+        <ParamElement
+          model={this.params.models[3]}
+          ref="cid"
+          message={this.state.paramMessages['cid']}
+          onRemove={this.params.remove.bind(this.params, this.params.models[3])} />
+
+        {this.params.models.slice(4).map((model) => {
+          return (
+            <ParamElement
+              model={model}
+              key={model.uid}
+              message={this.state.paramMessages[model.get('name')]}
+              onRemove={this.params.remove.bind(this.params, model)} />
+          );
+        })}
+
+        <div className="HitBuilderParam HitBuilderParam--action">
+          <div className="HitBuilderParam-body">
             <IconButton
-              disabled={!this.state.existingHitValue}
-              onClick={this.handleEditExistingHit}
-              type="create">Edit hit
+              type="add-circle"
+              iconStyle={{color:'hsl(150,60%,40%)'}}
+              onClick={this.handleAddParam}>
+              Add parameter
             </IconButton>
           </div>
-          <p><strong>Or construct a new hit from scratch.</strong></p>
-          <IconButton
-            className="Button Button--withIcon Button--action"
-            onClick={this.handleCreateNewHit}
-            type="arrow-forward">
-            Create new hit
-          </IconButton>
         </div>
-      )
-    }
-    else {
-      return (
-        <div>
 
-          <HitElement hitUrl={this.params.toQueryString()} />
+      </div>
+    )
 
-          <p style={{border:'1px solid',padding:'1em'}}>{this.state.allMessages.map((e) => e.description)}</p>
-
-          <ParamSelectElement
-            model={this.params.models[0]}
-            ref="v"
-            options={['1']}
-            message={this.state.paramMessages['v']}
-            onRemove={this.params.remove.bind(this.params, this.params.models[0])} />
-
-          <ParamSelectElement
-            model={this.params.models[1]}
-            ref="t"
-            options={HIT_TYPES}
-            message={this.state.paramMessages['t']}
-            onRemove={this.params.remove.bind(this.params, this.params.models[1])} />
-
-          <ParamElement
-            model={this.params.models[2]}
-            ref="tid"
-            placeholder="UA-XXXXX-Y"
-            message={this.state.paramMessages['tid']}
-            onRemove={this.params.remove.bind(this.params, this.params.models[2])} />
-
-          <ParamElement
-            model={this.params.models[3]}
-            ref="cid"
-            message={this.state.paramMessages['cid']}
-            onRemove={this.params.remove.bind(this.params, this.params.models[3])} />
-
-          {this.params.models.slice(4).map((model) => {
-            return (
-              <ParamElement
-                model={model}
-                key={model.uid}
-                message={this.state.paramMessages[model.get('name')]}
-                onRemove={this.params.remove.bind(this.params, model)} />
-            );
-          })}
-
-          <div className="HitBuilderParam HitBuilderParam--action">
-            <div className="HitBuilderParam-body">
-              <IconButton
-                type="add-circle"
-                iconStyle={{color:'hsl(150,60%,40%)'}}
-                onClick={this.handleAddParam}>
-                Add parameter
-              </IconButton>
-            </div>
-          </div>
-
-        </div>
-      )
-    }
   }
 }

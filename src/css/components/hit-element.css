@@ -1,0 +1,57 @@
+.HitElement {
+
+}
+
+.HitElement-status {
+
+}
+
+.HitElement-statusIcon {
+  display: inline-flex;
+  font-size: 3em;
+  margin-right: .3em;
+  vertical-align: -.3em;
+}
+
+.HitElement-statusMessage {
+  color: var(--text-color-faded);
+  font-weight: 300;
+  font-size: 1.5em;
+}
+
+.HitElement-requestInfo,
+.HitElement-payload {
+  font-family: Menlo, monospace;
+  font-size: .9em;
+  margin: 0 0 1.5em;
+}
+
+.HitElement-requestInfo {
+  color: var(--text-color-faded);
+}
+
+.HitElement-action {
+  margin-top: 1.5em;
+}
+
+.HitElement-statusIcon--valid {
+  color: hsl(150, 60%, 40%);
+}
+
+.HitElement-statusIcon--invalid {
+  color: hsl(0, 75%, 50%);
+}
+
+.HitElement-status,
+.HitElement-requestInfo,
+.HitElement-action {
+  opacity: 1;
+  transition: opacity .2s var(--quantum-timing);
+}
+
+.is-editing .HitElement-status,
+.is-editing .HitElement-requestInfo,
+.is-editing .HitElement-action {
+  opacity: .4;
+  pointer-events: none;
+}

@@ -13,14 +13,14 @@
 // limitations under the License.
 
 
+/* global $ */
+
+
 import Collection from '../collection';
 import map from 'lodash/collection/map';
 import Model from '../model';
 import querystring from 'querystring';
 import url from 'url';
-
-
-/* global $ */
 
 
 const REQUIRED_PARAMS = ['v', 't', 'tid', 'cid'];
@@ -38,10 +38,11 @@ export default class ParamsCollection extends Collection {
 
   update(newHit) {
     let params = getParamsFromHit(newHit);
-    let size = Math.max(params.length, this.size);
+    let models = this.models.slice(0);
+    let size = Math.max(params.length,  models.length);
 
     for (let i = 0; i < size; i++) {
-      let model = this.models[i];
+      let model = models[i];
       let param = params[i];
 
       if (model && param) {
