@@ -103,7 +103,7 @@ export default class ParamElement extends React.Component {
   renderHelpIcon() {
     return (
       <a
-        href={`${REFERENCE_URL}#${name}`}
+        href={`${REFERENCE_URL}#${this.state.name}`}
         tabIndex="1"
         title={`Learn more about the "${this.state.name}" parameter.`}
         className="HitBuilderParam-helpIcon">

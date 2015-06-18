@@ -18,10 +18,6 @@ import ParamElement from './param-element';
 import React from 'react';
 
 
-const REFERENCE_URL = 'https://developers.google.com/' +
-                      'analytics/devguides/collection/protocol/v1/parameters';
-
-
 export default class ParamSelectElement extends ParamElement {
 
   render() {
