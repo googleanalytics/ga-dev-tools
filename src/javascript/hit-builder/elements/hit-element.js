@@ -131,7 +131,7 @@ export default class HitElement extends React.Component {
           </IconButton>
           <IconButton
             type="content-paste">
-            Copy hit payload
+            Copy hit body
           </IconButton>
         </div>
       )
