@@ -17,7 +17,7 @@ limitations under the License.
 
 :root {
   --HitBuilderParam-gap: 1.25em;
-  --HitBuilderParam-labelWidth: 8em;
+  --HitBuilderParam-labelWidth: 7em;
   --HitBuilderParam-labelInputWidth: 4em;
 }
 
@@ -27,15 +27,8 @@ limitations under the License.
   display: inline-flex;
   margin: 0 0 var(--HitBuilderParam-gap);
   max-width: 36em;
-  transition: opacity .2s var(--quantum-timing);
   width: 100%;
 }
-
-.is-editing .HitBuilderParam {
-  opacity: .4;
-  pointer-events: none;
-}
-
 
 .HitBuilderParam-label {
   flex: 0 0 var(--HitBuilderParam-labelWidth);

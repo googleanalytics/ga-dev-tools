@@ -139,58 +139,66 @@ export default class HitValidator extends React.Component {
     return (
       <div>
 
+        <h3>Hit summary</h3>
+
         <HitElement
           hitStatus={this.state.hitStatus}
           messages={this.state.allMessages}
           onBlur={this.handleHitChange}
           hitPayload={this.params.toQueryString()} />
 
-        <ParamSelectElement
-          model={this.params.models[0]}
-          ref="v"
-          options={['1']}
-          message={this.state.paramMessages['v']}
-          onRemove={this.params.remove.bind(this.params, this.params.models[0])} />
+        <div className="HitBuilderParams">
 
-        <ParamSelectElement
-          model={this.params.models[1]}
-          ref="t"
-          options={HIT_TYPES}
-          message={this.state.paramMessages['t']}
-          onRemove={this.params.remove.bind(this.params, this.params.models[1])} />
+          <h3>Hit parameter details</h3>
 
-        <ParamElement
-          model={this.params.models[2]}
-          ref="tid"
-          placeholder="UA-XXXXX-Y"
-          message={this.state.paramMessages['tid']}
-          onRemove={this.params.remove.bind(this.params, this.params.models[2])} />
+          <ParamSelectElement
+            model={this.params.models[0]}
+            ref="v"
+            options={['1']}
+            message={this.state.paramMessages['v']}
+            onRemove={this.params.remove.bind(this.params, this.params.models[0])} />
 
-        <ParamElement
-          model={this.params.models[3]}
-          ref="cid"
-          message={this.state.paramMessages['cid']}
-          onRemove={this.params.remove.bind(this.params, this.params.models[3])} />
+          <ParamSelectElement
+            model={this.params.models[1]}
+            ref="t"
+            options={HIT_TYPES}
+            message={this.state.paramMessages['t']}
+            onRemove={this.params.remove.bind(this.params, this.params.models[1])} />
 
-        {this.params.models.slice(4).map((model) => {
-          return (
-            <ParamElement
-              model={model}
-              key={model.uid}
-              message={this.state.paramMessages[model.get('name')]}
-              onRemove={this.params.remove.bind(this.params, model)} />
-          );
-        })}
+          <ParamElement
+            model={this.params.models[2]}
+            ref="tid"
+            placeholder="UA-XXXXX-Y"
+            message={this.state.paramMessages['tid']}
+            onRemove={this.params.remove.bind(this.params, this.params.models[2])} />
 
-        <div className="HitBuilderParam HitBuilderParam--action">
-          <div className="HitBuilderParam-body">
-            <IconButton
-              type="add-circle"
-              iconStyle={{color:'hsl(150,60%,40%)'}}
-              onClick={this.handleAddParam}>
-              Add parameter
-            </IconButton>
+          <ParamElement
+            model={this.params.models[3]}
+            ref="cid"
+            message={this.state.paramMessages['cid']}
+            onRemove={this.params.remove.bind(this.params, this.params.models[3])} />
+
+          {this.params.models.slice(4).map((model) => {
+            return (
+              <ParamElement
+                model={model}
+                key={model.uid}
+                message={this.state.paramMessages[model.get('name')]}
+                onRemove={this.params.remove.bind(this.params, model)} />
+            );
+          })}
+
+          <div className="HitBuilderParam HitBuilderParam--action">
+            <div className="HitBuilderParam-body">
+              <IconButton
+                type="add-circle"
+                iconStyle={{color:'hsl(150,60%,40%)'}}
+                onClick={this.handleAddParam}>
+                Add parameter
+              </IconButton>
+            </div>
           </div>
+
         </div>
 
       </div>

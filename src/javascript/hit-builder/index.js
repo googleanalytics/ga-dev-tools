@@ -22,19 +22,16 @@ import React from 'react';
 // [x] Add preset choices for v and t params.
 // [x] Handle cases where a v and t values are not one of the preset choices.
 // [x] Remove the URLs from the error messages.
-// [ ] Add links to the param docs.
-// [ ] Add visual error state to the params when they're invalid.
-// [ ] Add an icon indicating whether or not the hit is valid.
-// [ ] Add a button to send a valid hit.
+// [x] Add links to the param docs.
+// [x] Add visual error state to the params when they're invalid.
+// [x] Add an icon indicating whether or not the hit is valid.
 // [ ] Don't perform an initial validation until all required params are present.
-// [ ] Don't validate until after the first blur event for each param.
-
-
-// Nice-to-have (post v1)
-// --------------------------------------------------------------------------
-// [ ] Inline param documentation and search suggestion
-// [ ] Lookup `tid` param
-// [ ] Auto-generate a UUID for the `cid` param
+// [ ] Add a button to send a valid hit.
+// [ ] Add a button to copy the hit body to the clipboard.
+// [ ] Add a button to share the hit.
+// [ ] Lookup `tid` param.
+// [ ] Auto-generate a UUID for the `cid` param.
+// [ ] Handle validation request timeouts/errors.
 
 
 React.render(
