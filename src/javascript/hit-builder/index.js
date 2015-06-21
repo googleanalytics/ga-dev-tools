@@ -25,8 +25,7 @@ import React from 'react';
 // [x] Add links to the param docs.
 // [x] Add visual error state to the params when they're invalid.
 // [x] Add an icon indicating whether or not the hit is valid.
-// [ ] Don't perform an initial validation until all required params are present.
-// [ ] Add a button to send a valid hit.
+// [x] Add a button to send a valid hit.
 // [ ] Add a button to copy the hit body to the clipboard.
 // [ ] Add a button to share the hit.
 // [ ] Lookup `tid` param.

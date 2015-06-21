@@ -30,8 +30,12 @@ export default class HitElement extends React.Component {
     this.handleChange = this.handleChange.bind(this);
     this.handleFocus = this.handleFocus.bind(this);
     this.handleBlur = this.handleBlur.bind(this);
+    this.sendHit = this.sendHit.bind(this);
 
-    this.state = {value: this.props.hitPayload};
+    this.state = {
+      value: this.props.hitPayload,
+      hitSent: false
+    };
   }
 
   handleChange(e) {
@@ -47,9 +51,21 @@ export default class HitElement extends React.Component {
     this.props.onBlur(e.target.value);
   }
 
+  sendHit() {
+    $.ajax({
+      method: 'POST',
+      url: 'https://www.google-analytics.com/collect',
+      data: this.state.value
+    })
+    .then(() => this.setState({hitSent: true}));
+  }
+
   componentWillReceiveProps(nextProps) {
     if (nextProps.hitPayload != this.state.hitPayload) {
-      this.setState({value: nextProps.hitPayload});
+      this.setState({
+        value: nextProps.hitPayload,
+        hitSent: false
+      });
     }
   }
 
@@ -91,6 +107,10 @@ export default class HitElement extends React.Component {
             </span>
             <div class="HitElement-statusBody">
               <h1 className="HitElement-statusHeading">Hit is valid!</h1>
+              <p className="HitElement-statusMessage">Use the buttons below to
+              copy the hit or share it with coworkers.<br />
+              You can also send the hit to Google Analytics and watch
+              it in action in the Real Time view.</p>
             </div>
           </header>
         )
@@ -135,8 +155,9 @@ export default class HitElement extends React.Component {
         <div className="HitElement-action">
           <IconButton
             className="Button Button--action Button--withIcon"
-            type="send">
-            Send hit
+            onClick={this.sendHit}
+            type={this.state.hitSent ? 'check' : 'send'}>
+            Send hit to Google Analytics
           </IconButton>
           <IconButton
             type="content-paste">
