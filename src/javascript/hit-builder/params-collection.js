@@ -70,8 +70,12 @@ export default class ParamsCollection extends Collection {
   }
 
   toQueryString() {
-    let query = this.models.reduce((obj, model) =>
-        (obj[model.get('name')] = model.get('value'), obj), {});
+    let query = {};
+    for (let model of this.models) {
+      let name = model.get('name');
+      let value = model.get('value');
+      if (name && value) query[name] = value;
+    }
 
     return querystring.stringify(query);
   }
