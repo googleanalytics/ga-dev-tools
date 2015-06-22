@@ -61,6 +61,7 @@ limitations under the License.
 @import './components/view-selector';
 
 /* Utilities. */
+@import './utilities/display.css';
 @import './utilities/media.css';
 @import './utilities/space.css';
 

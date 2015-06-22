@@ -19,6 +19,7 @@
 import Icon from '../../elements/icon';
 import IconButton from '../../elements/icon-button';
 import React from 'react';
+import supports from '../../supports';
 import Textarea from 'react-textarea-autosize';
 
 
@@ -31,10 +32,13 @@ export default class HitElement extends React.Component {
     this.handleFocus = this.handleFocus.bind(this);
     this.handleBlur = this.handleBlur.bind(this);
     this.sendHit = this.sendHit.bind(this);
+    this.copyHitBody = this.copyHitBody.bind(this);
+    this.copyShareUrl = this.copyShareUrl.bind(this);
 
     this.state = {
       value: this.props.hitPayload,
-      hitSent: false
+      hitSent: false,
+      hitBodyCopied: false
     };
   }
 
@@ -60,11 +64,33 @@ export default class HitElement extends React.Component {
     .then(() => this.setState({hitSent: true}));
   }
 
+  copyHitBody() {
+    let hitBody = React.findDOMNode(this.refs.hitBody);
+    if (copyElementText(hitBody)) {
+      this.setState({hitBodyCopied: true});
+    }
+    else {
+      // TODO(philipwalton): handle error case
+    }
+  }
+
+  copyShareUrl() {
+    let shareUrl = React.findDOMNode(this.refs.shareUrl);
+    if (copyElementText(shareUrl)) {
+      this.setState({hitUriCopied: true});
+    }
+    else {
+      // TODO(philipwalton): handle error case
+    }
+  }
+
   componentWillReceiveProps(nextProps) {
     if (nextProps.hitPayload != this.state.hitPayload) {
       this.setState({
         value: nextProps.hitPayload,
-        hitSent: false
+        hitSent: false,
+        hitBodyCopied: false,
+        hitUriCopied: false
       });
     }
   }
@@ -150,21 +176,69 @@ export default class HitElement extends React.Component {
   }
 
   renderHitActions() {
-    if (this.props.hitStatus == 'VALID') {
+    if (this.props.hitStatus != 'VALID') return;
+
+    let sendHitButton = (
+      <IconButton
+        className="Button Button--action Button--withIcon"
+        type={this.state.hitSent ? 'check' : 'send'}
+        onClick={this.sendHit}>
+        Send hit to Google Analytics
+      </IconButton>
+    );
+
+    if (supports.copyToClipboard()) {
       return (
         <div className="HitElement-action">
+          {sendHitButton}
           <IconButton
-            className="Button Button--action Button--withIcon"
-            onClick={this.sendHit}
-            type={this.state.hitSent ? 'check' : 'send'}>
-            Send hit to Google Analytics
-          </IconButton>
-          <IconButton
-            type="content-paste">
+            type={this.state.hitBodyCopied ? 'check' : 'content-paste'}
+            onClick={this.copyHitBody}>
             Copy hit body
           </IconButton>
+
+          <IconButton
+            type={this.state.hitUriCopied ? 'check' : 'share'}
+            onClick={this.copyShareUrl}>
+            Copy link to hit
+          </IconButton>
+          <div
+            ref="hitBody"
+            className="u-visuallyHidden">
+            {this.state.value}
+          </div>
+          <div
+            ref="shareUrl"
+            className="u-visuallyHidden">
+            {location.protocol + '//' + location.host + location.pathname +
+            '?' + this.state.value}
+          </div>
+        </div>
+      )
+    }
+    else {
+      return (
+        <div className="HitElement-action">
+          {sendHitButton}
         </div>
       )
     }
   }
+}
+
+
+function copyElementText(element) {
+  let success = false;
+  let range = document.createRange();
+  range.selectNode(element);
+
+  window.getSelection().removeAllRanges();
+  window.getSelection().addRange(range);
+
+  try {
+    success = document.execCommand('copy');
+  } catch(e) {}
+
+  window.getSelection().removeAllRanges();
+  return success;
 }

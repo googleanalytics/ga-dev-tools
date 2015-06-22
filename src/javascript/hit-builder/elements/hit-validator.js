@@ -59,10 +59,26 @@ export default class HitValidator extends React.Component {
       paramMessages: {}
     };
 
-    this.params = new ParamsCollection(DEFAULT_HIT)
+    this.params = new ParamsCollection(this.getInitialHit())
         .on('add', this.handleParamChange)
         .on('remove', this.handleParamChange)
         .on('change', this.handleParamChange)
+
+    this.validateParams();
+  }
+
+  getInitialHit() {
+    let query = location.search.slice(1);
+
+    if (query) {
+      if (history && history.replaceState) {
+        history.replaceState(history.state, document.title, location.pathname);
+      }
+      return query;
+    }
+    else {
+      return DEFAULT_HIT;
+    }
   }
 
   handleAddParam() {

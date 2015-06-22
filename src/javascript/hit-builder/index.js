@@ -26,8 +26,8 @@ import React from 'react';
 // [x] Add visual error state to the params when they're invalid.
 // [x] Add an icon indicating whether or not the hit is valid.
 // [x] Add a button to send a valid hit.
-// [ ] Add a button to copy the hit body to the clipboard.
-// [ ] Add a button to share the hit.
+// [x] Add a button to copy the hit body to the clipboard.
+// [x] Add a button to copy a shareable hit URL.
 // [ ] Lookup `tid` param.
 // [ ] Auto-generate a UUID for the `cid` param.
 // [ ] Handle validation request timeouts/errors.
