@@ -35,8 +35,8 @@ limitations under the License.
   --error-color: hsl(0, 60%, 50%);
   --error-color-bg: hsl(0, 60%, 97%);
 
-  --success-color: hsl(150, 60%, 40%);
-  --success-color-bg: hsl(150, 60%, 97%);
+  --success-color: hsl(135, 60%, 40%);
+  --success-color-bg: hsl(135, 60%, 97%);
 
   --info-color: hsl(200, 75%, 55%);
 
