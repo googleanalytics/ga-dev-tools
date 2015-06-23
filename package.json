@@ -38,6 +38,7 @@
     "select2": "select2/select2#3.5.2",
     "sinon": "^1.14.1",
     "svg4everybody": "jonathantneal/svg4everybody#1.0.0",
+    "uuid": "^2.0.1",
     "webpack": "^1.9.10"
   }
 }

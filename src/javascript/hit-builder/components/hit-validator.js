@@ -20,10 +20,12 @@ import Icon from '../../components/icon';
 import IconButton from '../../components/icon-button';
 import Model from '../../model';
 import ParamElement from './param-element';
+import ParamButtonElement from './param-button-element';
 import ParamSearchSuggestElement from './param-search-suggest-element';
 import ParamSelectElement from './param-select-element';
 import ParamsCollection from '../params-collection';
 import React from 'react';
+import uuid from 'uuid';
 
 
 const DEFAULT_HIT = 'v=1&t=pageview';
@@ -50,6 +52,7 @@ export default class HitValidator extends React.Component {
     this.handleAddParam = this.handleAddParam.bind(this);
     this.handleParamChange = this.handleParamChange.bind(this);
     this.handleHitChange = this.handleHitChange.bind(this);
+    this.handleGenerateUuid = this.handleGenerateUuid.bind(this);
 
     // Don't validate too frequently.
     this.validateParams = debounce(this.validateParams, 500, {leading: true});
@@ -91,6 +94,10 @@ export default class HitValidator extends React.Component {
 
   handleHitChange(hit) {
     this.params.update(hit);
+  }
+
+  handleGenerateUuid() {
+    this.params.models[3].set({value: uuid.v4()});
   }
 
   validateParams() {
@@ -174,29 +181,28 @@ export default class HitValidator extends React.Component {
             model={this.params.models[0]}
             ref="v"
             options={['1']}
-            message={this.state.paramMessages['v']}
-            onRemove={this.params.remove.bind(this.params, this.params.models[0])} />
+            message={this.state.paramMessages['v']} />
 
           <ParamSelectElement
             model={this.params.models[1]}
             ref="t"
             options={HIT_TYPES}
-            message={this.state.paramMessages['t']}
-            onRemove={this.params.remove.bind(this.params, this.params.models[1])} />
+            message={this.state.paramMessages['t']} />
 
           <ParamSearchSuggestElement
             model={this.params.models[2]}
             ref="tid"
             options={this.props.properties}
             placeholder="UA-XXXXX-Y"
-            message={this.state.paramMessages['tid']}
-            onRemove={this.params.remove.bind(this.params, this.params.models[2])} />
+            message={this.state.paramMessages['tid']} />
 
-          <ParamElement
+          <ParamButtonElement
             model={this.params.models[3]}
             ref="cid"
+            type="refresh"
+            title="Randomly generate UUID"
             message={this.state.paramMessages['cid']}
-            onRemove={this.params.remove.bind(this.params, this.params.models[3])} />
+            onClick={this.handleGenerateUuid} />
 
           {this.params.models.slice(4).map((model) => {
             return (

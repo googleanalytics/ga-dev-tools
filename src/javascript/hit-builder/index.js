@@ -18,21 +18,6 @@ import HitValidator from './components/hit-validator';
 import React from 'react';
 
 
-// TODO
-// --------------------------------------------------------------------------
-// [x] Add preset choices for v and t params.
-// [x] Handle cases where a v and t values are not one of the preset choices.
-// [x] Remove the URLs from the error messages.
-// [x] Add links to the param docs.
-// [x] Add visual error state to the params when they're invalid.
-// [x] Add an icon indicating whether or not the hit is valid.
-// [x] Add a button to send a valid hit.
-// [x] Add a button to copy the hit body to the clipboard.
-// [x] Add a button to copy a shareable hit URL.
-// [x] Add search suggest for the `tid` param.
-// [ ] Auto-generate a UUID for the `cid` param.
-// [ ] Handle validation request timeouts/errors.
-
 function render(properties) {
   React.render(
     <HitValidator properties={properties} />,
@@ -42,7 +27,6 @@ function render(properties) {
 
 
 function setup() {
-
   accountSummaries.get().then(function(summaries) {
     let properties = summaries.allProperties().map((property) => {
       return {
