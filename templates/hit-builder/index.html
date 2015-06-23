@@ -34,7 +34,9 @@ setTimeout(function() {
   The {{ project.title }} tools uses the <a
   href="{{ site.tech.measurement_protocol_validation_server.url }}">
   {{ site.tech.measurement_protocol_validation_server.name }}</a> to validate
-  Measurement Protocol hits.
+  Measurement Protocol hits. It also uses the <a
+  href="{{ site.tech.management_api.url }}">{{ site.tech.management_api.name }}
+  </a> to get the list of the current user's tracking IDs.
 {% endblock %}
 
 {% block foot_scripts %}
