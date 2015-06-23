@@ -13,6 +13,7 @@
 // limitations under the License.
 
 
+import accountSummaries from 'javascript-api-utils/lib/account-summaries';
 import HitValidator from './elements/hit-validator';
 import React from 'react';
 
@@ -28,12 +29,48 @@ import React from 'react';
 // [x] Add a button to send a valid hit.
 // [x] Add a button to copy the hit body to the clipboard.
 // [x] Add a button to copy a shareable hit URL.
-// [ ] Lookup `tid` param.
+// [x] Add search suggest for the `tid` param.
 // [ ] Auto-generate a UUID for the `cid` param.
 // [ ] Handle validation request timeouts/errors.
 
+function render(properties) {
+  React.render(
+    <HitValidator properties={properties} />,
+    document.getElementById('react-test')
+  );
+}
 
-React.render(
-  <HitValidator />,
-  document.getElementById('react-test')
-);
+
+function setup() {
+
+  accountSummaries.get().then(function(summaries) {
+    let properties = summaries.allProperties().map((property) => {
+      return {
+        name: property.name,
+        id: property.id,
+        group: summaries.getAccountByPropertyId(property.id).name
+      }
+    })
+
+    render(properties);
+  });
+
+  // Add/remove state classes.
+  $('body').removeClass('is-loading');
+  $('body').addClass('is-ready');
+}
+
+
+// Run setup when the Embed API is ready and the user is authorized.
+gapi.analytics.ready(function() {
+  if (gapi.analytics.auth.isAuthorized()) {
+    setup();
+  }
+  else {
+    gapi.analytics.auth.once('success', setup);
+  }
+});
+
+
+// Perform an initial render.
+render();

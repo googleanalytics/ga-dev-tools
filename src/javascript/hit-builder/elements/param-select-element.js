@@ -13,7 +13,6 @@
 // limitations under the License.
 
 
-import Icon from '../../elements/icon';
 import ParamElement from './param-element';
 import React from 'react';
 

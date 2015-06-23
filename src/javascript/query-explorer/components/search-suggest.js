@@ -369,6 +369,7 @@ export default class SearchSuggest extends React.Component {
           className="SearchSuggest-field FormField"
           name={this.props.name}
           value={this.state.value}
+          placeholder={this.props.placeholder}
           onClick={this.setShowMatchesState.bind(this)}
           onChange={this.handleChange.bind(this)}
           onKeyDown={this.handleKeyDown.bind(this)}

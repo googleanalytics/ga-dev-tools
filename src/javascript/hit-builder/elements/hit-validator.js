@@ -20,6 +20,7 @@ import Icon from '../../elements/icon';
 import IconButton from '../../elements/icon-button';
 import Model from '../../model';
 import ParamElement from './param-element';
+import ParamSearchSuggestElement from './param-search-suggest-element';
 import ParamSelectElement from './param-select-element';
 import ParamsCollection from '../params-collection';
 import React from 'react';
@@ -63,8 +64,6 @@ export default class HitValidator extends React.Component {
         .on('add', this.handleParamChange)
         .on('remove', this.handleParamChange)
         .on('change', this.handleParamChange)
-
-    this.validateParams();
   }
 
   getInitialHit() {
@@ -150,6 +149,10 @@ export default class HitValidator extends React.Component {
     return {allMessages, paramMessages};
   }
 
+  componentDidMount() {
+    this.validateParams();
+  }
+
   render() {
 
     return (
@@ -181,9 +184,10 @@ export default class HitValidator extends React.Component {
             message={this.state.paramMessages['t']}
             onRemove={this.params.remove.bind(this.params, this.params.models[1])} />
 
-          <ParamElement
+          <ParamSearchSuggestElement
             model={this.params.models[2]}
             ref="tid"
+            options={this.props.properties}
             placeholder="UA-XXXXX-Y"
             message={this.state.paramMessages['tid']}
             onRemove={this.params.remove.bind(this.params, this.params.models[2])} />
