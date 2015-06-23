@@ -14,7 +14,7 @@
 
 
 import camelCase from 'camelcase';
-import Icon from '../../elements/icon';
+import Icon from '../../components/icon';
 import React from 'react';
 
 

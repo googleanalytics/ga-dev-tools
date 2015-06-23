@@ -16,8 +16,8 @@
 /* global $ */
 
 
-import Icon from '../../elements/icon';
-import IconButton from '../../elements/icon-button';
+import Icon from '../../components/icon';
+import IconButton from '../../components/icon-button';
 import React from 'react';
 import supports from '../../supports';
 import Textarea from 'react-textarea-autosize';

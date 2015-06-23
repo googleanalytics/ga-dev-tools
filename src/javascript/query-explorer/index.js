@@ -30,7 +30,7 @@ import qs from 'querystring';
 import queryParams from './query-params';
 import QueryReport from './components/query-report';
 import React from 'react';
-import SearchSuggest from './components/search-suggest';
+import SearchSuggest from '../components/search-suggest';
 import Select2MultiSuggest from './components/select2-multi-suggest';
 import store from '../data-store';
 import tagData from './tag-data';

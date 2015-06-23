@@ -15,7 +15,7 @@
 
 import ParamElement from './param-element';
 import React from 'react';
-import SearchSuggest from '../../query-explorer/components/search-suggest';
+import SearchSuggest from '../../components/search-suggest';
 
 
 export default class ParamSearchSuggestElement extends ParamElement {

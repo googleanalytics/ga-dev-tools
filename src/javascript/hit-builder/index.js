@@ -14,7 +14,7 @@
 
 
 import accountSummaries from 'javascript-api-utils/lib/account-summaries';
-import HitValidator from './elements/hit-validator';
+import HitValidator from './components/hit-validator';
 import React from 'react';
 
 

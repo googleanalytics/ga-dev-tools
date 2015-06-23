@@ -13,7 +13,7 @@
 // limitations under the License.
 
 
-import Icon from '../../elements/icon';
+import Icon from '../../components/icon';
 import React from 'react';
 
 
