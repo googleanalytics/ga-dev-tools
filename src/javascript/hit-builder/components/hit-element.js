@@ -198,7 +198,7 @@ export default class HitElement extends React.Component {
           </IconButton>
 
           <IconButton
-            type={this.state.hitUriCopied ? 'check' : 'share'}
+            type={this.state.hitUriCopied ? 'check' : 'link'}
             onClick={this.copyShareUrl}>
             Copy link to hit
           </IconButton>
