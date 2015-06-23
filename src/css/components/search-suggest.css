@@ -29,6 +29,7 @@ limitations under the License.
   list-style: none;
   margin: -1px 0 0;
   max-height: 300px;
+  overflow-x: hidden;
   overflow-y: auto;
   padding: 0;
   position: absolute;

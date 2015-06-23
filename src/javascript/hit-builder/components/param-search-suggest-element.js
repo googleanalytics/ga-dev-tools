@@ -21,7 +21,6 @@ import SearchSuggest from '../../components/search-suggest';
 export default class ParamSearchSuggestElement extends ParamElement {
 
   render() {
-
     return (
       <div className={this.getClassName()}>
         {this.renderLabel()}
@@ -31,12 +30,12 @@ export default class ParamSearchSuggestElement extends ParamElement {
             value={this.state.value}
             placeholder={this.props.placeholder}
             options={this.props.options}
+            invalid={this.props.message}
             onChange={this.handleValueChange} />
           {this.renderHelpIcon()}
           {this.renderMessage()}
         </div>
       </div>
     );
-
   }
 }
