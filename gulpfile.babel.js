@@ -14,6 +14,7 @@
 
 
 import cleancss from 'gulp-cleancss';
+import fse from 'fs-extra';
 import glob from 'glob';
 import gulp from 'gulp';
 import gulpIf from 'gulp-if';
@@ -23,6 +24,7 @@ import mocha from 'gulp-mocha';
 import path from 'path';
 import plumber from 'gulp-plumber';
 import prefix from 'gulp-autoprefixer';
+import request from 'request';
 import rework from 'gulp-rework';
 import suit from 'rework-suit';
 import webpack from 'webpack';
@@ -162,13 +164,23 @@ gulp.task('javascript', [
 ]);
 
 
+gulp.task('json', function() {
+  const PARAMETER_REFERENCE_URL =
+      'https://developers.google.com/analytics' +
+      '/devguides/collection/protocol/v1/parameters.json';
+
+  request(PARAMETER_REFERENCE_URL)
+      .pipe(fse.createOutputStream('public/json/parameter-reference.json'));
+})
+
+
 gulp.task('test', ['javascript'], function() {
   return gulp.src('test/**/*.js', {read: false})
       .pipe(mocha());
 });
 
 
-gulp.task('watch', ['javascript', 'css', 'images'], function() {
+gulp.task('watch', ['javascript', 'css', 'images', 'json'], function() {
   gulp.watch('src/css/**/*.css', ['css']);
   gulp.watch('src/images/**/*', ['images']);
   gulp.watch('src/javascript/**/*', ['javascript']);
@@ -186,6 +198,7 @@ gulp.task('build:all', [
   'javascript',
   'css',
   'images',
+  'json',
   'build:embed-api-components'
 ]);
 
