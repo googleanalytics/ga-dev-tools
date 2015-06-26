@@ -46,7 +46,7 @@ const HIT_TYPES = [
 ];
 
 
-export default class HitValidator extends React.Component {
+export default class HitBuilder extends React.Component {
 
   constructor(props) {
     super(props)

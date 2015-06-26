@@ -16,12 +16,12 @@
 /* global gapi */
 
 
-import HitValidator from './components/hit-validator';
+import HitBuilder from './components/hit-builder';
 import React from 'react';
 
 
 function render(props) {
-  React.render(<HitValidator {...props} />,
+  React.render(<HitBuilder {...props} />,
   document.getElementById('react-test'));
 }
 
