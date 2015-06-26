@@ -13,8 +13,10 @@
 // limitations under the License.
 
 
+import accountSummaries from 'javascript-api-utils/lib/account-summaries';
 import Collection from '../../collection';
 import debounce from 'lodash/function/debounce';
+import escapeRegExp from 'lodash/string/escapeRegExp';
 import HitElement from './hit-element';
 import Icon from '../../components/icon';
 import IconButton from '../../components/icon-button';
@@ -25,6 +27,7 @@ import ParamSearchSuggestElement from './param-search-suggest-element';
 import ParamSelectElement from './param-select-element';
 import ParamsCollection from '../params-collection';
 import React from 'react';
+import unescape from 'lodash/string/unescape';
 import uuid from 'uuid';
 
 
@@ -60,13 +63,39 @@ export default class HitValidator extends React.Component {
     this.state = {
       hitStatus: 'PENDING',
       allMessages: [],
-      paramMessages: {}
+      paramMessages: {},
+      properties: [],
+      parameters: []
     };
 
     this.params = new ParamsCollection(this.getInitialHit())
         .on('add', this.handleParamChange)
         .on('remove', this.handleParamChange)
         .on('change', this.handleParamChange)
+  }
+
+  getProperties() {
+    accountSummaries.get().then((summaries) => {
+      let properties = summaries.allProperties().map((property) => {
+        return {
+          name: property.name,
+          id: property.id,
+          group: summaries.getAccountByPropertyId(property.id).name
+        }
+      })
+      this.setState({properties});
+    });
+  }
+
+  getParameters() {
+    $.getJSON('/public/json/parameter-reference.json', (data) => {
+      let parameters = data.parameters.map((param) => {
+        param.name = unescape(param.name);
+        param.pattern = new RegExp(param.id.replace(/_/g, '\\d+'));
+        return param;
+      });
+      this.setState({parameters});
+    });
   }
 
   getInitialHit() {
@@ -81,6 +110,11 @@ export default class HitValidator extends React.Component {
     else {
       return DEFAULT_HIT;
     }
+  }
+
+  handleUserAuthorized() {
+    this.getParameters();
+    this.getProperties();
   }
 
   handleAddParam() {
@@ -160,6 +194,12 @@ export default class HitValidator extends React.Component {
     this.validateParams();
   }
 
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.isAuthorized && !this.state.isAuthorized) {
+      this.handleUserAuthorized();
+    }
+  }
+
   render() {
 
     return (
@@ -192,7 +232,7 @@ export default class HitValidator extends React.Component {
           <ParamSearchSuggestElement
             model={this.params.models[2]}
             ref="tid"
-            options={this.props.properties}
+            options={this.state.properties}
             placeholder="UA-XXXXX-Y"
             message={this.state.paramMessages['tid']} />
 

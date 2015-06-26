@@ -13,31 +13,21 @@
 // limitations under the License.
 
 
-import accountSummaries from 'javascript-api-utils/lib/account-summaries';
+/* global gapi */
+
+
 import HitValidator from './components/hit-validator';
 import React from 'react';
 
 
-function render(properties) {
-  React.render(
-    <HitValidator properties={properties} />,
-    document.getElementById('react-test')
-  );
+function render(props) {
+  React.render(<HitValidator {...props} />,
+  document.getElementById('react-test'));
 }
 
 
 function setup() {
-  accountSummaries.get().then(function(summaries) {
-    let properties = summaries.allProperties().map((property) => {
-      return {
-        name: property.name,
-        id: property.id,
-        group: summaries.getAccountByPropertyId(property.id).name
-      }
-    })
-
-    render(properties);
-  });
+  render({isAuthorized: true});
 
   // Add/remove state classes.
   $('body').removeClass('is-loading');
