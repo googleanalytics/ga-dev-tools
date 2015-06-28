@@ -13,40 +13,33 @@
 // limitations under the License.
 
 
-/* global gapi */
-
-
-import HitBuilder from './components/hit-builder';
+import Icon from './icon';
 import React from 'react';
 
 
-function render(props) {
-  React.render(
-    <HitBuilder {...props} />,
-    document.getElementById('react-test')
-  );
-}
+let zIndex = 0;
 
 
-function setup() {
-  render({isAuthorized: true});
+export default class Alert extends React.Component {
 
-  // Add/remove state classes.
-  $('body').removeClass('is-loading');
-  $('body').addClass('is-ready');
-}
-
-
-// Run setup when the Embed API is ready and the user is authorized.
-gapi.analytics.ready(function() {
-  if (gapi.analytics.auth.isAuthorized()) {
-    setup();
+  render() {
+    return (
+      <div
+        className="Alert"
+        style={{zIndex: zIndex--}}>
+        <div className="Alert-icon">
+          <Icon type="error-outline" />
+        </div>
+        <div className="Alert-body">
+          <h1 className="Alert-title">{this.props.title}</h1>
+          <div className="Alert-message">{this.props.message}</div>
+        </div>
+        <button
+          className="Alert-close"
+          onClick={this.props.onRemove}>
+          <Icon type="close" />
+        </button>
+      </div>
+    );
   }
-  else {
-    gapi.analytics.auth.once('success', setup);
-  }
-});
-
-
-// Perform an initial render.
-render();
+}

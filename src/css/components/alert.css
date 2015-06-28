@@ -21,18 +21,29 @@ limitations under the License.
   box-shadow: 0 0 10px hsla(0, 0%, 0%, 0.4);
   color: #fff;
   display: flex;
-  left: 0;
   padding: var(--gap);
-  position: fixed;
-  right: 0;
-  top: 0;
+  position: relative;
+  transform: translate3d(0, 0, 0);
   transition: transform .2s var(--quantum-timing);
+}
+
+.Alert-enter {
+  transform: translate3d(0, -100%, 0);
+
+}
+
+.Alert-enter-active {
   transform: translate3d(0, 0, 0);
 }
 
-.Alert--hidden {
+.Alert-leave {
+  transform: translate3d(0, 0, 0);
+}
+
+.Alert-leave-active {
   transform: translate3d(0, -100%, 0);
 }
+
 
 .Alert-icon {
   font-size: 3em;

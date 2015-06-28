@@ -14,6 +14,7 @@
 
 
 import accountSummaries from 'javascript-api-utils/lib/account-summaries';
+import AlertDispatcher from '../../components/alert-dispatcher';
 import Collection from '../../collection';
 import debounce from 'lodash/function/debounce';
 import escapeRegExp from 'lodash/string/escapeRegExp';
