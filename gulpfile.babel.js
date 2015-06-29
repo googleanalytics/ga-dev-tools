@@ -174,7 +174,7 @@ gulp.task('json', function() {
 })
 
 
-gulp.task('test', ['javascript'], function() {
+gulp.task('test', function() {
   return gulp.src('test/**/*.js', {read: false})
       .pipe(mocha());
 });
