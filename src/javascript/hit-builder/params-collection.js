@@ -81,13 +81,14 @@ export default class ParamsCollection extends Collection {
   }
 
   validate() {
+    let query = this.toQueryString();
     return new Promise((resolve, reject) => {
       $.ajax({
         method: 'POST',
         url: 'https://www.google-analytics.com/debug/collect',
-        data: this.toQueryString(),
+        data: query,
         dataType: 'json',
-        success: resolve,
+        success: (response) => resolve({response, query}),
         error: reject
       });
     });

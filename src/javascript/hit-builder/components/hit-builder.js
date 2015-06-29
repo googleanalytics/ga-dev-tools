@@ -35,6 +35,9 @@ import uuid from 'uuid';
 const DEFAULT_HIT = 'v=1&t=pageview';
 
 
+const DEBOUNCE_DURATION = 500;
+
+
 const HIT_TYPES = [
   'pageview',
   'screenview',
@@ -59,7 +62,8 @@ export default class HitBuilder extends React.Component {
     this.handleGenerateUuid = this.handleGenerateUuid.bind(this);
 
     // Don't validate too frequently.
-    this.validateParams = debounce(this.validateParams, 500, {leading: true});
+    this.validateParams = debounce(this.validateParams,
+        DEBOUNCE_DURATION, {leading: true});
 
     this.state = {
       hitStatus: 'PENDING',
@@ -137,9 +141,17 @@ export default class HitBuilder extends React.Component {
 
   validateParams() {
     if (this.params.hasRequiredParams()) {
-      this.params.validate().then((response) => {
-        let result = response.hitParsingResult[0];
+      this.params.validate().then((data) => {
 
+        // In some cases the query will have changed before the response gets
+        // back, so we need to check that the result is for the current query.
+        // If it's not, ignore it.
+        if (data.query != this.params.toQueryString()) {
+          // TODO(philipwalton): considering tracking when this happens.
+          return;
+        }
+
+        let result = data.response.hitParsingResult[0];
         if (result.valid) {
           this.setState({
             hitStatus: 'VALID',
