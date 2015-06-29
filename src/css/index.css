@@ -32,6 +32,7 @@ limitations under the License.
 @import './components/auth-only';
 @import './components/box';
 @import './components/button';
+@import './components/button-set';
 @import './components/chartjs';
 @import './components/checkbox';
 @import './components/content';

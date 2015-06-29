@@ -210,17 +210,19 @@ export default class HitElement extends React.Component {
     if (supports.copyToClipboard()) {
       return (
         <div className="HitElement-action">
-          {sendHitButton}
-          <IconButton
-            type={this.state.hitBodyCopied ? 'check' : 'content-paste'}
-            onClick={this.copyHitBody}>
-            Copy hit payload
-          </IconButton>
-          <IconButton
-            type={this.state.hitUriCopied ? 'check' : 'link'}
-            onClick={this.copyShareUrl}>
-            Copy sharable link to hit
-          </IconButton>
+          <div className="ButtonSet">
+            {sendHitButton}
+            <IconButton
+              type={this.state.hitBodyCopied ? 'check' : 'content-paste'}
+              onClick={this.copyHitBody}>
+              Copy hit payload
+            </IconButton>
+            <IconButton
+              type={this.state.hitUriCopied ? 'check' : 'link'}
+              onClick={this.copyShareUrl}>
+              Copy sharable link to hit
+            </IconButton>
+          </div>
           <div
             ref="hitBody"
             className="u-visuallyHidden">
