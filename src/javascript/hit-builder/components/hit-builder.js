@@ -228,7 +228,12 @@ export default class HitBuilder extends React.Component {
     return (
       <div>
 
-        <h3>Hit summary</h3>
+        <div className="HeadingGroup HeadingGroup--h3">
+          <h3>Hit summary</h3>
+          <p>The box below displays the full hit and its validation status.
+          Once all the required parameters have been completed, the hit will be
+          automatically validated as it's updated.</p>
+        </div>
 
         <HitElement
           hitStatus={this.state.hitStatus}
@@ -238,7 +243,12 @@ export default class HitBuilder extends React.Component {
 
         <div className="HitBuilderParams">
 
-          <h3>Hit parameter details</h3>
+          <div className="HeadingGroup HeadingGroup--h3">
+            <h3>Hit parameter details</h3>
+            <p>The fields below show the individual parameters and values for
+            the hit above. When you update these values the hit above will
+            be automatically updated and validated.</p>
+          </div>
 
           <ParamSelectElement
             model={this.params.models[0]}
