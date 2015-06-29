@@ -124,12 +124,17 @@ export default class HitElement extends React.Component {
             Host: www.google-analytics.com
           </div>
           <div className="HitElement-requestBody">
-            <Textarea
-              className="FormField"
-              value={this.state.value}
-              onChange={this.handleChange}
-              onFocus={this.handleFocus}
-              onBlur={this.handleBlur} />
+            <div className="FormControl FormControl--full">
+              <label className="FormControl-label">Hit payload</label>
+              <div className="FormControl-body">
+                <Textarea
+                  className="FormField"
+                  value={this.state.value}
+                  onChange={this.handleChange}
+                  onFocus={this.handleFocus}
+                  onBlur={this.handleBlur} />
+              </div>
+            </div>
           </div>
           {this.renderHitActions()}
         </div>
@@ -209,9 +214,8 @@ export default class HitElement extends React.Component {
           <IconButton
             type={this.state.hitBodyCopied ? 'check' : 'content-paste'}
             onClick={this.copyHitBody}>
-            Copy hit body
+            Copy hit payload
           </IconButton>
-
           <IconButton
             type={this.state.hitUriCopied ? 'check' : 'link'}
             onClick={this.copyShareUrl}>
