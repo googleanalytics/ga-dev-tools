@@ -61,13 +61,23 @@ export default class HitElement extends React.Component {
       url: 'https://www.google-analytics.com/collect',
       data: this.state.value
     })
-    .then(() => this.setState({hitSent: true}));
+    .then(() => {
+      this.setState({hitSent: true})
+
+      // After three second, remove the success checkbox.
+      setTimeout(() => this.setState({hitSent: false}), 1000);
+    });
   }
 
   copyHitBody() {
     let hitBody = React.findDOMNode(this.refs.hitBody);
     if (copyElementText(hitBody)) {
-      this.setState({hitBodyCopied: true});
+      this.setState({hitBodyCopied: true, hitUriCopied: false});
+
+      // After three second, remove the success checkbox.
+      clearTimeout(this.hitBodyCopiedTimeout_);
+      this.hitBodyCopiedTimeout_ =
+          setTimeout(() => this.setState({hitBodyCopied: false}), 1000);
     }
     else {
       // TODO(philipwalton): handle error case
@@ -77,7 +87,12 @@ export default class HitElement extends React.Component {
   copyShareUrl() {
     let shareUrl = React.findDOMNode(this.refs.shareUrl);
     if (copyElementText(shareUrl)) {
-      this.setState({hitUriCopied: true});
+      this.setState({hitUriCopied: true, hitBodyCopied: false});
+
+      // After three second, remove the success checkbox.
+      clearTimeout(this.hitUriCopiedTimeout_);
+      this.hitUriCopiedTimeout_ =
+          setTimeout(() => this.setState({hitUriCopied: false}), 1000);
     }
     else {
       // TODO(philipwalton): handle error case
@@ -133,7 +148,7 @@ export default class HitElement extends React.Component {
             </span>
             <div class="HitElement-statusBody">
               <h1 className="HitElement-statusHeading">Hit is valid!</h1>
-              <p className="HitElement-statusMessage">Use the buttons below to
+              <p className="HitElement-statusMessage">Use the controls below to
               copy the hit or share it with coworkers.<br />
               You can also send the hit to Google Analytics and watch
               it in action in the Real Time view.</p>
@@ -200,7 +215,7 @@ export default class HitElement extends React.Component {
           <IconButton
             type={this.state.hitUriCopied ? 'check' : 'link'}
             onClick={this.copyShareUrl}>
-            Copy link to hit
+            Copy sharable link to hit
           </IconButton>
           <div
             ref="hitBody"
