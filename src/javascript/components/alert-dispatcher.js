@@ -29,6 +29,15 @@ export default class AlertDispatcher extends React.Component {
     alerts.add(new Model(props));
   }
 
+  /**
+   * Only add the alert if an identical alert is not already present.
+   */
+  static addOnce(props) {
+    if (!alerts.find(props)) {
+      AlertDispatcher.add(props);
+    }
+  }
+
   handleRemove(model) {
     alerts.remove(model)
   }

@@ -169,11 +169,21 @@ export default class HitBuilder extends React.Component {
             paramMessages
           });
         }
-      });
+      })
+      // TODO(philipwalton): handle timeout errors and slow network connection.
+      .catch((err) => {
+        AlertDispatcher.addOnce({
+          title: 'Oops, an error occurred while validating the hit',
+          message: `Check your connection to make sure you're still online.
+                    If you're still having problems, try refreshing the page.`
+        });
+      })
     }
     else {
       this.setState({
-        hitStatus: 'PENDING'
+        hitStatus: 'PENDING',
+        allMessages: [],
+        paramMessages: {}
       });
     }
   }
