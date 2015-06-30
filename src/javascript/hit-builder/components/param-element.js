@@ -133,6 +133,7 @@ export default class ParamElement extends React.Component {
           </span>
           <input
             className="FormField HitBuilderParam-inputLabel"
+            ref="labelField"
             value={this.state.name}
             onChange={this.handleNameChange} />
         </div>
@@ -174,6 +175,12 @@ export default class ParamElement extends React.Component {
    * http://facebook.github.io/react/docs/component-specs.html
    * ---------------------------------------------------------
    */
+
+  componentDidMount() {
+    if (this.props.needsFocus) {
+      React.findDOMNode(this.refs.labelField).focus();
+    }
+  }
 
   componentWillReceiveProps(nextProps) {
     if (nextProps.model != this.state.model) {

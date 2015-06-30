@@ -153,8 +153,11 @@ export default class HitBuilder extends React.Component {
 
   /**
    * Adds new param models after a user clicks to the "Add parameter" button.
+   * Also turns on a flag to indicate that this param needs focus after
+   * rendering.
    */
   handleAddParam() {
+    this.newParamNeedsFocus_ = true;
     this.params.add(new Model({name:'', value:''}));
   }
 
@@ -288,6 +291,10 @@ export default class HitBuilder extends React.Component {
     }
   }
 
+  componentDidUpdate() {
+    this.newParamNeedsFocus_ = false;
+  }
+
   render() {
 
     return (
@@ -343,10 +350,12 @@ export default class HitBuilder extends React.Component {
             onClick={this.handleGenerateUuid} />
 
           {this.params.models.slice(4).map((model) => {
+            let isLast = (this.params.last() == model);
             return (
               <ParamElement
                 model={model}
                 key={model.uid}
+                needsFocus={isLast && this.newParamNeedsFocus_}
                 message={this.state.paramMessages[model.get('name')]}
                 onRemove={this.params.remove.bind(this.params, model)} />
             );
