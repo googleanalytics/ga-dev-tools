@@ -117,6 +117,10 @@ img {
   height: auto;
 }
 
+input::placeholder {
+  color: #aaa;
+}
+
 @media (--break-lg) {
   h1 {
     margin: 0 0 calc(var(--gap-lg)/2.5);
