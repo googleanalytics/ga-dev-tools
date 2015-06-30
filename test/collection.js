@@ -156,7 +156,7 @@ describe('Collection', function() {
 
   describe('.find()', function() {
 
-    it('returns the first model in a collection with matching properties.',
+    it('returns the first model in the collection with matching properties.',
         function() {
 
       let match = collection.find({prop3: 'value3'});
@@ -166,7 +166,27 @@ describe('Collection', function() {
     it('returns undefined if there are no matches.', function() {
       let match = collection.find({prop: 'doesNotExist'});
       assert.equal(undefined, match);
-    })
+    });
+
+  });
+
+  describe('.first()', function() {
+
+    it('returns the first model in the collection.', function() {
+
+      let first = collection.first();
+      assert.equal(model1, first);
+    });
+
+  });
+
+  describe('.last()', function() {
+
+    it('returns the last model in the collection.', function() {
+
+      let last = collection.last();
+      assert.equal(model3, last);
+    });
 
   });
 

@@ -113,6 +113,24 @@ export default class Collection extends events.EventEmitter {
 
 
   /**
+   * Returns the first model in the collection.
+   * @return {Model}
+   */
+  first() {
+    return this.models_[0];
+  }
+
+
+  /**
+   * Returns the last model in the collection.
+   * @return {Model}
+   */
+  last() {
+    return this.models_[this.size - 1];
+  }
+
+
+  /**
    * Destroy a collection instance, cleaning up any events added to it or that
    * it added to its models.
    */
