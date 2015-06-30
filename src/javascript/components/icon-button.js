@@ -1,4 +1,4 @@
-// Copyright 2015 Google Inc. All rights reserved.
+ // Copyright 2015 Google Inc. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -29,13 +29,15 @@ export default class IconButton extends React.Component {
   render() {
     let nodeType = this.props.href ? 'a' : 'button';
     return React.createElement(nodeType, this.props,
-        <span
-          className="Button-icon"
-          style={this.props.iconStyle}>
-          <Icon type={this.props.type} />
-        </span>,
-        this.props.children);
+        <span className="Button-iconWrapper">
+          <span
+            className="Button-icon"
+            style={this.props.iconStyle}>
+            <Icon type={this.props.type} />
+          </span>
+          {this.props.children}
+        </span>);
   }
 }
 
-IconButton.defaultProps = {className: 'Button Button--withIcon'};
+IconButton.defaultProps = {className: 'Button'};

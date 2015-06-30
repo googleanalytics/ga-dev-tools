@@ -43,7 +43,7 @@ limitations under the License.
 }
 
 
-.Button--withIcon {
+.Button-iconWrapper {
   display: inline-flex;
   align-items: center;
 }
@@ -61,8 +61,4 @@ limitations under the License.
 
 .Button-icon {
   margin-right: .6em;
-}
-
-.Button + .Button {
-  margin-left: 1em;
 }
