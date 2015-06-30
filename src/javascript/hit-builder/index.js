@@ -20,6 +20,9 @@ import HitBuilder from './components/hit-builder';
 import React from 'react';
 
 
+/**
+ * The base render function.
+ */
 function render(props) {
   React.render(
     <HitBuilder {...props} />,
@@ -28,6 +31,10 @@ function render(props) {
 }
 
 
+/**
+ * The callback invoked when the Embed API has authorized the user.
+ * Updates the CSS state classes and rerenders in the authorized state.
+ */
 function setup() {
   render({isAuthorized: true});
 

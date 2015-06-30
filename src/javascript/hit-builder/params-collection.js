@@ -28,6 +28,12 @@ const REQUIRED_PARAMS = ['v', 't', 'tid', 'cid'];
 
 export default class ParamsCollection extends Collection {
 
+  /**
+   * Creates a collection from a hit query string.
+   * @constructor
+   * @param {string} hit The hit query string.
+   * @return {ParamsCollection}
+   */
   constructor(hit) {
     super(createModelsFromParams(getParamsFromHit(hit)));
 
@@ -36,6 +42,11 @@ export default class ParamsCollection extends Collection {
     this.toQueryString = this.toQueryString.bind(this);
   }
 
+
+  /**
+   * Updates a collection from a new hit query string.
+   * @param {string} newHit The updated hit query string.
+   */
   update(newHit) {
     let params = getParamsFromHit(newHit);
     let models = this.models.slice(0);
@@ -57,18 +68,34 @@ export default class ParamsCollection extends Collection {
     }
   }
 
-  // TODO(philipwalton): optimize to not be O(n).
+
+  /**
+   * Returns true of the colleciton contains a model with the passed name.
+   * @param {string} name The name of the model to look for.
+   * @return {boolean}
+   */
   has(name) {
+    // TODO(philipwalton): optimize to not be O(n).
     for (let model of this.models) {
       if (model.get('name') == name) return true;
     }
   }
 
+
+  /**
+   * Returns true if the hit contains all the required param models.
+   * @return {boolean}
+   */
   hasRequiredParams() {
     // This assumes the required params are the first items in the collection.
     return REQUIRED_PARAMS.every((param, i) => this.models[i].get('value'));
   }
 
+
+  /**
+   * Returns the hit model data as a query string.
+   * @return {string}
+   */
   toQueryString() {
     let query = {};
     for (let model of this.models) {
@@ -80,6 +107,12 @@ export default class ParamsCollection extends Collection {
     return querystring.stringify(query);
   }
 
+
+  /**
+   * Sends a validation request to the Measurement Protocol Validation Server
+   * and returns a promise that will be fulfilled with the response.
+   * @return {Promise}
+   */
   validate() {
     let query = this.toQueryString();
     return new Promise((resolve, reject) => {
@@ -97,6 +130,12 @@ export default class ParamsCollection extends Collection {
 }
 
 
+/**
+ * Accepts a hit payload or URL and converts it into an array of param objects
+ * where the required params are always first and in the correct order.
+ * @param {string} hit A query string or hit payload.
+ * @return {Array<Object>} The param models.
+ */
 function getParamsFromHit(hit = '') {
   // If the hit contains a "?", remove it and all characters before it.
   let searchIndex = hit.indexOf('?');
@@ -123,6 +162,11 @@ function getParamsFromHit(hit = '') {
 }
 
 
+/**
+ * Converts and array of param objects into an array of param models.
+ * @param {string} hit A query string or hit payload.
+ * @return {Array<Model>} The param models.
+ */
 function createModelsFromParams(params) {
   return map(params, (param) => new Model(param));
 }

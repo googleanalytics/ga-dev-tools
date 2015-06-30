@@ -20,9 +20,20 @@ import React from 'react';
 
 export default class ParamButtonElement extends ParamElement {
 
+  /**
+   * Returns the class name for the form field.
+   * @returns {string}
+   */
   getFieldClassName() {
     return super.getFieldClassName() + ' FormFieldAddOn-field';
   }
+
+
+  /**
+   * React lifecycyle method below:
+   * http://facebook.github.io/react/docs/component-specs.html
+   * ---------------------------------------------------------
+   */
 
   render() {
     return (

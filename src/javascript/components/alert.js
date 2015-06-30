@@ -22,6 +22,12 @@ let zIndex = 0;
 
 export default class Alert extends React.Component {
 
+  /**
+   * React lifecycyle method below:
+   * http://facebook.github.io/react/docs/component-specs.html
+   * ---------------------------------------------------------
+   */
+
   render() {
     return (
       <div

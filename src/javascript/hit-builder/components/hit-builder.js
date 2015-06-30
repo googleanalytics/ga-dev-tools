@@ -52,6 +52,13 @@ const HIT_TYPES = [
 
 export default class HitBuilder extends React.Component {
 
+  /**
+   * Sets the initial props and state on the component and binds the methods
+   * that are attached to component event handlers.
+   * @constructor
+   * @param {Object} props The props object initially passed by React.
+   * @return {HitBuilder}
+   */
   constructor(props) {
     super(props)
 
@@ -79,6 +86,11 @@ export default class HitBuilder extends React.Component {
         .on('change', this.handleParamChange)
   }
 
+
+  /**
+   * Makes a request to the AccoutSummaries.get method updates the properties
+   * state when done with the result.
+   */
   getProperties() {
     accountSummaries.get().then((summaries) => {
       let properties = summaries.allProperties().map((property) => {
@@ -92,6 +104,11 @@ export default class HitBuilder extends React.Component {
     });
   }
 
+
+  /**
+   * Makes a request for the parameter reference data and updates the
+   * parameters state when done with the result.
+   */
   getParameters() {
     $.getJSON('/public/json/parameter-reference.json', (data) => {
       let parameters = data.parameters.map((param) => {
@@ -103,6 +120,13 @@ export default class HitBuilder extends React.Component {
     });
   }
 
+
+  /**
+   * Gets the initial hit from the URL if present. If a hit is found in the URL
+   * it is captured and immediately stripped as to have two sources of state.
+   * If no hit is found in the URL the default hit is used.
+   * @return {string} The default hit.
+   */
   getInitialHit() {
     let query = location.search.slice(1);
 
@@ -117,28 +141,54 @@ export default class HitBuilder extends React.Component {
     }
   }
 
+
+  /**
+   * Updates the state after the user has authorized.
+   */
   handleUserAuthorized() {
     this.getParameters();
     this.getProperties();
   }
 
+
+  /**
+   * Adds new param models after a user clicks to the "Add parameter" button.
+   */
   handleAddParam() {
     this.params.add(new Model({name:'', value:''}));
   }
 
+
+  /**
+   * Rerenders the tool and validates the parameters after any change occurs.
+   */
   handleParamChange() {
     this.forceUpdate();
     this.validateParams();
   }
 
+
+  /**
+   * Updates the param collection with a new hit value.
+   * @param {string} hit The hit payload value.
+   */
   handleHitChange(hit) {
     this.params.update(hit);
   }
 
+
+  /**
+   * Generates a random UUID value for the "cid" parameter.
+   */
   handleGenerateUuid() {
     this.params.models[3].set({value: uuid.v4()});
   }
 
+
+  /**
+   * Validates the hit parameters and updates the hit status box according to
+   * the validation state.
+   */
   validateParams() {
     if (this.params.hasRequiredParams()) {
       this.params.validate().then((data) => {
@@ -188,6 +238,14 @@ export default class HitBuilder extends React.Component {
     }
   }
 
+
+  /**
+   * Gets data about the hit errors from the parser message.
+   * @return {Object} An object containing the "allMessages" property, which
+   *     contains an array of all messages and a "paramMessages" property,
+   *     which contains an object of only messages specific to individual
+   *     parameters.
+   */
   getErrorsFromParserMessage(messages) {
     let allMessages = []
     let paramMessages = {};
@@ -212,6 +270,13 @@ export default class HitBuilder extends React.Component {
     }
     return {allMessages, paramMessages};
   }
+
+
+  /**
+   * React lifecycyle method below:
+   * http://facebook.github.io/react/docs/component-specs.html
+   * ---------------------------------------------------------
+   */
 
   componentDidMount() {
     this.validateParams();
@@ -302,6 +367,5 @@ export default class HitBuilder extends React.Component {
 
       </div>
     )
-
   }
 }

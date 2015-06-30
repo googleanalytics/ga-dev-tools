@@ -19,6 +19,13 @@ import React from 'react';
 
 
 export default class IconButton extends React.Component {
+
+  /**
+   * React lifecycyle method below:
+   * http://facebook.github.io/react/docs/component-specs.html
+   * ---------------------------------------------------------
+   */
+
   render() {
     let nodeType = this.props.href ? 'a' : 'button';
     return React.createElement(nodeType, this.props,

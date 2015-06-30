@@ -25,12 +25,18 @@ let alerts = new Collection();
 
 export default class AlertDispatcher extends React.Component {
 
+  /**
+   * Adds an alert models to the collection.
+   * @param {Object} props The alert props.
+   */
   static add(props) {
     alerts.add(new Model(props));
   }
 
+
   /**
-   * Only add the alert if an identical alert is not already present.
+   * Only adds the alert if an identical alert is not already present.
+   * @param {Object} props The alert props to check for before adding.
    */
   static addOnce(props) {
     if (!alerts.find(props)) {
@@ -38,9 +44,21 @@ export default class AlertDispatcher extends React.Component {
     }
   }
 
+
+  /**
+   * Removes an alert model from the collection.
+   * @param {Model} model
+   */
   handleRemove(model) {
     alerts.remove(model)
   }
+
+
+  /**
+   * React lifecycyle method below:
+   * http://facebook.github.io/react/docs/component-specs.html
+   * ---------------------------------------------------------
+   */
 
   componentDidMount() {
     let update = () => this.forceUpdate();

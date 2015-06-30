@@ -23,6 +23,13 @@ const REFERENCE_URL = 'https://developers.google.com/' +
 
 export default class ParamElement extends React.Component {
 
+  /**
+   * Sets the initial props and state on the component and binds the methods
+   * that are attached to component event handlers.
+   * @constructor
+   * @param {Object} props The props object initially passed by React.
+   * @return {ParamElement}
+   */
   constructor(props) {
     super(props);
 
@@ -37,49 +44,79 @@ export default class ParamElement extends React.Component {
     }
   }
 
+
+  /**
+   * Updates the state and param model with the new name.
+   * @return {Object} e The React event.
+   */
   handleNameChange(e) {
     let data = {name: e.target.value, value: this.state.value};
     this.setState(data)
     this.props.model.set(data);
   }
 
+
+  /**
+   * Updates the state and param model with the new value.
+   * @return {Object} e The React event.
+   */
   handleValueChange(e) {
     let data = {name: this.state.name, value: e.target.value};
     this.setState(data)
     this.props.model.set(data);
   }
 
+
+  /**
+   * Invokes the passed onRemove handler.
+   */
   remove() {
     this.props.onRemove();
   }
 
+
+  /**
+   * Returns whether or not the parameter is required.
+   * @return {boolean}
+   */
   isRequired() {
     return this.props.model.get('required');
   }
 
+
+  /**
+   * Returns the class name for the root component element.
+   * @return {string}
+   */
   getClassName() {
     return 'HitBuilderParam' + (this.isRequired() ?
         ' HitBuilderParam--required' : '');
   }
 
+
+  /**
+   * Returns the class name for the parameter value field.
+   * @return {string}
+   */
   getFieldClassName() {
     return 'FormField' + (this.props.message ? ' FormField--invalid' : '');
   }
 
+
+  /**
+   * Returns the field placeholder element from the passed properties or a
+   * single spaced string to fix a baseline alignment bug in Chrome.
+   * @return {string}
+   */
   getPlaceholder() {
-    // A placeholder is needed for proper baseline alignment.
     return this.props.placeholder || ' ';
   }
 
-  componentWillReceiveProps(nextProps) {
-    if (nextProps.model != this.state.model) {
-      this.setState({
-        name: nextProps.model.get('name'),
-        value: nextProps.model.get('value')
-      });
-    }
-  }
 
+  /**
+   * Returns the rendered components that make up the parameter label.
+   * @return {Object}
+   */
   renderLabel() {
     if (this.isRequired()) {
       return <label className="HitBuilderParam-label">{this.state.name}</label>;
@@ -103,6 +140,11 @@ export default class ParamElement extends React.Component {
     }
   }
 
+
+  /**
+   * Returns the rendered components that make up the parameter help icon.
+   * @return {Object}
+   */
   renderHelpIcon() {
     return (
       <a
@@ -115,9 +157,30 @@ export default class ParamElement extends React.Component {
     )
   }
 
+
+  /**
+   * Returns the rendered components that make up the parameter error message.
+   * @return {Object}
+   */
   renderMessage() {
     if (this.props.message) {
       return <div className="HitBuilderParam-info">{this.props.message}</div>;
+    }
+  }
+
+
+  /**
+   * React lifecycyle method below:
+   * http://facebook.github.io/react/docs/component-specs.html
+   * ---------------------------------------------------------
+   */
+
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.model != this.state.model) {
+      this.setState({
+        name: nextProps.model.get('name'),
+        value: nextProps.model.get('value')
+      });
     }
   }
 

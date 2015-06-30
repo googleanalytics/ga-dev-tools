@@ -20,6 +20,13 @@ const ICON_PATH = '/public/images/icons.svg#icon-';
 
 
 export default class Icon extends React.Component {
+
+  /**
+   * React lifecycyle method below:
+   * http://facebook.github.io/react/docs/component-specs.html
+   * ---------------------------------------------------------
+   */
+
   render() {
     let useHtml = `<use xlink:href="${ICON_PATH}${this.props.type}"></use>`;
     return (

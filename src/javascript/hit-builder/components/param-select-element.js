@@ -19,6 +19,12 @@ import React from 'react';
 
 export default class ParamSelectElement extends ParamElement {
 
+  /**
+   * React lifecycyle method below:
+   * http://facebook.github.io/react/docs/component-specs.html
+   * ---------------------------------------------------------
+   */
+
   render() {
     // Only render a select if the value is one of the passed options.
     if (this.props.options.includes(this.state.value)) {
