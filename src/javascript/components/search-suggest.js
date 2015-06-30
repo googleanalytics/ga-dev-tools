@@ -47,7 +47,8 @@ export default class SearchSuggest extends React.Component {
       matches: [],
       selectedMatchIndex: 0,
       open: false,
-      above: false
+      above: false,
+      invalid: this.props.inavlid
     };
     this.namespace = 'SearchSuggest:' + this.props.name;
   }
@@ -293,6 +294,9 @@ export default class SearchSuggest extends React.Component {
     if (props.value != this.state.value) {
       this.setState({value: props.value});
     }
+    if (props.invalid != this.state.invalid) {
+      this.setState({invalid: props.invalid});
+    }
   }
 
 
@@ -302,7 +306,8 @@ export default class SearchSuggest extends React.Component {
       nextState.matches === this.state.matches &&
       nextState.selectedMatchIndex === this.state.selectedMatchIndex &&
       nextState.open === this.state.open &&
-      nextState.above === this.state.above
+      nextState.above === this.state.above &&
+      nextState.invalid === this.state.invalid
     );
   }
 
@@ -363,12 +368,18 @@ export default class SearchSuggest extends React.Component {
       className += ' SearchSuggest--above';
     }
 
+    let fieldClassName = 'SearchSuggest-field FormField';
+    if (this.state.invalid && !this.state.open) {
+      fieldClassName += ' FormField--invalid';
+    }
+
     return (
       <div className={className}>
         <input
-          className="SearchSuggest-field FormField"
+          className={fieldClassName}
           name={this.props.name}
           value={this.state.value}
+          placeholder={this.props.placeholder}
           onClick={this.setShowMatchesState.bind(this)}
           onChange={this.handleChange.bind(this)}
           onKeyDown={this.handleKeyDown.bind(this)}

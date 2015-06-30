@@ -18,6 +18,7 @@
 
 import assign from 'lodash/object/assign';
 import DataChart from './data-chart';
+import IconButton from '../../components/icon-button';
 import isNull from 'lodash/lang/isNull';
 import omit from 'lodash/object/omit';
 import qs from 'querystring';
@@ -79,11 +80,6 @@ let QueryReport = React.createClass({
     let accountData = report && report.accountData;
     let response = report && report.response;
     let params = report && report.params;
-
-    let iconDownload =
-        `<svg class="Icon" viewBox="0 0 24 24">
-           <use xlink:href="/public/images/icons.svg#icon-file-download"></use>
-         </svg>`;
 
     if (accountData) {
       partials.reportTitle = (
@@ -198,14 +194,14 @@ let QueryReport = React.createClass({
 
       partials.reportDownloadLink = (
         <div className="QueryReport-item">
-          <a
+          <IconButton
             download
+            type="file-download"
             href={this.downloadTsvLink()}
-            className="Button Button--icon"
+            className="Button Button--withIcon"
             onClick={this.props.onDownloadTsvClick}>
-            <span dangerouslySetInnerHTML={{__html: iconDownload}} />&nbsp;
             Download Results as TSV
-          </a>
+          </IconButton>
         </div>
       );
     }

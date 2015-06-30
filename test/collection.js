@@ -25,10 +25,10 @@ describe('Collection', function() {
   var model1, model2, model3, model4, collection;
 
   beforeEach(function() {
-    model1 = new Model({id: '1', prop: 'value'});
-    model2 = new Model({id: '2', prop: 'value'});
-    model3 = new Model({id: '3', prop: 'value'});
-    model4 = new Model({id: '4', prop: 'value'});
+    model1 = new Model({prop1: 'value1'});
+    model2 = new Model({prop2: 'value2'});
+    model3 = new Model({prop3: 'value3'});
+    model4 = new Model({prop4: 'value4'});
     collection = new Collection([model1, model2, model3]);
   });
 
@@ -66,8 +66,8 @@ describe('Collection', function() {
 
   describe('.get()', function() {
 
-    it('gets a model by its ID.', function() {
-      assert.equal(collection.get('2'), model2);
+    it('gets a model by its uid property.', function() {
+      assert.equal(collection.get(model2.uid), model2);
     });
 
   });
@@ -95,13 +95,13 @@ describe('Collection', function() {
 
       collection.on('change', collectionSpy);
       model4.on('change', modelSpy)
-      model4.set('prop', 'newValue');
+      model4.set('prop4', 'newValue4');
 
       assert(modelSpy.calledOnce);
       assert.equal(collectionSpy.callCount, 0);
 
       collection.add(model4);
-      model4.set('prop', 'newerValue');
+      model4.set('prop4', 'newerValue4');
       assert(modelSpy.calledTwice);
       assert(collectionSpy.calledOnce);
     });
@@ -115,9 +115,9 @@ describe('Collection', function() {
       assert.equal(collection.size, 2);
     });
 
-    it('accepts a model object or a model ID.', function() {
+    it('accepts a model object or a model\'s uid property.', function() {
       collection.remove(model1);
-      collection.remove('2');
+      collection.remove(model2.uid);
       assert.equal(collection.size, 1);
     });
 
@@ -130,7 +130,7 @@ describe('Collection', function() {
       assert(spy.calledOnce);
       assert(spy.calledWith(model1));
 
-      collection.remove('2');
+      collection.remove(model2.uid);
       assert(spy.calledTwice);
       assert(spy.calledWith(model2));
     });
@@ -142,15 +142,31 @@ describe('Collection', function() {
       collection.on('change', collectionSpy);
       model1.on('change', modelSpy)
 
-      model1.set('prop', 'newValue');
+      model1.set('prop1', 'newValue1');
       assert(modelSpy.calledOnce);
       assert(collectionSpy.calledOnce);
 
       collection.remove(model1);
-      model1.set('prop', 'newerValue');
+      model1.set('prop1', 'newerValue1');
       assert(modelSpy.calledTwice);
       assert(collectionSpy.calledOnce);
     });
+
+  });
+
+  describe('.find()', function() {
+
+    it('returns the first model in a collection with matching properties.',
+        function() {
+
+      let match = collection.find({prop3: 'value3'});
+      assert.equal(model3, match);
+    });
+
+    it('returns undefined if there are no matches.', function() {
+      let match = collection.find({prop: 'doesNotExist'});
+      assert.equal(undefined, match);
+    })
 
   });
 

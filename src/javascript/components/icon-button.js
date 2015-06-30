@@ -13,25 +13,29 @@
 // limitations under the License.
 
 
-import camelCase from 'camelcase';
-import Icon from '../../components/icon';
+import assign from 'lodash/object/assign';
+import Icon from './icon';
 import React from 'react';
 
 
-const REFERENCE_URL =
-    'https://developers.google.com' +
-    '/analytics/devguides/reporting/core/v3/reference#';
+export default class IconButton extends React.Component {
 
+  /**
+   * React lifecycyle method below:
+   * http://facebook.github.io/react/docs/component-specs.html
+   * ---------------------------------------------------------
+   */
 
-export default class HelpIconLink extends React.Component {
   render() {
-    return (
-      <a
-        className="FormControl-helpIcon"
-        href={REFERENCE_URL + camelCase(this.props.name)}
-        tabIndex="-1">
-        <Icon type="info-outline" />
-      </a>
-    );
+    let nodeType = this.props.href ? 'a' : 'button';
+    return React.createElement(nodeType, this.props,
+        <span
+          className="Button-icon"
+          style={this.props.iconStyle}>
+          <Icon type={this.props.type} />
+        </span>,
+        this.props.children);
   }
 }
+
+IconButton.defaultProps = {className: 'Button Button--withIcon'};

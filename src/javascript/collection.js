@@ -16,6 +16,7 @@
 import each from 'lodash/collection/each';
 import events from 'events';
 import find from 'lodash/collection/find';
+import isMatch from 'lodash/lang/isMatch';
 import Model from './model';
 import without from 'lodash/array/without';
 
@@ -40,7 +41,7 @@ export default class Collection extends events.EventEmitter {
   }
 
 
-  /*
+  /**
    * Gets the current models.
    * @return {Array<Model>}
    */
@@ -49,7 +50,7 @@ export default class Collection extends events.EventEmitter {
   }
 
 
-  /*
+  /**
    * Gets size of the collect in terms of number of models.
    * @return {number}
    */
@@ -58,23 +59,21 @@ export default class Collection extends events.EventEmitter {
   }
 
 
-  /*
-   * Gets a model by its `id` prop.
+  /**
+   * Gets a model by its unique ID.
    * @return {Model}
    */
-  get(id) {
-    return find(this.models_, (model) => model.props.id == id);
+  get(uid) {
+    return find(this.models_, {uid});
   }
 
 
-  /*
+  /**
    * Adds a model to the collection.
    * @emits add
    * @return {Collection}
    */
   add(model) {
-    if (!model.props.id) throw new Error('Models must have an "id" property.');
-
     model.on('change', this.handleChange_);
 
     this.models_.push(model);
@@ -83,7 +82,7 @@ export default class Collection extends events.EventEmitter {
   }
 
 
-  /*
+  /**
    * Removes a model from the collection.
    * @param {Model} model
    * @emits remove
@@ -98,6 +97,18 @@ export default class Collection extends events.EventEmitter {
     this.models_ = without(this.models_, model);
     this.emit('remove', model);
     return this;
+  }
+
+
+  /**
+   * Returns the first model (if found) matching the passed properties.
+   * @param {Object} props The properties to look for.
+   * @return {Model} The first matching model.
+   */
+  find(props) {
+    for (let model of this.models_) {
+      if (isMatch(model.get(), props)) return model;
+    }
   }
 
 

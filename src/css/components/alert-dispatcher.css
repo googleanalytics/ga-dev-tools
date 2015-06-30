@@ -15,19 +15,9 @@ limitations under the License.
 */
 
 
-
-.FlexLine {
-  /* display: flex; */
-
-  /*
-   * TODO(philipwalton): replace the below with the above once this FF bug is
-   * fixed: https://bugzilla.mozilla.org/show_bug.cgi?id=1146442
-   */
-   display: inline-flex;
-   width: 100%;
+.AlertDispatcher {
+  left: 0;
+  position: fixed;
+  right: 0;
+  top: 0;
 }
-
-.FlexLine > [data-flex] {
-  flex: 1 0 0%;
-}
-

@@ -32,6 +32,19 @@ describe('Model', function() {
     assert(model instanceof events.EventEmitter);
   });
 
+  describe('.uid', function() {
+
+    it('creates a read-only unique ID property.', function() {
+      assert(model.uid);
+      assert(typeof model.uid == 'string');
+
+      assert.throws(() => model.uid = 'foo',
+          /Cannot assign to read only property/);
+    });
+
+  });
+
+
   describe('.props', function() {
 
     it('returns all model props.', function() {

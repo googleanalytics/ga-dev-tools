@@ -66,11 +66,10 @@ h2 {
 h3 {
   color: #666;
   font-size: 1.25em;
-  margin: calc(var(--gap)/1.25) 0;
-
 }
 h3.H3--underline {
   border-bottom: 1px solid hsl(30, 10%, 85%);
+  margin: calc(var(--gap)/1.25) 0;
   padding-bottom: .5em;
 }
 
@@ -125,7 +124,7 @@ img {
   h2 {
     margin: calc(var(--gap-lg)/1.75) 0;
   }
-  h3 {
+  h3.H3--underline {
     margin: calc(var(--gap-lg)/1.25) 0;
   }
 }

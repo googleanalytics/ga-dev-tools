@@ -27,9 +27,12 @@ limitations under the License.
 @import './components/account-explorer-results';
 @import './components/account-explorer-search';
 @import './components/active-users';
+@import './components/alert';
+@import './components/alert-dispatcher';
 @import './components/auth-only';
 @import './components/box';
 @import './components/button';
+@import './components/button-set';
 @import './components/chartjs';
 @import './components/checkbox';
 @import './components/content';
@@ -42,6 +45,9 @@ limitations under the License.
 @import './components/form-field';
 @import './components/form-field-add-on';
 @import './components/header';
+@import './components/hit-builder-param';
+@import './components/hit-builder-params';
+@import './components/hit-element';
 @import './components/icon';
 @import './components/inline-definition-list';
 @import './components/logo';
@@ -58,6 +64,7 @@ limitations under the License.
 @import './components/view-selector';
 
 /* Utilities. */
+@import './utilities/display.css';
 @import './utilities/media.css';
 @import './utilities/space.css';
 

@@ -1,0 +1,98 @@
+/*
+Copyright 2015 Google Inc. All rights reserved.
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+*/
+
+
+:root {
+  --HitBuilderParam-gap: 1.25em;
+  --HitBuilderParam-labelWidth: 7em;
+  --HitBuilderParam-labelInputWidth: 4em;
+}
+
+
+.HitBuilderParam {
+  align-items: baseline;
+  display: inline-flex;
+  margin: 0 0 var(--HitBuilderParam-gap);
+  max-width: 36em;
+  width: 100%;
+}
+
+.HitBuilderParam-label {
+  flex: 0 0 var(--HitBuilderParam-labelWidth);
+  font-weight: 600;
+  margin-right: var(--HitBuilderParam-gap);
+  position: relative;
+  text-align: right;
+}
+
+.HitBuilderParam--required .HitBuilderParam-label::before {
+  color: hsl(0, 70%, 55%);
+  content: '*';
+  display: inline-block;
+  font-weight: 600;
+  margin-right: .5em;
+}
+
+.HitBuilderParam-inputLabel {
+  text-align: right;
+  width: var(--HitBuilderParam-labelInputWidth);
+}
+
+
+.HitBuilderParam-removeIcon {
+  color: var(--error-color);
+  cursor: pointer;
+  right: var(--HitBuilderParam-labelInputWidth);
+  padding: .667em;
+  position: absolute;
+  top: 0;
+}
+
+
+.HitBuilderParam-body {
+  flex: 1 0 0%;
+  padding-right: 2.5em;
+  position: relative;
+}
+
+.HitBuilderParam-info {
+  color: var(--error-color);
+  display: block;
+  font-size: .85em;
+  line-height: 1.2;
+  margin-top: .5em;
+}
+
+.HitBuilderParam-helpIcon {
+  color: #ccc;
+  cursor: pointer;
+  right: 0;
+  padding: .667em;
+  position: absolute;
+  top: 0;
+}
+.HitBuilderParam-helpIcon:active,
+.HitBuilderParam-helpIcon:focus,
+.HitBuilderParam-helpIcon:hover {
+  color: inherit;
+  outline: 0;
+}
+
+
+.HitBuilderParam--action {
+  margin-left: calc(var(--HitBuilderParam-labelWidth) +
+                    var(--HitBuilderParam-gap));
+}

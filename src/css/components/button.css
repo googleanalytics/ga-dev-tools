@@ -15,7 +15,7 @@ limitations under the License.
 */
 
 .Button {
-  background: hsl(30,10%,90%);
+  background: hsla(0,0%,0%, .075);
   border: 1px solid transparent;
   border-radius: 4px;
   box-sizing: border-box;
@@ -26,36 +26,32 @@ limitations under the License.
   font-weight: 400;
   line-height: calc(20em/14); /* 20px @ 14px body font */
   padding: calc(6em/14) 1em; /* 6px @ 14px body font */
-  transition: background-color .2s var(--quantum-timing);
+  transition: background-color .2s var(--quantum-timing),
+              border-color .2s var(--quantum-timing);
 }
 
 .Button:disabled {
-  opacity: .6;
+  opacity: .4;
 }
 
 .Button:active:enabled,
 .Button:focus:enabled,
 .Button:hover:enabled {
-  background: hsl(30,10%,85%);
+  background: hsla(0,0%,0%, .15);
   outline: none;
   text-decoration: none;
 }
 
 
-.Button--icon {
+.Button--withIcon {
   display: inline-flex;
   align-items: center;
 }
-.Button--icon > .Icon {
-  font-size: 1.15em;
-  margin-right: .75em;
-}
-
-
 
 .Button--action {
   color: #fff;
   background: hsl(217, 91%, 63%);
+  border-color: transparent;
 }
 .Button--action:active:enabled,
 .Button--action:focus:enabled,
@@ -63,6 +59,10 @@ limitations under the License.
   background: hsl(217, 91%, 53%);
 }
 
+.Button-icon {
+  margin-right: .6em;
+}
+
 .Button + .Button {
-  margin-left: .5em;
+  margin-left: 1em;
 }

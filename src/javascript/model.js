@@ -17,12 +17,14 @@ import assign from 'lodash/object/assign';
 import clone from 'lodash/lang/clone';
 import each from 'lodash/collection/each';
 import events from 'events';
+import uniqueId from 'lodash/utility/uniqueId';
 
 
 export default class Model extends events.EventEmitter {
 
   /**
    * Create a new model instance with the specified props.
+   * A read-only unique ID is also created.
    * @constructor
    * @param {Object} props The initial props for the model.
    * @return {Model}
@@ -32,6 +34,10 @@ export default class Model extends events.EventEmitter {
     this.props_ = props || {};
     this.oldProps_ = {};
     this.changedProps_ = {};
+
+    Object.defineProperty(this, 'uid', {
+      value: String(uniqueId())
+    });
   }
 
 

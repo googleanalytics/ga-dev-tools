@@ -1,0 +1,116 @@
+.HitElement {
+  background: #FFF;
+  border-radius: 4px;
+  margin-bottom: var(--gap);
+}
+
+.HitElement-status {
+  background-color: hsl(0, 0%, 98%);
+  border: 1px solid var(--border-color);
+  border-radius: 4px 4px 0 0;
+  display: flex;
+  padding: var(--gap-lg);
+
+  /* Force hardware acceleration for better transition performance. */
+  transform: translate3d(0, 0, 0);
+}
+
+.HitElement-body {
+  background-color: #fff;
+  border: solid var(--border-color);
+  border-radius: 0 0 4px 4px;
+  border-width: 0 1px 1px;
+  padding: var(--gap-lg);
+  transition: border-color .3s var(--quantum-timing);
+}
+
+.HitElement-statusIcon {
+  color: var(--text-color-faded);
+  display: inline-flex;
+  font-size: 2.5em;
+  margin-right: .5em;
+}
+
+.HitElement-statusBody {
+
+}
+
+.HitElement-statusHeading {
+  color: #000;
+  font-size: 1.6em;
+  font-weight: 300;
+  margin: .25em 0;
+}
+
+.HitElement-statusMessage {
+  color: var(--text-color-faded);
+  font-size: .9em;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.HitElement-requestInfo,
+.HitElement-requestBody {
+  font-family: Menlo, monospace;
+  font-size: .9em;
+}
+
+.HitElement-requestBody,
+.HitElement-action {
+  margin-top: var(--gap-lg);
+}
+
+.HitElement-status,
+.HitElement-body,
+.HitElement-requestInfo,
+.HitElement-action {
+  opacity: 1;
+  transition: border-color .3s var(--quantum-timing),
+              opacity .3s var(--quantum-timing);
+}
+
+
+/**
+ * Valid Hits
+ */
+
+.HitElement--valid .HitElement-statusIcon,
+.HitElement--valid .HitElement-statusHeading {
+  color: var(--success-color);
+}
+.HitElement--valid .HitElement-status {
+  border-color: var(--success-color);
+  background-color: var(--success-color-bg);
+}
+
+
+/**
+ * Invalid Hits
+ */
+
+.HitElement--invalid .HitElement-statusIcon,
+.HitElement--invalid .HitElement-statusHeading {
+  color: var(--error-color);
+}
+.HitElement--invalid .HitElement-status {
+  border-color: var(--error-color);
+  background-color: var(--error-color-bg);
+}
+
+
+/**
+ * State: is-editing
+ */
+
+.is-editing .HitElement-status,
+.is-editing .HitElement-requestInfo,
+.is-editing .HitElement-action {
+  opacity: .1;
+  pointer-events: none;
+}
+
+.is-editing .HitElement-status,
+.is-editing .HitElement-body {
+  border-color: transparent;
+}
