@@ -13,20 +13,17 @@
 // limitations under the License.
 
 
-import cleancss from 'gulp-cleancss';
+import cssnext from 'gulp-cssnext';
 import fse from 'fs-extra';
 import glob from 'glob';
 import gulp from 'gulp';
 import gulpIf from 'gulp-if';
 import gutil from 'gulp-util';
-import inline from 'rework-plugin-inline';
 import mocha from 'gulp-mocha';
 import path from 'path';
 import plumber from 'gulp-plumber';
 import prefix from 'gulp-autoprefixer';
 import request from 'request';
-import rework from 'gulp-rework';
-import suit from 'rework-suit';
 import webpack from 'webpack';
 
 
@@ -40,13 +37,17 @@ function streamError(err) {
 }
 
 gulp.task('css', function() {
-  gulp.src('src/css/index.css')
-      .pipe(plumber({errorHandler: streamError}))
-      .pipe(rework(suit(), inline('src/images'), {sourcemap: true}))
-      .pipe(prefix('> 1%', 'last 2 versions', 'Safari >= 5.1',
-                   'ie >= 10', 'Firefox ESR'))
-      .pipe(gulpIf(isProd(), cleancss({keepSpecialComments: 0})))
-      .pipe(gulp.dest('./public/css'));
+  gulp.task('css', function() {
+    let opts = {
+      browsers: '> 1%, last 2 versions, Safari > 5, ie > 9, Firefox ESR',
+      compress: isProd(),
+      url: {url: 'inline'}
+    }
+    return gulp.src('./src/css/index.css')
+        .pipe(plumber({errorHandler: streamError}))
+        .pipe(cssnext(opts))
+        .pipe(gulp.dest('public/css'));
+  });
 });
 
 gulp.task('images', function() {
