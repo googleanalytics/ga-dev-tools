@@ -53,10 +53,16 @@ limitations under the License.
   margin-left: .5em;
 }
 @media (--break-lg) {
+
+  /*
+   * 1. Use with instead of flex-basis to workaround Flexbug 8
+   *    https://github.com/philipwalton/flexbugs
+   */
   .FormControl--inline .FormControl-label {
-    flex: 0 0 var(--form-label-width);
+    flex: 0 0 auto; /* 1 */
     padding-right: var(--form-control-space);
     text-align: right;
+    width: var(--form-label-width); /* 1 */
   }
   .FormControl--required .FormControl-label::after {
     content: none;
