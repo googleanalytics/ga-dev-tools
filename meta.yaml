@@ -52,7 +52,6 @@ projects:
 - title: Account Explorer
   type: tool
   slug: account-explorer
-  status: new
   tech: [embed_api, management_api]
 - title: Dimensions & Metrics Explorer
   type: tool
@@ -90,7 +89,6 @@ projects:
 - title: Enhanced Ecommerce
   type: demo
   slug: enhanced-ecommerce
-  status: new
   external: https://enhancedecommerce.appspot.com
   tech: [analyticsjs, ecjs]
 - title: Hit Builder
