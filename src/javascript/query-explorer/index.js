@@ -38,6 +38,14 @@ import ViewSelector from './components/view-selector';
 
 
 /**
+ * The parameters that are safe to track the values entered by users.
+ * All other params are either uninteresting or may possibly contain PII and
+ * therefore only their presence/absense is tracked.
+ */
+const PARAMS_TO_TRACK = ['start-date', 'end-date', 'metrics', 'dimensions'];
+
+
+/**
  * Store a reference here for access to the whole module.
  */
 let metrics;
@@ -276,18 +284,16 @@ function handleSubmit(e) {
 
   let paramsClone = clone(params.get());
 
-  // Construct a "Query Parameter" dimension string based off this report
-  let paramsToTrack = pick(paramsClone,
-      ['start-date', 'end-date', 'metrics', 'dimensions']);
-  // Don't run `encodeURIComponent` on these params because the they will
-  // never contain characters that make parsing fail (or be ambiguous).
-  // NOTE: Manual serializing is requred until the encodeURIComponent override
-  // is supported here: https://github.com/Gozala/querystring/issues/6
-  let serializedParamsToTrack = map(paramsToTrack,
-      (value, key) => `${key}=${value}`).join('&');
+  let trackableParamData = map(paramsClone, (value, key) => {
+    // Don't run `encodeURIComponent` on these params because the they will
+    // never contain characters that make parsing fail (or be ambiguous).
+    // NOTE: Manual serializing is requred until the encodeURIComponent override
+    // is supported here: https://github.com/Gozala/querystring/issues/6
+    return PARAMS_TO_TRACK.includes(key) ? `${key}=${value}` : key;
+  }).join('&');
 
   // Set it on the tracker so it gets sent with all Query Explorer hits.
-  ga('set', 'dimension2', serializedParamsToTrack);
+  ga('set', 'dimension2', trackableParamData);
 
   state.set({
     isQuerying: true,
