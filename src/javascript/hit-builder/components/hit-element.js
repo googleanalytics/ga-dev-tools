@@ -25,28 +25,10 @@ import Textarea from 'react-textarea-autosize';
 
 export default class HitElement extends React.Component {
 
-  /**
-   * Sets the initial props and state on the component and binds the methods
-   * that are attached to component event handlers.
-   * @constructor
-   * @param {Object} props The props object initially passed by React.
-   * @return {HitElement}
-   */
-  constructor(props) {
-    super(props);
-
-    this.handleChange = this.handleChange.bind(this);
-    this.handleFocus = this.handleFocus.bind(this);
-    this.handleBlur = this.handleBlur.bind(this);
-    this.sendHit = this.sendHit.bind(this);
-    this.copyHitPayload = this.copyHitPayload.bind(this);
-    this.copyShareUrl = this.copyShareUrl.bind(this);
-
-    this.state = {
-      value: this.props.hitPayload,
-      hitSent: false,
-      hitPayloadCopied: false
-    };
+  state = {
+    value: this.props.hitPayload,
+    hitSent: false,
+    hitPayloadCopied: false
   }
 
 
@@ -54,7 +36,7 @@ export default class HitElement extends React.Component {
    * Updates the values state when the users changes the hit text.
    * @param {Object} e The React event object.
    */
-  handleChange(e) {
+  handleChange = (e) => {
     this.setState({value: e.target.value});
   }
 
@@ -63,7 +45,7 @@ export default class HitElement extends React.Component {
    * Puts the UI in a mostly disabled state while the user is focused on
    * the hit textarea.
    */
-  handleFocus() {
+  handleFocus = () => {
     $('body').addClass('is-editing');
   }
 
@@ -73,7 +55,7 @@ export default class HitElement extends React.Component {
    * hit value.
    * @param {Object} e The React event object.
    */
-  handleBlur(e) {
+  handleBlur = (e) => {
     $('body').removeClass('is-editing');
     this.props.onBlur(e.target.value);
   }
@@ -84,7 +66,7 @@ export default class HitElement extends React.Component {
    * to indicate the hit was successfully sent. After 1 second the button
    * gets restored to its original state.
    */
-  sendHit() {
+  sendHit = () => {
     $.ajax({
       method: 'POST',
       url: 'https://www.google-analytics.com/collect',
@@ -104,7 +86,7 @@ export default class HitElement extends React.Component {
    * was successfully copied. After 1 second the button gets restored to its
    * original state.
    */
-  copyHitPayload() {
+  copyHitPayload = () => {
     let hitPayload = React.findDOMNode(this.refs.hitPayload);
     if (copyElementText(hitPayload)) {
       this.setState({hitPayloadCopied: true, hitUriCopied: false});
@@ -125,7 +107,7 @@ export default class HitElement extends React.Component {
    * was successfully copied. After 1 second the button gets restored to its
    * original state.
    */
-  copyShareUrl() {
+  copyShareUrl = () => {
     let shareUrl = React.findDOMNode(this.refs.shareUrl);
     if (copyElementText(shareUrl)) {
       this.setState({hitUriCopied: true, hitPayloadCopied: false});

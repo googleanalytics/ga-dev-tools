@@ -20,6 +20,10 @@ import React from 'react';
 
 export default class IconButton extends React.Component {
 
+  static defaultProps = {
+    className: 'Button'
+  }
+
   /**
    * React lifecycyle method below:
    * http://facebook.github.io/react/docs/component-specs.html
@@ -39,5 +43,3 @@ export default class IconButton extends React.Component {
         </span>);
   }
 }
-
-IconButton.defaultProps = {className: 'Button'};

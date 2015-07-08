@@ -52,33 +52,26 @@ const HIT_TYPES = [
 
 export default class HitBuilder extends React.Component {
 
+  state = {
+    hitStatus: 'PENDING',
+    allMessages: [],
+    paramMessages: {},
+    properties: [],
+    parameters: []
+  };
+
+
   /**
-   * Sets the initial props and state on the component and binds the methods
-   * that are attached to component event handlers.
    * @constructor
    * @param {Object} props The props object initially passed by React.
    * @return {HitBuilder}
    */
   constructor(props) {
-    super(props)
-
-    // Bind methods
-    this.handleAddParam = this.handleAddParam.bind(this);
-    this.handleParamChange = this.handleParamChange.bind(this);
-    this.handleHitChange = this.handleHitChange.bind(this);
-    this.handleGenerateUuid = this.handleGenerateUuid.bind(this);
+    super(props);
 
     // Don't validate too frequently.
     this.validateParams = debounce(this.validateParams,
         DEBOUNCE_DURATION, {leading: true});
-
-    this.state = {
-      hitStatus: 'PENDING',
-      allMessages: [],
-      paramMessages: {},
-      properties: [],
-      parameters: []
-    };
 
     this.params = new ParamsCollection(this.getInitialHit())
         .on('add', this.handleParamChange)
@@ -156,7 +149,7 @@ export default class HitBuilder extends React.Component {
    * Also turns on a flag to indicate that this param needs focus after
    * rendering.
    */
-  handleAddParam() {
+  handleAddParam = () => {
     this.newParamNeedsFocus_ = true;
     this.params.add(new Model({name:'', value:''}));
   }
@@ -165,7 +158,7 @@ export default class HitBuilder extends React.Component {
   /**
    * Rerenders the tool and validates the parameters after any change occurs.
    */
-  handleParamChange() {
+  handleParamChange = () => {
     this.forceUpdate();
     this.validateParams();
   }
@@ -175,7 +168,7 @@ export default class HitBuilder extends React.Component {
    * Updates the param collection with a new hit value.
    * @param {string} hit The hit payload value.
    */
-  handleHitChange(hit) {
+  handleHitChange = (hit) => {
     this.params.update(hit);
   }
 
@@ -183,7 +176,7 @@ export default class HitBuilder extends React.Component {
   /**
    * Generates a random UUID value for the "cid" parameter.
    */
-  handleGenerateUuid() {
+  handleGenerateUuid = () => {
     this.params.models[3].set({value: uuid.v4()});
   }
 
