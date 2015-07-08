@@ -26,6 +26,10 @@ import template from 'lodash/string/template';
 
 export default class Select2MultiSuggest extends React.Component {
 
+  static defaultProps = {
+    value: ''
+  }
+
   /**
    * Sets the initial props and state on the component.
    * @constructor
@@ -221,5 +225,3 @@ export default class Select2MultiSuggest extends React.Component {
     )
   }
 }
-
-Select2MultiSuggest.defaultProps = {value: ''};

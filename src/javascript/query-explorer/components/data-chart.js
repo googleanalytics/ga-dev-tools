@@ -27,6 +27,10 @@ const SRC_PARAM = 'query-explorer:v2';
 
 export default class DataChart extends React.Component {
 
+  static defaultProps = {
+    params: {}
+  }
+
   componentDidMount() {
     gapi.analytics.ready(() => {
       let params = queryParams.sanitize(this.props.params);
@@ -75,8 +79,4 @@ export default class DataChart extends React.Component {
       <div className={this.props.className} hidden={this.props.hidden} />
     );
   }
-}
-
-DataChart.defaultProps = {
-  params: {}
 }

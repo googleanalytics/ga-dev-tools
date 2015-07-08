@@ -34,6 +34,11 @@ const keyCodes = {
 
 export default class SearchSuggest extends React.Component {
 
+  static defaultProps = {
+    value: '',
+    options: []
+  }
+
   /**
    * Sets the initial props and state on the component.
    * @constructor
@@ -421,9 +426,3 @@ export default class SearchSuggest extends React.Component {
     );
   }
 }
-
-
-SearchSuggest.defaultProps = {
-  value: '',
-  options: []
-};
