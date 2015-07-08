@@ -23,33 +23,16 @@ const REFERENCE_URL = 'https://developers.google.com/' +
 
 export default class ParamElement extends React.Component {
 
-  /**
-   * Sets the initial props and state on the component and binds the methods
-   * that are attached to component event handlers.
-   * @constructor
-   * @param {Object} props The props object initially passed by React.
-   * @return {ParamElement}
-   */
-  constructor(props) {
-    super(props);
-
-    // Bind methods.
-    this.handleNameChange = this.handleNameChange.bind(this);
-    this.handleValueChange = this.handleValueChange.bind(this);
-    this.remove = this.remove.bind(this);
-
-    this.state = {
-      name: this.props.model.get('name'),
-      value: this.props.model.get('value')
-    }
+  state = {
+    name: this.props.model.get('name'),
+    value: this.props.model.get('value')
   }
-
 
   /**
    * Updates the state and param model with the new name.
    * @return {Object} e The React event.
    */
-  handleNameChange(e) {
+  handleNameChange = (e) => {
     let data = {name: e.target.value, value: this.state.value};
     this.setState(data)
     this.props.model.set(data);
@@ -60,7 +43,7 @@ export default class ParamElement extends React.Component {
    * Updates the state and param model with the new value.
    * @return {Object} e The React event.
    */
-  handleValueChange(e) {
+  handleValueChange = (e) => {
     let data = {name: this.state.name, value: e.target.value};
     this.setState(data)
     this.props.model.set(data);
@@ -70,7 +53,7 @@ export default class ParamElement extends React.Component {
   /**
    * Invokes the passed onRemove handler.
    */
-  remove() {
+  remove = () => {
     this.props.onRemove();
   }
 

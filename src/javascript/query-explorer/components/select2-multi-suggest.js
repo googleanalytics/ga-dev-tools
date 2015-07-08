@@ -30,21 +30,9 @@ export default class Select2MultiSuggest extends React.Component {
     value: ''
   }
 
-  /**
-   * Sets the initial props and state on the component.
-   * @constructor
-   * @param {Object} props The props object initially passed by React.
-   * @return {Select2MultiSuggest}
-   */
-  constructor(props) {
-    super(props);
-    this.state = {
-      value: props.value
-    };
-
-    bindAll(this, ['tokenizer', 'matcher']);
+  state = {
+    value: this.props.value
   }
-
 
   /**
    * Returns a tag object given a tag ID, e.g. "ga:users".
@@ -118,7 +106,7 @@ export default class Select2MultiSuggest extends React.Component {
    * @param {Function} selectCallback A function that accepts an option and adds
    *     it to the existing selections.
    */
-  tokenizer(input, selection, selectCallback) {
+  tokenizer = (input, selection, selectCallback) => {
     let parts = input.split(',');
 
     // If there aren't any parts, return immediately;
@@ -142,7 +130,7 @@ export default class Select2MultiSuggest extends React.Component {
    * @param {string} id The ID of the tag to match against.
    * @return {boolean} Whether or not the text is a match for the tag.
    */
-  matcher(text, id) {
+  matcher = (text, id) => {
     let tag = this.getTagById(id);
     let search = text.toLowerCase();
     let selectedTags = this.props.name == 'sort' ?

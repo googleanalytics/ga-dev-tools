@@ -39,22 +39,23 @@ export default class SearchSuggest extends React.Component {
     options: []
   }
 
+  state = {
+    value: this.props.value,
+    matches: [],
+    selectedMatchIndex: 0,
+    open: false,
+    above: false,
+    invalid: this.props.inavlid
+  };
+
   /**
-   * Sets the initial props and state on the component.
+   * Sets a unique namespace used for binding and unbinding jQuery events.
    * @constructor
    * @param {Object} props The props object initially passed by React.
    * @return {SearchSuggest}
    */
   constructor(props) {
     super(props);
-    this.state = {
-      value: props.value,
-      matches: [],
-      selectedMatchIndex: 0,
-      open: false,
-      above: false,
-      invalid: this.props.inavlid
-    };
     this.namespace = 'SearchSuggest:' + this.props.name;
   }
 
