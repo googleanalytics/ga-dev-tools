@@ -197,6 +197,7 @@ gulp.task('build:embed-api-components', ['javascript'], function() {
 gulp.task('build:all', [
   'test',
   'javascript',
+  'watch',
   'css',
   'images',
   'json',
