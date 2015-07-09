@@ -99,7 +99,7 @@ projects:
 - title: Polymer Elements
   type: demo
   slug: polymer-elements
-  external: http://googlewebcomponents.github.io/google-analytics/components/google-analytics/demo/
+  external: https://elements.polymer-project.org/elements/google-analytics?view=demo:demo/index.html
   tech: [management_api, metadata_api]
 - title: Query Explorer
   type: tool
