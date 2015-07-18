@@ -11,5 +11,8 @@ __pycache__/
 node_modules
 npm-debug.log
 
+# python modules
+python_modules
+
 # Built files
 public/
