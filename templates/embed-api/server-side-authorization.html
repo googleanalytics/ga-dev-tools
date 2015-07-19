@@ -1,0 +1,121 @@
+{% extends 'base.html' %}
+
+{% block head_scripts %}
+{{ super() }}
+<script>
+(function(w,d,s,g,js,fs){
+  g=w.gapi||(w.gapi={});g.analytics={q:[],ready:function(f){this.q.push(f);}};
+  js=d.createElement(s);fs=d.getElementsByTagName(s)[0];
+  js.src='https://apis.google.com/js/platform.js';
+  fs.parentNode.insertBefore(js,fs);js.onload=function(){g.load('analytics');};
+}(window,document,'script'));
+
+gapi.analytics.ready(function() {
+
+  // Authorize this user with the access token from the service account.
+  gapi.analytics.auth.authorize({
+    serverAuth: {
+      access_token: '{{ site.access_token }}'
+    }
+  });
+
+  document.body.classList.add('is-authorized');
+});
+</script>
+{% endblock %}
+
+{% block content %}
+<section>
+  <p>{{ page.excerpt | safe }}</p>
+</section>
+
+
+<ul class="FlexGrid">
+  <li class="FlexGrid-item">
+    <div class="Dashboard">
+      <header class="Titles">
+        <h3 class="Titles-main">Site Traffic</h3>
+        <div class="Titles-sub">Sessions - last 30 days</div>
+      </header>
+      <figure id="chart-1-container"></figure>
+    </div>
+  </li>
+  <li class="FlexGrid-item">
+    <div class="Dashboard">
+      <header class="Titles">
+        <h3 class="Titles-main">Top Countries</h3>
+        <div class="Titles-sub">Users - last 30 days</div>
+      </header>
+      <figure id="chart-2-container"></figure>
+    </div>
+  </li>
+  <li class="FlexGrid-item">
+    <div class="Dashboard">
+      <header class="Titles">
+        <h3 class="Titles-main">Most Popular Demos/Tools</h3>
+        <div class="Titles-sub">All users - last 30 days</div>
+      </header>
+      <figure id="chart-3-container"></figure>
+    </div>
+  </li>
+  <li class="FlexGrid-item">
+    <div class="Dashboard">
+      <header class="Titles">
+        <h3 class="Titles-main">Most Revisited Demos/Tools</h3>
+        <div class="Titles-sub">Returning users - last 30 days</div>
+      </header>
+      <figure id="chart-4-container"></figure>
+    </div>
+  </li>
+</ul>
+
+<section>
+<h2>How it works</h2>
+
+<p>You can recreate the demo above by copy and pasting the following code into an HTML file running on a web server. Feel free to add some CSS to spice it up a bit!</p>
+
+<p>If you want to know more, check out the <a href="https://developers.google.com/analytics/devguides/reporting/embed/">Embed API documentation</a> on our developers site.</p>
+
+<h3>Step 1: Load the Embed API library.</h3>
+
+<pre>
+{%- filter forceescape -%}
+<script>
+{% include 'embed-api/code/_snippet.js' %}
+</script>
+{%- endfilter -%}
+</pre>
+
+<h3>Step 2: Add HTML containers to host the dashboard components.</h3>
+
+<pre>
+{%- filter forceescape -%}
+<div id="chart-container"></div>
+{%- endfilter -%}
+</pre>
+
+<h3>Step 3: Write the dashboard code.</h3>
+
+<pre>
+{%- filter forceescape -%}
+<script>
+
+{% include 'embed-api/code/_server-side-authorization.js' %}
+</script>
+{%- endfilter -%}
+</pre>
+
+</section>
+{% endblock %}
+
+{% block tech_content %}
+  The {{ page.title }} demo uses the...
+{% endblock %}
+
+{% block foot_scripts %}
+{{ super() }}
+<script src="/public/javascript/embed-api.js"></script>
+<script>
+{% include 'embed-api/code/_server-side-authorization.js' %}
+</script>
+{% endblock %}
