@@ -44,7 +44,7 @@ limitations under the License.
 
 .Dashboard::after {
   color: var(--text-color-faded);
-  content: 'Authorize to view demo...';
+  content: 'Waiting for authorization...';
   font-size: 1.1em;
   font-weight: 300;
   left: var(--gap);

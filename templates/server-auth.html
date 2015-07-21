@@ -1,0 +1,24 @@
+{% set auth = 'server' %}
+
+{% extends 'base.html' %}
+
+{% block head_scripts %}
+
+{{ super() }}
+
+<script>
+{% include 'embed-api/code/_snippet.js' %}
+
+gapi.analytics.ready(function() {
+
+  // Authorize this user with the access token from the service account.
+  gapi.analytics.auth.authorize({
+    serverAuth: {
+      access_token: '{{ site.access_token }}'
+    }
+  });
+
+  document.body.classList.add('is-authorized');
+});
+</script>
+{% endblock %}
