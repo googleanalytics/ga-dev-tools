@@ -21,6 +21,8 @@ import lib.redirects as redirects
 from webapp2_extras.routes import RedirectRoute
 from lib.controllers.base import BaseController
 from lib.controllers.explorer_csv import ExplorerCsvController
+from lib.controllers.server_side_auth import ServerSideAuthController
+
 
 router = webapp2.WSGIApplication([
 
@@ -31,6 +33,11 @@ router = webapp2.WSGIApplication([
 
   # Main routes
   (r'/query-explorer/csvhandler.*', ExplorerCsvController),
+  RedirectRoute(r'/embed-api/server-side-authorization/',
+      handler=ServerSideAuthController, name='ServerSideAuth',
+      strict_slash=True),
+
+  # Dynamic routes
   RedirectRoute(r'/',
       handler=BaseController, name='Home', strict_slash=True),
   RedirectRoute(r'/<project>/',
