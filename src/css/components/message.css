@@ -1,0 +1,5 @@
+.Message {
+  background-color: hsl(50, 96%, 94%);
+  border-left: 5px solid hsl(50, 96%, 50%);
+  padding: 1.5em;
+}

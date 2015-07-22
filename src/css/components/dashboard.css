@@ -32,7 +32,6 @@ limitations under the License.
   border: 1px solid hsla(0,0%,0%,.075);
   border-radius: 4px;
   min-height: 10em;
-  margin-bottom: var(--gap);
   max-width: var(--Dashboard-maxWidth);
   padding: var(--gap);
   position: relative;
@@ -88,7 +87,6 @@ limitations under the License.
 
 @media (--break-lg) {
   .Dashboard {
-    margin-bottom: var(--gap-lg);
     padding: var(--gap-lg);
   }
   .Dashboard-header {

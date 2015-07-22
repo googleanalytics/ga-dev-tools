@@ -51,6 +51,7 @@ limitations under the License.
 @import './components/icon';
 @import './components/inline-definition-list';
 @import './components/logo';
+@import './components/message';
 @import './components/nav';
 @import './components/nav-header';
 @import './components/progress-bar';
