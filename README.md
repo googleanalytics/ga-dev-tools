@@ -28,6 +28,7 @@ git clone https://github.com/googleanalytics/ga-dev-tools.git
 cd ga-dev-tools
 
 # Install the build dependencies.
+pip install -r requirements.txt -t python_modules
 npm install
 npm run build
 
