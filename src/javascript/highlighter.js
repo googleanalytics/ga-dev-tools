@@ -19,11 +19,14 @@
 import hljs from 'highlight.js/lib/highlight';
 
 
-hljs.registerLanguage('xml',
-    require('highlight.js/lib/languages/xml'));
+hljs.registerLanguage(
+    'xml', require('highlight.js/lib/languages/xml'));
 
-hljs.registerLanguage('javascript',
-    require('highlight.js/lib/languages/javascript'));
+hljs.registerLanguage(
+    'javascript', require('highlight.js/lib/languages/javascript'));
+
+hljs.registerLanguage(
+    'python', require('highlight.js/lib/languages/python'));
 
 
 export default {
