@@ -69,10 +69,6 @@ projects:
     slug: basic-dashboard
     tech: [embed_api]
     excerpt: 'This demos shows how to create a basic dashboard with a single timeline chart showing site traffic over the past week. You can update the chart to see data for any Google Analytics view you have access to.'
-  - title: Multiple Date Ranges
-    slug: multiple-date-ranges
-    tech: [embed_api]
-    excerpt: 'Displaying data side-by-side from multipe different date ranges is not currently possible through the Google Analytics website. This demo shows how easy it is to do this using the Embed API.'
   - title: Multiple Views
     slug: multiple-views
     tech: [embed_api]
