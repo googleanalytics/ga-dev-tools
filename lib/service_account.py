@@ -17,7 +17,6 @@
 
 
 import json
-from google.appengine.api import memcache
 from oauth2client.client import SignedJwtAssertionCredentials
 
 
@@ -29,46 +28,17 @@ SCOPE = 'https://www.googleapis.com/auth/analytics.readonly'
 KEY_FILEPATH = 'service-account-key.json'
 
 
-CACHE_KEY = 'access_token'
+# Loads the key file's private data.
+with open(KEY_FILEPATH) as key_file:
+  _key_data = json.load(key_file)
 
 
-# The duration to consider stored access tokens valid for.
-# Access token expire in 60 minutes, use 50 minutes to be safe.
-EXPIRY_TIME = 60 * 50
+# Constructs a credentials objects from the key data and OAuth2 scope.
+_credentials = SignedJwtAssertionCredentials(
+    _key_data['client_email'], _key_data['private_key'], SCOPE)
 
 
-def _get_access_token_from_cache():
-  """Gets an access token stored in cache, if present."""
-  return memcache.get(CACHE_KEY)
-
-
-def _refresh_access_token_in_cache(access_token):
-  """Update the access token in the cache with a new, valid one."""
-  memcache.set(CACHE_KEY, access_token, time=EXPIRY_TIME)
-
-
-def _get_access_token_from_key_file():
-  """Gets an access token from the key file data"""
-
-  with open(KEY_FILEPATH) as key_file:
-    KEY_DATA = json.load(key_file)
-
-  credentials = SignedJwtAssertionCredentials(
-      KEY_DATA['client_email'], KEY_DATA['private_key'], SCOPE)
-
-  return credentials.get_access_token().access_token
-
-
+# Defines a method to get an access from the credentials object.
+# The access token is automatically refreshed if it has expired.
 def get_access_token():
-  """Gets a valid access token from the data in the key file. The token is
-  cached for 50 minutes so multiple calls to this function don't require
-  authorization requests.
-  """
-
-  access_token = _get_access_token_from_cache()
-
-  if not access_token:
-    access_token = _get_access_token_from_key_file()
-    _refresh_access_token_in_cache(access_token)
-
-  return access_token
+  return _credentials.get_access_token().access_token
