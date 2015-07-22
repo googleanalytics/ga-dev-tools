@@ -49,7 +49,8 @@ gapi.analytics.ready(function() {
       container: 'chart-1-container',
       type: 'PIE',
       options: {
-        width: '100%'
+        width: '100%',
+        pieHole: 4/9
       }
     }
   });
@@ -72,7 +73,8 @@ gapi.analytics.ready(function() {
       container: 'chart-2-container',
       type: 'PIE',
       options: {
-        width: '100%'
+        width: '100%',
+        pieHole: 4/9
       }
     }
   });

@@ -5,7 +5,9 @@ gapi.analytics.ready(function() {
    */
   gapi.analytics.auth.authorize({
     'serverAuth': {
-      'access_token': 'XXXXXX'
+      {% raw -%}
+      'access_token': '{{ ACCESS_TOKEN_FROM_SERVICE_ACCOUNT }}'
+      {%- endraw %}
     }
   });
 
@@ -16,10 +18,10 @@ gapi.analytics.ready(function() {
    */
   var dataChart = new gapi.analytics.googleCharts.DataChart({
     query: {
-      'ids': 'ga:42124519', // The Demos & Tools website view.
+      'ids': 'ga:100367422', // The Demos & Tools website view.
       'start-date': '30daysAgo',
       'end-date': 'yesterday',
-      'metrics': 'ga:sessions',
+      'metrics': 'ga:sessions,ga:users',
       'dimensions': 'ga:date'
     },
     chart: {
@@ -34,79 +36,30 @@ gapi.analytics.ready(function() {
 
 
   /**
-   * Creates a new DataChart instance showing top countries.
-   * It will be rendered inside an element with the id "chart-2-container".
+   * Creates a new DataChart instance showing top 5 most popular demos/tools
+   * amongst returning users only.
+   * It will be rendered inside an element with the id "chart-3-container".
    */
   var dataChart2 = new gapi.analytics.googleCharts.DataChart({
     query: {
-      'ids': 'ga:42124519', // The Demos & Tools website view.
+      'ids': 'ga:100367422', // The Demos & Tools website view.
       'start-date': '30daysAgo',
       'end-date': 'yesterday',
-      'metrics': 'ga:sessions',
-      'dimensions': 'ga:country',
-      'sort': '-ga:sessions',
-      'max-results': 5
+      'metrics': 'ga:pageviews',
+      'dimensions': 'ga:pagePathLevel1',
+      'sort': '-ga:pageviews',
+      'filters': 'ga:pagePathLevel1!=/',
+      'max-results': 7
     },
     chart: {
       'container': 'chart-2-container',
       'type': 'PIE',
       'options': {
-        'width': '100%'
+        'width': '100%',
+        'pieHole': 4/9,
       }
     }
   });
   dataChart2.execute();
-
-
-  /**
-   * Creates a new DataChart instance showing top 5 most popular demos/tools.
-   * It will be rendered inside an element with the id "chart-2-container".
-   */
-  var dataChart3 = new gapi.analytics.googleCharts.DataChart({
-    query: {
-      'ids': 'ga:42124519', // The Demos & Tools website view.
-      'start-date': '30daysAgo',
-      'end-date': 'yesterday',
-      'metrics': 'ga:pageviews',
-      'dimensions': 'ga:pagePathLevel2',
-      'sort': '-ga:pageviews',
-      'max-results': 5
-    },
-    chart: {
-      'container': 'chart-3-container',
-      'type': 'TABLE',
-      'options': {
-        'width': '100%'
-      }
-    }
-  });
-  dataChart3.execute();
-
-
-  /**
-   * Creates a new DataChart instance showing top 5 most popular demos/tools
-   * amongst returning users only.
-   * It will be rendered inside an element with the id "chart-3-container".
-   */
-  var dataChart4 = new gapi.analytics.googleCharts.DataChart({
-    query: {
-      'ids': 'ga:42124519', // The Demos & Tools website view.
-      'start-date': '30daysAgo',
-      'end-date': 'yesterday',
-      'metrics': 'ga:pageviews',
-      'dimensions': 'ga:pagePathLevel2',
-      'sort': '-ga:pageviews',
-      'segment': 'gaid::-3', // Returning users.
-      'max-results': 5
-    },
-    chart: {
-      'container': 'chart-4-container',
-      'type': 'TABLE',
-      'options': {
-        'width': '100%'
-      }
-    }
-  });
-  dataChart4.execute();
 
 });

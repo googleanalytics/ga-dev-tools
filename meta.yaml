@@ -41,6 +41,9 @@ tech:
   real_time_reporting_api:
     name: Real Time Reporting API
     url: https://developers.google.com/analytics/devguides/reporting/realtime/
+  api_client_library_python:
+    name: Google API Client Library for Python
+    url: https://developers.google.com/api-client-library/python/start/installation
 
 # Links represent external URLs that may frequently change.
 # Setting them here makes it easier to update globally.
@@ -86,6 +89,11 @@ projects:
     slug: third-party-visualizations
     tech: [embed_api, real_time_reporting_api]
     excerpt: 'The Embed API make it easy to query data and display it in a Google Chart. But it also allows you to access the raw data so you can display it however you want. This example uses the <a href="http://www.chartjs.org/">Chart.js</a> visualization library.'
+  - title: Server-side Authorization
+    slug: server-side-authorization
+    status: new
+    tech: [embed_api, api_client_library_python]
+    excerpt: 'This demo shows how you can use server-side authorization to display your Google Analytics data to users without granting them access to your Google Analytics account.'
 - title: Enhanced Ecommerce
   type: demo
   slug: enhanced-ecommerce
