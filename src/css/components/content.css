@@ -17,6 +17,7 @@ limitations under the License.
 
 .Content {
   margin: var(--gap);
+  max-width: 1060px;
   transition: opacity .5s var(--quantum-timing);
 }
 
