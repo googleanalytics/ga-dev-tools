@@ -16,7 +16,7 @@ gapi.analytics.ready(function() {
    * Creates a new DataChart instance showing sessions over the past 30 days.
    * It will be rendered inside an element with the id "chart-1-container".
    */
-  var dataChart = new gapi.analytics.googleCharts.DataChart({
+  var dataChart1 = new gapi.analytics.googleCharts.DataChart({
     query: {
       'ids': 'ga:100367422', // The Demos & Tools website view.
       'start-date': '30daysAgo',
@@ -32,7 +32,7 @@ gapi.analytics.ready(function() {
       }
     }
   });
-  dataChart.execute();
+  dataChart1.execute();
 
 
   /**
