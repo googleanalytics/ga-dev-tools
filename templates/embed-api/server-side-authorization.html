@@ -35,7 +35,7 @@
 
 <h3>Step 1: Create a service account and download the JSON key</h3>
 
-<p>Follow the steps in the Google Idendity Platform documentation to <a href="https://developers.google.com/identity/protocols/OAuth2ServiceAccount#creatinganaccount">create a service account</a> from the <a href="https://console.developers.google.com/">Google Developer Console</a>.</p>
+<p>Follow the steps in the Google Identity Platform documentation to <a href="https://developers.google.com/identity/protocols/OAuth2ServiceAccount#creatinganaccount">create a service account</a> from the <a href="https://console.developers.google.com/">Google Developer Console</a>.</p>
 
 <p>Once the service account is created, you can click the <strong>Generate New JSON Key</strong> button to create and download the key and add it to your project.</p>
 
@@ -76,7 +76,7 @@ with open(KEY_FILEPATH) as key_file:
 _credentials = SignedJwtAssertionCredentials(
     _key_data['client_email'], _key_data['private_key'], SCOPE)
 
-# Defines a method to get an access from the credentials object.
+# Defines a method to get an access token from the credentials object.
 # The access token is automatically refreshed if it has expired.
 def get_access_token():
   return _credentials.get_access_token().access_token
@@ -106,6 +106,8 @@ def get_access_token():
 <h3>Step 6: Write the dashboard code.</h3>
 
 <p>Use the access token obtained in step 3 to authorize the Embed API.</p>
+
+<p class="Message"><strong>Important!</strong>&nbsp; When you add an access token to the source code of your page, your site's visitors could use that access token to run any query the service account could run. If your account contains sensitive information, considering adding the service account only to a specific view. You may also want to add a <a href="https://support.google.com/analytics/answer/1033162?hl=en">view filter</a> to limit what data the service account can access.</p>
 
 <pre>
 {%- filter forceescape -%}

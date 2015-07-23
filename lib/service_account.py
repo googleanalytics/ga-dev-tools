@@ -38,7 +38,7 @@ _credentials = SignedJwtAssertionCredentials(
     _key_data['client_email'], _key_data['private_key'], SCOPE)
 
 
-# Defines a method to get an access from the credentials object.
+# Defines a method to get an access token from the credentials object.
 # The access token is automatically refreshed if it has expired.
 def get_access_token():
   return _credentials.get_access_token().access_token
