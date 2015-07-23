@@ -10,7 +10,12 @@
     {% set title = project.title %}
   {%- endif -%}
 
+  {%- if not auth -%}
+    {% set auth = None %}
+  {%- endif -%}
+
   {% include '_head.html' %}
+
   {% block head_scripts %}
     <script>
       window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;

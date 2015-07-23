@@ -16,6 +16,7 @@
 # limitations under the License.
 
 
+import logging
 import jinja2
 import os.path
 import yaml
@@ -77,13 +78,18 @@ def __get_page(project, page):
   else:
     return [i for i in project['pages'] if i['slug'] == page][0]
 
-def render(project='index', page='index'):
+
+def get_data(project='index', page='index'):
+  return {
+    'site': data,
+    'project': __get_project(project),
+    'page': __get_page(project, page)
+  }
+
+
+def render(project='index', page='index', template_data=None):
   try:
-    template_data = {
-      'site': data,
-      'project': __get_project(project),
-      'page': __get_page(project, page)
-    }
+    template_data = template_data if template_data else get_data(project, page)
 
     if project == 'index':
       template_file = 'index.html'
@@ -92,7 +98,9 @@ def render(project='index', page='index'):
 
     template = JINJA_ENVIRONMENT.get_template(template_file)
     return template.render(template_data)
-  except:
+
+  except Exception as err:
+    logging.error(err)
     template = JINJA_ENVIRONMENT.get_template('404.html')
     return template.render({
       'site': data,

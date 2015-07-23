@@ -32,7 +32,6 @@ limitations under the License.
   border: 1px solid hsla(0,0%,0%,.075);
   border-radius: 4px;
   min-height: 10em;
-  margin-bottom: var(--gap);
   max-width: var(--Dashboard-maxWidth);
   padding: var(--gap);
   position: relative;
@@ -44,7 +43,7 @@ limitations under the License.
 
 .Dashboard::after {
   color: var(--text-color-faded);
-  content: 'Authorize to view demo...';
+  content: 'Waiting for authorization...';
   font-size: 1.1em;
   font-weight: 300;
   left: var(--gap);
@@ -88,7 +87,6 @@ limitations under the License.
 
 @media (--break-lg) {
   .Dashboard {
-    margin-bottom: var(--gap-lg);
     padding: var(--gap-lg);
   }
   .Dashboard-header {

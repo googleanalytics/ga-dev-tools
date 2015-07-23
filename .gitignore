@@ -11,5 +11,11 @@ __pycache__/
 node_modules
 npm-debug.log
 
+# python modules
+python_modules
+
 # Built files
 public/
+
+# Private keys
+service-account-key.json
