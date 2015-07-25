@@ -19,7 +19,9 @@
   {% block head_scripts %}
     <script>
       window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
-      ga('create', '{{ site.tracking_id }}', 'auto');
+      ga('create', '{{ site.tracking_id }}', 'auto', {
+        siteSpeedSampleRate: 100
+      });
     </script>
 
     {% if site.env == 'production' %}
