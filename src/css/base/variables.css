@@ -32,10 +32,14 @@ limitations under the License.
   --text-color-faded: #777;
   --text-color-faint: #aaa;
 
+  --action-color: hsl(217, 91%, 63%);
+  --action-color-dark: hsl(217, 91%, 53%);
+
   --error-color: hsl(0, 60%, 50%);
   --error-color-bg: hsl(0, 60%, 97%);
 
   --success-color: hsl(135, 60%, 40%);
+  --success-color-dark: hsl(135, 60%, 33%);
   --success-color-bg: hsl(135, 60%, 97%);
 
   --info-color: hsl(200, 75%, 55%);
