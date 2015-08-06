@@ -28,6 +28,7 @@
     "highlight.js": "^8.6.0",
     "javascript-api-utils": "googleanalytics/javascript-api-utils#0.4.0",
     "lodash": "^3.10.0",
+    "material-design-icons": "^2.0.0",
     "mocha": "^2.2.5",
     "node-libs-browser": "^0.5.2",
     "normalize.css": "^3.0.3",
