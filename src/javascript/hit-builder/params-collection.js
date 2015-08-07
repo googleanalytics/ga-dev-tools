@@ -83,16 +83,6 @@ export default class ParamsCollection extends Collection {
 
 
   /**
-   * Returns true if the hit contains all the required param models.
-   * @return {boolean}
-   */
-  hasRequiredParams() {
-    // This assumes the required params are the first items in the collection.
-    return REQUIRED_PARAMS.every((param, i) => this.models[i].get('value'));
-  }
-
-
-  /**
    * Returns the hit model data as a query string.
    * @return {string}
    */

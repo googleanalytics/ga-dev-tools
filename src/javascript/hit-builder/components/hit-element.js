@@ -165,15 +165,18 @@ export default class HitElement extends React.Component {
       case 'PENDING':
         return (
           <header className="HitElement-status">
-            <span className="HitElement-statusIcon">
-              <Icon type="create" />
+            <span
+              className="HitElement-statusIcon">
+              <Icon type="warning" />
             </span>
             <div className="HitElement-statusBody">
               <h1 className="HitElement-statusHeading">
-                The hit is missing required parameters.
+                This hit has not yet been validated
               </h1>
-              <p className="HitElement-statusMessage">All the required fields
-              below must be filled out before the hit can be validated.</p>
+              <p className="HitElement-statusMessage">You can update the hit
+              using any of the controls below.<br />
+              When you're done, click the "Validate hit" button to make sure
+              everything's OK.</p>
             </div>
           </header>
         )
@@ -186,11 +189,23 @@ export default class HitElement extends React.Component {
    * @return {Object}
    */
   renderHitActions() {
-    if (this.props.hitStatus != 'VALID') return;
+    if (this.props.hitStatus != 'VALID') {
+      let buttonText = (this.props.hitStatus == 'INVALID' ?
+          'Revalidate' : 'Validate') + ' hit';
+      return (
+        <div className="HitElement-action">
+          <button
+            className="Button Button--action"
+            onClick={this.props.onValidate}>
+            {buttonText}
+          </button>
+        </div>
+      )
+    }
 
     let sendHitButton = (
       <IconButton
-        className="Button Button--action Button--withIcon"
+        className="Button Button--success Button--withIcon"
         type={this.state.hitSent ? 'check' : 'send'}
         onClick={this.sendHit}>
         Send hit to Google Analytics

@@ -69,10 +69,6 @@ export default class HitBuilder extends React.Component {
   constructor(props) {
     super(props);
 
-    // Don't validate too frequently.
-    this.validateParams = debounce(this.validateParams,
-        DEBOUNCE_DURATION, {leading: true});
-
     this.params = new ParamsCollection(this.getInitialHit())
         .on('add', this.handleParamChange)
         .on('remove', this.handleParamChange)
@@ -156,11 +152,15 @@ export default class HitBuilder extends React.Component {
 
 
   /**
-   * Rerenders the tool and validates the parameters after any change occurs.
+   * Rerenders the tool after any change occurs.
    */
   handleParamChange = () => {
-    this.forceUpdate();
-    this.validateParams();
+    if (this.state.hitStatus == 'VALID') {
+      this.setState({hitStatus: 'PENDING'})
+    }
+    else {
+      this.forceUpdate();
+    }
   }
 
 
@@ -185,53 +185,42 @@ export default class HitBuilder extends React.Component {
    * Validates the hit parameters and updates the hit status box according to
    * the validation state.
    */
-  validateParams() {
-    if (this.params.hasRequiredParams()) {
-      this.params.validate().then((data) => {
+  validateParams = () => {
 
-        // In some cases the query will have changed before the response gets
-        // back, so we need to check that the result is for the current query.
-        // If it's not, ignore it.
-        if (data.query != this.params.toQueryString()) {
-          // TODO(philipwalton): considering tracking when this happens.
-          return;
-        }
+    this.params.validate().then((data) => {
 
-        let result = data.response.hitParsingResult[0];
-        if (result.valid) {
-          this.setState({
-            hitStatus: 'VALID',
-            allMessages: [],
-            paramMessages: {}
-          });
-        }
-        else {
-          let {allMessages, paramMessages} =
-              this.getErrorsFromParserMessage(result.parserMessage);
+      // In some cases the query will have changed before the response gets
+      // back, so we need to check that the result is for the current query.
+      // If it's not, ignore it.
+      if (data.query != this.params.toQueryString()) return;
 
-          this.setState({
-            hitStatus: 'INVALID',
-            allMessages,
-            paramMessages
-          });
-        }
-      })
-      // TODO(philipwalton): handle timeout errors and slow network connection.
-      .catch((err) => {
-        AlertDispatcher.addOnce({
-          title: 'Oops, an error occurred while validating the hit',
-          message: `Check your connection to make sure you're still online.
-                    If you're still having problems, try refreshing the page.`
+      let result = data.response.hitParsingResult[0];
+      if (result.valid) {
+        this.setState({
+          hitStatus: 'VALID',
+          allMessages: [],
+          paramMessages: {}
         });
-      })
-    }
-    else {
-      this.setState({
-        hitStatus: 'PENDING',
-        allMessages: [],
-        paramMessages: {}
+      }
+      else {
+        let {allMessages, paramMessages} =
+            this.getErrorsFromParserMessage(result.parserMessage);
+
+        this.setState({
+          hitStatus: 'INVALID',
+          allMessages,
+          paramMessages
+        });
+      }
+    })
+    // TODO(philipwalton): handle timeout errors and slow network connection.
+    .catch((err) => {
+      AlertDispatcher.addOnce({
+        title: 'Oops, an error occurred while validating the hit',
+        message: `Check your connection to make sure you're still online.
+                  If you're still having problems, try refreshing the page.`
       });
-    }
+    })
   }
 
 
@@ -274,10 +263,6 @@ export default class HitBuilder extends React.Component {
    * ---------------------------------------------------------
    */
 
-  componentDidMount() {
-    this.validateParams();
-  }
-
   componentWillReceiveProps(nextProps) {
     if (nextProps.isAuthorized && !this.state.isAuthorized) {
       this.handleUserAuthorized();
@@ -296,23 +281,25 @@ export default class HitBuilder extends React.Component {
         <div className="HeadingGroup HeadingGroup--h3">
           <h3>Hit summary</h3>
           <p>The box below displays the full hit and its validation status.
-          Once all the required parameters have been completed, the hit will be
-          automatically validated as it's updated.</p>
+          You can update the hit in the text box and the parameter details
+          below will be automatically updated.</p>
         </div>
 
         <HitElement
           hitStatus={this.state.hitStatus}
           messages={this.state.allMessages}
           onBlur={this.handleHitChange}
+          onValidate={this.validateParams}
           hitPayload={this.params.toQueryString()} />
 
         <div className="HitBuilderParams">
 
           <div className="HeadingGroup HeadingGroup--h3">
             <h3>Hit parameter details</h3>
-            <p>The fields below show the individual parameters and values for
-            the hit above. When you update these values the hit above will
-            be automatically updated and validated.</p>
+            <p>The fields below are a breakdown of the individual parameters
+            and values for the hit in the text box above.
+            When you update these values the hit above will be automatically
+            updated.</p>
           </div>
 
           <ParamSelectElement
