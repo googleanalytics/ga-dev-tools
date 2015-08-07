@@ -28,7 +28,8 @@ export default class HitElement extends React.Component {
   state = {
     value: this.props.hitPayload,
     hitSent: false,
-    hitPayloadCopied: false
+    hitPayloadCopied: false,
+    isValidating: this.props.isValidating
   }
 
 
@@ -190,14 +191,16 @@ export default class HitElement extends React.Component {
    */
   renderHitActions() {
     if (this.props.hitStatus != 'VALID') {
-      let buttonText = (this.props.hitStatus == 'INVALID' ?
-          'Revalidate' : 'Validate') + ' hit';
+      let buttonText = (this.props.hitStatus == 'INVALID' ? 'Rev' : 'V') +
+          'alidate hit';
+
       return (
         <div className="HitElement-action">
           <button
             className="Button Button--action"
+            disabled={this.state.isValidating}
             onClick={this.props.onValidate}>
-            {buttonText}
+            {this.state.isValidating ? 'Validating...' : buttonText}
           </button>
         </div>
       )
@@ -266,6 +269,9 @@ export default class HitElement extends React.Component {
         hitPayloadCopied: false,
         hitUriCopied: false
       });
+    }
+    if (nextProps.isValidating != this.state.isValidating) {
+      this.setState({isValidating: nextProps.isValidating});
     }
   }
 

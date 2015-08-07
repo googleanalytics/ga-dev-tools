@@ -54,6 +54,7 @@ export default class HitBuilder extends React.Component {
 
   state = {
     hitStatus: 'PENDING',
+    isValidating: false,
     allMessages: [],
     paramMessages: {},
     properties: [],
@@ -186,7 +187,7 @@ export default class HitBuilder extends React.Component {
    * the validation state.
    */
   validateParams = () => {
-
+    this.setState({isValidating: true});
     this.params.validate().then((data) => {
 
       // In some cases the query will have changed before the response gets
@@ -198,6 +199,7 @@ export default class HitBuilder extends React.Component {
       if (result.valid) {
         this.setState({
           hitStatus: 'VALID',
+          isValidating: false,
           allMessages: [],
           paramMessages: {}
         });
@@ -208,6 +210,7 @@ export default class HitBuilder extends React.Component {
 
         this.setState({
           hitStatus: 'INVALID',
+          isValidating: false,
           allMessages,
           paramMessages
         });
@@ -215,6 +218,7 @@ export default class HitBuilder extends React.Component {
     })
     // TODO(philipwalton): handle timeout errors and slow network connection.
     .catch((err) => {
+      this.setState({isValidating: false});
       AlertDispatcher.addOnce({
         title: 'Oops, an error occurred while validating the hit',
         message: `Check your connection to make sure you're still online.
@@ -287,6 +291,7 @@ export default class HitBuilder extends React.Component {
 
         <HitElement
           hitStatus={this.state.hitStatus}
+          isValidating={this.state.isValidating}
           messages={this.state.allMessages}
           onBlur={this.handleHitChange}
           onValidate={this.validateParams}
