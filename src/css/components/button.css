@@ -48,17 +48,28 @@ limitations under the License.
   align-items: center;
 }
 
+.Button-icon {
+  margin-right: .6em;
+}
+
 .Button--action {
   color: #fff;
-  background: hsl(217, 91%, 63%);
+  background: var(--action-color);
   border-color: transparent;
 }
 .Button--action:active:enabled,
 .Button--action:focus:enabled,
 .Button--action:hover:enabled {
-  background: hsl(217, 91%, 53%);
+  background: var(--action-color-dark);
 }
 
-.Button-icon {
-  margin-right: .6em;
+.Button--success {
+  color: #fff;
+  background: var(--success-color);
+  border-color: transparent;
+}
+.Button--success:active:enabled,
+.Button--success:focus:enabled,
+.Button--success:hover:enabled {
+  background: var(--success-color-dark);
 }
