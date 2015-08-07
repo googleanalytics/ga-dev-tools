@@ -303,7 +303,7 @@ export default class HitBuilder extends React.Component {
             <h3>Hit parameter details</h3>
             <p>The fields below are a breakdown of the individual parameters
             and values for the hit in the text box above.
-            When you update these values the hit above will be automatically
+            When you update these values, the hit above will be automatically
             updated.</p>
           </div>
 
