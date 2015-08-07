@@ -20,7 +20,9 @@ limitations under the License.
   border-width: 1px 0 0;
   line-height: 1.2;
   list-style: none;
+  overflow: hidden;
   padding: .5em;
+  word-wrap: break-word;
 }
 .SearchSuggestMatch:first-child {
   border: 0;
