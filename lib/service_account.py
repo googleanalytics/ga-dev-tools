@@ -28,17 +28,30 @@ SCOPE = 'https://www.googleapis.com/auth/analytics.readonly'
 KEY_FILEPATH = 'service-account-key.json'
 
 
-# Loads the key file's private data.
-with open(KEY_FILEPATH) as key_file:
-  _key_data = json.load(key_file)
+# Cache the credentials object
+__credentials = None
 
 
-# Constructs a credentials objects from the key data and OAuth2 scope.
-_credentials = SignedJwtAssertionCredentials(
-    _key_data['client_email'], _key_data['private_key'], SCOPE)
+# Gets the credentials object from the cache if available,
+# otherwise generates it from the key file.
+def get_credentials():
+  global __credentials
+
+  if __credentials:
+    return __credentials
+  else:
+    # Loads the key file's private data.
+    with open(KEY_FILEPATH) as key_file:
+      key_data = json.load(key_file)
+
+    # Constructs a credentials objects from the key data and OAuth2 scope.
+    __credentials = SignedJwtAssertionCredentials(
+        key_data['client_email'], key_data['private_key'], SCOPE)
+
+    return __credentials
 
 
 # Defines a method to get an access token from the credentials object.
 # The access token is automatically refreshed if it has expired.
 def get_access_token():
-  return _credentials.get_access_token().access_token
+  return get_credentials().get_access_token().access_token
