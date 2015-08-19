@@ -23,6 +23,11 @@ limitations under the License.
 @import './base/elements';
 @import './base/variables';
 
+/* Vendor styles (which don't necessarily follow conventions) */
+@import './vendor/highlight';
+@import './vendor/select2-overrides';
+@import './vendor/table-chart';
+
 /* Components. */
 @import './components/account-explorer-results';
 @import './components/account-explorer-search';
@@ -68,8 +73,3 @@ limitations under the License.
 @import './utilities/display.css';
 @import './utilities/media.css';
 @import './utilities/space.css';
-
-/* Vendor styles (which don't necessarily follow conventions) */
-@import './vendor/highlight';
-@import './vendor/select2-overrides';
-@import './vendor/table-chart';

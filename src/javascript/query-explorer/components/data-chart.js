@@ -39,7 +39,10 @@ export default class DataChart extends React.Component {
         query: assign({}, params, {_src: SRC_PARAM}),
         chart: {
           type: 'TABLE',
-          container: React.findDOMNode(this)
+          container: React.findDOMNode(this),
+          options: {
+            width: '100%'
+          }
         }
       });
 

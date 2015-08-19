@@ -19,6 +19,18 @@ limitations under the License.
  * Styles for gapi analytics table.
  */
 
+/*
+ * TODO(philipwalton): the following rule can be removed once the
+ * new Embed API table styles are live.
+ */
+html .google-visualization-table,
+html .google-visualization-table-table th,
+html .google-visualization-table-table td {
+  border: 0;
+}
+/* end TODO */
+
+
 .gapi-analytics-data-chart {
   margin-bottom: var(--gap);
 }
