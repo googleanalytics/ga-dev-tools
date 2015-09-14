@@ -48,7 +48,7 @@ function setupUncaughtExceptionTracking() {
 export default {
   track: function() {
     ga('require', 'displayfeatures');
-    ga('require', 'linkid', 'linkid.js');
+    ga('require', 'linkid');
 
     setupOutBoundLinkTracking();
     setupUncaughtExceptionTracking();
