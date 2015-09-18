@@ -133,7 +133,7 @@ gapi.analytics.ready(function() {
       if (!this.summaries.all().length) {
         return this.emit('error', new Error('This user does not have any ' +
             'Google Analytics accounts. You can sign up at ' +
-            '"google.com/analytics".'));
+            '"www.google.com/analytics".'));
       }
 
       // If there are no id props, set the defaults.
