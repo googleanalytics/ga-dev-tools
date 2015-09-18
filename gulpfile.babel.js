@@ -134,7 +134,7 @@ gulp.task('javascript:embed-api-components', (function() {
       },
       cache: {},
       devtool: '#source-map',
-      plugins: [new webpack.optimize.UglifyJsPlugin()],
+      plugins: isProd() ? [new webpack.optimize.UglifyJsPlugin()] : [],
       module: {
         loaders: [
           {
