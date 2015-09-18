@@ -16,6 +16,7 @@
 /* global gapi */
 
 
+import AlertDispatcher from '../../components/alert-dispatcher';
 import React from 'react';
 
 
@@ -61,13 +62,21 @@ var ViewSelector = React.createClass({
         self.props.onChange.apply(self, args)
       });
 
-      // An error on the first render means somehow a view was passed
-      // to the constructor to which the user doesn't have access.
-      // In that case, render the default view. All other errors should
-      // just do nothing.
-      self.viewSelector_.on('error', function() {
-        if (!self.hasSuccessfullyShownView_) {
-          self.viewSelector_.set({ids:undefined}).execute();
+      self.viewSelector_.on('error', function(err) {
+        // If an error happens on the first render and is about not having
+        // access to a particular view, just show the default view and assume
+        // it's because someone shared a report to someone else without access.
+        if (err.message.includes('access')) {
+          if (!self.hasSuccessfullyShownView_) {
+            self.viewSelector_.set({ids:undefined}).execute();
+          }
+        }
+        // For all other errors, display an alert message.
+        else {
+          AlertDispatcher.addOnce({
+            title: 'Oops, there was an error',
+            message: err.message
+          });
         }
       });
 

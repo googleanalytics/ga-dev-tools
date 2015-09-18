@@ -129,6 +129,13 @@ gapi.analytics.ready(function() {
       var ids = getIdProp(opts);
       var view, account, property;
 
+      // If the user does not have any accounts, emit an error.
+      if (!this.summaries.all().length) {
+        return this.emit('error', new Error('This user does not have any ' +
+            'Google Analytics accounts. You can sign up at ' +
+            '"google.com/analytics".'));
+      }
+
       // If there are no id props, set the defaults.
       if (!ids) {
         account = this.accounts[0];
@@ -178,7 +185,7 @@ gapi.analytics.ready(function() {
         }
       }
       else {
-        this.emit('error', new Error('You do not have access to ' +
+        this.emit('error', new Error('This user does not have access to ' +
             ids.prop.slice(0, -2) + ' : ' + ids.value));
       }
     },
