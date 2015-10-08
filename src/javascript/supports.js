@@ -29,12 +29,9 @@ export default {
     return function() {
       return isCopySupported || (isCopySupported =
 
-        // Firefox has a false positive on the
-        // `queryCommandSupported('copy')` method, so at the moment we simply
-        // have to exclude it. Once Firefox enables true support, remove this
-        // conditional.
-        // http://goo.gl/x4jcS
-        typeof InstallTrigger === 'undefined' &&
+        // Firefox 40 and lower return a false positive for
+        // `queryCommandSupported('copy')`, so we have to ignore it.
+        /Firefox\/(\d+)/.test(navigator.userAgent) && (+RegExp.$1 >= 41) &&
 
         // If queryCommandSupported returns true, assume it's correct since
         // we're ignoring Firefox for now.
