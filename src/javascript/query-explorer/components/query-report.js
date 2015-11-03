@@ -55,7 +55,8 @@ let QueryReport = React.createClass({
   apiQueryUri: function() {
     let params = queryParams.sanitize(this.props.report.params);
     if (this.props.includeAccessToken) {
-      params['access_token'] = gapi.auth.getToken().access_token;
+      params['access_token'] =
+          gapi.analytics.auth.getAuthResponse().access_token;
     }
     return API_URI_BASE + qs.stringify(params);
   },
@@ -67,7 +68,9 @@ let QueryReport = React.createClass({
    */
   downloadTsvLink: function() {
     let params = queryParams.sanitize(this.props.report.params);
-    params['access_token'] = gapi.auth.getToken().access_token;
+    params['access_token'] =
+        gapi.analytics.auth.getAuthResponse().access_token;
+
     return TSV_PATH + '?' + qs.stringify(params);
   },
 
