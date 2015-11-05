@@ -22,7 +22,7 @@ limitations under the License.
 }
 
 .Dashboard {
-  background: hsla(0,0%,100%,.75);
+  background: #fff;
   border: 1px solid var(--border-color);
   border-radius: 4px;
   max-width: var(--Dashboard-maxWidth);
