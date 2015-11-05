@@ -1,4 +1,4 @@
-// Copyright 2014 Google Inc. All rights reserved.
+// Copyright 2015 Google Inc. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,12 +15,14 @@
 
 /* global gapi */
 
+
 gapi.analytics.ready(function() {
 
   gapi.analytics.createComponent('ActiveUsers', {
 
     initialize: function() {
       this.activeUsers = 0;
+      gapi.analytics.auth.once('signOut', this.handleSignOut_.bind(this));
     },
 
     execute: function() {
@@ -33,10 +35,10 @@ gapi.analytics.ready(function() {
 
       // Wait until the user is authorized.
       if (gapi.analytics.auth.isAuthorized()) {
-        this.getActiveUsers_();
+        this.pollActiveUsers_();
       }
       else {
-        gapi.analytics.auth.once('success', this.getActiveUsers_.bind(this));
+        gapi.analytics.auth.once('signIn', this.pollActiveUsers_.bind(this));
       }
     },
 
@@ -57,7 +59,7 @@ gapi.analytics.ready(function() {
       this.container.querySelector('b').innerHTML = this.activeUsers;
     },
 
-    getActiveUsers_: function() {
+    pollActiveUsers_: function() {
       var options = this.get();
       var pollingInterval = (options.pollingInterval || 5) * 1000;
 
@@ -67,24 +69,25 @@ gapi.analytics.ready(function() {
 
       this.polling_ = true;
       gapi.client.analytics.data.realtime
-        .get({ids:options.ids, metrics:'rt:activeUsers'})
-        .execute(function(response) {
+          .get({ids:options.ids, metrics:'rt:activeUsers'})
+          .then(function(response) {
 
-          var newValue = response.totalResults ? +response.rows[0][0] : 0;
-          var oldValue = this.activeUsers;
+        var result = response.result;
+        var newValue = result.totalResults ? +result.rows[0][0] : 0;
+        var oldValue = this.activeUsers;
 
-          this.emit('success', {activeUsers: this.activeUsers});
+        this.emit('success', {activeUsers: this.activeUsers});
 
-          if (newValue != oldValue) {
-            this.activeUsers = newValue;
-            this.onChange_(newValue - oldValue);
-          }
+        if (newValue != oldValue) {
+          this.activeUsers = newValue;
+          this.onChange_(newValue - oldValue);
+        }
 
-          if (this.polling_ = true) {
-            this.timeout_ = setTimeout(this.getActiveUsers_.bind(this),
-                pollingInterval);
-          }
-        }.bind(this));
+        if (this.polling_ = true) {
+          this.timeout_ = setTimeout(this.pollActiveUsers_.bind(this),
+              pollingInterval);
+        }
+      }.bind(this));
     },
 
     onChange_: function(delta) {
@@ -98,6 +101,16 @@ gapi.analytics.ready(function() {
       else {
         this.emit('decrease', {activeUsers: this.activeUsers, delta: delta});
       }
+    },
+
+    handleSignOut_: function() {
+      this.stop();
+      gapi.analytics.auth.once('signIn', this.handleSignIn_.bind(this));
+    },
+
+    handleSignIn_: function() {
+      this.pollActiveUsers_();
+      gapi.analytics.auth.once('signOut', this.handleSignOut_.bind(this));
     },
 
     template:

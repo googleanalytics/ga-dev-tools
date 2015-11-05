@@ -17,6 +17,7 @@
 
 
 import accountSummaries from 'javascript-api-utils/lib/account-summaries';
+import site from '../site';
 
 
 function setup() {
@@ -29,6 +30,7 @@ function setup() {
     var allIds = getAllIds(summaries, validIds);
 
     setViewSelector(allIds.viewId);
+    site.setReadyState();
   });
 }
 

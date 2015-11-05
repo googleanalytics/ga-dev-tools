@@ -17,6 +17,7 @@
 
 
 import debounce from 'lodash/function/debounce';
+import site from '../site';
 
 
 //
@@ -57,4 +58,7 @@ function monkeyPatchForDemos() {
 }
 
 
-gapi.analytics.ready(monkeyPatchForDemos);
+gapi.analytics.ready(function() {
+  monkeyPatchForDemos();
+  site.setReadyState();
+});

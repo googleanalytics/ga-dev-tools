@@ -32,6 +32,7 @@ import QueryReport from './components/query-report';
 import React from 'react';
 import SearchSuggest from '../components/search-suggest';
 import Select2MultiSuggest from './components/select2-multi-suggest';
+import site from '../site';
 import store from '../data-store';
 import tagData from './tag-data';
 import ViewSelector from './components/view-selector';
@@ -569,10 +570,7 @@ function setup() {
   // Store the initial settings on the tracker.
   ga('set', 'dimension3', qs.stringify(settings.get()));
 
-  // Add/remove state classes.
-  $('body').removeClass('is-loading');
-  $('body').addClass('is-ready');
-
+  site.setReadyState();
 }
 
 

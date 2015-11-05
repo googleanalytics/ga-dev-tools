@@ -13,44 +13,52 @@
 // limitations under the License.
 
 
-/* global $ */
+/* global $, gapi */
 
 
 export default {
 
   init: function() {
     this.addOpenHandler();
+    this.addSignOutHandler();
   },
 
   addOpenHandler: function() {
-    $(document).on('touchend.header click.header',
-        '#header-user', function(event) {
-
+    $(document).on('touchend.header click.header', '#header-user', (event) => {
       event.preventDefault();
-      $(document).off('.header');
       this.open();
-      this.addCloseHandler();
-    }.bind(this));
+    });
   },
 
   addCloseHandler: function() {
-    $(document).on('touchend.header click.header', function(event) {
-
+    $(document).on('touchend.header click.header', (event) => {
       // Only close if the user didn't click inside of #header-auth.
       if (!$(event.target).closest('#header-auth').length) {
         event.preventDefault();
-        $(document).off('.header');
         this.close();
-        this.addOpenHandler();
       }
-    }.bind(this));
+    });
+  },
+
+  addSignOutHandler: function() {
+    gapi.analytics.ready(() => {
+      $('#header-sign-out').on('click', (event) => {
+        event.preventDefault();
+        this.close();
+        gapi.analytics.auth.signOut();
+      });
+    });
   },
 
   open: function() {
+    $(document).off('.header');
+    this.addCloseHandler();
     $('#header').addClass('is-open');
   },
 
   close: function() {
+    $(document).off('.header');
+    this.addOpenHandler();
     $('#header').removeClass('is-open');
   }
 

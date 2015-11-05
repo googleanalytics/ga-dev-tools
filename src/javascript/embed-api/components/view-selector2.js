@@ -113,7 +113,7 @@ gapi.analytics.ready(function() {
         onAuthorize();
       }
       else {
-        gapi.analytics.auth.on('success', onAuthorize);
+        gapi.analytics.auth.on('signIn', onAuthorize);
       }
     },
 
