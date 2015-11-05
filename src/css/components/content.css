@@ -15,28 +15,20 @@ limitations under the License.
 */
 
 
+@import './site';
+
+
 .Content {
   margin: var(--gap);
   max-width: 1060px;
   transition: opacity .5s var(--quantum-timing);
 }
 
-.is-loading .Content {
-  animation: Content-fadeIn .5s var(--quantum-timing) 1;
+.Site.is-loading .Content,
+.Site.is-needingAuthorization .Content {
   pointer-events: none;
   opacity: .333;
 }
-
-.is-ready .Content {
-  opacity: 1;
-}
-
-@keyframes Content-fadeIn {
-  0% {
-    opacity: 0;
-  }
-}
-
 
 @media (--break-lg) {
   .Content {

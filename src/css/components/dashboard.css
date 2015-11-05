@@ -21,39 +21,12 @@ limitations under the License.
   --Dashboard-maxWidth: 52em;
 }
 
-/**
- * Dashboard groups one or more items into a single view.
- * It is also sign-in aware, so it shows a message to authorize
- * if the user is not signed in.
- */
-
 .Dashboard {
   background: hsla(0,0%,100%,.75);
-  border: 1px solid hsla(0,0%,0%,.075);
+  border: 1px solid var(--border-color);
   border-radius: 4px;
-  min-height: 10em;
   max-width: var(--Dashboard-maxWidth);
   padding: var(--gap);
-  position: relative;
-}
-
-.Dashboard > * {
-  opacity: .03;
-}
-
-.Dashboard::after {
-  color: var(--text-color-faded);
-  content: 'Waiting for authorization...';
-  font-size: 1.1em;
-  font-weight: 300;
-  left: var(--gap);
-  line-height: 1.4em;
-  margin-top: -.7em;
-  position: absolute;
-  right: var(--gap);
-  text-align: center;
-  top: 50%;
-  z-index: 2;
 }
 
 .Dashboard-header {
@@ -72,19 +45,6 @@ limitations under the License.
   max-width: 100%;
 }
 
-.Site.is-authorized .Dashboard {
-  background: #fff;
-  border-color: var(--border-color);
-  min-height: 0;
-  position: static;
-}
-.Site.is-authorized .Dashboard > * {
-  opacity: 1;
-}
-.Site.is-authorized .Dashboard::after {
-  content: none;
-}
-
 @media (--break-lg) {
   .Dashboard {
     padding: var(--gap-lg);
@@ -98,6 +58,3 @@ limitations under the License.
     padding: var(--gap);
   }
 }
-
-
-

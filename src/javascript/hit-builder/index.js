@@ -18,6 +18,7 @@
 
 import HitBuilder from './components/hit-builder';
 import React from 'react';
+import site from '../site';
 
 
 /**
@@ -37,10 +38,7 @@ function render(props) {
  */
 function setup() {
   render({isAuthorized: true});
-
-  // Add/remove state classes.
-  $('body').removeClass('is-loading');
-  $('body').addClass('is-ready');
+  site.setReadyState();
 }
 
 
