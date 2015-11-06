@@ -41,8 +41,8 @@ export default {
   },
 
   addSignOutHandler: function() {
-    gapi.analytics.ready(() => {
-      $('#header-sign-out').on('click', (event) => {
+    $('#header-sign-out').on('click', (event) => {
+      gapi.analytics.ready(() => {
         event.preventDefault();
         this.close();
         gapi.analytics.auth.signOut();
