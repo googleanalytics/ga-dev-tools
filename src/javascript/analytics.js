@@ -16,20 +16,23 @@
 /* global $, ga */
 
 
-function setupOutBoundLinkTracking() {
-  $(document).on('click', 'a', function() {
+import 'autotrack/lib/plugins/media-query-tracker';
+import 'autotrack/lib/plugins/outbound-link-tracker';
+import 'autotrack/lib/plugins/session-duration-tracker';
 
-    if (location.hostname != this.hostname) {
-      // Opening links in an external tabs allows the ga beacon to send.
-      // When following links directly, sometimes they don't make it.
-      this.target = '_blank';
-      var analyticsId = $(this).attr('data-analytics-id');
-      var eventAction = analyticsId ? 'click:' + analyticsId : 'click';
 
-      ga('send', 'event', 'outbound link', eventAction, this.href);
-    }
-  });
-}
+let mediaQueryDefinitions = [
+  {
+    name: 'Breakpoint',
+    dimensionIndex: 1,
+    items: [
+      {name: 'xs', media: 'all'},
+      {name: 'sm', media: '(min-width: 420px)'},
+      {name: 'md', media: '(min-width: 570px)'},
+      {name: 'lg', media: '(min-width: 1024px)'}
+    ]
+  }
+];
 
 
 function setupUncaughtExceptionTracking() {
@@ -49,10 +52,11 @@ export default {
   track: function() {
     ga('require', 'displayfeatures');
     ga('require', 'linkid');
-
-    setupOutBoundLinkTracking();
-    setupUncaughtExceptionTracking();
-
+    ga('require', 'mediaQueryTracker', {mediaQueryDefinitions});
+    ga('require', 'outboundLinkTracker');
+    ga('require', 'sessionDurationTracker');
     ga('send', 'pageview');
+
+    setupUncaughtExceptionTracking();
   }
 };
