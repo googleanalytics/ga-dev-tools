@@ -14,7 +14,7 @@
 
 
 // Global polyfills.
-require('core-js');
+require('babel-polyfill');
 require('svg4everybody');
 
 

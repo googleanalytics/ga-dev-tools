@@ -20,6 +20,7 @@ import assign from 'lodash/object/assign';
 import mapValues from 'lodash/object/mapValues';
 import queryParams from '../query-params';
 import React from 'react';
+import ReactDOM from 'react-dom';
 
 
 const SRC_PARAM = 'query-explorer:v2';
@@ -39,7 +40,7 @@ export default class DataChart extends React.Component {
         query: assign({}, params, {_src: SRC_PARAM}),
         chart: {
           type: 'TABLE',
-          container: React.findDOMNode(this),
+          container: ReactDOM.findDOMNode(this),
           options: {
             width: '100%'
           }

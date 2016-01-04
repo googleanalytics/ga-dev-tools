@@ -15,6 +15,7 @@
 
 import Icon from '../../components/icon';
 import React from 'react';
+import ReactDOM from 'react-dom';
 
 
 const REFERENCE_URL = 'https://developers.google.com/' +
@@ -161,7 +162,7 @@ export default class ParamElement extends React.Component {
 
   componentDidMount() {
     if (this.props.needsFocus) {
-      React.findDOMNode(this.refs.labelField).focus();
+      ReactDOM.findDOMNode(this.refs.labelField).focus();
     }
   }
 

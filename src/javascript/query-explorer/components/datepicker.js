@@ -56,8 +56,8 @@ var Datepicker = React.createClass({
     };
 
     let self = this;
-    let $input = $(this.refs.input.getDOMNode());
-    let $icon = $(this.refs.icon.getDOMNode());
+    let $input = $(this.refs.input);
+    let $icon = $(this.refs.icon);
 
     $input.datepicker(opts).on('change', function(e) {
       self.handleChange(e)
@@ -71,7 +71,7 @@ var Datepicker = React.createClass({
 
   },
   componentWillUnmount: function() {
-    $(this.refs.input.getDOMNode()).datepicker('destroy').off();
+    $(this.refs.input).datepicker('destroy').off();
   },
   render: function() {
     return (

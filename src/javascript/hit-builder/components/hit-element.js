@@ -19,6 +19,7 @@
 import Icon from '../../components/icon';
 import IconButton from '../../components/icon-button';
 import React from 'react';
+import ReactDOM from 'react-dom';
 import supports from '../../supports';
 import Textarea from 'react-textarea-autosize';
 
@@ -88,7 +89,7 @@ export default class HitElement extends React.Component {
    * original state.
    */
   copyHitPayload = () => {
-    let hitPayload = React.findDOMNode(this.refs.hitPayload);
+    let hitPayload = ReactDOM.findDOMNode(this.refs.hitPayload);
     if (copyElementText(hitPayload)) {
       this.setState({hitPayloadCopied: true, hitUriCopied: false});
 
@@ -109,7 +110,7 @@ export default class HitElement extends React.Component {
    * original state.
    */
   copyShareUrl = () => {
-    let shareUrl = React.findDOMNode(this.refs.shareUrl);
+    let shareUrl = ReactDOM.findDOMNode(this.refs.shareUrl);
     if (copyElementText(shareUrl)) {
       this.setState({hitUriCopied: true, hitPayloadCopied: false});
 

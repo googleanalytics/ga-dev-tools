@@ -17,7 +17,8 @@ import Alert from './alert';
 import Collection from '../collection';
 import Model from '../model';
 import React from 'react';
-import ReactCSSTransitionGroup from 'react/lib/ReactCSSTransitionGroup';
+import ReactDOM from 'react-dom';
+import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 
 
 let alerts = new Collection();
@@ -71,6 +72,8 @@ export default class AlertDispatcher extends React.Component {
       <ReactCSSTransitionGroup
         component="div"
         className="AlertDispatcher"
+        transitionEnterTimeout={200}
+        transitionLeaveTimeout={200}
         transitionName="Alert">
         {alerts.models.map((model) => (
           <Alert
@@ -87,4 +90,4 @@ export default class AlertDispatcher extends React.Component {
 // Only add AlertDispatcher to the DOM if this module gets imported.
 let alertDispatcherContainer = document.createElement('div');
 document.body.appendChild(alertDispatcherContainer);
-React.render(<AlertDispatcher />, alertDispatcherContainer);
+ReactDOM.render(<AlertDispatcher />, alertDispatcherContainer);

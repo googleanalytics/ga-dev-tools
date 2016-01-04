@@ -21,6 +21,7 @@ import debounce from 'lodash/function/debounce';
 import filter from 'lodash/collection/filter';
 import map from 'lodash/collection/map';
 import React from 'react';
+import ReactDOM from 'react-dom';
 
 
 const keyCodes = {
@@ -215,7 +216,7 @@ export default class SearchSuggest extends React.Component {
    */
   hideMatchesOnExternalEvent(e) {
     if (this.state.open === true &&
-        !$.contains(React.findDOMNode(this), e.target)) {
+        !$.contains(ReactDOM.findDOMNode(this), e.target)) {
       this.setHideMatchesState();
     }
   }
@@ -243,8 +244,8 @@ export default class SearchSuggest extends React.Component {
    * @return {Object} An object with `spaceAbove` and `spaceBelow` properties.
    */
   calculateDropdownSpace() {
-    let $input = $(React.findDOMNode(this.refs.input));
-    let $dropdown = $(React.findDOMNode(this.refs.matches));
+    let $input = $(ReactDOM.findDOMNode(this.refs.input));
+    let $dropdown = $(ReactDOM.findDOMNode(this.refs.matches));
 
     let inputTop = $input.offset().top;
     let inputBottom = inputTop + $input.outerHeight();
@@ -322,7 +323,7 @@ export default class SearchSuggest extends React.Component {
     // If the update was triggered by a value change, make sure the dropdown
     // is always scrolled to the top so the first match is visible.
     if (this.state.value != prevState.value) {
-      React.findDOMNode(this.refs.matches).scrollTop = 0;
+      ReactDOM.findDOMNode(this.refs.matches).scrollTop = 0;
     }
 
     // If the user is scrolling through the matches via the up and down arrows
@@ -331,7 +332,7 @@ export default class SearchSuggest extends React.Component {
 
       // TODO(philipwalton): is there a more React-y way of getting access
       // to this node? Using refs seems like overkill...
-      let selectedElement = React.findDOMNode(this.refs.matches)
+      let selectedElement = ReactDOM.findDOMNode(this.refs.matches)
           .children[this.state.selectedMatchIndex];
 
       // If there is no selected match, return immediately.
@@ -339,7 +340,7 @@ export default class SearchSuggest extends React.Component {
 
       let selectedElementOffsetTop = selectedElement.offsetTop;
       let selectedElementClientHeight = selectedElement.clientHeight;
-      let container = React.findDOMNode(this.refs.matches);
+      let container = ReactDOM.findDOMNode(this.refs.matches);
       let containerScrollTop = container.scrollTop;
       let containerClientHeight = container.clientHeight;
 

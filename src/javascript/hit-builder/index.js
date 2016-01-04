@@ -18,6 +18,7 @@
 
 import HitBuilder from './components/hit-builder';
 import React from 'react';
+import ReactDOM from 'react-dom';
 import site from '../site';
 
 
@@ -25,7 +26,7 @@ import site from '../site';
  * The base render function.
  */
 function render(props) {
-  React.render(
+  ReactDOM.render(
     <HitBuilder {...props} />,
     document.getElementById('react-test')
   );
