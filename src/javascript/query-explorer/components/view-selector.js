@@ -18,6 +18,7 @@
 
 import AlertDispatcher from '../../components/alert-dispatcher';
 import React from 'react';
+import ReactDOM from 'react-dom';
 
 
 /**
@@ -52,7 +53,7 @@ var ViewSelector = React.createClass({
     gapi.analytics.ready(function() {
 
       self.viewSelector_ = new gapi.analytics.ext.ViewSelector2({
-        container: self.getDOMNode(),
+        container: ReactDOM.findDOMNode(self),
         ids: self.props.ids,
         template: self.props.template || VIEW_SELECTOR_TEMPLATE
       })

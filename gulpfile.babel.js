@@ -94,7 +94,10 @@ gulp.task('javascript:bundle', (function() {
           {
             test: /\.js$/,
             exclude: /node_modules/,
-            loader: 'babel-loader?stage=0'
+            loader: 'babel',
+            query: {
+              cacheDirectory: true,
+            }
           }
         ]
       }

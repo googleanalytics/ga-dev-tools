@@ -20,6 +20,7 @@ import bindAll from 'lodash/function/bindAll';
 import filter from 'lodash/collection/filter';
 import map from 'lodash/collection/map';
 import React from 'react';
+import ReactDOM from 'react-dom';
 import some from 'lodash/collection/some';
 import template from 'lodash/string/template';
 
@@ -62,7 +63,7 @@ export default class Select2MultiSuggest extends React.Component {
    */
   handleChange() {
     let name = this.props.name;
-    let value = ($(React.findDOMNode(this)).val() || []).join(',');
+    let value = ($(ReactDOM.findDOMNode(this)).val() || []).join(',');
     this.setState({value})
     this.props.onChange({target: {name, value}});
   }
@@ -152,7 +153,7 @@ export default class Select2MultiSuggest extends React.Component {
 
 
   componentDidMount() {
-    let $input = $(React.findDOMNode(this));
+    let $input = $(ReactDOM.findDOMNode(this));
     $input.on('change', this.handleChange.bind(this));
   }
 
@@ -180,13 +181,13 @@ export default class Select2MultiSuggest extends React.Component {
         tokenizer: this.tokenizer,
         matcher: this.matcher
       };
-      $(React.findDOMNode(this)).select2(opts);
+      $(ReactDOM.findDOMNode(this)).select2(opts);
     }
   }
 
 
   componentWillUnmount() {
-    $(React.findDOMNode(this)).select2('destroy').off();
+    $(ReactDOM.findDOMNode(this)).select2('destroy').off();
   }
 
 
