@@ -19,11 +19,16 @@ import glob from 'glob';
 import gulp from 'gulp';
 import gulpIf from 'gulp-if';
 import gutil from 'gulp-util';
+import imagemin from 'gulp-imagemin';
+import merge from 'merge-stream';
 import mocha from 'gulp-mocha';
 import path from 'path';
+import pngquant from 'imagemin-pngquant';
 import plumber from 'gulp-plumber';
 import prefix from 'gulp-autoprefixer';
+import rename from 'gulp-rename';
 import request from 'request';
+import resize from 'gulp-image-resize';
 import webpack from 'webpack';
 
 
@@ -51,8 +56,20 @@ gulp.task('css', function() {
 });
 
 gulp.task('images', function() {
-  gulp.src('src/images/**/*')
-      .pipe(gulp.dest('public/images'));
+  return merge(
+    gulp.src('./src/images/**/*.svg')
+        .pipe(gulp.dest('public/images')),
+
+    gulp.src('./src/images/**/*.png')
+        .pipe(imagemin({use: [pngquant()]}))
+        .pipe(gulp.dest('public/images')),
+
+    gulp.src('./src/images/**/*.png')
+        .pipe(resize({width : '50%'}))
+        .pipe(imagemin({use: [pngquant()]}))
+        .pipe(rename((p) => p.basename = p.basename.replace('@2x', '')))
+        .pipe(gulp.dest('public/images'))
+  );
 });
 
 
