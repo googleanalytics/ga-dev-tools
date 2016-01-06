@@ -5,51 +5,6 @@ path: '/'
 tracking_id: UA-41425441-5
 client_id: 793177639245-olst43lspv93vkoql0b9l26hmpf9kfmv.apps.googleusercontent.com
 
-# Google Analytics tech tags. Demos and tools should tag themselves with
-# one or more of these to make tech more discoverable.
-tech:
-  analyticsjs:
-    name: analytics.js
-    url: https://developers.google.com/analytics/devguides/collection/analyticsjs/
-  core_reporting_api:
-    name: Core Reporting API
-    url: https://developers.google.com/analytics/devguides/reporting/core/
-  ecjs:
-    name: Enhanced Ecommerce (ec.js)
-    url: https://developers.google.com/analytics/devguides/collection/analyticsjs/enhanced-ecommerce
-  embed_api:
-    name: Embed API
-    url: https://developers.google.com/analytics/devguides/reporting/embed/
-  management_api:
-    name: Management API
-    url: https://developers.google.com/analytics/devguides/config/mgmt/
-  mcf_reporting_api:
-    name: MCF Reporting API
-    url: https://developers.google.com/analytics/devguides/reporting/mcf/
-  measurement_protocol:
-    name: Measurement Protocol
-    url: https://developers.google.com/analytics/devguides/collection/protocol/
-  measurement_protocol_validation_server:
-    name: Measurement Protocol Validation Server
-    url: https://developers.google.com/analytics/devguides/collection/protocol/v1/validating-hits
-  metadata_api:
-    name: Metadata API
-    url: https://developers.google.com/analytics/devguides/reporting/metadata/
-  provisioning_api:
-    name: Provisioning API
-    url: https://developers.google.com/analytics/devguides/config/provisioning/
-  real_time_reporting_api:
-    name: Real Time Reporting API
-    url: https://developers.google.com/analytics/devguides/reporting/realtime/
-  api_client_library_python:
-    name: Google API Client Library for Python
-    url: https://developers.google.com/api-client-library/python/start/installation
-
-# Links represent external URLs that may frequently change.
-# Setting them here makes it easier to update globally.
-links:
-  devsite: http://developers.google.com/analytics
-  github: https://github.com/googleanalytics/ga-dev-tools
 
 projects:
 - title: Account Explorer
@@ -115,3 +70,51 @@ projects:
   slug: spreadsheet-add-on
   external: https://chrome.google.com/webstore/detail/google-analytics/fefimfimnhjjkomigakinmjileehfopp
   tech: [core_reporting_api, management_api, mcf_reporting_api, metadata_api]
+
+
+# Google Analytics tech tags. Demos and tools should tag themselves with
+# one or more of these to make tech more discoverable.
+tech:
+  analyticsjs:
+    name: analytics.js
+    url: https://developers.google.com/analytics/devguides/collection/analyticsjs/
+  core_reporting_api:
+    name: Core Reporting API
+    url: https://developers.google.com/analytics/devguides/reporting/core/
+  ecjs:
+    name: Enhanced Ecommerce (ec.js)
+    url: https://developers.google.com/analytics/devguides/collection/analyticsjs/enhanced-ecommerce
+  embed_api:
+    name: Embed API
+    url: https://developers.google.com/analytics/devguides/reporting/embed/
+  management_api:
+    name: Management API
+    url: https://developers.google.com/analytics/devguides/config/mgmt/
+  mcf_reporting_api:
+    name: MCF Reporting API
+    url: https://developers.google.com/analytics/devguides/reporting/mcf/
+  measurement_protocol:
+    name: Measurement Protocol
+    url: https://developers.google.com/analytics/devguides/collection/protocol/
+  measurement_protocol_validation_server:
+    name: Measurement Protocol Validation Server
+    url: https://developers.google.com/analytics/devguides/collection/protocol/v1/validating-hits
+  metadata_api:
+    name: Metadata API
+    url: https://developers.google.com/analytics/devguides/reporting/metadata/
+  provisioning_api:
+    name: Provisioning API
+    url: https://developers.google.com/analytics/devguides/config/provisioning/
+  real_time_reporting_api:
+    name: Real Time Reporting API
+    url: https://developers.google.com/analytics/devguides/reporting/realtime/
+  api_client_library_python:
+    name: Google API Client Library for Python
+    url: https://developers.google.com/api-client-library/python/start/installation
+
+
+# Links represent external URLs that may change.
+# Setting them here makes it easier to update globally.
+links:
+  devsite: http://developers.google.com/analytics
+  github: https://github.com/googleanalytics/ga-dev-tools
