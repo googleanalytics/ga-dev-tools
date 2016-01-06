@@ -13,7 +13,9 @@
 // limitations under the License.
 
 
+import concat from 'gulp-concat';
 import cssnext from 'gulp-cssnext';
+import del from 'del';
 import fse from 'fs-extra';
 import glob from 'glob';
 import gulp from 'gulp';
@@ -29,6 +31,7 @@ import prefix from 'gulp-autoprefixer';
 import rename from 'gulp-rename';
 import request from 'request';
 import resize from 'gulp-image-resize';
+import sourcemaps from 'gulp-sourcemaps';
 import webpack from 'webpack';
 
 
@@ -57,14 +60,14 @@ gulp.task('css', function() {
 
 gulp.task('images', function() {
   return merge(
-    gulp.src('./src/images/**/*.svg')
+    gulp.src('src/images/**/*.svg')
         .pipe(gulp.dest('public/images')),
 
-    gulp.src('./src/images/**/*.png')
+    gulp.src('src/images/**/*.png')
         .pipe(imagemin({use: [pngquant()]}))
         .pipe(gulp.dest('public/images')),
 
-    gulp.src('./src/images/**/*.png')
+    gulp.src('src/images/**/*.png')
         .pipe(resize({width : '50%'}))
         .pipe(imagemin({use: [pngquant()]}))
         .pipe(rename((p) => p.basename = p.basename.replace('@2x', '')))
@@ -73,7 +76,23 @@ gulp.task('images', function() {
 });
 
 
-gulp.task('javascript:bundle', (function() {
+gulp.task('javascript:bundle', ['javascript:webpack'], function(done) {
+  gulp.src([
+    'node_modules/jquery/dist/jquery.min.js',
+    'public/javascript/common.js',
+    'public/javascript/app.js'
+  ])
+  .pipe(sourcemaps.init())
+  .pipe(concat('app.js'))
+  .pipe(sourcemaps.write('.'))
+  .pipe(gulp.dest('public/javascript'))
+  .on('end', function() {
+    del(['public/javascript/common*']).then(() => done(), (err) => done(err));
+  });
+});
+
+
+gulp.task('javascript:webpack', (function() {
 
   let compiler;
 
@@ -192,7 +211,7 @@ gulp.task('json', function() {
 
   request(PARAMETER_REFERENCE_URL)
       .pipe(fse.createOutputStream('public/json/parameter-reference.json'));
-})
+});
 
 
 gulp.task('test', function() {
