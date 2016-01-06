@@ -21,9 +21,9 @@ import json
 import logging
 import lib.csv_writer as csv_writer
 from google.appengine.api import urlfetch
-from lib.controllers.base import BaseController
+from lib.handlers.base import BaseHandler
 
-class ExplorerCsvController(BaseController):
+class ExplorerCsvHandler(BaseHandler):
 
   def get(self):
     uri = ('https://www.googleapis.com/analytics/v3/data/ga?' +

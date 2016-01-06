@@ -16,10 +16,15 @@
 # limitations under the License.
 
 
-import webapp2
+import lib.service_account as service_account
 import lib.template as template
+from lib.handlers.base import BaseHandler
 
-class BaseController(webapp2.RequestHandler):
-  def get(self, project='index', page='index'):
-    html = template.render(project, page)
+
+class ServerSideAuthHandler(BaseHandler):
+  def get(self):
+    data = template.get_data('embed-api', 'server-side-authorization')
+    data['site']['access_token'] = service_account.get_access_token()
+    html = template.render('embed-api', 'server-side-authorization', data)
+
     self.response.write(html)

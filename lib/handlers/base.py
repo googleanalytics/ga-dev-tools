@@ -17,7 +17,9 @@
 
 
 import webapp2
+import lib.template as template
 
-class EmbedApiHandler(webapp2.RequestHandler):
-  def get(self):
-    return webapp2.redirect('/embed-api/', True)
+class BaseHandler(webapp2.RequestHandler):
+  def get(self, project='index', page='index'):
+    html = template.render(project, page)
+    self.response.write(html)

@@ -17,11 +17,11 @@
 
 
 import webapp2
-import lib.redirects as redirects
+import lib.handlers.redirects as redirects
 from webapp2_extras.routes import RedirectRoute
-from lib.controllers.base import BaseController
-from lib.controllers.explorer_csv import ExplorerCsvController
-from lib.controllers.server_side_auth import ServerSideAuthController
+from lib.handlers.base import BaseHandler
+from lib.handlers.explorer_csv import ExplorerCsvHandler
+from lib.handlers.server_side_auth import ServerSideAuthHandler
 
 
 router = webapp2.WSGIApplication([
@@ -32,17 +32,17 @@ router = webapp2.WSGIApplication([
   (r'/explorer.*', redirects.QueryExplorerRedirect),
 
   # Main routes
-  (r'/query-explorer/csvhandler.*', ExplorerCsvController),
+  (r'/query-explorer/csvhandler.*', ExplorerCsvHandler),
   RedirectRoute(r'/embed-api/server-side-authorization/',
-      handler=ServerSideAuthController, name='ServerSideAuth',
+      handler=ServerSideAuthHandler, name='ServerSideAuth',
       strict_slash=True),
 
   # Dynamic routes
   RedirectRoute(r'/',
-      handler=BaseController, name='Home', strict_slash=True),
+      handler=BaseHandler, name='Home', strict_slash=True),
   RedirectRoute(r'/<project>/',
-      handler=BaseController, name='Project', strict_slash=True),
+      handler=BaseHandler, name='Project', strict_slash=True),
   RedirectRoute(r'/<project>/<page>/',
-      handler=BaseController, name='Page', strict_slash=True),
+      handler=BaseHandler, name='Page', strict_slash=True),
 
 ], debug=False)
