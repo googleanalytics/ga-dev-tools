@@ -32,6 +32,7 @@ import rename from 'gulp-rename';
 import request from 'request';
 import resize from 'gulp-image-resize';
 import sourcemaps from 'gulp-sourcemaps';
+import uglify from 'gulp-uglify';
 import webpack from 'webpack';
 
 
@@ -70,7 +71,7 @@ gulp.task('images', function() {
     gulp.src('src/images/**/*.png')
         .pipe(resize({width : '50%'}))
         .pipe(imagemin({use: [pngquant()]}))
-        .pipe(rename((p) => p.basename = p.basename.replace('@2x', '')))
+        .pipe(rename((p) => p.basename = p.basename.replace('-2x', '')))
         .pipe(gulp.dest('public/images'))
   );
 });
@@ -78,16 +79,20 @@ gulp.task('images', function() {
 
 gulp.task('javascript:bundle', ['javascript:webpack'], function(done) {
   gulp.src([
-    'node_modules/jquery/dist/jquery.min.js',
     'public/javascript/common.js',
-    'public/javascript/app.js'
+    'public/javascript/index.js'
   ])
   .pipe(sourcemaps.init())
   .pipe(concat('app.js'))
+  .pipe(gulpIf(isProd(), uglify()))
   .pipe(sourcemaps.write('.'))
   .pipe(gulp.dest('public/javascript'))
   .on('end', function() {
-    del(['public/javascript/common*']).then(() => done(), (err) => done(err));
+    del([
+      'public/javascript/common*',
+      'public/javascript/index*'
+    ])
+    .then(() => done(), (err) => done(err));
   });
 });
 
@@ -98,7 +103,7 @@ gulp.task('javascript:webpack', (function() {
 
   function createCompiler() {
     let sourceFiles = glob.sync('./*/index.js', {cwd: './src/javascript/'})
-    let entry = {'app': './src/javascript/index.js'};
+    let entry = {'index': './src/javascript/index.js'};
 
     for (let filename of sourceFiles) {
       let name = path.join('.', path.dirname(filename));
