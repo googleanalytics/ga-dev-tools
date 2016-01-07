@@ -15,14 +15,17 @@
 
 // Global polyfills.
 require('core-js');
-require('svg4everybody');
 
 
 import analytics from './analytics';
 import header from './header';
 import highlighter from './highlighter';
 import sidebar from './sidebar';
+import svg4everybody from 'svg4everybody/dist/svg4everybody';
 
+
+// Polyfills SVG support in all browsers.
+svg4everybody();
 
 // Initiaze the header functionality.
 header.init();
