@@ -40,24 +40,25 @@ function isProd() {
   return process.env.NODE_ENV == 'production';
 }
 
+
 function streamError(err) {
   gutil.beep();
   gutil.log(err instanceof gutil.PluginError ? err.toString() : err.stack);
 }
 
+
 gulp.task('css', function() {
-  gulp.task('css', function() {
-    let opts = {
-      browsers: '> 1%, last 2 versions, Safari > 5, ie > 9, Firefox ESR',
-      compress: isProd(),
-      url: {url: 'inline'}
-    }
-    return gulp.src('./src/css/index.css')
-        .pipe(plumber({errorHandler: streamError}))
-        .pipe(cssnext(opts))
-        .pipe(gulp.dest('public/css'));
-  });
+  let opts = {
+    browsers: '> 1%, last 2 versions, Safari > 5, ie > 9, Firefox ESR',
+    compress: isProd(),
+    url: {url: 'inline'}
+  }
+  return gulp.src('./src/css/index.css')
+      .pipe(plumber({errorHandler: streamError}))
+      .pipe(cssnext(opts))
+      .pipe(gulp.dest('public/css'));
 });
+
 
 gulp.task('images', function() {
   return merge(
