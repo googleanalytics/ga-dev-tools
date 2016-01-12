@@ -25,8 +25,8 @@ const REFERENCE_URL = 'https://developers.google.com/' +
 export default class ParamElement extends React.Component {
 
   state = {
-    name: this.props.model.get('name'),
-    value: this.props.model.get('value')
+    name: this.props.param.name,
+    value: this.props.param.value
   }
 
   /**
@@ -34,9 +34,9 @@ export default class ParamElement extends React.Component {
    * @return {Object} e The React event.
    */
   handleNameChange = (e) => {
-    let data = {name: e.target.value, value: this.state.value};
-    this.setState(data)
-    this.props.model.set(data);
+    let name = e.target.value;
+    this.setState({name});
+    this.props.actions.editParamName(this.props.param.id, name);
   }
 
 
@@ -45,26 +45,9 @@ export default class ParamElement extends React.Component {
    * @return {Object} e The React event.
    */
   handleValueChange = (e) => {
-    let data = {name: this.state.name, value: e.target.value};
-    this.setState(data)
-    this.props.model.set(data);
-  }
-
-
-  /**
-   * Invokes the passed onRemove handler.
-   */
-  remove = () => {
-    this.props.onRemove();
-  }
-
-
-  /**
-   * Returns whether or not the parameter is required.
-   * @return {boolean}
-   */
-  isRequired() {
-    return this.props.model.get('required');
+    let value = e.target.value;
+    this.setState({value});
+    this.props.actions.editParamValue(this.props.param.id, value);
   }
 
 
@@ -73,7 +56,7 @@ export default class ParamElement extends React.Component {
    * @return {string}
    */
   getClassName() {
-    return 'HitBuilderParam' + (this.isRequired() ?
+    return 'HitBuilderParam' + (this.props.required ?
         ' HitBuilderParam--required' : '');
   }
 
@@ -102,8 +85,9 @@ export default class ParamElement extends React.Component {
    * @return {Object}
    */
   renderLabel() {
-    if (this.isRequired()) {
-      return <label className="HitBuilderParam-label">{this.state.name}</label>;
+    let {name} = this.state;
+    if (this.props.param.required) {
+      return <label className="HitBuilderParam-label">{name}</label>;
     }
     else {
       return (
@@ -112,13 +96,13 @@ export default class ParamElement extends React.Component {
             className="HitBuilderParam-removeIcon"
             tabIndex="1"
             title="Remove this parameter"
-            onClick={this.remove}>
+            onClick={this.props.onRemove}>
             <Icon type="remove-circle" />
           </span>
           <input
             className="FormField HitBuilderParam-inputLabel"
             ref="labelField"
-            value={this.state.name}
+            value={name}
             onChange={this.handleNameChange} />
         </div>
       );
@@ -133,9 +117,9 @@ export default class ParamElement extends React.Component {
   renderHelpIcon() {
     return (
       <a
-        href={`${REFERENCE_URL}#${this.state.name}`}
+        href={`${REFERENCE_URL}#${this.props.param.name}`}
         tabIndex="1"
-        title={`Learn more about the "${this.state.name}" parameter.`}
+        title={`Learn more about the "${this.props.param.name}" parameter.`}
         className="HitBuilderParam-helpIcon">
         <Icon type="info-outline" />
       </a>
@@ -167,11 +151,9 @@ export default class ParamElement extends React.Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    if (nextProps.model != this.state.model) {
-      this.setState({
-        name: nextProps.model.get('name'),
-        value: nextProps.model.get('value')
-      });
+    if (nextProps.param != this.props.param) {
+      let {name, value} = nextProps.param;
+      this.setState({name, value});
     }
   }
 

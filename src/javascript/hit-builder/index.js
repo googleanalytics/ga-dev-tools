@@ -1,4 +1,4 @@
-// Copyright 2015 Google Inc. All rights reserved.
+// Copyright 2016 Google Inc. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -16,10 +16,39 @@
 /* global gapi */
 
 
-import HitBuilder from './components/hit-builder';
 import React from 'react';
 import ReactDOM from 'react-dom';
+import {connect, Provider} from 'react-redux';
+import {bindActionCreators, createStore} from 'redux';
+
+import * as paramActions from './actions/params';
+import HitBuilder from './components/hit-builder';
+import {convertHitToParams, getInitialHitAndUpdateUrl} from './hit';
+import reducer from './reducers';
+
 import site from '../site';
+
+
+const store = createStore(reducer, {
+  params: convertHitToParams(getInitialHitAndUpdateUrl())
+});
+
+
+function mapStateToProps(state) {
+  return {
+    params: state.params
+  };
+}
+
+
+function mapDispatchToProps(dispatch) {
+  return {
+    actions: bindActionCreators(paramActions, dispatch)
+  }
+}
+
+
+let HitBuilderApp = connect(mapStateToProps, mapDispatchToProps)(HitBuilder);
 
 
 /**
@@ -27,8 +56,10 @@ import site from '../site';
  */
 function render(props) {
   ReactDOM.render(
-    <HitBuilder {...props} />,
-    document.getElementById('react-test')
+    <Provider store={store}>
+      <HitBuilderApp {...props} />
+    </Provider>,
+    document.getElementById('hit-builder')
   );
 }
 
@@ -55,4 +86,5 @@ gapi.analytics.ready(function() {
 
 
 // Perform an initial render.
+store.subscribe(render);
 render();

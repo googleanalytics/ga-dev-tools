@@ -13,26 +13,7 @@
 // limitations under the License.
 
 
-import 'babel-polyfill';
-import svg4everybody from 'svg4everybody/dist/svg4everybody';
-
-import analytics from './analytics';
-import header from './header';
-import highlighter from './highlighter';
-import sidebar from './sidebar';
-
-
-// Polyfills SVG support in all browsers.
-svg4everybody();
-
-// Initiaze the header functionality.
-header.init();
-
-// Initiaze the sidebar functionality.
-sidebar.init();
-
-// Highlight code blocks.
-highlighter.highlight('pre');
-
-// Setup Google Analytics tracking.
-analytics.track();
+export const ADD_PARAM = 'ADD_PARAM'
+export const REMOVE_PARAM = 'REMOVE_PARAM'
+export const EDIT_PARAM_NAME = 'EDIT_PARAM_NAME'
+export const EDIT_PARAM_VALUE = 'EDIT_PARAM_VALUE'

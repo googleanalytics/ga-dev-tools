@@ -1,4 +1,4 @@
-// Copyright 2015 Google Inc. All rights reserved.
+// Copyright 2016 Google Inc. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,25 +14,23 @@
 
 
 import accountSummaries from 'javascript-api-utils/lib/account-summaries';
-import AlertDispatcher from '../../components/alert-dispatcher';
-import Collection from '../../collection';
 import debounce from 'lodash/function/debounce';
 import escapeRegExp from 'lodash/string/escapeRegExp';
-import HitElement from './hit-element';
-import Icon from '../../components/icon';
-import IconButton from '../../components/icon-button';
-import Model from '../../model';
-import ParamElement from './param-element';
-import ParamButtonElement from './param-button-element';
-import ParamSearchSuggestElement from './param-search-suggest-element';
-import ParamSelectElement from './param-select-element';
-import ParamsCollection from '../params-collection';
-import React from 'react';
 import unescape from 'lodash/string/unescape';
+import React from 'react';
 import uuid from 'uuid';
 
+import HitElement from './hit-element';
+import ParamButtonElement from './param-button-element';
+import ParamElement from './param-element';
+import ParamSearchSuggestElement from './param-search-suggest-element';
+import ParamSelectElement from './param-select-element';
+import {convertParamsToHit, validateHit} from '../hit';
 
-const DEFAULT_HIT = 'v=1&t=pageview';
+import Collection from '../../collection';
+import AlertDispatcher from '../../components/alert-dispatcher';
+import Icon from '../../components/icon';
+import IconButton from '../../components/icon-button';
 
 
 const DEBOUNCE_DURATION = 500;
@@ -60,21 +58,6 @@ export default class HitBuilder extends React.Component {
     properties: [],
     parameters: []
   };
-
-
-  /**
-   * @constructor
-   * @param {Object} props The props object initially passed by React.
-   * @return {HitBuilder}
-   */
-  constructor(props) {
-    super(props);
-
-    this.params = new ParamsCollection(this.getInitialHit())
-        .on('add', this.handleParamChange)
-        .on('remove', this.handleParamChange)
-        .on('change', this.handleParamChange)
-  }
 
 
   /**
@@ -112,27 +95,6 @@ export default class HitBuilder extends React.Component {
 
 
   /**
-   * Gets the initial hit from the URL if present. If a hit is found in the URL
-   * it is captured and immediately stripped as to have two sources of state.
-   * If no hit is found in the URL the default hit is used.
-   * @return {string} The default hit.
-   */
-  getInitialHit() {
-    let query = location.search.slice(1);
-
-    if (query) {
-      if (history && history.replaceState) {
-        history.replaceState(history.state, document.title, location.pathname);
-      }
-      return query;
-    }
-    else {
-      return DEFAULT_HIT;
-    }
-  }
-
-
-  /**
    * Updates the state after the user has authorized.
    */
   handleUserAuthorized() {
@@ -142,13 +104,13 @@ export default class HitBuilder extends React.Component {
 
 
   /**
-   * Adds new param models after a user clicks to the "Add parameter" button.
+   * Adds a new param after a user clicks to the "Add parameter" button.
    * Also turns on a flag to indicate that this param needs focus after
    * rendering.
    */
   handleAddParam = () => {
     this.newParamNeedsFocus_ = true;
-    this.params.add(new Model({name:'', value:''}));
+    this.props.actions.addParam();
   }
 
 
@@ -156,12 +118,8 @@ export default class HitBuilder extends React.Component {
    * Rerenders the tool after any change occurs.
    */
   handleParamChange = () => {
-    if (this.state.hitStatus == 'VALID') {
-      this.setState({hitStatus: 'PENDING'})
-    }
-    else {
-      this.forceUpdate();
-    }
+    // TODO(philipwalton): invalidate the current hit
+    // this.props.actions.resetHitStatus();
   }
 
 
@@ -170,7 +128,7 @@ export default class HitBuilder extends React.Component {
    * @param {string} hit The hit payload value.
    */
   handleHitChange = (hit) => {
-    this.params.update(hit);
+    // this.params.update(hit);
   }
 
 
@@ -178,7 +136,7 @@ export default class HitBuilder extends React.Component {
    * Generates a random UUID value for the "cid" parameter.
    */
   handleGenerateUuid = () => {
-    this.params.models[3].set({value: uuid.v4()});
+    this.props.actions.editParamValue(this.props.params[3].id, uuid.v4());
   }
 
 
@@ -188,12 +146,12 @@ export default class HitBuilder extends React.Component {
    */
   validateParams = () => {
     this.setState({isValidating: true});
-    this.params.validate().then((data) => {
+    validateHit(this.props.params).then((data) => {
 
       // In some cases the query will have changed before the response gets
       // back, so we need to check that the result is for the current query.
       // If it's not, ignore it.
-      if (data.query != this.params.toQueryString()) return;
+      if (data.hit != convertParamsToHit(this.props.params)) return;
 
       let result = data.response.hitParsingResult[0];
       if (result.valid) {
@@ -251,7 +209,10 @@ export default class HitBuilder extends React.Component {
 
     for (let message of messages) {
       let processedMessage = processMessage(message);
-      if (this.params.has(processedMessage.parameter)) {
+
+      if (this.props.params.some((param) =>
+          param.name === processedMessage.parameter)) {
+
         let {parameter, description} = processedMessage;
         paramMessages[parameter] = description;
       }
@@ -279,6 +240,8 @@ export default class HitBuilder extends React.Component {
 
   render() {
 
+    let {params} = this.props;
+
     return (
       <div>
 
@@ -295,7 +258,7 @@ export default class HitBuilder extends React.Component {
           messages={this.state.allMessages}
           onBlur={this.handleHitChange}
           onValidate={this.validateParams}
-          hitPayload={this.params.toQueryString()} />
+          hitPayload={convertParamsToHit(params)} />
 
         <div className="HitBuilderParams">
 
@@ -308,41 +271,46 @@ export default class HitBuilder extends React.Component {
           </div>
 
           <ParamSelectElement
-            model={this.params.models[0]}
             ref="v"
+            actions={this.props.actions}
+            param={params[0]}
             options={['1']}
             message={this.state.paramMessages['v']} />
 
           <ParamSelectElement
-            model={this.params.models[1]}
             ref="t"
+            actions={this.props.actions}
+            param={params[1]}
             options={HIT_TYPES}
             message={this.state.paramMessages['t']} />
 
           <ParamSearchSuggestElement
-            model={this.params.models[2]}
             ref="tid"
+            actions={this.props.actions}
+            param={params[2]}
             options={this.state.properties}
             placeholder="UA-XXXXX-Y"
             message={this.state.paramMessages['tid']} />
 
           <ParamButtonElement
-            model={this.params.models[3]}
             ref="cid"
+            actions={this.props.actions}
+            param={params[3]}
             type="refresh"
             title="Randomly generate UUID"
             message={this.state.paramMessages['cid']}
             onClick={this.handleGenerateUuid} />
 
-          {this.params.models.slice(4).map((model) => {
-            let isLast = (this.params.last() == model);
+          {params.slice(4).map((param, i) => {
+            let isLast = (params.length - 1 === i);
             return (
               <ParamElement
-                model={model}
-                key={model.uid}
+                key={param.id}
+                actions={this.props.actions}
+                param={param}
                 needsFocus={isLast && this.newParamNeedsFocus_}
-                message={this.state.paramMessages[model.get('name')]}
-                onRemove={this.params.remove.bind(this.params, model)} />
+                message={this.state.paramMessages[param.name]}
+                onRemove={() => this.props.actions.removeParam(param.id) } />
             );
           })}
 

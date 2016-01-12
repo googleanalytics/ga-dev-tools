@@ -13,26 +13,12 @@
 // limitations under the License.
 
 
-import 'babel-polyfill';
-import svg4everybody from 'svg4everybody/dist/svg4everybody';
+import {combineReducers} from 'redux'
 
-import analytics from './analytics';
-import header from './header';
-import highlighter from './highlighter';
-import sidebar from './sidebar';
+import params from './params'
 
 
-// Polyfills SVG support in all browsers.
-svg4everybody();
+const reducer = combineReducers({params});
 
-// Initiaze the header functionality.
-header.init();
 
-// Initiaze the sidebar functionality.
-sidebar.init();
-
-// Highlight code blocks.
-highlighter.highlight('pre');
-
-// Setup Google Analytics tracking.
-analytics.track();
+export default reducer
