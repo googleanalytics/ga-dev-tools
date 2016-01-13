@@ -13,7 +13,9 @@
 // limitations under the License.
 
 
-export const ADD_PARAM = 'ADD_PARAM'
-export const REMOVE_PARAM = 'REMOVE_PARAM'
-export const EDIT_PARAM_NAME = 'EDIT_PARAM_NAME'
-export const EDIT_PARAM_VALUE = 'EDIT_PARAM_VALUE'
+import * as types from './types';
+
+
+export function setHitStatus(status) {
+  return {type: types.SET_HIT_STATUS, status};
+}

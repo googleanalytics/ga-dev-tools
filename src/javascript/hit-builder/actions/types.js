@@ -13,21 +13,9 @@
 // limitations under the License.
 
 
-import * as types from './types';
+export const ADD_PARAM = 'ADD_PARAM'
+export const REMOVE_PARAM = 'REMOVE_PARAM'
+export const EDIT_PARAM_NAME = 'EDIT_PARAM_NAME'
+export const EDIT_PARAM_VALUE = 'EDIT_PARAM_VALUE'
 
-
-export function addParam() {
-  return {type: types.ADD_PARAM};
-}
-
-export function removeParam(id) {
-  return {type: types.REMOVE_PARAM, id};
-}
-
-export function editParamName(id, name) {
-  return {type: types.EDIT_PARAM_NAME, id, name};
-}
-
-export function editParamValue(id, value) {
-  return {type: types.EDIT_PARAM_VALUE, id, value};
-}
+export const SET_HIT_STATUS = 'SET_HIT_STATUS';
