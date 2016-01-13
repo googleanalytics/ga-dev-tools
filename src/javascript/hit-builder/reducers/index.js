@@ -15,8 +15,9 @@
 
 import {combineReducers} from 'redux';
 
-import params from './params';
+import isAuthorized from './auth';
 import hitStatus from './hit-status';
+import params from './params';
 
 
-export default combineReducers({hitStatus, params});
+export default combineReducers({hitStatus, isAuthorized, params});

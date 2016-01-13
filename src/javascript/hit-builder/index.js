@@ -31,6 +31,7 @@ import site from '../site';
 
 const store = createStore(reducer, {
   hitStatus: 'UNVALIDATED',
+  isAuthorized: false,
   params: convertHitToParams(getInitialHitAndUpdateUrl())
 });
 
@@ -68,7 +69,10 @@ function render(props) {
  * Updates the CSS state classes and rerenders in the authorized state.
  */
 function setup() {
+  // TODO(philipwalton): remove this once redux-thunk is implemented.
   render({isAuthorized: true});
+
+  store.dispatch(actions.setAuthorizedState());
   site.setReadyState();
 }
 

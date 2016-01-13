@@ -136,8 +136,6 @@ export default class HitBuilder extends React.Component {
   validateParams = () => {
     this.props.actions.setHitStatus('VALIDATING');
 
-
-
     validateHit(this.props.params).then((data) => {
 
       // In some cases the query will have changed before the response gets

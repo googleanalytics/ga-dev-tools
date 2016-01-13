@@ -1,7 +1,10 @@
-import * as params from './params';
+import * as isAuthorized from './auth';
 import * as hitStatus from './hit-status';
+import * as params from './params';
+
 
 export default {
-  ...params,
-  ...hitStatus
+  ...hitStatus,
+  ...isAuthorized,
+  ...params
 };
