@@ -13,10 +13,6 @@
 // limitations under the License.
 
 
-import accountSummaries from 'javascript-api-utils/lib/account-summaries';
-import debounce from 'lodash/function/debounce';
-import escapeRegExp from 'lodash/string/escapeRegExp';
-import unescape from 'lodash/string/unescape';
 import React from 'react';
 import uuid from 'uuid';
 
@@ -25,15 +21,13 @@ import ParamButtonElement from './param-button-element';
 import ParamElement from './param-element';
 import ParamSearchSuggestElement from './param-search-suggest-element';
 import ParamSelectElement from './param-select-element';
+
 import {convertParamsToHit, validateHit} from '../hit';
 
 import Collection from '../../collection';
 import AlertDispatcher from '../../components/alert-dispatcher';
 import Icon from '../../components/icon';
 import IconButton from '../../components/icon-button';
-
-
-const DEBOUNCE_DURATION = 500;
 
 
 const HIT_TYPES = [
@@ -53,52 +47,7 @@ export default class HitBuilder extends React.Component {
   state = {
     allMessages: [],
     paramMessages: {},
-    properties: [],
-    parameters: []
   };
-
-
-  /**
-   * Makes a request to the AccoutSummaries.get method updates the properties
-   * state when done with the result.
-   */
-  getProperties() {
-    accountSummaries.get().then((summaries) => {
-      let properties = summaries.allProperties().map((property) => {
-        return {
-          name: property.name,
-          id: property.id,
-          group: summaries.getAccountByPropertyId(property.id).name
-        }
-      })
-      this.setState({properties});
-    });
-  }
-
-
-  /**
-   * Makes a request for the parameter reference data and updates the
-   * parameters state when done with the result.
-   */
-  getParameters() {
-    $.getJSON('/public/json/parameter-reference.json', (data) => {
-      let parameters = data.parameters.map((param) => {
-        param.name = unescape(param.name);
-        param.pattern = new RegExp(param.id.replace(/_/g, '\\d+'));
-        return param;
-      });
-      this.setState({parameters});
-    });
-  }
-
-
-  /**
-   * Updates the state after the user has authorized.
-   */
-  handleUserAuthorized() {
-    this.getParameters();
-    this.getProperties();
-  }
 
 
   /**
@@ -216,12 +165,6 @@ export default class HitBuilder extends React.Component {
    * ---------------------------------------------------------
    */
 
-  componentWillReceiveProps(nextProps) {
-    if (nextProps.isAuthorized && !this.state.isAuthorized) {
-      this.handleUserAuthorized();
-    }
-  }
-
   componentDidUpdate() {
     this.newParamNeedsFocus_ = false;
   }
@@ -275,7 +218,7 @@ export default class HitBuilder extends React.Component {
             ref="tid"
             actions={this.props.actions}
             param={params[2]}
-            options={this.state.properties}
+            options={this.props.properties}
             placeholder="UA-XXXXX-Y"
             message={this.state.paramMessages['tid']} />
 

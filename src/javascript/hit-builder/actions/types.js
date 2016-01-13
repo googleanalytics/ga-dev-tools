@@ -24,3 +24,6 @@ export const SET_HIT_STATUS = 'SET_HIT_STATUS';
 
 // isAuthorized
 export const SET_AUTHORIZED_STATE = 'SET_AUTHORIZED_STATE';
+
+// properties
+export const SET_USER_PROPERTIES = 'SET_USER_PROPERTIES';

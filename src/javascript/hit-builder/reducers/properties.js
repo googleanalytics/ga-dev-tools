@@ -13,17 +13,17 @@
 // limitations under the License.
 
 
-import {combineReducers} from 'redux';
-
-import isAuthorized from './auth';
-import hitStatus from './hit-status';
-import params from './params';
-import properties from './properties';
+import * as types from '../actions/types';
 
 
-export default combineReducers({
-  hitStatus,
-  isAuthorized,
-  params,
-  properties
-});
+export default function properties(state = [], action) {
+
+  switch (action.type) {
+
+    case types.SET_USER_PROPERTIES:
+      return action.properties;
+
+    default:
+      return state
+  }
+}

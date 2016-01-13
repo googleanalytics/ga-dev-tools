@@ -13,9 +13,35 @@
 // limitations under the License.
 
 
+import accountSummaries from 'javascript-api-utils/lib/account-summaries';
+
 import * as types from './types';
 
 
-export function setAuthorizedState() {
+function setAuthorizedState() {
   return {type: types.SET_AUTHORIZED_STATE};
+}
+
+
+function setUserProperties(properties) {
+  return {type: types.SET_USER_PROPERTIES, properties};
+}
+
+
+export function handleAuthorizationSuccess() {
+  return function(dispatch) {
+    dispatch(setAuthorizedState());
+
+    accountSummaries.get().then((summaries) => {
+      let properties = summaries.allProperties().map((property) => {
+        return {
+          name: property.name,
+          id: property.id,
+          group: summaries.getAccountByPropertyId(property.id).name
+        }
+      })
+
+      dispatch(setUserProperties(properties));
+    });
+  }
 }

@@ -60,22 +60,18 @@ function render(props) {
  * The callback invoked when the Embed API has authorized the user.
  * Updates the CSS state classes and rerenders in the authorized state.
  */
-function setup() {
-  // TODO(philipwalton): remove this once redux-thunk is implemented.
-  render({isAuthorized: true});
-
-  store.dispatch(actions.setAuthorizedState());
+function onAuthorizationSuccess() {
+  store.dispatch(actions.handleAuthorizationSuccess());
   site.setReadyState();
 }
 
 
-// Run setup when the Embed API is ready and the user is authorized.
 gapi.analytics.ready(function() {
   if (gapi.analytics.auth.isAuthorized()) {
-    setup();
+    onAuthorizationSuccess();
   }
   else {
-    gapi.analytics.auth.once('success', setup);
+    gapi.analytics.auth.once('success', onAuthorizationSuccess);
   }
 });
 
