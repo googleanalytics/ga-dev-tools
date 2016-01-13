@@ -23,17 +23,9 @@ import {bindActionCreators, createStore} from 'redux';
 
 import actions from './actions';
 import HitBuilder from './components/hit-builder';
-import {convertHitToParams, getInitialHitAndUpdateUrl} from './hit';
-import reducer from './reducers';
+import store from './store';
 
 import site from '../site';
-
-
-const store = createStore(reducer, {
-  hitStatus: 'UNVALIDATED',
-  isAuthorized: false,
-  params: convertHitToParams(getInitialHitAndUpdateUrl())
-});
 
 
 function mapStateToProps(state) {
