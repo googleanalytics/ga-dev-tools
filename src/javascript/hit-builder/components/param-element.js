@@ -36,6 +36,7 @@ export default class ParamElement extends React.Component {
   handleNameChange = (e) => {
     let name = e.target.value;
     this.setState({name});
+    this.props.actions.setHitStatus('UNVALIDATED');
     this.props.actions.editParamName(this.props.param.id, name);
   }
 
@@ -47,6 +48,7 @@ export default class ParamElement extends React.Component {
   handleValueChange = (e) => {
     let value = e.target.value;
     this.setState({value});
+    this.props.actions.setHitStatus('UNVALIDATED');
     this.props.actions.editParamValue(this.props.param.id, value);
   }
 

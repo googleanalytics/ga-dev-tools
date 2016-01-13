@@ -51,8 +51,6 @@ const HIT_TYPES = [
 export default class HitBuilder extends React.Component {
 
   state = {
-    hitStatus: 'PENDING',
-    isValidating: false,
     allMessages: [],
     paramMessages: {},
     properties: [],
@@ -115,15 +113,6 @@ export default class HitBuilder extends React.Component {
 
 
   /**
-   * Rerenders the tool after any change occurs.
-   */
-  handleParamChange = () => {
-    // TODO(philipwalton): invalidate the current hit
-    // this.props.actions.resetHitStatus();
-  }
-
-
-  /**
    * Updates the param collection with a new hit value.
    * @param {string} hit The hit payload value.
    */
@@ -145,7 +134,10 @@ export default class HitBuilder extends React.Component {
    * the validation state.
    */
   validateParams = () => {
-    this.setState({isValidating: true});
+    this.props.actions.setHitStatus('VALIDATING');
+
+
+
     validateHit(this.props.params).then((data) => {
 
       // In some cases the query will have changed before the response gets
@@ -155,9 +147,8 @@ export default class HitBuilder extends React.Component {
 
       let result = data.response.hitParsingResult[0];
       if (result.valid) {
+        this.props.actions.setHitStatus('VALID');
         this.setState({
-          hitStatus: 'VALID',
-          isValidating: false,
           allMessages: [],
           paramMessages: {}
         });
@@ -166,9 +157,8 @@ export default class HitBuilder extends React.Component {
         let {allMessages, paramMessages} =
             this.getErrorsFromParserMessage(result.parserMessage);
 
+        this.props.actions.setHitStatus('INVALID');
         this.setState({
-          hitStatus: 'INVALID',
-          isValidating: false,
           allMessages,
           paramMessages
         });
@@ -176,7 +166,7 @@ export default class HitBuilder extends React.Component {
     })
     // TODO(philipwalton): handle timeout errors and slow network connection.
     .catch((err) => {
-      this.setState({isValidating: false});
+      this.props.actions.setHitStatus('UNVALIDATED');
       AlertDispatcher.addOnce({
         title: 'Oops, an error occurred while validating the hit',
         message: `Check your connection to make sure you're still online.
@@ -253,8 +243,7 @@ export default class HitBuilder extends React.Component {
         </div>
 
         <HitElement
-          hitStatus={this.state.hitStatus}
-          isValidating={this.state.isValidating}
+          hitStatus={this.props.hitStatus}
           messages={this.state.allMessages}
           onBlur={this.handleHitChange}
           onValidate={this.validateParams}

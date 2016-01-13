@@ -13,10 +13,17 @@
 // limitations under the License.
 
 
-import {combineReducers} from 'redux';
-
-import params from './params';
-import hitStatus from './hit-status';
+import * as types from '../actions/types';
 
 
-export default combineReducers({hitStatus, params});
+export default function hitStatus(state = 'UNVALIDATED', action) {
+
+  switch (action.type) {
+
+    case types.SET_HIT_STATUS:
+      return action.status;
+
+    default:
+      return state
+  }
+}

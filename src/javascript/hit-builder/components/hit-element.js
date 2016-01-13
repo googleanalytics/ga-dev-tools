@@ -30,7 +30,7 @@ export default class HitElement extends React.Component {
     value: this.props.hitPayload,
     hitSent: false,
     hitPayloadCopied: false,
-    isValidating: this.props.isValidating
+    hitUriCopied: false
   }
 
 
@@ -138,7 +138,7 @@ export default class HitElement extends React.Component {
               className="HitElement-statusIcon">
               <Icon type="check" />
             </span>
-            <div class="HitElement-statusBody">
+            <div className="HitElement-statusBody">
               <h1 className="HitElement-statusHeading">Hit is valid!</h1>
               <p className="HitElement-statusMessage">Use the controls below to
               copy the hit or share it with coworkers.<br />
@@ -164,7 +164,7 @@ export default class HitElement extends React.Component {
             </div>
           </header>
         )
-      case 'PENDING':
+      default:
         return (
           <header className="HitElement-status">
             <span
@@ -191,17 +191,20 @@ export default class HitElement extends React.Component {
    * @return {Object}
    */
   renderHitActions() {
-    if (this.props.hitStatus != 'VALID') {
-      let buttonText = (this.props.hitStatus == 'INVALID' ? 'Rev' : 'V') +
+    let {props, state} = this;
+    let {hitStatus} = props;
+
+    if (hitStatus != 'VALID') {
+      let buttonText = (hitStatus == 'INVALID' ? 'Rev' : 'V') +
           'alidate hit';
 
       return (
         <div className="HitElement-action">
           <button
             className="Button Button--action"
-            disabled={this.state.isValidating}
-            onClick={this.props.onValidate}>
-            {this.state.isValidating ? 'Validating...' : buttonText}
+            disabled={hitStatus === 'VALIDATING'}
+            onClick={props.onValidate}>
+            {hitStatus === 'VALIDATING' ? 'Validating...' : buttonText}
           </button>
         </div>
       )
@@ -210,7 +213,7 @@ export default class HitElement extends React.Component {
     let sendHitButton = (
       <IconButton
         className="Button Button--success Button--withIcon"
-        type={this.state.hitSent ? 'check' : 'send'}
+        type={state.hitSent ? 'check' : 'send'}
         onClick={this.sendHit}>
         Send hit to Google Analytics
       </IconButton>
@@ -222,12 +225,12 @@ export default class HitElement extends React.Component {
           <div className="ButtonSet">
             {sendHitButton}
             <IconButton
-              type={this.state.hitPayloadCopied ? 'check' : 'content-paste'}
+              type={state.hitPayloadCopied ? 'check' : 'content-paste'}
               onClick={this.copyHitPayload}>
               Copy hit payload
             </IconButton>
             <IconButton
-              type={this.state.hitUriCopied ? 'check' : 'link'}
+              type={state.hitUriCopied ? 'check' : 'link'}
               onClick={this.copyShareUrl}>
               Copy sharable link to hit
             </IconButton>
@@ -235,13 +238,13 @@ export default class HitElement extends React.Component {
           <div
             ref="hitPayload"
             className="u-visuallyHidden">
-            {this.state.value}
+            {state.value}
           </div>
           <div
             ref="shareUrl"
             className="u-visuallyHidden">
             {location.protocol + '//' + location.host + location.pathname +
-            '?' + this.state.value}
+            '?' + state.value}
           </div>
         </div>
       )
@@ -270,9 +273,6 @@ export default class HitElement extends React.Component {
         hitPayloadCopied: false,
         hitUriCopied: false
       });
-    }
-    if (nextProps.isValidating != this.state.isValidating) {
-      this.setState({isValidating: nextProps.isValidating});
     }
   }
 

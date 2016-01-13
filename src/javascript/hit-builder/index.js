@@ -21,7 +21,7 @@ import ReactDOM from 'react-dom';
 import {connect, Provider} from 'react-redux';
 import {bindActionCreators, createStore} from 'redux';
 
-import * as paramActions from './actions/params';
+import actions from './actions';
 import HitBuilder from './components/hit-builder';
 import {convertHitToParams, getInitialHitAndUpdateUrl} from './hit';
 import reducer from './reducers';
@@ -30,20 +30,19 @@ import site from '../site';
 
 
 const store = createStore(reducer, {
+  hitStatus: 'UNVALIDATED',
   params: convertHitToParams(getInitialHitAndUpdateUrl())
 });
 
 
 function mapStateToProps(state) {
-  return {
-    params: state.params
-  };
+  return state;
 }
 
 
 function mapDispatchToProps(dispatch) {
   return {
-    actions: bindActionCreators(paramActions, dispatch)
+    actions: bindActionCreators(actions, dispatch)
   }
 }
 

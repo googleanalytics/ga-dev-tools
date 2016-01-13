@@ -13,10 +13,10 @@
 // limitations under the License.
 
 
-import * as types from '../constants/param-types'
+import * as types from '../actions/types';
 
 
-export default function todos(state = [], action) {
+export default function params(state = [], action) {
 
   switch (action.type) {
 
