@@ -17,7 +17,8 @@ import * as types from './types';
 import {setHitStatus} from './hit-status';
 import {setValidationMessages} from './validation-messages';
 
-import {convertParamsToHit, validateHit} from '../hit';
+import {convertParamsToHit, convertHitToParams,
+        getHitValidationResult} from '../hit';
 
 import AlertDispatcher from '../../components/alert-dispatcher';
 
@@ -38,7 +39,22 @@ export function editParamValue(id, value) {
   return {type: types.EDIT_PARAM_VALUE, id, value};
 }
 
-export function validateParams() {
+export function replaceParams(params) {
+  return {type: types.REPLACE_PARAMS, params};
+}
+
+export function updateHit(newHit) {
+  return function(dispatch, getState) {
+    let oldHit = convertParamsToHit(getState().params);
+    if (oldHit != newHit) {
+      let params = convertHitToParams(newHit);
+      dispatch(setHitStatus('UNVALIDATED'));
+      dispatch(replaceParams(params));
+    }
+  }
+}
+
+export function validateHit() {
 
   function formatMessage(message) {
     let linkRegex = /Please see http:\/\/goo\.gl\/a8d4RP#\w+ for details\.$/;
@@ -52,20 +68,20 @@ export function validateParams() {
 
   return function(dispatch, getState) {
 
-    let {params} = getState();
+    let hit = convertParamsToHit(getState().params);
     dispatch(setHitStatus('VALIDATING'));
 
-    validateHit(params).then((data) => {
+    getHitValidationResult(hit).then((data) => {
 
-      let {params} = getState();
+      let hit = convertParamsToHit(getState().params);
 
       // In some cases the query will have changed before the response gets
       // back, so we need to check that the result is for the current query.
       // If it's not, ignore it.
-      if (data.hit != convertParamsToHit(params)) return;
+      if (data.hit != hit) return;
 
       let result = data.response.hitParsingResult[0];
-      let messages = result.parserMessage;
+      let validationMessages = result.parserMessage;
 
       if (result.valid) {
         dispatch(setHitStatus('VALID'));
@@ -73,7 +89,7 @@ export function validateParams() {
       }
       else {
         dispatch(setHitStatus('INVALID'));
-        dispatch(setValidationMessages(messages.map(formatMessage)));
+        dispatch(setValidationMessages(validationMessages.map(formatMessage)));
       }
     })
     // TODO(philipwalton): handle timeout errors and slow network connection.

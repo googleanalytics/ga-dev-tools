@@ -105,8 +105,7 @@ export default class HitBuilder extends React.Component {
         <HitElement
           actions={this.props.actions}
           hitStatus={this.props.hitStatus}
-          messages={this.props.validationMessages}
-          onBlur={this.handleHitChange}
+          validationMessages={this.props.validationMessages}
           hitPayload={convertParamsToHit(params)} />
 
         <div className="HitBuilderParams">

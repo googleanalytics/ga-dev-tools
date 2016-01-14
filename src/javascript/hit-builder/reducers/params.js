@@ -41,6 +41,9 @@ export default function params(state = [], action) {
       return state.map((param) =>
           param.id === action.id ? {...param, value: action.value} : param);
 
+    case types.REPLACE_PARAMS:
+      return action.params;
+
     default:
       return state
   }

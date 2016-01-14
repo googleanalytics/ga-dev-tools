@@ -38,8 +38,8 @@ export default class HitElement extends React.Component {
    * Updates the values state when the users changes the hit text.
    * @param {Object} e The React event object.
    */
-  handleChange = (e) => {
-    this.setState({value: e.target.value});
+  handleChange = ({target: {value}}) => {
+    this.setState({value});
   }
 
 
@@ -57,9 +57,9 @@ export default class HitElement extends React.Component {
    * hit value.
    * @param {Object} e The React event object.
    */
-  handleBlur = (e) => {
+  handleBlur = ({target: {value}}) => {
     $('body').removeClass('is-editing');
-    this.props.onBlur(e.target.value);
+    this.props.actions.updateHit(value);
   }
 
 
@@ -157,7 +157,7 @@ export default class HitElement extends React.Component {
             <div className="HitElement-statusBody">
               <h1 className="HitElement-statusHeading">Hit is invalid!</h1>
               <ul className="HitElement-statusMessage">
-                {this.props.messages.map((message) => (
+                {this.props.validationMessages.map((message) => (
                   <li key={message.param}>{message.description}</li>
                 ))}
               </ul>
@@ -203,7 +203,7 @@ export default class HitElement extends React.Component {
           <button
             className="Button Button--action"
             disabled={hitStatus === 'VALIDATING'}
-            onClick={() => actions.validateParams()}>
+            onClick={() => actions.validateHit()}>
             {hitStatus === 'VALIDATING' ? 'Validating...' : buttonText}
           </button>
         </div>

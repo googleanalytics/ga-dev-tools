@@ -100,11 +100,10 @@ export function convertParamsToHit(params) {
 /**
  * Sends a validation request to the Measurement Protocol Validation Server
  * and returns a promise that will be fulfilled with the response.
- * @param {Array} params And array of name/value params that make up a hit.
+ * @param {string} hit A Measurement Protocol hit payload.
  * @return {Promise}
  */
-export function validateHit(params) {
-  let hit = convertParamsToHit(params);
+export function getHitValidationResult(hit) {
   return new Promise((resolve, reject) => {
     $.ajax({
       method: 'POST',
