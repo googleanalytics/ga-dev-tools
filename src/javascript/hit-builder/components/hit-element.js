@@ -158,7 +158,7 @@ export default class HitElement extends React.Component {
               <h1 className="HitElement-statusHeading">Hit is invalid!</h1>
               <ul className="HitElement-statusMessage">
                 {this.props.messages.map((message) => (
-                  <li key={message.parameter}>{message.description}</li>
+                  <li key={message.param}>{message.description}</li>
                 ))}
               </ul>
             </div>
@@ -192,7 +192,7 @@ export default class HitElement extends React.Component {
    */
   renderHitActions() {
     let {props, state} = this;
-    let {hitStatus} = props;
+    let {actions, hitStatus} = props;
 
     if (hitStatus != 'VALID') {
       let buttonText = (hitStatus == 'INVALID' ? 'Rev' : 'V') +
@@ -203,7 +203,7 @@ export default class HitElement extends React.Component {
           <button
             className="Button Button--action"
             disabled={hitStatus === 'VALIDATING'}
-            onClick={props.onValidate}>
+            onClick={() => actions.validateParams()}>
             {hitStatus === 'VALIDATING' ? 'Validating...' : buttonText}
           </button>
         </div>

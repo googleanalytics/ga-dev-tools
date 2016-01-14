@@ -27,3 +27,6 @@ export const SET_AUTHORIZED_STATE = 'SET_AUTHORIZED_STATE';
 
 // properties
 export const SET_USER_PROPERTIES = 'SET_USER_PROPERTIES';
+
+// validationMessages
+export const SET_VALIDATION_MESSAGES = 'SET_VALIDATION_MESSAGES';

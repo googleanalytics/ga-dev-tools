@@ -13,19 +13,17 @@
 // limitations under the License.
 
 
-import {combineReducers} from 'redux';
-
-import isAuthorized from './auth';
-import hitStatus from './hit-status';
-import params from './params';
-import properties from './properties';
-import validationMessages from './validation-messages';
+import * as types from '../actions/types';
 
 
-export default combineReducers({
-  hitStatus,
-  isAuthorized,
-  params,
-  properties,
-  validationMessages
-});
+export default function validationMessages(state = [], action) {
+
+  switch (action.type) {
+
+    case types.SET_VALIDATION_MESSAGES:
+      return action.validationMessages;
+
+    default:
+      return state
+  }
+}

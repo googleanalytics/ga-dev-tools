@@ -13,19 +13,9 @@
 // limitations under the License.
 
 
-import {combineReducers} from 'redux';
-
-import isAuthorized from './auth';
-import hitStatus from './hit-status';
-import params from './params';
-import properties from './properties';
-import validationMessages from './validation-messages';
+import * as types from './types';
 
 
-export default combineReducers({
-  hitStatus,
-  isAuthorized,
-  params,
-  properties,
-  validationMessages
-});
+export function setValidationMessages(validationMessages) {
+  return {type: types.SET_VALIDATION_MESSAGES, validationMessages};
+}

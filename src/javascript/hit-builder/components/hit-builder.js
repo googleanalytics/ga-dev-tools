@@ -22,10 +22,9 @@ import ParamElement from './param-element';
 import ParamSearchSuggestElement from './param-search-suggest-element';
 import ParamSelectElement from './param-select-element';
 
-import {convertParamsToHit, validateHit} from '../hit';
+import {convertParamsToHit} from '../hit';
 
 import Collection from '../../collection';
-import AlertDispatcher from '../../components/alert-dispatcher';
 import Icon from '../../components/icon';
 import IconButton from '../../components/icon-button';
 
@@ -43,11 +42,6 @@ const HIT_TYPES = [
 
 
 export default class HitBuilder extends React.Component {
-
-  state = {
-    allMessages: [],
-    paramMessages: {},
-  };
 
 
   /**
@@ -78,84 +72,9 @@ export default class HitBuilder extends React.Component {
   }
 
 
-  /**
-   * Validates the hit parameters and updates the hit status box according to
-   * the validation state.
-   */
-  validateParams = () => {
-    this.props.actions.setHitStatus('VALIDATING');
-
-    validateHit(this.props.params).then((data) => {
-
-      // In some cases the query will have changed before the response gets
-      // back, so we need to check that the result is for the current query.
-      // If it's not, ignore it.
-      if (data.hit != convertParamsToHit(this.props.params)) return;
-
-      let result = data.response.hitParsingResult[0];
-      if (result.valid) {
-        this.props.actions.setHitStatus('VALID');
-        this.setState({
-          allMessages: [],
-          paramMessages: {}
-        });
-      }
-      else {
-        let {allMessages, paramMessages} =
-            this.getErrorsFromParserMessage(result.parserMessage);
-
-        this.props.actions.setHitStatus('INVALID');
-        this.setState({
-          allMessages,
-          paramMessages
-        });
-      }
-    })
-    // TODO(philipwalton): handle timeout errors and slow network connection.
-    .catch((err) => {
-      this.props.actions.setHitStatus('UNVALIDATED');
-      AlertDispatcher.addOnce({
-        title: 'Oops, an error occurred while validating the hit',
-        message: `Check your connection to make sure you're still online.
-                  If you're still having problems, try refreshing the page.`
-      });
-    })
-  }
-
-
-  /**
-   * Gets data about the hit errors from the parser message.
-   * @return {Object} An object containing the "allMessages" property, which
-   *     contains an array of all messages and a "paramMessages" property,
-   *     which contains an object of only messages specific to individual
-   *     parameters.
-   */
-  getErrorsFromParserMessage(messages) {
-    let allMessages = []
-    let paramMessages = {};
-
-    function processMessage(message) {
-      let linkRegex = /Please see http:\/\/goo\.gl\/a8d4RP#\w+ for details\.$/;
-      return {
-        parameter: message.parameter,
-        description: message.description.replace(linkRegex, '').trim(),
-        type: message.messageType,
-        code: message.messageCode
-      }
-    }
-
-    for (let message of messages) {
-      let processedMessage = processMessage(message);
-
-      if (this.props.params.some((param) =>
-          param.name === processedMessage.parameter)) {
-
-        let {parameter, description} = processedMessage;
-        paramMessages[parameter] = description;
-      }
-      allMessages.push(processedMessage);
-    }
-    return {allMessages, paramMessages};
+  getValidationMessageForParam(param) {
+    let message = this.props.validationMessages.find((m) => m.param === param);
+    return message && message.description;
   }
 
 
@@ -184,10 +103,10 @@ export default class HitBuilder extends React.Component {
         </div>
 
         <HitElement
+          actions={this.props.actions}
           hitStatus={this.props.hitStatus}
-          messages={this.state.allMessages}
+          messages={this.props.validationMessages}
           onBlur={this.handleHitChange}
-          onValidate={this.validateParams}
           hitPayload={convertParamsToHit(params)} />
 
         <div className="HitBuilderParams">
@@ -205,14 +124,14 @@ export default class HitBuilder extends React.Component {
             actions={this.props.actions}
             param={params[0]}
             options={['1']}
-            message={this.state.paramMessages['v']} />
+            message={this.getValidationMessageForParam('v')} />
 
           <ParamSelectElement
             ref="t"
             actions={this.props.actions}
             param={params[1]}
             options={HIT_TYPES}
-            message={this.state.paramMessages['t']} />
+            message={this.getValidationMessageForParam('t')} />
 
           <ParamSearchSuggestElement
             ref="tid"
@@ -220,7 +139,7 @@ export default class HitBuilder extends React.Component {
             param={params[2]}
             options={this.props.properties}
             placeholder="UA-XXXXX-Y"
-            message={this.state.paramMessages['tid']} />
+            message={this.getValidationMessageForParam('tid')} />
 
           <ParamButtonElement
             ref="cid"
@@ -228,7 +147,7 @@ export default class HitBuilder extends React.Component {
             param={params[3]}
             type="refresh"
             title="Randomly generate UUID"
-            message={this.state.paramMessages['cid']}
+            message={this.getValidationMessageForParam('cid')}
             onClick={this.handleGenerateUuid} />
 
           {params.slice(4).map((param, i) => {
@@ -239,7 +158,7 @@ export default class HitBuilder extends React.Component {
                 actions={this.props.actions}
                 param={param}
                 needsFocus={isLast && this.newParamNeedsFocus_}
-                message={this.state.paramMessages[param.name]}
+                message={this.getValidationMessageForParam(param.name)}
                 onRemove={() => this.props.actions.removeParam(param.id) } />
             );
           })}
