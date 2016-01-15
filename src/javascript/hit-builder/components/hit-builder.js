@@ -135,8 +135,8 @@ export default class HitBuilder extends React.Component {
             message={this.getValidationMessageForParam('cid')}
             onClick={this.handleGenerateUuid} />
 
-          {params.slice(4).map((param, i) => {
-            let isLast = (params.length - 1 === i);
+          {params.slice(4).map((param) => {
+            let isLast = (param === params[params.length - 1]);
             return (
               <ParamElement
                 key={param.id}
