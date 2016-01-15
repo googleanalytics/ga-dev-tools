@@ -22,6 +22,10 @@ import Textarea from 'react-textarea-autosize';
 import Icon from '../../components/icon';
 import IconButton from '../../components/icon-button';
 import supports from '../../supports';
+import {sleep} from '../../utils';
+
+
+const ACTION_TIMEOUT = 1500;
 
 
 export default class HitElement extends React.Component {
@@ -68,18 +72,15 @@ export default class HitElement extends React.Component {
    * to indicate the hit was successfully sent. After 1 second the button
    * gets restored to its original state.
    */
-  sendHit = () => {
-    $.ajax({
+  sendHit = async () => {
+    await $.ajax({
       method: 'POST',
       url: 'https://www.google-analytics.com/collect',
       data: this.state.value
     })
-    .then(() => {
-      this.setState({hitSent: true})
-
-      // After three second, remove the success checkbox.
-      setTimeout(() => this.setState({hitSent: false}), 3000);
-    });
+    this.setState({hitSent: true});
+    await sleep(ACTION_TIMEOUT);
+    this.setState({hitSent: false});
   }
 
 
@@ -95,8 +96,8 @@ export default class HitElement extends React.Component {
 
       // After three second, remove the success checkbox.
       clearTimeout(this.hitPayloadCopiedTimeout_);
-      this.hitPayloadCopiedTimeout_ =
-          setTimeout(() => this.setState({hitPayloadCopied: false}), 3000);
+      this.hitPayloadCopiedTimeout_ = setTimeout(() =>
+          this.setState({hitPayloadCopied: false}), ACTION_TIMEOUT);
     }
     else {
       // TODO(philipwalton): handle error case
@@ -116,8 +117,8 @@ export default class HitElement extends React.Component {
 
       // After three second, remove the success checkbox.
       clearTimeout(this.hitUriCopiedTimeout_);
-      this.hitUriCopiedTimeout_ =
-          setTimeout(() => this.setState({hitUriCopied: false}), 1000);
+      this.hitUriCopiedTimeout_ = setTimeout(() =>
+          this.setState({hitUriCopied: false}), ACTION_TIMEOUT);
     }
     else {
       // TODO(philipwalton): handle error case
