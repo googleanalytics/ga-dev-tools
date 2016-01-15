@@ -64,19 +64,18 @@ export function validateHit() {
     };
   }
 
-  return function(dispatch, getState) {
+  return async function(dispatch, getState) {
 
     let hit = convertParamsToHit(getState().params);
     dispatch(setHitStatus('VALIDATING'));
 
-    getHitValidationResult(hit).then((data) => {
-
-      let hit = convertParamsToHit(getState().params);
+    try {
+      let data = await getHitValidationResult(hit);
 
       // In some cases the query will have changed before the response gets
       // back, so we need to check that the result is for the current query.
       // If it's not, ignore it.
-      if (data.hit != hit) return;
+      if (data.hit != convertParamsToHit(getState().params)) return;
 
       let result = data.response.hitParsingResult[0];
       let validationMessages = result.parserMessage;
@@ -89,9 +88,9 @@ export function validateHit() {
         dispatch(setHitStatus('INVALID'));
         dispatch(setValidationMessages(validationMessages.map(formatMessage)));
       }
-    })
-    // TODO(philipwalton): handle timeout errors and slow network connection.
-    .catch((err) => {
+    }
+    catch(err) {
+      // TODO(philipwalton): handle timeout errors and slow network connection.
       dispatch(setHitStatus('UNVALIDATED'));
       dispatch(setValidationMessages([]));
       AlertDispatcher.addOnce({
@@ -99,6 +98,6 @@ export function validateHit() {
         message: `Check your connection to make sure you're still online.
                   If you're still having problems, try refreshing the page.`
       });
-    });
+    }
   };
 }

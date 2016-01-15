@@ -28,19 +28,16 @@ function setUserProperties(properties) {
 
 
 export function handleAuthorizationSuccess() {
-  return function(dispatch) {
+  return async function(dispatch) {
     dispatch(setAuthorizedState());
 
-    accountSummaries.get().then((summaries) => {
-      let properties = summaries.allProperties().map((property) => {
-        return {
-          name: property.name,
-          id: property.id,
-          group: summaries.getAccountByPropertyId(property.id).name
-        };
-      });
+    let summaries = await accountSummaries.get()
+    let properties = summaries.allProperties().map((property) => ({
+      name: property.name,
+      id: property.id,
+      group: summaries.getAccountByPropertyId(property.id).name
+    }));
 
-      dispatch(setUserProperties(properties));
-    });
+    dispatch(setUserProperties(properties));
   };
 }
