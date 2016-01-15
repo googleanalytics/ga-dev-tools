@@ -46,65 +46,6 @@ import ViewSelector from './view-selector';
 const PARAMS_TO_TRACK = ['start-date', 'end-date', 'metrics', 'dimensions'];
 
 
-/**
- * Store a reference here for access to the whole module.
- */
-// let metrics;
-// let dimensions;
-// let segments;
-// let sortOptions;
-
-
-/**
- * Create model instances to store render state.
- */
-// let state = new Model();
-// let params = new Model(getInitalQueryParams());
-// let settings = new Model(store.get('query-explorer:settings'));
-
-
-/**
- * Gets the query params used to populate the params model.
- * If params are found in the URL, they are used and merged with the defaults.
- * Otherwise the datastore is checked for params from a previous session, and
- * those are merged with the defaults.
- * If no params exist in the URL or the datastore, the defaults are returned.
- * @return {Object} The initial params.
- */
-function getInitalQueryParams() {
-  let defaultParams = {'start-date': '30daysAgo', 'end-date': 'yesterday'};
-  let storedParams = store.get('query-explorer:params');
-  let urlParams = qs.parse(location.search.slice(1));
-
-  // Don't assume that the presence any query params means it's a Query
-  // Explorer URL. Only use the query params if they exist and contain at least
-  // a metric value.
-  if (urlParams && urlParams['metrics']) {
-
-    // Some of the Query Explorer links out in the wild have double-encoded
-    // URL params. Check for the substring '%253A' (a colon, double-encoded),
-    // and if found then double-decode all params.
-    if (urlParams['metrics'].indexOf('%253A')) {
-      urlParams = mapValues(urlParams, (value) => decodeURIComponent(value));
-    }
-
-    // Remove the query params in the URL to prevent losing state on refresh.
-    // https://github.com/googleanalytics/ga-dev-tools/issues/61
-    if (history && history.replaceState) {
-      history.replaceState(history.state, document.title, location.pathname);
-    }
-
-    urlParams = queryParams.sanitize(assign({}, defaultParams, urlParams));
-    store.set('query-explorer:params', urlParams);
-    return urlParams;
-  }
-  else if (storedParams) {
-    return queryParams.sanitize(assign({}, defaultParams, storedParams));
-  }
-  else {
-    return defaultParams;
-  }
-}
 
 
 export default class QueryExplorer extends React.Component {
@@ -122,7 +63,6 @@ export default class QueryExplorer extends React.Component {
     this.sortOptions;
 
     this._state = new Model();
-    this.params = new Model(getInitalQueryParams());
     this.settings = new Model(store.get('query-explorer:settings'));
 
     // Store the initial settings on the tracker.
@@ -137,9 +77,8 @@ export default class QueryExplorer extends React.Component {
    */
   handleViewSelectorChange = async (viewSelectorData) => {
 
-    let {account, property, view} = viewSelectorData;
+    let {account, property, view, ids} = viewSelectorData;
 
-    this.params.set('ids', viewSelectorData.ids);
     this._state.set('selectedAccountData', clone(viewSelectorData));
 
     let result = await tagData.getMetricsAndDimensions(account, property, view);
@@ -153,8 +92,7 @@ export default class QueryExplorer extends React.Component {
     // be properties of `state`.
     this.setSortOptions();
 
-    // TODO(philipwalton): see if this can be done without using forceUpdate.
-    this.forceUpdate();
+    this.props.actions.updateParams({ids});
   }
 
 
@@ -163,17 +101,18 @@ export default class QueryExplorer extends React.Component {
    * @param {Event|Object} e A native Event object, React event, or data object
    *     containing the target.name and target.value properties.
    */
-  handleFieldChange = (e) => {
-    let {name, value} = e.target;
-    if (value) {
-      this.params.set(name, value);
-    }
-    else {
-      this.params.unset(name);
+  handleParamChange = ({target: {name, value}}) => {
+    debugger;
+    this.props.actions.updateParams({[name]: value});
+
+    if (name == 'metrics' || name == 'dimensions') {
+      this.setSortOptions();
     }
 
-    // TODO(philipwalton): see if this can be done without using forceUpdate.
-    this.forceUpdate();
+    // TODO(philipwalton): move this to the middleware ultimately.
+    let nextParams = Object.assign({},
+        queryParams.sanitize(this.props.params), {[name]: value});
+    store.set('query-explorer:params', nextParams);
   }
 
 
@@ -183,9 +122,11 @@ export default class QueryExplorer extends React.Component {
    */
   setSortOptions() {
 
+    let {params} = this.props;
+
     let metsAndDims = (this.metrics || []).concat(this.dimensions || []);
-    let chosenMetrics = (this.params.get('metrics') || '').split(',');
-    let chosenDimensions = (this.params.get('dimensions') || '').split(',');
+    let chosenMetrics = (params.metrics || '').split(',');
+    let chosenDimensions = (params.dimensions || '').split(',');
     let chosenMetsAndDims = (chosenMetrics || []).concat(chosenDimensions || []);
 
     this.sortOptions = [];
@@ -222,14 +163,7 @@ export default class QueryExplorer extends React.Component {
       ga('set', 'dimension3', qs.stringify(this.settings.get()));
       this.forceUpdate();
     });
-    this.params.on('change', (model) => {
-      if ('metrics' in model.changedProps ||
-          'dimensions' in model.changedProps) {
-        this.setSortOptions();
-      }
-      store.set('query-explorer:params', queryParams.sanitize(this.params.get()));
-      this.forceUpdate();
-    });
+
     this._state.on('change', () => {
       this.forceUpdate();
     });
@@ -250,14 +184,15 @@ export default class QueryExplorer extends React.Component {
       this.forceUpdate();
     });
 
-    if (this.params.get('segment')) {
-      let value = this.params.get('segment');
+    if (this.props.params.segment) {
+      let value = this.props.params.segment;
       let segment = find(this.segments, segment =>
           value == segment.segmentId || value == segment.definition);
 
       if (segment) {
-        this.params.set('segment', useDefinition ?
-            segment.definition : segment.segmentId);
+        this.props.actions.updateParams({
+          segment: useDefinition ? segment.definition : segment.segmentId
+        });
       }
     }
   }
@@ -337,7 +272,7 @@ export default class QueryExplorer extends React.Component {
   handleSubmit = (e) => {
     e.preventDefault();
 
-    let paramsClone = clone(this.params.get());
+    let paramsClone = clone(this.props.params);
 
     let trackableParamData = map(paramsClone, (value, key) => {
       // Don't run `encodeURIComponent` on these params because the they will
@@ -407,7 +342,7 @@ export default class QueryExplorer extends React.Component {
         <h3 className="H3--underline">Select a view</h3>
 
         <ViewSelector
-          ids={this.params.get('ids')}
+          ids={params.ids}
           onChange={this.handleViewSelectorChange} />
 
         <h3 className="H3--underline">Set the query parameters</h3>
@@ -421,8 +356,8 @@ export default class QueryExplorer extends React.Component {
                 <input
                   className="FormField FormFieldCombo-field"
                   name="ids"
-                  value={this.params.get('ids')}
-                  onChange={this.handleFieldChange} />
+                  value={params.ids}
+                  onChange={this.handleParamChange} />
                 <HelpIconLink name="ids" />
               </div>
             </div>
@@ -434,8 +369,8 @@ export default class QueryExplorer extends React.Component {
               <div className="FlexLine">
                 <Datepicker
                   name="start-date"
-                  value={this.params.get('start-date')}
-                  onChange={this.handleFieldChange} />
+                  value={params['start-date']}
+                  onChange={this.handleParamChange} />
                 <HelpIconLink name="start-date" />
               </div>
             </div>
@@ -447,8 +382,8 @@ export default class QueryExplorer extends React.Component {
               <div className="FlexLine">
                 <Datepicker
                   name="end-date"
-                  value={this.params.get('end-date')}
-                  onChange={this.handleFieldChange} />
+                  value={params['end-date']}
+                  onChange={this.handleParamChange} />
                 <HelpIconLink name="end-date" />
               </div>
             </div>
@@ -460,9 +395,9 @@ export default class QueryExplorer extends React.Component {
               <div className="FlexLine">
                 <Select2MultiSuggest
                   name="metrics"
-                  value={this.params.get('metrics')}
+                  value={params.metrics}
                   tags={this.metrics}
-                  onChange={this.handleFieldChange} />
+                  onChange={this.handleParamChange} />
                 <HelpIconLink name="metrics" />
               </div>
             </div>
@@ -474,9 +409,9 @@ export default class QueryExplorer extends React.Component {
               <div className="FlexLine">
                 <Select2MultiSuggest
                   name="dimensions"
-                  value={this.params.get('dimensions')}
+                  value={params.dimensions}
                   tags={this.dimensions}
-                  onChange={this.handleFieldChange} />
+                  onChange={this.handleParamChange} />
                 <HelpIconLink name="dimensions" />
               </div>
             </div>
@@ -488,9 +423,9 @@ export default class QueryExplorer extends React.Component {
               <div className="FlexLine">
                 <Select2MultiSuggest
                   name="sort"
-                  value={this.params.get('sort')}
+                  value={params.sort}
                   tags={this.sortOptions}
-                  onChange={this.handleFieldChange} />
+                  onChange={this.handleParamChange} />
                 <HelpIconLink name="sort" />
               </div>
             </div>
@@ -503,8 +438,8 @@ export default class QueryExplorer extends React.Component {
                 <input
                   className="FormField FormFieldCombo-field"
                   name="filters"
-                  value={this.params.get('filters')}
-                  onChange={this.handleFieldChange} />
+                  value={params.filters}
+                  onChange={this.handleParamChange} />
                 <HelpIconLink name="filters" />
               </div>
             </div>
@@ -516,9 +451,9 @@ export default class QueryExplorer extends React.Component {
               <div className="FlexLine">
                 <SearchSuggest
                   name="segment"
-                  value={this.params.get('segment')}
+                  value={params.segment}
                   options={this.segments}
-                  onChange={this.handleFieldChange} />
+                  onChange={this.handleParamChange} />
                 <HelpIconLink name="segment" />
               </div>
               <div className="FormControl-info">
@@ -541,8 +476,8 @@ export default class QueryExplorer extends React.Component {
                 <input
                   className="FormField FormFieldCombo-field"
                   name="samplingLevel"
-                  value={this.params.get('samplingLevel')}
-                  onChange={this.handleFieldChange} />
+                  value={params.samplingLevel}
+                  onChange={this.handleParamChange} />
                 <HelpIconLink name="samplingLevel" />
               </div>
             </div>
@@ -555,8 +490,8 @@ export default class QueryExplorer extends React.Component {
                 <input
                   className="FormField FormFieldCombo-field"
                   name="start-index"
-                  value={this.params.get('start-index')}
-                  onChange={this.handleFieldChange} />
+                  value={params['start-index']}
+                  onChange={this.handleParamChange} />
                 <HelpIconLink name="start-index" />
               </div>
             </div>
@@ -569,8 +504,8 @@ export default class QueryExplorer extends React.Component {
                 <input
                   className="FormField FormFieldCombo-field"
                   name="max-results"
-                  value={this.params.get('max-results')}
-                  onChange={this.handleFieldChange} />
+                  value={params['max-results']}
+                  onChange={this.handleParamChange} />
                 <HelpIconLink name="max-results" />
               </div>
             </div>

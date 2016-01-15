@@ -16,18 +16,42 @@
 /* global gapi */
 
 
-import QueryExplorer from './components/query-explorer';
 import React from 'react';
 import ReactDOM from 'react-dom';
+import {connect, Provider} from 'react-redux';
+import {bindActionCreators, createStore} from 'redux';
+
+import actions from './actions';
+import QueryExplorer from './components/query-explorer';
+import store from './store';
+
 import site from '../site';
+
+
+function mapStateToProps(state) {
+  return state;
+}
+
+
+function mapDispatchToProps(dispatch) {
+  return {
+    actions: bindActionCreators(actions, dispatch)
+  }
+}
+
+
+let QueryExplorerApp =
+    connect(mapStateToProps, mapDispatchToProps)(QueryExplorer);
 
 
 /**
  * The base render function.
  */
-function render(props) {
+function render() {
   ReactDOM.render(
-    <QueryExplorer {...props} />,
+    <Provider store={store}>
+      <QueryExplorerApp />
+    </Provider>,
     document.getElementById('query-explorer')
   );
 }
@@ -37,22 +61,22 @@ function render(props) {
  * The callback invoked when the Embed API has authorized the user.
  * Updates the CSS state classes and rerenders in the authorized state.
  */
-function setup() {
-  render({isAuthorized: true});
+function onAuthorizationSuccess() {
+  store.dispatch(actions.handleAuthorizationSuccess());
   site.setReadyState();
 }
 
 
-// Run setup when the Embed API is ready and the user is authorized.
 gapi.analytics.ready(function() {
   if (gapi.analytics.auth.isAuthorized()) {
-    setup();
+    onAuthorizationSuccess();
   }
   else {
-    gapi.analytics.auth.once('success', setup);
+    gapi.analytics.auth.once('success', onAuthorizationSuccess);
   }
 });
 
 
 // Perform an initial render.
+store.subscribe(render);
 render();
