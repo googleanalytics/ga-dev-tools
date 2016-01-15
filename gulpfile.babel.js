@@ -117,9 +117,12 @@ gulp.task('javascript:webpack', (function() {
       minChunks: 2
     })];
 
-    // Uglify in production.
+    // Uglify and remove dev-only code in production.
     if (isProd()) {
       plugins.push(new webpack.optimize.UglifyJsPlugin());
+      plugins.push(new webpack.DefinePlugin({
+        'process.env': {NODE_ENV: '"production"'}
+      }));
     }
 
     return webpack({
