@@ -1,4 +1,4 @@
-// Copyright 2015 Google Inc. All rights reserved.
+// Copyright 2016 Google Inc. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -16,19 +16,42 @@
 /* global gapi */
 
 
-import HitBuilder from './components/hit-builder';
 import React from 'react';
 import ReactDOM from 'react-dom';
+import {connect, Provider} from 'react-redux';
+import {bindActionCreators, createStore} from 'redux';
+
+import actions from './actions';
+import HitBuilder from './components/hit-builder';
+import store from './store';
+
 import site from '../site';
+
+
+function mapStateToProps(state) {
+  return state;
+}
+
+
+function mapDispatchToProps(dispatch) {
+  return {
+    actions: bindActionCreators(actions, dispatch)
+  }
+}
+
+
+let HitBuilderApp = connect(mapStateToProps, mapDispatchToProps)(HitBuilder);
 
 
 /**
  * The base render function.
  */
-function render(props) {
+function render() {
   ReactDOM.render(
-    <HitBuilder {...props} />,
-    document.getElementById('react-test')
+    <Provider store={store}>
+      <HitBuilderApp />
+    </Provider>,
+    document.getElementById('hit-builder')
   );
 }
 
@@ -37,22 +60,22 @@ function render(props) {
  * The callback invoked when the Embed API has authorized the user.
  * Updates the CSS state classes and rerenders in the authorized state.
  */
-function setup() {
-  render({isAuthorized: true});
+function onAuthorizationSuccess() {
+  store.dispatch(actions.handleAuthorizationSuccess());
   site.setReadyState();
 }
 
 
-// Run setup when the Embed API is ready and the user is authorized.
 gapi.analytics.ready(function() {
   if (gapi.analytics.auth.isAuthorized()) {
-    setup();
+    onAuthorizationSuccess();
   }
   else {
-    gapi.analytics.auth.once('success', setup);
+    gapi.analytics.auth.once('success', onAuthorizationSuccess);
   }
 });
 
 
 // Perform an initial render.
+store.subscribe(render);
 render();

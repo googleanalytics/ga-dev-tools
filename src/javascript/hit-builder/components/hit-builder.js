@@ -1,4 +1,4 @@
-// Copyright 2015 Google Inc. All rights reserved.
+// Copyright 2016 Google Inc. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -13,29 +13,15 @@
 // limitations under the License.
 
 
-import accountSummaries from 'javascript-api-utils/lib/account-summaries';
-import AlertDispatcher from '../../components/alert-dispatcher';
-import Collection from '../../collection';
-import debounce from 'lodash/function/debounce';
-import escapeRegExp from 'lodash/string/escapeRegExp';
+import React from 'react';
+import uuid from 'uuid';
 import HitElement from './hit-element';
-import Icon from '../../components/icon';
-import IconButton from '../../components/icon-button';
-import Model from '../../model';
-import ParamElement from './param-element';
 import ParamButtonElement from './param-button-element';
+import ParamElement from './param-element';
 import ParamSearchSuggestElement from './param-search-suggest-element';
 import ParamSelectElement from './param-select-element';
-import ParamsCollection from '../params-collection';
-import React from 'react';
-import unescape from 'lodash/string/unescape';
-import uuid from 'uuid';
-
-
-const DEFAULT_HIT = 'v=1&t=pageview';
-
-
-const DEBOUNCE_DURATION = 500;
+import {convertParamsToHit} from '../hit';
+import IconButton from '../../components/icon-button';
 
 
 const HIT_TYPES = [
@@ -52,125 +38,15 @@ const HIT_TYPES = [
 
 export default class HitBuilder extends React.Component {
 
-  state = {
-    hitStatus: 'PENDING',
-    isValidating: false,
-    allMessages: [],
-    paramMessages: {},
-    properties: [],
-    parameters: []
-  };
-
 
   /**
-   * @constructor
-   * @param {Object} props The props object initially passed by React.
-   * @return {HitBuilder}
-   */
-  constructor(props) {
-    super(props);
-
-    this.params = new ParamsCollection(this.getInitialHit())
-        .on('add', this.handleParamChange)
-        .on('remove', this.handleParamChange)
-        .on('change', this.handleParamChange)
-  }
-
-
-  /**
-   * Makes a request to the AccoutSummaries.get method updates the properties
-   * state when done with the result.
-   */
-  getProperties() {
-    accountSummaries.get().then((summaries) => {
-      let properties = summaries.allProperties().map((property) => {
-        return {
-          name: property.name,
-          id: property.id,
-          group: summaries.getAccountByPropertyId(property.id).name
-        }
-      })
-      this.setState({properties});
-    });
-  }
-
-
-  /**
-   * Makes a request for the parameter reference data and updates the
-   * parameters state when done with the result.
-   */
-  getParameters() {
-    $.getJSON('/public/json/parameter-reference.json', (data) => {
-      let parameters = data.parameters.map((param) => {
-        param.name = unescape(param.name);
-        param.pattern = new RegExp(param.id.replace(/_/g, '\\d+'));
-        return param;
-      });
-      this.setState({parameters});
-    });
-  }
-
-
-  /**
-   * Gets the initial hit from the URL if present. If a hit is found in the URL
-   * it is captured and immediately stripped as to have two sources of state.
-   * If no hit is found in the URL the default hit is used.
-   * @return {string} The default hit.
-   */
-  getInitialHit() {
-    let query = location.search.slice(1);
-
-    if (query) {
-      if (history && history.replaceState) {
-        history.replaceState(history.state, document.title, location.pathname);
-      }
-      return query;
-    }
-    else {
-      return DEFAULT_HIT;
-    }
-  }
-
-
-  /**
-   * Updates the state after the user has authorized.
-   */
-  handleUserAuthorized() {
-    this.getParameters();
-    this.getProperties();
-  }
-
-
-  /**
-   * Adds new param models after a user clicks to the "Add parameter" button.
+   * Adds a new param after a user clicks to the "Add parameter" button.
    * Also turns on a flag to indicate that this param needs focus after
    * rendering.
    */
   handleAddParam = () => {
     this.newParamNeedsFocus_ = true;
-    this.params.add(new Model({name:'', value:''}));
-  }
-
-
-  /**
-   * Rerenders the tool after any change occurs.
-   */
-  handleParamChange = () => {
-    if (this.state.hitStatus == 'VALID') {
-      this.setState({hitStatus: 'PENDING'})
-    }
-    else {
-      this.forceUpdate();
-    }
-  }
-
-
-  /**
-   * Updates the param collection with a new hit value.
-   * @param {string} hit The hit payload value.
-   */
-  handleHitChange = (hit) => {
-    this.params.update(hit);
+    this.props.actions.addParam();
   }
 
 
@@ -178,86 +54,13 @@ export default class HitBuilder extends React.Component {
    * Generates a random UUID value for the "cid" parameter.
    */
   handleGenerateUuid = () => {
-    this.params.models[3].set({value: uuid.v4()});
+    this.props.actions.editParamValue(this.props.params[3].id, uuid.v4());
   }
 
 
-  /**
-   * Validates the hit parameters and updates the hit status box according to
-   * the validation state.
-   */
-  validateParams = () => {
-    this.setState({isValidating: true});
-    this.params.validate().then((data) => {
-
-      // In some cases the query will have changed before the response gets
-      // back, so we need to check that the result is for the current query.
-      // If it's not, ignore it.
-      if (data.query != this.params.toQueryString()) return;
-
-      let result = data.response.hitParsingResult[0];
-      if (result.valid) {
-        this.setState({
-          hitStatus: 'VALID',
-          isValidating: false,
-          allMessages: [],
-          paramMessages: {}
-        });
-      }
-      else {
-        let {allMessages, paramMessages} =
-            this.getErrorsFromParserMessage(result.parserMessage);
-
-        this.setState({
-          hitStatus: 'INVALID',
-          isValidating: false,
-          allMessages,
-          paramMessages
-        });
-      }
-    })
-    // TODO(philipwalton): handle timeout errors and slow network connection.
-    .catch((err) => {
-      this.setState({isValidating: false});
-      AlertDispatcher.addOnce({
-        title: 'Oops, an error occurred while validating the hit',
-        message: `Check your connection to make sure you're still online.
-                  If you're still having problems, try refreshing the page.`
-      });
-    })
-  }
-
-
-  /**
-   * Gets data about the hit errors from the parser message.
-   * @return {Object} An object containing the "allMessages" property, which
-   *     contains an array of all messages and a "paramMessages" property,
-   *     which contains an object of only messages specific to individual
-   *     parameters.
-   */
-  getErrorsFromParserMessage(messages) {
-    let allMessages = []
-    let paramMessages = {};
-
-    function processMessage(message) {
-      let linkRegex = /Please see http:\/\/goo\.gl\/a8d4RP#\w+ for details\.$/;
-      return {
-        parameter: message.parameter,
-        description: message.description.replace(linkRegex, '').trim(),
-        type: message.messageType,
-        code: message.messageCode
-      }
-    }
-
-    for (let message of messages) {
-      let processedMessage = processMessage(message);
-      if (this.params.has(processedMessage.parameter)) {
-        let {parameter, description} = processedMessage;
-        paramMessages[parameter] = description;
-      }
-      allMessages.push(processedMessage);
-    }
-    return {allMessages, paramMessages};
+  getValidationMessageForParam(param) {
+    let message = this.props.validationMessages.find((m) => m.param === param);
+    return message && message.description;
   }
 
 
@@ -267,17 +70,13 @@ export default class HitBuilder extends React.Component {
    * ---------------------------------------------------------
    */
 
-  componentWillReceiveProps(nextProps) {
-    if (nextProps.isAuthorized && !this.state.isAuthorized) {
-      this.handleUserAuthorized();
-    }
-  }
-
   componentDidUpdate() {
     this.newParamNeedsFocus_ = false;
   }
 
   render() {
+
+    let {params} = this.props;
 
     return (
       <div>
@@ -290,12 +89,10 @@ export default class HitBuilder extends React.Component {
         </div>
 
         <HitElement
-          hitStatus={this.state.hitStatus}
-          isValidating={this.state.isValidating}
-          messages={this.state.allMessages}
-          onBlur={this.handleHitChange}
-          onValidate={this.validateParams}
-          hitPayload={this.params.toQueryString()} />
+          actions={this.props.actions}
+          hitStatus={this.props.hitStatus}
+          validationMessages={this.props.validationMessages}
+          hitPayload={convertParamsToHit(params)} />
 
         <div className="HitBuilderParams">
 
@@ -308,41 +105,46 @@ export default class HitBuilder extends React.Component {
           </div>
 
           <ParamSelectElement
-            model={this.params.models[0]}
             ref="v"
+            actions={this.props.actions}
+            param={params[0]}
             options={['1']}
-            message={this.state.paramMessages['v']} />
+            message={this.getValidationMessageForParam('v')} />
 
           <ParamSelectElement
-            model={this.params.models[1]}
             ref="t"
+            actions={this.props.actions}
+            param={params[1]}
             options={HIT_TYPES}
-            message={this.state.paramMessages['t']} />
+            message={this.getValidationMessageForParam('t')} />
 
           <ParamSearchSuggestElement
-            model={this.params.models[2]}
             ref="tid"
-            options={this.state.properties}
+            actions={this.props.actions}
+            param={params[2]}
+            options={this.props.properties}
             placeholder="UA-XXXXX-Y"
-            message={this.state.paramMessages['tid']} />
+            message={this.getValidationMessageForParam('tid')} />
 
           <ParamButtonElement
-            model={this.params.models[3]}
             ref="cid"
+            actions={this.props.actions}
+            param={params[3]}
             type="refresh"
             title="Randomly generate UUID"
-            message={this.state.paramMessages['cid']}
+            message={this.getValidationMessageForParam('cid')}
             onClick={this.handleGenerateUuid} />
 
-          {this.params.models.slice(4).map((model) => {
-            let isLast = (this.params.last() == model);
+          {params.slice(4).map((param) => {
+            let isLast = (param === params[params.length - 1]);
             return (
               <ParamElement
-                model={model}
-                key={model.uid}
+                key={param.id}
+                actions={this.props.actions}
+                param={param}
                 needsFocus={isLast && this.newParamNeedsFocus_}
-                message={this.state.paramMessages[model.get('name')]}
-                onRemove={this.params.remove.bind(this.params, model)} />
+                message={this.getValidationMessageForParam(param.name)}
+                onRemove={() => this.props.actions.removeParam(param.id) } />
             );
           })}
 

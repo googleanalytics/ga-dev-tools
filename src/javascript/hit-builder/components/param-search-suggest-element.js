@@ -13,8 +13,8 @@
 // limitations under the License.
 
 
-import ParamElement from './param-element';
 import React from 'react';
+import ParamElement from './param-element';
 import SearchSuggest from '../../components/search-suggest';
 
 

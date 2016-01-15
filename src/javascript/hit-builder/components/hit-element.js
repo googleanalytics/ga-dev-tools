@@ -1,4 +1,4 @@
-// Copyright 2015 Google Inc. All rights reserved.
+// Copyright 2016 Google Inc. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -16,12 +16,12 @@
 /* global $ */
 
 
-import Icon from '../../components/icon';
-import IconButton from '../../components/icon-button';
 import React from 'react';
 import ReactDOM from 'react-dom';
-import supports from '../../supports';
 import Textarea from 'react-textarea-autosize';
+import Icon from '../../components/icon';
+import IconButton from '../../components/icon-button';
+import supports from '../../supports';
 
 
 export default class HitElement extends React.Component {
@@ -30,16 +30,16 @@ export default class HitElement extends React.Component {
     value: this.props.hitPayload,
     hitSent: false,
     hitPayloadCopied: false,
-    isValidating: this.props.isValidating
+    hitUriCopied: false
   }
 
 
   /**
    * Updates the values state when the users changes the hit text.
-   * @param {Object} e The React event object.
+   * @param {string} value The input element's value property.
    */
-  handleChange = (e) => {
-    this.setState({value: e.target.value});
+  handleChange = ({target: {value}}) => {
+    this.setState({value});
   }
 
 
@@ -55,11 +55,11 @@ export default class HitElement extends React.Component {
   /**
    * Removes the disabled state and calls the `onBlur` methods with the new
    * hit value.
-   * @param {Object} e The React event object.
+   * @param {string} value The input element's value property.
    */
-  handleBlur = (e) => {
+  handleBlur = ({target: {value}}) => {
     $('body').removeClass('is-editing');
-    this.props.onBlur(e.target.value);
+    this.props.actions.updateHit(value);
   }
 
 
@@ -78,7 +78,7 @@ export default class HitElement extends React.Component {
       this.setState({hitSent: true})
 
       // After three second, remove the success checkbox.
-      setTimeout(() => this.setState({hitSent: false}), 1000);
+      setTimeout(() => this.setState({hitSent: false}), 3000);
     });
   }
 
@@ -96,7 +96,7 @@ export default class HitElement extends React.Component {
       // After three second, remove the success checkbox.
       clearTimeout(this.hitPayloadCopiedTimeout_);
       this.hitPayloadCopiedTimeout_ =
-          setTimeout(() => this.setState({hitPayloadCopied: false}), 1000);
+          setTimeout(() => this.setState({hitPayloadCopied: false}), 3000);
     }
     else {
       // TODO(philipwalton): handle error case
@@ -138,7 +138,7 @@ export default class HitElement extends React.Component {
               className="HitElement-statusIcon">
               <Icon type="check" />
             </span>
-            <div class="HitElement-statusBody">
+            <div className="HitElement-statusBody">
               <h1 className="HitElement-statusHeading">Hit is valid!</h1>
               <p className="HitElement-statusMessage">Use the controls below to
               copy the hit or share it with coworkers.<br />
@@ -157,14 +157,14 @@ export default class HitElement extends React.Component {
             <div className="HitElement-statusBody">
               <h1 className="HitElement-statusHeading">Hit is invalid!</h1>
               <ul className="HitElement-statusMessage">
-                {this.props.messages.map((message) => (
-                  <li key={message.parameter}>{message.description}</li>
+                {this.props.validationMessages.map((message) => (
+                  <li key={message.param}>{message.description}</li>
                 ))}
               </ul>
             </div>
           </header>
         )
-      case 'PENDING':
+      default:
         return (
           <header className="HitElement-status">
             <span
@@ -191,17 +191,20 @@ export default class HitElement extends React.Component {
    * @return {Object}
    */
   renderHitActions() {
-    if (this.props.hitStatus != 'VALID') {
-      let buttonText = (this.props.hitStatus == 'INVALID' ? 'Rev' : 'V') +
+    let {props, state} = this;
+    let {actions, hitStatus} = props;
+
+    if (hitStatus != 'VALID') {
+      let buttonText = (hitStatus == 'INVALID' ? 'Rev' : 'V') +
           'alidate hit';
 
       return (
         <div className="HitElement-action">
           <button
             className="Button Button--action"
-            disabled={this.state.isValidating}
-            onClick={this.props.onValidate}>
-            {this.state.isValidating ? 'Validating...' : buttonText}
+            disabled={hitStatus === 'VALIDATING'}
+            onClick={() => actions.validateHit()}>
+            {hitStatus === 'VALIDATING' ? 'Validating...' : buttonText}
           </button>
         </div>
       )
@@ -210,7 +213,7 @@ export default class HitElement extends React.Component {
     let sendHitButton = (
       <IconButton
         className="Button Button--success Button--withIcon"
-        type={this.state.hitSent ? 'check' : 'send'}
+        type={state.hitSent ? 'check' : 'send'}
         onClick={this.sendHit}>
         Send hit to Google Analytics
       </IconButton>
@@ -222,12 +225,12 @@ export default class HitElement extends React.Component {
           <div className="ButtonSet">
             {sendHitButton}
             <IconButton
-              type={this.state.hitPayloadCopied ? 'check' : 'content-paste'}
+              type={state.hitPayloadCopied ? 'check' : 'content-paste'}
               onClick={this.copyHitPayload}>
               Copy hit payload
             </IconButton>
             <IconButton
-              type={this.state.hitUriCopied ? 'check' : 'link'}
+              type={state.hitUriCopied ? 'check' : 'link'}
               onClick={this.copyShareUrl}>
               Copy sharable link to hit
             </IconButton>
@@ -235,13 +238,13 @@ export default class HitElement extends React.Component {
           <div
             ref="hitPayload"
             className="u-visuallyHidden">
-            {this.state.value}
+            {state.value}
           </div>
           <div
             ref="shareUrl"
             className="u-visuallyHidden">
             {location.protocol + '//' + location.host + location.pathname +
-            '?' + this.state.value}
+            '?' + state.value}
           </div>
         </div>
       )
@@ -270,9 +273,6 @@ export default class HitElement extends React.Component {
         hitPayloadCopied: false,
         hitUriCopied: false
       });
-    }
-    if (nextProps.isValidating != this.state.isValidating) {
-      this.setState({isValidating: nextProps.isValidating});
     }
   }
 

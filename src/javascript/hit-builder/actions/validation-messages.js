@@ -13,26 +13,9 @@
 // limitations under the License.
 
 
-import 'babel-polyfill';
-import svg4everybody from 'svg4everybody/dist/svg4everybody';
-
-import analytics from './analytics';
-import header from './header';
-import highlighter from './highlighter';
-import sidebar from './sidebar';
+import * as types from './types';
 
 
-// Polyfills SVG support in all browsers.
-svg4everybody();
-
-// Initiaze the header functionality.
-header.init();
-
-// Initiaze the sidebar functionality.
-sidebar.init();
-
-// Highlight code blocks.
-highlighter.highlight('pre');
-
-// Setup Google Analytics tracking.
-analytics.track();
+export function setValidationMessages(validationMessages) {
+  return {type: types.SET_VALIDATION_MESSAGES, validationMessages};
+}

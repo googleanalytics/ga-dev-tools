@@ -13,26 +13,17 @@
 // limitations under the License.
 
 
-import 'babel-polyfill';
-import svg4everybody from 'svg4everybody/dist/svg4everybody';
-
-import analytics from './analytics';
-import header from './header';
-import highlighter from './highlighter';
-import sidebar from './sidebar';
+import * as types from '../actions/types';
 
 
-// Polyfills SVG support in all browsers.
-svg4everybody();
+export default function properties(state = [], action) {
 
-// Initiaze the header functionality.
-header.init();
+  switch (action.type) {
 
-// Initiaze the sidebar functionality.
-sidebar.init();
+    case types.SET_USER_PROPERTIES:
+      return action.properties;
 
-// Highlight code blocks.
-highlighter.highlight('pre');
-
-// Setup Google Analytics tracking.
-analytics.track();
+    default:
+      return state;
+  }
+}
