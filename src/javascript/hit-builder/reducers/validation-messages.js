@@ -24,6 +24,6 @@ export default function validationMessages(state = [], action) {
       return action.validationMessages;
 
     default:
-      return state
+      return state;
   }
 }

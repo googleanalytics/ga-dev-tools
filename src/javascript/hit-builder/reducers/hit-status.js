@@ -24,6 +24,6 @@ export default function hitStatus(state = 'UNVALIDATED', action) {
       return action.status;
 
     default:
-      return state
+      return state;
   }
 }

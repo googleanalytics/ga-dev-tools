@@ -45,6 +45,6 @@ export default function params(state = [], action) {
       return action.params;
 
     default:
-      return state
+      return state;
   }
 }

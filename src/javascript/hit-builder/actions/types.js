@@ -14,11 +14,11 @@
 
 
 // params
-export const ADD_PARAM = 'ADD_PARAM'
-export const REMOVE_PARAM = 'REMOVE_PARAM'
-export const EDIT_PARAM_NAME = 'EDIT_PARAM_NAME'
-export const EDIT_PARAM_VALUE = 'EDIT_PARAM_VALUE'
-export const REPLACE_PARAMS = 'REPLACE_PARAMS'
+export const ADD_PARAM = 'ADD_PARAM';
+export const REMOVE_PARAM = 'REMOVE_PARAM';
+export const EDIT_PARAM_NAME = 'EDIT_PARAM_NAME';
+export const EDIT_PARAM_VALUE = 'EDIT_PARAM_VALUE';
+export const REPLACE_PARAMS = 'REPLACE_PARAMS';
 
 // hitStatus
 export const SET_HIT_STATUS = 'SET_HIT_STATUS';

@@ -24,6 +24,6 @@ export default function properties(state = [], action) {
       return action.properties;
 
     default:
-      return state
+      return state;
   }
 }

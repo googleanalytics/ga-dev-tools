@@ -38,10 +38,10 @@ export function handleAuthorizationSuccess() {
           name: property.name,
           id: property.id,
           group: summaries.getAccountByPropertyId(property.id).name
-        }
-      })
+        };
+      });
 
       dispatch(setUserProperties(properties));
     });
-  }
+  };
 }

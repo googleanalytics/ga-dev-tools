@@ -24,6 +24,6 @@ export default function isAuthorized(state = false, action) {
       return true;
 
     default:
-      return state
+      return state;
   }
 }

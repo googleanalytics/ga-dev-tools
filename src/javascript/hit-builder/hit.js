@@ -18,7 +18,6 @@
 
 import map from 'lodash/collection/map';
 import querystring from 'querystring';
-import url from 'url';
 
 
 const DEFAULT_HIT = 'v=1&t=pageview';

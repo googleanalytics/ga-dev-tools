@@ -51,7 +51,7 @@ export function updateHit(newHit) {
       dispatch(setHitStatus('UNVALIDATED'));
       dispatch(replaceParams(params));
     }
-  }
+  };
 }
 
 export function validateHit() {
@@ -63,7 +63,7 @@ export function validateHit() {
       description: message.description.replace(linkRegex, '').trim(),
       type: message.messageType,
       code: message.messageCode
-    }
+    };
   }
 
   return function(dispatch, getState) {
@@ -101,6 +101,6 @@ export function validateHit() {
         message: `Check your connection to make sure you're still online.
                   If you're still having problems, try refreshing the page.`
       });
-    })
-  }
+    });
+  };
 }

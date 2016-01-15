@@ -46,10 +46,10 @@ let HitBuilderApp = connect(mapStateToProps, mapDispatchToProps)(HitBuilder);
 /**
  * The base render function.
  */
-function render(props) {
+function render() {
   ReactDOM.render(
     <Provider store={store}>
-      <HitBuilderApp {...props} />
+      <HitBuilderApp />
     </Provider>,
     document.getElementById('hit-builder')
   );
