@@ -56,7 +56,7 @@ var ViewSelector = React.createClass({
         container: ReactDOM.findDOMNode(self),
         ids: self.props.ids,
         template: self.props.template || VIEW_SELECTOR_TEMPLATE
-      })
+      });
 
       self.viewSelector_.on('viewChange', function(...args) {
         self.hasSuccessfullyShownView_ = true;
@@ -84,9 +84,9 @@ var ViewSelector = React.createClass({
       self.viewSelector_.execute();
     });
   },
-  componentWillReceiveProps: function(props) {
-    if (props.ids && this.viewSelector_) {
-      this.viewSelector_.set({ids: props.ids}).execute();
+  componentWillReceiveProps: function(nextProps) {
+    if (nextProps.ids != this.props.ids && this.viewSelector_) {
+      this.viewSelector_.set({ids: nextProps.ids}).execute();
     }
   },
   componentWillUnmount: function() {
