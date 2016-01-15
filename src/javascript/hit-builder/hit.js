@@ -53,7 +53,7 @@ export function getInitialHitAndUpdateUrl() {
  * Accepts a hit payload or URL and converts it into an array of param objects
  * where the required params are always first and in the correct order.
  * @param {string} hit A query string or hit payload.
- * @return {Array<Object>} The param models.
+ * @return {Array<Object>} The param objects.
  */
 export function convertHitToParams(hit = '') {
   // If the hit contains a "?", remove it and all characters before it.
@@ -62,7 +62,7 @@ export function convertHitToParams(hit = '') {
 
   let query = querystring.parse(hit);
 
-  // Create required models first, regardless of order in the hit.
+  // Create required params first, regardless of order in the hit.
   let requiredParams = [];
   for (let name of REQUIRED_PARAMS) {
     requiredParams.push({
@@ -74,7 +74,7 @@ export function convertHitToParams(hit = '') {
     delete query[name];
   }
 
-  // Create optional models after required models.
+  // Create optional params after required params.
   let optionalParams = map(query, (value, name) =>
       ({name, value, isOptional: true}));
 
@@ -84,6 +84,7 @@ export function convertHitToParams(hit = '') {
 
 /**
  * Returns the hit model data as a query string.
+ * @param {Array<Object>} params An array of param objects.
  * @return {string}
  */
 export function convertParamsToHit(params) {

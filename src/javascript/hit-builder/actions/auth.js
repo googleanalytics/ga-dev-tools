@@ -14,7 +14,6 @@
 
 
 import accountSummaries from 'javascript-api-utils/lib/account-summaries';
-
 import * as types from './types';
 
 

@@ -13,9 +13,9 @@
 // limitations under the License.
 
 
-import Icon from '../../components/icon';
 import React from 'react';
 import ReactDOM from 'react-dom';
+import Icon from '../../components/icon';
 
 
 const REFERENCE_URL = 'https://developers.google.com/' +
@@ -30,11 +30,10 @@ export default class ParamElement extends React.Component {
   }
 
   /**
-   * Updates the state and param model with the new name.
-   * @return {Object} e The React event.
+   * Updates the state with the new name.
+   * @param {string} name The input element's value property.
    */
-  handleNameChange = (e) => {
-    let name = e.target.value;
+  handleNameChange = ({target: {value: name}}) => {
     this.setState({name});
     this.props.actions.setHitStatus('UNVALIDATED');
     this.props.actions.editParamName(this.props.param.id, name);
@@ -42,11 +41,10 @@ export default class ParamElement extends React.Component {
 
 
   /**
-   * Updates the state and param model with the new value.
-   * @return {Object} e The React event.
+   * Updates the state with the new value.
+   * @param {string} value The input element's value property.
    */
-  handleValueChange = (e) => {
-    let value = e.target.value;
+  handleValueChange = ({target: {value}}) => {
     this.setState({value});
     this.props.actions.setHitStatus('UNVALIDATED');
     this.props.actions.editParamValue(this.props.param.id, value);

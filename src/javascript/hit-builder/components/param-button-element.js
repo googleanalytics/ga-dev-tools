@@ -13,9 +13,9 @@
 // limitations under the License.
 
 
-import Icon from '../../components/icon';
-import ParamElement from './param-element';
 import React from 'react';
+import ParamElement from './param-element';
+import Icon from '../../components/icon';
 
 
 export default class ParamButtonElement extends ParamElement {

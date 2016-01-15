@@ -14,7 +14,6 @@
 
 
 import {combineReducers} from 'redux';
-
 import isAuthorized from './auth';
 import hitStatus from './hit-status';
 import params from './params';

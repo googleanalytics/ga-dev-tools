@@ -16,10 +16,8 @@
 import * as types from './types';
 import {setHitStatus} from './hit-status';
 import {setValidationMessages} from './validation-messages';
-
 import {convertParamsToHit, convertHitToParams,
         getHitValidationResult} from '../hit';
-
 import AlertDispatcher from '../../components/alert-dispatcher';
 
 

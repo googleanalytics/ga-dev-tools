@@ -16,12 +16,12 @@
 /* global $ */
 
 
-import Icon from '../../components/icon';
-import IconButton from '../../components/icon-button';
 import React from 'react';
 import ReactDOM from 'react-dom';
-import supports from '../../supports';
 import Textarea from 'react-textarea-autosize';
+import Icon from '../../components/icon';
+import IconButton from '../../components/icon-button';
+import supports from '../../supports';
 
 
 export default class HitElement extends React.Component {
@@ -36,7 +36,7 @@ export default class HitElement extends React.Component {
 
   /**
    * Updates the values state when the users changes the hit text.
-   * @param {Object} e The React event object.
+   * @param {string} value The input element's value property.
    */
   handleChange = ({target: {value}}) => {
     this.setState({value});
@@ -55,7 +55,7 @@ export default class HitElement extends React.Component {
   /**
    * Removes the disabled state and calls the `onBlur` methods with the new
    * hit value.
-   * @param {Object} e The React event object.
+   * @param {string} value The input element's value property.
    */
   handleBlur = ({target: {value}}) => {
     $('body').removeClass('is-editing');
@@ -78,7 +78,7 @@ export default class HitElement extends React.Component {
       this.setState({hitSent: true})
 
       // After three second, remove the success checkbox.
-      setTimeout(() => this.setState({hitSent: false}), 1000);
+      setTimeout(() => this.setState({hitSent: false}), 3000);
     });
   }
 
@@ -96,7 +96,7 @@ export default class HitElement extends React.Component {
       // After three second, remove the success checkbox.
       clearTimeout(this.hitPayloadCopiedTimeout_);
       this.hitPayloadCopiedTimeout_ =
-          setTimeout(() => this.setState({hitPayloadCopied: false}), 1000);
+          setTimeout(() => this.setState({hitPayloadCopied: false}), 3000);
     }
     else {
       // TODO(philipwalton): handle error case

@@ -15,17 +15,12 @@
 
 import React from 'react';
 import uuid from 'uuid';
-
 import HitElement from './hit-element';
 import ParamButtonElement from './param-button-element';
 import ParamElement from './param-element';
 import ParamSearchSuggestElement from './param-search-suggest-element';
 import ParamSelectElement from './param-select-element';
-
 import {convertParamsToHit} from '../hit';
-
-import Collection from '../../collection';
-import Icon from '../../components/icon';
 import IconButton from '../../components/icon-button';
 
 
@@ -52,15 +47,6 @@ export default class HitBuilder extends React.Component {
   handleAddParam = () => {
     this.newParamNeedsFocus_ = true;
     this.props.actions.addParam();
-  }
-
-
-  /**
-   * Updates the param collection with a new hit value.
-   * @param {string} hit The hit payload value.
-   */
-  handleHitChange = (hit) => {
-    // this.params.update(hit);
   }
 
 
