@@ -63,10 +63,6 @@ export default class QueryExplorer extends React.Component {
     this.sortOptions;
 
     this._state = new Model();
-    this.settings = new Model(store.get('query-explorer:settings'));
-
-    // Store the initial settings on the tracker.
-    ga('set', 'dimension3', qs.stringify(this.settings.get()));
   }
 
 
@@ -102,7 +98,6 @@ export default class QueryExplorer extends React.Component {
    *     containing the target.name and target.value properties.
    */
   handleParamChange = ({target: {name, value}}) => {
-    debugger;
     this.props.actions.updateParams({[name]: value});
 
     if (name == 'metrics' || name == 'dimensions') {
@@ -154,47 +149,29 @@ export default class QueryExplorer extends React.Component {
 
 
   async handleUserAuthorized() {
-    this.segments = await tagData.getSegments(this.settings.get('useDefinition'));
-    this.forceUpdate();
+    let {actions, settings} = this.props;
 
-    // Listen for changes and rerender.
-    this.settings.on('change', () => {
-      store.set('query-explorer:settings', this.settings.get());
-      ga('set', 'dimension3', qs.stringify(this.settings.get()));
-      this.forceUpdate();
-    });
+    let segments = await tagData.getSegments(settings.useDefinition);
+    this.segments = segments;
+
+    actions.updateSelect2Options({segments});
 
     this._state.on('change', () => {
       this.forceUpdate();
+    });
+
+    this.setState({
+      isAuthorized: true
     });
   }
 
 
   /**
    * Invoked when a user clicks on the segment definition checkbox.
-   * @param {SyntheticEvent} e The React event.
+   * @param {{target: Element}} The React event.
    */
-  handleSegmentDefinitionToggle = (e) => {
-    let useDefinition = e.target.checked;
-    this.settings.set('useDefinition', useDefinition);
-
-    tagData.getSegments(useDefinition).then((results) => {
-      this.segments = results;
-      // TODO(philipwalton): don't use forceUpdate().
-      this.forceUpdate();
-    });
-
-    if (this.props.params.segment) {
-      let value = this.props.params.segment;
-      let segment = find(this.segments, segment =>
-          value == segment.segmentId || value == segment.definition);
-
-      if (segment) {
-        this.props.actions.updateParams({
-          segment: useDefinition ? segment.definition : segment.segmentId
-        });
-      }
-    }
+  handleSegmentDefinitionToggle = ({target: {checked: useDefinition}}) => {
+    this.props.actions.updateSettings({useDefinition});
   }
 
 
@@ -203,8 +180,8 @@ export default class QueryExplorer extends React.Component {
    * Invoked when a user clicks on the include `ids` checkbox.
    * @param {SyntheticEvent} e The React event.
    */
-  handleIdsToggle = (e) => {
-    this.settings.set('includeIds', e.target.checked);
+  handleIdsToggle = ({target: {checked: includeIds}}) => {
+    this.props.actions.updateSettings({includeIds});
   }
 
 
@@ -212,8 +189,8 @@ export default class QueryExplorer extends React.Component {
    * Invoked when a user clicks on the include `access_token` checkbox.
    * @param {SyntheticEvent} e The React event.
    */
-  handleAccessTokenToggle = (e) => {
-    this.settings.set('includeAccessToken', e.target.checked);
+  handleAccessTokenToggle = ({target: {checked: includeAccessToken}}) => {
+    this.props.actions.updateSettings({includeAccessToken});
   }
 
 
@@ -335,7 +312,7 @@ export default class QueryExplorer extends React.Component {
 
   render() {
 
-    let {actions, params} = this.props;
+    let {actions, params, settings, select2Options} = this.props;
 
     return (
       <div>
@@ -452,7 +429,7 @@ export default class QueryExplorer extends React.Component {
                 <SearchSuggest
                   name="segment"
                   value={params.segment}
-                  options={this.segments}
+                  options={select2Options.segments}
                   onChange={this.handleParamChange} />
                 <HelpIconLink name="segment" />
               </div>
@@ -462,7 +439,7 @@ export default class QueryExplorer extends React.Component {
                     className="Checkbox"
                     type="checkbox"
                     onChange={this.handleSegmentDefinitionToggle}
-                    checked={this.settings.get('useDefinition')} />
+                    checked={settings.useDefinition} />
                   Show segment definitions instead of IDs.
                 </label>
               </div>
@@ -526,8 +503,8 @@ export default class QueryExplorer extends React.Component {
         <QueryReport
           report={this._state.get('report')}
           isQuerying={this._state.get('isQuerying')}
-          includeIds={this.settings.get('includeIds')}
-          includeAccessToken={this.settings.get('includeAccessToken')}
+          includeIds={settings.includeIds}
+          includeAccessToken={settings.includeAccessToken}
           onSuccess={this.handleDataChartSuccess}
           onError={this.handleDataChartError}
           onIdsToggle={this.handleIdsToggle}

@@ -5,9 +5,6 @@ import queryParams from './query-params';
 import reducer from './reducers';
 import db from '../data-store';
 
-// TODO(philipwalton): create middleware to save the params and settings
-// to localStorage.
-
 
 let middlewear = [thunkMiddleware];
 
@@ -74,8 +71,11 @@ function getInitalQueryParamsAndUpdateUrl() {
  * exist, an empty object is returned.
  * @return {Object} The settings object.
  */
-function getDefaultSettings() {
-  return db.get('query-explorer:settings') || {};
+function getDefaultSettingsAndUpdateTracker() {
+  let settings = db.get('query-explorer:settings') || {};
+
+  ga('set', 'dimension3', qs.stringify(settings));
+  return settings;
 }
 
 
@@ -89,9 +89,24 @@ function getDefaultSelect2Options() {
 }
 
 
-export default createStoreWithMiddleware(reducer, {
+let store = createStoreWithMiddleware(reducer, {
   isAuthorized: false,
   params: getInitalQueryParamsAndUpdateUrl(),
   select2Options: getDefaultSelect2Options(),
-  settings: getDefaultSettings()
+  settings: getDefaultSettingsAndUpdateTracker()
 });
+
+
+// TODO(philipwalton): create middleware to save the params and settings
+// to localStorage.
+store.subscribe(function() {
+  let {params, settings} = store.getState();
+
+  db.set('query-explorer:settings', settings);
+  ga('set', 'dimension3', qs.stringify(settings));
+
+  db.set('query-explorer:params', qs.stringify(settings));
+});
+
+
+export default store;

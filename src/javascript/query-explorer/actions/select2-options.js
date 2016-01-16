@@ -16,6 +16,6 @@
 import * as types from './types';
 
 
-export function updateSelect2Options(options) {
-  return {type: types.UPDATE_SELECT2_OPTIONS, options};
+export function updateSelect2Options(select2Options) {
+  return {type: types.UPDATE_SELECT2_OPTIONS, select2Options};
 }

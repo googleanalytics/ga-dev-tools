@@ -14,8 +14,43 @@
 
 
 import * as types from './types';
+import {updateParams} from './params';
+import {updateSelect2Options} from './select2-options';
+import tagData from '../tag-data';
+
+
+async function handleUseDefinitionChange(dispatch, useDefinition, params) {
+
+  let segments = await tagData.getSegments(useDefinition);
+
+  dispatch(updateSelect2Options({segments}));
+
+  if (params.segment) {
+    let value = params.segment;
+    let segment = segments.find((s) => value == s.sId || value == s.definition);
+
+    if (segment) {
+      segment = useDefinition ? segment.definition : segment.segmentId
+      dispatch(updateParams({segment}));
+    }
+    else {
+      // TODO(philipwalton): investigate why this can't be null and needs
+      // to be an empty string (fails when calling toLowerCase()).
+      dispatch(updateParams({segment: ''}));
+    }
+  }
+}
 
 
 export function updateSettings(settings) {
-  return {type: types.UPDATE_SETTINGS, settings};
+  return function(dispatch, getState) {
+    let {params, settings: prevSettings} = getState();
+    let {useDefinition} = settings;
+
+    if (useDefinition != prevSettings.useDefinition) {
+      handleUseDefinitionChange(dispatch, useDefinition, params);
+    }
+
+    dispatch({type: types.UPDATE_SETTINGS, settings});
+  };
 }
