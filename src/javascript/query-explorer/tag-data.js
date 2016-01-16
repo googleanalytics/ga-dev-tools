@@ -81,8 +81,8 @@ export default {
   },
 
   getSegments(useDefinition) {
-    return getSegmentTags().then(function(resutls) {
-      let segments = resutls.map(function(segment) {
+    return getSegmentTags().then(function(results) {
+      let segments = results.map(function(segment) {
         return {
           id: useDefinition ? segment.definition : segment.segmentId,
           definition: segment.definition,
