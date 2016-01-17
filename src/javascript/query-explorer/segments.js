@@ -22,6 +22,9 @@
 let cache;
 
 
+// TODO(philipwalton): this module should eventually live at:
+// https://github.com/googleanalytics/javascript-api-utils
+
 let segments = {
 
   /**
