@@ -16,15 +16,15 @@
 import * as types from '../actions/types';
 
 
-export default function settings(state = {}, action) {
+export default function viewData(state = {}, action) {
 
   switch (action.type) {
 
-    case types.UPDATE_SETTINGS:
-      let {settings} = action;
+    case types.UPDATE_VIEW_DATA:
+      let {viewData} = action;
       return {
         ...state,
-        ...settings
+        ...viewData
       };
 
     default:

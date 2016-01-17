@@ -14,13 +14,20 @@
 
 
 import * as types from './types';
-import queryParams from '../query-params';
-import db from '../../data-store';
+import segments from '../segments';
 
 
 export function updateParams(params) {
-
-  // TODO(philipwalton): update `select2Options.sort` if the metrics or
-  // dimensions params change.
   return {type: types.UPDATE_PARAMS, params};
+}
+
+
+export function swapSegmentIdAndDefinition(segment, useDefinition) {
+  return async function(dispatch, getState) {
+    segment = await (useDefinition
+        ? segments.getDefinitionFromId(segment)
+        : segments.getIdFromDefinition(segment));
+
+    if (typeof segment == 'string') dispatch(updateParams({segment}));
+  }
 }

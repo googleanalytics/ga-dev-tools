@@ -16,25 +16,16 @@
 /* global $, ga, gapi */
 
 
-import assign from 'lodash/object/assign';
-import clone from 'lodash/lang/clone';
 import Datepicker from './datepicker';
-import filter from 'lodash/collection/filter';
-import find from 'lodash/collection/find';
 import HelpIconLink from './help-icon-link';
 import map from 'lodash/collection/map';
-import mapValues from 'lodash/object/mapValues';
 import Model from '../../model';
-import pick from 'lodash/object/pick';
-import qs from 'querystring';
-import queryParams from '../query-params';
+
 import QueryReport from './query-report';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import SearchSuggest from '../../components/search-suggest';
 import Select2MultiSuggest from './select2-multi-suggest';
-import store from '../../data-store';
-import tagData from '../tag-data';
 import ViewSelector from './view-selector';
 
 
@@ -47,7 +38,6 @@ const PARAMS_TO_TRACK = ['start-date', 'end-date', 'metrics', 'dimensions'];
 
 
 
-
 export default class QueryExplorer extends React.Component {
 
   state = {
@@ -56,11 +46,6 @@ export default class QueryExplorer extends React.Component {
 
   constructor(props) {
     super(props);
-
-    this.metrics;
-    this.dimensions;
-    this.segments;
-    this.sortOptions;
 
     this._state = new Model();
   }
@@ -71,24 +56,12 @@ export default class QueryExplorer extends React.Component {
    * @param {Object} data The object emited by the ViewSelector2's "changeView"
    * event.
    */
-  handleViewSelectorChange = async (viewSelectorData) => {
+  handleViewSelectorChange = async (viewData) => {
+    this._state.set('selectedAccountData', {...viewData});
 
-    let {account, property, view, ids} = viewSelectorData;
-
-    this._state.set('selectedAccountData', clone(viewSelectorData));
-
-    let result = await tagData.getMetricsAndDimensions(account, property, view);
-
-    this.metrics = result.metrics;
-    this.dimensions = result.dimensions;
-
-    // TODO(philipwalton) This does need to happen after metrics and dimensions
-    // potentially change, but it sould probably happen in an event handler
-    // rather than here. Refactor once dimensions and metrics are moved to
-    // be properties of `state`.
-    this.setSortOptions();
-
-    this.props.actions.updateParams({ids});
+    this.props.actions.updateViewData(viewData);
+    this.props.actions.updateParams({ids: viewData.ids});
+    this.props.actions.updateMetricsDimensionsAndSortOptions();
   }
 
 
@@ -101,64 +74,13 @@ export default class QueryExplorer extends React.Component {
     this.props.actions.updateParams({[name]: value});
 
     if (name == 'metrics' || name == 'dimensions') {
-      this.setSortOptions();
-    }
-
-    // TODO(philipwalton): move this to the middleware ultimately.
-    let nextParams = Object.assign({},
-        queryParams.sanitize(this.props.params), {[name]: value});
-    store.set('query-explorer:params', nextParams);
-  }
-
-
-  /**
-   * Sets or updates the options for the sort field based on the chosen
-   * metrics and dimensions.
-   */
-  setSortOptions() {
-
-    let {params} = this.props;
-
-    let metsAndDims = (this.metrics || []).concat(this.dimensions || []);
-    let chosenMetrics = (params.metrics || '').split(',');
-    let chosenDimensions = (params.dimensions || '').split(',');
-    let chosenMetsAndDims = (chosenMetrics || []).concat(chosenDimensions || []);
-
-    this.sortOptions = [];
-
-    for (let choice of chosenMetsAndDims) {
-      for (let option of metsAndDims) {
-        if (choice == option.id) {
-
-          let descending = clone(option);
-          descending.name += ' (descending)';
-          descending.text += ' (descending)';
-          descending.id = '-' + choice;
-
-          let ascending = clone(option);
-          ascending.name += ' (ascending)';
-          ascending.text += ' (ascending)';
-          ascending.id = choice;
-
-          this.sortOptions.push(descending);
-          this.sortOptions.push(ascending);
-        }
-      }
+      this.props.actions.updateSortOptions();
     }
   }
 
 
-  async handleUserAuthorized() {
-    let {actions, settings} = this.props;
-
-    let segments = await tagData.getSegments(settings.useDefinition);
-    this.segments = segments;
-
-    actions.updateSelect2Options({segments});
-
-    this._state.on('change', () => {
-      this.forceUpdate();
-    });
+  handleUserAuthorized() {
+    this.props.actions.updateSegmentsOptions();
 
     this.setState({
       isAuthorized: true
@@ -171,7 +93,9 @@ export default class QueryExplorer extends React.Component {
    * @param {{target: Element}} The React event.
    */
   handleSegmentDefinitionToggle = ({target: {checked: useDefinition}}) => {
+    let {segment} = this.props.params;
     this.props.actions.updateSettings({useDefinition});
+    this.props.actions.swapSegmentIdAndDefinition(segment, useDefinition);
   }
 
 
@@ -202,7 +126,7 @@ export default class QueryExplorer extends React.Component {
     this._state.set({
       isQuerying: false,
       report: {
-        accountData: clone(this._state.get('selectedAccountData')),
+        accountData: {...this._state.get('selectedAccountData')},
         params: this._state.get('report').params,
         response: data.response
       }
@@ -226,7 +150,7 @@ export default class QueryExplorer extends React.Component {
     this._state.set({
       isQuerying: false,
       report: {
-        accountData: clone(this._state.get('selectedAccountData')),
+        accountData: {...this._state.get('selectedAccountData')},
         params: state.get('report').params,
         error: err.error
       }
@@ -249,7 +173,7 @@ export default class QueryExplorer extends React.Component {
   handleSubmit = (e) => {
     e.preventDefault();
 
-    let paramsClone = clone(this.props.params);
+    let paramsClone = {...this.props.params};
 
     let trackableParamData = map(paramsClone, (value, key) => {
       // Don't run `encodeURIComponent` on these params because the they will
@@ -293,9 +217,6 @@ export default class QueryExplorer extends React.Component {
   handleDownloadTsvClick() {
     ga('send', 'event', 'query tsv download', 'click');
   }
-
-
-
 
 
   /**
@@ -373,7 +294,7 @@ export default class QueryExplorer extends React.Component {
                 <Select2MultiSuggest
                   name="metrics"
                   value={params.metrics}
-                  tags={this.metrics}
+                  tags={select2Options.metrics}
                   onChange={this.handleParamChange} />
                 <HelpIconLink name="metrics" />
               </div>
@@ -387,7 +308,7 @@ export default class QueryExplorer extends React.Component {
                 <Select2MultiSuggest
                   name="dimensions"
                   value={params.dimensions}
-                  tags={this.dimensions}
+                  tags={select2Options.dimensions}
                   onChange={this.handleParamChange} />
                 <HelpIconLink name="dimensions" />
               </div>
@@ -401,7 +322,7 @@ export default class QueryExplorer extends React.Component {
                 <Select2MultiSuggest
                   name="sort"
                   value={params.sort}
-                  tags={this.sortOptions}
+                  tags={select2Options.sort}
                   onChange={this.handleParamChange} />
                 <HelpIconLink name="sort" />
               </div>

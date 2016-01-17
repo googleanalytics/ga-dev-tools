@@ -18,11 +18,13 @@ import isAuthorized from './auth';
 import params from './params';
 import select2Options from './select2-options';
 import settings from './settings';
+import viewData from './view-data';
 
 
 export default combineReducers({
   isAuthorized,
   params,
   select2Options,
-  settings
+  settings,
+  viewData
 });

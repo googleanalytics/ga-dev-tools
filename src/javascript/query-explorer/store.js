@@ -105,7 +105,7 @@ store.subscribe(function() {
   db.set('query-explorer:settings', settings);
   ga('set', 'dimension3', qs.stringify(settings));
 
-  db.set('query-explorer:params', qs.stringify(settings));
+  db.set('query-explorer:params', params);
 });
 
 

@@ -17,11 +17,13 @@ import * as isAuthorized from './auth';
 import * as params from './params';
 import * as select2Options from './select2-options';
 import * as settings from './settings';
+import * as viewData from './view-data';
 
 
 export default {
   ...isAuthorized,
   ...params,
   ...select2Options,
-  ...settings
+  ...settings,
+  ...viewData
 };
