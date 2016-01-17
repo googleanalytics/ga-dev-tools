@@ -16,6 +16,7 @@
 import {combineReducers} from 'redux';
 import isAuthorized from './auth';
 import params from './params';
+import isQuerying from './query';
 import select2Options from './select2-options';
 import settings from './settings';
 import viewData from './view-data';
@@ -23,6 +24,7 @@ import viewData from './view-data';
 
 export default combineReducers({
   isAuthorized,
+  isQuerying,
   params,
   select2Options,
   settings,

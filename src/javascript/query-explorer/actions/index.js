@@ -13,16 +13,18 @@
 // limitations under the License.
 
 
-import * as isAuthorized from './auth';
+import * as auth from './auth';
 import * as params from './params';
+import * as query from './query';
 import * as select2Options from './select2-options';
 import * as settings from './settings';
 import * as viewData from './view-data';
 
 
 export default {
-  ...isAuthorized,
+  ...auth,
   ...params,
+  ...query,
   ...select2Options,
   ...settings,
   ...viewData

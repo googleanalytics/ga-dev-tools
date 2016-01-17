@@ -111,8 +111,10 @@ export default class QueryExplorer extends React.Component {
    * @param {Object} data The object emitted by the DataChart's "success" event.
    */
   handleDataChartSuccess = (data) => {
+
+    this.props.actions.setQueryState(false);
+
     this._state.set({
-      isQuerying: false,
       report: {
         accountData: {...this._state.get('selectedAccountData')},
         params: this._state.get('report').params,
@@ -135,8 +137,10 @@ export default class QueryExplorer extends React.Component {
    * @param {Object} data The error emitted by the DataChart's "error" event.
    */
   handleDataChartError = (err) => {
+
+    this.props.actions.setQueryState(false);
+
     this._state.set({
-      isQuerying: false,
       report: {
         accountData: {...this._state.get('selectedAccountData')},
         params: state.get('report').params,
@@ -161,6 +165,8 @@ export default class QueryExplorer extends React.Component {
   handleSubmit = (e) => {
     e.preventDefault();
 
+    this.props.actions.setQueryState(true);
+
     let paramsClone = {...this.props.params};
 
     let trackableParamData = map(paramsClone, (value, key) => {
@@ -175,7 +181,6 @@ export default class QueryExplorer extends React.Component {
     ga('set', 'dimension2', trackableParamData);
 
     this._state.set({
-      isQuerying: true,
       report: {
         params: paramsClone
       }
@@ -215,7 +220,7 @@ export default class QueryExplorer extends React.Component {
 
   render() {
 
-    let {actions, params, settings, select2Options} = this.props;
+    let {actions, isQuerying, params, settings, select2Options} = this.props;
 
     return (
       <div>
@@ -395,8 +400,8 @@ export default class QueryExplorer extends React.Component {
             <div className="FormControl-body">
               <button
                 className="Button Button--action"
-                disabled={this._state.get('isQuerying')}>
-                {this._state.get('isQuerying') ? 'Loading...' : 'Run Query'}
+                disabled={isQuerying}>
+                {isQuerying ? 'Loading...' : 'Run Query'}
               </button>
             </div>
           </div>
@@ -405,7 +410,7 @@ export default class QueryExplorer extends React.Component {
 
         <QueryReport
           report={this._state.get('report')}
-          isQuerying={this._state.get('isQuerying')}
+          isQuerying={isQuerying}
           includeIds={settings.includeIds}
           includeAccessToken={settings.includeAccessToken}
           onSuccess={this.handleDataChartSuccess}

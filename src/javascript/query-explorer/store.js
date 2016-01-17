@@ -91,6 +91,7 @@ function getDefaultSelect2Options() {
 
 let store = createStoreWithMiddleware(reducer, {
   isAuthorized: false,
+  isQuerying: false,
   params: getInitalQueryParamsAndUpdateUrl(),
   select2Options: getDefaultSelect2Options(),
   settings: getDefaultSettingsAndUpdateTracker()
