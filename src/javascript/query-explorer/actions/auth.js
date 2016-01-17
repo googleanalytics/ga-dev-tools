@@ -14,6 +14,7 @@
 
 
 import * as types from './types';
+import {updateSegmentsOptions} from './select2-options';
 
 
 function setAuthorizedState() {
@@ -23,5 +24,6 @@ function setAuthorizedState() {
 export function handleAuthorizationSuccess() {
   return function(dispatch) {
     dispatch(setAuthorizedState());
+    dispatch(updateSegmentsOptions());
   };
 }

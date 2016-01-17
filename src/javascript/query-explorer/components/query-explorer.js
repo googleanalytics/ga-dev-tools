@@ -40,14 +40,11 @@ const PARAMS_TO_TRACK = ['start-date', 'end-date', 'metrics', 'dimensions'];
 
 export default class QueryExplorer extends React.Component {
 
-  state = {
-    isAuthorized: false
-  };
-
   constructor(props) {
     super(props);
 
     this._state = new Model();
+    this._state.on('change', () => this.forceUpdate());
   }
 
 
@@ -76,15 +73,6 @@ export default class QueryExplorer extends React.Component {
     if (name == 'metrics' || name == 'dimensions') {
       this.props.actions.updateSortOptions();
     }
-  }
-
-
-  handleUserAuthorized() {
-    this.props.actions.updateSegmentsOptions();
-
-    this.setState({
-      isAuthorized: true
-    });
   }
 
 
@@ -224,12 +212,6 @@ export default class QueryExplorer extends React.Component {
    * http://facebook.github.io/react/docs/component-specs.html
    * ---------------------------------------------------------
    */
-
-  componentWillReceiveProps(nextProps) {
-    if (nextProps.isAuthorized && !this.state.isAuthorized) {
-      this.handleUserAuthorized();
-    }
-  }
 
   render() {
 
