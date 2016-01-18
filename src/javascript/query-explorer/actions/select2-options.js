@@ -45,12 +45,9 @@ export function updateSortOptions() {
 }
 
 
-export function updateSegmentsOptions() {
-  return async function(dispatch, getState) {
-    let {params, settings} = getState();
-    let {useDefinition} = settings;
+export function updateSegmentsOptions(useDefinition) {
+  return async function(dispatch) {
     let segments = await getSegmentsOptions(useDefinition);
-
     dispatch(updateSelect2Options({segments}));
   }
 }

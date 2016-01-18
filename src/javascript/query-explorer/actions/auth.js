@@ -22,8 +22,9 @@ function setAuthorizedState() {
 }
 
 export function handleAuthorizationSuccess() {
-  return function(dispatch) {
+  return function(dispatch, getState) {
+    let {useDefinition} = getState().settings;
     dispatch(setAuthorizedState());
-    dispatch(updateSegmentsOptions());
+    dispatch(updateSegmentsOptions(useDefinition));
   };
 }

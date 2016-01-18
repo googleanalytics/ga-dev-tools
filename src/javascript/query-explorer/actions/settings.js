@@ -14,19 +14,8 @@
 
 
 import * as types from './types';
-import {updateSegmentsOptions} from './select2-options';
 
 
 export function updateSettings(settings) {
-  return function(dispatch, getState) {
-    let {params, settings: prevSettings} = getState();
-    let {useDefinition} = settings;
-    let useDefinitionChanged = useDefinition != prevSettings.useDefinition;
-
-    dispatch({type: types.UPDATE_SETTINGS, settings});
-
-    if (useDefinitionChanged) {
-      dispatch(updateSegmentsOptions());
-    }
-  };
+  return {type: types.UPDATE_SETTINGS, settings};
 }
