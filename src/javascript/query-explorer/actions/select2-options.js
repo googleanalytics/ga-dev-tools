@@ -21,10 +21,10 @@ import * as types from './types';
 import segments from '../segments';
 
 
-export function updateMetricsDimensionsAndSortOptions() {
+export function updateMetricsDimensionsAndSortOptions(viewData) {
   return async function(dispatch, getState) {
+    let {account, property, view} = viewData;
     let {params} = getState();
-    let {account, property, view} = getState().viewData;
     let {metrics, dimensions} = await getMetricsAndDimensionsOptions(
         account, property, view);
 

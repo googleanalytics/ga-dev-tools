@@ -18,6 +18,7 @@
 
 import React from 'react';
 import ReactDOM from 'react-dom';
+import accountSummaries from 'javascript-api-utils/lib/account-summaries';
 
 import Datepicker from './datepicker';
 import HelpIconLink from './help-icon-link';
@@ -45,9 +46,9 @@ export default class QueryExplorer extends React.Component {
    */
   handleViewSelectorChange = (viewData) => {
     let {actions} = this.props;
-    actions.updateViewData(viewData);
-    actions.updateParams({ids: viewData.ids});
-    actions.updateMetricsDimensionsAndSortOptions();
+    let {ids} = viewData;
+    actions.updateParams({ids});
+    actions.updateMetricsDimensionsAndSortOptions(viewData);
   }
 
 
@@ -142,17 +143,12 @@ export default class QueryExplorer extends React.Component {
    * Invoked when a user submits the <QueryForm>.
    * @param {Event|Object} e The native or React event.
    */
-  handleSubmit = (e) => {
+  handleSubmit = async (e) => {
     e.preventDefault();
-    let {actions, params, viewData} = this.props;
+    let {actions, params} = this.props;
     let paramsClone = {...params};
 
     actions.setQueryState(true);
-    actions.updateReport({
-      propertyName: viewData.property.name,
-      viewName: viewData.view.name,
-      params: paramsClone
-    });
 
     let trackableParamData = Object.keys(paramsClone).map((key) =>
         PARAMS_TO_TRACK.includes(key) ? `${key}=${paramsClone[key]}` : key)
@@ -160,6 +156,17 @@ export default class QueryExplorer extends React.Component {
 
     // Set it on the tracker so it gets sent with all Query Explorer hits.
     ga('set', 'dimension2', trackableParamData);
+
+    let summaries = await accountSummaries.get();
+    let viewId = params.ids.slice(3);
+    let view = summaries.getView(viewId);
+    let property = summaries.getPropertyByViewId(viewId);
+
+    actions.updateReport({
+      propertyName: property.name,
+      viewName: view.name,
+      params: paramsClone
+    });
   }
 
 

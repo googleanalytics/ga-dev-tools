@@ -30,6 +30,3 @@ export const UPDATE_SELECT2_OPTIONS = 'UPDATE_SELECT2_OPTIONS';
 
 // settings
 export const UPDATE_SETTINGS = 'UPDATE_SETTINGS';
-
-// viewData
-export const UPDATE_VIEW_DATA = 'UPDATE_VIEW_DATA';

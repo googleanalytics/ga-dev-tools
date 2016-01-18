@@ -19,7 +19,6 @@ import * as query from './query';
 import * as report from './report';
 import * as select2Options from './select2-options';
 import * as settings from './settings';
-import * as viewData from './view-data';
 
 
 export default {
@@ -29,5 +28,4 @@ export default {
   ...report,
   ...select2Options,
   ...settings,
-  ...viewData
 };

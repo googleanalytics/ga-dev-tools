@@ -20,7 +20,6 @@ import isQuerying from './query';
 import report from './report';
 import select2Options from './select2-options';
 import settings from './settings';
-import viewData from './view-data';
 
 
 export default combineReducers({
@@ -29,6 +28,5 @@ export default combineReducers({
   params,
   report,
   select2Options,
-  settings,
-  viewData
+  settings
 });
