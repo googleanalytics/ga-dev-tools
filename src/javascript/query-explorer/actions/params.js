@@ -24,9 +24,9 @@ export function updateParams(params) {
 
 export function swapSegmentIdAndDefinition(segment, useDefinition) {
   return async function(dispatch, getState) {
-    segment = await (useDefinition
+    segment = await useDefinition
         ? segments.getDefinitionFromId(segment)
-        : segments.getIdFromDefinition(segment));
+        : segments.getIdFromDefinition(segment);
 
     if (typeof segment == 'string') dispatch(updateParams({segment}));
   }
