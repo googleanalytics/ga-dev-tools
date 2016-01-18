@@ -358,6 +358,20 @@ export default class QueryExplorer extends React.Component {
           </div>
 
           <div className="FormControl FormControl--inline">
+            <label className="FormControl-label">include-empty-rows</label>
+            <div className="FormControl-body">
+              <div className="FlexLine">
+                <input
+                  className="FormField FormFieldCombo-field"
+                  name="include-empty-rows"
+                  value={params['include-empty-rows']}
+                  onChange={this.handleParamChange} />
+                <HelpIconLink name="include-empty-rows" />
+              </div>
+            </div>
+          </div>
+
+          <div className="FormControl FormControl--inline">
             <label className="FormControl-label">start-index</label>
             <div className="FormControl-body">
               <div className="FlexLine">

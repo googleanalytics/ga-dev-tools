@@ -23,6 +23,7 @@ const PARAMS = [
   'filters',
   'segment',
   'samplingLevel',
+  'include-empty-rows',
   'start-index',
   'max-results'
 ];
