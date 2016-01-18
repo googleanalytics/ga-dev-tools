@@ -28,17 +28,25 @@ let iconCalendar =
      </svg>`;
 
 
-var Datepicker = React.createClass({
-  getInitialState: function() {
-    return {
-      value: this.props.value,
-    }
-  },
-  handleChange: function(e) {
+export default class Datepicker extends React.Component {
+
+  state = {
+    value: this.props.value,
+  }
+
+  handleChange = (e) => {
     this.setState({value: e.target.value});
     this.props.onChange.call(this, e);
-  },
-  componentDidMount: function() {
+  }
+
+
+  /**
+   * React lifecycyle method below:
+   * http://facebook.github.io/react/docs/component-specs.html
+   * ---------------------------------------------------------
+   */
+
+  componentDidMount() {
     let isShowing = false;
     let opts = {
       changeMonth: true,
@@ -55,25 +63,25 @@ var Datepicker = React.createClass({
       }
     };
 
-    let self = this;
     let $input = $(this.refs.input);
     let $icon = $(this.refs.icon);
 
-    $input.datepicker(opts).on('change', function(e) {
-      self.handleChange(e)
-      self.props.onChange(e)
+    $input.datepicker(opts).on('change', (e) => {
+      this.handleChange(e);
+      this.props.onChange(e);
     });
 
     $icon.on('click', function(e) {
       $input.datepicker(isShowing ? 'hide' : 'show');
       isShowing = !isShowing;
     });
+  }
 
-  },
-  componentWillUnmount: function() {
+  componentWillUnmount() {
     $(this.refs.input).datepicker('destroy').off();
-  },
-  render: function() {
+  }
+
+  render() {
     return (
       <div className="FormFieldAddOn">
         <input
@@ -93,7 +101,4 @@ var Datepicker = React.createClass({
       </div>
     );
   }
-});
-
-
-export default Datepicker
+}

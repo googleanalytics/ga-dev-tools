@@ -16,11 +16,10 @@
 /* global gapi */
 
 
-import assign from 'lodash/object/assign';
 import mapValues from 'lodash/object/mapValues';
-import queryParams from '../query-params';
 import React from 'react';
 import ReactDOM from 'react-dom';
+import {sanitize} from '../query-params';
 
 
 const SRC_PARAM = 'query-explorer:v2';
@@ -32,12 +31,19 @@ export default class DataChart extends React.Component {
     params: {}
   }
 
+
+  /**
+   * React lifecycyle method below:
+   * http://facebook.github.io/react/docs/component-specs.html
+   * ---------------------------------------------------------
+   */
+
   componentDidMount() {
     gapi.analytics.ready(() => {
-      let params = queryParams.sanitize(this.props.params);
+      let params = sanitize(this.props.params);
 
       this.dataChart_ = new gapi.analytics.googleCharts.DataChart({
-        query: assign({}, params, {_src: SRC_PARAM}),
+        query: {...params, _src: SRC_PARAM},
         chart: {
           type: 'TABLE',
           container: ReactDOM.findDOMNode(this),
@@ -55,7 +61,7 @@ export default class DataChart extends React.Component {
   componentWillReceiveProps(nextProps) {
     if (nextProps.params && nextProps.isQuerying) {
 
-      let newParams = queryParams.sanitize(nextProps.params);
+      let newParams = sanitize(nextProps.params);
 
       // The Embed API has its own defaults for these values, so we need to
       // explicitly set them in case the user doesn't.
@@ -68,7 +74,7 @@ export default class DataChart extends React.Component {
       // TODO(philipwalton): .set() should ideally be able to handle
       // sending it new properties without merging.
       let nulledOldParams = mapValues(this.dataChart_.get().query, () => null);
-      let params = assign(defaultParams, nulledOldParams, newParams);
+      let params = {...defaultParams, ...nulledOldParams, ...newParams};
 
       this.dataChart_.set({query: params}).execute();
     }

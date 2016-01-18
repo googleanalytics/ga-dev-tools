@@ -1,4 +1,4 @@
-// Copyright 2015 Google Inc. All rights reserved.
+// Copyright 2016 Google Inc. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -13,25 +13,20 @@
 // limitations under the License.
 
 
-import camelCase from 'camelcase';
-import React from 'react';
-import Icon from '../../components/icon';
+// isAuthorized
+export const SET_AUTHORIZED_STATE = 'SET_AUTHORIZED_STATE';
 
+// isQuerying
+export const SET_QUERY_STATE = 'SET_QUERY_STATE';
 
-const REFERENCE_URL =
-    'https://developers.google.com' +
-    '/analytics/devguides/reporting/core/v3/reference#';
+// params
+export const UPDATE_PARAMS = 'UPDATE_PARAMS';
 
+// report
+export const UPDATE_REPORT = 'UPDATE_REPORT';
 
-export default class HelpIconLink extends React.Component {
-  render() {
-    return (
-      <a
-        className="FormControl-helpIcon"
-        href={REFERENCE_URL + camelCase(this.props.name)}
-        tabIndex="-1">
-        <Icon type="info-outline" />
-      </a>
-    );
-  }
-}
+// select2Options
+export const UPDATE_SELECT2_OPTIONS = 'UPDATE_SELECT2_OPTIONS';
+
+// settings
+export const UPDATE_SETTINGS = 'UPDATE_SETTINGS';

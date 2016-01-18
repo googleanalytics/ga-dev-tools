@@ -1,4 +1,4 @@
-// Copyright 2015 Google Inc. All rights reserved.
+// Copyright 2016 Google Inc. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -13,25 +13,21 @@
 // limitations under the License.
 
 
-import camelCase from 'camelcase';
-import React from 'react';
-import Icon from '../../components/icon';
+import * as types from '../actions/types';
 
 
-const REFERENCE_URL =
-    'https://developers.google.com' +
-    '/analytics/devguides/reporting/core/v3/reference#';
+export default function settings(state = {}, action) {
 
+  switch (action.type) {
 
-export default class HelpIconLink extends React.Component {
-  render() {
-    return (
-      <a
-        className="FormControl-helpIcon"
-        href={REFERENCE_URL + camelCase(this.props.name)}
-        tabIndex="-1">
-        <Icon type="info-outline" />
-      </a>
-    );
+    case types.UPDATE_SETTINGS:
+      let {settings} = action;
+      return {
+        ...state,
+        ...settings
+      };
+
+    default:
+      return state;
   }
 }
