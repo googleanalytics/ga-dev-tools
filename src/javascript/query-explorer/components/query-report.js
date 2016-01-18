@@ -16,10 +16,8 @@
 /* global gapi */
 
 
-import assign from 'lodash/object/assign';
 import DataChart from './data-chart';
 import IconButton from '../../components/icon-button';
-import isNull from 'lodash/lang/isNull';
 import omit from 'lodash/object/omit';
 import qs from 'querystring';
 import queryParams from '../query-params';

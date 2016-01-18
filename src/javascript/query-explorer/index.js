@@ -19,7 +19,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import {connect, Provider} from 'react-redux';
-import {bindActionCreators, createStore} from 'redux';
+import {bindActionCreators} from 'redux';
 
 import actions from './actions';
 import QueryExplorer from './components/query-explorer';

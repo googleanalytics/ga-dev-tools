@@ -16,17 +16,16 @@
 /* global $, ga, gapi */
 
 
-import Datepicker from './datepicker';
-import HelpIconLink from './help-icon-link';
-import map from 'lodash/collection/map';
-import Model from '../../model';
-
-import QueryReport from './query-report';
 import React from 'react';
 import ReactDOM from 'react-dom';
-import SearchSuggest from '../../components/search-suggest';
+
+import Datepicker from './datepicker';
+import HelpIconLink from './help-icon-link';
+import QueryReport from './query-report';
 import Select2MultiSuggest from './select2-multi-suggest';
 import ViewSelector from './view-selector';
+
+import SearchSuggest from '../../components/search-suggest';
 
 
 /**
@@ -35,7 +34,6 @@ import ViewSelector from './view-selector';
  * therefore only their presence/absense is tracked.
  */
 const PARAMS_TO_TRACK = ['start-date', 'end-date', 'metrics', 'dimensions'];
-
 
 
 export default class QueryExplorer extends React.Component {
@@ -156,8 +154,9 @@ export default class QueryExplorer extends React.Component {
       params: paramsClone
     });
 
-    let trackableParamData = map(paramsClone, (value, key) =>
-        PARAMS_TO_TRACK.includes(key) ? `${key}=${value}` : key).join('&');
+    let trackableParamData = Object.keys(paramsClone).map((key) =>
+        PARAMS_TO_TRACK.includes(key) ? `${key}=${paramsClone[key]}` : key)
+        .join('&');
 
     // Set it on the tracker so it gets sent with all Query Explorer hits.
     ga('set', 'dimension2', trackableParamData);
