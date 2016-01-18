@@ -16,13 +16,13 @@
 /* global $ */
 
 
-import bindAll from 'lodash/function/bindAll';
 import filter from 'lodash/collection/filter';
 import map from 'lodash/collection/map';
+import some from 'lodash/collection/some';
+import bindAll from 'lodash/function/bindAll';
+import template from 'lodash/string/template';
 import React from 'react';
 import ReactDOM from 'react-dom';
-import some from 'lodash/collection/some';
-import template from 'lodash/string/template';
 
 
 export default class Select2MultiSuggest extends React.Component {
@@ -150,7 +150,6 @@ export default class Select2MultiSuggest extends React.Component {
    * http://facebook.github.io/react/docs/component-specs.html
    * ---------------------------------------------------------
    */
-
 
   componentDidMount() {
     let $input = $(ReactDOM.findDOMNode(this));

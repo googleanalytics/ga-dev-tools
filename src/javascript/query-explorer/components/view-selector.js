@@ -16,9 +16,9 @@
 /* global gapi */
 
 
-import AlertDispatcher from '../../components/alert-dispatcher';
 import React from 'react';
 import ReactDOM from 'react-dom';
+import AlertDispatcher from '../../components/alert-dispatcher';
 
 
 /**
@@ -45,31 +45,36 @@ const VIEW_SELECTOR_TEMPLATE =
     '</div>';
 
 
-var ViewSelector = React.createClass({
-  componentDidMount: function() {
+export default class ViewSelector extends React.Component {
 
-    let self = this;
+  /**
+   * React lifecycyle method below:
+   * http://facebook.github.io/react/docs/component-specs.html
+   * ---------------------------------------------------------
+   */
 
-    gapi.analytics.ready(function() {
+  componentDidMount() {
 
-      self.viewSelector_ = new gapi.analytics.ext.ViewSelector2({
-        container: ReactDOM.findDOMNode(self),
-        ids: self.props.ids,
-        template: self.props.template || VIEW_SELECTOR_TEMPLATE
+    gapi.analytics.ready(() => {
+
+      this.viewSelector_ = new gapi.analytics.ext.ViewSelector2({
+        container: ReactDOM.findDOMNode(this),
+        ids: this.props.ids,
+        template: this.props.template || VIEW_SELECTOR_TEMPLATE
       });
 
-      self.viewSelector_.on('viewChange', function(...args) {
-        self.hasSuccessfullyShownView_ = true;
-        self.props.onChange.apply(self, args)
+      this.viewSelector_.on('viewChange', (...args) => {
+        this.hasSuccessfullyShownView_ = true;
+        this.props.onChange.apply(this, args)
       });
 
-      self.viewSelector_.on('error', function(err) {
+      this.viewSelector_.on('error', (err) => {
         // If an error happens on the first render and is about not having
         // access to a particular view, just show the default view and assume
         // it's because someone shared a report to someone else without access.
         if (err.message.includes('access')) {
-          if (!self.hasSuccessfullyShownView_) {
-            self.viewSelector_.set({ids:undefined}).execute();
+          if (!this.hasSuccessfullyShownView_) {
+            this.viewSelector_.set({ids:undefined}).execute();
           }
         }
         // For all other errors, display an alert message.
@@ -81,22 +86,23 @@ var ViewSelector = React.createClass({
         }
       });
 
-      self.viewSelector_.execute();
+      this.viewSelector_.execute();
     });
-  },
-  componentWillReceiveProps: function(nextProps) {
+  }
+
+  componentWillReceiveProps(nextProps) {
     if (nextProps.ids != this.props.ids && this.viewSelector_) {
       this.viewSelector_.set({ids: nextProps.ids}).execute();
     }
-  },
-  componentWillUnmount: function() {
+  }
+
+  componentWillUnmount() {
     if (this.viewSelector_) this.viewSelector_.off();
-  },
-  render: function() {
+  }
+
+  render() {
     return (
       <div dangerouslySetInnerHTML={{__html: VIEW_SELECTOR_TEMPLATE}} />
     );
   }
-});
-
-export default ViewSelector
+}

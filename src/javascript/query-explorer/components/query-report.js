@@ -16,12 +16,12 @@
 /* global gapi */
 
 
-import DataChart from './data-chart';
-import IconButton from '../../components/icon-button';
 import omit from 'lodash/object/omit';
 import qs from 'querystring';
-import queryParams from '../query-params';
 import React from 'react';
+import DataChart from './data-chart';
+import {sanitize} from '../query-params';
+import IconButton from '../../components/icon-button';
 
 
 const API_URI_BASE = 'https://www.googleapis.com/analytics/v3/data/ga?';
@@ -33,47 +33,53 @@ const SELF_BASE = location.protocol + '//' + location.host + location.pathname;
 const TSV_PATH = SELF_BASE + 'csvhandler.csv';
 
 
-let QueryReport = React.createClass({
+export default class QueryReport extends React.Component {
 
   /**
    * Build a URL that directly links to this report
    * @return {string}
    */
-  reportLink: function() {
+  reportLink() {
     let params = (this.props.includeIds) ?
         this.props.report.params : omit(this.props.report.params, 'ids');
-    return SELF_BASE + '?' + qs.stringify(queryParams.sanitize(params));
-  },
+    return SELF_BASE + '?' + qs.stringify(sanitize(params));
+  }
 
 
   /**
    * Build a URL that can be used to query the Core Reporting API.
    * @return {string}
    */
-  apiQueryUri: function() {
-    let params = queryParams.sanitize(this.props.report.params);
+  apiQueryUri() {
+    let params = sanitize(this.props.report.params);
     if (this.props.includeAccessToken) {
       params['access_token'] =
           gapi.analytics.auth.getAuthResponse().access_token;
     }
     return API_URI_BASE + qs.stringify(params);
-  },
+  }
 
 
   /**
    * Build a URL that can download a TSV file for this report.
    * @return {string}
    */
-  downloadTsvLink: function() {
-    let params = queryParams.sanitize(this.props.report.params);
+  downloadTsvLink() {
+    let params = sanitize(this.props.report.params);
     params['access_token'] =
         gapi.analytics.auth.getAuthResponse().access_token;
 
     return TSV_PATH + '?' + qs.stringify(params);
-  },
+  }
 
 
-  render: function() {
+  /**
+   * React lifecycyle method below:
+   * http://facebook.github.io/react/docs/component-specs.html
+   * ---------------------------------------------------------
+   */
+
+  render() {
 
     let partials = {};
     let {report} = this.props;
@@ -222,7 +228,4 @@ let QueryReport = React.createClass({
       </div>
     );
   }
-});
-
-
-export default QueryReport
+}

@@ -14,8 +14,8 @@
 
 
 import camelCase from 'camelcase';
-import Icon from '../../components/icon';
 import React from 'react';
+import Icon from '../../components/icon';
 
 
 const REFERENCE_URL =

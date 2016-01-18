@@ -1,4 +1,4 @@
-// Copyright 2015 Google Inc. All rights reserved.
+// Copyright 2016 Google Inc. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -28,23 +28,20 @@ const PARAMS = [
 ];
 
 
-export default {
+/**
+ * Consumes an object of query parameters and returns an object that only
+ * contains whitelisted parameters with non-empty values in the correct order.
+ * @param {Object} dirtyParams The params object to sanitize.
+ * @return {Object} The sanitized object.
+ */
+export function sanitize(dirtyParams) {
+  let sanitizedParams = {};
 
-  /**
-   * Consumes an object of query parameters and returns an object that only
-   * contains whitelisted parameters with non-empty values in the correct order.
-   * @param {Object} dirtyParams The params object to sanitize.
-   * @return {Object} The sanitized object.
-   */
-  sanitize: function(dirtyParams) {
-    let sanitizedParams = {};
-
-    PARAMS.forEach(function(param) {
-      if (typeof dirtyParams[param] == 'string' && dirtyParams[param].length) {
-        sanitizedParams[param] = dirtyParams[param];
-      }
-    });
-    return sanitizedParams;
+  for (let param of PARAMS) {
+    if (typeof dirtyParams[param] == 'string' && dirtyParams[param].length) {
+      sanitizedParams[param] = dirtyParams[param];
+    }
   }
 
-};
+  return sanitizedParams;
+}

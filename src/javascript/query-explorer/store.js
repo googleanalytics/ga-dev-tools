@@ -16,7 +16,7 @@
 import { createStore, applyMiddleware } from 'redux'
 import thunkMiddleware from 'redux-thunk'
 import qs from 'querystring';
-import queryParams from './query-params';
+import {sanitize} from './query-params';
 import reducer from './reducers';
 import db from '../data-store';
 
@@ -68,12 +68,12 @@ function getInitalQueryParamsAndUpdateUrl() {
       history.replaceState(history.state, document.title, location.pathname);
     }
 
-    urlParams = queryParams.sanitize({...defaultParams, ...urlParams});
+    urlParams = sanitize({...defaultParams, ...urlParams});
     store.set('query-explorer:params', urlParams);
     return urlParams;
   }
   else if (storedParams) {
-    return queryParams.sanitize({...defaultParams, ...storedParams});
+    return sanitize({...defaultParams, ...storedParams});
   }
   else {
     return defaultParams;
