@@ -1,4 +1,4 @@
-// Copyright 2015 Google Inc. All rights reserved.
+// Copyright 2016 Google Inc. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -78,16 +78,13 @@ let QueryReport = React.createClass({
   render: function() {
 
     let partials = {};
-    let report = this.props.report;
-    let error = report && report.error;
-    let accountData = report && report.accountData;
-    let response = report && report.response;
-    let params = report && report.params;
+    let {report} = this.props;
+    let {params, response, viewName, propertyName, error} = report;
 
-    if (accountData) {
+    if (propertyName && viewName) {
       partials.reportTitle = (
         <h2 id="report-start" className="QueryReport-title">
-          {accountData.property.name} ({accountData.view.name})
+          {propertyName} ({viewName})
         </h2>
       )
     }

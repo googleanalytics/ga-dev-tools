@@ -13,23 +13,9 @@
 // limitations under the License.
 
 
-// isAuthorized
-export const SET_AUTHORIZED_STATE = 'SET_AUTHORIZED_STATE';
+import * as types from './types';
 
-// isQuerying
-export const SET_QUERY_STATE = 'SET_QUERY_STATE';
 
-// params
-export const UPDATE_PARAMS = 'UPDATE_PARAMS';
-
-// report
-export const UPDATE_REPORT = 'UPDATE_REPORT';
-
-// select2Options
-export const UPDATE_SELECT2_OPTIONS = 'UPDATE_SELECT2_OPTIONS';
-
-// settings
-export const UPDATE_SETTINGS = 'UPDATE_SETTINGS';
-
-// viewData
-export const UPDATE_VIEW_DATA = 'UPDATE_VIEW_DATA';
+export function updateReport(report) {
+  return {type: types.UPDATE_REPORT, report};
+}

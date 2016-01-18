@@ -40,25 +40,16 @@ const PARAMS_TO_TRACK = ['start-date', 'end-date', 'metrics', 'dimensions'];
 
 export default class QueryExplorer extends React.Component {
 
-  constructor(props) {
-    super(props);
-
-    this._state = new Model();
-    this._state.on('change', () => this.forceUpdate());
-  }
-
-
   /**
    * Invoked when a user changes the ViewSelector2 instance.
    * @param {Object} data The object emited by the ViewSelector2's "changeView"
    * event.
    */
-  handleViewSelectorChange = async (viewData) => {
-    this._state.set('selectedAccountData', {...viewData});
-
-    this.props.actions.updateViewData(viewData);
-    this.props.actions.updateParams({ids: viewData.ids});
-    this.props.actions.updateMetricsDimensionsAndSortOptions();
+  handleViewSelectorChange = (viewData) => {
+    let {actions} = this.props;
+    actions.updateViewData(viewData);
+    actions.updateParams({ids: viewData.ids});
+    actions.updateMetricsDimensionsAndSortOptions();
   }
 
 
@@ -111,15 +102,10 @@ export default class QueryExplorer extends React.Component {
    * @param {Object} data The object emitted by the DataChart's "success" event.
    */
   handleDataChartSuccess = (data) => {
-
     this.props.actions.setQueryState(false);
-
-    this._state.set({
-      report: {
-        accountData: {...this._state.get('selectedAccountData')},
-        params: this._state.get('report').params,
-        response: data.response
-      }
+    this.props.actions.updateReport({
+      response: data.response,
+      error: null
     });
 
     ga('send', {
@@ -137,15 +123,10 @@ export default class QueryExplorer extends React.Component {
    * @param {Object} data The error emitted by the DataChart's "error" event.
    */
   handleDataChartError = (err) => {
-
     this.props.actions.setQueryState(false);
-
-    this._state.set({
-      report: {
-        accountData: {...this._state.get('selectedAccountData')},
-        params: state.get('report').params,
-        error: err.error
-      }
+    this.props.actions.updateReport({
+      response: null,
+      error: err.error
     });
 
     ga('send', {
@@ -164,27 +145,21 @@ export default class QueryExplorer extends React.Component {
    */
   handleSubmit = (e) => {
     e.preventDefault();
+    let {actions, params, viewData} = this.props;
+    let paramsClone = {...params};
 
-    this.props.actions.setQueryState(true);
+    actions.setQueryState(true);
+    actions.updateReport({
+      propertyName: viewData.property.name,
+      viewName: viewData.view.name,
+      params: paramsClone
+    });
 
-    let paramsClone = {...this.props.params};
-
-    let trackableParamData = map(paramsClone, (value, key) => {
-      // Don't run `encodeURIComponent` on these params because the they will
-      // never contain characters that make parsing fail (or be ambiguous).
-      // NOTE: Manual serializing is requred until the encodeURIComponent override
-      // is supported here: https://github.com/Gozala/querystring/issues/6
-      return PARAMS_TO_TRACK.includes(key) ? `${key}=${value}` : key;
-    }).join('&');
+    let trackableParamData = map(paramsClone, (value, key) =>
+        PARAMS_TO_TRACK.includes(key) ? `${key}=${value}` : key).join('&');
 
     // Set it on the tracker so it gets sent with all Query Explorer hits.
     ga('set', 'dimension2', trackableParamData);
-
-    this._state.set({
-      report: {
-        params: paramsClone
-      }
-    });
   }
 
 
@@ -220,7 +195,14 @@ export default class QueryExplorer extends React.Component {
 
   render() {
 
-    let {actions, isQuerying, params, settings, select2Options} = this.props;
+    let {
+      actions,
+      isQuerying,
+      params,
+      report,
+      settings,
+      select2Options
+    } = this.props;
 
     return (
       <div>
@@ -409,7 +391,7 @@ export default class QueryExplorer extends React.Component {
         </form>
 
         <QueryReport
-          report={this._state.get('report')}
+          report={report}
           isQuerying={isQuerying}
           includeIds={settings.includeIds}
           includeAccessToken={settings.includeAccessToken}
@@ -424,6 +406,4 @@ export default class QueryExplorer extends React.Component {
       </div>
     );
   }
-
 }
-

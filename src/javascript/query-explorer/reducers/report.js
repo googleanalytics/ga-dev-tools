@@ -13,23 +13,17 @@
 // limitations under the License.
 
 
-// isAuthorized
-export const SET_AUTHORIZED_STATE = 'SET_AUTHORIZED_STATE';
+import * as types from '../actions/types';
 
-// isQuerying
-export const SET_QUERY_STATE = 'SET_QUERY_STATE';
 
-// params
-export const UPDATE_PARAMS = 'UPDATE_PARAMS';
+export default function report(state = {}, action) {
+  let {report} = action;
+  switch (action.type) {
 
-// report
-export const UPDATE_REPORT = 'UPDATE_REPORT';
+    case types.UPDATE_REPORT:
+      return {...state, ...report};
 
-// select2Options
-export const UPDATE_SELECT2_OPTIONS = 'UPDATE_SELECT2_OPTIONS';
-
-// settings
-export const UPDATE_SETTINGS = 'UPDATE_SETTINGS';
-
-// viewData
-export const UPDATE_VIEW_DATA = 'UPDATE_VIEW_DATA';
+    default:
+      return state;
+  }
+}
