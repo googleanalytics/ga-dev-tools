@@ -83,24 +83,13 @@ export default class QueryReport extends React.Component {
 
     let partials = {};
     let {report} = this.props;
-    let {params, response, viewName, propertyName, error} = report;
+    let {params, response, viewName, propertyName} = report;
 
     if (propertyName && viewName) {
       partials.reportTitle = (
         <h2 id="report-start" className="QueryReport-title">
           {propertyName} ({viewName})
         </h2>
-      )
-    }
-
-    if (error) {
-      partials.reportError = (
-        <aside className="Error">
-          <h3 className="Error-title">
-            Ack! There was an error ({error.code})
-          </h3>
-          <p className="Error-message">{error.message}</p>
-        </aside>
       )
     }
 
@@ -211,9 +200,8 @@ export default class QueryReport extends React.Component {
     }
 
     return (
-      <div className="QueryReport" hidden={!response && !error}>
+      <div className="QueryReport" hidden={!response}>
         {partials.reportTitle}
-        {partials.reportError}
         {partials.reportMeta}
         <DataChart
           hidden={!response}

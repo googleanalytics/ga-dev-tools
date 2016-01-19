@@ -103,10 +103,7 @@ export default class QueryExplorer extends React.Component {
    */
   handleDataChartSuccess = (data) => {
     this.props.actions.setQueryState(false);
-    this.props.actions.updateReport({
-      response: data.response,
-      error: null
-    });
+    this.props.actions.updateReport({response: data.response});
 
     ga('send', {
       hitType: 'event',
@@ -122,18 +119,20 @@ export default class QueryExplorer extends React.Component {
    * Invoked when the DataChart component's "error" event emits.
    * @param {Object} data The error emitted by the DataChart's "error" event.
    */
-  handleDataChartError = (err) => {
+  handleDataChartError = ({error: {code, message}}) => {
     this.props.actions.setQueryState(false);
-    this.props.actions.updateReport({
-      response: null,
-      error: err.error
+    this.props.actions.updateReport({});
+
+    AlertDispatcher.addOnce({
+      title: `Ack! There was an error (${code})`,
+      message: message
     });
 
     ga('send', {
       hitType: 'event',
       eventCategory: 'query',
       eventAction: 'submit',
-      eventLabel: `(${err.error.code}) ${err.error.message}`,
+      eventLabel: `(${code}) ${message}`,
       metric2: 1
     });
   }
