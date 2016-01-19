@@ -1,4 +1,4 @@
-// Copyright 2015 Google Inc. All rights reserved.
+// Copyright 2016 Google Inc. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -13,11 +13,8 @@
 // limitations under the License.
 
 
-import Icon from './icon';
 import React from 'react';
-
-
-let zIndex = 0;
+import Icon from './icon';
 
 
 export default class Alert extends React.Component {
@@ -32,7 +29,7 @@ export default class Alert extends React.Component {
     return (
       <div
         className="Alert"
-        style={{zIndex: zIndex--}}>
+        style={{zIndex: -this.props.id}}>
         <div className="Alert-icon">
           <Icon type="error-outline" />
         </div>

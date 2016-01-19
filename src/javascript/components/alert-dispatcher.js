@@ -1,4 +1,4 @@
-// Copyright 2015 Google Inc. All rights reserved.
+// Copyright 2016 Google Inc. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -13,25 +13,25 @@
 // limitations under the License.
 
 
-import Alert from './alert';
-import Collection from '../collection';
-import Model from '../model';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
+import Alert from './alert';
 
 
-let alerts = new Collection();
+let id = 0;
+let alerts = [];
 
 
 export default class AlertDispatcher extends React.Component {
 
   /**
-   * Adds an alert models to the collection.
-   * @param {Object} props The alert props.
+   * Adds an alert to the list of alerts.
+   * @param {Object} alert An object of alert properties.
    */
-  static add(props) {
-    alerts.add(new Model(props));
+  static add({title, message}) {
+    alerts.push({title, message, id: id++});
+    render();
   }
 
 
@@ -39,19 +39,23 @@ export default class AlertDispatcher extends React.Component {
    * Only adds the alert if an identical alert is not already present.
    * @param {Object} props The alert props to check for before adding.
    */
-  static addOnce(props) {
-    if (!alerts.find(props)) {
-      AlertDispatcher.add(props);
+  static addOnce({title, message}) {
+    let existingAlert = alerts.find((a) =>
+        a.title === title && a.message === message)
+
+    if (!existingAlert) {
+      AlertDispatcher.add({title, message});
     }
   }
 
 
   /**
-   * Removes an alert model from the collection.
-   * @param {Model} model
+   * Removes an alert from the alert list.
+   * @param {number} id
    */
-  handleRemove(model) {
-    alerts.remove(model)
+  handleRemove(id) {
+    alerts = alerts.filter((alert) => id != alert.id);
+    render();
   }
 
 
@@ -61,12 +65,6 @@ export default class AlertDispatcher extends React.Component {
    * ---------------------------------------------------------
    */
 
-  componentDidMount() {
-    let update = () => this.forceUpdate();
-    alerts.on('add', update);
-    alerts.on('remove', update);
-  }
-
   render() {
     return (
       <ReactCSSTransitionGroup
@@ -75,11 +73,13 @@ export default class AlertDispatcher extends React.Component {
         transitionEnterTimeout={200}
         transitionLeaveTimeout={200}
         transitionName="Alert">
-        {alerts.models.map((model) => (
+        {alerts.map((alert) => (
           <Alert
-            {...model.get()}
-            key={model.uid}
-            onRemove={this.handleRemove.bind(this, model)} />
+            key={alert.id}
+            id={alert.id}
+            title={alert.title}
+            message={alert.message}
+            onRemove={this.handleRemove.bind(this, alert.id)} />
         ))}
       </ReactCSSTransitionGroup>
     );
@@ -90,4 +90,12 @@ export default class AlertDispatcher extends React.Component {
 // Only add AlertDispatcher to the DOM if this module gets imported.
 let alertDispatcherContainer = document.createElement('div');
 document.body.appendChild(alertDispatcherContainer);
-ReactDOM.render(<AlertDispatcher />, alertDispatcherContainer);
+
+
+function render() {
+  ReactDOM.render(
+    <AlertDispatcher alerts={alerts} />,
+    alertDispatcherContainer
+  );
+}
+render();
