@@ -14,7 +14,7 @@
 
 
 import assert from 'assert';
-import queryParams from '../../src/javascript/query-explorer/query-params';
+import * as queryParams from '../../src/javascript/query-explorer/query-params';
 
 
 describe('queryParams', function() {
