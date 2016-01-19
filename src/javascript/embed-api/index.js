@@ -16,7 +16,7 @@
 /* global $, gapi */
 
 
-import debounce from 'lodash/function/debounce';
+import debounce from 'lodash/debounce';
 import site from '../site';
 
 

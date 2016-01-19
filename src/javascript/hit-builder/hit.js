@@ -16,7 +16,7 @@
 /* global $ */
 
 
-import map from 'lodash/collection/map';
+import map from 'lodash/map';
 import querystring from 'querystring';
 
 

@@ -16,7 +16,7 @@
 /* global gapi */
 
 
-import omit from 'lodash/object/omit';
+import omit from 'lodash/omit';
 import qs from 'querystring';
 import React from 'react';
 import DataChart from './data-chart';

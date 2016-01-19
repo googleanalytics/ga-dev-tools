@@ -16,11 +16,11 @@
 /* global $ */
 
 
-import filter from 'lodash/collection/filter';
-import map from 'lodash/collection/map';
-import some from 'lodash/collection/some';
-import bindAll from 'lodash/function/bindAll';
-import template from 'lodash/string/template';
+import filter from 'lodash/filter';
+import map from 'lodash/map';
+import some from 'lodash/some';
+import bindAll from 'lodash/bindAll';
+import template from 'lodash/template';
 import React from 'react';
 import ReactDOM from 'react-dom';
 

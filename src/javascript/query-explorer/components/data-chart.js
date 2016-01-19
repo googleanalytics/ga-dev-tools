@@ -16,7 +16,7 @@
 /* global gapi */
 
 
-import mapValues from 'lodash/object/mapValues';
+import mapValues from 'lodash/mapValues';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import {sanitize} from '../query-params';
