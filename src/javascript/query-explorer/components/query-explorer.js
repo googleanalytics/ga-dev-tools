@@ -147,6 +147,7 @@ export default class QueryExplorer extends React.Component {
     let {actions, params} = this.props;
     let paramsClone = {...params};
 
+    actions.updateReport({params: paramsClone});
     actions.setQueryState(true);
 
     let trackableParamData = Object.keys(paramsClone).map((key) =>
@@ -163,8 +164,7 @@ export default class QueryExplorer extends React.Component {
 
     actions.updateReport({
       propertyName: property.name,
-      viewName: view.name,
-      params: paramsClone
+      viewName: view.name
     });
   }
 
