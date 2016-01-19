@@ -78,22 +78,34 @@ export default class QueryExplorer extends React.Component {
   }
 
 
-
   /**
-   * Invoked when a user clicks on the include `ids` checkbox.
-   * @param {SyntheticEvent} e The React event.
+   * Invoked when a user submits the <QueryForm>.
+   * @param {Event|Object} e The native or React event.
    */
-  handleIdsToggle = ({target: {checked: includeIds}}) => {
-    this.props.actions.updateSettings({includeIds});
-  }
+  handleSubmit = async (e) => {
+    e.preventDefault();
+    let {actions, params} = this.props;
+    let paramsClone = {...params};
 
+    actions.updateReport({params: paramsClone});
+    actions.setQueryState(true);
 
-  /**
-   * Invoked when a user clicks on the include `access_token` checkbox.
-   * @param {SyntheticEvent} e The React event.
-   */
-  handleAccessTokenToggle = ({target: {checked: includeAccessToken}}) => {
-    this.props.actions.updateSettings({includeAccessToken});
+    let trackableParamData = Object.keys(paramsClone).map((key) =>
+        PARAMS_TO_TRACK.includes(key) ? `${key}=${paramsClone[key]}` : key)
+        .join('&');
+
+    // Set it on the tracker so it gets sent with all Query Explorer hits.
+    ga('set', 'dimension2', trackableParamData);
+
+    let summaries = await accountSummaries.get();
+    let viewId = params.ids.slice(3);
+    let view = summaries.getView(viewId);
+    let property = summaries.getPropertyByViewId(viewId);
+
+    actions.updateReport({
+      propertyName: property.name,
+      viewName: view.name
+    });
   }
 
 
@@ -139,35 +151,21 @@ export default class QueryExplorer extends React.Component {
 
 
   /**
-   * Invoked when a user submits the <QueryForm>.
-   * @param {Event|Object} e The native or React event.
+   * Invoked when a user clicks on the include `ids` checkbox.
+   * @param {SyntheticEvent} e The React event.
    */
-  handleSubmit = async (e) => {
-    e.preventDefault();
-    let {actions, params} = this.props;
-    let paramsClone = {...params};
-
-    actions.updateReport({params: paramsClone});
-    actions.setQueryState(true);
-
-    let trackableParamData = Object.keys(paramsClone).map((key) =>
-        PARAMS_TO_TRACK.includes(key) ? `${key}=${paramsClone[key]}` : key)
-        .join('&');
-
-    // Set it on the tracker so it gets sent with all Query Explorer hits.
-    ga('set', 'dimension2', trackableParamData);
-
-    let summaries = await accountSummaries.get();
-    let viewId = params.ids.slice(3);
-    let view = summaries.getView(viewId);
-    let property = summaries.getPropertyByViewId(viewId);
-
-    actions.updateReport({
-      propertyName: property.name,
-      viewName: view.name
-    });
+  handleIdsToggle = ({target: {checked: includeIds}}) => {
+    this.props.actions.updateSettings({includeIds});
   }
 
+
+  /**
+   * Invoked when a user clicks on the include `access_token` checkbox.
+   * @param {SyntheticEvent} e The React event.
+   */
+  handleAccessTokenToggle = ({target: {checked: includeAccessToken}}) => {
+    this.props.actions.updateSettings({includeAccessToken});
+  }
 
   /**
    * Invoked when a user focuses on the "Direct link to this report" textarea.
