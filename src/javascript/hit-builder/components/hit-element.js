@@ -77,7 +77,7 @@ export default class HitElement extends React.Component {
       method: 'POST',
       url: 'https://www.google-analytics.com/collect',
       data: this.state.value
-    })
+    });
     this.setState({hitSent: true});
     await sleep(ACTION_TIMEOUT);
     this.setState({hitSent: false});
@@ -147,7 +147,7 @@ export default class HitElement extends React.Component {
               it in action in the Real Time view.</p>
             </div>
           </header>
-        )
+        );
       case 'INVALID':
         return (
           <header className="HitElement-status">
@@ -164,7 +164,7 @@ export default class HitElement extends React.Component {
               </ul>
             </div>
           </header>
-        )
+        );
       default:
         return (
           <header className="HitElement-status">
@@ -182,7 +182,7 @@ export default class HitElement extends React.Component {
               everything's OK.</p>
             </div>
           </header>
-        )
+        );
     }
   }
 
@@ -208,7 +208,7 @@ export default class HitElement extends React.Component {
             {hitStatus === 'VALIDATING' ? 'Validating...' : buttonText}
           </button>
         </div>
-      )
+      );
     }
 
     let sendHitButton = (
@@ -248,14 +248,14 @@ export default class HitElement extends React.Component {
             '?' + state.value}
           </div>
         </div>
-      )
+      );
     }
     else {
       return (
         <div className="HitElement-action">
           {sendHitButton}
         </div>
-      )
+      );
     }
   }
 
@@ -306,7 +306,7 @@ export default class HitElement extends React.Component {
           {this.renderHitActions()}
         </div>
       </section>
-    )
+    );
   }
 
 }

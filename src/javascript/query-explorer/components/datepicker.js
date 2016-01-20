@@ -31,7 +31,7 @@ let iconCalendar =
 export default class Datepicker extends React.Component {
 
   state = {
-    value: this.props.value,
+    value: this.props.value
   }
 
   handleChange = (e) => {
@@ -57,9 +57,7 @@ export default class Datepicker extends React.Component {
       showOn: false,
       onClose: function() {
         // Use setTimeout to avoid race conditions with the icon click event.
-        setTimeout(function() {
-          isShowing = false
-        }, ANIMATION_DURATION);
+        setTimeout(() => isShowing = false, ANIMATION_DURATION);
       }
     };
 
@@ -71,7 +69,7 @@ export default class Datepicker extends React.Component {
       this.props.onChange(e);
     });
 
-    $icon.on('click', function(e) {
+    $icon.on('click', function() {
       $input.datepicker(isShowing ? 'hide' : 'show');
       isShowing = !isShowing;
     });

@@ -170,10 +170,11 @@ export default class SearchSuggest extends React.Component {
   /**
    * Updates the component state to hide the matches dropdown and set the
    * correct text after a match has been selected.
+   * @param {string} value The value to set.
    */
   setSelectedMatchState(value) {
     this.setState({value, selectedMatchIndex: 0, open: false});
-    this.props.onChange.call(this, {target:{value, name: this.props.name}});
+    this.props.onChange.call(this, {target: {value, name: this.props.name}});
   }
 
 
@@ -253,7 +254,7 @@ export default class SearchSuggest extends React.Component {
     let viewportTop = $(window).scrollTop();
     let viewportBottom = viewportTop + $(window).height();
     let spaceAbove = (inputTop - dropdownHeight) - viewportTop;
-    let spaceBelow = viewportBottom - (inputBottom + dropdownHeight)
+    let spaceBelow = viewportBottom - (inputBottom + dropdownHeight);
 
     return {spaceAbove, spaceBelow};
   }
@@ -262,7 +263,7 @@ export default class SearchSuggest extends React.Component {
   /**
    * Accepts a list of event parameters and returns a space separated string
    * of events with a unique namespace added, formatted for jQuery.
-   * @param {string} ...event A list of event names.
+   * @param {Array<string>} events A list of event names.
    * @return {string} The jQuery formatted event argument.
    */
   namespaceEvents(...events) {
@@ -421,7 +422,7 @@ export default class SearchSuggest extends React.Component {
                   {match.id}
                 </div>
               </li>
-            )
+            );
           })}
         </ul>
       </div>

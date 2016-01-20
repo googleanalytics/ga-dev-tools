@@ -48,7 +48,6 @@ export function getInitialHitAndUpdateUrl() {
 }
 
 
-
 /**
  * Accepts a hit payload or URL and converts it into an array of param objects
  * where the required params are always first and in the correct order.

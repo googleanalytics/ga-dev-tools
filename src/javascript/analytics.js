@@ -13,7 +13,7 @@
 // limitations under the License.
 
 
-/* global $, ga */
+/* global ga */
 
 
 import 'autotrack/lib/plugins/media-query-tracker';
@@ -37,7 +37,7 @@ let mediaQueryDefinitions = [
 
 function setupUncaughtExceptionTracking() {
   window.onerror = function(message, url, line, col) {
-    var desc = 'Uncaught error: ' +
+    let desc = 'Uncaught error: ' +
         message + ' (line: ' + line + ', url: ' + url + ', col: ' + col + ')';
 
     ga('send', 'exception', {

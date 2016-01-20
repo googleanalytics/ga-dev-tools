@@ -1,5 +1,5 @@
-import { createStore, applyMiddleware } from 'redux'
-import thunkMiddleware from 'redux-thunk'
+import {createStore, applyMiddleware} from 'redux';
+import thunkMiddleware from 'redux-thunk';
 
 import {convertHitToParams, getInitialHitAndUpdateUrl} from './hit';
 import reducer from './reducers';

@@ -19,8 +19,6 @@
 import filter from 'lodash/filter';
 import map from 'lodash/map';
 import some from 'lodash/some';
-import bindAll from 'lodash/bindAll';
-import template from 'lodash/template';
 import React from 'react';
 import ReactDOM from 'react-dom';
 
@@ -37,7 +35,7 @@ export default class Select2MultiSuggest extends React.Component {
 
   /**
    * Returns a tag object given a tag ID, e.g. "ga:users".
-   * @param {string} tagID
+   * @param {string} tagId The ID of the tag to get.
    * @return {Object} The matching object in `this.props.tags`.
    */
   getTagById(tagId) {
@@ -64,7 +62,7 @@ export default class Select2MultiSuggest extends React.Component {
   handleChange() {
     let name = this.props.name;
     let value = ($(ReactDOM.findDOMNode(this)).val() || []).join(',');
-    this.setState({value})
+    this.setState({value});
     this.props.onChange({target: {name, value}});
   }
 
@@ -78,7 +76,7 @@ export default class Select2MultiSuggest extends React.Component {
   s2TagTemplate(opt) {
     let data = opt.element ? $(opt.element).data() : opt;
     return `<span title="${data.name}">${data.id}</span>`;
-  };
+  }
 
 
   /**
@@ -99,9 +97,10 @@ export default class Select2MultiSuggest extends React.Component {
 
 
   /**
-   * Takes an input string entered by the user and parses it to look for options.
-   * This allows the user to paste text like "ga:sessions,ga:users" into the
-   * input field and have select2 automatically break it apart into two options.
+   * Takes an input string entered by the user and parses it to look for
+   * options. This allows the user to paste text like "ga:sessions,ga:users"
+   * into the input field and have select2 automatically break it apart into
+   * two options.
    * @param {string} input The text the user has entered.
    * @param {Array} selection A list of option the user has already selected.
    * @param {Function} selectCallback A function that accepts an option and adds
@@ -166,7 +165,7 @@ export default class Select2MultiSuggest extends React.Component {
       if (value != this.state.value) {
         let name = this.props.name;
         this.setState({value});
-        this.props.onChange({target:{name,value}});
+        this.props.onChange({target: {name, value}});
       }
     }
   }
@@ -207,9 +206,9 @@ export default class Select2MultiSuggest extends React.Component {
               key={tag.id}>
               {tag.id}
             </option>
-          )
+          );
         })}
       </select>
-    )
+    );
   }
 }

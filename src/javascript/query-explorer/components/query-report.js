@@ -90,14 +90,14 @@ export default class QueryReport extends React.Component {
         <h2 id="report-start" className="QueryReport-title">
           {propertyName} ({viewName})
         </h2>
-      )
+      );
     }
 
     if (response) {
       let resultsShowing = response.dataTable.rows &&
           response.dataTable.rows.length || 0;
       let totalResults = response.totalResults || 0;
-      let sampledData = response.containsSampledData ? 'Yes' : 'No'
+      let sampledData = response.containsSampledData ? 'Yes' : 'No';
 
       partials.reportMeta = (
         <aside className="QueryReport-meta">

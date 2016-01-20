@@ -77,6 +77,7 @@ function verifySchema() {
 /**
  * Run the migration fuctions from the version in local storage to the current
  * version.
+ * @param {number} fromVersion The version to run migration functions from.
  */
 function migrate(fromVersion) {
   while (fromVersion < SCHEMA_VERSION) {

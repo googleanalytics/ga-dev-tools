@@ -152,7 +152,7 @@ export default class HitBuilder extends React.Component {
             <div className="HitBuilderParam-body">
               <IconButton
                 type="add-circle"
-                iconStyle={{color:'hsl(150,60%,40%)'}}
+                iconStyle={{color: 'hsl(150,60%,40%)'}}
                 onClick={this.handleAddParam}>
                 Add parameter
               </IconButton>
@@ -162,6 +162,6 @@ export default class HitBuilder extends React.Component {
         </div>
 
       </div>
-    )
+    );
   }
 }

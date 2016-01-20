@@ -36,7 +36,7 @@ export default {
   addCloseHandler: function() {
     $(document).on('touchend.sidebar click.sidebar', function(event) {
 
-      var $target = $(event.target);
+      let $target = $(event.target);
 
       // Close of the user clicked the close icon or clicked
       // outside of the sidebar.
@@ -60,3 +60,4 @@ export default {
   }
 
 };
+

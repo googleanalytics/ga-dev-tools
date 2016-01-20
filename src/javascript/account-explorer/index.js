@@ -25,9 +25,9 @@ function setup() {
   $('#search-box').trigger('focus');
 
   accountSummaries.get().then(function(summaries) {
-    var urlHash = getMapFromHash();
-    var validIds = returnValidIds(summaries, urlHash);
-    var allIds = getAllIds(summaries, validIds);
+    let urlHash = getMapFromHash();
+    let validIds = returnValidIds(summaries, urlHash);
+    let allIds = getAllIds(summaries, validIds);
 
     setViewSelector(allIds.viewId);
     site.setReadyState();
@@ -41,25 +41,25 @@ function setup() {
  */
 function handleSearch() {
 
-  var searchTerm = $('#search-box').val().toLowerCase();
+  let searchTerm = $('#search-box').val().toLowerCase();
 
   accountSummaries.get().then(function(summaries) {
-    var results = [];
+    let results = [];
     if (searchTerm) {
-      for (var i = 0; i < summaries.all().length; i++) {
-        var account = summaries.all()[i];
+      for (let i = 0; i < summaries.all().length; i++) {
+        let account = summaries.all()[i];
         if (!account.webProperties) {
           continue;
         }
-        for (var j = 0; j < account.webProperties.length; j++) {
-          var property = account.webProperties[j];
+        for (let j = 0; j < account.webProperties.length; j++) {
+          let property = account.webProperties[j];
           if (!property.profiles) {
             continue;
           }
-          for (var k = 0; k < property.profiles.length; k++) {
-            var view = property.profiles[k];
-            var tableId = 'ga:' + view.id;
-            var match = tableId.indexOf(searchTerm) > -1 ||
+          for (let k = 0; k < property.profiles.length; k++) {
+            let view = property.profiles[k];
+            let tableId = 'ga:' + view.id;
+            let match = tableId.indexOf(searchTerm) > -1 ||
                         view.id.indexOf(searchTerm) > -1 ||
                         view.name.toLowerCase().indexOf(searchTerm) > -1 ||
                         property.id.toLowerCase().indexOf(searchTerm) > -1 ||
@@ -97,7 +97,7 @@ function updateResults(results, opt_query) {
 
   function mark(text) {
     if (opt_query) {
-      var regex = new RegExp('(' + opt_query + ')', 'ig');
+      let regex = new RegExp('(' + opt_query + ')', 'ig');
       return text.replace(regex, '<mark>$1</mark>');
     }
     else {
@@ -105,26 +105,30 @@ function updateResults(results, opt_query) {
     }
   }
 
-  var searchResults = $('#results-body');
+  let searchResults = $('#results-body');
   if (results.length === 0) {
     searchResults.append('<td colspan="4">No results found</td>');
   }
   else {
-    for (var i = 0; i < results.length; i++) {
+    for (let i = 0; i < results.length; i++) {
       searchResults.append('<tr class="view-result"><td>' +
-        mark(results[i].account.name) + ' <div class="AccountExplorerResults-id">' +
+        mark(results[i].account.name) +
+        ' <div class="AccountExplorerResults-id">' +
         mark(results[i].account.id) + '</div></td><td>' +
-        mark(results[i].property.name) + ' <div class="AccountExplorerResults-id">' +
+        mark(results[i].property.name) +
+        ' <div class="AccountExplorerResults-id">' +
         mark(results[i].property.id) + '</div></td><td>' +
         '<a href="//www.google.com/analytics/web/#report/visitors-overview/a' +
-        results[i].account.id + 'w' + results[i].property.internalWebPropertyId + 'p' +
+        results[i].account.id + 'w' +
+        results[i].property.internalWebPropertyId + 'p' +
         results[i].view.id + '" title="Open this view in Google Analytics">' +
         mark(results[i].view.name) + ' ' +
         '<svg class="Icon" viewBox="0 0 24 24">' +
           '<use xlink:href="/public/images/icons.svg#icon-call-made"></use>' +
         '</svg></a> ' +
         '<div class="AccountExplorerResults-id">' +
-        mark(results[i].view.id) + '</div></td><td><div ' + 'class="AccountExplorerResults-id">' +
+        mark(results[i].view.id) + '</div></td><td><div ' +
+        'class="AccountExplorerResults-id">' +
         mark('ga:' + results[i].view.id) + '</div></td></tr>');
     }
   }
@@ -139,7 +143,7 @@ function updateResults(results, opt_query) {
  * @param {String} viewId The view ID to set the viewSelector to
  */
 function setViewSelector(viewId) {
-  var viewSelector = new gapi.analytics.ext.ViewSelector2({
+  let viewSelector = new gapi.analytics.ext.ViewSelector2({
     container: 'view-selector-container'
   }).execute();
 
@@ -148,7 +152,7 @@ function setViewSelector(viewId) {
   function getIdsAndUpdateResults() {
     // Use a try/catch block in case we have sparse properties or accounts.
     try {
-      var allObjects = {
+      let allObjects = {
         view: viewSelector.view,
         property: viewSelector.property,
         account: viewSelector.account
@@ -177,15 +181,15 @@ function setViewSelector(viewId) {
  */
 function returnValidIds(summaries, ids) {
   if (ids.viewId) {
-    var view = summaries.getProfile(ids.viewId);
+    let view = summaries.getProfile(ids.viewId);
     ids.viewId = view ? view.id : null;
   }
   if (ids.propertyId) {
-    var property = summaries.getProperty(ids.propertyId);
+    let property = summaries.getProperty(ids.propertyId);
     ids.propertyId = property ? property.id : null;
   }
   if (ids.accountId) {
-    var account = summaries.getAccount(ids.accountId);
+    let account = summaries.getAccount(ids.accountId);
     ids.accountId = account ? account.id : null;
   }
   return ids;
@@ -207,7 +211,7 @@ function returnValidIds(summaries, ids) {
  *     returnObject is true, will return the account objects, not the IDs.
  */
 function getAllIds(summaries, ids, returnObject) {
-  var accountObject = {};
+  let accountObject = {};
   if (ids.viewId) {
     accountObject.view = summaries.getView(ids.viewId);
     accountObject.property = summaries.getPropertyByViewId(ids.viewId);
@@ -248,11 +252,11 @@ function getAllIds(summaries, ids, returnObject) {
  * @return {Object} An object containing the parameters and values in the hash
  */
 function getMapFromHash() {
-  var urlHash = document.location.hash.substr(1);
-  var params = urlHash.split('&');
-  var map = {};
-  for (var i = 0, param; param = params[i]; i++) {
-    var fragment = param.split('=');
+  let urlHash = document.location.hash.substr(1);
+  let params = urlHash.split('&');
+  let map = {};
+  for (let i = 0, param; param = params[i]; i++) {
+    let fragment = param.split('=');
     map[fragment[0]] = fragment[1];
   }
   return map;

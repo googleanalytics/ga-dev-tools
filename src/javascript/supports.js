@@ -13,9 +13,6 @@
 // limitations under the License.
 
 
-/* global $ */
-
-
 export default {
 
   /**
@@ -44,7 +41,7 @@ export default {
         // interaction. https://goo.gl/6bkQ7T
         /Chrome\/(\d+)/.test(navigator.userAgent) && (+RegExp.$1 >= 43)
       );
-    }
+    };
   }())
 
 };

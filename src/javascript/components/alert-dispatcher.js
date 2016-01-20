@@ -41,7 +41,7 @@ export default class AlertDispatcher extends React.Component {
    */
   static addOnce({title, message}) {
     let existingAlert = alerts.find((a) =>
-        a.title === title && a.message === message)
+        a.title === title && a.message === message);
 
     if (!existingAlert) {
       AlertDispatcher.add({title, message});
@@ -51,7 +51,7 @@ export default class AlertDispatcher extends React.Component {
 
   /**
    * Removes an alert from the alert list.
-   * @param {number} id
+   * @param {number} id The ID of the alert to remove.
    */
   handleRemove(id) {
     alerts = alerts.filter((alert) => id != alert.id);

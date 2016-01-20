@@ -65,7 +65,7 @@ export default class ViewSelector extends React.Component {
 
       this.viewSelector_.on('viewChange', (...args) => {
         this.hasSuccessfullyShownView_ = true;
-        this.props.onChange.apply(this, args)
+        this.props.onChange.apply(this, args);
       });
 
       this.viewSelector_.on('error', (err) => {
@@ -74,7 +74,7 @@ export default class ViewSelector extends React.Component {
         // it's because someone shared a report to someone else without access.
         if (err.message.includes('access')) {
           if (!this.hasSuccessfullyShownView_) {
-            this.viewSelector_.set({ids:undefined}).execute();
+            this.viewSelector_.set({ids: undefined}).execute();
           }
         }
         // For all other errors, display an alert message.

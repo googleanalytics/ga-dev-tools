@@ -38,11 +38,11 @@ function monkeyPatchForDemos() {
   // Keep a reference to all created DataChart instances so they can be
   // redrawn on resize. Do this here instead of in the demo code to
   // avoid introducing unnecessary complexity.
-  var originalDataChart = gapi.analytics.googleCharts.DataChart;
-  var dataCharts = [];
+  let originalDataChart = gapi.analytics.googleCharts.DataChart;
+  let dataCharts = [];
 
   gapi.analytics.googleCharts.DataChart = function DataChart(options) {
-    var dataChart = new originalDataChart(options);
+    let dataChart = new originalDataChart(options);
     dataCharts.push(dataChart);
     return dataChart;
   };

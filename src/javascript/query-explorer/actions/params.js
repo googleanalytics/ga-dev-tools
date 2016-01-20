@@ -23,11 +23,11 @@ export function updateParams(params) {
 
 
 export function swapSegmentIdAndDefinition(segment, useDefinition) {
-  return async function(dispatch, getState) {
+  return async function(dispatch) {
     segment = await (useDefinition
         ? segments.getDefinitionFromId(segment)
         : segments.getIdFromDefinition(segment));
 
     if (typeof segment == 'string') dispatch(updateParams({segment}));
-  }
+  };
 }
