@@ -26,6 +26,7 @@ import QueryReport from './query-report';
 import Select2MultiSuggest from './select2-multi-suggest';
 import ViewSelector from './view-selector';
 
+import AlertDispatcher from '../../components/alert-dispatcher';
 import SearchSuggest from '../../components/search-suggest';
 
 
@@ -78,6 +79,77 @@ export default class QueryExplorer extends React.Component {
   }
 
 
+  /**
+   * Invoked when a user submits the <QueryForm>.
+   * @param {Event|Object} e The native or React event.
+   */
+  handleSubmit = async (e) => {
+    e.preventDefault();
+    let {actions, params} = this.props;
+    let paramsClone = {...params};
+
+    actions.updateReport({params: paramsClone});
+    actions.setQueryState(true);
+
+    let trackableParamData = Object.keys(paramsClone).map((key) =>
+        PARAMS_TO_TRACK.includes(key) ? `${key}=${paramsClone[key]}` : key)
+        .join('&');
+
+    // Set it on the tracker so it gets sent with all Query Explorer hits.
+    ga('set', 'dimension2', trackableParamData);
+
+    let summaries = await accountSummaries.get();
+    let viewId = params.ids.slice(3);
+    let view = summaries.getView(viewId);
+    let property = summaries.getPropertyByViewId(viewId);
+
+    actions.updateReport({
+      propertyName: property.name,
+      viewName: view.name
+    });
+  }
+
+
+  /**
+   * Invoked when the DataChart component's "success" event emits.
+   * @param {Object} data The object emitted by the DataChart's "success" event.
+   */
+  handleDataChartSuccess = (data) => {
+    this.props.actions.setQueryState(false);
+    this.props.actions.updateReport({response: data.response});
+
+    ga('send', {
+      hitType: 'event',
+      eventCategory: 'query',
+      eventAction: 'submit',
+      eventLabel: '(200) OK',
+      metric1: 1
+    });
+  }
+
+
+  /**
+   * Invoked when the DataChart component's "error" event emits.
+   * @param {Object} data The error emitted by the DataChart's "error" event.
+   */
+  handleDataChartError = ({error: {code, message}}) => {
+    this.props.actions.setQueryState(false);
+    this.props.actions.updateReport({});
+
+    AlertDispatcher.addOnce({
+      title: `Ack! There was an error (${code})`,
+      message: message
+    });
+
+    ga('send', {
+      hitType: 'event',
+      eventCategory: 'query',
+      eventAction: 'submit',
+      eventLabel: `(${code}) ${message}`,
+      metric2: 1
+    });
+  }
+
 
   /**
    * Invoked when a user clicks on the include `ids` checkbox.
@@ -95,80 +167,6 @@ export default class QueryExplorer extends React.Component {
   handleAccessTokenToggle = ({target: {checked: includeAccessToken}}) => {
     this.props.actions.updateSettings({includeAccessToken});
   }
-
-
-  /**
-   * Invoked when the DataChart component's "success" event emits.
-   * @param {Object} data The object emitted by the DataChart's "success" event.
-   */
-  handleDataChartSuccess = (data) => {
-    this.props.actions.setQueryState(false);
-    this.props.actions.updateReport({
-      response: data.response,
-      error: null
-    });
-
-    ga('send', {
-      hitType: 'event',
-      eventCategory: 'query',
-      eventAction: 'submit',
-      eventLabel: '(200) OK',
-      metric1: 1
-    });
-  }
-
-
-  /**
-   * Invoked when the DataChart component's "error" event emits.
-   * @param {Object} data The error emitted by the DataChart's "error" event.
-   */
-  handleDataChartError = (err) => {
-    this.props.actions.setQueryState(false);
-    this.props.actions.updateReport({
-      response: null,
-      error: err.error
-    });
-
-    ga('send', {
-      hitType: 'event',
-      eventCategory: 'query',
-      eventAction: 'submit',
-      eventLabel: `(${err.error.code}) ${err.error.message}`,
-      metric2: 1
-    });
-  }
-
-
-  /**
-   * Invoked when a user submits the <QueryForm>.
-   * @param {Event|Object} e The native or React event.
-   */
-  handleSubmit = async (e) => {
-    e.preventDefault();
-    let {actions, params} = this.props;
-    let paramsClone = {...params};
-
-    actions.setQueryState(true);
-
-    let trackableParamData = Object.keys(paramsClone).map((key) =>
-        PARAMS_TO_TRACK.includes(key) ? `${key}=${paramsClone[key]}` : key)
-        .join('&');
-
-    // Set it on the tracker so it gets sent with all Query Explorer hits.
-    ga('set', 'dimension2', trackableParamData);
-
-    let summaries = await accountSummaries.get();
-    let viewId = params.ids.slice(3);
-    let view = summaries.getView(viewId);
-    let property = summaries.getPropertyByViewId(viewId);
-
-    actions.updateReport({
-      propertyName: property.name,
-      viewName: view.name,
-      params: paramsClone
-    });
-  }
-
 
   /**
    * Invoked when a user focuses on the "Direct link to this report" textarea.

@@ -13,7 +13,6 @@
 // limitations under the License.
 
 
-import assign from 'lodash/object/assign';
 import Icon from './icon';
 import React from 'react';
 

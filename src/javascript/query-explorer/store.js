@@ -13,9 +13,10 @@
 // limitations under the License.
 
 
-import { createStore, applyMiddleware } from 'redux'
-import thunkMiddleware from 'redux-thunk'
+import mapValues from 'lodash/mapValues';
 import qs from 'querystring';
+import { createStore, applyMiddleware } from 'redux';
+import thunkMiddleware from 'redux-thunk';
 import {sanitize} from './query-params';
 import reducer from './reducers';
 import db from '../data-store';
@@ -69,7 +70,7 @@ function getInitalQueryParamsAndUpdateUrl() {
     }
 
     urlParams = sanitize({...defaultParams, ...urlParams});
-    store.set('query-explorer:params', urlParams);
+    db.set('query-explorer:params', urlParams);
     return urlParams;
   }
   else if (storedParams) {

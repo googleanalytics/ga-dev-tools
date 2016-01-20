@@ -16,7 +16,7 @@
 /* global gapi */
 
 
-import mapValues from 'lodash/object/mapValues';
+import mapValues from 'lodash/mapValues';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import {sanitize} from '../query-params';
@@ -27,10 +27,7 @@ const SRC_PARAM = 'query-explorer:v2';
 
 export default class DataChart extends React.Component {
 
-  static defaultProps = {
-    params: {}
-  }
-
+  isQuerying = false
 
   /**
    * React lifecycyle method below:
@@ -59,7 +56,13 @@ export default class DataChart extends React.Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    if (nextProps.params && nextProps.isQuerying) {
+
+    // Compares the props to the instance state to determine when the request
+    // should initiate.
+    if (nextProps.params &&
+        this.isQuerying === false && nextProps.isQuerying === true) {
+
+      this.isQuerying = true;
 
       let newParams = sanitize(nextProps.params);
 
@@ -74,9 +77,16 @@ export default class DataChart extends React.Component {
       // TODO(philipwalton): .set() should ideally be able to handle
       // sending it new properties without merging.
       let nulledOldParams = mapValues(this.dataChart_.get().query, () => null);
+
       let params = {...defaultParams, ...nulledOldParams, ...newParams};
 
       this.dataChart_.set({query: params}).execute();
+    }
+
+    // Compares the props to the instance state to determine when the request
+    // has completed.
+    if (this.isQuerying === true && nextProps.isQuerying === false) {
+      this.isQuerying = false;
     }
   }
 

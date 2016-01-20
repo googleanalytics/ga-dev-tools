@@ -16,10 +16,10 @@
 /* global $ */
 
 
-import bindAll from 'lodash/function/bindAll';
-import debounce from 'lodash/function/debounce';
-import filter from 'lodash/collection/filter';
-import map from 'lodash/collection/map';
+import bindAll from 'lodash/bindAll';
+import debounce from 'lodash/debounce';
+import filter from 'lodash/filter';
+import map from 'lodash/map';
 import React from 'react';
 import ReactDOM from 'react-dom';
 
