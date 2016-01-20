@@ -1,4 +1,4 @@
-// Copyright 2015 Google Inc. All rights reserved.
+// Copyright 2016 Google Inc. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@
 import concat from 'gulp-concat';
 import cssnext from 'gulp-cssnext';
 import del from 'del';
+import eslint from 'gulp-eslint';
 import fse from 'fs-extra';
 import glob from 'glob';
 import gulp from 'gulp';
@@ -223,6 +224,14 @@ gulp.task('json', function() {
 });
 
 
+gulp.task('lint', function () {
+  return gulp.src(['src/javascript/**/*.js'])
+      .pipe(eslint())
+      .pipe(eslint.format())
+      .pipe(eslint.failAfterError());
+});
+
+
 gulp.task('test', function() {
   return gulp.src('test/**/*.js', {read: false})
       .pipe(mocha());
@@ -243,6 +252,7 @@ gulp.task('build:embed-api-components', ['javascript'], function() {
 
 
 gulp.task('build:all', [
+  'lint',
   'test',
   'javascript',
   'css',

@@ -13,11 +13,10 @@
 // limitations under the License.
 
 
-/* global $, ga, gapi */
+/* global ga */
 
 
 import React from 'react';
-import ReactDOM from 'react-dom';
 import accountSummaries from 'javascript-api-utils/lib/account-summaries';
 
 import Datepicker from './datepicker';
@@ -42,8 +41,8 @@ export default class QueryExplorer extends React.Component {
 
   /**
    * Invoked when a user changes the ViewSelector2 instance.
-   * @param {Object} data The object emited by the ViewSelector2's "changeView"
-   * event.
+   * @param {Object} viewData The object emited by the ViewSelector2's
+   * `changeView` event.
    */
   handleViewSelectorChange = (viewData) => {
     let {actions} = this.props;
@@ -153,7 +152,7 @@ export default class QueryExplorer extends React.Component {
 
   /**
    * Invoked when a user clicks on the include `ids` checkbox.
-   * @param {SyntheticEvent} e The React event.
+   * @param {{target: Element}} includeIds The React event.
    */
   handleIdsToggle = ({target: {checked: includeIds}}) => {
     this.props.actions.updateSettings({includeIds});
@@ -162,7 +161,7 @@ export default class QueryExplorer extends React.Component {
 
   /**
    * Invoked when a user clicks on the include `access_token` checkbox.
-   * @param {SyntheticEvent} e The React event.
+   * @param {{target: Element}} includeAccessToken The React event.
    */
   handleAccessTokenToggle = ({target: {checked: includeAccessToken}}) => {
     this.props.actions.updateSettings({includeAccessToken});
@@ -171,7 +170,7 @@ export default class QueryExplorer extends React.Component {
   /**
    * Invoked when a user focuses on the "Direct link to this report" textarea.
    */
-  handleDirectLinkFocus(e) {
+  handleDirectLinkFocus() {
     ga('send', 'event', 'query direct link', 'focus');
   }
 
@@ -201,13 +200,16 @@ export default class QueryExplorer extends React.Component {
   render() {
 
     let {
-      actions,
       isQuerying,
       params,
       report,
       settings,
       select2Options
     } = this.props;
+
+    let formControlClass = 'FormControl FormControl--inline';
+    let formActionClass = formControlClass + ' FormControl--action';
+    let requiredFormControlClass = formControlClass +' FormControl--required';
 
     return (
       <div>
@@ -221,7 +223,7 @@ export default class QueryExplorer extends React.Component {
 
         <form onSubmit={this.handleSubmit}>
 
-          <div className="FormControl FormControl--inline FormControl--required">
+          <div className={requiredFormControlClass}>
             <label className="FormControl-label">ids</label>
             <div className="FormControl-body">
               <div className="FlexLine">
@@ -235,7 +237,7 @@ export default class QueryExplorer extends React.Component {
             </div>
           </div>
 
-          <div className="FormControl FormControl--inline FormControl--required">
+          <div className={requiredFormControlClass}>
             <label className="FormControl-label">start-date</label>
             <div className="FormControl-body">
               <div className="FlexLine">
@@ -248,7 +250,7 @@ export default class QueryExplorer extends React.Component {
             </div>
           </div>
 
-          <div className="FormControl FormControl--inline FormControl--required">
+          <div className={requiredFormControlClass}>
             <label className="FormControl-label">end-date</label>
             <div className="FormControl-body">
               <div className="FlexLine">
@@ -261,7 +263,7 @@ export default class QueryExplorer extends React.Component {
             </div>
           </div>
 
-          <div className="FormControl FormControl--inline FormControl--required">
+          <div className={requiredFormControlClass}>
             <label className="FormControl-label">metrics</label>
             <div className="FormControl-body">
               <div className="FlexLine">
@@ -275,7 +277,7 @@ export default class QueryExplorer extends React.Component {
             </div>
           </div>
 
-          <div className="FormControl FormControl--inline">
+          <div className={formControlClass}>
             <label className="FormControl-label">dimensions</label>
             <div className="FormControl-body">
               <div className="FlexLine">
@@ -289,7 +291,7 @@ export default class QueryExplorer extends React.Component {
             </div>
           </div>
 
-          <div className="FormControl FormControl--inline">
+          <div className={formControlClass}>
             <label className="FormControl-label">sort</label>
             <div className="FormControl-body">
               <div className="FlexLine">
@@ -303,7 +305,7 @@ export default class QueryExplorer extends React.Component {
             </div>
           </div>
 
-          <div className="FormControl FormControl--inline">
+          <div className={formControlClass}>
             <label className="FormControl-label">filters</label>
             <div className="FormControl-body">
               <div className="FlexLine">
@@ -317,7 +319,7 @@ export default class QueryExplorer extends React.Component {
             </div>
           </div>
 
-          <div className="FormControl FormControl--inline">
+          <div className={formControlClass}>
             <label className="FormControl-label">segment</label>
             <div className="FormControl-body">
               <div className="FlexLine">
@@ -341,7 +343,7 @@ export default class QueryExplorer extends React.Component {
             </div>
           </div>
 
-          <div className="FormControl FormControl--inline">
+          <div className={formControlClass}>
             <label className="FormControl-label">samplingLevel</label>
             <div className="FormControl-body">
               <div className="FlexLine">
@@ -355,7 +357,7 @@ export default class QueryExplorer extends React.Component {
             </div>
           </div>
 
-          <div className="FormControl FormControl--inline">
+          <div className={formControlClass}>
             <label className="FormControl-label">include-empty-rows</label>
             <div className="FormControl-body">
               <div className="FlexLine">
@@ -369,7 +371,7 @@ export default class QueryExplorer extends React.Component {
             </div>
           </div>
 
-          <div className="FormControl FormControl--inline">
+          <div className={formControlClass}>
             <label className="FormControl-label">start-index</label>
             <div className="FormControl-body">
               <div className="FlexLine">
@@ -383,7 +385,7 @@ export default class QueryExplorer extends React.Component {
             </div>
           </div>
 
-          <div className="FormControl FormControl--inline">
+          <div className={formControlClass}>
             <label className="FormControl-label">max-results</label>
             <div className="FormControl-body">
               <div className="FlexLine">
@@ -397,7 +399,7 @@ export default class QueryExplorer extends React.Component {
             </div>
           </div>
 
-          <div className="FormControl FormControl--inline FormControl--action">
+          <div className={formActionClass}>
             <div className="FormControl-body">
               <button
                 className="Button Button--action"

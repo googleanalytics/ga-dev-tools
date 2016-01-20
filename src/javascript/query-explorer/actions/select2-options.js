@@ -13,9 +13,6 @@
 // limitations under the License.
 
 
-/* global gapi */
-
-
 import metadata from 'javascript-api-utils/lib/metadata';
 import * as types from './types';
 import segments from '../segments';
@@ -31,7 +28,7 @@ export function updateMetricsDimensionsAndSortOptions(viewData) {
     let sort = getSortOptions(params, metrics, dimensions);
 
     dispatch(updateSelect2Options({metrics, dimensions, sort}));
-  }
+  };
 }
 
 
@@ -41,7 +38,7 @@ export function updateSortOptions() {
     let sort = getSortOptions(params, metrics, dimensions);
 
     dispatch(updateSelect2Options({sort}));
-  }
+  };
 }
 
 
@@ -49,7 +46,7 @@ export function updateSegmentsOptions(useDefinition) {
   return async function(dispatch) {
     let segments = await getSegmentsOptions(useDefinition);
     dispatch(updateSelect2Options({segments}));
-  }
+  };
 }
 
 
@@ -121,8 +118,9 @@ function getSegmentsOptions(useDefinition) {
       return {
         id: useDefinition ? segment.definition : segment.segmentId,
         name: segment.name,
-        group: segment.type == 'BUILT_IN' ? 'Built in Segment' : 'Custom Segment'
-      }
+        group: segment.type == 'BUILT_IN' ?
+            'Built in Segment' : 'Custom Segment'
+      };
     });
 
     // Remove the 'All Sessions' segment when using definitions.
@@ -134,8 +132,11 @@ function getSegmentsOptions(useDefinition) {
 
 
 /**
- * Returns a promise that is resolved with an array of all public metrics.
- * @return {goog.Promise}
+ * Gets a list of all public metrics associated with the passed view.
+ * @param {Object} account An account object from accountSummaries.list.
+ * @param {Object} property A property object from accountSummaries.list.
+ * @param {Object} view A view object from accountSummaries.list.
+ * @return {Promise} A promise resolved with an array of all public metrics.
  */
 function getMetrics(account, property, view) {
   return metadata.getAuthenticated(account, property, view).then(
@@ -144,12 +145,13 @@ function getMetrics(account, property, view) {
 
 
 /**
- * Returns a promise that is resolved with an array of all public dimensions.
- * @return {goog.Promise}
+ * Gets a list of all public dimensions associated with the passed view.
+ * @param {Object} account An account object from accountSummaries.list.
+ * @param {Object} property A property object from accountSummaries.list.
+ * @param {Object} view A view object from accountSummaries.list.
+ * @return {Promise} A promise resolved with an array of all public dimensions.
  */
 function getDimensions(account, property, view) {
   return metadata.getAuthenticated(account, property, view).then(
          (columns) => columns.allDimensions('public'));
 }
-
-

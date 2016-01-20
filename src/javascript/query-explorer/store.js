@@ -13,9 +13,12 @@
 // limitations under the License.
 
 
+/* global ga */
+
+
 import mapValues from 'lodash/mapValues';
 import qs from 'querystring';
-import { createStore, applyMiddleware } from 'redux';
+import {createStore, applyMiddleware} from 'redux';
 import thunkMiddleware from 'redux-thunk';
 import {sanitize} from './query-params';
 import reducer from './reducers';
@@ -26,7 +29,6 @@ let middlewear = [thunkMiddleware];
 
 
 // Adds a logger in non-production mode.
-let logger;
 if (process.env.NODE_ENV != 'production') {
   // Uses `require` here instead of `import` so the module isn't included
   // in the production build.
@@ -101,7 +103,7 @@ function getDefaultSelect2Options() {
     dimensions: [],
     sort: [],
     segments: []
-  }
+  };
 }
 
 

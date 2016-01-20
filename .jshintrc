@@ -1,9 +1,0 @@
-{
-  "browser": true,
-  "boss": true,
-  "esnext": true,
-  "expr": true,
-  "node": true,
-  "scripturl": true,
-  "quotmark": "single"
-}

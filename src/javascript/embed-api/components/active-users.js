@@ -49,7 +49,7 @@ gapi.analytics.ready(function() {
     },
 
     render_: function() {
-      var opts = this.get();
+      let opts = this.get();
 
       // Render the component inside the container.
       this.container = typeof opts.container == 'string' ?
@@ -60,8 +60,8 @@ gapi.analytics.ready(function() {
     },
 
     pollActiveUsers_: function() {
-      var options = this.get();
-      var pollingInterval = (options.pollingInterval || 5) * 1000;
+      let options = this.get();
+      let pollingInterval = (options.pollingInterval || 5) * 1000;
 
       if (isNaN(pollingInterval) || pollingInterval < 5000) {
         throw new Error('Frequency must be 5 seconds or more.');
@@ -69,12 +69,12 @@ gapi.analytics.ready(function() {
 
       this.polling_ = true;
       gapi.client.analytics.data.realtime
-          .get({ids:options.ids, metrics:'rt:activeUsers'})
+          .get({ids: options.ids, metrics: 'rt:activeUsers'})
           .then(function(response) {
 
-        var result = response.result;
-        var newValue = result.totalResults ? +result.rows[0][0] : 0;
-        var oldValue = this.activeUsers;
+        let result = response.result;
+        let newValue = result.totalResults ? +result.rows[0][0] : 0;
+        let oldValue = this.activeUsers;
 
         this.emit('success', {activeUsers: this.activeUsers});
 
@@ -83,7 +83,7 @@ gapi.analytics.ready(function() {
           this.onChange_(newValue - oldValue);
         }
 
-        if (this.polling_ = true) {
+        if (this.polling_ == true) {
           this.timeout_ = setTimeout(this.pollActiveUsers_.bind(this),
               pollingInterval);
         }
@@ -91,7 +91,7 @@ gapi.analytics.ready(function() {
     },
 
     onChange_: function(delta) {
-      var valueContainer = this.container.querySelector('b');
+      let valueContainer = this.container.querySelector('b');
       if (valueContainer) valueContainer.innerHTML = this.activeUsers;
 
       this.emit('change', {activeUsers: this.activeUsers, delta: delta});

@@ -123,7 +123,7 @@ export default class ParamElement extends React.Component {
         className="HitBuilderParam-helpIcon">
         <Icon type="info-outline" />
       </a>
-    )
+    );
   }
 
 

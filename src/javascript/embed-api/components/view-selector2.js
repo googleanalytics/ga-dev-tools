@@ -15,7 +15,9 @@
 
 /* global gapi */
 
+
 import accountSummaries from 'javascript-api-utils/lib/account-summaries';
+
 
 /**
  * A ViewSelector2 component for the Embed API.
@@ -64,7 +66,7 @@ gapi.analytics.ready(function() {
             'has been rendered on the page.');
       }
 
-      var prevOpts = this.get();
+      let prevOpts = this.get();
 
       if (prevOpts.ids != opts.ids ||
           prevOpts.viewId != opts.viewId ||
@@ -94,7 +96,7 @@ gapi.analytics.ready(function() {
      *     succeeded and the accountSummaries have been retrieved.
      */
     setup_: function(cb) {
-      var self = this;
+      let self = this;
 
       function onAuthorize() {
         accountSummaries.get().then(
@@ -125,9 +127,9 @@ gapi.analytics.ready(function() {
      */
     updateAccounts_: function() {
 
-      var opts = this.get();
-      var ids = getIdProp(opts);
-      var view, account, property;
+      let opts = this.get();
+      let ids = getIdProp(opts);
+      let view, account, property;
 
       // If the user does not have any accounts, emit an error.
       if (!this.summaries.all().length) {
@@ -197,17 +199,17 @@ gapi.analytics.ready(function() {
      */
     render_: function() {
 
-      var opts = this.get();
+      let opts = this.get();
 
       this.container = typeof opts.container == 'string' ?
           document.getElementById(opts.container) : opts.container;
 
       this.container.innerHTML = opts.template || this.template;
-      var selects = this.container.querySelectorAll('select');
+      let selects = this.container.querySelectorAll('select');
 
-      var accounts = this.accounts;
-      var properties = this.properties || [{name: '(Empty)', id: ''}];
-      var views = this.views || [{name: '(Empty)', id: ''}];
+      let accounts = this.accounts;
+      let properties = this.properties || [{name: '(Empty)', id: ''}];
+      let views = this.views || [{name: '(Empty)', id: ''}];
 
       updateSelect(selects[0], accounts, this.account.id);
       updateSelect(selects[1], properties, this.property && this.property.id);
@@ -229,7 +231,7 @@ gapi.analytics.ready(function() {
      */
     onChange_: function() {
 
-      var props = {
+      let props = {
         account: this.account,
         property: this.property,
         view: this.view,
@@ -259,7 +261,7 @@ gapi.analytics.ready(function() {
      * @param {string} property The property key to be set on the instance.
      */
     onUserSelect_: function(select, property) {
-      var data = {};
+      let data = {};
       data[property] = select.value;
 
       this.set(data);
@@ -302,7 +304,7 @@ gapi.analytics.ready(function() {
    */
   function updateSelect(select, options, id) {
     select.innerHTML = options.map(function(option) {
-      var selected = option.id == id ? 'selected ' : ' ';
+      let selected = option.id == id ? 'selected ' : ' ';
       return '<option ' + selected + 'value="' + option.id + '">' +
           option.name + '</option>';
     }).join('');

@@ -15,25 +15,27 @@
 
 /* global gapi */
 
+
 /**
  * A DateRangeSelector component for the Embed API.
  */
 gapi.analytics.ready(function() {
 
-  var nDaysAgo = /(\d+)daysAgo/;
-  var dateFormat = /\d{4}\-\d{2}\-\d{2}/;
+  let nDaysAgo = /(\d+)daysAgo/;
+  let dateFormat = /\d{4}\-\d{2}\-\d{2}/;
 
   /**
    * Convert a date acceptable to the Core Reporting API (e.g. `today`,
    * `yesterday` or `NdaysAgo`) into the format YYYY-MM-DD. Dates
    * already in that format are simply returned.
+   * @param {string} str The date string to format.
    * @return {string} The formatted date.
    */
   function convertDate(str) {
     // If str is in the proper format, do nothing.
     if (dateFormat.test(str)) return str;
 
-    var match = nDaysAgo.exec(str);
+    let match = nDaysAgo.exec(str);
     if (match) {
       return daysAgo(+match[1]);
     } else if (str == 'today') {
@@ -48,14 +50,15 @@ gapi.analytics.ready(function() {
   /**
    * Accept a number and return a date formatted as YYYY-MM-DD that
    * represents that many days ago.
+   * @param {number} numDays The number of days ago whose date to return.
    * @return {string} The formatted date.
    */
   function daysAgo(numDays) {
-    var date = new Date();
+    let date = new Date();
     date.setDate(date.getDate() - numDays);
-    var month = String(date.getMonth() + 1);
+    let month = String(date.getMonth() + 1);
     month = month.length == 1 ? '0' + month: month;
-    var day = String(date.getDate());
+    let day = String(date.getDate());
     day = day.length == 1 ? '0' + day: day;
     return date.getFullYear() + '-' + month + '-' + day;
   }
@@ -67,7 +70,7 @@ gapi.analytics.ready(function() {
      * @return {DateRangeSelector} The instance.
      */
     execute: function() {
-      var options = this.get();
+      let options = this.get();
       options['start-date'] = options['start-date'] || '7daysAgo';
       options['end-date'] = options['end-date'] || 'yesterday';
 
@@ -79,7 +82,7 @@ gapi.analytics.ready(function() {
       if (options.template) this.template = options.template;
 
       this.container.innerHTML = this.template;
-      var dateInputs = this.container.querySelectorAll('input');
+      let dateInputs = this.container.querySelectorAll('input');
 
       this.startDateInput = dateInputs[0];
       this.startDateInput.value = convertDate(options['start-date']);
