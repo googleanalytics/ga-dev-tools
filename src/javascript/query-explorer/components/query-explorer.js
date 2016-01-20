@@ -71,10 +71,15 @@ export default class QueryExplorer extends React.Component {
    * @param {{target: Element}} The React event.
    */
   handleSegmentDefinitionToggle = ({target: {checked: useDefinition}}) => {
+    let {actions} = this.props;
     let {segment} = this.props.params;
-    this.props.actions.updateSettings({useDefinition});
-    this.props.actions.swapSegmentIdAndDefinition(segment, useDefinition);
-    this.props.actions.updateSegmentsOptions();
+
+    actions.updateSettings({useDefinition});
+    actions.updateSegmentsOptions();
+
+    if (segment) {
+      actions.swapSegmentIdAndDefinition(segment, useDefinition);
+    }
   }
 
 
