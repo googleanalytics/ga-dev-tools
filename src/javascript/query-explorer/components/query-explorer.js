@@ -138,7 +138,7 @@ export default class QueryExplorer extends React.Component {
    */
   handleDataChartError = ({error: {code, message}}) => {
     this.props.actions.setQueryState(false);
-    this.props.actions.updateReport({});
+    this.props.actions.updateReport({params: null, response: null});
 
     AlertDispatcher.addOnce({
       title: `Ack! There was an error (${code})`,
