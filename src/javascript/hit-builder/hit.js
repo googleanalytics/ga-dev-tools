@@ -75,7 +75,7 @@ export function convertHitToParams(hit = '') {
 
   // Create optional params after required params.
   let optionalParams = map(query, (value, name) =>
-      ({name, value, isOptional: true}));
+      ({name, value, id: id++, isOptional: true}));
 
   return requiredParams.concat(optionalParams);
 }
