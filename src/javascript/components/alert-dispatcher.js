@@ -50,6 +50,17 @@ export default class AlertDispatcher extends React.Component {
 
 
   /**
+   * Removes any alerts that may be shown.
+   */
+  static removeAll() {
+    if (alerts.length) {
+      alerts = [];
+      render();
+    }
+  }
+
+
+  /**
    * Removes an alert from the alert list.
    * @param {number} id The ID of the alert to remove.
    */
