@@ -26,7 +26,7 @@ export function updateParams(params) {
     AlertDispatcher.removeAll();
 
     dispatch({type: types.UPDATE_PARAMS, params});
-  }
+  };
 }
 
 
