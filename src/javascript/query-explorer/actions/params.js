@@ -15,10 +15,18 @@
 
 import * as types from './types';
 import segments from '../segments';
+import AlertDispatcher from '../../components/alert-dispatcher';
 
 
 export function updateParams(params) {
-  return {type: types.UPDATE_PARAMS, params};
+  return function(dispatch) {
+    // Hides any errors that may be showing since they may be out of date.
+    // TODO(philipwalton): consider letting Redux handle the AlertDispatcher
+    // component and making the errors tied to a specific param.
+    AlertDispatcher.removeAll();
+
+    dispatch({type: types.UPDATE_PARAMS, params});
+  }
 }
 
 
