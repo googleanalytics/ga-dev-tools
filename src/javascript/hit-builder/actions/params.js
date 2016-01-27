@@ -31,7 +31,7 @@ export function addParam() {
   return function(dispatch) {
     dispatch({type: types.ADD_PARAM});
     resetHitValidationStatus(dispatch);
-  }
+  };
 }
 
 
@@ -39,7 +39,7 @@ export function removeParam(id) {
   return function(dispatch) {
     dispatch({type: types.REMOVE_PARAM, id});
     resetHitValidationStatus(dispatch);
-  }
+  };
 }
 
 
@@ -47,7 +47,7 @@ export function editParamName(id, name) {
   return function(dispatch) {
     dispatch({type: types.EDIT_PARAM_NAME, id, name});
     resetHitValidationStatus(dispatch);
-  }
+  };
 }
 
 
@@ -55,7 +55,7 @@ export function editParamValue(id, value) {
   return function(dispatch) {
     dispatch({type: types.EDIT_PARAM_VALUE, id, value});
     resetHitValidationStatus(dispatch);
-  }
+  };
 }
 
 
