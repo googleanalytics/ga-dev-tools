@@ -204,7 +204,7 @@ export default class HitElement extends React.Component {
           <button
             className="Button Button--action"
             disabled={hitStatus === 'VALIDATING'}
-            onClick={() => actions.validateHit()}>
+            onClick={actions.validateHit}>
             {hitStatus === 'VALIDATING' ? 'Validating...' : buttonText}
           </button>
         </div>
