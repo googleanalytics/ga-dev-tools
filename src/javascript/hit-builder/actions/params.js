@@ -21,36 +21,55 @@ import {convertParamsToHit, convertHitToParams,
 import AlertDispatcher from '../../components/alert-dispatcher';
 
 
-export function addParam() {
-  return {type: types.ADD_PARAM};
+function resetHitValidationStatus(dispatch) {
+  dispatch(setHitStatus('UNVALIDATED'));
+  dispatch(setValidationMessages([]));
 }
+
+
+export function addParam() {
+  return function(dispatch) {
+    dispatch({type: types.ADD_PARAM});
+    resetHitValidationStatus(dispatch);
+  };
+}
+
 
 export function removeParam(id) {
-  return {type: types.REMOVE_PARAM, id};
+  return function(dispatch) {
+    dispatch({type: types.REMOVE_PARAM, id});
+    resetHitValidationStatus(dispatch);
+  };
 }
+
 
 export function editParamName(id, name) {
-  return {type: types.EDIT_PARAM_NAME, id, name};
+  return function(dispatch) {
+    dispatch({type: types.EDIT_PARAM_NAME, id, name});
+    resetHitValidationStatus(dispatch);
+  };
 }
+
 
 export function editParamValue(id, value) {
-  return {type: types.EDIT_PARAM_VALUE, id, value};
+  return function(dispatch) {
+    dispatch({type: types.EDIT_PARAM_VALUE, id, value});
+    resetHitValidationStatus(dispatch);
+  };
 }
 
-export function replaceParams(params) {
-  return {type: types.REPLACE_PARAMS, params};
-}
 
 export function updateHit(newHit) {
   return function(dispatch, getState) {
     let oldHit = convertParamsToHit(getState().params);
     if (oldHit != newHit) {
       let params = convertHitToParams(newHit);
-      dispatch(setHitStatus('UNVALIDATED'));
-      dispatch(replaceParams(params));
+      dispatch({type: types.REPLACE_PARAMS, params});
+      resetHitValidationStatus(dispatch);
     }
   };
 }
+
 
 export function validateHit() {
 
