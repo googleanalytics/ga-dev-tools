@@ -16,6 +16,7 @@
 /* global ga */
 
 
+import 'autotrack/lib/plugins/event-tracker';
 import 'autotrack/lib/plugins/media-query-tracker';
 import 'autotrack/lib/plugins/outbound-link-tracker';
 import 'autotrack/lib/plugins/session-duration-tracker';
@@ -30,6 +31,25 @@ let mediaQueryDefinitions = [
       {name: 'sm', media: '(min-width: 420px)'},
       {name: 'md', media: '(min-width: 570px)'},
       {name: 'lg', media: '(min-width: 1024px)'}
+    ]
+  },
+  {
+    name: 'Resolution',
+    dimensionIndex: 4,
+    items: [
+      {name: '1x',   media: 'all'},
+      {name: '1.5x', media: '(-webkit-min-device-pixel-ratio: 1.5), ' +
+                            '(min-resolution: 144dpi)'},
+      {name: '2x',   media: '(-webkit-min-device-pixel-ratio: 2), ' +
+                            '(min-resolution: 192dpi)'},
+    ]
+  },
+  {
+    name: 'Orientation',
+    dimensionIndex: 5,
+    items: [
+      {name: 'landscape', media: '(orientation: landscape)'},
+      {name: 'portrait',  media: '(orientation: portrait)'}
     ]
   }
 ];
@@ -50,11 +70,17 @@ function setupUncaughtExceptionTracking() {
 
 export default {
   track: function() {
+
+    // Requires official plugins
     ga('require', 'displayfeatures');
     ga('require', 'linkid');
+
+    // Requires autotrack plugins
+    ga('require', 'eventTracker');
     ga('require', 'mediaQueryTracker', {mediaQueryDefinitions});
     ga('require', 'outboundLinkTracker');
     ga('require', 'sessionDurationTracker');
+
     ga('send', 'pageview');
 
     setupUncaughtExceptionTracking();

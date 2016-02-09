@@ -53,10 +53,12 @@ export default {
 
   open: function() {
     $(document.body).addClass('is-expanded');
+    ga('send', 'event', 'Sidebar', 'open');
   },
 
   close: function() {
     $(document.body).removeClass('is-expanded');
+    ga('send', 'event', 'Sidebar', 'close');
   }
 
 };
