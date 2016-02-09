@@ -41,7 +41,7 @@ let mediaQueryDefinitions = [
       {name: '1.5x', media: '(-webkit-min-device-pixel-ratio: 1.5), ' +
                             '(min-resolution: 144dpi)'},
       {name: '2x',   media: '(-webkit-min-device-pixel-ratio: 2), ' +
-                            '(min-resolution: 192dpi)'},
+                            '(min-resolution: 192dpi)'}
     ]
   },
   {
