@@ -1,4 +1,4 @@
-// Copyright 2015 Google Inc. All rights reserved.
+// Copyright 2016 Google Inc. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -30,6 +30,25 @@ let mediaQueryDefinitions = [
       {name: 'sm', media: '(min-width: 420px)'},
       {name: 'md', media: '(min-width: 570px)'},
       {name: 'lg', media: '(min-width: 1024px)'}
+    ]
+  },
+  {
+    name: 'Resolution',
+    dimensionIndex: 4,
+    items: [
+      {name: '1x',   media: 'all'},
+      {name: '1.5x', media: '(-webkit-min-device-pixel-ratio: 1.5), ' +
+                            '(min-resolution: 144dpi)'},
+      {name: '2x',   media: '(-webkit-min-device-pixel-ratio: 2), ' +
+                            '(min-resolution: 192dpi)'}
+    ]
+  },
+  {
+    name: 'Orientation',
+    dimensionIndex: 5,
+    items: [
+      {name: 'landscape', media: '(orientation: landscape)'},
+      {name: 'portrait',  media: '(orientation: portrait)'}
     ]
   }
 ];
