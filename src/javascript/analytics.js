@@ -16,6 +16,7 @@
 /* global ga */
 
 
+import 'autotrack/lib/plugins/event-tracker';
 import 'autotrack/lib/plugins/media-query-tracker';
 import 'autotrack/lib/plugins/outbound-link-tracker';
 import 'autotrack/lib/plugins/session-duration-tracker';
@@ -69,11 +70,17 @@ function setupUncaughtExceptionTracking() {
 
 export default {
   track: function() {
+
+    // Requires official plugins
     ga('require', 'displayfeatures');
     ga('require', 'linkid');
+
+    // Requires autotrack plugins
+    ga('require', 'eventTracker');
     ga('require', 'mediaQueryTracker', {mediaQueryDefinitions});
     ga('require', 'outboundLinkTracker');
     ga('require', 'sessionDurationTracker');
+
     ga('send', 'pageview');
 
     setupUncaughtExceptionTracking();

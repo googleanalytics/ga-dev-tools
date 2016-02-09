@@ -29,9 +29,21 @@
 
   {% if auth == 'user' %}
     <aside class="Header-auth" id="header-auth">
-      <div class="Header-embedApi" id="embed-api-auth-container"></div>
-      <button class="Header-signOut LinkButton" id="header-sign-out">
-        Sign Out</button>
+      <div
+        class="Header-embedApi"
+        id="embed-api-auth-container"
+        data-event-category="User"
+        data-event-label="auth"
+        data-event-action="signin">
+      </div>
+      <button
+        class="Header-signOut LinkButton"
+        id="header-sign-out"
+        data-event-category="User"
+        data-event-label="auth"
+        data-event-action="signout">
+        Sign Out
+      </button>
     </aside>
   {% endif %}
 

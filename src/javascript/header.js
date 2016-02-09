@@ -13,7 +13,7 @@
 // limitations under the License.
 
 
-/* global $, gapi */
+/* global $, ga, gapi */
 
 
 export default {
@@ -54,12 +54,14 @@ export default {
     $(document).off('.header');
     this.addCloseHandler();
     $('#header').addClass('is-open');
+    ga('send', 'event', 'Header', 'open');
   },
 
   close: function() {
     $(document).off('.header');
     this.addOpenHandler();
     $('#header').removeClass('is-open');
+    ga('send', 'event', 'Header', 'close');
   }
 
 };
