@@ -7,6 +7,12 @@ client_id: 793177639245-olst43lspv93vkoql0b9l26hmpf9kfmv.apps.googleusercontent.
 
 
 projects:
+- title: Autotrack
+  type: demo
+  slug: autotrack
+  status: new
+  server_auth: true
+  tech: [autotrack, embed_api]
 - title: Account Explorer
   type: tool
   slug: account-explorer
@@ -76,6 +82,9 @@ tech:
   analyticsjs:
     name: analytics.js
     url: https://developers.google.com/analytics/devguides/collection/analyticsjs/
+  autotrack:
+    name: autotrack
+    url: https://github.com/googleanalytics/autotrack/
   core_reporting_api:
     name: Core Reporting API
     url: https://developers.google.com/analytics/devguides/reporting/core/
