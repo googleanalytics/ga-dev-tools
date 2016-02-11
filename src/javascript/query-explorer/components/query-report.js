@@ -205,7 +205,7 @@ export default class QueryReport extends React.Component {
         {partials.reportMeta}
         <DataChart
           hidden={!response}
-          className="QueryReport-item"
+          className="DataTable QueryReport-item"
           params={params}
           isQuerying={this.props.isQuerying}
           onSuccess={this.props.onSuccess}

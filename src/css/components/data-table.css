@@ -1,0 +1,21 @@
+.DataTable .gapi-analytics-data-chart {
+  overflow-x: auto;
+}
+
+.DataTable .gapi-analytics-data-chart .gapi-analytics-data-chart-styles-table-tr-head {
+  background: hsl(30, 10%, 96.7%);
+}
+
+.DataTable .gapi-analytics-data-chart .gapi-analytics-data-chart-styles-table-th {
+  border-bottom: 1px solid #ddd;
+  border-top: 1px solid #ddd;
+  white-space: nowrap;
+}
+
+.DataTable .gapi-analytics-data-chart .gapi-analytics-data-chart-styles-table-th:first-child {
+  border-left: 1px solid #ddd;
+}
+
+.DataTable .gapi-analytics-data-chart .gapi-analytics-data-chart-styles-table-th:last-child {
+  border-right: 1px solid #ddd;
+}
