@@ -1,0 +1,21 @@
+.Table {
+  background: #fff;
+  margin: 0 0 var(--gap);
+}
+
+.Table td,
+.Table th {
+  border: 1px solid var(--border-color);
+  padding: .5em 1em;
+  text-align: left;
+}
+
+.Table th > h4 {
+  margin: 0;
+  font-size: 1.1em;
+  font-weight: 400;
+}
+
+.Table tbody tr:nth-child(2n-1) {
+  background-color: hsla(0, 0%, 0%, .02);
+}

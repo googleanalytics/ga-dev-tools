@@ -66,6 +66,7 @@ limitations under the License.
 @import './components/search-suggest-match';
 @import './components/site';
 @import './components/tech-info';
+@import './components/table';
 @import './components/titles';
 @import './components/view-selector';
 
