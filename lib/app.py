@@ -31,11 +31,8 @@ router = webapp2.WSGIApplication([
   (r'/explorer/csvhandler.*', redirects.QueryExplorerCsvRedirect),
   (r'/explorer.*', redirects.QueryExplorerRedirect),
 
-  # Main routes
+  # Static routes
   (r'/query-explorer/csvhandler.*', ExplorerCsvHandler),
-  RedirectRoute(r'/embed-api/server-side-authorization/',
-      handler=ServerSideAuthHandler, name='ServerSideAuth',
-      strict_slash=True),
 
   # Dynamic routes
   RedirectRoute(r'/',

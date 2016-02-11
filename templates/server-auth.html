@@ -14,7 +14,7 @@ gapi.analytics.ready(function() {
   // Authorize this user with the access token from the service account.
   gapi.analytics.auth.authorize({
     serverAuth: {
-      access_token: '{{ site.access_token }}'
+      access_token: '{{ site.get_access_token() }}'
     }
   });
 

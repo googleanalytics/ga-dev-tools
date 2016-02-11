@@ -20,6 +20,7 @@ import logging
 import jinja2
 import os.path
 import yaml
+import lib.service_account as service_account
 
 JINJA_ENVIRONMENT = jinja2.Environment(
   loader=jinja2.FileSystemLoader('templates'),
@@ -90,6 +91,7 @@ def get_data(project='index', page='index'):
 def render(project='index', page='index', template_data=None):
   try:
     template_data = template_data if template_data else get_data(project, page)
+    template_data['site']['get_access_token'] = service_account.get_access_token
 
     if project == 'index':
       template_file = 'index.html'
