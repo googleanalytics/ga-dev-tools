@@ -39,13 +39,21 @@ section {
   max-width: 52em;
 }
 
+p, ul, ol, pre, dl {
+  margin: var(--gap) 0;
+}
+
 ul {
   list-style: square;
   padding: 0 0 0 1.5em;
 }
 
-p, ul, ol, pre {
-  margin: 0 0 var(--gap);
+dt {
+  font-weight: 700;
+}
+
+dd {
+  margin: .4em 0 1em 2em;
 }
 
 h1, h2 {

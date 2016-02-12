@@ -19,9 +19,6 @@ limitations under the License.
  * Styles for gapi analytics table.
  */
 
-.gapi-analytics-data-chart {
-  margin-bottom: var(--gap);
-}
 
 .gapi-analytics-data-chart .gapi-analytics-data-chart-styles-table-tr-odd {
   background: hsl(30, 15%, 96.7%)!important;
