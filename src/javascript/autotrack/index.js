@@ -56,6 +56,12 @@ let pieChartOptions = {
 };
 
 
+/**
+ * Renders a new DataChart component and returns a completion promise.
+ * @param {Array} options An array of DataChart options to set on the instance.
+ * @param {string} container The element ID to render the chart inside.
+ * @return {Promise} A promise resolved when the chart is rendered.
+ */
 function renderDataChart(container, options) {
   return new Promise(function(resolve, reject) {
     let chart = new gapi.analytics.googleCharts.DataChart({chart: {container}});
@@ -166,7 +172,7 @@ gapi.analytics.ready(function() {
 
 
   /**
-   * Creates a new DataChart instance showing device orientation.
+   * Creates a new DataChart instance showing breapoint change events.
    */
   let breakpointChange = renderDataChart('breakpoint-change-chart-container', [
     baseOptions,
@@ -182,6 +188,8 @@ gapi.analytics.ready(function() {
     }
   ]);
 
+
+  // Adds error handling.
   Promise.all([
     outboundLink,
     authEvents,
