@@ -172,7 +172,7 @@ gapi.analytics.ready(function() {
 
 
   /**
-   * Creates a new DataChart instance showing breapoint change events.
+   * Creates a new DataChart instance showing breakpoint change events.
    */
   let breakpointChange = renderDataChart('breakpoint-change-chart-container', [
     baseOptions,
