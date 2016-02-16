@@ -1,7 +1,7 @@
 # coding=utf-8
 
 
-# Copyright 2015 Google Inc. All rights reserved.
+# Copyright 2016 Google Inc. All rights reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -31,11 +31,8 @@ router = webapp2.WSGIApplication([
   (r'/explorer/csvhandler.*', redirects.QueryExplorerCsvRedirect),
   (r'/explorer.*', redirects.QueryExplorerRedirect),
 
-  # Main routes
+  # Static routes
   (r'/query-explorer/csvhandler.*', ExplorerCsvHandler),
-  RedirectRoute(r'/embed-api/server-side-authorization/',
-      handler=ServerSideAuthHandler, name='ServerSideAuth',
-      strict_slash=True),
 
   # Dynamic routes
   RedirectRoute(r'/',

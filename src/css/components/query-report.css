@@ -1,5 +1,5 @@
 /*
-Copyright 2015 Google Inc. All rights reserved.
+Copyright 2016 Google Inc. All rights reserved.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -39,29 +39,6 @@ limitations under the License.
 .QueryReport-item {
   margin: 0 0 var(--gap);
 }
-
-.QueryReport .gapi-analytics-data-chart {
-  overflow-x: auto;
-}
-
-.QueryReport .gapi-analytics-data-chart .gapi-analytics-data-chart-styles-table-tr-head {
-  background: hsl(30, 10%, 96.7%);
-}
-
-.QueryReport .gapi-analytics-data-chart .gapi-analytics-data-chart-styles-table-th {
-  border-bottom: 1px solid #ddd;
-  border-top: 1px solid #ddd;
-  white-space: nowrap;
-}
-
-.QueryReport .gapi-analytics-data-chart .gapi-analytics-data-chart-styles-table-th:first-child {
-  border-left: 1px solid #ddd;
-}
-
-.QueryReport .gapi-analytics-data-chart .gapi-analytics-data-chart-styles-table-th:last-child {
-  border-right: 1px solid #ddd;
-}
-
 
 @media (--break-lg) {
   .QueryReport {

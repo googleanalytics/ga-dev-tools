@@ -1,5 +1,5 @@
 /*
-Copyright 2014 Google Inc. All rights reserved.
+Copyright 2016 Google Inc. All rights reserved.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -45,6 +45,10 @@ limitations under the License.
   max-width: 100%;
 }
 
+.Dashboard--collapseBottom {
+  padding-bottom: 0;
+}
+
 @media (--break-lg) {
   .Dashboard {
     padding: var(--gap-lg);
@@ -56,5 +60,9 @@ limitations under the License.
   .Dashboard-footer {
     margin: -var(--gap-lg) -var(--gap-lg) var(--gap-lg);
     padding: var(--gap);
+  }
+
+  .Dashboard--collapseBottom {
+    padding-bottom: calc(var(--gap-lg) - var(--gap));
   }
 }

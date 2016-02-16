@@ -1,4 +1,4 @@
-// Copyright 2014 Google Inc. All rights reserved.
+// Copyright 2016 Google Inc. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -49,10 +49,15 @@ function monkeyPatchForDemos() {
 
   $(window).on('resize', debounce(function() {
     dataCharts.forEach(function(dataChart) {
-      // TODO(philipwalton): update the Embed API DataChart component
-      // to allow for a redraw method (or something like that). We shouldn't
-      // have to do an additional query just to redraw.
-      dataChart && dataChart.execute();
+      try {
+        // TODO(philipwalton): update the Embed API DataChart component
+        // to allow for a redraw method (or something like that). We shouldn't
+        // have to do an additional query just to redraw.
+        if (dataChart.get().chart.type != 'TABLE') {
+          dataChart.execute();
+        }
+      }
+      catch(e) {}
     });
   }, 200));
 }

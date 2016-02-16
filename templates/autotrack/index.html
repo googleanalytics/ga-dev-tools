@@ -1,0 +1,204 @@
+{% extends 'server-auth.html' %}
+
+{% block content %}
+
+<section>
+  <p><a href="{{ site.tech.autotrack.url }}">Autotrack</a> is a JavaScript library built on top of <a href="{{ site.tech.analyticsjs.url }}">analytics.js</a> that makes it easier for web developers to track the user interactions that are common to most websites.</p>
+
+  <p>To help you get an idea of what the data collected by autotrack might look like, this demo includes visualizations of the actual data captured by using autotrack on this site.</p>
+</section>
+
+<section>
+  <h2>Outbound link tracking</h2>
+  <p>The table below shows the top ten links visitors to this site have clicked on in the last seven days. Autotrack uses events to track outbound link clicks and sets the event label to the link's URL.</p>
+</section>
+
+<div class="Dashboard Dashboard--collapseBottom Dashboard--full">
+  <header class="Titles">
+    <h3 class="Titles-main">Outbound Link Clicks</h3>
+    <div class="Titles-sub">Events - Last 7 days</div>
+  </header>
+  <figure class="DataTable" id="outbound-links-chart-container"></figure>
+  <p>
+    <a href="https://ga-dev-tools.appspot.com/query-explorer/?start-date=7daysAgo&end-date=yesterday&metrics=ga%3AtotalEvents&dimensions=ga%3AeventLabel&sort=-ga%3AtotalEvents&filters=ga%3AeventCategory%3D%3DOutbound%20Link%2Cga%3AeventAction%3D%3Dclick&max-results=10">View this report in the Query Explorer &#8594;</a>
+  </p>
+</div>
+
+<section>
+  <h2>Declarative Event Tracking</h2>
+  <p>To make capturing events easier, autotrack supports declarative event binding. Demos &amp; Tools uses this technique on the sign-in and sign-out buttons to help track the usage of those features.</p>
+
+  <p>Here's an example of what declarative event binding looks like for the sign-out button:</p>
+
+<pre>{%- filter forceescape -%}
+<button
+  data-event-category="User"
+  data-event-action="signout">
+  Sign Out
+</button>
+{%- endfilter -%}
+</pre>
+
+  <p>And the following table shows the actual usage data for these buttons on this site:</p>
+</section>
+
+<div class="Dashboard Dashboard--full">
+  <header class="Titles">
+    <h3 class="Titles-main">Sign In/Out Interactions</h3>
+    <div class="Titles-sub">Events - Last 7 days</div>
+  </header>
+  <figure class="DataTable" id="auth-events-chart-container"></figure>
+</div>
+
+<section>
+  <h2>Media query tracking</h2>
+  <p>The Demos &amp; Tools site tracks media query usage for the following categories:</p>
+
+  <dl>
+    <dt>Breakpoints:</dt>
+    <dd>The screen sizes where the site layout changes to fit the content (resize your browser window to see this in action).</li>
+    <dt>Resolution:</dt>
+    <dd>The popularity of high-dpi screens (such as retina displays) is increasing. It's useful to know whether your user's screens have such capabilities, so you can build your site accordingly.</dd>
+    <dt>Orientation:</dt>
+    <dd>How you decide to design your site's layout may be influenced by whether your users view your site primarily in landscape or portrait mode.</dd>
+  </dl>
+
+  <p>As you can see from the pie charts below, most Demos &amp; Tools users are on large screens, at regular resolution, in landscape mode:</p>
+</section>
+
+<div class="Dashboard Dashboard--collapseBottom Dashboard--full" style="text-align: center">
+<ul class="FlexGrid">
+  <li class="FlexGrid-item">
+    <header class="Titles">
+      <h3 class="Titles-main">Breakpoint Usage</h3>
+      <div class="Titles-sub">Sessions - Last 7 days</div>
+    </header>
+    <figure id="breakpoint-chart-container"></figure>
+  </li>
+  <li class="FlexGrid-item">
+    <header class="Titles">
+      <h3 class="Titles-main">Resolution (dpi)</h3>
+      <div class="Titles-sub">Sessions - Last 7 days</div>
+    </header>
+    <figure id="resolution-chart-container"></figure>
+  </li>
+  <li class="FlexGrid-item">
+    <header class="Titles">
+      <h3 class="Titles-main">Orientation</h3>
+      <div class="Titles-sub">Sessions - Last 7 days</div>
+    </header>
+    <figure id="orientation-chart-container"></figure>
+  </li>
+</ul>
+</div>
+
+<section>
+  <p>The tables below outline how each of the media query values are defined:</p>
+
+  <h3>Breakpoints</h3>
+
+  <table class="Table">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Value</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><code>xs</code></td>
+        <td><code>all</code></td>
+      </tr>
+      <tr>
+        <td><code>sm</code></td>
+        <td><code>(min-width: 420px)</code></td>
+      </tr>
+      <tr>
+        <td><code>md</code></td>
+        <td><code>(min-width: 570px)</code></td>
+      </tr>
+      <tr>
+        <td><code>lg</code></td>
+        <td><code>(min-width: 1024px)</code></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h3>Resolution</h3>
+
+  <table class="Table">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Value</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><code>1x</code></td>
+        <td><code>all</code></td>
+      </tr>
+      <tr>
+        <td><code>1.5x</code></td>
+        <td><code>(min-resolution: 144dpi), (-webkit-min-device-pixel-ratio: 1.5)</code></td>
+      </tr>
+      <tr>
+        <td><code>2x</code></td>
+        <td><code>(min-resolution: 192dpi), (-webkit-min-device-pixel-ratio: 2)</code></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h3>Orientation</h3>
+
+  <table class="Table">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Value</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><code>landscape</code></td>
+        <td><code>(orientation: landscape)</code></td>
+      </tr>
+      <tr>
+        <td><code>portrait</code></td>
+        <td><code>(orientation: portrait)</code></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <p>For more information on how to configure media query tracking for your site, refer to the <a href="{{ site.tech.autotrack.url }}#mediaquerytracker"><code>mediaQueryTracker</code></a> configuration section of the autotrack documentation.</p>
+
+  <h2>Media query change tracking</h2>
+
+  <p>If you're tracking media query values, it's often useful to know if and when those values change. Autotrack captures this information as well by sending an event any time a media query stops matching one value and starts matching another, it also updates the tracker object so subsequent hits are associated with the correct media value.</p>
+
+  <p>This chart shows how frequently the breakpoint media query values changed on this site over the last seven days as well what breakpoints were most commonly changed to/from:</p>
+
+</section>
+
+<div class="Dashboard Dashboard--collapseBottom">
+  <header class="Titles">
+    <h3 class="Titles-main">Breakpoint Changes</h3>
+    <div class="Titles-sub">Events - Last 7 days</div>
+  </header>
+  <figure id="breakpoint-change-chart-container"></figure>
+</div>
+
+<section>
+  <h2>Getting started with autotrack</h2>
+  <p>To you use autotrack on one of your own sites, the best place to start is the <a href="{{ site.tech.autotrack.url }}#usage">usage documentation</a> on Github. To see an example implementation from Demos &amp; Tool, check out the <a href="https://github.com/googleanalytics/ga-dev-tools/blob/master/src/javascript/analytics.js">source code</a>.</p>
+
+{% endblock %}
+
+{% block tech_content %}
+  The {{ page.title }} demo uses the <a href="{{ site.tech.embed_api.url }}">{{ site.tech.embed_api.name }}</a> to report on display and the visualizations of the <a href="{{ site.tech.autotrack.url }}">{{ site.tech.autotrack.name }}</a> data.
+{% endblock %}
+
+{% block foot_scripts %}
+{{ super() }}
+<script src="/public/javascript/autotrack.js"></script>
+{% endblock %}

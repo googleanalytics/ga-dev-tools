@@ -1,5 +1,5 @@
 /*
-Copyright 2015 Google Inc. All rights reserved.
+Copyright 2016 Google Inc. All rights reserved.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -18,8 +18,7 @@ limitations under the License.
 :root {
   --FlexGrid-gutter: var(--gap);
   --FlexGrid-gutter-lg: var(--gap-lg);
-  --FlexGrid-itemMinWidth: 300px;
-  --FlexGrid-itemMinWidth-lg: 360px;
+  --FlexGrid-itemMinWidth: 200px;
 }
 
 .FlexGrid {
@@ -62,7 +61,6 @@ limitations under the License.
     margin: 0 0 -var(--FlexGrid-gutter-lg) -var(--FlexGrid-gutter-lg);
   }
   .FlexGrid-item {
-    flex-basis: var(--FlexGrid-itemMinWidth-lg);
     margin: 0 0 var(--FlexGrid-gutter-lg) var(--FlexGrid-gutter-lg);
   }
 }

@@ -1,5 +1,5 @@
 /*
-Copyright 2014 Google Inc. All rights reserved.
+Copyright 2016 Google Inc. All rights reserved.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -39,13 +39,21 @@ section {
   max-width: 52em;
 }
 
+p, ul, ol, pre, dl {
+  margin: var(--gap) 0;
+}
+
 ul {
   list-style: square;
   padding: 0 0 0 1.5em;
 }
 
-p, ul, ol, pre {
-  margin: 0 0 var(--gap);
+dt {
+  font-weight: 700;
+}
+
+dd {
+  margin: .4em 0 1em 2em;
 }
 
 h1, h2 {
