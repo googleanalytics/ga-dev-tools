@@ -75,7 +75,7 @@ export default class QueryExplorer extends React.Component {
     let {segment} = this.props.params;
 
     actions.updateSettings({useDefinition});
-    actions.updateSegmentsOptions();
+    actions.updateSegmentsOptions(useDefinition);
 
     if (segment) {
       actions.swapSegmentIdAndDefinition(segment, useDefinition);
