@@ -25,6 +25,9 @@ import sidebar from './sidebar';
 // Polyfills SVG support in all browsers.
 svg4everybody();
 
+// Setup Google Analytics tracking.
+analytics.track();
+
 // Initiaze the header functionality.
 header.init();
 
@@ -33,6 +36,3 @@ sidebar.init();
 
 // Highlight code blocks.
 highlighter.highlight('pre');
-
-// Setup Google Analytics tracking.
-analytics.track();
