@@ -151,7 +151,7 @@ export default class QueryReport extends React.Component {
                   type="checkbox"
                   onChange={this.props.onIdsToggle}
                   checked={this.props.includeIds} />
-                  Include <code>ids</code> paramter in the link above
+                  Include <code>ids</code> parameter in the link above
                   (uncheck if sharing publicly).
               </label>
             </div>
