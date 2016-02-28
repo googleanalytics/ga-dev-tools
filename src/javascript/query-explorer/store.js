@@ -13,15 +13,13 @@
 // limitations under the License.
 
 
-/* global ga */
-
-
 import mapValues from 'lodash/mapValues';
 import qs from 'querystring';
 import {createStore, applyMiddleware} from 'redux';
 import thunkMiddleware from 'redux-thunk';
 import {sanitize} from './query-params';
 import reducer from './reducers';
+import {ga} from '../analytics';
 import db from '../data-store';
 
 

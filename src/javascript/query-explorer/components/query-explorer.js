@@ -13,9 +13,6 @@
 // limitations under the License.
 
 
-/* global ga */
-
-
 import React from 'react';
 import accountSummaries from 'javascript-api-utils/lib/account-summaries';
 
@@ -25,6 +22,7 @@ import QueryReport from './query-report';
 import Select2MultiSuggest from './select2-multi-suggest';
 import ViewSelector from './view-selector';
 
+import {ga} from '../../analytics';
 import AlertDispatcher from '../../components/alert-dispatcher';
 import SearchSuggest from '../../components/search-suggest';
 

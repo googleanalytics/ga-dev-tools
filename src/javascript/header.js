@@ -13,7 +13,10 @@
 // limitations under the License.
 
 
-/* global $, ga, gapi */
+/* global $, gapi */
+
+
+import {ga} from './analytics';
 
 
 export default {
