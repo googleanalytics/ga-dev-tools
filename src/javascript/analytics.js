@@ -81,7 +81,7 @@ export function init() {
  */
 export function ga(command, ...args) {
   window.ga(command, ...args);
-  if (!command.startsWith('testing.')) {
+  if (typeof command == 'string' && !command.startsWith('testing.')) {
     window.ga(`testing.${command}`, ...args);
   }
 }
