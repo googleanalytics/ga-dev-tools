@@ -4,8 +4,8 @@
     <div class="Titles-sub">{{ subtitle }}</div>
   {% endif %}
   {% if project.external %}
-    <a class="Titles-action" href="{{ project.external }}">
-      Launch {{ project.type | capitalize }} &#8594;
+    <a class="Titles-action" href="{{ project.external.url }}">
+      {{ project.external.action }} &#8594;
     </a>
   {% endif %}
 </div>
