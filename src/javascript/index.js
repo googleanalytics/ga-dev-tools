@@ -16,7 +16,7 @@
 import 'babel-polyfill';
 import svg4everybody from 'svg4everybody/dist/svg4everybody';
 
-import analytics from './analytics';
+import * as analytics from './analytics';
 import header from './header';
 import highlighter from './highlighter';
 import sidebar from './sidebar';
@@ -26,7 +26,7 @@ import sidebar from './sidebar';
 svg4everybody();
 
 // Setup Google Analytics tracking.
-analytics.track();
+analytics.init();
 
 // Initiaze the header functionality.
 header.init();

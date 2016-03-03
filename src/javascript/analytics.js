@@ -13,13 +13,10 @@
 // limitations under the License.
 
 
-/* global ga */
-
-
 import 'autotrack/lib/plugins/event-tracker';
 import 'autotrack/lib/plugins/media-query-tracker';
 import 'autotrack/lib/plugins/outbound-link-tracker';
-import 'autotrack/lib/plugins/session-duration-tracker';
+import 'autotrack/lib/plugins/page-visibility-tracker';
 
 
 let mediaQueryDefinitions = [
@@ -55,34 +52,36 @@ let mediaQueryDefinitions = [
 ];
 
 
-function setupUncaughtExceptionTracking() {
-  window.onerror = function(message, url, line, col) {
-    let desc = 'Uncaught error: ' +
-        message + ' (line: ' + line + ', url: ' + url + ', col: ' + col + ')';
+/**
+ * Initializes all analytics.js tracking.
+ */
+export function init() {
 
-    ga('send', 'exception', {
-      exDescription: desc,
-      exFatal: false
-    });
-  };
+  // Requires official plugins
+  ga('require', 'displayfeatures');
+  ga('require', 'linkid');
+
+  // Requires autotrack plugins
+  ga('require', 'eventTracker');
+  ga('require', 'mediaQueryTracker', {mediaQueryDefinitions});
+  ga('require', 'outboundLinkTracker');
+
+  // Only requires pageVisibilityTracker on the testing tracker.
+  ga('testing.require', 'pageVisibilityTracker');
+
+  ga('send', 'pageview');
 }
 
 
-export default {
-  track: function() {
-
-    // Requires official plugins
-    ga('require', 'displayfeatures');
-    ga('require', 'linkid');
-
-    // Requires autotrack plugins
-    ga('require', 'eventTracker');
-    ga('require', 'mediaQueryTracker', {mediaQueryDefinitions});
-    ga('require', 'outboundLinkTracker');
-    ga('require', 'sessionDurationTracker');
-
-    ga('send', 'pageview');
-
-    setupUncaughtExceptionTracking();
+/**
+ * Shadows the global `ga` command queue to allow for running commands on
+ * multiple test trackers.
+ * @param {string} command The command to run.
+ * @param {*} ...args A list of arguments to pass to the command queue.
+ */
+export function ga(command, ...args) {
+  window.ga(command, ...args);
+  if (typeof command == 'string' && !command.startsWith('testing.')) {
+    window.ga(`testing.${command}`, ...args);
   }
-};
+}

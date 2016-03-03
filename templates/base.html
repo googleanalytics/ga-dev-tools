@@ -19,17 +19,23 @@
   {% block head_scripts %}
     <script>
       window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
-      ga('create', '{{ site.tracking_id }}', 'auto', {siteSpeedSampleRate: 10});
-    </script>
-    <script async src="//www.google-analytics.com/analytics.js"></script>
-    {% if site.env != 'production' %}
-      <script>
+
+      ga('create', '{{ site.tracking_id }}', 'auto');
+      ga('create', '{{ site.tracking_id_testing }}', 'auto', 'testing');
+
+      {% if site.env != 'production' %}
         ga('set', 'sendHitTask', function(model) {
-          //console.log(decodeURIComponent(model.get('hitPayload')).split('&'));
+          console.log('t0', Date.now(), decodeURIComponent(model.get('hitPayload')));
           throw 'Abort tracking in non-production environments.'
         });
-      </script>
-    {% endif %}
+        ga('testing.set', 'sendHitTask', function(model) {
+          console.log('testing', Date.now(), decodeURIComponent(model.get('hitPayload')));
+          throw 'Abort tracking in non-production environments.'
+        });
+      {% endif %}
+
+    </script>
+    <script async src="https://www.google-analytics.com/analytics.js"></script>
   {% endblock %}
 </head>
 <body class="Site {{ initial_state }}">
