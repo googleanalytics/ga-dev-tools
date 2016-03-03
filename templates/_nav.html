@@ -1,18 +1,9 @@
 <nav class="Nav">
 
   <section class="Nav-section">
-    <h1 class="Nav-category">Demos</h1>
+    <h1 class="Nav-category">Demos &amp; Tools</h1>
     <ol>
-      {% for pr in site.demos %}
-        {% include '_nav-project.html' %}
-      {% endfor %}
-    </ol>
-  </section>
-
-  <section class="Nav-section">
-    <h1 class="Nav-category">Tools</h1>
-    <ol>
-      {% for pr in site.tools %}
+      {% for pr in site.projects %}
         {% include '_nav-project.html' %}
       {% endfor %}
     </ol>

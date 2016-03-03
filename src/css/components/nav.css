@@ -1,5 +1,5 @@
 /*
-Copyright 2014 Google Inc. All rights reserved.
+Copyright 2016 Google Inc. All rights reserved.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -16,8 +16,8 @@ limitations under the License.
 
 
 :root {
-  --Nav-indent: 1.25em;
-  --Nav-linkPaddingV: .4em;
+  --Nav-indent: 2em;
+  --Nav-linkPaddingV: .5em;
 }
 
 .Nav {
@@ -62,7 +62,10 @@ limitations under the License.
 }
 
 .Nav-link--nested {
-  padding-left: calc(var(--gap)+var(--Nav-indent));
+  font-size: 0.85em;
+  padding-bottom: calc(var(--Nav-linkPaddingV)/0.85);
+  padding-left: calc(var(--gap)+var(--Nav-indent)/0.85);
+  padding-top: calc(var(--Nav-linkPaddingV)/0.85);
 }
 
 .Nav-status {
