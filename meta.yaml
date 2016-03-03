@@ -81,6 +81,15 @@ projects:
   external:
     action: Get Add-on
     url: https://chrome.google.com/webstore/detail/google-analytics/fefimfimnhjjkomigakinmjileehfopp
+- title: Tag Assistant
+  type: demo
+  status: new
+  slug: tag-assistant
+  tech: [tag_assistant, analyticsjs]
+  external:
+    action: Get Extension
+    url: https://chrome.google.com/webstore/detail/tag-assistant-by-google/kejbdjndbnbjgmefkgdddjlbokphdefk
+
 
 # Google Analytics tech tags. Demos and tools should tag themselves with
 # one or more of these to make tech more discoverable.
@@ -124,6 +133,9 @@ tech:
   api_client_library_python:
     name: Google API Client Library for Python
     url: https://developers.google.com/api-client-library/python/start/installation
+  tag_assistant:
+    name: Tag Assistant
+    url: https://chrome.google.com/webstore/detail/tag-assistant-by-google/kejbdjndbnbjgmefkgdddjlbokphdefk
 
 
 # Links represent external URLs that may change.
