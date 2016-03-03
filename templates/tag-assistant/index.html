@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<section>
+  <p>Google <a href="{{ site.tech.tag_assistant.url }}">Tag Assistant</a> is a Chrome Extension that helps you validate the tracking code on your website and troubleshoot common problems. It's an ideal tool for debugging and testing your analytics.js implementations locally and ensuring everything is correct before deploying your code to production.</p>
+
+  <p>Tag Assistant works by letting you record a typical user flow. It keeps track of all the hits you send, checks them for any problems, and gives you a full report of the interactions. If it detects any issues or potential improvements, it will let you know.
+
+  <p>To see how Tag Assistant works, check out the video below. In it Philip Walton, Developer Programs Engineer on the Google Analytics team, demonstrates how you can use Tag Assistant to catch errors and check the validity of advanced tracking implementations such as <a href="https://developers.google.com/analytics/devguides/collection/analyticsjs/cross-domain">cross-domain tracking</a>.
+
+  <figure class="Screenshot">
+    <div class="Video">
+      <iframe class="Video-frame" width="640" height="400" src="https://www.youtube.com/embed/O_FFUw1tSfI" frameborder="0" allowfullscreen></iframe>
+    </div>
+
+    <figcaption>Using Tag Assistant to validate your tracking implementations.</figcaption>
+  </figure>
+
+  <h3>Links mentioned in the video</h3>
+
+  <ul>
+    <li><a href="https://developers.google.com/analytics/devguides/collection/protocol/v1/parameters">Measurement Protocol parameter reference</a></li>
+    <li><a href="https://developers.google.com/analytics/devguides/collection/analyticsjs/linker">Cross-domain Linker plugin</a></li>
+  </ul>
+
+  <h2>Learn More</h2>
+
+  <p>To learn more about Tag Assistant and using Tag Assistant Recordings, you can read about them in the Google Analytics Help Center:</p>
+
+  <ul>
+    <li><a href="https://support.google.com/tagassistant/answer/2947093">About Tag Assistant</a></li>
+    <li><a href="https://support.google.com/analytics/answer/6277302">About Tag Assistant Recordings</a></li>
+  </ul>
+
+</section>
+{% endblock %}
+
+{% block tech_content %}
+  This demo of <a href="{{ site.tech.tag_assistant.url }}">{{ project.title }}</a> shows how you can validate your <a href="{{ site.tech.analyticsjs.url }}">{{ site.tech.analyticsjs.name }}</a> implementations.
+{% endblock %}

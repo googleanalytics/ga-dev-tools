@@ -12,7 +12,6 @@ projects:
   type: demo
   slug: autotrack
   status: new
-  server_auth: true
   tech: [autotrack, embed_api]
 - title: Account Explorer
   type: tool
@@ -21,7 +20,9 @@ projects:
 - title: Dimensions & Metrics Explorer
   type: tool
   slug: dimensions-metrics-explorer
-  external: https://developers.google.com/analytics/devguides/reporting/core/dimsmets
+  external:
+    action: Launch Tool
+    url: https://developers.google.com/analytics/devguides/reporting/core/dimsmets
   tech: [metadata_api]
 - title: Embed API
   type: demo
@@ -54,8 +55,10 @@ projects:
 - title: Enhanced Ecommerce
   type: demo
   slug: enhanced-ecommerce
-  external: https://enhancedecommerce.appspot.com
   tech: [analyticsjs, ecjs]
+  external:
+    action: View Demo
+    url: https://enhancedecommerce.appspot.com
 - title: Hit Builder
   type: tool
   slug: hit-builder
@@ -63,18 +66,29 @@ projects:
 - title: Polymer Elements
   type: demo
   slug: polymer-elements
-  external: https://elements.polymer-project.org/elements/google-analytics?view=demo:demo/index.html
   tech: [management_api, metadata_api]
+  external:
+    action: View Demo
+    url: https://elements.polymer-project.org/elements/google-analytics?view=demo:demo/index.html
 - title: Query Explorer
   type: tool
   slug: query-explorer
-  status: updated
   tech: [core_reporting_api, embed_api, management_api, metadata_api]
 - title: Spreadsheet Add-on
   type: tool
   slug: spreadsheet-add-on
-  external: https://chrome.google.com/webstore/detail/google-analytics/fefimfimnhjjkomigakinmjileehfopp
   tech: [core_reporting_api, management_api, mcf_reporting_api, metadata_api]
+  external:
+    action: Get Add-on
+    url: https://chrome.google.com/webstore/detail/google-analytics/fefimfimnhjjkomigakinmjileehfopp
+- title: Tag Assistant
+  type: demo
+  status: new
+  slug: tag-assistant
+  tech: [tag_assistant, analyticsjs]
+  external:
+    action: Get Extension
+    url: https://chrome.google.com/webstore/detail/tag-assistant-by-google/kejbdjndbnbjgmefkgdddjlbokphdefk
 
 
 # Google Analytics tech tags. Demos and tools should tag themselves with
@@ -119,6 +133,9 @@ tech:
   api_client_library_python:
     name: Google API Client Library for Python
     url: https://developers.google.com/api-client-library/python/start/installation
+  tag_assistant:
+    name: Tag Assistant
+    url: https://chrome.google.com/webstore/detail/tag-assistant-by-google/kejbdjndbnbjgmefkgdddjlbokphdefk
 
 
 # Links represent external URLs that may change.

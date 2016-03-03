@@ -49,14 +49,6 @@ if not 'env' in data:
     data['env'] = 'development'
 
 
-# Group all demos together
-data['demos'] = [i for i in data['projects'] if i['type'] == 'demo']
-
-
-# Group all tools together
-data['tools'] = [i for i in data['projects'] if i['type'] == 'tool']
-
-
 def __get_project(project):
   if project == 'index':
     return {

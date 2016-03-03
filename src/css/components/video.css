@@ -1,0 +1,12 @@
+.Video {
+  position: relative;
+  padding-bottom: 62.5%;
+  height: 0;
+}
+.Video-frame {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
