@@ -19,37 +19,42 @@ import 'autotrack/lib/plugins/outbound-link-tracker';
 import 'autotrack/lib/plugins/page-visibility-tracker';
 
 
-let mediaQueryDefinitions = [
-  {
-    name: 'Breakpoint',
-    dimensionIndex: 1,
-    items: [
-      {name: 'xs', media: 'all'},
-      {name: 'sm', media: '(min-width: 420px)'},
-      {name: 'md', media: '(min-width: 570px)'},
-      {name: 'lg', media: '(min-width: 1024px)'}
-    ]
-  },
-  {
-    name: 'Resolution',
-    dimensionIndex: 4,
-    items: [
-      {name: '1x',   media: 'all'},
-      {name: '1.5x', media: '(-webkit-min-device-pixel-ratio: 1.5), ' +
-                            '(min-resolution: 144dpi)'},
-      {name: '2x',   media: '(-webkit-min-device-pixel-ratio: 2), ' +
-                            '(min-resolution: 192dpi)'}
-    ]
-  },
-  {
-    name: 'Orientation',
-    dimensionIndex: 5,
-    items: [
-      {name: 'landscape', media: '(orientation: landscape)'},
-      {name: 'portrait',  media: '(orientation: portrait)'}
-    ]
+let autotrackOpts = {
+  mediaQueryDefinitions: [
+    {
+      name: 'Breakpoint',
+      dimensionIndex: 1,
+      items: [
+        {name: 'xs', media: 'all'},
+        {name: 'sm', media: '(min-width: 420px)'},
+        {name: 'md', media: '(min-width: 570px)'},
+        {name: 'lg', media: '(min-width: 1024px)'}
+      ]
+    },
+    {
+      name: 'Resolution',
+      dimensionIndex: 4,
+      items: [
+        {name: '1x',   media: 'all'},
+        {name: '1.5x', media: '(-webkit-min-device-pixel-ratio: 1.5), ' +
+                              '(min-resolution: 144dpi)'},
+        {name: '2x',   media: '(-webkit-min-device-pixel-ratio: 2), ' +
+                              '(min-resolution: 192dpi)'}
+      ]
+    },
+    {
+      name: 'Orientation',
+      dimensionIndex: 5,
+      items: [
+        {name: 'landscape', media: '(orientation: landscape)'},
+        {name: 'portrait',  media: '(orientation: portrait)'}
+      ]
+    }
+  ],
+  virtualPageviewFields: {
+    dimension6: 'pageVisibilityTracker'
   }
-];
+};
 
 
 /**
@@ -62,14 +67,26 @@ export function init() {
   ga('require', 'linkid');
 
   // Requires autotrack plugins
-  ga('require', 'eventTracker');
-  ga('require', 'mediaQueryTracker', {mediaQueryDefinitions});
-  ga('require', 'outboundLinkTracker');
+  ga('require', 'eventTracker', autotrackOpts);
+  ga('require', 'mediaQueryTracker', autotrackOpts);
+  ga('require', 'outboundLinkTracker', autotrackOpts);
 
   // Only requires pageVisibilityTracker on the testing tracker.
-  ga('testing.require', 'pageVisibilityTracker');
+  window.ga('testing.require', 'pageVisibilityTracker', autotrackOpts);
 
-  ga('send', 'pageview');
+  ga('send', 'pageview', {dimension6: 'pageload'});
+}
+
+
+// Randomizes the order in which tracker methods are called.
+// This is necessary because latter trackers will lose more hits (for various
+// reasons) and the results will be skewed.
+let trackerNames = ['t0', 'testing'];
+let randomizedTrackerNames = [];
+while (trackerNames.length) {
+  let index = Math.floor(Math.random() * trackerNames.length);
+  let name = trackerNames.splice(index, 1)[0];
+  randomizedTrackerNames.push(name);
 }
 
 
@@ -80,8 +97,7 @@ export function init() {
  * @param {*} ...args A list of arguments to pass to the command queue.
  */
 export function ga(command, ...args) {
-  window.ga(command, ...args);
-  if (typeof command == 'string' && !command.startsWith('testing.')) {
-    window.ga(`testing.${command}`, ...args);
+  for (let name of randomizedTrackerNames) {
+    window.ga(name + '.' + command, ...args);
   }
 }

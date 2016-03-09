@@ -24,13 +24,16 @@
       ga('create', '{{ site.tracking_id_testing }}', 'auto', 'testing');
 
       {% if site.env != 'production' %}
-        ga('set', 'sendHitTask', function(model) {
-          console.log('t0', Date.now(), decodeURIComponent(model.get('hitPayload')));
-          throw 'Abort tracking in non-production environments.'
-        });
-        ga('testing.set', 'sendHitTask', function(model) {
-          console.log('testing', Date.now(), decodeURIComponent(model.get('hitPayload')));
-          throw 'Abort tracking in non-production environments.'
+        ga(function() {
+          var trackers = ga.getAll();
+          for (var i = 0, tracker; tracker = trackers[i]; i++) {
+            tracker.set('sendHitTask', function(model) {
+              console.log(model.get('name'), Date.now(),
+                  model.get('hitPayload').split('&').map(decodeURIComponent));
+
+              throw 'Abort tracking in non-production environments.';
+            });
+          }
         });
       {% endif %}
 
