@@ -94,7 +94,7 @@ function cleanUrlTracker(opts) {
 
     tracker.set('page', path);
 
-    if (search && opts.searchDimensionIndex) {
+    if (opts.searchDimensionIndex) {
       tracker.set('dimension' + opts.searchDimensionIndex,
           search || '(not set)');
     }
