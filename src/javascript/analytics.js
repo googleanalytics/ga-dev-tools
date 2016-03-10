@@ -53,8 +53,53 @@ let autotrackOpts = {
   ],
   virtualPageviewFields: {
     dimension6: 'pageVisibilityTracker'
-  }
+  },
+  searchDimensionIndex: 7,
+  urlHasTrailingSlash: 'always' // 'always' | 'never' | function
 };
+
+
+// Randomizes the order in which tracker methods are called.
+// This is necessary because latter trackers will lose more hits (for various
+// reasons) and the results will be skewed.
+let trackerNames = ['t0', 'testing'];
+let randomizedTrackerNames = [];
+while (trackerNames.length) {
+  let index = Math.floor(Math.random() * trackerNames.length);
+  let name = trackerNames.splice(index, 1)[0];
+  randomizedTrackerNames.push(name);
+}
+
+
+/**
+ * Experimental possible future plugin logic.
+ */
+function cleanUrlTracker(opts) {
+
+  // Removes the
+  return function() {
+    let tracker = window.ga.getByName('testing');
+    let path = location.pathname;
+    let search = location.search.slice(1);
+
+    if (opts.urlHasTrailingSlash  == 'always') {
+      path = path.replace(/\/+$/, '') + '/';
+    }
+    // else if (opts.urlHasTrailingSlash == 'never') {
+    //   path = path.replace(/\/+$/, '')
+    // }
+    // else if (typeof opts.urlHasTrailingSlash == 'function') {
+    //   path = opts.urlHasTrailingSlash(path);
+    // }
+
+    tracker.set('page', path);
+
+    if (search && opts.searchDimensionIndex) {
+      tracker.set('dimension' + opts.searchDimensionIndex,
+          search || '(not set)');
+    }
+  };
+}
 
 
 /**
@@ -71,22 +116,13 @@ export function init() {
   ga('require', 'mediaQueryTracker', autotrackOpts);
   ga('require', 'outboundLinkTracker', autotrackOpts);
 
+  // Adds experimental clearnUrlTracker plugin.
+  window.ga(cleanUrlTracker(autotrackOpts));
+
   // Only requires pageVisibilityTracker on the testing tracker.
   window.ga('testing.require', 'pageVisibilityTracker', autotrackOpts);
 
   ga('send', 'pageview', {dimension6: 'pageload'});
-}
-
-
-// Randomizes the order in which tracker methods are called.
-// This is necessary because latter trackers will lose more hits (for various
-// reasons) and the results will be skewed.
-let trackerNames = ['t0', 'testing'];
-let randomizedTrackerNames = [];
-while (trackerNames.length) {
-  let index = Math.floor(Math.random() * trackerNames.length);
-  let name = trackerNames.splice(index, 1)[0];
-  randomizedTrackerNames.push(name);
 }
 
 
