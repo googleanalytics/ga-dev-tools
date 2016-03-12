@@ -16,8 +16,7 @@
 # limitations under the License.
 
 
-import json
-from oauth2client.client import SignedJwtAssertionCredentials
+from oauth2client.service_account import ServiceAccountCredentials
 
 
 # The scope for the OAuth2 request.
@@ -40,13 +39,9 @@ def get_credentials():
   if __credentials:
     return __credentials
   else:
-    # Loads the key file's private data.
-    with open(KEY_FILEPATH) as key_file:
-      key_data = json.load(key_file)
-
-    # Constructs a credentials objects from the key data and OAuth2 scope.
-    __credentials = SignedJwtAssertionCredentials(
-        key_data['client_email'], key_data['private_key'], SCOPE)
+    # Constructs a credentials objects from the key file and OAuth2 scope.
+    __credentials = ServiceAccountCredentials.from_json_keyfile_name(
+        KEY_FILEPATH, SCOPE)
 
     return __credentials
 
