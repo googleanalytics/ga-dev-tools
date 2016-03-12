@@ -18,7 +18,7 @@ gapi.analytics.ready(function() {
    */
   var dataChart1 = new gapi.analytics.googleCharts.DataChart({
     query: {
-      'ids': 'ga:100367422', // The Demos & Tools website view.
+      'ids': 'ga:100367422', // <-- Replace with the ids value for your view.
       'start-date': '30daysAgo',
       'end-date': 'yesterday',
       'metrics': 'ga:sessions,ga:users',
@@ -42,7 +42,7 @@ gapi.analytics.ready(function() {
    */
   var dataChart2 = new gapi.analytics.googleCharts.DataChart({
     query: {
-      'ids': 'ga:100367422', // The Demos & Tools website view.
+      'ids': 'ga:100367422', // <-- Replace with the ids value for your view.
       'start-date': '30daysAgo',
       'end-date': 'yesterday',
       'metrics': 'ga:pageviews',
