@@ -17,11 +17,11 @@ import * as types from '../actions/types';
 
 
 export default function params(state = {}, action) {
+  let {params} = action;
 
   switch (action.type) {
 
     case types.UPDATE_PARAMS:
-      let {params} = action;
       return {
         ...state,
         ...params

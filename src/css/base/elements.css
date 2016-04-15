@@ -129,6 +129,11 @@ input::placeholder {
   color: #aaa;
 }
 
+table {
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+
 @media (--break-lg) {
   h1 {
     margin: 0 0 calc(var(--gap-lg)/2.5);

@@ -31,7 +31,7 @@ let iconCalendar =
 export default class Datepicker extends React.Component {
 
   state = {
-    value: this.props.value
+    value: this.props.value || ''
   }
 
   handleChange = (e) => {
