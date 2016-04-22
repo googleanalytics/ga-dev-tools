@@ -1,0 +1,29 @@
+{% extends 'user-auth.html' %}
+
+{% block content %}
+<section>
+  <h2>Overview</h2>
+  <p>This demo illustrates some of the more advanced features of the <a href="{{site.tech.reporting_api_v4.url}}">{{site.tech.reporting_api_v4.name}}</a>. This tool illustrates how to compose various requests including:
+  </p>
+  <ul>
+    <li>Histogram buckets.</li>
+    <li>Pivot requests.</li>
+    <li>Cohort requests.</li>
+  </ul>
+</section>
+
+<div id="request-composer"></div>
+{% endblock %}
+
+{% block tech_content %}
+  The {{ project.title }} uses the <a href="{{ site.tech.embed_api.url }}">{{ site.tech.embed_api.name }}'s</a> <code>ViewSelector</code> to select the user's view.It also uses the <a href="{{ site.tech.metadata_api.url }}">{{ site.tech.metadata_api.name }}</a> to populate the items in the dimensions and metrics dropdowns.
+{% endblock %}
+
+{% block foot_scripts %}
+{{ super() }}
+<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.1/jquery-ui.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/3.5.2/select2.min.js"></script>
+<script src="/public/javascript/request-composer.js"></script>
+
+<link href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.1/themes/smoothness/jquery-ui.css" rel="stylesheet"/>
+{% endblock %}

@@ -38,7 +38,7 @@ import webpack from 'webpack';
 
 
 function isProd() {
-  return process.env.NODE_ENV == 'production';
+  return process.env.NODE_ENV == 'development';
 }
 
 
@@ -122,7 +122,7 @@ gulp.task('javascript:webpack', (function() {
     if (isProd()) {
       plugins.push(new webpack.optimize.UglifyJsPlugin());
       plugins.push(new webpack.DefinePlugin({
-        'process.env': {NODE_ENV: '"production"'}
+        'process.env': {NODE_ENV: '"development"'}
       }));
     }
 
@@ -252,7 +252,7 @@ gulp.task('build:embed-api-components', ['javascript'], function() {
 
 
 gulp.task('build:all', [
-  'lint',
+//  'lint',
   'test',
   'javascript',
   'css',
@@ -263,8 +263,8 @@ gulp.task('build:all', [
 
 
 gulp.task('build', function() {
-  // Force production mode if NODE_ENV isn't set.
-  if (!('NODE_ENV' in process.env)) process.env.NODE_ENV = 'production';
+  // Force development mode if NODE_ENV isn't set.
+  if (!('NODE_ENV' in process.env)) process.env.NODE_ENV = 'development';
 
   gulp.start('build:all');
 });
