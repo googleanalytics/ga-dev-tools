@@ -24,7 +24,7 @@ import {sanitize} from '../query-params';
 import IconButton from '../../components/icon-button';
 
 
-const API_URI_BASE = 'https://www.googleapis.com/analytics/v3/data/ga?';
+const API_URI_BASE = 'https://analyticsreporting.googleapis.com/v4/reports:batchGet?';
 
 
 const SELF_BASE = location.protocol + '//' + location.host + location.pathname;

@@ -35,7 +35,7 @@ import SearchSuggest from '../../components/search-suggest';
 const PARAMS_TO_TRACK = ['startDate', 'endDate', 'metrics', 'dimensions'];
 
 
-export default class QueryExplorer extends React.Component {
+export default class RequestComposer extends React.Component {
 
   /**
    * Invoked when a user changes the ViewSelector2 instance.

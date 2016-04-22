@@ -22,7 +22,7 @@ import {connect, Provider} from 'react-redux';
 import {bindActionCreators} from 'redux';
 
 import actions from './actions';
-import QueryExplorer from './components/request-composer';
+import RequestComposer from './components/request-composer';
 import store from './store';
 
 import site from '../site';
@@ -40,8 +40,8 @@ function mapDispatchToProps(dispatch) {
 }
 
 
-let QueryExplorerApp =
-    connect(mapStateToProps, mapDispatchToProps)(QueryExplorer);
+let RequestComposerApp =
+    connect(mapStateToProps, mapDispatchToProps)(RequestComposer);
 
 
 /**
@@ -50,7 +50,7 @@ let QueryExplorerApp =
 function render() {
   ReactDOM.render(
     <Provider store={store}>
-      <QueryExplorerApp />
+      <RequestComposerApp />
     </Provider>,
     document.getElementById('request-composer')
   );
@@ -62,6 +62,7 @@ function render() {
  * Updates the CSS state classes and rerenders in the authorized state.
  */
 function onAuthorizationSuccess() {
+  gapi.client.load('https://analyticsreporting.googleapis.com/$discovery/rest', 'v4')
   store.dispatch(actions.handleAuthorizationSuccess());
   site.setReadyState();
 }
