@@ -240,7 +240,7 @@ export default class RequestComposer extends React.Component {
                   name="viewId"
                   value={params.viewId}
                   onChange={this.handleParamChange} />
-                <HelpIconLink name="ReportRequest.FIELDS.viewId" />
+                <HelpIconLink name="ReportRequest.FIELDS.view_id" />
               </div>
             </div>
           </div>
@@ -322,7 +322,7 @@ export default class RequestComposer extends React.Component {
                   name="filters"
                   value={params.filters}
                   onChange={this.handleParamChange} />
-                <HelpIconLink name="filters" />
+                <HelpIconLink name="ReportRequest.FIELDS.filters_expression" />
               </div>
             </div>
           </div>
@@ -336,7 +336,7 @@ export default class RequestComposer extends React.Component {
                   value={params.segment}
                   options={select2Options.segments}
                   onChange={this.handleParamChange} />
-                <HelpIconLink name="segment" />
+                <HelpIconLink name="ReportRequest.FIELDS.segments" />
               </div>
               <div className="FormControl-info">
                 <label>
@@ -360,49 +360,49 @@ export default class RequestComposer extends React.Component {
                   name="samplingLevel"
                   value={params.samplingLevel}
                   onChange={this.handleParamChange} />
-                <HelpIconLink name="samplingLevel" />
+                <HelpIconLink name="ReportRequest.FIELDS.sampling_level" />
               </div>
             </div>
           </div>
 
           <div className={formControlClass}>
-            <label className="FormControl-label">include-empty-rows</label>
+            <label className="FormControl-label">includeEmptyRows</label>
             <div className="FormControl-body">
               <div className="FlexLine">
                 <input
                   className="FormField FormFieldCombo-field"
-                  name="include-empty-rows"
-                  value={params['include-empty-rows']}
+                  name="includeEmptyRows"
+                  value={params['includeEmptyRows']}
                   onChange={this.handleParamChange} />
-                <HelpIconLink name="include-empty-rows" />
+                <HelpIconLink name="ReportRequest.FIELDS.include_empty_rows" />
               </div>
             </div>
           </div>
 
           <div className={formControlClass}>
-            <label className="FormControl-label">start-index</label>
+            <label className="FormControl-label">pageToken</label>
             <div className="FormControl-body">
               <div className="FlexLine">
                 <input
                   className="FormField FormFieldCombo-field"
-                  name="start-index"
-                  value={params['start-index']}
+                  name="pageToken"
+                  value={params['pageToken']}
                   onChange={this.handleParamChange} />
-                <HelpIconLink name="start-index" />
+                <HelpIconLink name="ReportRequest.FIELDS.page_token" />
               </div>
             </div>
           </div>
 
           <div className={formControlClass}>
-            <label className="FormControl-label">max-results</label>
+            <label className="FormControl-label">pageSize</label>
             <div className="FormControl-body">
               <div className="FlexLine">
                 <input
                   className="FormField FormFieldCombo-field"
-                  name="max-results"
-                  value={params['max-results']}
+                  name="pageSize"
+                  value={params['pageSize']}
                   onChange={this.handleParamChange} />
-                <HelpIconLink name="max-results" />
+                <HelpIconLink name="ReportRequest.FIELDS.page_size" />
               </div>
             </div>
           </div>
