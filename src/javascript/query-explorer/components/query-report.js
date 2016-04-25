@@ -150,7 +150,7 @@ export default class QueryReport extends React.Component {
                   className="Checkbox"
                   type="checkbox"
                   onChange={this.props.onIdsToggle}
-                  checked={this.props.includeIds} />
+                  checked={!!this.props.includeIds} />
                   Include <code>ids</code> parameter in the link above
                   (uncheck if sharing publicly).
               </label>
@@ -176,7 +176,7 @@ export default class QueryReport extends React.Component {
                   className="Checkbox"
                   type="checkbox"
                   onChange={this.props.onAccessTokenToggle}
-                  checked={this.props.includeAccessToken} />
+                  checked={!!this.props.includeAccessToken} />
                   Include current <code>access_token</code> in the Query URI
                   (will expire in ~60 minutes).
               </label>

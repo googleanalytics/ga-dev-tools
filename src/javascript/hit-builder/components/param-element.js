@@ -25,8 +25,8 @@ const REFERENCE_URL = 'https://developers.google.com/' +
 export default class ParamElement extends React.Component {
 
   state = {
-    name: this.props.param.name,
-    value: this.props.param.value
+    name: this.props.param.name || '',
+    value: this.props.param.value || ''
   }
 
   /**

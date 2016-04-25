@@ -233,7 +233,7 @@ export default class QueryExplorer extends React.Component {
                 <input
                   className="FormField FormFieldCombo-field"
                   name="ids"
-                  value={params.ids}
+                  value={params.ids || ''}
                   onChange={this.handleParamChange} />
                 <HelpIconLink name="ids" />
               </div>
@@ -315,7 +315,7 @@ export default class QueryExplorer extends React.Component {
                 <input
                   className="FormField FormFieldCombo-field"
                   name="filters"
-                  value={params.filters}
+                  value={params.filters || ''}
                   onChange={this.handleParamChange} />
                 <HelpIconLink name="filters" />
               </div>
@@ -339,7 +339,7 @@ export default class QueryExplorer extends React.Component {
                     className="Checkbox"
                     type="checkbox"
                     onChange={this.handleSegmentDefinitionToggle}
-                    checked={settings.useDefinition} />
+                    checked={!!settings.useDefinition} />
                   Show segment definitions instead of IDs.
                 </label>
               </div>
@@ -353,7 +353,7 @@ export default class QueryExplorer extends React.Component {
                 <input
                   className="FormField FormFieldCombo-field"
                   name="samplingLevel"
-                  value={params.samplingLevel}
+                  value={params.samplingLevel || ''}
                   onChange={this.handleParamChange} />
                 <HelpIconLink name="samplingLevel" />
               </div>
@@ -367,7 +367,7 @@ export default class QueryExplorer extends React.Component {
                 <input
                   className="FormField FormFieldCombo-field"
                   name="include-empty-rows"
-                  value={params['include-empty-rows']}
+                  value={params['include-empty-rows'] || ''}
                   onChange={this.handleParamChange} />
                 <HelpIconLink name="include-empty-rows" />
               </div>
@@ -381,7 +381,7 @@ export default class QueryExplorer extends React.Component {
                 <input
                   className="FormField FormFieldCombo-field"
                   name="start-index"
-                  value={params['start-index']}
+                  value={params['start-index'] || ''}
                   onChange={this.handleParamChange} />
                 <HelpIconLink name="start-index" />
               </div>
@@ -395,7 +395,7 @@ export default class QueryExplorer extends React.Component {
                 <input
                   className="FormField FormFieldCombo-field"
                   name="max-results"
-                  value={params['max-results']}
+                  value={params['max-results'] || ''}
                   onChange={this.handleParamChange} />
                 <HelpIconLink name="max-results" />
               </div>
