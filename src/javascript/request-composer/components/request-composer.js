@@ -21,6 +21,7 @@ import HelpIconLink from './help-icon-link';
 import QueryReport from './query-report';
 import Select2MultiSuggest from './select2-multi-suggest';
 import ViewSelector from './view-selector';
+import BarChartComponent from './bar-chart';
 
 import {ga} from '../../analytics';
 import AlertDispatcher from '../../components/alert-dispatcher';
@@ -80,6 +81,7 @@ export default class RequestComposer extends React.Component {
       actions.swapSegmentIdAndDefinition(segment, useDefinition);
     }
   }
+
 
 
   /**
@@ -416,6 +418,8 @@ export default class RequestComposer extends React.Component {
           </div>
 
         </form>
+
+        <BarChartComponent />
 
         <QueryReport
           report={report}
