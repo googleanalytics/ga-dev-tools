@@ -19,46 +19,6 @@ import 'autotrack/lib/plugins/outbound-link-tracker';
 import 'autotrack/lib/plugins/page-visibility-tracker';
 
 
-let autotrackOpts = {
-  mediaQueryDefinitions: [
-    {
-      name: 'Breakpoint',
-      dimensionIndex: 1,
-      items: [
-        {name: 'xs', media: 'all'},
-        {name: 'sm', media: '(min-width: 420px)'},
-        {name: 'md', media: '(min-width: 570px)'},
-        {name: 'lg', media: '(min-width: 1024px)'}
-      ]
-    },
-    {
-      name: 'Resolution',
-      dimensionIndex: 4,
-      items: [
-        {name: '1x',   media: 'all'},
-        {name: '1.5x', media: '(-webkit-min-device-pixel-ratio: 1.5), ' +
-                              '(min-resolution: 144dpi)'},
-        {name: '2x',   media: '(-webkit-min-device-pixel-ratio: 2), ' +
-                              '(min-resolution: 192dpi)'}
-      ]
-    },
-    {
-      name: 'Orientation',
-      dimensionIndex: 5,
-      items: [
-        {name: 'landscape', media: '(orientation: landscape)'},
-        {name: 'portrait',  media: '(orientation: portrait)'}
-      ]
-    }
-  ],
-  virtualPageviewFields: {
-    dimension6: 'pageVisibilityTracker'
-  },
-  searchDimensionIndex: 7,
-  urlHasTrailingSlash: 'always' // 'always' | 'never' | function
-};
-
-
 // Randomizes the order in which tracker methods are called.
 // This is necessary because latter trackers will lose more hits (for various
 // reasons) and the results will be skewed.
@@ -112,15 +72,52 @@ export function init() {
   ga('require', 'linkid');
 
   // Requires autotrack plugins
-  ga('require', 'eventTracker', autotrackOpts);
-  ga('require', 'mediaQueryTracker', autotrackOpts);
-  ga('require', 'outboundLinkTracker', autotrackOpts);
+  ga('require', 'eventTracker');
+  ga('require', 'mediaQueryTracker', {
+    definitions: [
+      {
+        name: 'Breakpoint',
+        dimensionIndex: 1,
+        items: [
+          {name: 'xs', media: 'all'},
+          {name: 'sm', media: '(min-width: 420px)'},
+          {name: 'md', media: '(min-width: 570px)'},
+          {name: 'lg', media: '(min-width: 1024px)'}
+        ]
+      },
+      {
+        name: 'Resolution',
+        dimensionIndex: 4,
+        items: [
+          {name: '1x',   media: 'all'},
+          {name: '1.5x', media: '(-webkit-min-device-pixel-ratio: 1.5), ' +
+                                '(min-resolution: 144dpi)'},
+          {name: '2x',   media: '(-webkit-min-device-pixel-ratio: 2), ' +
+                                '(min-resolution: 192dpi)'}
+        ]
+      },
+      {
+        name: 'Orientation',
+        dimensionIndex: 5,
+        items: [
+          {name: 'landscape', media: '(orientation: landscape)'},
+          {name: 'portrait',  media: '(orientation: portrait)'}
+        ]
+      }
+    ]
+  });
+  ga('require', 'outboundLinkTracker');
 
   // Adds experimental clearnUrlTracker plugin.
-  window.ga(cleanUrlTracker(autotrackOpts));
+  window.ga(cleanUrlTracker({
+    searchDimensionIndex: 7,
+    urlHasTrailingSlash: 'always' // 'always' | 'never' | function
+  }));
 
   // Only requires pageVisibilityTracker on the testing tracker.
-  window.ga('testing.require', 'pageVisibilityTracker', autotrackOpts);
+  window.ga('testing.require', 'pageVisibilityTracker', {
+    fieldsObj: {dimension6: 'pageVisibilityTracker'}
+  });
 
   ga('send', 'pageview', {dimension6: 'pageload'});
 }
