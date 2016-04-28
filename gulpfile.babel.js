@@ -38,7 +38,7 @@ import webpack from 'webpack';
 
 
 function isProd() {
-  return process.env.NODE_ENV == 'development';
+  return process.env.NODE_ENV == 'production';
 }
 
 
@@ -263,8 +263,8 @@ gulp.task('build:all', [
 
 
 gulp.task('build', function() {
-  // Force development mode if NODE_ENV isn't set.
-  if (!('NODE_ENV' in process.env)) process.env.NODE_ENV = 'development';
+  // Force production mode if NODE_ENV isn't set.
+  if (!('NODE_ENV' in process.env)) process.env.NODE_ENV = 'production';
 
   gulp.start('build:all');
 });

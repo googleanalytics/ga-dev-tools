@@ -18,6 +18,7 @@ import accountSummaries from 'javascript-api-utils/lib/account-summaries';
 
 import Datepicker from './datepicker';
 import HelpIconLink from './help-icon-link';
+import RequestViewer from './request-viewer';
 import QueryReport from './query-report';
 import Select2MultiSuggest from './select2-multi-suggest';
 import ViewSelector from './view-selector';
@@ -418,6 +419,11 @@ export default class RequestComposer extends React.Component {
           </div>
 
         </form>
+
+        <RequestViewer 
+          params={params}
+
+        />
 
         <BarChartComponent />
 

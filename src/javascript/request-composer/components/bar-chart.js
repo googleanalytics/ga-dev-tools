@@ -81,7 +81,10 @@ var chartData = {
 export default class BarChartComponent extends React.Component {
   render() {
     return (
-      <Bar data={chartData} options={chartOptions} width="600" height="250"/>
+      <div>
+        <h2>Query Results</h2>
+        <Bar data={chartData} options={chartOptions} width="600" height="250"/>
+      </div>
     );
   }
 }
