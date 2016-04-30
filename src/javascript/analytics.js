@@ -13,6 +13,7 @@
 // limitations under the License.
 
 
+import 'autotrack/lib/plugins/clean-url-tracker';
 import 'autotrack/lib/plugins/event-tracker';
 import 'autotrack/lib/plugins/media-query-tracker';
 import 'autotrack/lib/plugins/outbound-link-tracker';
@@ -28,37 +29,6 @@ while (trackerNames.length) {
   let index = Math.floor(Math.random() * trackerNames.length);
   let name = trackerNames.splice(index, 1)[0];
   randomizedTrackerNames.push(name);
-}
-
-
-/**
- * Experimental possible future plugin logic.
- */
-function cleanUrlTracker(opts) {
-
-  // Removes the
-  return function() {
-    let tracker = window.ga.getByName('testing');
-    let path = location.pathname;
-    let search = location.search.slice(1);
-
-    if (opts.urlHasTrailingSlash  == 'always') {
-      path = path.replace(/\/+$/, '') + '/';
-    }
-    // else if (opts.urlHasTrailingSlash == 'never') {
-    //   path = path.replace(/\/+$/, '')
-    // }
-    // else if (typeof opts.urlHasTrailingSlash == 'function') {
-    //   path = opts.urlHasTrailingSlash(path);
-    // }
-
-    tracker.set('page', path);
-
-    if (opts.searchDimensionIndex) {
-      tracker.set('dimension' + opts.searchDimensionIndex,
-          search || '(not set)');
-    }
-  };
 }
 
 
@@ -108,11 +78,11 @@ export function init() {
   });
   ga('require', 'outboundLinkTracker');
 
-  // Adds experimental clearnUrlTracker plugin.
-  window.ga(cleanUrlTracker({
-    searchDimensionIndex: 7,
-    urlHasTrailingSlash: 'always' // 'always' | 'never' | function
-  }));
+  // Only requires cleanUrlTracker on the testing tracker.
+  window.ga('testing.require', 'cleanUrlTracker', {
+    queryDimensionIndex: 7,
+    trailingSlash: true
+  });
 
   // Only requires pageVisibilityTracker on the testing tracker.
   window.ga('testing.require', 'pageVisibilityTracker', {
