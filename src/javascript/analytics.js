@@ -86,6 +86,8 @@ export function init() {
 
   // Only requires pageVisibilityTracker on the testing tracker.
   window.ga('testing.require', 'pageVisibilityTracker', {
+    visibleMetricIndex: 3,
+    hiddenMetricIndex: 4,
     fieldsObj: {dimension6: 'pageVisibilityTracker'}
   });
 
