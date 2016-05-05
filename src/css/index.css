@@ -62,6 +62,7 @@ limitations under the License.
 @import './components/nav-header';
 @import './components/progress-bar';
 @import './components/query-report';
+@import './components/request-viewer';
 @import './components/screenshot';
 @import './components/search-suggest';
 @import './components/search-suggest-match';

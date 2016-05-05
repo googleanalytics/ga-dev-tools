@@ -50,6 +50,28 @@ const DEFAULT_REQUEST =
 }
 
 
+function syntaxHighlight(json) {
+    if (typeof json != 'string') {
+         json = JSON.stringify(json, undefined, 2);
+    }
+    json = json.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    return json.replace(/("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g, function (match) {
+        var cls = 'number';
+        if (/^"/.test(match)) {
+            if (/:$/.test(match)) {
+                cls = 'key';
+            } else {
+                cls = 'string';
+            }
+        } else if (/true|false/.test(match)) {
+            cls = 'boolean';
+        } else if (/null/.test(match)) {
+            cls = 'null';
+        }
+        return '<span class="' + cls + '">' + match + '</span>';
+    });
+}
+
 export default class RequestViewer extends React.Component {
 
   handleChange = () => {
@@ -76,8 +98,8 @@ export default class RequestViewer extends React.Component {
     }
 
 
-    var request = REQUEST_URI + '\n'
-    request += JSON.stringify(template, null, 2);
+    //var request = REQUEST_URI + '\n'
+    var request = syntaxHighlight(JSON.stringify(template, null, 2));
     return request;
   }
 
@@ -89,12 +111,13 @@ export default class RequestViewer extends React.Component {
     return (
       <div>
         <h3> JSON request</h3>
-        <textarea
+        <pre
           cols="80"
           rows="20"
           id="query-output"
-          value={request}
-          onChange={this.handleChange} />
+          onChange={this.handleChange}
+          dangerouslySetInnerHTML={{__html: request}}>
+        </pre>
       </div>
     );
   }
