@@ -18,6 +18,135 @@ import * as types from './types';
 import segments from '../segments';
 
 
+var NUMERIC_DIMENSIONS = [
+  {
+    'attributes': {
+      'group': 'User',
+      'uiName': 'Session Count',
+    },
+    'id': 'ga:sessionCount'
+  },
+    {
+    'attributes': {
+      'group': 'User',
+      'uiName': 'Days Since Last Session',
+    },
+    'id': 'ga:daysSinceLastSession'
+  },
+  {
+    'attributes': {
+      'group': 'Session',
+      'uiName': 'Session Duration Bucket',
+    },
+    'id': 'ga:sessionDurationBucket'
+  },
+  {
+    'attributes': {
+      'Group': 'Ecommerce',
+      'uiName': 'Days to transaction',
+    },
+    'id': 'ga:daysToTransaction'
+  },
+  {
+    'attributes': {
+      'group': 'Time',
+      'uiName': 'Year',
+    },
+    'id': 'ga:year'
+  },
+  {
+    'attributes': {
+      'group': 'Time',
+      'uiName': 'month',
+    },
+    'id': 'ga:month'
+  },
+  {
+    'attributes': {
+      'group': 'Time',
+      'uiName': 'week',
+    },
+    'id': 'ga:week'
+  },
+  {
+    'attributes': {
+      'group': 'Time',
+      'uiName': 'Day',
+    },
+    'id': 'ga:day'
+  },
+  {
+    'attributes': {
+      'group': 'Time',
+      'uiName': 'Hour',
+    },
+    'id': 'ga:hour'
+  },
+  {
+    'attributes': {
+      'group': 'Time',
+      'uiName': 'Hour',
+    },
+    'id': 'ga:hour'
+  },
+  {
+    'attributes': {
+      'group': 'Time',
+      'uiName': 'Minute',
+    },
+    'id': 'ga:minute'
+  },
+  {
+    'attributes': {
+      'group': 'Time',
+      'uiName': 'Nth Month',
+    },
+    'id': 'ga:nthMonth'
+  },
+  {
+    'attributes': {
+      'group': 'Time',
+      'uiName': 'Nth Week',
+    },
+    'id': 'ga:nthWeek'
+  },
+  {
+    'attributes': {
+      'group': 'Time',
+      'uiName': 'NthDay',
+    },
+    'id': 'ga:nthDay'
+  },
+  {
+    'attributes': {
+      'group': 'Time',
+      'uiName': 'Nth Hour',
+    },
+    'id': 'ga:nthHour'
+  },
+  {
+    'attributes': {
+      'group': 'Time',
+      'uiName': 'Nth Minute',
+    },
+    'id': 'ga:nthMinute'
+  },
+  {
+    'attributes': {
+      'group': 'Time',
+      'uiName': 'ISO Year',
+    },
+    'id': 'ga:isoYear'
+  },
+  {
+    'attributes': {
+      'group': 'Time',
+      'uiName': 'ISO Week',
+    },
+    'id': 'ga:isoWeek'
+  }
+]
+
 export function updateMetricsDimensionsAndSortOptions(viewData) {
   return async function(dispatch, getState) {
     let {account, property, view} = viewData;
@@ -132,7 +261,7 @@ function getSegmentsOptions(useDefinition) {
 
 
 /**
- * Gets a list of all public metrics associated with the passed view.
+ * Gets a list of all public, v3 metrics associated with the passed view.
  * @param {Object} account An account object from accountSummaries.list.
  * @param {Object} property A property object from accountSummaries.list.
  * @param {Object} view A view object from accountSummaries.list.
@@ -140,18 +269,28 @@ function getSegmentsOptions(useDefinition) {
  */
 function getMetrics(account, property, view) {
   return metadata.getAuthenticated(account, property, view).then(
-         (columns) => columns.allMetrics('public'));
+      (columns) => columns.allMetrics({
+        status: 'PUBLIC',
+        addedInApiVersion: '3'
+      }));
 }
 
 
+
 /**
- * Gets a list of all public dimensions associated with the passed view.
+ * Gets a list of all public, v3 dimensions associated with the passed view.
  * @param {Object} account An account object from accountSummaries.list.
  * @param {Object} property A property object from accountSummaries.list.
  * @param {Object} view A view object from accountSummaries.list.
  * @return {Promise} A promise resolved with an array of all public dimensions.
  */
 function getDimensions(account, property, view) {
+
+  return NUMERIC_DIMENSIONS;
+
   return metadata.getAuthenticated(account, property, view).then(
-         (columns) => columns.allDimensions('public'));
+      (columns) => columns.allDimensions({
+        status: 'PUBLIC',
+        addedInApiVersion: '3'
+      }));
 }
