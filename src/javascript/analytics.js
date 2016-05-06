@@ -88,7 +88,11 @@ export function init() {
   window.ga('testing.require', 'pageVisibilityTracker', {
     visibleMetricIndex: 3,
     hiddenMetricIndex: 4,
-    fieldsObj: {dimension6: 'pageVisibilityTracker'}
+    fieldsObj: {dimension6: 'pageVisibilityTracker'},
+    hitFilter: function(model) {
+      // Sets the "Dimensionized Metric" to the event value for bucketting.
+      model.set('dimension8', model.get('eventValue'), true);
+    }
   });
 
   ga('send', 'pageview', {dimension6: 'pageload'});
