@@ -100,6 +100,7 @@ function getDefaultSelect2Options() {
     metrics: [],
     dimensions: [],
     sort: [],
+    buckets: [],
     segments: []
   };
 }

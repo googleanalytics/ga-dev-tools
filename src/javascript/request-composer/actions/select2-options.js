@@ -223,9 +223,9 @@ function getSortOptions(params, metrics, dimensions) {
       if (choice == option.id) {
 
         let descending = {...option};
-        descending.name += ' (descending)';
-        descending.text += ' (descending)';
-        descending.id = '-' + choice;
+        descending.name = '{"fieldName": "' + choice + '"}';
+        descending.text = '{"fieldName": "' + choice + '"}';
+        descending.id = '{"fieldName": "' + choice + '"}';
 
         let ascending = {...option};
         ascending.name += ' (ascending)';

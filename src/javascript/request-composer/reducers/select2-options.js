@@ -20,6 +20,7 @@ let defaultOptions = {
   metrics: [],
   dimensions: [],
   sort: [],
+  buckets: [],
   segments: []
 };
 

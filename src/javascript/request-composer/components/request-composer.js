@@ -315,6 +315,20 @@ export default class RequestComposer extends React.Component {
           </div>
 
           <div className={formControlClass}>
+            <label className="FormControl-label">Histogram Buckets</label>
+            <div className="FormControl-body">
+              <div className="FlexLine">
+                <Select2MultiSuggest
+                  name="buckets"
+                  value={params.buckets}
+                  tags={select2Options.buckets}
+                  onChange={this.handleParamChange} />
+                <HelpIconLink name="ReportRequest.FIELDS.histogram_buckets" />
+              </div>
+            </div>
+          </div>
+
+          <div className={formControlClass}>
             <label className="FormControl-label">filters</label>
             <div className="FormControl-body">
               <div className="FlexLine">
