@@ -114,12 +114,26 @@ export default class RequestViewer extends React.Component {
         template.reportRequests[0].metrics.push({'expression': metrics[i]});
       }
     } else {
-      delete template.reportRequests[0].metrics
+      delete template.reportRequests[0].metrics;
     }
-    return template
 
+    // Handle the segment parameter.
+    if (params.segment) {
+      // Clear the segment definition.
+      template.reportRequests[0].segments = [];
 
-    //var request = REQUEST_URI + '\n'
+      // Get the segment from the model and populate the segments array.
+      template.reportRequests[0].segments = [{'segmentId': params.segment}];
+      // Add the ga:segment dimension.
+      if (template.reportRequests[0].dimensions) {
+        template.reportRequests[0].dimensions.push({'name': 'ga:segment'});
+      } else {
+        template.reportRequests[0].dimensions = {'name': 'ga:segment'};
+      }
+    } else {
+      delete template.reportRequests[0].segments
+    }
+
     var request = syntaxHighlight(JSON.stringify(template, null, 2));
     return request;
   }
