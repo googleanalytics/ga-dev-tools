@@ -85,13 +85,6 @@ var NUMERIC_DIMENSIONS = [
   {
     'attributes': {
       'group': 'Time',
-      'uiName': 'Hour',
-    },
-    'id': 'ga:hour'
-  },
-  {
-    'attributes': {
-      'group': 'Time',
       'uiName': 'Minute',
     },
     'id': 'ga:minute'
@@ -223,14 +216,14 @@ function getSortOptions(params, metrics, dimensions) {
       if (choice == option.id) {
 
         let descending = {...option};
-        descending.name = '{"fieldName": "' + choice + '"}';
-        descending.text = '{"fieldName": "' + choice + '"}';
-        descending.id = '{"fieldName": "' + choice + '"}';
+        descending.name += ' (descending)';
+        descending.text = ' (descending)';
+        descending.id = '"fieldName": "' + choice + '",<br/> "sortOrder": "DESCENDING"';
 
         let ascending = {...option};
         ascending.name += ' (ascending)';
         ascending.text += ' (ascending)';
-        ascending.id = choice;
+        ascending.id = '"fieldName": "' + choice + '",<br/> "sortOrder": "ASCENDING"';
 
         sortOptions.push(descending);
         sortOptions.push(ascending);
