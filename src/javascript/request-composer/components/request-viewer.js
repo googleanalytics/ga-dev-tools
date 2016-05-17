@@ -23,6 +23,7 @@ const DEFAULT_REQUEST =
   "reportRequests": 
   [
     {
+      "viewId": "1174",
       "dateRanges": 
       [
         {
@@ -30,7 +31,6 @@ const DEFAULT_REQUEST =
           "endDate": "2015-02-01"
         }
       ],
-      "viewId": "1174",
       "dimensions": [],
       "metrics": 
       [
@@ -72,6 +72,7 @@ function syntaxHighlight(json) {
     });
 }
 
+
 export default class RequestViewer extends React.Component {
 
   handleChange = () => {
@@ -87,15 +88,35 @@ export default class RequestViewer extends React.Component {
     template.reportRequests[0].dateRanges[0].startDate = params.startDate;
     template.reportRequests[0].dateRanges[0].endDate = params.endDate;
 
+
+    // Handle the dimensions field.
     if (params.dimensions) {
-      let dimensions = params.dimensions.split(',');
+      // Clear the dimensions.
       template.reportRequests[0].dimensions = [];
+
+      // Get the dimensions from the model and populate the dimensions array.
+      let dimensions = params.dimensions.split(',');
       for (var i in dimensions) {
         template.reportRequests[0].dimensions.push({'name': dimensions[i]});
       }
     } else {
       delete template.reportRequests[0].dimensions;
     }
+
+    // Handle the metrics field.
+    if (params.metrics) {
+      // Clear the metrics.
+      template.reportRequests[0].metrics = []
+
+      // Get the metrics from the model and populate the metrics array.
+      let metrics = params.metrics.split(',');
+      for (var i in metrics) {
+        template.reportRequests[0].metrics.push({'expression': metrics[i]});
+      }
+    } else {
+      delete template.reportRequests[0].metrics
+    }
+    return template
 
 
     //var request = REQUEST_URI + '\n'
