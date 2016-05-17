@@ -217,13 +217,13 @@ function getSortOptions(params, metrics, dimensions) {
 
         let descending = {...option};
         descending.name += ' (descending)';
-        descending.text = ' (descending)';
-        descending.id = '"fieldName": "' + choice + '",<br/> "sortOrder": "DESCENDING"';
+        descending.text += ' (descending)';
+        descending.id = '-' + choice;
 
         let ascending = {...option};
         ascending.name += ' (ascending)';
         ascending.text += ' (ascending)';
-        ascending.id = '"fieldName": "' + choice + '",<br/> "sortOrder": "ASCENDING"';
+        ascending.id = choice;
 
         sortOptions.push(descending);
         sortOptions.push(ascending);

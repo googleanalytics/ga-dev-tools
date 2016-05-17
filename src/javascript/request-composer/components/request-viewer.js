@@ -97,7 +97,18 @@ export default class RequestViewer extends React.Component {
       // Get the dimensions from the model and populate the dimensions array.
       let dimensions = params.dimensions.split(',');
       for (var i in dimensions) {
-        template.reportRequests[0].dimensions.push({'name': dimensions[i]});
+
+        var dimension = {'name': dimensions[i]}
+
+        if (params.buckets) {
+          var histogramBuckets = [];
+          var buckets = params.buckets.split(',');
+          for (var j in buckets) {
+            histogramBuckets.push(buckets[j]);
+          }
+          dimension.histogramBuckets = histogramBuckets;
+        }
+        template.reportRequests[0].dimensions.push(dimension);
       }
     } else {
       delete template.reportRequests[0].dimensions;
@@ -132,6 +143,35 @@ export default class RequestViewer extends React.Component {
       }
     } else {
       delete template.reportRequests[0].segments
+    }
+
+    // Handle the sort (OrderBys) parameter.
+    if (params.sort) {
+      // Clear the orderBys definition.
+      template.reportRequests[0].orderBys = [];
+
+      // Get the dimsmets from the model and populate the orderBys array.
+      let dimsmets = params.sort.split(',');
+      for (var i in dimsmets) {
+        var orderBy = {};
+        var fieldName = dimsmets[i];
+
+        if (fieldName[0] == '-') {
+          fieldName = fieldName.substring(1);
+          orderBy.sortOrder = 'DESCENDING';
+        } else {
+          orderBy.sortOrder = 'ASCENDING';
+        }
+        orderBy.fieldName = fieldName;
+
+        // Check if this is dimension.
+        if (params.dimensions.indexOf(fieldName) > -1) {
+          // It is a dimension.
+          orderBy.orderType = 'HISTOGRAM_BUCKET';
+        }
+
+        template.reportRequests[0].orderBys.push(orderBy);
+      }
     }
 
     var request = syntaxHighlight(JSON.stringify(template, null, 2));
