@@ -62,7 +62,8 @@ function render() {
  * Updates the CSS state classes and rerenders in the authorized state.
  */
 function onAuthorizationSuccess() {
-  gapi.client.load('https://analyticsreporting.googleapis.com/$discovery/rest', 'v4')
+  gapi.client.load('https://analyticsreporting.googleapis.com/$discovery/rest', 'v4');
+  console.log("Loaded V4 API.");
   store.dispatch(actions.handleAuthorizationSuccess());
   site.setReadyState();
 }
