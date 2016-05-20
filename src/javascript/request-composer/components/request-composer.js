@@ -16,6 +16,7 @@
 import React from 'react';
 import accountSummaries from 'javascript-api-utils/lib/account-summaries';
 
+import {composeRequest} from '../request';
 import Datepicker from './datepicker';
 import HelpIconLink from './help-icon-link';
 import RequestViewer from './request-viewer';
@@ -110,6 +111,14 @@ export default class RequestComposer extends React.Component {
     let property = summaries.getPropertyByViewId(viewId);
 
     console.log('HandleSubmit');
+
+    let request = composeRequest(params);
+    let response = gapi.client.analyticsreporting.reports.batchGet(request
+      ).then(function(resp) {
+        console.log(resp.result);
+      }, function(reason) {
+        console.log('Error: ' + reason.result.error.message);
+    });
 
     actions.updateReport({
       propertyName: property.name,
@@ -453,6 +462,7 @@ export default class RequestComposer extends React.Component {
           onDirectLinkFocus={this.handleDirectLinkFocus}
           onApiUriFocus={this.handleApiUriFocus}
           onDownloadTsvClick={this.handleDownloadTsvClick} />
+
 
       </div>
     );
