@@ -78,8 +78,14 @@ var chartData = {
     ]
 };
 
+export function createResults(response) {
+    console.log('BarChart Renders Response: ' + response);
+}
+
 export default class BarChartComponent extends React.Component {
   render() {
+    let {response} = this.props;
+    createResults(response);
     return (
       <div>
         <h2>Query Results</h2>

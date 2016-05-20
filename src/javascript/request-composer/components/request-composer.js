@@ -113,11 +113,16 @@ export default class RequestComposer extends React.Component {
     console.log('HandleSubmit');
 
     let request = composeRequest(params);
-    let response = gapi.client.analyticsreporting.reports.batchGet(request
-      ).then(function(resp) {
-        console.log(resp.result);
-      }, function(reason) {
-        console.log('Error: ' + reason.result.error.message);
+    gapi.client.analyticsreporting.reports.batchGet(request
+      ).then(function(response) {
+        //console.log(resp.result);
+        console.log('REQUEST COMPOSER QUERY SUCCEEDED!!!');
+        actions.updateResponse(response);
+      }, function(response) {
+        //"{ "error": { "code": 400, "message": "Invalid value at 'report_requests[0].dimensions[0].histogram_buckets[1]' (TYPE_INT64), \" 343\"\nInvalid value at 'report_requests[0].dimensions[0].histogram_buckets[2]' (TYPE_INT64), \" 100\"", "status": "INVALID_ARGUMENT", "details": [ { "@type": "type.googleapis.com/google.rpc.BadRequest", "fieldViolations": [ { "field": "report_requests[0].dimensions[0].histogram_buckets[1]", "description": "Invalid value at 'report_requests[0].dimensions[0].histogram_buckets[1]' (TYPE_INT64), \" 343\"" }, { "field": "report_requests[0].dimensions[0].histogram_buckets[2]", "description": "Invalid value at 'report_requests[0].dimensions[0].histogram_buckets[2]' (TYPE_INT64), \" 100\"" } ] } ] } } "
+        console.log('REQUST COMPOSER QUERY FAILED!!!!!');
+        //console.log(response.body.error.message);
+        actions.updateResponse(response)
     });
 
     actions.updateReport({
@@ -221,6 +226,7 @@ export default class RequestComposer extends React.Component {
       isQuerying,
       params,
       report,
+      response,
       settings,
       select2Options
     } = this.props;
@@ -445,10 +451,11 @@ export default class RequestComposer extends React.Component {
 
         <RequestViewer 
           params={params}
-
         />
 
-        <BarChartComponent />
+        <BarChartComponent
+        response={response}
+        />
 
         <QueryReport
           report={report}

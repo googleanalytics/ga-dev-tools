@@ -13,22 +13,17 @@
 // limitations under the License.
 
 
-import {combineReducers} from 'redux';
-import isAuthorized from './auth';
-import params from './params';
-import isQuerying from './query';
-import report from './report';
-import response from './response';
-import select2Options from './select2-options';
-import settings from './settings';
+import * as types from '../actions/types';
 
 
-export default combineReducers({
-  isAuthorized,
-  isQuerying,
-  params,
-  report,
-  response,
-  select2Options,
-  settings
-});
+export default function response(state = {}, action) {
+  let {response} = action;
+  switch (action.type) {
+
+    case types.UPDATE_RESPONSE:
+      return {...state, ...response};
+
+    default:
+      return state;
+  }
+}

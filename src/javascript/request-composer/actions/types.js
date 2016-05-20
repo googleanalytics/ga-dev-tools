@@ -30,3 +30,6 @@ export const UPDATE_SELECT2_OPTIONS = 'UPDATE_SELECT2_OPTIONS';
 
 // settings
 export const UPDATE_SETTINGS = 'UPDATE_SETTINGS';
+
+// response
+export const UPDATE_RESPONSE = 'UPDATE_RESPONSE';
