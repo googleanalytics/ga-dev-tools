@@ -54,7 +54,7 @@ var chartOptions = {
     //String - A legend template
     legendTemplate : "<ul class=\"<%=name.toLowerCase()%>-legend\"><% for (var i=0; i<datasets.length; i++){%><li><span style=\"background-color:<%=datasets[i].fillColor%>\"></span><%if(datasets[i].label){%><%=datasets[i].label%><%}%></li><%}%></ul>"
 
-}
+};
 
 var chartData = {
     labels: ["January", "February", "March", "April", "May", "June", "July"],
@@ -78,13 +78,58 @@ var chartData = {
     ]
 };
 
-export function createResults(response) {
-    console.log('BarChart Renders Response: ' + response);
+export function createResults(report) {
+    // Parses the report and creates a chartData object.
+    var labels = [];
+    var dataset = {
+            label: null,
+            fillColor: "rgba(220,220,220,0.5)",
+            strokeColor: "rgba(220,220,220,0.8)",
+            highlightFill: "rgba(220,220,220,0.75)",
+            highlightStroke: "rgba(220,220,220,1)",
+            data: []
+        };
+    var myData = chartData;
+    if (!report.data) {
+        return;
+    }
+    if (report.data.rows && report.data.rows.length) {
+        var metricheaders = report.columnHeader.metricHeader.metricHeaderEntries;
+        dataset.label = metricheaders[0];
+        for (var rowIndex=0, row; row = report.data.rows[rowIndex]; ++rowIndex) {
+            var values = row.metrics[0].values;
+            dataset.data.push(values[0]);
+            labels.push(row.dimensions[0]);
+        }
+    }
+    return {labels: labels, datasets: [dataset]};
 }
 
 export default class BarChartComponent extends React.Component {
   render() {
     let {response} = this.props;
+    //checkHttpResponseCode(response);
+    if (response.status > 200) {
+        console.log(response);
+        return (
+            <div>
+              <h2>Query Results</h2>
+              <pre
+                dangerouslySetInnerHTML={{__html: "Hello World " + response.result.error.message}}>
+              </pre>
+            </div>
+            );
+    } else if (response.status == 200) {
+        console.log("200 Response Parsing results: ");
+        console.log(response.result.reports[0]);
+        let data = createResults(response.result.reports[0]);
+        return (
+          <div>
+            <h2>Query Results</h2>
+            <Bar data={data} options={chartOptions} width="600" height="250"/>
+          </div>
+        );
+    }
     createResults(response);
     return (
       <div>

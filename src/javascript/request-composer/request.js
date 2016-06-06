@@ -66,7 +66,7 @@ export function composeRequest(params) {
 
       if (params.buckets) {
         var histogramBuckets = [];
-        var buckets = params.buckets.split(',');
+        var buckets = params.buckets.split(/[ ,]+/);
         for (var j in buckets) {
           histogramBuckets.push(buckets[j]);
         }

@@ -110,7 +110,6 @@ export default class RequestComposer extends React.Component {
     let view = summaries.getView(viewId);
     let property = summaries.getPropertyByViewId(viewId);
 
-    console.log('HandleSubmit');
 
     let request = composeRequest(params);
     gapi.client.analyticsreporting.reports.batchGet(request
@@ -124,6 +123,8 @@ export default class RequestComposer extends React.Component {
         //console.log(response.body.error.message);
         actions.updateResponse(response)
     });
+
+    actions.setQueryState(false);
 
     actions.updateReport({
       propertyName: property.name,
@@ -456,19 +457,6 @@ export default class RequestComposer extends React.Component {
         <BarChartComponent
         response={response}
         />
-
-        <QueryReport
-          report={report}
-          isQuerying={isQuerying}
-          includeViewId={settings.includeViewId}
-          includeAccessToken={settings.includeAccessToken}
-          onSuccess={this.handleDataChartSuccess}
-          onError={this.handleDataChartError}
-          onViewIdToggle={this.handleViewIdToggle}
-          onAccessTokenToggle={this.handleAccessTokenToggle}
-          onDirectLinkFocus={this.handleDirectLinkFocus}
-          onApiUriFocus={this.handleApiUriFocus}
-          onDownloadTsvClick={this.handleDownloadTsvClick} />
 
 
       </div>
