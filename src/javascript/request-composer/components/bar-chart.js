@@ -89,7 +89,6 @@ export function createResults(report) {
             highlightStroke: "rgba(220,220,220,1)",
             data: []
         };
-    var myData = chartData;
     if (!report.data) {
         return;
     }
@@ -102,7 +101,8 @@ export function createResults(report) {
             labels.push(row.dimensions[0]);
         }
     }
-    return {labels: labels, datasets: [dataset]};
+    var foo = {labels: labels, datasets: [dataset]};
+    return foo;
 }
 
 export default class BarChartComponent extends React.Component {
@@ -126,11 +126,10 @@ export default class BarChartComponent extends React.Component {
         return (
           <div>
             <h2>Query Results</h2>
-            <Bar data={data} options={chartOptions} width="600" height="250"/>
+            <Bar data={data} options={chartOptions} width="600" height="250" redraw/>
           </div>
         );
     }
-    createResults(response);
     return (
       <div>
         <h2>Query Results</h2>
