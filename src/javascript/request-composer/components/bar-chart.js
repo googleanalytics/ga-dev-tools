@@ -110,25 +110,22 @@ export default class BarChartComponent extends React.Component {
     let {response} = this.props;
     //checkHttpResponseCode(response);
     if (response.status > 200) {
-        console.log(response);
-        return (
-            <div>
-              <h2>Query Results</h2>
-              <pre
-                dangerouslySetInnerHTML={{__html: "Hello World " + response.result.error.message}}>
-              </pre>
-            </div>
-            );
-    } else if (response.status == 200) {
-        console.log("200 Response Parsing results: ");
-        console.log(response.result.reports[0]);
-        let data = createResults(response.result.reports[0]);
-        return (
+      return (
           <div>
             <h2>Query Results</h2>
-            <Bar data={data} options={chartOptions} width="600" height="250" redraw/>
+            <pre
+              dangerouslySetInnerHTML={{__html: response.result.error.message}}>
+            </pre>
           </div>
-        );
+          );
+    } else if (response.status == 200) {
+      let data = createResults(response.result.reports[0]);
+      return (
+        <div>
+          <h2>Query Results</h2>
+          <Bar data={data} options={chartOptions} width="600" height="250" redraw/>
+        </div>
+      );
     }
     return (
       <div>

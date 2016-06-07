@@ -109,6 +109,13 @@ export function composeRequest(params) {
     delete template.reportRequests[0].segments
   }
 
+  if (params.filters) {
+    // Set the filtersExpression.
+    template.reportRequests[0].filtersExpression = params.filters;
+  } else {
+    delete template.reportRequests[0].filtersExpression;
+  }
+
   // Handle the sort (OrderBys) parameter.
   if (params.sort) {
     // Clear the orderBys definition.
