@@ -14,6 +14,7 @@
 
 
 import React from 'react';
+import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
 import accountSummaries from 'javascript-api-utils/lib/account-summaries';
 
 import {composeRequest} from '../request';
@@ -36,6 +37,7 @@ import SearchSuggest from '../../components/search-suggest';
  * therefore only their presence/absense is tracked.
  */
 const PARAMS_TO_TRACK = ['startDate', 'endDate', 'metrics', 'dimensions'];
+const REQUEST_TYPES = {0 : 'HISTOGRAM', 1 : 'PIVOT', 2 : 'COHORT'};
 
 
 export default class RequestComposer extends React.Component {
@@ -67,6 +69,15 @@ export default class RequestComposer extends React.Component {
     }
   }
 
+    /**
+   * Invoked when a user changes the request type.
+   * @param Int index The index of the selcected request tab.
+   * @param Int last The index of the last selected request tab.
+   */
+  handleRequestChange = (index, last) => {
+    // See issue https://github.com/reactjs/react-tabs/issues/51
+    setTimeout(wrap(this.props.actions.updateSettings({requestType: REQUEST_TYPES[index]})),0);
+  }
 
   /**
    * Invoked when a user clicks on the segment definition checkbox.
@@ -243,6 +254,37 @@ export default class RequestComposer extends React.Component {
         <ViewSelector
           viewId={params.viewId}
           onChange={this.handleViewSelectorChange} />
+
+      <Tabs
+        onSelect={this.handleRequestChange}
+        selectedIndex={2}
+      >
+        <TabList>
+          <Tab>Histogram Request</Tab>
+          <Tab>Pivot Request</Tab>
+          <Tab>Cohort Request</Tab>
+        </TabList>
+        <TabPanel>
+          <h2>For dimensions with integer values, 
+            it is easier to understand their characteristics 
+            by bucketing their values into ranges. 
+          </h2>
+        </TabPanel>
+        <TabPanel>
+          <h2>Google Analytics Reporting API V4 allows you
+            to generate Pivot Tables. To construct a request
+            with a pivot table, define the Pivot field in the 
+            ReportRequest.
+          </h2>
+        </TabPanel>
+        <TabPanel>
+          <h2>A cohort is a group of users who share a common
+            characteristic. For example, all users with the same
+            Acquisition Date belong to the same cohort. The Cohort
+            Analysis report lets you isolate and analyze cohort behavior.
+          </h2>
+        </TabPanel>
+      </Tabs>
 
         <h3 className="H3--underline">Set the query parameters</h3>
 

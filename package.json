@@ -67,5 +67,8 @@
     "svg4everybody": "^2.0.1",
     "uuid": "^2.0.1",
     "webpack": "^1.12.9"
+  },
+  "dependencies": {
+    "react-tabs": "^0.5.5"
   }
 }
