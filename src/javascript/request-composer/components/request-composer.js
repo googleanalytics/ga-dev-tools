@@ -37,7 +37,7 @@ import SearchSuggest from '../../components/search-suggest';
  * therefore only their presence/absense is tracked.
  */
 const PARAMS_TO_TRACK = ['startDate', 'endDate', 'metrics', 'dimensions'];
-const REQUEST_TYPES = {0 : 'HISTOGRAM', 1 : 'PIVOT', 2 : 'COHORT'};
+const REQUEST_TYPES = ['HISTOGRAM', 'PIVOT', 'COHORT'];
 
 
 export default class RequestComposer extends React.Component {
@@ -50,7 +50,6 @@ export default class RequestComposer extends React.Component {
   handleViewSelectorChange = (viewData) => {
     let {actions} = this.props;
     let {viewId} = viewData;
-    console.log('ViewSelectorChange' + viewData);
     actions.updateParams({viewId});
     actions.updateMetricsDimensionsAndSortOptions(viewData);
   }
@@ -75,8 +74,7 @@ export default class RequestComposer extends React.Component {
    * @param Int last The index of the last selected request tab.
    */
   handleRequestChange = (index, last) => {
-    // See issue https://github.com/reactjs/react-tabs/issues/51
-    setTimeout(wrap(this.props.actions.updateSettings({requestType: REQUEST_TYPES[index]})),0);
+    this.props.actions.updateSettings({requestType: REQUEST_TYPES[index]})
   }
 
   /**
@@ -122,7 +120,7 @@ export default class RequestComposer extends React.Component {
     let property = summaries.getPropertyByViewId(viewId);
 
 
-    let request = composeRequest(params);
+    let request = composeRequest(params, settings);
     gapi.client.analyticsreporting.reports.batchGet(request
       ).then(function(response) {
         //console.log(resp.result);
@@ -257,7 +255,7 @@ export default class RequestComposer extends React.Component {
 
       <Tabs
         onSelect={this.handleRequestChange}
-        selectedIndex={2}
+        selectedIndex={REQUEST_TYPES.indexOf(settings.requestType)}
       >
         <TabList>
           <Tab>Histogram Request</Tab>
@@ -494,6 +492,7 @@ export default class RequestComposer extends React.Component {
 
         <RequestViewer 
           params={params}
+          settings={settings}
         />
 
         <BarChartComponent

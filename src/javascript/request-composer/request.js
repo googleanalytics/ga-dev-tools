@@ -44,8 +44,8 @@ const DEFAULT_REQUEST =
   ]
 };
 
-export function composeRequest(params) {
-  console.log(params);
+export function composeRequest(params, settings) {
+  console.log(settings);
   
   var template = DEFAULT_REQUEST;
   template.reportRequests[0].viewId = params.viewId;
