@@ -101,7 +101,7 @@ export default class RequestComposer extends React.Component {
    */
   handleSubmit = async (e) => {
     e.preventDefault();
-    let {actions, params} = this.props;
+    let {actions, params, settings} = this.props;
     let paramsClone = {...params};
 
     actions.updateReport({params: paramsClone});
@@ -123,13 +123,11 @@ export default class RequestComposer extends React.Component {
     let request = composeRequest(params, settings);
     gapi.client.analyticsreporting.reports.batchGet(request
       ).then(function(response) {
-        //console.log(resp.result);
         console.log('REQUEST COMPOSER QUERY SUCCEEDED!!!');
         actions.updateResponse(response);
       }, function(response) {
         //"{ "error": { "code": 400, "message": "Invalid value at 'report_requests[0].dimensions[0].histogram_buckets[1]' (TYPE_INT64), \" 343\"\nInvalid value at 'report_requests[0].dimensions[0].histogram_buckets[2]' (TYPE_INT64), \" 100\"", "status": "INVALID_ARGUMENT", "details": [ { "@type": "type.googleapis.com/google.rpc.BadRequest", "fieldViolations": [ { "field": "report_requests[0].dimensions[0].histogram_buckets[1]", "description": "Invalid value at 'report_requests[0].dimensions[0].histogram_buckets[1]' (TYPE_INT64), \" 343\"" }, { "field": "report_requests[0].dimensions[0].histogram_buckets[2]", "description": "Invalid value at 'report_requests[0].dimensions[0].histogram_buckets[2]' (TYPE_INT64), \" 100\"" } ] } ] } } "
         console.log('REQUST COMPOSER QUERY FAILED!!!!!');
-        //console.log(response.body.error.message);
         actions.updateResponse(response)
     });
 
@@ -143,93 +141,10 @@ export default class RequestComposer extends React.Component {
 
 
   /**
-   * Invoked when the DataChart component's "success" event emits.
-   * @param {Object} data The object emitted by the DataChart's "success" event.
-   */
-  handleDataChartSuccess = (data) => {
-    this.props.actions.setQueryState(false);
-    this.props.actions.updateReport({response: data.response});
-
-    ga('send', {
-      hitType: 'event',
-      eventCategory: 'query',
-      eventAction: 'submit',
-      eventLabel: '(200) OK',
-      metric1: 1
-    });
-  }
-
-
-  /**
-   * Invoked when the DataChart component's "error" event emits.
-   * @param {Object} data The error emitted by the DataChart's "error" event.
-   */
-  handleDataChartError = ({error: {code, message}}) => {
-    this.props.actions.setQueryState(false);
-    this.props.actions.updateReport({params: null, response: null});
-
-    AlertDispatcher.addOnce({
-      title: `Ack! There was an error (${code})`,
-      message: message
-    });
-
-    ga('send', {
-      hitType: 'event',
-      eventCategory: 'query',
-      eventAction: 'submit',
-      eventLabel: `(${code}) ${message}`,
-      metric2: 1
-    });
-  }
-
-
-  /**
-   * Invoked when a user clicks on the include `viewId` checkbox.
-   * @param {{target: Element}} includeViewId The React event.
-   */
-  handleViewIdToggle = ({target: {checked: includeViewId}}) => {
-    this.props.actions.updateSettings({includeViewId});
-  }
-
-
-  /**
-   * Invoked when a user clicks on the include `access_token` checkbox.
-   * @param {{target: Element}} includeAccessToken The React event.
-   */
-  handleAccessTokenToggle = ({target: {checked: includeAccessToken}}) => {
-    this.props.actions.updateSettings({includeAccessToken});
-  }
-
-  /**
-   * Invoked when a user focuses on the "Direct link to this report" textarea.
-   */
-  handleDirectLinkFocus() {
-    ga('send', 'event', 'query direct link', 'focus');
-  }
-
-
-  /**
-   * Invoked when a user focuses on the "API Query URI" textarea.
-   */
-  handleApiUriFocus() {
-    ga('send', 'event', 'query api uri', 'focus');
-  }
-
-
-  /**
-   * Invoked when a user clicks the "Download Results as TSV" button.
-   */
-  handleDownloadTsvClick() {
-    ga('send', 'event', 'query tsv download', 'click');
-  }
-
-
-  /**
    * React lifecycyle method below:
    * http://facebook.github.io/react/docs/component-specs.html
    * ---------------------------------------------------------
    */
-
   render() {
 
     let {
