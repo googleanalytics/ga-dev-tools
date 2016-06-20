@@ -18,6 +18,7 @@
 
 import React from 'react';
 import { Bar } from 'react-chartjs';
+import AlertDispatcher from '../../components/alert-dispatcher';
 
 
 var chartOptions = {
@@ -110,6 +111,10 @@ export default class BarChartComponent extends React.Component {
     let {response} = this.props;
     //checkHttpResponseCode(response);
     if (response.status > 200) {
+        AlertDispatcher.addOnce({
+        title: 'Oops, there bad access error',
+        message: response.result.error.message
+       });
       return (
           <div>
             <h2>Query Results</h2>
