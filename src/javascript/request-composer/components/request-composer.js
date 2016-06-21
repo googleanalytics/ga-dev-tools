@@ -271,6 +271,77 @@ export default class RequestComposer extends React.Component {
             </div>
           </div>
 
+          {settings.requestType == 'PIVOT' ? (
+          <div className={formControlClass}>
+            <label className="FormControl-label">Pivot Metrics</label>
+            <div className="FormControl-body">
+              <div className="FlexLine">
+                <Select2MultiSuggest
+                  name="metrics"
+                  value={params.pivotmetrics}
+                  tags={select2Options.metrics}
+                  onChange={this.handleParamChange}/>
+                <HelpIconLink name="Pivot.FIELDS.metrics" />
+              </div>
+            </div>
+          </div>
+          ) :
+          null}
+
+          {settings.requestType == 'PIVOT' ? (
+          <div className={formControlClass}>
+            <label className="FormControl-label">Pivot Dimensions</label>
+            <div className="FormControl-body">
+              <div className="FlexLine">
+                <Select2MultiSuggest
+                  name="dimensions"
+                  value={params.pivotdimensions}
+                  tags={select2Options.dimensions}
+                  onChange={this.handleParamChange}
+                  disabled={settings.requestType == 'PIVOT'}/>
+                <HelpIconLink name="Pivot.FIELDS.dimensions" />
+              </div>
+            </div>
+          </div>
+          ) :
+          null}
+
+          {settings.requestType == 'PIVOT' ? (
+          <div className={formControlClass}>
+            <label className="FormControl-label">Pivot startGroup</label>
+            <div className="FormControl-body">
+              <div className="FlexLine">
+                <input
+                  className="FormField FormFieldCombo-field"
+                  name="start-index"
+                  value={params['startGroup'] || ''}
+                  onChange={this.handleParamChange}
+                  disabled={settings.requestType == 'PIVOT'} />
+                <HelpIconLink name="Pivot.FIELDS.startGroupCount" />
+              </div>
+            </div>
+          </div>
+          ) :
+          null}
+
+          {settings.requestType == 'PIVOT' ? (
+          <div className={formControlClass}>
+            <label className="FormControl-label">Pivot maxGroupCount</label>
+            <div className="FormControl-body">
+              <div className="FlexLine">
+                <input
+                  className="FormField FormFieldCombo-field"
+                  name="max-results"
+                  value={params['maxGroupCount'] || ''}
+                  onChange={this.handleParamChange} 
+                  disabled={settings.requestType == 'PIVOT'}/>
+                <HelpIconLink name="Pivot.FIELDS.maxGroupCount" />
+              </div>
+            </div>
+          </div>
+          ) :
+          null}
+
           <div className={formControlClass}>
             <label className="FormControl-label">Order By</label>
             <div className="FormControl-body">
@@ -285,6 +356,7 @@ export default class RequestComposer extends React.Component {
             </div>
           </div>
 
+          {settings.requestType == 'HISTOGRAM' ? (
           <div className={formControlClass}>
             <label className="FormControl-label">Buckets</label>
             <div className="FormControl-body">
@@ -298,6 +370,8 @@ export default class RequestComposer extends React.Component {
               </div>
             </div>
           </div>
+          ) :
+          null}
 
           <div className={formControlClass}>
             <label className="FormControl-label">filters</label>
