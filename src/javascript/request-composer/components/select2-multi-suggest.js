@@ -177,7 +177,8 @@ export default class Select2MultiSuggest extends React.Component {
         formatSelection: this.s2TagTemplate,
         formatResult: this.s2DropdownItemTemplate,
         tokenizer: this.tokenizer,
-        matcher: this.matcher
+        matcher: this.matcher,
+        maximumSelectionSize: this.props.maximumSelectionSize
       };
       $(ReactDOM.findDOMNode(this)).select2(opts);
     }

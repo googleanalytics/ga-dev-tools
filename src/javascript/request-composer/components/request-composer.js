@@ -159,6 +159,7 @@ export default class RequestComposer extends React.Component {
     let formControlClass = 'FormControl FormControl--inline';
     let formActionClass = formControlClass + ' FormControl--action';
     let requiredFormControlClass = formControlClass +' FormControl--required';
+    let maximumSelectionSize = 2;
 
     return (
       <div>
@@ -251,7 +252,8 @@ export default class RequestComposer extends React.Component {
                   name="metrics"
                   value={params.metrics}
                   tags={select2Options.metrics}
-                  onChange={this.handleParamChange} />
+                  onChange={this.handleParamChange}
+                  maximumSelectionSize={maximumSelectionSize} />
                 <HelpIconLink name="ReportRequest.FIELDS.metrics" />
               </div>
             </div>
@@ -265,7 +267,8 @@ export default class RequestComposer extends React.Component {
                   name="dimensions"
                   value={params.dimensions}
                   tags={select2Options.dimensions}
-                  onChange={this.handleParamChange} />
+                  onChange={this.handleParamChange}
+                  maximumSelectionSize={maximumSelectionSize} />
                 <HelpIconLink name="ReportRequest.FIELDS.dimensions" />
               </div>
             </div>
@@ -280,7 +283,8 @@ export default class RequestComposer extends React.Component {
                   name="metrics"
                   value={params.pivotmetrics}
                   tags={select2Options.metrics}
-                  onChange={this.handleParamChange}/>
+                  onChange={this.handleParamChange}
+                  maximumSelectionSize={maximumSelectionSize} />
                 <HelpIconLink name="Pivot.FIELDS.metrics" />
               </div>
             </div>
@@ -350,7 +354,8 @@ export default class RequestComposer extends React.Component {
                   name="sort"
                   value={params.sort}
                   tags={select2Options.sort}
-                  onChange={this.handleParamChange} />
+                  onChange={this.handleParamChange}
+                  maximumSelectionSize={maximumSelectionSize} />
                 <HelpIconLink name="ReportRequest.FIELDS.order_bys" />
               </div>
             </div>
