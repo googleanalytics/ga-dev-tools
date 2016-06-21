@@ -38,6 +38,7 @@ import SearchSuggest from '../../components/search-suggest';
  */
 const PARAMS_TO_TRACK = ['startDate', 'endDate', 'metrics', 'dimensions'];
 const REQUEST_TYPES = ['HISTOGRAM', 'PIVOT', 'COHORT'];
+const COHORT_SIZES = ['Day', 'Week', 'Month'];
 
 
 export default class RequestComposer extends React.Component {
@@ -75,6 +76,7 @@ export default class RequestComposer extends React.Component {
    */
   handleRequestChange = (index, last) => {
     this.props.actions.updateSettings({requestType: REQUEST_TYPES[index]})
+    actions.updateMetricsDimensionsAndSortOptions(viewData);
   }
 
   /**
@@ -218,6 +220,7 @@ export default class RequestComposer extends React.Component {
             </div>
           </div>
 
+          {settings.requestType != 'COHORT' ? (
           <div className={requiredFormControlClass}>
             <label className="FormControl-label">startDate</label>
             <div className="FormControl-body">
@@ -230,7 +233,10 @@ export default class RequestComposer extends React.Component {
               </div>
             </div>
           </div>
+          ) :
+          null}
 
+          {settings.requestType != 'COHORT' ? (
           <div className={requiredFormControlClass}>
             <label className="FormControl-label">endDate</label>
             <div className="FormControl-body">
@@ -243,7 +249,10 @@ export default class RequestComposer extends React.Component {
               </div>
             </div>
           </div>
-
+          ) :
+          null}
+ 
+          {settings.requestType != 'COHORT' ? (
           <div className={requiredFormControlClass}>
             <label className="FormControl-label">metrics</label>
             <div className="FormControl-body">
@@ -258,7 +267,10 @@ export default class RequestComposer extends React.Component {
               </div>
             </div>
           </div>
+          ) :
+          null}
 
+          {settings.requestType != 'COHORT' ? (
           <div className={formControlClass}>
             <label className="FormControl-label">dimensions</label>
             <div className="FormControl-body">
@@ -273,6 +285,47 @@ export default class RequestComposer extends React.Component {
               </div>
             </div>
           </div>
+          ) :
+          null}
+
+          {settings.requestType == 'COHORT' ? (
+          <div className={requiredFormControlClass}>
+            <label className="FormControl-label">Cohort Metric</label>
+            <div className="FormControl-body">
+              <div className="FlexLine">
+                <Select2MultiSuggest
+                  name="metrics"
+                  value={params.cohortmetric}
+                  tags={select2Options.metrics}
+                  onChange={this.handleParamChange}
+                  maximumSelectionSize={1} />
+                <HelpIconLink name="ReportRequest.FIELDS.metrics" />
+              </div>
+            </div>
+          </div>
+          ) :
+          null}
+
+          {settings.requestType == 'COHORT' ? (
+          <div className={requiredFormControlClass}>
+            <label className="FormControl-label">Cohort Size</label>
+            <div className="FormControl-body">
+              <div className="FlexLine">
+                <select
+                  className="FormField FormFieldCombo-field"
+                  value={params.cohortSize}
+                  onChange={this.handleParamChange}>
+                  {COHORT_SIZES.map((option) => (
+                    <option value={option} key={option}>{option}</option>
+                  ))}
+                </select>
+                <HelpIconLink name="ReportRequest.FIELDS.cohorts" />
+              </div>
+            </div>
+          </div>
+          ) :
+          null}
+
 
           {settings.requestType == 'PIVOT' ? (
           <div className={formControlClass}>
