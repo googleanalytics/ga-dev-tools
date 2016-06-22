@@ -63,18 +63,16 @@ gulp.task('css', function() {
 
 gulp.task('images', function() {
   return merge(
-    gulp.src('src/images/**/*.svg')
-        .pipe(gulp.dest('public/images')),
-
-    gulp.src('src/images/**/*.png')
-        .pipe(imagemin({use: [pngquant()]}))
-        .pipe(gulp.dest('public/images')),
-
-    gulp.src('src/images/**/*.png')
-        .pipe(resize({width : '50%'}))
-        .pipe(imagemin({use: [pngquant()]}))
-        .pipe(rename((p) => p.basename = p.basename.replace('-2x', '')))
-        .pipe(gulp.dest('public/images'))
+      gulp.src('src/images/**/*.svg')
+          .pipe(gulp.dest('public/images')),
+      gulp.src('src/images/**/*.png')
+          .pipe(imagemin({use: [pngquant()]}))
+          .pipe(gulp.dest('public/images')),
+      gulp.src('src/images/**/*.png')
+          .pipe(resize({width : '50%'}))
+          .pipe(imagemin({use: [pngquant()]}))
+          .pipe(rename((p) => p.basename = p.basename.replace('-2x', '')))
+          .pipe(gulp.dest('public/images'))
   );
 });
 
