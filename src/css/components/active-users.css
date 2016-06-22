@@ -15,12 +15,6 @@ limitations under the License.
 */
 
 
-@import './site';
-
-/**
- * ActiveUsers Component
- */
-
 .ActiveUsers {
   background: var(--bg-color-light);
   border: 1px solid var(--border-color);

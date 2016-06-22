@@ -54,27 +54,31 @@ gulp.task('css', function() {
     compress: isProd(),
     url: {url: 'inline'}
   }
-  return gulp.src('./src/css/index.css')
-      .pipe(plumber({errorHandler: streamError}))
-      .pipe(cssnext(opts))
-      .pipe(gulp.dest('public/css'));
+  return merge(
+      gulp.src('./src/css/index.css')
+          .pipe(plumber({errorHandler: streamError}))
+          .pipe(cssnext(opts))
+          .pipe(gulp.dest('public/css')),
+      gulp.src('./src/css/chartjs-visualizations.css')
+          .pipe(plumber({errorHandler: streamError}))
+          .pipe(cssnext(opts))
+          .pipe(gulp.dest('public/css'))
+  );
 });
 
 
 gulp.task('images', function() {
   return merge(
-    gulp.src('src/images/**/*.svg')
-        .pipe(gulp.dest('public/images')),
-
-    gulp.src('src/images/**/*.png')
-        .pipe(imagemin({use: [pngquant()]}))
-        .pipe(gulp.dest('public/images')),
-
-    gulp.src('src/images/**/*.png')
-        .pipe(resize({width : '50%'}))
-        .pipe(imagemin({use: [pngquant()]}))
-        .pipe(rename((p) => p.basename = p.basename.replace('-2x', '')))
-        .pipe(gulp.dest('public/images'))
+      gulp.src('src/images/**/*.svg')
+          .pipe(gulp.dest('public/images')),
+      gulp.src('src/images/**/*.png')
+          .pipe(imagemin({use: [pngquant()]}))
+          .pipe(gulp.dest('public/images')),
+      gulp.src('src/images/**/*.png')
+          .pipe(resize({width : '50%'}))
+          .pipe(imagemin({use: [pngquant()]}))
+          .pipe(rename((p) => p.basename = p.basename.replace('-2x', '')))
+          .pipe(gulp.dest('public/images'))
   );
 });
 
