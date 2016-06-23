@@ -48,9 +48,9 @@ export default class RequestViewer extends React.Component {
   }
 
   render() {
-    let {params} = this.props;
+    let {params, settings} = this.props;
 
-    let formatted = syntaxHighlight(composeRequest(params), null, 2);
+    let formatted = syntaxHighlight(composeRequest(params, settings), null, 2);
 
     return (
       <div>
