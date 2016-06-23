@@ -44,8 +44,54 @@ const DEFAULT_REQUEST =
   ]
 };
 
+function buildReportRequest(params) {
+  if (!params) {
+    return null;
+  }
+  reportRequest = {
+      "viewId": params.viewId,
+      "pageSize": params.pageSize,
+      "samplingLevel": params.samplingLevel
+  };
+  return reportRequest;
+}
+
+function applyDateRanges(request, params) {
+  request.dateRanges = [{
+    "startDate": params.startDate,
+    "endDate": params.endDate
+  }]
+  return request;
+}
+
+function applyMetrics(request, params) {
+  request.metrics = []
+
+  let metrics = params.metrics.split(',');
+  for (var i in metrics) {
+    request.metrics.push({'expression': metrics[i]});
+  }
+  return request;
+}
+
+function applyDimensions(request, params) {
+
+  return request;
+}
+
+function buildRequest(params) {
+  if (params) {
+    requset = buildReportRequest(params);
+    applyDateRanges(request, params);
+    applyMetrics(request, params);
+    return request;
+  } else {
+    return null;
+  }
+}
+
 export function composeRequest(params, settings) {
-  console.log(settings);
+  //console.log(buildRequest(params));
   
   var template = DEFAULT_REQUEST;
   template.reportRequests[0].viewId = params.viewId;

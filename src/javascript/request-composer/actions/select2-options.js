@@ -254,7 +254,7 @@ function getSegmentsOptions(useDefinition) {
 
 
 /**
- * Gets a list of all public, v4 metrics associated with the passed view.
+ * Gets a list of all public metrics associated with the passed view.
  * @param {Object} account An account object from accountSummaries.list.
  * @param {Object} property A property object from accountSummaries.list.
  * @param {Object} view A view object from accountSummaries.list.
@@ -263,15 +263,14 @@ function getSegmentsOptions(useDefinition) {
 function getMetrics(account, property, view) {
   return metadata.getAuthenticated(account, property, view).then(
       (columns) => columns.allMetrics({
-        status: 'PUBLIC',
-        addedInApiVersion: '4'
+        status: 'PUBLIC'
       }));
 }
 
 
 
 /**
- * Gets a list of all public, v4 dimensions associated with the passed view.
+ * Gets a list of all public dimensions associated with the passed view.
  * @param {Object} account An account object from accountSummaries.list.
  * @param {Object} property A property object from accountSummaries.list.
  * @param {Object} view A view object from accountSummaries.list.
@@ -282,6 +281,5 @@ function getDimensions(account, property, view) {
   return metadata.getAuthenticated(account, property, view).then(
       (columns) => columns.allDimensions({
         status: 'PUBLIC',
-        addedInApiVersion: '4'
       }));
 }
