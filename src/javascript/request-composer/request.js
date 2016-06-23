@@ -12,43 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-const DEFAULT_REQUEST =
-
-{
-  "reportRequests": 
-  [
-    {
-      "viewId": "1174",
-      "dateRanges": 
-      [
-        {
-          "startDate": "2015-01-01",
-          "endDate": "2015-02-01"
-        }
-      ],
-      "dimensions": [],
-      "metrics": 
-      [
-        {
-          "expression": "ga:sessions"
-        }
-      ],
-      "orderBys": 
-      [
-        {
-          "fieldName": "ga:sessionCount",
-          "orderType": "HISTOGRAM_BUCKET"
-        }
-      ]
-    }
-  ]
-};
 
 function buildReportRequest(params) {
   if (!params) {
     return null;
   }
-  reportRequest = {
+  var reportRequest = {
       "viewId": params.viewId,
       "pageSize": params.pageSize,
       "samplingLevel": params.samplingLevel
@@ -56,61 +25,40 @@ function buildReportRequest(params) {
   return reportRequest;
 }
 
-function applyDateRanges(request, params) {
-  request.dateRanges = [{
-    "startDate": params.startDate,
-    "endDate": params.endDate
-  }]
-  return request;
-}
-
-function applyMetrics(request, params) {
-  request.metrics = []
-
-  let metrics = params.metrics.split(',');
-  for (var i in metrics) {
-    request.metrics.push({'expression': metrics[i]});
+function applyDateRanges(request, params, settings) {
+  if (params.startDate &&
+      params.endDate &&
+      settings.requestType != 'COHORT') {
+    request.dateRanges = [{
+      "startDate": params.startDate,
+      "endDate": params.endDate
+    }]
   }
   return request;
 }
 
-function applyDimensions(request, params) {
+function applyMetrics(request, params, settings) {
+  if (params.metrics) {
+    request.metrics = []
 
-  return request;
-}
-
-function buildRequest(params) {
-  if (params) {
-    requset = buildReportRequest(params);
-    applyDateRanges(request, params);
-    applyMetrics(request, params);
+    let metrics = params.metrics.split(',');
+    for (var i in metrics) {
+      request.metrics.push({'expression': metrics[i]});
+    }
     return request;
-  } else {
-    return null;
   }
 }
 
-export function composeRequest(params, settings) {
-  //console.log(buildRequest(params));
-  
-  var template = DEFAULT_REQUEST;
-  template.reportRequests[0].viewId = params.viewId;
-  template.reportRequests[0].dateRanges[0].startDate = params.startDate;
-  template.reportRequests[0].dateRanges[0].endDate = params.endDate;
-
-
-  // Handle the dimensions field.
+function applyDimensions(request, params, settings) {
   if (params.dimensions) {
-    // Clear the dimensions.
-    template.reportRequests[0].dimensions = [];
+    request.dimensions = []
 
-    // Get the dimensions from the model and populate the dimensions array.
     let dimensions = params.dimensions.split(',');
     for (var i in dimensions) {
-
-      var dimension = {'name': dimensions[i]}
-
-      if (params.buckets) {
+      var dimension = {'name': dimensions[i]};
+      if (settings.requestType && 
+          settings.requestType == 'HISTOGRAM' &&
+          params.buckets) {
         var histogramBuckets = [];
         var buckets = params.buckets.split(/[ ,]+/);
         for (var j in buckets) {
@@ -118,56 +66,30 @@ export function composeRequest(params, settings) {
         }
         dimension.histogramBuckets = histogramBuckets;
       }
-      template.reportRequests[0].dimensions.push(dimension);
+      request.dimensions.push(dimension);
     }
-  } else {
-    delete template.reportRequests[0].dimensions;
   }
+  return request;
+}
 
-  // Handle the metrics field.
-  if (params.metrics) {
-    // Clear the metrics.
-    template.reportRequests[0].metrics = []
-
-    // Get the metrics from the model and populate the metrics array.
-    let metrics = params.metrics.split(',');
-    for (var i in metrics) {
-      template.reportRequests[0].metrics.push({'expression': metrics[i]});
-    }
-  } else {
-    delete template.reportRequests[0].metrics;
-  }
-
-  // Handle the segment parameter.
+function applySegment(request, params) {
   if (params.segment) {
-    // Clear the segment definition.
-    template.reportRequests[0].segments = [];
+    request.segments = [{'segmentId': params.segment}];
 
-    // Get the segment from the model and populate the segments array.
-    template.reportRequests[0].segments = [{'segmentId': params.segment}];
-    // Add the ga:segment dimension.
-    if (template.reportRequests[0].dimensions) {
-      template.reportRequests[0].dimensions.push({'name': 'ga:segment'});
-    } else {
-      template.reportRequests[0].dimensions = {'name': 'ga:segment'};
-    }
-  } else {
-    delete template.reportRequests[0].segments
+    // Get current dimensions if they exist otherwise empty list.
+    var dimensions = request.dimensions ? request.dimensions : [];
+
+    // Add the `ga:segment` dimension to the list.
+    dimensions.push({'name': 'ga:segment'});
+    request.dimensions = dimensions;
   }
+  return request;
+}
 
-  if (params.filters) {
-    // Set the filtersExpression.
-    template.reportRequests[0].filtersExpression = params.filters;
-  } else {
-    delete template.reportRequests[0].filtersExpression;
-  }
-
-  // Handle the sort (OrderBys) parameter.
+function applyOrderBys(request, params, settings) {
   if (params.sort) {
-    // Clear the orderBys definition.
-    template.reportRequests[0].orderBys = [];
+    request.orderBys = [];
 
-    // Get the dimsmets from the model and populate the orderBys array.
     let dimsmets = params.sort.split(',');
     for (var i in dimsmets) {
       var orderBy = {};
@@ -181,15 +103,23 @@ export function composeRequest(params, settings) {
       }
       orderBy.fieldName = fieldName;
 
-      // Check if this is dimension.
-      if (params.dimensions.indexOf(fieldName) > -1) {
-        // It is a dimension.
+      if (params.dimensions.indexOf(fieldName) > -1 &&
+          settings.requestType &&
+          settings.requestType == 'HISTOGRAM') {
         orderBy.orderType = 'HISTOGRAM_BUCKET';
       }
-
-      template.reportRequests[0].orderBys.push(orderBy);
+      request.orderBys.push(orderBy);
     }
   }
+}
 
-  return template;
+export function composeRequest(params, settings) {
+  var reportRequest = buildReportRequest(params);
+  applyDateRanges(reportRequest, params, settings);
+  applyMetrics(reportRequest, params, settings);
+  applyDimensions(reportRequest, params, settings);
+  applySegment(reportRequest, params);
+  applyOrderBys(reportRequest, params, settings);
+  let request = {'reportRequests': [reportRequest]};
+  return request;
 }
