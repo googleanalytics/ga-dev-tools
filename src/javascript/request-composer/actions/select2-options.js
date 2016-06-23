@@ -144,12 +144,14 @@ export function updateMetricsDimensionsAndSortOptions(viewData) {
   return async function(dispatch, getState) {
     let {account, property, view} = viewData;
     let {params} = getState();
-    let {metrics, dimensions} = await getMetricsAndDimensionsOptions(
+    let {metrics, dimensions,
+         pivotMetrics, pivotDimensions,
+         cohortMetrics} = await getMetricsAndDimensionsOptions(
         account, property, view);
 
     let sort = getSortOptions(params, metrics, dimensions);
 
-    dispatch(updateSelect2Options({metrics, dimensions, sort}));
+    dispatch(updateSelect2Options({metrics, dimensions, pivotMetrics, pivotDimensions, cohortMetrics, sort}));
   };
 }
 
@@ -197,7 +199,28 @@ function getMetricsAndDimensionsOptions(account, property, view) {
         group: dimension.attributes.group
       };
     });
-    return {metrics, dimensions};
+    let pivotMetrics = data[0].map(function(metric) {
+      return {
+        id: metric.id,
+        name: metric.attributes.uiName,
+        group: metric.attributes.group
+      };
+    });
+    let pivotDimensions = data[1].map(function(dimension) {
+      return {
+        id: dimension.id,
+        name: dimension.attributes.uiName,
+        group: dimension.attributes.group
+      };
+    });
+    let cohortMetrics = data[0].map(function(metric) {
+      return {
+        id: metric.id,
+        name: metric.attributes.uiName,
+        group: metric.attributes.group
+      };
+    });
+    return {metrics, dimensions, pivotMetrics, pivotDimensions, cohortMetrics};
   });
 }
 

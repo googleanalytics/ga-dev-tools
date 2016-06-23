@@ -27,7 +27,10 @@ const PARAMS = [
   'include-empty-rows',
   'start-index',
   'pageSize',
-  'cohortSize'
+  'cohortSize',
+  'pivotMetrics',
+  'pivotDimensions',
+  'cohortMetrics'
 ];
 
 

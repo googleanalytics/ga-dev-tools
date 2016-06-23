@@ -303,9 +303,9 @@ export default class RequestComposer extends React.Component {
             <div className="FormControl-body">
               <div className="FlexLine">
                 <Select2MultiSuggest
-                  name="metrics"
-                  value={params.cohortmetric}
-                  tags={select2Options.metrics}
+                  name="cohortMetrics"
+                  value={params.cohortMetrics}
+                  tags={select2Options.cohortMetrics}
                   onChange={this.handleParamChange}
                   maximumSelectionSize={1} />
                 <HelpIconLink name="ReportRequest.FIELDS.metrics" />
@@ -342,9 +342,9 @@ export default class RequestComposer extends React.Component {
             <div className="FormControl-body">
               <div className="FlexLine">
                 <Select2MultiSuggest
-                  name="metrics"
-                  value={params.pivotmetrics}
-                  tags={select2Options.metrics}
+                  name="pivotMetrics"
+                  value={params.pivotMetrics}
+                  tags={select2Options.pivotMetrics}
                   onChange={this.handleParamChange}
                   maximumSelectionSize={maximumSelectionSize} />
                 <HelpIconLink name="Pivot.FIELDS.metrics" />
@@ -360,9 +360,9 @@ export default class RequestComposer extends React.Component {
             <div className="FormControl-body">
               <div className="FlexLine">
                 <Select2MultiSuggest
-                  name="dimensions"
-                  value={params.pivotdimensions}
-                  tags={select2Options.dimensions}
+                  name="pivotDimensions"
+                  value={params.pivotDimensions}
+                  tags={select2Options.pivotDimensions}
                   onChange={this.handleParamChange}
                   disabled={settings.requestType == 'PIVOT'}/>
                 <HelpIconLink name="Pivot.FIELDS.dimensions" />

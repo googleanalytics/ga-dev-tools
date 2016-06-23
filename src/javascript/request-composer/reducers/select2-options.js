@@ -19,6 +19,9 @@ import * as types from '../actions/types';
 let defaultOptions = {
   metrics: [],
   dimensions: [],
+  pivotMetrics: [],
+  pivotDimensions: [],
+  cohortMetrics: [],
   sort: [],
   segments: []
 };
