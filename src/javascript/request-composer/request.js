@@ -113,6 +113,42 @@ function applyOrderBys(request, params, settings) {
   }
 }
 
+function applyPivotDimensions(pivot, params) {
+  if (params.pivotDimensions) {
+    pivot.dimensions = []
+
+    let dimensions = params.pivotDimensions.split(',');
+    for (var i in dimensions) {
+      var dimension = {'name': dimensions[i]};
+      pivot.dimensions.push(dimension);
+    }
+  }
+  return pivot;
+}
+
+function applyPivotMetrics(pivot, params) {
+  if (params.pivotMetrics) {
+    pivot.metrics = []
+
+    let metrics = params.pivotMetrics.split(',');
+    for (var i in metrics) {
+      var metric = {'expression': metrics[i]};
+      pivot.metrics.push(metric);
+    }
+  }
+  return pivot;
+}
+
+function applyPivots(request, params, settings) {
+  if (settings.requestType == 'PIVOT' ) {
+    var pivot = {};
+    applyPivotDimensions(pivot, params);
+    applyPivotMetrics(pivot, params);
+    request.pivots = [pivot];
+  }
+  return request;
+}
+
 export function composeRequest(params, settings) {
   var reportRequest = buildReportRequest(params);
   applyDateRanges(reportRequest, params, settings);
@@ -120,6 +156,7 @@ export function composeRequest(params, settings) {
   applyDimensions(reportRequest, params, settings);
   applySegment(reportRequest, params);
   applyOrderBys(reportRequest, params, settings);
+  applyPivots(reportRequest, params, settings);
   let request = {'reportRequests': [reportRequest]};
   return request;
 }
