@@ -14,9 +14,6 @@
 
 
 function buildReportRequest(params) {
-  if (!params) {
-    return null;
-  }
   var reportRequest = {
       "viewId": params.viewId,
       "pageSize": params.pageSize,
@@ -38,15 +35,24 @@ function applyDateRanges(request, params, settings) {
 }
 
 function applyMetrics(request, params, settings) {
-  if (params.metrics) {
-    request.metrics = []
+  if (params.metrics &&
+      settings.requestType != 'COHORT') {
+    request.metrics = [];
 
     let metrics = params.metrics.split(',');
     for (var i in metrics) {
       request.metrics.push({'expression': metrics[i]});
     }
-    return request;
+  } else if (params.cohortMetrics &&
+             settings.requestType == 'COHORT') {
+    request.metrics = [];
+
+    let metrics = params.cohortMetrics.split(',');
+    for (var i in metrics) {
+      request.metrics.push({'expression': metrics[i]});
+    }
   }
+  return request;
 }
 
 function applyDimensions(request, params, settings) {
@@ -150,6 +156,9 @@ function applyPivots(request, params, settings) {
 }
 
 export function composeRequest(params, settings) {
+  if (!params || !settings) {
+    return null;
+  }
   var reportRequest = buildReportRequest(params);
   applyDateRanges(reportRequest, params, settings);
   applyMetrics(reportRequest, params, settings);
