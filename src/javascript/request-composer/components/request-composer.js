@@ -39,6 +39,7 @@ import SearchSuggest from '../../components/search-suggest';
 const PARAMS_TO_TRACK = ['startDate', 'endDate', 'metrics', 'dimensions'];
 const REQUEST_TYPES = ['HISTOGRAM', 'PIVOT', 'COHORT'];
 const COHORT_SIZES = ['Day', 'Week', 'Month'];
+const SAMPLING_LEVELS = ['DEFAULT', 'SMALL', 'LARGE'];
 
 
 export default class RequestComposer extends React.Component {
@@ -473,11 +474,14 @@ export default class RequestComposer extends React.Component {
             <label className="FormControl-label">samplingLevel</label>
             <div className="FormControl-body">
               <div className="FlexLine">
-                <input
+                <select
                   className="FormField FormFieldCombo-field"
-                  name="samplingLevel"
                   value={params.samplingLevel}
-                  onChange={this.handleParamChange} />
+                  onChange={this.handleParamChange}>
+                  {SAMPLING_LEVELS.map((option) => (
+                    <option value={option} key={option}>{option}</option>
+                  ))}
+                </select>
                 <HelpIconLink name="ReportRequest.FIELDS.sampling_level" />
               </div>
             </div>
