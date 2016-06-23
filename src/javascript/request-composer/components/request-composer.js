@@ -76,8 +76,16 @@ export default class RequestComposer extends React.Component {
    * @param Int last The index of the last selected request tab.
    */
   handleRequestChange = (index, last) => {
-    this.props.actions.updateSettings({requestType: REQUEST_TYPES[index]})
-    actions.updateMetricsDimensionsAndSortOptions(viewData);
+    this.props.actions.updateSettings({requestType: REQUEST_TYPES[index]});
+  }
+
+
+  handleSamplingLevelChange = ({target: {name, value}}) => {
+    this.props.actions.updateParams({'samplingLevel': value});
+  }
+
+  handleCohortSizeChange = ({target: {name, value}}) => {
+    this.props.actions.updateParams({'cohortSize': value});
   }
 
   /**
@@ -315,7 +323,7 @@ export default class RequestComposer extends React.Component {
                 <select
                   className="FormField FormFieldCombo-field"
                   value={params.cohortSize}
-                  onChange={this.handleParamChange}>
+                  onChange={this.handleCohortSizeChange}>
                   {COHORT_SIZES.map((option) => (
                     <option value={option} key={option}>{option}</option>
                   ))}
@@ -476,8 +484,8 @@ export default class RequestComposer extends React.Component {
               <div className="FlexLine">
                 <select
                   className="FormField FormFieldCombo-field"
-                  value={params.samplingLevel}
-                  onChange={this.handleParamChange}>
+                  value={params['samplingLevel']}
+                  onChange={this.handleSelectChange}>
                   {SAMPLING_LEVELS.map((option) => (
                     <option value={option} key={option}>{option}</option>
                   ))}
