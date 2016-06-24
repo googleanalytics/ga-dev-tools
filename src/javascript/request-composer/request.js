@@ -81,13 +81,13 @@ function applyDimensions(request, params, settings) {
     request.dimensions = [{'name': 'ga:cohort'}];
     switch(params.cohortSize) {
       case 'Day':
-        request.dimensions.push({'name': 'ga:NthDay'});
+        request.dimensions.push({'name': 'ga:cohortNthDay'});
         break;
       case 'Week':
-        request.dimensions.push({'name': 'ga:NthWeek'});
+        request.dimensions.push({'name': 'ga:cohortNthWeek'});
         break;
       case 'Month':
-        request.dimensions.push({'name': 'ga:NthMonth'});
+        request.dimensions.push({'name': 'ga:cohortNthMonth'});
         break;
     }
   }
