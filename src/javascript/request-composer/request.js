@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+import moment from 'moment';
 
 function buildReportRequest(params) {
   var reportRequest = {
@@ -170,6 +171,65 @@ function applyPivots(request, params, settings) {
   return request;
 }
 
+function applyCohorts(request, params, settings) {
+  if (settings.requestType == 'COHORT') {
+    var now = moment();
+    var cohorts = []
+    switch(params.cohortSize) {
+      case 'Day':
+        // Create cohorts for the past seven days.
+        for(var i = 0; i < 7; i++) {
+          now = now.subtract(1,'days');
+          var cohort = {
+            'type': 'FIRST_VISIT_DATE',
+            'name': now.format('YYYY-MM-DD'),
+            'dateRange': {
+              'startDate': now.format('YYYY-MM-DD'),
+              'endDate': now.format('YYYY-MM-DD')
+            }
+          };
+          cohorts.push(cohort);
+
+        }
+        break;
+      case 'Week':
+        // Create cohorts for the past 6 weeks.
+        for(var i = 0; i < 6; i++) {
+            var startDate = now.subtract(1,'week').startOf('week').format('YYYY-MM-DD');
+            var endDate = now.endOf('week').format('YYYY-MM-DD');
+            var cohort = {
+              'type': 'FIRST_VISIT_DATE',
+              'name': startDate + ' to ' + endDate,
+              'dateRange': {
+                'startDate': startDate,
+                'endDate': endDate
+              }            
+          };
+          cohorts.push(cohort);
+        }
+        break;
+      case 'Month':
+        // Create cohorts for the past 3 months.
+        for(var i = 0; i < 3; i++) {
+            var startDate = now.subtract(1,'month').startOf('month').format('YYYY-MM-DD');
+            var endDate = now.endOf('month').format('YYYY-MM-DD');
+            var cohort = {
+              'type': 'FIRST_VISIT_DATE',
+              'name':  startDate + ' to ' + endDate,
+              'dateRange': {
+                'startDate': startDate,
+                'endDate': endDate
+              } 
+            };
+            cohorts.push(cohort);
+        }
+        break;
+    }
+    request.cohortGroup = {'cohorts': cohorts}
+  }
+  return request;
+}
+
 export function composeRequest(params, settings) {
   if (!params || !settings) {
     return null;
@@ -181,6 +241,7 @@ export function composeRequest(params, settings) {
   applySegment(reportRequest, params);
   applyOrderBys(reportRequest, params, settings);
   applyPivots(reportRequest, params, settings);
+  applyCohorts(reportRequest, params, settings);
   let request = {'reportRequests': [reportRequest]};
   return request;
 }
