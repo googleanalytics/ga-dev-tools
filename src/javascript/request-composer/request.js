@@ -56,13 +56,14 @@ function applyMetrics(request, params, settings) {
 }
 
 function applyDimensions(request, params, settings) {
-  if (params.dimensions) {
+  if (params.dimensions &&
+      settings.requestType != 'COHORT') {
     request.dimensions = []
 
     let dimensions = params.dimensions.split(',');
     for (var i in dimensions) {
       var dimension = {'name': dimensions[i]};
-      if (settings.requestType && 
+      if (settings.requestType &&
           settings.requestType == 'HISTOGRAM' &&
           params.buckets) {
         var histogramBuckets = [];
@@ -73,6 +74,20 @@ function applyDimensions(request, params, settings) {
         dimension.histogramBuckets = histogramBuckets;
       }
       request.dimensions.push(dimension);
+    }
+  } else if (params.cohortSize &&
+             settings.requestType == 'COHORT') {
+    request.dimensions = [{'name': 'ga:cohort'}];
+    switch(params.cohortSize) {
+      case 'Day':
+        request.dimensions.push({'name': 'ga:NthDay'});
+        break;
+      case 'Week':
+        request.dimensions.push({'name': 'ga:NthWeek'});
+        break;
+      case 'Month':
+        request.dimensions.push({'name': 'ga:NthMonth'});
+        break;
     }
   }
   return request;
