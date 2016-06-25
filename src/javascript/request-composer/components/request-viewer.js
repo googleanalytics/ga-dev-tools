@@ -12,40 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import {composeRequest} from '../request';
+import {composeRequest, syntaxHighlight} from '../request';
 import React from 'react';
 
-const REQUEST_URI = 'POST https://analyticsreporting.googleapis.com/v4/reports:batchGet?'
-
-
-function syntaxHighlight(json) {
-    if (typeof json != 'string') {
-         json = JSON.stringify(json, undefined, 2);
-    }
-    json = json.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-    return json.replace(/("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g, function (match) {
-        var cls = 'number';
-        if (/^"/.test(match)) {
-            if (/:$/.test(match)) {
-                cls = 'key';
-            } else {
-                cls = 'string';
-            }
-        } else if (/true|false/.test(match)) {
-            cls = 'boolean';
-        } else if (/null/.test(match)) {
-            cls = 'null';
-        }
-        return '<span class="' + cls + '">' + match + '</span>';
-    });
-}
+const REQUEST_URI = 'POST https://analyticsreporting.googleapis.com/v4/reports:batchGet?';
 
 
 export default class RequestViewer extends React.Component {
-
-  handleChange = () => {
-    console.log(this);
-  }
 
   render() {
     let {params, settings} = this.props;
@@ -59,7 +32,6 @@ export default class RequestViewer extends React.Component {
           cols="80"
           rows="20"
           id="query-output"
-          onChange={this.handleChange}
           dangerouslySetInnerHTML={{__html: formatted}}>
         </pre>
       </div>

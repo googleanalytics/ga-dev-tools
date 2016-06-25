@@ -502,7 +502,7 @@ export default class RequestComposer extends React.Component {
                 <input
                   className="FormField FormFieldCombo-field"
                   name="includeEmptyRows"
-                  value={params['includeEmptyRows']}
+                  value={params['includeEmptyRows'] || ''}
                   onChange={this.handleParamChange} />
                 <HelpIconLink name="ReportRequest.FIELDS.include_empty_rows" />
               </div>

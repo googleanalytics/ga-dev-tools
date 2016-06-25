@@ -16,10 +16,23 @@ import moment from 'moment';
 
 function buildReportRequest(params) {
   var reportRequest = {
-      "viewId": params.viewId,
-      "pageSize": params.pageSize,
-      "samplingLevel": params.samplingLevel
+      'viewId': params.viewId,
+      'samplingLevel': params.samplingLevel,
   };
+  if (params.includeEmptyRows) {
+    if (params.includeEmptyRows.toLowerCase() == 'true') {
+      reportRequest.includeEmptyRows = 'true';
+    } else if (params.includeEmptyRows.toLowerCase() == 'false') {
+      reportRequest.includeEmptyRows = 'false';
+    }
+  }
+  if (params.pageSize &&
+      parseInt(params.pageSize)) {
+    reportRequest.pageSize = params.pageSize;
+  }
+  if (params.pageToken) {
+    reportRequest.pageToken = params.pageToken;
+  }
   return reportRequest;
 }
 
@@ -28,8 +41,8 @@ function applyDateRanges(request, params, settings) {
       params.endDate &&
       settings.requestType != 'COHORT') {
     request.dateRanges = [{
-      "startDate": params.startDate,
-      "endDate": params.endDate
+      'startDate': params.startDate,
+      'endDate': params.endDate
     }]
   }
   return request;
@@ -244,4 +257,26 @@ export function composeRequest(params, settings) {
   applyCohorts(reportRequest, params, settings);
   let request = {'reportRequests': [reportRequest]};
   return request;
+}
+
+export function syntaxHighlight(json) {
+    if (typeof json != 'string') {
+         json = JSON.stringify(json, undefined, 2);
+    }
+    json = json.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    return json.replace(/("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g, function (match) {
+        var cls = 'number';
+        if (/^"/.test(match)) {
+            if (/:$/.test(match)) {
+                cls = 'key';
+            } else {
+                cls = 'string';
+            }
+        } else if (/true|false/.test(match)) {
+            cls = 'boolean';
+        } else if (/null/.test(match)) {
+            cls = 'null';
+        }
+        return '<span class="' + cls + '">' + match + '</span>';
+    });
 }
