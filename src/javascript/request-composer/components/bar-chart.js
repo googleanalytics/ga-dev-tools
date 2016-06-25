@@ -18,6 +18,8 @@
 
 import React from 'react';
 import { Bar } from 'react-chartjs';
+import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
+import { syntaxHighlight } from '../request';
 import AlertDispatcher from '../../components/alert-dispatcher';
 
 
@@ -126,10 +128,26 @@ export default class BarChartComponent extends React.Component {
     } else if (response.status == 200) {
       let data = createResults(response.result.reports[0]);
       return (
-        <div>
-          <h2>Query Results</h2>
-          <Bar data={data} options={chartOptions} width="600" height="250" redraw/>
-        </div>
+          <div>
+          <Tabs
+            selectedIndex={0}
+          >
+            <TabList>
+              <Tab>Response Chart</Tab>
+              <Tab>Response JSON</Tab>
+            </TabList>
+            <TabPanel>
+              <h2>Query Results</h2>
+              <Bar data={data} options={chartOptions} width="600" height="250" redraw/>
+            </TabPanel>
+            <TabPanel>
+              <pre
+              dangerouslySetInnerHTML={{__html: syntaxHighlight(response.result, null, 2)}}>
+            </pre>
+            </TabPanel>
+
+          </Tabs>
+          </div>
       );
     }
     return (
