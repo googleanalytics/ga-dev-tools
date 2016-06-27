@@ -485,7 +485,7 @@ export default class RequestComposer extends React.Component {
                 <select
                   className="FormField FormFieldCombo-field"
                   value={params['samplingLevel']}
-                  onChange={this.handleSelectChange}>
+                  onChange={this.handleSamplingLevelChange}>
                   {SAMPLING_LEVELS.map((option) => (
                     <option value={option} key={option}>{option}</option>
                   ))}

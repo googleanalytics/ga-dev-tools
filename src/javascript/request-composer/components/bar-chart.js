@@ -66,17 +66,14 @@ var HIGHLIGHT_STROKE = ["rgba(220,220,220,1)", "rgba(151,187,205,1)"];
 
 export function createResults(report) {
     // Parses the report and creates a chartData object.
-    var labels = [];
 
     if (!report.data) {
         return;
     }
 
+    var labels = [];
     var datasets = [];
     if (report.data.rows && report.data.rows.length) {
-
-
-        
         var metricheaders = report.columnHeader.metricHeader.metricHeaderEntries;
         for (var i=0, header; header = metricheaders[i]; ++i) {
             datasets.push({
@@ -105,7 +102,7 @@ export function createResults(report) {
 export default class BarChartComponent extends React.Component {
   render() {
     let {response} = this.props;
-    //checkHttpResponseCode(response);
+
     if (response.status > 200) {
         AlertDispatcher.addOnce({
         title: 'Oops, there was an error',
@@ -116,9 +113,7 @@ export default class BarChartComponent extends React.Component {
       let data = createResults(response.result.reports[0]);
       return (
           <div>
-          <Tabs
-            selectedIndex={0}
-          >
+          <Tabs selectedIndex={0}>
             <TabList>
               <Tab>Response Chart</Tab>
               <Tab>Response JSON</Tab>
@@ -128,6 +123,7 @@ export default class BarChartComponent extends React.Component {
               <Bar data={data} options={chartOptions} width="600" height="250" redraw/>
             </TabPanel>
             <TabPanel>
+              <h2>API Response</h2>
               <pre
               dangerouslySetInnerHTML={{__html: syntaxHighlight(response.result, null, 2)}}>
             </pre>
