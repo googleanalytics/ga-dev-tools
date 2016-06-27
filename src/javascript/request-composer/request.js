@@ -19,6 +19,9 @@ function buildReportRequest(params) {
       'viewId': params.viewId,
       'samplingLevel': params.samplingLevel,
   };
+  if (params.filters) {
+    reportRequest.filters = params.filters;
+  }
   if (params.includeEmptyRows) {
     if (params.includeEmptyRows.toLowerCase() == 'true') {
       reportRequest.includeEmptyRows = 'true';
@@ -120,6 +123,7 @@ function applySegment(request, params) {
   }
   return request;
 }
+
 
 function applyOrderBys(request, params, settings) {
   if (params.sort) {
