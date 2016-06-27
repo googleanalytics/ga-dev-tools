@@ -59,52 +59,46 @@ var chartOptions = {
 
 };
 
-var chartData = {
-    labels: ["January", "February", "March", "April", "May", "June", "July"],
-    datasets: [
-        {
-            label: "My First dataset",
-            fillColor: "rgba(220,220,220,0.5)",
-            strokeColor: "rgba(220,220,220,0.8)",
-            highlightFill: "rgba(220,220,220,0.75)",
-            highlightStroke: "rgba(220,220,220,1)",
-            data: [65, 59, 80, 81, 56, 55, 40]
-        },
-        {
-            label: "My Second dataset",
-            fillColor: "rgba(151,187,205,0.5)",
-            strokeColor: "rgba(151,187,205,0.8)",
-            highlightFill: "rgba(151,187,205,0.75)",
-            highlightStroke: "rgba(151,187,205,1)",
-            data: [28, 48, 40, 19, 86, 27, 90]
-        }
-    ]
-};
+var FILL_COLOR = ["rgba(220,220,220,0.5)", "rgba(151,187,205,0.5)"];
+var STROKE_COLOR = ["rgba(220,220,220,0.8)", "rgba(151,187,205,0.8)"];
+var HIGHLIGHT_FILL = ["rgba(220,220,220,0.75)", "rgba(151,187,205,0.75)"];
+var HIGHLIGHT_STROKE = ["rgba(220,220,220,1)", "rgba(151,187,205,1)"];
 
 export function createResults(report) {
     // Parses the report and creates a chartData object.
     var labels = [];
-    var dataset = {
-            label: null,
-            fillColor: "rgba(220,220,220,0.5)",
-            strokeColor: "rgba(220,220,220,0.8)",
-            highlightFill: "rgba(220,220,220,0.75)",
-            highlightStroke: "rgba(220,220,220,1)",
-            data: []
-        };
+
     if (!report.data) {
         return;
     }
+
+    var datasets = [];
     if (report.data.rows && report.data.rows.length) {
+
+
+        
         var metricheaders = report.columnHeader.metricHeader.metricHeaderEntries;
-        dataset.label = metricheaders[0];
+        for (var i=0, header; header = metricheaders[i]; ++i) {
+            datasets.push({
+                label: header.name,
+                fillColor: FILL_COLOR[i%2],
+                strokeColor: STROKE_COLOR[i%2],
+                highlightFill: HIGHLIGHT_FILL[i%2],
+                highlightStroke: HIGHLIGHT_STROKE[i%2],
+                data: []
+            });
+        }
+
         for (var rowIndex=0, row; row = report.data.rows[rowIndex]; ++rowIndex) {
-            var values = row.metrics[0].values;
-            dataset.data.push(values[0]);
+            var metricValues = row.metrics[0].values;
+            for (var i=0, value; value = metricValues[i]; ++i) {
+                datasets[i].data.push(value);
+            }
             labels.push(row.dimensions[0]);
         }
     }
-    var foo = {labels: labels, datasets: [dataset]};
+
+    var foo = {labels: labels, datasets: datasets};
     return foo;
 }
 
@@ -114,17 +108,10 @@ export default class BarChartComponent extends React.Component {
     //checkHttpResponseCode(response);
     if (response.status > 200) {
         AlertDispatcher.addOnce({
-        title: 'Oops, there bad access error',
+        title: 'Oops, there was an error',
         message: response.result.error.message
        });
-      return (
-          <div>
-            <h2>Query Results</h2>
-            <pre
-              dangerouslySetInnerHTML={{__html: response.result.error.message}}>
-            </pre>
-          </div>
-          );
+      return (null);
     } else if (response.status == 200) {
       let data = createResults(response.result.reports[0]);
       return (
@@ -150,12 +137,7 @@ export default class BarChartComponent extends React.Component {
           </div>
       );
     }
-    return (
-      <div>
-        <h2>Query Results</h2>
-        <Bar data={chartData} options={chartOptions} width="600" height="250"/>
-      </div>
-    );
+    return (null);
   }
 }
 
