@@ -20,6 +20,7 @@ import React from 'react';
 import { Bar } from 'react-chartjs';
 import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
 import { syntaxHighlight } from '../request';
+import PivotTable from './pivot-table';
 import AlertDispatcher from '../../components/alert-dispatcher';
 
 
@@ -99,9 +100,11 @@ export function createResults(report) {
     return foo;
 }
 
-export default class BarChartComponent extends React.Component {
+export default class BarChart extends React.Component {
   render() {
-    let {response} = this.props;
+
+
+    let {response, settings} = this.props;
 
     if (response.status > 200) {
         AlertDispatcher.addOnce({
@@ -120,13 +123,21 @@ export default class BarChartComponent extends React.Component {
             </TabList>
             <TabPanel>
               <h2>Query Results</h2>
-              <Bar data={data} options={chartOptions} width="600" height="250" redraw/>
+              {settings.responseType == 'HISTOGRAM' ? (
+                <Bar data={data} options={chartOptions} width="600" height="250" redraw/>
+              ) :
+              null}
+
+              {settings.responseType == 'PIVOT' ? (
+                <PivotTable/>
+              ) :
+              null}
+
             </TabPanel>
             <TabPanel>
               <h2>API Response</h2>
-              <pre
-              dangerouslySetInnerHTML={{__html: syntaxHighlight(response.result, null, 2)}}>
-            </pre>
+              <pre dangerouslySetInnerHTML={{__html: syntaxHighlight(response.result, null, 2)}}>
+              </pre>
             </TabPanel>
 
           </Tabs>

@@ -61,6 +61,7 @@ limitations under the License.
 @import './components/nav';
 @import './components/nav-header';
 @import './components/progress-bar';
+@import './components/pivot-table';
 @import './components/query-report';
 @import './components/request-viewer';
 @import './components/screenshot';
