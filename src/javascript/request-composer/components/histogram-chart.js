@@ -95,7 +95,7 @@ export function createResults(report) {
     return foo;
 };
 
-export default class BarChart extends React.Component {
+export default class HistogramChart extends React.Component {
   render() {
     let {response} = this.props;
     let data = createResults(response.result.reports[0]);

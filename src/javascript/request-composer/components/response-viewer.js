@@ -19,7 +19,7 @@
 import React from 'react';
 import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
 import { syntaxHighlight } from '../request';
-import BarChart from './histogram-chart';
+import HistogramChart from './histogram-chart';
 import PivotTable from './pivot-table';
 import AlertDispatcher from '../../components/alert-dispatcher';
 
@@ -53,7 +53,7 @@ export default class ResultsViewer extends React.Component {
             <TabPanel>
               <h2>Response {RESULTS_VIEW[settings.responseType]}</h2>
               {settings.responseType == 'HISTOGRAM' ? (
-                <BarChart
+                <HistogramChart
                   response={response}
                 />
               ) :
