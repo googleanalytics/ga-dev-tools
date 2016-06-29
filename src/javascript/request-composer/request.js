@@ -183,6 +183,12 @@ function applyPivots(request, params, settings) {
     var pivot = {};
     applyPivotDimensions(pivot, params);
     applyPivotMetrics(pivot, params);
+    if (params.maxGroupCount) {
+      pivot.maxGroupCount = params.maxGroupCount;
+    }
+    if (params.startGroup) {
+      pivot.startGroup = params.startGroup;
+    }
     request.pivots = [pivot];
   }
   return request;

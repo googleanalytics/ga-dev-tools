@@ -364,8 +364,7 @@ export default class RequestComposer extends React.Component {
                   name="pivotDimensions"
                   value={params.pivotDimensions}
                   tags={select2Options.pivotDimensions}
-                  onChange={this.handleParamChange}
-                  disabled={settings.requestType == 'PIVOT'}/>
+                  onChange={this.handleParamChange}/>
                 <HelpIconLink name="Pivot.FIELDS.dimensions" />
               </div>
             </div>
@@ -380,11 +379,10 @@ export default class RequestComposer extends React.Component {
               <div className="FlexLine">
                 <input
                   className="FormField FormFieldCombo-field"
-                  name="start-index"
+                  name="startGroup"
                   value={params['startGroup'] || ''}
-                  onChange={this.handleParamChange}
-                  disabled={settings.requestType == 'PIVOT'} />
-                <HelpIconLink name="Pivot.FIELDS.startGroupCount" />
+                  onChange={this.handleParamChange}/>
+                <HelpIconLink name="Pivot.FIELDS.startGroup" />
               </div>
             </div>
           </div>
@@ -398,10 +396,9 @@ export default class RequestComposer extends React.Component {
               <div className="FlexLine">
                 <input
                   className="FormField FormFieldCombo-field"
-                  name="max-results"
+                  name="maxGroupCount"
                   value={params['maxGroupCount'] || ''}
-                  onChange={this.handleParamChange} 
-                  disabled={settings.requestType == 'PIVOT'}/>
+                  onChange={this.handleParamChange} />
                 <HelpIconLink name="Pivot.FIELDS.maxGroupCount" />
               </div>
             </div>

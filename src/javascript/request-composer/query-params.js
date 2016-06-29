@@ -26,12 +26,14 @@ const PARAMS = [
   'samplingLevel',
   'includeEmptyRows',
   'start-index',
+  'maxGroupCount',
   'pageSize',
   'pageToken',
+  'cohortMetrics',
   'cohortSize',
   'pivotMetrics',
   'pivotDimensions',
-  'cohortMetrics'
+  'startGroup'
 ];
 
 
