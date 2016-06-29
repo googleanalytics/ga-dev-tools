@@ -19,7 +19,7 @@
 import React from 'react';
 import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
 import { syntaxHighlight } from '../request';
-import BarChart from './bar-chart';
+import BarChart from './histogram-chart';
 import PivotTable from './pivot-table';
 import AlertDispatcher from '../../components/alert-dispatcher';
 
