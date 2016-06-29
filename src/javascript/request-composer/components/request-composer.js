@@ -24,7 +24,7 @@ import RequestViewer from './request-viewer';
 import QueryReport from './query-report';
 import Select2MultiSuggest from './select2-multi-suggest';
 import ViewSelector from './view-selector';
-import BarChart from './bar-chart';
+import ResponseViewer from './response-viewer';
 
 import {ga} from '../../analytics';
 import AlertDispatcher from '../../components/alert-dispatcher';
@@ -130,16 +130,16 @@ export default class RequestComposer extends React.Component {
     let view = summaries.getView(viewId);
     let property = summaries.getPropertyByViewId(viewId);
 
-
     let request = composeRequest(params, settings);
     gapi.client.analyticsreporting.reports.batchGet(request
       ).then(function(response) {
-        console.log('REQUEST COMPOSER QUERY SUCCEEDED!!!');
         actions.updateResponse(response);
         actions.updateSettings({'responseType': settings.requestType});
       }, function(response) {
-        //"{ "error": { "code": 400, "message": "Invalid value at 'report_requests[0].dimensions[0].histogram_buckets[1]' (TYPE_INT64), \" 343\"\nInvalid value at 'report_requests[0].dimensions[0].histogram_buckets[2]' (TYPE_INT64), \" 100\"", "status": "INVALID_ARGUMENT", "details": [ { "@type": "type.googleapis.com/google.rpc.BadRequest", "fieldViolations": [ { "field": "report_requests[0].dimensions[0].histogram_buckets[1]", "description": "Invalid value at 'report_requests[0].dimensions[0].histogram_buckets[1]' (TYPE_INT64), \" 343\"" }, { "field": "report_requests[0].dimensions[0].histogram_buckets[2]", "description": "Invalid value at 'report_requests[0].dimensions[0].histogram_buckets[2]' (TYPE_INT64), \" 100\"" } ] } ] } } "
-        console.log('REQUST COMPOSER QUERY FAILED!!!!!');
+        AlertDispatcher.addOnce({
+          title: 'Oops, there was an error',
+          message: response.result.error.message
+        });
         actions.updateResponse(response)
     });
 
@@ -555,7 +555,7 @@ export default class RequestComposer extends React.Component {
           settings={settings}
         />
 
-        <BarChart
+        <ResponseViewer
           response={response}
           settings={settings}
         />

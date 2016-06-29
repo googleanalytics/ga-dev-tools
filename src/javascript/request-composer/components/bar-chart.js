@@ -18,13 +18,8 @@
 
 import React from 'react';
 import { Bar } from 'react-chartjs';
-import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
-import { syntaxHighlight } from '../request';
-import PivotTable from './pivot-table';
-import AlertDispatcher from '../../components/alert-dispatcher';
 
-
-var chartOptions = {
+const CHART_OPTIONS = {
     //Boolean - Whether the scale should start at zero, or an order of magnitude down from the lowest value
     scaleBeginAtZero : true,
 
@@ -98,54 +93,16 @@ export function createResults(report) {
 
     var foo = {labels: labels, datasets: datasets};
     return foo;
-}
+};
 
 export default class BarChart extends React.Component {
   render() {
-
-
-    let {response, settings} = this.props;
-
-    if (response.status > 200) {
-        AlertDispatcher.addOnce({
-        title: 'Oops, there was an error',
-        message: response.result.error.message
-       });
-      return (null);
-    } else if (response.status == 200) {
-      let data = createResults(response.result.reports[0]);
-      return (
-          <div>
-          <Tabs selectedIndex={0}>
-            <TabList>
-              <Tab>Response Chart</Tab>
-              <Tab>Response JSON</Tab>
-            </TabList>
-            <TabPanel>
-              <h2>Query Results</h2>
-              {settings.responseType == 'HISTOGRAM' ? (
-                <Bar data={data} options={chartOptions} width="600" height="250" redraw/>
-              ) :
-              null}
-
-              {settings.responseType == 'PIVOT' ? (
-                <PivotTable/>
-              ) :
-              null}
-
-            </TabPanel>
-            <TabPanel>
-              <h2>API Response</h2>
-              <pre dangerouslySetInnerHTML={{__html: syntaxHighlight(response.result, null, 2)}}>
-              </pre>
-            </TabPanel>
-
-          </Tabs>
-          </div>
-      );
-    }
-    return (null);
+    let {response} = this.props;
+    let data = createResults(response.result.reports[0]);
+    return (
+        <Bar data={data} options={CHART_OPTIONS} width="600" height="250" redraw/>
+    );
   }
-}
+};
 
 
