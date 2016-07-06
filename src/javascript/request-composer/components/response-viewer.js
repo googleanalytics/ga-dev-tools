@@ -61,7 +61,6 @@ export default class ResultsViewer extends React.Component {
               {settings.responseType == 'PIVOT' ? (
                 <PivotTable
                   response={response}
-                  settings={settings}
                 />
               ) :
               null}
