@@ -60,7 +60,7 @@ var STROKE_COLOR = ["rgba(220,220,220,0.8)", "rgba(151,187,205,0.8)"];
 var HIGHLIGHT_FILL = ["rgba(220,220,220,0.75)", "rgba(151,187,205,0.75)"];
 var HIGHLIGHT_STROKE = ["rgba(220,220,220,1)", "rgba(151,187,205,1)"];
 
-export function createResults(report) {
+export function createChartData(report) {
     // Parses the report and creates a chartData object.
 
     if (!report.data) {
@@ -91,14 +91,13 @@ export function createResults(report) {
         }
     }
 
-    var foo = {labels: labels, datasets: datasets};
-    return foo;
+    return {labels: labels, datasets: datasets};
 };
 
 export default class HistogramChart extends React.Component {
   render() {
     let {response} = this.props;
-    let data = createResults(response.result.reports[0]);
+    let data = createChartData(response.result.reports[0]);
     return (
         <Bar data={data} options={CHART_OPTIONS} width="600" height="250" redraw/>
     );
