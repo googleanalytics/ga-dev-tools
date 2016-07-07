@@ -21,6 +21,7 @@ import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
 import { syntaxHighlight } from '../request';
 import HistogramChart from './histogram-chart';
 import PivotTable from './pivot-table';
+import CohortTable from './cohort-table';
 import AlertDispatcher from '../../components/alert-dispatcher';
 
 const RESULTS_VIEW = {
@@ -61,6 +62,13 @@ export default class ResultsViewer extends React.Component {
               {settings.responseType == 'PIVOT' ? (
                 <PivotTable
                   response={response}
+                />
+              ) :
+              null}
+              {settings.responseType == 'COHORT' ? (
+                <CohortTable
+                  response={response}
+                  settings={settings}
                 />
               ) :
               null}

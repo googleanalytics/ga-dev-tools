@@ -134,7 +134,10 @@ export default class RequestComposer extends React.Component {
     gapi.client.analyticsreporting.reports.batchGet(request
       ).then(function(response) {
         actions.updateResponse(response);
-        actions.updateSettings({'responseType': settings.requestType});
+        actions.updateSettings({
+          'responseType': settings.requestType,
+          'responseCohortSize': params.cohortSize
+      });
       }, function(response) {
         AlertDispatcher.addOnce({
           title: 'Oops, there was an error',
