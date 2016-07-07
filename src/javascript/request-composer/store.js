@@ -47,7 +47,12 @@ let createStoreWithMiddleware = applyMiddleware(...middlewear)(createStore);
  */
 function getInitalQueryParamsAndUpdateUrl() {
 
-  let defaultParams = {'startDate': '30daysAgo', 'endDate': 'yesterday'};
+  let defaultParams = {
+    'startDate': '30daysAgo',
+    'endDate': 'yesterday',
+    'cohortSize': 'Day',
+    'cohortMetrics': 'ga:cohortActiveUsers'
+  };
   let storedParams = db.get('request-composer:params');
   let urlParams = qs.parse(location.search.slice(1));
 
@@ -88,7 +93,9 @@ function getInitalQueryParamsAndUpdateUrl() {
  * @return {Object} The settings object.
  */
 function getDefaultSettingsAndUpdateTracker() {
-  let settings = db.get('request-composer:settings') || {};
+  let settings = db.get('request-composer:settings') || {
+    'requestType': 'HISTOGRAM'
+  };
 
   ga('set', 'dimension3', qs.stringify(settings));
   return settings;
