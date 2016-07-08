@@ -409,6 +409,7 @@ export default class RequestComposer extends React.Component {
           ) :
           null}
 
+          {settings.requestType != 'COHORT' ? (
           <div className={formControlClass}>
             <label className="FormControl-label">Order By</label>
             <div className="FormControl-body">
@@ -423,6 +424,8 @@ export default class RequestComposer extends React.Component {
               </div>
             </div>
           </div>
+          ) :
+          null}
 
           {settings.requestType == 'HISTOGRAM' ? (
           <div className={formControlClass}>
