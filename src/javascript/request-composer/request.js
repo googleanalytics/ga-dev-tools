@@ -126,7 +126,11 @@ function applySegment(request, params) {
 
 
 function applyOrderBys(request, params, settings) {
-  if (params.sort) {
+
+  if (settings.requestType == 'COHORT') {
+  	request.orderBys = [{fieldName: 'ga:cohort'}];
+  	return request;
+  } else if (params.sort) {
     request.orderBys = [];
 
     let dimsmets = params.sort.split(',');
@@ -149,6 +153,7 @@ function applyOrderBys(request, params, settings) {
       }
       request.orderBys.push(orderBy);
     }
+    return request;
   }
 }
 
