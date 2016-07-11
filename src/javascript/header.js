@@ -16,7 +16,7 @@
 /* global $, gapi */
 
 
-import {ga} from './analytics';
+import {gaAll} from './analytics';
 
 
 export default {
@@ -57,14 +57,14 @@ export default {
     $(document).off('.header');
     this.addCloseHandler();
     $('#header').addClass('is-open');
-    ga('send', 'event', 'Header', 'open');
+    gaAll('send', 'event', 'Header', 'open');
   },
 
   close: function() {
     $(document).off('.header');
     this.addOpenHandler();
     $('#header').removeClass('is-open');
-    ga('send', 'event', 'Header', 'close');
+    gaAll('send', 'event', 'Header', 'close');
   }
 
 };

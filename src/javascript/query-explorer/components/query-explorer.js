@@ -22,7 +22,7 @@ import QueryReport from './query-report';
 import Select2MultiSuggest from './select2-multi-suggest';
 import ViewSelector from './view-selector';
 
-import {ga} from '../../analytics';
+import {gaAll} from '../../analytics';
 import AlertDispatcher from '../../components/alert-dispatcher';
 import SearchSuggest from '../../components/search-suggest';
 
@@ -98,7 +98,7 @@ export default class QueryExplorer extends React.Component {
         .join('&');
 
     // Set it on the tracker so it gets sent with all Query Explorer hits.
-    ga('set', 'dimension2', trackableParamData);
+    gaAll('set', 'dimension2', trackableParamData);
 
     let summaries = await accountSummaries.get();
     let viewId = params.ids.slice(3);
@@ -120,7 +120,7 @@ export default class QueryExplorer extends React.Component {
     this.props.actions.setQueryState(false);
     this.props.actions.updateReport({response: data.response});
 
-    ga('send', {
+    gaAll('send', {
       hitType: 'event',
       eventCategory: 'query',
       eventAction: 'submit',
@@ -143,7 +143,7 @@ export default class QueryExplorer extends React.Component {
       message: message
     });
 
-    ga('send', {
+    gaAll('send', {
       hitType: 'event',
       eventCategory: 'query',
       eventAction: 'submit',
@@ -174,7 +174,7 @@ export default class QueryExplorer extends React.Component {
    * Invoked when a user focuses on the "Direct link to this report" textarea.
    */
   handleDirectLinkFocus() {
-    ga('send', 'event', 'query direct link', 'focus');
+    gaAll('send', 'event', 'query direct link', 'focus');
   }
 
 
@@ -182,7 +182,7 @@ export default class QueryExplorer extends React.Component {
    * Invoked when a user focuses on the "API Query URI" textarea.
    */
   handleApiUriFocus() {
-    ga('send', 'event', 'query api uri', 'focus');
+    gaAll('send', 'event', 'query api uri', 'focus');
   }
 
 
@@ -190,7 +190,7 @@ export default class QueryExplorer extends React.Component {
    * Invoked when a user clicks the "Download Results as TSV" button.
    */
   handleDownloadTsvClick() {
-    ga('send', 'event', 'query tsv download', 'click');
+    gaAll('send', 'event', 'query tsv download', 'click');
   }
 
 

@@ -17,27 +17,7 @@
   {% include '_head.html' %}
 
   {% block head_scripts %}
-    <script>
-      window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
-
-      ga('create', '{{ site.tracking_id }}', 'auto');
-      ga('create', '{{ site.tracking_id_testing }}', 'auto', 'testing');
-
-      {% if site.env != 'production' %}
-        ga(function() {
-          var trackers = ga.getAll();
-          for (var i = 0, tracker; tracker = trackers[i]; i++) {
-            tracker.set('sendHitTask', function(model) {
-              console.log(model.get('name'), Date.now(),
-                  model.get('hitPayload').split('&').map(decodeURIComponent));
-
-              throw 'Abort tracking in non-production environments.';
-            });
-          }
-        });
-      {% endif %}
-
-    </script>
+    <script>window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;</script>
     <script async src="https://www.google-analytics.com/analytics.js"></script>
   {% endblock %}
 </head>
@@ -67,7 +47,7 @@
 
       {% block tech %}
         {% if project.tech or page.tech %}
-          <aside class="TechInfo">
+          <aside id="tech-info" class="TechInfo">
             <svg class="TechInfo-icon" viewBox="0 0 24 24">
               <use xlink:href="/public/images/icons.svg#icon-info-outline"></use>
             </svg>
