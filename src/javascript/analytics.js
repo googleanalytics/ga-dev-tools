@@ -122,7 +122,7 @@ function requirePlugins() {
   gaAll('require', 'cleanUrlTracker', {
     stripQuery: true,
     queryDimensionIndex: getDefinitionIndex(dimensions.URL_QUERY_PARAMS),
-    trailingSlash: true
+    trailingSlash: 'add'
   });
   gaAll('require', 'eventTracker');
   gaAll('require', 'mediaQueryTracker', {
