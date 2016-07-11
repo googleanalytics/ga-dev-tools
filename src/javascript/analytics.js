@@ -120,6 +120,7 @@ function requirePlugins() {
 
   // Autotrack plugins.
   gaAll('require', 'cleanUrlTracker', {
+    stripQuery: true,
     queryDimensionIndex: getDefinitionIndex(dimensions.URL_QUERY_PARAMS),
     trailingSlash: true
   });
