@@ -166,7 +166,10 @@ function requireExperimentalPlugins() {
   gaTest('require', 'pageVisibilityTracker', {
     visibleMetricIndex: getDefinitionIndex(metrics.PAGE_VISIBLE),
     hiddenMetricIndex: getDefinitionIndex(metrics.PAGE_HIDDEN),
-    fieldsObj: {[dimensions.HIT_SOURCE]: 'pageVisibilityTracker'},
+    fieldsObj: {
+      nonInteraction: null,
+      [dimensions.HIT_SOURCE]: 'pageVisibilityTracker'
+    },
     hitFilter: function(model) {
       model.set(dimensions.METRIC_VALUE, String(model.get('eventValue')), true);
     }
