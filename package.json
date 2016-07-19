@@ -11,7 +11,7 @@
   },
   "license": "Apache-2.0",
   "devDependencies": {
-    "autotrack": "googleanalytics/autotrack#1.0-dev",
+    "autotrack": "^1.0.0",
     "babel-core": "^6.1.13",
     "babel-eslint": "^6.0.2",
     "babel-loader": "^6.2.0",

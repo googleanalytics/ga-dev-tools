@@ -26,8 +26,11 @@ import 'autotrack/lib/plugins/page-visibility-tracker';
  * data is always sent first.
  */
 const ALL_TRACKERS = shuffleArray([
-  {name: 't0', trackingId: 'UA-41425441-5'},
-  {name: 'testing', trackingId: 'UA-41425441-7'}
+  {name: 't0', trackingId: 'UA-41425441-5'}
+
+  // NOTE(philipwalton): testing is not currently being done, so the testing
+  // tracker is not used. Uncomment these lines to resume testing.
+  // {name: 'testing', trackingId: 'UA-41425441-7'}
 ]);
 
 
@@ -50,7 +53,8 @@ const dimensions = {
   ORIENTATION: 'dimension5',
   HIT_SOURCE: 'dimension6',
   URL_QUERY_PARAMS: 'dimension7',
-  METRIC_VALUE: 'dimension8'
+  METRIC_VALUE: 'dimension8',
+  CLIENT_ID: 'dimension9'
 };
 
 
@@ -62,7 +66,7 @@ const gaTest = createGaProxy(TEST_TRACKER);
 function init() {
   createTrackers();
   requirePlugins();
-  requireExperimentalPlugins();
+  trackClientId();
 
   // Delays sending any beacons until after the load event
   // to ensure beacons don't block resources.
@@ -85,7 +89,14 @@ export {init, gaAll, gaTest};
 function createGaProxy(trackers) {
   return function(command, ...args) {
     for (let {name} of trackers) {
-      window.ga(`${name}.${command}`, ...args);
+      if (typeof command == 'function') {
+        window.ga(function() {
+          command(window.ga.getByName(name));
+        });
+      }
+      else {
+        window.ga(`${name}.${command}`, ...args);
+      }
     }
   };
 }
@@ -125,6 +136,9 @@ function requirePlugins() {
     trailingSlash: 'add'
   });
   gaAll('require', 'eventTracker');
+  gaAll('require', 'impressionTracker', {
+    elements: ['tech-info']
+  });
   gaAll('require', 'mediaQueryTracker', {
     definitions: [
       {
@@ -158,12 +172,7 @@ function requirePlugins() {
     ]
   });
   gaAll('require', 'outboundLinkTracker');
-}
-
-
-function requireExperimentalPlugins() {
-  // Only require these plugins on the test tracker(s).
-  gaTest('require', 'pageVisibilityTracker', {
+  gaAll('require', 'pageVisibilityTracker', {
     visibleMetricIndex: getDefinitionIndex(metrics.PAGE_VISIBLE),
     hiddenMetricIndex: getDefinitionIndex(metrics.PAGE_HIDDEN),
     fieldsObj: {
@@ -174,8 +183,13 @@ function requireExperimentalPlugins() {
       model.set(dimensions.METRIC_VALUE, String(model.get('eventValue')), true);
     }
   });
-  gaTest('require', 'impressionTracker', {
-    elements: ['tech-info']
+}
+
+
+function trackClientId() {
+  gaAll(function(tracker) {
+    let clientId = tracker.get('clientId');
+    tracker.set(dimensions.CLIENT_ID, clientId);
   });
 }
 
