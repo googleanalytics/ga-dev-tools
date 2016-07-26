@@ -139,11 +139,15 @@ function getSegmentsOptions(useDefinition) {
  * @return {Promise} A promise resolved with an array of all public metrics.
  */
 function getMetrics(account, property, view) {
-  return metadata.getAuthenticated(account, property, view).then(
-      (columns) => columns.allMetrics({
-        status: 'PUBLIC',
-        addedInApiVersion: '3'
-      }));
+  return metadata.getAuthenticated(account, property, view).then((columns) => {
+    return columns.allMetrics((metric, id) => {
+      return metric.status == 'PUBLIC' &&
+             metric.addedInApiVersion == '3' &&
+             // TODO(philipwalton): remove this temporary exclusion once
+             // calulated metrics can be templatized using the Management API.
+             id != 'ga:calcMetric_<NAME>';
+    });
+  });
 }
 
 
@@ -155,9 +159,10 @@ function getMetrics(account, property, view) {
  * @return {Promise} A promise resolved with an array of all public dimensions.
  */
 function getDimensions(account, property, view) {
-  return metadata.getAuthenticated(account, property, view).then(
-      (columns) => columns.allDimensions({
-        status: 'PUBLIC',
-        addedInApiVersion: '3'
-      }));
+  return metadata.getAuthenticated(account, property, view).then((columns) => {
+    return columns.allDimensions({
+      status: 'PUBLIC',
+      addedInApiVersion: '3'
+    });
+  });
 }

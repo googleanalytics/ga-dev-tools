@@ -4,7 +4,7 @@ application: ga-dev-tools
 # For staging:
 # application: google.com:ga-dev-tools
 
-version: v16-0-0
+version: v17-2-0
 runtime: python27
 api_version: 1
 threadsafe: yes

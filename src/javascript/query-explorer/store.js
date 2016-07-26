@@ -19,7 +19,7 @@ import {createStore, applyMiddleware} from 'redux';
 import thunkMiddleware from 'redux-thunk';
 import {sanitize} from './query-params';
 import reducer from './reducers';
-import {ga} from '../analytics';
+import {gaAll} from '../analytics';
 import db from '../data-store';
 
 
@@ -90,7 +90,7 @@ function getInitalQueryParamsAndUpdateUrl() {
 function getDefaultSettingsAndUpdateTracker() {
   let settings = db.get('query-explorer:settings') || {};
 
-  ga('set', 'dimension3', qs.stringify(settings));
+  gaAll('set', 'dimension3', qs.stringify(settings));
   return settings;
 }
 
@@ -121,7 +121,7 @@ store.subscribe(function() {
   let {params, settings} = store.getState();
 
   db.set('query-explorer:settings', settings);
-  ga('set', 'dimension3', qs.stringify(settings));
+  gaAll('set', 'dimension3', qs.stringify(settings));
 
   db.set('query-explorer:params', params);
 });

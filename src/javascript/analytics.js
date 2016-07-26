@@ -13,127 +13,206 @@
 // limitations under the License.
 
 
+import 'autotrack/lib/plugins/clean-url-tracker';
 import 'autotrack/lib/plugins/event-tracker';
+import 'autotrack/lib/plugins/impression-tracker';
 import 'autotrack/lib/plugins/media-query-tracker';
 import 'autotrack/lib/plugins/outbound-link-tracker';
 import 'autotrack/lib/plugins/page-visibility-tracker';
 
 
-let autotrackOpts = {
-  mediaQueryDefinitions: [
-    {
-      name: 'Breakpoint',
-      dimensionIndex: 1,
-      items: [
-        {name: 'xs', media: 'all'},
-        {name: 'sm', media: '(min-width: 420px)'},
-        {name: 'md', media: '(min-width: 570px)'},
-        {name: 'lg', media: '(min-width: 1024px)'}
-      ]
-    },
-    {
-      name: 'Resolution',
-      dimensionIndex: 4,
-      items: [
-        {name: '1x',   media: 'all'},
-        {name: '1.5x', media: '(-webkit-min-device-pixel-ratio: 1.5), ' +
-                              '(min-resolution: 144dpi)'},
-        {name: '2x',   media: '(-webkit-min-device-pixel-ratio: 2), ' +
-                              '(min-resolution: 192dpi)'}
-      ]
-    },
-    {
-      name: 'Orientation',
-      dimensionIndex: 5,
-      items: [
-        {name: 'landscape', media: '(orientation: landscape)'},
-        {name: 'portrait',  media: '(orientation: portrait)'}
-      ]
-    }
-  ],
-  virtualPageviewFields: {
-    dimension6: 'pageVisibilityTracker'
-  },
-  searchDimensionIndex: 7,
-  urlHasTrailingSlash: 'always' // 'always' | 'never' | function
+/**
+ * A global list of tracker object, randomized to ensure no one tracker
+ * data is always sent first.
+ */
+const ALL_TRACKERS = shuffleArray([
+  {name: 't0', trackingId: 'UA-41425441-5'}
+
+  // NOTE(philipwalton): testing is not currently being done, so the testing
+  // tracker is not used. Uncomment these lines to resume testing.
+  // {name: 'testing', trackingId: 'UA-41425441-7'}
+]);
+
+
+const TEST_TRACKER = ALL_TRACKERS.filter(({name}) => /test/.test(name));
+
+
+const metrics = {
+  QUERY_SUCCESS: 'metric1',
+  QUERY_ERROR: 'metric2',
+  PAGE_VISIBLE: 'metric3',
+  PAGE_HIDDEN: 'metric4'
 };
 
 
-// Randomizes the order in which tracker methods are called.
-// This is necessary because latter trackers will lose more hits (for various
-// reasons) and the results will be skewed.
-let trackerNames = ['t0', 'testing'];
-let randomizedTrackerNames = [];
-while (trackerNames.length) {
-  let index = Math.floor(Math.random() * trackerNames.length);
-  let name = trackerNames.splice(index, 1)[0];
-  randomizedTrackerNames.push(name);
+const dimensions = {
+  BREAKPOINT: 'dimension1',
+  QUERY_EXPLORER_PARAMS: 'dimension2',
+  QUERY_EXPLORER_SETTINGS: 'dimension3',
+  RESOLUTION: 'dimension4',
+  ORIENTATION: 'dimension5',
+  HIT_SOURCE: 'dimension6',
+  URL_QUERY_PARAMS: 'dimension7',
+  METRIC_VALUE: 'dimension8',
+  CLIENT_ID: 'dimension9'
+};
+
+
+// The command queue proxies.
+const gaAll = createGaProxy(ALL_TRACKERS);
+const gaTest = createGaProxy(TEST_TRACKER);
+
+
+function init() {
+  createTrackers();
+  requirePlugins();
+  trackClientId();
+
+  // Delays sending any beacons until after the load event
+  // to ensure beacons don't block resources.
+  window.onload = function() {
+    sendInitialPageview();
+  };
 }
 
 
+export {init, gaAll, gaTest};
+
+
 /**
- * Experimental possible future plugin logic.
+ * Creates a ga() proxy function that calls commands on all but the
+ * excluded trackers.
+ * @param {Array} trackers an array or objects containing the `name` and
+ *     `trackingId` fields.
+ * @return {Function} The proxied ga() function.
  */
-function cleanUrlTracker(opts) {
-
-  // Removes the
-  return function() {
-    let tracker = window.ga.getByName('testing');
-    let path = location.pathname;
-    let search = location.search.slice(1);
-
-    if (opts.urlHasTrailingSlash  == 'always') {
-      path = path.replace(/\/+$/, '') + '/';
-    }
-    // else if (opts.urlHasTrailingSlash == 'never') {
-    //   path = path.replace(/\/+$/, '')
-    // }
-    // else if (typeof opts.urlHasTrailingSlash == 'function') {
-    //   path = opts.urlHasTrailingSlash(path);
-    // }
-
-    tracker.set('page', path);
-
-    if (opts.searchDimensionIndex) {
-      tracker.set('dimension' + opts.searchDimensionIndex,
-          search || '(not set)');
+function createGaProxy(trackers) {
+  return function(command, ...args) {
+    for (let {name} of trackers) {
+      if (typeof command == 'function') {
+        window.ga(function() {
+          command(window.ga.getByName(name));
+        });
+      }
+      else {
+        window.ga(`${name}.${command}`, ...args);
+      }
     }
   };
 }
 
 
-/**
- * Initializes all analytics.js tracking.
- */
-export function init() {
+function createTrackers() {
+  for (let tracker of ALL_TRACKERS) {
+    window.ga('create', tracker.trackingId, 'auto', tracker.name, {
+      siteSpeedSampleRate: 10
+    });
+  }
+  if (process.env.NODE_ENV !== 'production') {
+    window.ga(function() {
+      for (let tracker of window.ga.getAll()) {
+        tracker.set('sendHitTask', function(/*model*/) {
+          // console.log(model.get('name'), Date.now(),
+          //     model.get('hitPayload').split('&').map(decodeURIComponent));
+          throw 'Abort tracking in non-production environments.';
+        });
+      }
+    });
+  }
+}
 
-  // Requires official plugins
-  ga('require', 'displayfeatures');
-  ga('require', 'linkid');
 
-  // Requires autotrack plugins
-  ga('require', 'eventTracker', autotrackOpts);
-  ga('require', 'mediaQueryTracker', autotrackOpts);
-  ga('require', 'outboundLinkTracker', autotrackOpts);
+function sendInitialPageview() {
+  gaAll('send', 'pageview', {[dimensions.HIT_SOURCE]: 'pageload'});
+}
 
-  // Adds experimental clearnUrlTracker plugin.
-  window.ga(cleanUrlTracker(autotrackOpts));
 
-  // Only requires pageVisibilityTracker on the testing tracker.
-  window.ga('testing.require', 'pageVisibilityTracker', autotrackOpts);
+function requirePlugins() {
 
-  ga('send', 'pageview', {dimension6: 'pageload'});
+  // Autotrack plugins.
+  gaAll('require', 'cleanUrlTracker', {
+    stripQuery: true,
+    queryDimensionIndex: getDefinitionIndex(dimensions.URL_QUERY_PARAMS),
+    trailingSlash: 'add'
+  });
+  gaAll('require', 'eventTracker');
+  gaAll('require', 'impressionTracker', {
+    elements: ['tech-info']
+  });
+  gaAll('require', 'mediaQueryTracker', {
+    definitions: [
+      {
+        name: 'Breakpoint',
+        dimensionIndex: getDefinitionIndex(dimensions.BREAKPOINT),
+        items: [
+          {name: 'sm', media: 'all'},
+          {name: 'md', media: '(min-width: 36em)'},
+          {name: 'lg', media: '(min-width: 48em)'}
+        ]
+      },
+      {
+        name: 'Resolution',
+        dimensionIndex: getDefinitionIndex(dimensions.RESOLUTION),
+        items: [
+          {name: '1x',   media: 'all'},
+          {name: '1.5x', media: '(-webkit-min-device-pixel-ratio: 1.5), ' +
+                                '(min-resolution: 144dpi)'},
+          {name: '2x',   media: '(-webkit-min-device-pixel-ratio: 2), ' +
+                                '(min-resolution: 192dpi)'}
+        ]
+      },
+      {
+        name: 'Orientation',
+        dimensionIndex: getDefinitionIndex(dimensions.ORIENTATION),
+        items: [
+          {name: 'landscape', media: '(orientation: landscape)'},
+          {name: 'portrait',  media: '(orientation: portrait)'}
+        ]
+      }
+    ]
+  });
+  gaAll('require', 'outboundLinkTracker');
+  gaAll('require', 'pageVisibilityTracker', {
+    visibleMetricIndex: getDefinitionIndex(metrics.PAGE_VISIBLE),
+    hiddenMetricIndex: getDefinitionIndex(metrics.PAGE_HIDDEN),
+    fieldsObj: {
+      nonInteraction: null,
+      [dimensions.HIT_SOURCE]: 'pageVisibilityTracker'
+    },
+    hitFilter: function(model) {
+      model.set(dimensions.METRIC_VALUE, String(model.get('eventValue')), true);
+    }
+  });
+}
+
+
+function trackClientId() {
+  gaAll(function(tracker) {
+    let clientId = tracker.get('clientId');
+    tracker.set(dimensions.CLIENT_ID, clientId);
+  });
+}
+
+
+// Accepts a custom dimension or metric and returns it's numerical index.
+function getDefinitionIndex(dimension) {
+  return +dimension.slice(-1);
 }
 
 
 /**
- * Shadows the global `ga` command queue to allow for running commands on
- * multiple test trackers.
- * @param {string} command The command to run.
- * @param {*} ...args A list of arguments to pass to the command queue.
+ * Randomize array element order in-place.
+ * Using Durstenfeld shuffle algorithm.
+ * http://goo.gl/91pjZs
+ * @param {Array} array The input array.
+ * @return {Array} The randomized array.
  */
-export function ga(command, ...args) {
-  for (let name of randomizedTrackerNames) {
-    window.ga(name + '.' + command, ...args);
+function shuffleArray(array) {
+  for (let i = array.length - 1; i > 0; i--) {
+    let j = Math.floor(Math.random() * (i + 1));
+    let temp = array[i];
+    array[i] = array[j];
+    array[j] = temp;
   }
+  return array;
 }
