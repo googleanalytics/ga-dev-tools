@@ -19,7 +19,7 @@ import {createStore, applyMiddleware} from 'redux';
 import thunkMiddleware from 'redux-thunk';
 import {sanitize} from './query-params';
 import reducer from './reducers';
-import {ga} from '../analytics';
+import {gaAll} from '../analytics';
 import db from '../data-store';
 
 
@@ -88,7 +88,7 @@ function getInitalQueryParamsAndUpdateUrl() {
 
 
 /**
- * Gets the Query Explorer settings stored in local storage. If no settings
+ * Gets the Requet Composer settings stored in local storage. If no settings
  * exist, an empty object is returned.
  * @return {Object} The settings object.
  */
@@ -97,7 +97,7 @@ function getDefaultSettingsAndUpdateTracker() {
     'requestType': 'HISTOGRAM'
   };
 
-  ga('set', 'dimension3', qs.stringify(settings));
+  gaAll('set', 'dimension3', qs.stringify(settings));
   return settings;
 }
 
@@ -128,7 +128,7 @@ store.subscribe(function() {
   let {params, settings} = store.getState();
 
   db.set('request-composer:settings', settings);
-  ga('set', 'dimension3', qs.stringify(settings));
+  gaAll('set', 'dimension3', qs.stringify(settings));
 
   db.set('request-composer:params', params);
 });
