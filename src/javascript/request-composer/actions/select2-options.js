@@ -277,17 +277,21 @@ function getSegmentsOptions(useDefinition) {
 
 
 /**
- * Gets a list of all public metrics associated with the passed view.
+ * Gets a list of all public, v3 metrics associated with the passed view.
  * @param {Object} account An account object from accountSummaries.list.
  * @param {Object} property A property object from accountSummaries.list.
  * @param {Object} view A view object from accountSummaries.list.
  * @return {Promise} A promise resolved with an array of all public metrics.
  */
 function getMetrics(account, property, view) {
-  return metadata.getAuthenticated(account, property, view).then(
-      (columns) => columns.allMetrics({
-        status: 'PUBLIC'
-      }));
+  return metadata.getAuthenticated(account, property, view).then((columns) => {
+    return columns.allMetrics((metric, id) => {
+      return metric.status == 'PUBLIC' &&
+             // TODO(philipwalton): remove this temporary exclusion once
+             // calulated metrics can be templatized using the Management API.
+             id != 'ga:calcMetric_<NAME>';
+    });
+  });
 }
 
 
@@ -301,8 +305,9 @@ function getMetrics(account, property, view) {
  */
 function getDimensions(account, property, view) {
 
-  return metadata.getAuthenticated(account, property, view).then(
-      (columns) => columns.allDimensions({
+  return metadata.getAuthenticated(account, property, view).then((columns) => {
+    return columns.allDimensions({
         status: 'PUBLIC',
-      }));
+      });
+  });
 }
