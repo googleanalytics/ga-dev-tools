@@ -18,8 +18,8 @@
 
 import React from 'react';
 import ReactDOM from 'react-dom';
-import AlertDispatcher from '../../components/alert-dispatcher';
-import '../../embed-api/components/view-selector2';
+import AlertDispatcher from './alert-dispatcher';
+import '../embed-api/components/view-selector2';
 
 
 /**
@@ -60,7 +60,7 @@ export default class ViewSelector extends React.Component {
 
       this.viewSelector_ = new gapi.analytics.ext.ViewSelector2({
         container: ReactDOM.findDOMNode(this),
-        viewId: this.props.viewId,
+        ids: this.props.ids,
         template: this.props.template || VIEW_SELECTOR_TEMPLATE
       });
 
@@ -75,11 +75,7 @@ export default class ViewSelector extends React.Component {
         // it's because someone shared a report to someone else without access.
         if (err.message.includes('access')) {
           if (!this.hasSuccessfullyShownView_) {
-            this.viewSelector_.set({viewId: undefined}).execute();
-            AlertDispatcher.addOnce({
-              title: 'Oops, there bad access error',
-              message: err.message
-          });
+            this.viewSelector_.set({ids: undefined}).execute();
           }
         }
         // For all other errors, display an alert message.
@@ -96,8 +92,8 @@ export default class ViewSelector extends React.Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    if (nextProps.viewId != this.props.viewId && this.viewSelector_) {
-      this.viewSelector_.set({viewId: nextProps.viewId}).execute();
+    if (nextProps.ids != this.props.ids && this.viewSelector_) {
+      this.viewSelector_.set({ids: nextProps.ids}).execute();
     }
   }
 
