@@ -18,7 +18,6 @@ import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
 import accountSummaries from 'javascript-api-utils/lib/account-summaries';
 
 import {composeRequest} from '../request';
-import Datepicker from './datepicker';
 import RequestViewer from './request-viewer';
 import Select2MultiSuggest from './select2-multi-suggest';
 import ViewSelector from './view-selector';
@@ -26,6 +25,7 @@ import ResponseViewer from './response-viewer';
 
 import {gaAll} from '../../analytics';
 import AlertDispatcher from '../../components/alert-dispatcher';
+import Datepicker from '../../components/datepicker';
 import HelpIconLink from '../../components/help-icon-link';
 import SearchSuggest from '../../components/search-suggest';
 
