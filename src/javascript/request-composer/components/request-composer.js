@@ -21,12 +21,11 @@ import {composeRequest} from '../request';
 import Datepicker from './datepicker';
 import HelpIconLink from './help-icon-link';
 import RequestViewer from './request-viewer';
-import QueryReport from './query-report';
 import Select2MultiSuggest from './select2-multi-suggest';
 import ViewSelector from './view-selector';
 import ResponseViewer from './response-viewer';
 
-import {ga} from '../../analytics';
+import {gaAll} from '../../analytics';
 import AlertDispatcher from '../../components/alert-dispatcher';
 import SearchSuggest from '../../components/search-suggest';
 
@@ -123,7 +122,7 @@ export default class RequestComposer extends React.Component {
         .join('&');
 
     // Set it on the tracker so it gets sent with all Query Explorer hits.
-    ga('set', 'dimension2', trackableParamData);
+    gaAll('set', 'dimension2', trackableParamData);
 
     let summaries = await accountSummaries.get();
     let viewId = params.viewId;
