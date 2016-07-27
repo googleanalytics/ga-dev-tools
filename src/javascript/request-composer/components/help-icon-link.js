@@ -17,9 +17,6 @@ import React from 'react';
 import Icon from '../../components/icon';
 
 
-const REFERENCE_URL =
-    'https://developers.google.com' +
-    '/analytics/devguides/reporting/core/v4/rest/v4/reports/batchGet#';
 
 
 export default class HelpIconLink extends React.Component {
@@ -27,7 +24,7 @@ export default class HelpIconLink extends React.Component {
     return (
       <a
         className="FormControl-helpIcon"
-        href={REFERENCE_URL + this.props.name}
+        href={this.props.url + this.props.name}
         tabIndex="-1">
         <Icon type="info-outline" />
       </a>

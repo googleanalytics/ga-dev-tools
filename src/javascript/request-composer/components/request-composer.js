@@ -39,6 +39,9 @@ const PARAMS_TO_TRACK = ['startDate', 'endDate', 'metrics', 'dimensions'];
 const REQUEST_TYPES = ['HISTOGRAM', 'PIVOT', 'COHORT'];
 const COHORT_SIZES = ['Day', 'Week', 'Month'];
 const SAMPLING_LEVELS = ['DEFAULT', 'SMALL', 'LARGE'];
+const REFERENCE_URL =
+    'https://developers.google.com' +
+    '/analytics/devguides/reporting/core/v4/rest/v4/reports/batchGet#';
 
 
 export default class RequestComposer extends React.Component {
@@ -227,7 +230,9 @@ export default class RequestComposer extends React.Component {
                   name="viewId"
                   value={params.viewId}
                   onChange={this.handleParamChange} />
-                <HelpIconLink name="ReportRequest.FIELDS.view_id" />
+                <HelpIconLink
+                  url={REFERENCE_URL}
+                  name="ReportRequest.FIELDS.view_id" />
               </div>
             </div>
           </div>
@@ -241,7 +246,9 @@ export default class RequestComposer extends React.Component {
                   name="startDate"
                   value={params['startDate']}
                   onChange={this.handleParamChange} />
-                <HelpIconLink name="DateRange.FIELDS.start_date" />
+                <HelpIconLink 
+                  url={REFERENCE_URL}
+                  name="DateRange.FIELDS.start_date" />
               </div>
             </div>
           </div>
@@ -257,7 +264,9 @@ export default class RequestComposer extends React.Component {
                   name="endDate"
                   value={params['endDate']}
                   onChange={this.handleParamChange} />
-                <HelpIconLink name="DateRange.FIELDS.start_date" />
+                <HelpIconLink 
+                  url={REFERENCE_URL}
+                  name="DateRange.FIELDS.start_date" />
               </div>
             </div>
           </div>
@@ -275,7 +284,9 @@ export default class RequestComposer extends React.Component {
                   tags={select2Options.metrics}
                   onChange={this.handleParamChange}
                   maximumSelectionSize={maximumSelectionSize} />
-                <HelpIconLink name="ReportRequest.FIELDS.metrics" />
+                <HelpIconLink 
+                  url={REFERENCE_URL}
+                  name="ReportRequest.FIELDS.metrics" />
               </div>
             </div>
           </div>
@@ -293,7 +304,9 @@ export default class RequestComposer extends React.Component {
                   tags={select2Options.dimensions}
                   onChange={this.handleParamChange}
                   maximumSelectionSize={maximumSelectionSize} />
-                <HelpIconLink name="ReportRequest.FIELDS.dimensions" />
+                <HelpIconLink 
+                  url={REFERENCE_URL}
+                  name="ReportRequest.FIELDS.dimensions" />
               </div>
             </div>
           </div>
@@ -311,7 +324,9 @@ export default class RequestComposer extends React.Component {
                   tags={select2Options.cohortMetrics}
                   onChange={this.handleParamChange}
                   maximumSelectionSize={1} />
-                <HelpIconLink name="ReportRequest.FIELDS.metrics" />
+                <HelpIconLink 
+                  url={REFERENCE_URL}
+                  name="ReportRequest.FIELDS.metrics" />
               </div>
             </div>
           </div>
@@ -331,7 +346,9 @@ export default class RequestComposer extends React.Component {
                     <option value={option} key={option}>{option}</option>
                   ))}
                 </select>
-                <HelpIconLink name="ReportRequest.FIELDS.cohorts" />
+                <HelpIconLink 
+                  url={REFERENCE_URL}
+                  name="ReportRequest.FIELDS.cohorts" />
               </div>
             </div>
           </div>
@@ -350,7 +367,9 @@ export default class RequestComposer extends React.Component {
                   tags={select2Options.pivotMetrics}
                   onChange={this.handleParamChange}
                   maximumSelectionSize={maximumSelectionSize} />
-                <HelpIconLink name="Pivot.FIELDS.metrics" />
+                <HelpIconLink 
+                  url={REFERENCE_URL}
+                  name="Pivot.FIELDS.metrics" />
               </div>
             </div>
           </div>
@@ -367,7 +386,9 @@ export default class RequestComposer extends React.Component {
                   value={params.pivotDimensions}
                   tags={select2Options.pivotDimensions}
                   onChange={this.handleParamChange}/>
-                <HelpIconLink name="Pivot.FIELDS.dimensions" />
+                <HelpIconLink 
+                  url={REFERENCE_URL}
+                  name="Pivot.FIELDS.dimensions" />
               </div>
             </div>
           </div>
@@ -384,7 +405,9 @@ export default class RequestComposer extends React.Component {
                   name="startGroup"
                   value={params['startGroup'] || ''}
                   onChange={this.handleParamChange}/>
-                <HelpIconLink name="Pivot.FIELDS.startGroup" />
+                <HelpIconLink 
+                  url={REFERENCE_URL}
+                  name="Pivot.FIELDS.startGroup" />
               </div>
             </div>
           </div>
@@ -401,7 +424,9 @@ export default class RequestComposer extends React.Component {
                   name="maxGroupCount"
                   value={params['maxGroupCount'] || ''}
                   onChange={this.handleParamChange} />
-                <HelpIconLink name="Pivot.FIELDS.maxGroupCount" />
+                <HelpIconLink 
+                  url={REFERENCE_URL}
+                  name="Pivot.FIELDS.maxGroupCount" />
               </div>
             </div>
           </div>
@@ -419,7 +444,9 @@ export default class RequestComposer extends React.Component {
                   tags={select2Options.sort}
                   onChange={this.handleParamChange}
                   maximumSelectionSize={maximumSelectionSize} />
-                <HelpIconLink name="ReportRequest.FIELDS.order_bys" />
+                <HelpIconLink 
+                  url={REFERENCE_URL}
+                  name="ReportRequest.FIELDS.order_bys" />
               </div>
             </div>
           </div>
@@ -436,7 +463,9 @@ export default class RequestComposer extends React.Component {
                   name="buckets"
                   value={params['buckets']}
                   onChange={this.handleParamChange} />
-                <HelpIconLink name="Dimension.FIELDS.histogram_buckets" />
+                <HelpIconLink 
+                  url={REFERENCE_URL}
+                  name="Dimension.FIELDS.histogram_buckets" />
               </div>
             </div>
           </div>
@@ -452,7 +481,9 @@ export default class RequestComposer extends React.Component {
                   name="filters"
                   value={params.filters}
                   onChange={this.handleParamChange} />
-                <HelpIconLink name="ReportRequest.FIELDS.filters_expression" />
+                <HelpIconLink 
+                  url={REFERENCE_URL}
+                  name="ReportRequest.FIELDS.filters_expression" />
               </div>
             </div>
           </div>
@@ -466,7 +497,9 @@ export default class RequestComposer extends React.Component {
                   value={params.segment}
                   options={select2Options.segments}
                   onChange={this.handleParamChange} />
-                <HelpIconLink name="ReportRequest.FIELDS.segments" />
+                <HelpIconLink 
+                  url={REFERENCE_URL}
+                  name="ReportRequest.FIELDS.segments" />
               </div>
               <div className="FormControl-info">
                 <label>
@@ -493,7 +526,9 @@ export default class RequestComposer extends React.Component {
                     <option value={option} key={option}>{option}</option>
                   ))}
                 </select>
-                <HelpIconLink name="ReportRequest.FIELDS.sampling_level" />
+                <HelpIconLink 
+                  url={REFERENCE_URL}
+                  name="ReportRequest.FIELDS.sampling_level" />
               </div>
             </div>
           </div>
@@ -507,7 +542,9 @@ export default class RequestComposer extends React.Component {
                   name="includeEmptyRows"
                   value={params['includeEmptyRows'] || ''}
                   onChange={this.handleParamChange} />
-                <HelpIconLink name="ReportRequest.FIELDS.include_empty_rows" />
+                <HelpIconLink 
+                  url={REFERENCE_URL}
+                  name="ReportRequest.FIELDS.include_empty_rows" />
               </div>
             </div>
           </div>
@@ -521,7 +558,9 @@ export default class RequestComposer extends React.Component {
                   name="pageToken"
                   value={params['pageToken']}
                   onChange={this.handleParamChange} />
-                <HelpIconLink name="ReportRequest.FIELDS.page_token" />
+                <HelpIconLink 
+                  url={REFERENCE_URL}
+                  name="ReportRequest.FIELDS.page_token" />
               </div>
             </div>
           </div>
@@ -535,7 +574,9 @@ export default class RequestComposer extends React.Component {
                   name="pageSize"
                   value={params['pageSize']}
                   onChange={this.handleParamChange} />
-                <HelpIconLink name="ReportRequest.FIELDS.page_size" />
+                <HelpIconLink 
+                  url={REFERENCE_URL}
+                  name="ReportRequest.FIELDS.page_size" />
               </div>
             </div>
           </div>
