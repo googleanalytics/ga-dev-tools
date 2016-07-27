@@ -116,7 +116,6 @@ let store = createStoreWithMiddleware(reducer, {
   isAuthorized: false,
   isQuerying: false,
   params: getInitalQueryParamsAndUpdateUrl(),
-  report: {},
   select2Options: getDefaultSelect2Options(),
   settings: getDefaultSettingsAndUpdateTracker()
 });

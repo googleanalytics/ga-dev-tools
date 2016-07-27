@@ -17,7 +17,6 @@ import {combineReducers} from 'redux';
 import isAuthorized from './auth';
 import params from './params';
 import isQuerying from './query';
-import report from './report';
 import response from './response';
 import select2Options from './select2-options';
 import settings from './settings';
@@ -27,7 +26,6 @@ export default combineReducers({
   isAuthorized,
   isQuerying,
   params,
-  report,
   response,
   select2Options,
   settings

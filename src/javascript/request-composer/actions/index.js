@@ -16,7 +16,6 @@
 import * as auth from './auth';
 import * as params from './params';
 import * as query from './query';
-import * as report from './report';
 import * as response from './response';
 import * as select2Options from './select2-options';
 import * as settings from './settings';
@@ -26,7 +25,6 @@ export default {
   ...auth,
   ...params,
   ...query,
-  ...report,
   ...response,
   ...select2Options,
   ...settings
