@@ -17,13 +17,13 @@ import React from 'react';
 import accountSummaries from 'javascript-api-utils/lib/account-summaries';
 
 import Datepicker from './datepicker';
-import HelpIconLink from './help-icon-link';
 import QueryReport from './query-report';
 import Select2MultiSuggest from './select2-multi-suggest';
 import ViewSelector from './view-selector';
 
 import {gaAll} from '../../analytics';
 import AlertDispatcher from '../../components/alert-dispatcher';
+import HelpIconLink from '../../components/help-icon-link';
 import SearchSuggest from '../../components/search-suggest';
 
 
@@ -33,7 +33,9 @@ import SearchSuggest from '../../components/search-suggest';
  * therefore only their presence/absense is tracked.
  */
 const PARAMS_TO_TRACK = ['start-date', 'end-date', 'metrics', 'dimensions'];
-
+const REFERENCE_URL =
+    'https://developers.google.com' +
+    '/analytics/devguides/reporting/core/v3/reference#';
 
 export default class QueryExplorer extends React.Component {
 
@@ -235,7 +237,9 @@ export default class QueryExplorer extends React.Component {
                   name="ids"
                   value={params.ids || ''}
                   onChange={this.handleParamChange} />
-                <HelpIconLink name="ids" />
+                <HelpIconLink
+                  url={REFERENCE_URL}
+                  name="ids" />
               </div>
             </div>
           </div>
@@ -248,7 +252,9 @@ export default class QueryExplorer extends React.Component {
                   name="start-date"
                   value={params['start-date']}
                   onChange={this.handleParamChange} />
-                <HelpIconLink name="start-date" />
+                <HelpIconLink
+                  url={REFERENCE_URL}
+                  name="start-date" />
               </div>
             </div>
           </div>
@@ -261,7 +267,9 @@ export default class QueryExplorer extends React.Component {
                   name="end-date"
                   value={params['end-date']}
                   onChange={this.handleParamChange} />
-                <HelpIconLink name="end-date" />
+                <HelpIconLink
+                  url={REFERENCE_URL}
+                  name="end-date" />
               </div>
             </div>
           </div>
@@ -275,7 +283,9 @@ export default class QueryExplorer extends React.Component {
                   value={params.metrics}
                   tags={select2Options.metrics}
                   onChange={this.handleParamChange} />
-                <HelpIconLink name="metrics" />
+                <HelpIconLink
+                  url={REFERENCE_URL}
+                  name="metrics" />
               </div>
             </div>
           </div>
@@ -289,7 +299,9 @@ export default class QueryExplorer extends React.Component {
                   value={params.dimensions}
                   tags={select2Options.dimensions}
                   onChange={this.handleParamChange} />
-                <HelpIconLink name="dimensions" />
+                <HelpIconLink
+                  url={REFERENCE_URL}
+                  name="dimensions" />
               </div>
             </div>
           </div>
@@ -303,7 +315,9 @@ export default class QueryExplorer extends React.Component {
                   value={params.sort}
                   tags={select2Options.sort}
                   onChange={this.handleParamChange} />
-                <HelpIconLink name="sort" />
+                <HelpIconLink
+                  url={REFERENCE_URL}
+                  name="sort" />
               </div>
             </div>
           </div>
@@ -317,7 +331,9 @@ export default class QueryExplorer extends React.Component {
                   name="filters"
                   value={params.filters || ''}
                   onChange={this.handleParamChange} />
-                <HelpIconLink name="filters" />
+                <HelpIconLink
+                  url={REFERENCE_URL}
+                  name="filters" />
               </div>
             </div>
           </div>
@@ -331,7 +347,9 @@ export default class QueryExplorer extends React.Component {
                   value={params.segment}
                   options={select2Options.segments}
                   onChange={this.handleParamChange} />
-                <HelpIconLink name="segment" />
+                <HelpIconLink
+                  url={REFERENCE_URL}
+                  name="segment" />
               </div>
               <div className="FormControl-info">
                 <label>
@@ -355,7 +373,9 @@ export default class QueryExplorer extends React.Component {
                   name="samplingLevel"
                   value={params.samplingLevel || ''}
                   onChange={this.handleParamChange} />
-                <HelpIconLink name="samplingLevel" />
+                <HelpIconLink
+                  url={REFERENCE_URL}
+                  name="samplingLevel" />
               </div>
             </div>
           </div>
@@ -369,7 +389,9 @@ export default class QueryExplorer extends React.Component {
                   name="include-empty-rows"
                   value={params['include-empty-rows'] || ''}
                   onChange={this.handleParamChange} />
-                <HelpIconLink name="include-empty-rows" />
+                <HelpIconLink
+                  url={REFERENCE_URL}
+                  name="include-empty-rows" />
               </div>
             </div>
           </div>
@@ -383,7 +405,9 @@ export default class QueryExplorer extends React.Component {
                   name="start-index"
                   value={params['start-index'] || ''}
                   onChange={this.handleParamChange} />
-                <HelpIconLink name="start-index" />
+                <HelpIconLink
+                  url={REFERENCE_URL}
+                  name="start-index" />
               </div>
             </div>
           </div>
@@ -397,7 +421,9 @@ export default class QueryExplorer extends React.Component {
                   name="max-results"
                   value={params['max-results'] || ''}
                   onChange={this.handleParamChange} />
-                <HelpIconLink name="max-results" />
+                <HelpIconLink
+                  url={REFERENCE_URL}
+                  name="max-results" />
               </div>
             </div>
           </div>
