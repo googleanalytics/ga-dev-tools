@@ -22,6 +22,7 @@ let defaultOptions = {
   pivotMetrics: [],
   pivotDimensions: [],
   cohortMetrics: [],
+  histogramDimensions: [],
   sort: [],
   segments: []
 };

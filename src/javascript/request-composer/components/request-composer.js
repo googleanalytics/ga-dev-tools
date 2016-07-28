@@ -286,7 +286,28 @@ export default class RequestComposer extends React.Component {
           ) :
           null}
 
-          {settings.requestType != 'COHORT' ? (
+
+          {settings.requestType == 'HISTOGRAM' ? (
+          <div className={formControlClass}>
+            <label className="FormControl-label">Histogram dimension</label>
+            <div className="FormControl-body">
+              <div className="FlexLine">
+                <Select2MultiSuggest
+                  name="histogramDimensions"
+                  value={params.histogramDimensions}
+                  tags={select2Options.histogramDimensions}
+                  onChange={this.handleParamChange}
+                  maximumSelectionSize={1} />
+                <HelpIconLink 
+                  url={REFERENCE_URL}
+                  name="ReportRequest.FIELDS.dimensions" />
+              </div>
+            </div>
+          </div>
+          ) :
+          null}
+
+          {settings.requestType == 'PIVOT' ? (
           <div className={formControlClass}>
             <label className="FormControl-label">dimensions</label>
             <div className="FormControl-body">
@@ -426,7 +447,7 @@ export default class RequestComposer extends React.Component {
           ) :
           null}
 
-          {settings.requestType != 'COHORT' ? (
+          {settings.requestType == 'PIVOT' ? (
           <div className={formControlClass}>
             <label className="FormControl-label">Order By</label>
             <div className="FormControl-body">

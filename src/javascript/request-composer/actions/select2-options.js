@@ -19,139 +19,49 @@ import segments from '../segments';
 
 
 var NUMERIC_DIMENSIONS = [
-  {
-    'attributes': {
-      'group': 'User',
-      'uiName': 'Session Count',
-    },
-    'id': 'ga:sessionCount'
-  },
-    {
-    'attributes': {
-      'group': 'User',
-      'uiName': 'Days Since Last Session',
-    },
-    'id': 'ga:daysSinceLastSession'
-  },
-  {
-    'attributes': {
-      'group': 'Session',
-      'uiName': 'Session Duration Bucket',
-    },
-    'id': 'ga:sessionDurationBucket'
-  },
-  {
-    'attributes': {
-      'Group': 'Ecommerce',
-      'uiName': 'Days to transaction',
-    },
-    'id': 'ga:daysToTransaction'
-  },
-  {
-    'attributes': {
-      'group': 'Time',
-      'uiName': 'Year',
-    },
-    'id': 'ga:year'
-  },
-  {
-    'attributes': {
-      'group': 'Time',
-      'uiName': 'month',
-    },
-    'id': 'ga:month'
-  },
-  {
-    'attributes': {
-      'group': 'Time',
-      'uiName': 'week',
-    },
-    'id': 'ga:week'
-  },
-  {
-    'attributes': {
-      'group': 'Time',
-      'uiName': 'Day',
-    },
-    'id': 'ga:day'
-  },
-  {
-    'attributes': {
-      'group': 'Time',
-      'uiName': 'Hour',
-    },
-    'id': 'ga:hour'
-  },
-  {
-    'attributes': {
-      'group': 'Time',
-      'uiName': 'Minute',
-    },
-    'id': 'ga:minute'
-  },
-  {
-    'attributes': {
-      'group': 'Time',
-      'uiName': 'Nth Month',
-    },
-    'id': 'ga:nthMonth'
-  },
-  {
-    'attributes': {
-      'group': 'Time',
-      'uiName': 'Nth Week',
-    },
-    'id': 'ga:nthWeek'
-  },
-  {
-    'attributes': {
-      'group': 'Time',
-      'uiName': 'NthDay',
-    },
-    'id': 'ga:nthDay'
-  },
-  {
-    'attributes': {
-      'group': 'Time',
-      'uiName': 'Nth Hour',
-    },
-    'id': 'ga:nthHour'
-  },
-  {
-    'attributes': {
-      'group': 'Time',
-      'uiName': 'Nth Minute',
-    },
-    'id': 'ga:nthMinute'
-  },
-  {
-    'attributes': {
-      'group': 'Time',
-      'uiName': 'ISO Year',
-    },
-    'id': 'ga:isoYear'
-  },
-  {
-    'attributes': {
-      'group': 'Time',
-      'uiName': 'ISO Week',
-    },
-    'id': 'ga:isoWeek'
-  }
+  'ga:sessionCount',
+  'ga:daysSinceLastSession',
+  'ga:sessionDurationBucket',
+  'ga:daysToTransaction',
+  'ga:year',
+  'ga:month',
+  'ga:week',
+  'ga:day',
+  'ga:hour',
+  'ga:minute',
+  'ga:nthMonth',
+  'ga:nthWeek',
+  'ga:nthDay',
+  'ga:nthHour',
+  'ga:nthMinute',
+  'ga:isoYear',
+  'ga:isoWeek'
 ]
 
 export function updateMetricsDimensionsAndSortOptions(viewData) {
   return async function(dispatch, getState) {
     let {account, property, view} = viewData;
     let {params} = getState();
-    let {metrics, dimensions,
-         pivotMetrics, pivotDimensions,
-         cohortMetrics} = await getMetricsAndDimensionsOptions(
-        account, property, view);
+    let {
+      metrics, 
+      dimensions,
+      pivotMetrics,
+      pivotDimensions,
+      cohortMetrics,
+      histogramDimensions
+    } = await getMetricsAndDimensionsOptions(account, property, view);
 
     let sort = getSortOptions(params, metrics, dimensions);
 
-    dispatch(updateSelect2Options({metrics, dimensions, pivotMetrics, pivotDimensions, cohortMetrics, sort}));
+    dispatch(updateSelect2Options({
+      metrics,
+      dimensions,
+      pivotMetrics,
+      pivotDimensions,
+      cohortMetrics,
+      histogramDimensions,
+      sort
+    }));
   };
 }
 
@@ -182,7 +92,9 @@ function updateSelect2Options(select2Options) {
 function getMetricsAndDimensionsOptions(account, property, view) {
   return Promise.all([
     getMetrics(account, property, view),
-    getDimensions(account, property, view)
+    getDimensions(account, property, view),
+    getV4Metrics(account, property, view),
+    getNumericDimensions(account, property, view)
   ])
   .then(function(data) {
     let metrics = data[0].map(function(metric) {
@@ -213,14 +125,28 @@ function getMetricsAndDimensionsOptions(account, property, view) {
         group: dimension.attributes.group
       };
     });
-    let cohortMetrics = data[0].map(function(metric) {
+    let cohortMetrics = data[2].map(function(metric) {
       return {
         id: metric.id,
         name: metric.attributes.uiName,
         group: metric.attributes.group
       };
     });
-    return {metrics, dimensions, pivotMetrics, pivotDimensions, cohortMetrics};
+    let histogramDimensions = data[3].map(function(metric) {
+      return {
+        id: metric.id,
+        name: metric.attributes.uiName,
+        group: metric.attributes.group
+      };
+    });
+    return {
+      metrics,
+      dimensions,
+      pivotMetrics,
+      pivotDimensions,
+      cohortMetrics,
+      histogramDimensions
+    };
   });
 }
 
@@ -294,20 +220,54 @@ function getMetrics(account, property, view) {
   });
 }
 
-
+/**
+ * Gets a list of all public, v4 metrics associated with the passed view.
+ * @param {Object} account An account object from accountSummaries.list.
+ * @param {Object} property A property object from accountSummaries.list.
+ * @param {Object} view A view object from accountSummaries.list.
+ * @return {Promise} A promise resolved with an array of all public metrics.
+ */
+function getV4Metrics(account, property, view) {
+  return metadata.getAuthenticated(account, property, view).then((columns) => {
+    return columns.allMetrics((metric, id) => {
+      return metric.status == 'PUBLIC' &&
+             metric.addedInApiVersion == '4' &&
+             // TODO(philipwalton): remove this temporary exclusion once
+             // calulated metrics can be templatized using the Management API.
+             id != 'ga:calcMetric_<NAME>';
+    });
+  });
+}
 
 /**
- * Gets a list of all public dimensions associated with the passed view.
+ * Gets a list of all public, v3 dimensions associated with the passed view.
  * @param {Object} account An account object from accountSummaries.list.
  * @param {Object} property A property object from accountSummaries.list.
  * @param {Object} view A view object from accountSummaries.list.
  * @return {Promise} A promise resolved with an array of all public dimensions.
  */
 function getDimensions(account, property, view) {
-
   return metadata.getAuthenticated(account, property, view).then((columns) => {
     return columns.allDimensions({
-        status: 'PUBLIC',
-      });
+      status: 'PUBLIC',
+      addedInApiVersion: '3'
+    });
+  });
+}
+
+/**
+ * Gets a list of all numeric possible dimensions associated with the passed view.
+ * This could include custom dimensions.
+ * @param {Object} account An account object from accountSummaries.list.
+ * @param {Object} property A property object from accountSummaries.list.
+ * @param {Object} view A view object from accountSummaries.list.
+ * @return {Promise} A promise resolved with an array of all public dimensions.
+ */
+function getNumericDimensions(account, property, view) {
+
+  return metadata.getAuthenticated(account, property, view).then((columns) => {
+    return columns.allDimensions((dimension, id) => {
+      return id.match('ga:dimension') || NUMERIC_DIMENSIONS.includes(id);
+    });
   });
 }

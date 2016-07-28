@@ -160,6 +160,7 @@ export default class Select2MultiSuggest extends React.Component {
       matcher: this.matcher,
       maximumSelectionSize: this.props.maximumSelectionSize
     };
+    this.buildTagMap(this.props.tags);
     $(ReactDOM.findDOMNode(this)).select2(opts);
   }
 

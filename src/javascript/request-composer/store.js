@@ -106,6 +106,10 @@ function getDefaultSelect2Options() {
   return {
     metrics: [],
     dimensions: [],
+    pivotMetrics: [],
+    pivotDimensions: [],
+    cohortMetrics: [],
+    histogramDimensions: [],
     sort: [],
     segments: []
   };

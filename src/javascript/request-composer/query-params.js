@@ -19,6 +19,7 @@ const PARAMS = [
   'endDate',
   'metrics',
   'dimensions',
+  'histogramDimensions',
   'buckets',
   'sort',
   'filters',

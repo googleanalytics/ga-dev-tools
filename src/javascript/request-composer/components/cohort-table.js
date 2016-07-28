@@ -81,7 +81,7 @@ export default class CohortTable extends React.Component {
             header={<Cell>{header}</Cell>}
             width={200}
             cell={props => (
-                <Cell {...props}>{data.cohortTable[props.rowIndex][header]}</Cell>
+                <Cell key={props.rowIndex} {...props}>{data.cohortTable[props.rowIndex][header]}</Cell>
               )}
           />
         ))}

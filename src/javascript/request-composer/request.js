@@ -73,11 +73,18 @@ function applyMetrics(request, params, settings) {
 }
 
 function applyDimensions(request, params, settings) {
-  if (params.dimensions &&
-      settings.requestType != 'COHORT') {
-    request.dimensions = []
-
-    let dimensions = params.dimensions.split(',');
+  if (settings.requestType != 'COHORT' &&
+      (params.histogramDimensions || params.dimensions)) {
+    request.dimensions = [];
+    var dimensions = [];
+    if (settings.requestType == 'HISTOGRAM' &&
+        params.histogramDimensions) {
+      dimensions = params.histogramDimensions.split(',');
+    } else if (params.dimensions) {
+      dimensions = params.dimensions.split(',');
+    } else {
+      return request;
+    }
     for (var i in dimensions) {
       var dimension = {'name': dimensions[i]};
       if (settings.requestType &&
@@ -130,6 +137,16 @@ function applyOrderBys(request, params, settings) {
   if (settings.requestType == 'COHORT') {
   	request.orderBys = [{fieldName: 'ga:cohort'}];
   	return request;
+  } else if (settings.requestType == 'HISTOGRAM') {
+    if (request.dimensions) {
+      request.orderBys = [
+        {
+          fieldName: request.dimensions[0].name,
+          orderType: 'HISTOGRAM_BUCKET',
+          sortOrder: 'ASCENDING'
+        }
+      ]
+    }
   } else if (params.sort) {
     request.orderBys = [];
 
@@ -145,12 +162,6 @@ function applyOrderBys(request, params, settings) {
         orderBy.sortOrder = 'ASCENDING';
       }
       orderBy.fieldName = fieldName;
-
-      if (params.dimensions.indexOf(fieldName) > -1 &&
-          settings.requestType &&
-          settings.requestType == 'HISTOGRAM') {
-        orderBy.orderType = 'HISTOGRAM_BUCKET';
-      }
       request.orderBys.push(orderBy);
     }
     return request;
