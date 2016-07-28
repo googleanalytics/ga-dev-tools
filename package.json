@@ -6,7 +6,7 @@
   },
   "scripts": {
     "build": "gulp build",
-    "watch": "gulp watch",
+    "start": "gulp watch",
     "test": "gulp test"
   },
   "license": "Apache-2.0",

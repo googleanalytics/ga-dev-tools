@@ -35,10 +35,9 @@ cd ga-dev-tools
 # Install the build dependencies.
 pip install -r requirements.txt -t python_modules
 npm install
-npm run build
 
-# Run the local App Engine server.
-path/to/dev_appserver.py .
+# Build the site and run the local App Engine server.
+npm start
 ```
 
 If you're wanting to load any of the pages that require server-side authorization, you'll also need to create a service account, add the private JSON key to your project's root directory, and name it `service-account-key.json`. You can follow the instructions described in the [Server-side Authorization demo](https://ga-dev-tools.appspot.com/embed-api/server-side-authorization/) for more details.
