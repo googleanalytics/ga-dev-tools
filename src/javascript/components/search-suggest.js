@@ -411,7 +411,7 @@ export default class SearchSuggest extends React.Component {
                 className={className}
                 onMouseEnter={this.handleMouseEnter.bind(this, index)}
                 onClick={this.setSelectedMatchState.bind(this, match.id)}
-                key={match.id}>
+                key={index}>
                 <span className="SearchSuggestMatch-category">
                   {match.group}
                 </span>

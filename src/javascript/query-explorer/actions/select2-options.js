@@ -33,7 +33,7 @@ export function updateMetricsDimensionsAndSortOptions(viewData) {
 
 
 export function updateSortOptions() {
-  return async function(dispatch, getState) {
+  return function(dispatch, getState) {
     let {params, select2Options: {metrics, dimensions}} = getState();
     let sort = getSortOptions(params, metrics, dimensions);
 

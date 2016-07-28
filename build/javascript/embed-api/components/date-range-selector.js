@@ -1,2 +1,186 @@
-!function(t){function e(n){if(a[n])return a[n].exports;var i=a[n]={exports:{},id:n,loaded:!1};return t[n].call(i.exports,i,i.exports,e),i.loaded=!0,i.exports}var a={};return e.m=t,e.c=a,e.p="",e(0)}([function(t,e){"use strict";gapi.analytics.ready(function(){function t(t){if(n.test(t))return t;var i=a.exec(t);if(i)return e(+i[1]);if("today"==t)return e(0);if("yesterday"==t)return e(1);throw new Error("Cannot convert date "+t)}function e(t){var e=new Date;e.setDate(e.getDate()-t);var a=String(e.getMonth()+1);a=1==a.length?"0"+a:a;var n=String(e.getDate());return n=1==n.length?"0"+n:n,e.getFullYear()+"-"+a+"-"+n}var a=/(\d+)daysAgo/,n=/\d{4}\-\d{2}\-\d{2}/;gapi.analytics.createComponent("DateRangeSelector",{execute:function(){var e=this.get();e["start-date"]=e["start-date"]||"7daysAgo",e["end-date"]=e["end-date"]||"yesterday",this.container="string"==typeof e.container?document.getElementById(e.container):e.container,e.template&&(this.template=e.template),this.container.innerHTML=this.template;var a=this.container.querySelectorAll("input");return this.startDateInput=a[0],this.startDateInput.value=t(e["start-date"]),this.endDateInput=a[1],this.endDateInput.value=t(e["end-date"]),this.setValues(),this.setMinMax(),this.container.onchange=this.onChange.bind(this),this},onChange:function(){this.setValues(),this.setMinMax(),this.emit("change",{"start-date":this["start-date"],"end-date":this["end-date"]})},setValues:function(){this["start-date"]=this.startDateInput.value,this["end-date"]=this.endDateInput.value},setMinMax:function(){this.startDateInput.max=this.endDateInput.value,this.endDateInput.min=this.startDateInput.value},template:'<div class="DateRangeSelector">  <div class="DateRangeSelector-item">    <label>Start Date</label>     <input type="date">  </div>  <div class="DateRangeSelector-item">    <label>End Date</label>     <input type="date">  </div></div>'})})}]);
+/******/ (function(modules) { // webpackBootstrap
+/******/ 	// The module cache
+/******/ 	var installedModules = {};
+/******/
+/******/ 	// The require function
+/******/ 	function __webpack_require__(moduleId) {
+/******/
+/******/ 		// Check if module is in cache
+/******/ 		if(installedModules[moduleId])
+/******/ 			return installedModules[moduleId].exports;
+/******/
+/******/ 		// Create a new module (and put it into the cache)
+/******/ 		var module = installedModules[moduleId] = {
+/******/ 			exports: {},
+/******/ 			id: moduleId,
+/******/ 			loaded: false
+/******/ 		};
+/******/
+/******/ 		// Execute the module function
+/******/ 		modules[moduleId].call(module.exports, module, module.exports, __webpack_require__);
+/******/
+/******/ 		// Flag the module as loaded
+/******/ 		module.loaded = true;
+/******/
+/******/ 		// Return the exports of the module
+/******/ 		return module.exports;
+/******/ 	}
+/******/
+/******/
+/******/ 	// expose the modules object (__webpack_modules__)
+/******/ 	__webpack_require__.m = modules;
+/******/
+/******/ 	// expose the module cache
+/******/ 	__webpack_require__.c = installedModules;
+/******/
+/******/ 	// __webpack_public_path__
+/******/ 	__webpack_require__.p = "";
+/******/
+/******/ 	// Load entry module and return exports
+/******/ 	return __webpack_require__(0);
+/******/ })
+/************************************************************************/
+/******/ ([
+/* 0 */
+/***/ function(module, exports) {
+
+	'use strict';
+	
+	// Copyright 2014 Google Inc. All rights reserved.
+	//
+	// Licensed under the Apache License, Version 2.0 (the "License");
+	// you may not use this file except in compliance with the License.
+	// You may obtain a copy of the License at
+	//
+	//     http://www.apache.org/licenses/LICENSE-2.0
+	//
+	// Unless required by applicable law or agreed to in writing, software
+	// distributed under the License is distributed on an "AS IS" BASIS,
+	// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+	// See the License for the specific language governing permissions and
+	// limitations under the License.
+	
+	
+	/* global gapi */
+	
+	/**
+	 * A DateRangeSelector component for the Embed API.
+	 */
+	gapi.analytics.ready(function () {
+	
+	  var nDaysAgo = /(\d+)daysAgo/;
+	  var dateFormat = /\d{4}\-\d{2}\-\d{2}/;
+	
+	  /**
+	   * Convert a date acceptable to the Core Reporting API (e.g. `today`,
+	   * `yesterday` or `NdaysAgo`) into the format YYYY-MM-DD. Dates
+	   * already in that format are simply returned.
+	   * @param {string} str The date string to format.
+	   * @return {string} The formatted date.
+	   */
+	  function convertDate(str) {
+	    // If str is in the proper format, do nothing.
+	    if (dateFormat.test(str)) return str;
+	
+	    var match = nDaysAgo.exec(str);
+	    if (match) {
+	      return daysAgo(+match[1]);
+	    } else if (str == 'today') {
+	      return daysAgo(0);
+	    } else if (str == 'yesterday') {
+	      return daysAgo(1);
+	    } else {
+	      throw new Error('Cannot convert date ' + str);
+	    }
+	  }
+	
+	  /**
+	   * Accept a number and return a date formatted as YYYY-MM-DD that
+	   * represents that many days ago.
+	   * @param {number} numDays The number of days ago whose date to return.
+	   * @return {string} The formatted date.
+	   */
+	  function daysAgo(numDays) {
+	    var date = new Date();
+	    date.setDate(date.getDate() - numDays);
+	    var month = String(date.getMonth() + 1);
+	    month = month.length == 1 ? '0' + month : month;
+	    var day = String(date.getDate());
+	    day = day.length == 1 ? '0' + day : day;
+	    return date.getFullYear() + '-' + month + '-' + day;
+	  }
+	
+	  gapi.analytics.createComponent('DateRangeSelector', {
+	
+	    /**
+	     * Initialize the DateRangeSelector instance and render it to the page.
+	     * @return {DateRangeSelector} The instance.
+	     */
+	    execute: function execute() {
+	      var options = this.get();
+	      options['start-date'] = options['start-date'] || '7daysAgo';
+	      options['end-date'] = options['end-date'] || 'yesterday';
+	
+	      // Allow container to be a string ID or an HTMLElement.
+	      this.container = typeof options.container == 'string' ? document.getElementById(options.container) : options.container;
+	
+	      // Allow the template to be overridden.
+	      if (options.template) this.template = options.template;
+	
+	      this.container.innerHTML = this.template;
+	      var dateInputs = this.container.querySelectorAll('input');
+	
+	      this.startDateInput = dateInputs[0];
+	      this.startDateInput.value = convertDate(options['start-date']);
+	      this.endDateInput = dateInputs[1];
+	      this.endDateInput.value = convertDate(options['end-date']);
+	
+	      this.setValues();
+	      this.setMinMax();
+	
+	      this.container.onchange = this.onChange.bind(this);
+	      return this;
+	    },
+	
+	    /**
+	     * Emit a change event based on the currently selected dates.
+	     * Pass an object containing the start date and end date.
+	     */
+	    onChange: function onChange() {
+	      this.setValues();
+	      this.setMinMax();
+	      this.emit('change', {
+	        'start-date': this['start-date'],
+	        'end-date': this['end-date']
+	      });
+	    },
+	
+	    /**
+	     * Updates the instance properties based on the input values.
+	     */
+	    setValues: function setValues() {
+	      this['start-date'] = this.startDateInput.value;
+	      this['end-date'] = this.endDateInput.value;
+	    },
+	
+	    /**
+	     * Updates the input min and max attributes so there's no overlap.
+	     */
+	    setMinMax: function setMinMax() {
+	      this.startDateInput.max = this.endDateInput.value;
+	      this.endDateInput.min = this.startDateInput.value;
+	    },
+	
+	    /**
+	     * The html structure used to build the component. Developers can
+	     * override this by passing it to the component constructor.
+	     * The only requirement is that the structure contain two inputs, the
+	     * first will be the start date and the second will be the end date.
+	     */
+	    template: '<div class="DateRangeSelector">' + '  <div class="DateRangeSelector-item">' + '    <label>Start Date</label> ' + '    <input type="date">' + '  </div>' + '  <div class="DateRangeSelector-item">' + '    <label>End Date</label> ' + '    <input type="date">' + '  </div>' + '</div>'
+	  });
+	});
+
+/***/ }
+/******/ ]);
 //# sourceMappingURL=date-range-selector.js.map

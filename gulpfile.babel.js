@@ -13,28 +13,33 @@
 // limitations under the License.
 
 
-import concat from 'gulp-concat';
-import cssnext from 'gulp-cssnext';
+import {spawn} from 'child_process';
+import createOutputStream from 'create-output-stream';
 import del from 'del';
-import eslint from 'gulp-eslint';
 import fse from 'fs-extra';
 import glob from 'glob';
 import gulp from 'gulp';
-import gulpIf from 'gulp-if';
-import gutil from 'gulp-util';
-import imagemin from 'gulp-imagemin';
-import merge from 'merge-stream';
-import mocha from 'gulp-mocha';
-import path from 'path';
-import pngquant from 'imagemin-pngquant';
-import plumber from 'gulp-plumber';
 import prefix from 'gulp-autoprefixer';
-import rename from 'gulp-rename';
-import request from 'request';
+import concat from 'gulp-concat';
+import cssnext from 'gulp-cssnext';
+import eslint from 'gulp-eslint';
+import gulpIf from 'gulp-if';
 import resize from 'gulp-image-resize';
+import imagemin from 'gulp-imagemin';
+import mocha from 'gulp-mocha';
+import plumber from 'gulp-plumber';
+import rename from 'gulp-rename';
 import sourcemaps from 'gulp-sourcemaps';
 import uglify from 'gulp-uglify';
+import gutil from 'gulp-util';
+import pngquant from 'imagemin-pngquant';
+import merge from 'merge-stream';
+import path from 'path';
+import request from 'request';
 import webpack from 'webpack';
+
+
+let devServer;
 
 
 function isProd() {
@@ -109,12 +114,12 @@ gulp.task('javascript:webpack', (function() {
 
   function createCompiler() {
     let sourceFiles = glob.sync('./*/index.js', {cwd: './src/javascript/'})
-    let entry = {'index': './src/javascript/index.js'};
+    let entry = {index: ['babel-polyfill', './src/javascript/index.js']};
 
     for (let filename of sourceFiles) {
       let name = path.join('.', path.dirname(filename));
       let filepath = './' + path.join('./src/javascript', filename);
-      entry[name] = filepath;
+      entry[name] = ['babel-polyfill', filepath];
     }
 
     let plugins = [new webpack.optimize.CommonsChunkPlugin({
@@ -157,7 +162,7 @@ gulp.task('javascript:webpack', (function() {
   function compile(done) {
     (compiler || (compiler = createCompiler())).run(function(err, stats) {
       if (err) throw new gutil.PluginError('webpack', err);
-      gutil.log('[webpack]', stats.toString({cached: true}));
+      gutil.log('[webpack]', stats.toString('minimal'));
       done();
     });
   }
@@ -203,7 +208,7 @@ gulp.task('javascript:embed-api-components', (function() {
   function compile(done) {
     (compiler || (compiler = createCompiler())).run(function(err, stats) {
       if (err) throw new gutil.PluginError('webpack', err);
-      gutil.log('[webpack]', stats.toString({cached: true}));
+      gutil.log('[webpack]', stats.toString('minimal'));
       done();
     });
   }
@@ -224,7 +229,7 @@ gulp.task('json', function() {
       '/devguides/collection/protocol/v1/parameters.json';
 
   request(PARAMETER_REFERENCE_URL)
-      .pipe(fse.createOutputStream('public/json/parameter-reference.json'));
+      .pipe(createOutputStream('public/json/parameter-reference.json'));
 });
 
 
@@ -242,7 +247,16 @@ gulp.task('test', function() {
 });
 
 
-gulp.task('watch', ['javascript', 'css', 'images', 'json'], function() {
+gulp.task('serve', [], function(done) {
+  devServer = spawn('dev_appserver.py', ['.']);
+  devServer.stderr.on('data', (data) => {
+    if (data.includes('Starting module')) done();
+    process.stdout.write(data);
+  });
+});
+
+
+gulp.task('watch', ['build:core', 'serve'], function() {
   gulp.watch('src/css/**/*.css', ['css']);
   gulp.watch('src/images/**/*', ['images']);
   gulp.watch('src/javascript/**/*', ['javascript']);
@@ -255,14 +269,19 @@ gulp.task('build:embed-api-components', ['javascript'], function() {
 });
 
 
-gulp.task('build:all', [
-//  'lint',
-  'test',
+gulp.task('build:core', [
   'javascript',
   'css',
   'images',
   'json',
   'build:embed-api-components'
+])
+
+
+gulp.task('build:all', [
+  'lint',
+  'test',
+  'build:core'
 ]);
 
 
