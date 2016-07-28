@@ -114,12 +114,12 @@ gulp.task('javascript:webpack', (function() {
 
   function createCompiler() {
     let sourceFiles = glob.sync('./*/index.js', {cwd: './src/javascript/'})
-    let entry = {'index': './src/javascript/index.js'};
+    let entry = {index: ['babel-polyfill', './src/javascript/index.js']};
 
     for (let filename of sourceFiles) {
       let name = path.join('.', path.dirname(filename));
       let filepath = './' + path.join('./src/javascript', filename);
-      entry[name] = filepath;
+      entry[name] = ['babel-polyfill', filepath];
     }
 
     let plugins = [new webpack.optimize.CommonsChunkPlugin({

@@ -13,7 +13,6 @@
 // limitations under the License.
 
 
-import 'babel-polyfill';
 import svg4everybody from 'svg4everybody/dist/svg4everybody';
 
 import * as analytics from './analytics';
