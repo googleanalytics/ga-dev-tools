@@ -189,24 +189,27 @@ export default class RequestComposer extends React.Component {
           <Tab>Cohort Request</Tab>
         </TabList>
         <TabPanel>
-          <h2>For dimensions with integer values, 
-            it is easier to understand their characteristics 
-            by bucketing their values into ranges. 
-          </h2>
+          <p>For dimensions with integer values,
+            it is easier to understand their characteristics
+            by <a href="https://developers.google.com/analytics/devguides/reporting/core/v4/basics#histogram_buckets">bucketing</a> their
+            values into ranges.
+          </p>
         </TabPanel>
         <TabPanel>
-          <h2>Google Analytics Reporting API V4 allows you
-            to generate Pivot Tables. To construct a request
+          <p>Google Analytics Reporting API V4 allows you
+            to generate <a href="https://support.google.com/analytics/answer/1009642">Pivot Tables</a>.
+            To construct a request
             with a pivot table, define the Pivot field in the 
             ReportRequest.
-          </h2>
+          </p>
         </TabPanel>
         <TabPanel>
-          <h2>A cohort is a group of users who share a common
+          <p>A <a href="https://support.google.com/analytics/answer/6158745">cohort</a> is
+            a group of users who share a common
             characteristic. For example, all users with the same
             Acquisition Date belong to the same cohort. The Cohort
             Analysis report lets you isolate and analyze cohort behavior.
-          </h2>
+          </p>
         </TabPanel>
       </Tabs>
 
