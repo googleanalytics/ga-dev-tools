@@ -1,10 +1,10 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import {Table, Column, Cell} from 'fixed-data-table';
+import {Table, Column, Cell} from 'fixed-data-table-2';
 
 
 export function createPivotData(report) {
-  if (!report.data) {
+  if (!report.data.rows) {
     return;
   }
 
@@ -67,7 +67,11 @@ export function createPivotData(report) {
   };
 };
 
-
+const TextCell = ({rowIndex, data, col, ...props}) => (
+  <Cell {...props}>
+    {data[rowIndex][col]}
+  </Cell>
+);
 
 export default class PivotTable extends React.Component {
   constructor(props) {
@@ -80,24 +84,29 @@ export default class PivotTable extends React.Component {
 
     let data = createPivotData(response.result.reports[0]);
 
-    return (
-      <Table
-        rowsCount={data.pivotTable.length}
-        rowHeight={50}
-        headerHeight={100}
-        width={1000}
-        height={500}>
-        {data.headers.map((header) => (
-          <Column
-            fixed={true}
-            header={<Cell>{header}</Cell>}
-            cell={props => (
-                <Cell {...props}>{data.pivotTable[props.rowIndex][header]}</Cell>
-              )}
-            width={150}
-          />
-        ))}
-      </Table>
-    );
+    if (data) {
+      return (
+        <Table
+          rowsCount={data.pivotTable.length}
+          rowHeight={50}
+          headerHeight={100}
+          width={1000}
+          height={500}>
+          {data.headers.map((header) => (
+            <Column
+              fixed={true}
+              header={<Cell>{header}</Cell>}
+              key={header}
+              cell={<TextCell data={data.pivotTable} col={header} />}
+              width={150}
+            />
+          ))}
+        </Table>
+      );
+    } else {
+      return (
+          <h2>No data in response</h2>
+      );
+    }
   }
 }

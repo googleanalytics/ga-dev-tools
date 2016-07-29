@@ -98,9 +98,15 @@ export default class HistogramChart extends React.Component {
   render() {
     let {response} = this.props;
     let data = createChartData(response.result.reports[0]);
-    return (
-        <Bar data={data} options={CHART_OPTIONS} width="600" height="250" redraw/>
-    );
+    if (data.labels.length) {
+      return (
+          <Bar data={data} options={CHART_OPTIONS} width="600" height="250"/>
+      );
+    } else {
+      return (
+          <h2>No data in response</h2>
+      );
+  }
   }
 };
 

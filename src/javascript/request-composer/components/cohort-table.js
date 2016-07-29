@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import {Table, Column, Cell} from 'fixed-data-table';
+import {Table, Column, Cell} from 'fixed-data-table-2';
 
 
 export function createCohortData(report, settings) {
@@ -55,7 +55,11 @@ export function createCohortData(report, settings) {
   };
 };
 
-
+const TextCell = ({rowIndex, data, col, ...props}) => (
+  <Cell {...props}>
+    {data[rowIndex][col]}
+  </Cell>
+);
 
 export default class CohortTable extends React.Component {
   constructor(props) {
@@ -80,9 +84,8 @@ export default class CohortTable extends React.Component {
             fixed={true}
             header={<Cell>{header}</Cell>}
             width={200}
-            cell={props => (
-                <Cell key={props.rowIndex} {...props}>{data.cohortTable[props.rowIndex][header]}</Cell>
-              )}
+            key={header}
+            cell={<TextCell data={data.cohortTable} col={header} />}
           />
         ))}
       </Table>
