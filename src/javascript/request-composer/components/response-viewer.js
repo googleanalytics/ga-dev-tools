@@ -13,33 +13,31 @@
 // limitations under the License.
 
 
-/* global gapi */
-
-
 import React from 'react';
-import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
-import { syntaxHighlight } from '../request';
+import {Tab, Tabs, TabList, TabPanel} from 'react-tabs';
+import {syntaxHighlight} from '../request';
 import HistogramChart from './histogram-chart';
 import PivotTable from './pivot-table';
 import CohortTable from './cohort-table';
-import AlertDispatcher from '../../components/alert-dispatcher';
 
 const RESULTS_VIEW = {
   'HISTOGRAM': 'Chart',
   'PIVOT': 'Table',
   'COHORT': 'Table'
-}
+};
 
 export default class ResultsViewer extends React.Component {
   render() {
     let {response, settings} = this.props;
+
+    let highlighted = syntaxHighlight(response.result, null, 2);
 
     if (response.status > 200) {
 
       return (
           <div>
           <h2>API Response</h2>
-          <pre dangerouslySetInnerHTML={{__html: syntaxHighlight(response.result, null, 2)}}>
+          <pre dangerouslySetInnerHTML={{__html: highlighted}}>
           </pre>
           </div>
       );
@@ -75,7 +73,7 @@ export default class ResultsViewer extends React.Component {
             </TabPanel>
             <TabPanel>
               <h2>API Response</h2>
-              <pre dangerouslySetInnerHTML={{__html: syntaxHighlight(response.result, null, 2)}}>
+              <pre dangerouslySetInnerHTML={{__html: highlighted}}>
               </pre>
             </TabPanel>
 

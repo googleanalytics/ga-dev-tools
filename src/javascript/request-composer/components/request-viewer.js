@@ -15,15 +15,13 @@
 import {composeRequest, syntaxHighlight} from '../request';
 import React from 'react';
 
-const REQUEST_URI = 'POST https://analyticsreporting.googleapis.com/v4/reports:batchGet?';
-
 
 export default class RequestViewer extends React.Component {
 
   render() {
     let {params, settings} = this.props;
 
-    let formatted = syntaxHighlight(composeRequest(params, settings), null, 2);
+    let formatted = syntaxHighlight(composeRequest(params, settings));
 
     return (
       <div>

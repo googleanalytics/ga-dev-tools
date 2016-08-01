@@ -13,52 +13,51 @@
 // limitations under the License.
 
 
-/* global gapi */
-
-
 import React from 'react';
-import { Bar } from 'react-chartjs';
+import {Bar} from 'react-chartjs';
 
 const CHART_OPTIONS = {
-    //Boolean - Whether the scale should start at zero, or an order of magnitude down from the lowest value
-    scaleBeginAtZero : true,
+    //Boolean - Whether the scale should start at zero.
+    scaleBeginAtZero: true,
 
-    //Boolean - Whether grid lines are shown across the chart
-    scaleShowGridLines : true,
+    //Boolean - Whether grid lines are shown across the chart.
+    scaleShowGridLines: true,
 
-    //String - Colour of the grid lines
-    scaleGridLineColor : "rgba(0,0,0,.05)",
+    //String - Colour of the grid lines.
+    scaleGridLineColor: 'rgba(0,0,0,.05)',
 
     //Number - Width of the grid lines
-    scaleGridLineWidth : 1,
+    scaleGridLineWidth: 1,
 
-    //Boolean - Whether to show horizontal lines (except X axis)
+    //Boolean - Whether to show horizontal lines (except X axis).
     scaleShowHorizontalLines: true,
 
-    //Boolean - Whether to show vertical lines (except Y axis)
+    //Boolean - Whether to show vertical lines (except Y axis).
     scaleShowVerticalLines: true,
 
-    //Boolean - If there is a stroke on each bar
-    barShowStroke : true,
+    //Boolean - If there is a stroke on each bar.
+    barShowStroke: true,
 
-    //Number - Pixel width of the bar stroke
-    barStrokeWidth : 2,
+    //Number - Pixel width of the bar stroke.
+    barStrokeWidth: 2,
 
-    //Number - Spacing between each of the X value sets
-    barValueSpacing : 5,
+    //Number - Spacing between each of the X value sets.
+    barValueSpacing: 5,
 
-    //Number - Spacing between data sets within X values
-    barDatasetSpacing : 1,
+    //Number - Spacing between data sets within X values.
+    barDatasetSpacing: 1,
 
-    //String - A legend template
-    legendTemplate : "<ul class=\"<%=name.toLowerCase()%>-legend\"><% for (var i=0; i<datasets.length; i++){%><li><span style=\"background-color:<%=datasets[i].fillColor%>\"></span><%if(datasets[i].label){%><%=datasets[i].label%><%}%></li><%}%></ul>"
-
+    //String - A legend template.
+    legendTemplate: '<ul class=\"<%=name.toLowerCase()%>-legend\"><% \
+      for (var i=0; i<datasets.length; i++){%><li><span \
+        style=\"background-color:<%=datasets[i].fillColor%>\"></span>\
+        <%if(datasets[i].label){%><%=datasets[i].label%><%}%></li><%}%></ul>'
 };
 
-var FILL_COLOR = ["rgba(220,220,220,0.5)", "rgba(151,187,205,0.5)"];
-var STROKE_COLOR = ["rgba(220,220,220,0.8)", "rgba(151,187,205,0.8)"];
-var HIGHLIGHT_FILL = ["rgba(220,220,220,0.75)", "rgba(151,187,205,0.75)"];
-var HIGHLIGHT_STROKE = ["rgba(220,220,220,1)", "rgba(151,187,205,1)"];
+let FILL_COLOR = ['rgba(220,220,220,0.5)', 'rgba(151,187,205,0.5)'];
+let STROKE_COLOR = ['rgba(220,220,220,0.8)', 'rgba(151,187,205,0.8)'];
+let HIGHLIGHT_FILL = ['rgba(220,220,220,0.75)', 'rgba(151,187,205,0.75)'];
+let HIGHLIGHT_STROKE = ['rgba(220,220,220,1)', 'rgba(151,187,205,1)'];
 
 export function createChartData(report) {
     // Parses the report and creates a chartData object.
@@ -67,11 +66,11 @@ export function createChartData(report) {
         return;
     }
 
-    var labels = [];
-    var datasets = [];
+    let labels = [];
+    let datasets = [];
     if (report.data.rows && report.data.rows.length) {
-        var metricheaders = report.columnHeader.metricHeader.metricHeaderEntries;
-        for (var i=0, header; header = metricheaders[i]; ++i) {
+        let headers = report.columnHeader.metricHeader.metricHeaderEntries;
+        for (let i=0, header; header = headers[i]; ++i) {
             datasets.push({
                 label: header.name,
                 fillColor: FILL_COLOR[i%2],
@@ -82,9 +81,9 @@ export function createChartData(report) {
             });
         }
 
-        for (var rowIndex=0, row; row = report.data.rows[rowIndex]; ++rowIndex) {
-            var metricValues = row.metrics[0].values;
-            for (var i=0, value; value = metricValues[i]; ++i) {
+        for (let j=0, row; row = report.data.rows[j]; ++j) {
+            let metricValues = row.metrics[0].values;
+            for (let i=0, value; value = metricValues[i]; ++i) {
                 datasets[i].data.push(value);
             }
             labels.push(row.dimensions[0]);
@@ -92,7 +91,7 @@ export function createChartData(report) {
     }
 
     return {labels: labels, datasets: datasets};
-};
+}
 
 export default class HistogramChart extends React.Component {
   render() {
@@ -108,6 +107,6 @@ export default class HistogramChart extends React.Component {
       );
   }
   }
-};
+}
 
 

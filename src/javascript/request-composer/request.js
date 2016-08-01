@@ -15,9 +15,9 @@
 import moment from 'moment';
 
 function buildReportRequest(params) {
-  var reportRequest = {
-      'viewId': params.viewId,
-      'samplingLevel': params.samplingLevel,
+  let reportRequest = {
+      viewId: params.viewId,
+      samplingLevel: params.samplingLevel,
   };
   if (params.filters) {
     reportRequest.filters = params.filters;
@@ -46,7 +46,7 @@ function applyDateRanges(request, params, settings) {
     request.dateRanges = [{
       'startDate': params.startDate,
       'endDate': params.endDate
-    }]
+    }];
   }
   return request;
 }
@@ -57,7 +57,7 @@ function applyMetrics(request, params, settings) {
     request.metrics = [];
 
     let metrics = params.metrics.split(',');
-    for (var i in metrics) {
+    for (let i in metrics) {
       request.metrics.push({'expression': metrics[i]});
     }
   } else if (params.cohortMetrics &&
@@ -65,7 +65,7 @@ function applyMetrics(request, params, settings) {
     request.metrics = [];
 
     let metrics = params.cohortMetrics.split(',');
-    for (var i in metrics) {
+    for (let i in metrics) {
       request.metrics.push({'expression': metrics[i]});
     }
   }
@@ -76,7 +76,7 @@ function applyDimensions(request, params, settings) {
   if (settings.requestType != 'COHORT' &&
       (params.histogramDimensions || params.dimensions)) {
     request.dimensions = [];
-    var dimensions = [];
+    let dimensions = [];
     if (settings.requestType == 'HISTOGRAM' &&
         params.histogramDimensions) {
       dimensions = params.histogramDimensions.split(',');
@@ -85,14 +85,14 @@ function applyDimensions(request, params, settings) {
     } else {
       return request;
     }
-    for (var i in dimensions) {
-      var dimension = {'name': dimensions[i]};
+    for (let i in dimensions) {
+      let dimension = {'name': dimensions[i]};
       if (settings.requestType &&
           settings.requestType == 'HISTOGRAM' &&
           params.buckets) {
-        var histogramBuckets = [];
-        var buckets = params.buckets.split(/[ ,]+/);
-        for (var j in buckets) {
+        let histogramBuckets = [];
+        let buckets = params.buckets.split(/[ ,]+/);
+        for (let j in buckets) {
           histogramBuckets.push(buckets[j]);
         }
         dimension.histogramBuckets = histogramBuckets;
@@ -122,7 +122,7 @@ function applySegment(request, params) {
     request.segments = [{'segmentId': params.segment}];
 
     // Get current dimensions if they exist otherwise empty list.
-    var dimensions = request.dimensions ? request.dimensions : [];
+    let dimensions = request.dimensions ? request.dimensions : [];
 
     // Add the `ga:segment` dimension to the list.
     dimensions.push({'name': 'ga:segment'});
@@ -135,8 +135,8 @@ function applySegment(request, params) {
 function applyOrderBys(request, params, settings) {
 
   if (settings.requestType == 'COHORT') {
-  	request.orderBys = [{fieldName: 'ga:cohort'}];
-  	return request;
+    request.orderBys = [{fieldName: 'ga:cohort'}];
+    return request;
   } else if (settings.requestType == 'HISTOGRAM') {
     if (request.dimensions) {
       request.orderBys = [
@@ -145,15 +145,15 @@ function applyOrderBys(request, params, settings) {
           orderType: 'HISTOGRAM_BUCKET',
           sortOrder: 'ASCENDING'
         }
-      ]
+      ];
     }
   } else if (params.sort) {
     request.orderBys = [];
 
     let dimsmets = params.sort.split(',');
-    for (var i in dimsmets) {
-      var orderBy = {};
-      var fieldName = dimsmets[i];
+    for (let i in dimsmets) {
+      let orderBy = {};
+      let fieldName = dimsmets[i];
 
       if (fieldName[0] == '-') {
         fieldName = fieldName.substring(1);
@@ -170,11 +170,11 @@ function applyOrderBys(request, params, settings) {
 
 function applyPivotDimensions(pivot, params) {
   if (params.pivotDimensions) {
-    pivot.dimensions = []
+    pivot.dimensions = [];
 
     let dimensions = params.pivotDimensions.split(',');
-    for (var i in dimensions) {
-      var dimension = {'name': dimensions[i]};
+    for (let i in dimensions) {
+      let dimension = {'name': dimensions[i]};
       pivot.dimensions.push(dimension);
     }
   }
@@ -183,11 +183,11 @@ function applyPivotDimensions(pivot, params) {
 
 function applyPivotMetrics(pivot, params) {
   if (params.pivotMetrics) {
-    pivot.metrics = []
+    pivot.metrics = [];
 
     let metrics = params.pivotMetrics.split(',');
-    for (var i in metrics) {
-      var metric = {'expression': metrics[i]};
+    for (let i in metrics) {
+      let metric = {'expression': metrics[i]};
       pivot.metrics.push(metric);
     }
   }
@@ -196,7 +196,7 @@ function applyPivotMetrics(pivot, params) {
 
 function applyPivots(request, params, settings) {
   if (settings.requestType == 'PIVOT' ) {
-    var pivot = {};
+    let pivot = {};
     applyPivotDimensions(pivot, params);
     applyPivotMetrics(pivot, params);
     if (params.maxGroupCount) {
@@ -212,14 +212,14 @@ function applyPivots(request, params, settings) {
 
 function applyCohorts(request, params, settings) {
   if (settings.requestType == 'COHORT') {
-    var now = moment();
-    var cohorts = []
+    let now = moment();
+    let cohorts = [];
     switch(params.cohortSize) {
       case 'Day':
         // Create cohorts for the past seven days.
-        for(var i = 0; i < 7; i++) {
-          now = now.subtract(1,'days');
-          var cohort = {
+        for(let i = 0; i < 7; i++) {
+          now = now.subtract(1, 'days');
+          let cohort = {
             'type': 'FIRST_VISIT_DATE',
             'name': now.format('YYYY-MM-DD'),
             'dateRange': {
@@ -233,38 +233,40 @@ function applyCohorts(request, params, settings) {
         break;
       case 'Week':
         // Create cohorts for the past 6 weeks.
-        for(var i = 0; i < 6; i++) {
-            var startDate = now.subtract(1,'week').startOf('week').format('YYYY-MM-DD');
-            var endDate = now.endOf('week').format('YYYY-MM-DD');
-            var cohort = {
+        for(let i = 0; i < 6; i++) {
+            let startDate = now.subtract(1,
+              'week').startOf('week').format('YYYY-MM-DD');
+            let endDate = now.endOf('week').format('YYYY-MM-DD');
+            let cohort = {
               'type': 'FIRST_VISIT_DATE',
               'name': startDate + ' to ' + endDate,
               'dateRange': {
                 'startDate': startDate,
                 'endDate': endDate
-              }            
+              }
           };
           cohorts.push(cohort);
         }
         break;
       case 'Month':
         // Create cohorts for the past 3 months.
-        for(var i = 0; i < 3; i++) {
-            var startDate = now.subtract(1,'month').startOf('month').format('YYYY-MM-DD');
-            var endDate = now.endOf('month').format('YYYY-MM-DD');
-            var cohort = {
+        for(let i = 0; i < 3; i++) {
+            let startDate = now.subtract(1,
+              'month').startOf('month').format('YYYY-MM-DD');
+            let endDate = now.endOf('month').format('YYYY-MM-DD');
+            let cohort = {
               'type': 'FIRST_VISIT_DATE',
-              'name':  startDate + ' to ' + endDate,
+              'name': startDate + ' to ' + endDate,
               'dateRange': {
                 'startDate': startDate,
                 'endDate': endDate
-              } 
+              }
             };
             cohorts.push(cohort);
         }
         break;
     }
-    request.cohortGroup = {'cohorts': cohorts}
+    request.cohortGroup = {'cohorts': cohorts};
   }
   return request;
 }
@@ -273,7 +275,7 @@ export function composeRequest(params, settings) {
   if (!params || !settings) {
     return null;
   }
-  var reportRequest = buildReportRequest(params);
+  let reportRequest = buildReportRequest(params);
   applyDateRanges(reportRequest, params, settings);
   applyMetrics(reportRequest, params, settings);
   applyDimensions(reportRequest, params, settings);
@@ -285,13 +287,21 @@ export function composeRequest(params, settings) {
   return request;
 }
 
+const code = new RegExp('("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|'+
+  '\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)', 'g');
+
 export function syntaxHighlight(json) {
+    if (!json) {
+      return;
+    }
     if (typeof json != 'string') {
          json = JSON.stringify(json, undefined, 2);
     }
-    json = json.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-    return json.replace(/("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g, function (match) {
-        var cls = 'number';
+    json = json.replace(/&/g, '&amp;');
+    json = json.replace(/</g, '&lt;');
+    json = json.replace(/>/g, '&gt;');
+    return json.replace(code, function (match) {
+        let cls = 'number';
         if (/^"/.test(match)) {
             if (/:$/.test(match)) {
                 cls = 'key';

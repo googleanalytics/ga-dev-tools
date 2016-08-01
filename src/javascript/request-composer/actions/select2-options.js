@@ -18,7 +18,7 @@ import * as types from './types';
 import segments from '../segments';
 
 
-var NUMERIC_DIMENSIONS = [
+let NUMERIC_DIMENSIONS = [
   'ga:sessionCount',
   'ga:daysSinceLastSession',
   'ga:sessionDurationBucket',
@@ -36,14 +36,14 @@ var NUMERIC_DIMENSIONS = [
   'ga:nthMinute',
   'ga:isoYear',
   'ga:isoWeek'
-]
+];
 
 export function updateMetricsDimensionsAndSortOptions(viewData) {
   return async function(dispatch, getState) {
     let {account, property, view} = viewData;
     let {params} = getState();
     let {
-      metrics, 
+      metrics,
       dimensions,
       pivotMetrics,
       pivotDimensions,
@@ -67,7 +67,7 @@ export function updateMetricsDimensionsAndSortOptions(viewData) {
 
 
 export function updateSortOptions() {
-  return async function(dispatch, getState) {
+  return function(dispatch, getState) {
     let {params, select2Options: {metrics, dimensions}} = getState();
     let sort = getSortOptions(params, metrics, dimensions);
 
@@ -256,7 +256,7 @@ function getDimensions(account, property, view) {
 }
 
 /**
- * Gets a list of all numeric possible dimensions associated with the passed view.
+ * Gets a list of all numeric dimensions associated with the passed view.
  * This could include custom dimensions.
  * @param {Object} account An account object from accountSummaries.list.
  * @param {Object} property A property object from accountSummaries.list.
