@@ -20,7 +20,7 @@ function buildReportRequest(params) {
       samplingLevel: params.samplingLevel,
   };
   if (params.filters) {
-    reportRequest.filters = params.filters;
+    reportRequest.filtersExpression = params.filters;
   }
   if (params.includeEmptyRows) {
     if (params.includeEmptyRows.toLowerCase() == 'true') {

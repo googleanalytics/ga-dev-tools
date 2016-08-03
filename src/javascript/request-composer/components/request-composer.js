@@ -473,7 +473,7 @@ export default class RequestComposer extends React.Component {
           null}
 
           <div className={formControlClass}>
-            <label className="FormControl-label">filters</label>
+            <label className="FormControl-label">filters Expression</label>
             <div className="FormControl-body">
               <div className="FlexLine">
                 <input
