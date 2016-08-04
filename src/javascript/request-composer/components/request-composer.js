@@ -488,7 +488,6 @@ export default class RequestComposer extends React.Component {
             </div>
           </div>
 
-          {settings.requestType != 'COHORT' ? (
           <div className={formControlClass}>
             <label className="FormControl-label">segment</label>
             <div className="FormControl-body">
@@ -514,8 +513,6 @@ export default class RequestComposer extends React.Component {
               </div>
             </div>
           </div>
-          ) :
-          null}
 
           <div className={formControlClass}>
             <label className="FormControl-label">samplingLevel</label>
