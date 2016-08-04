@@ -117,8 +117,8 @@ function applyDimensions(request, params, settings) {
   return request;
 }
 
-function applySegment(request, params) {
-  if (params.segment) {
+function applySegment(request, params, settings) {
+  if (settings.requestType != 'COHORT' && params.segment) {
     request.segments = [{'segmentId': params.segment}];
 
     // Get current dimensions if they exist otherwise empty list.
@@ -279,7 +279,7 @@ export function composeRequest(params, settings) {
   applyDateRanges(reportRequest, params, settings);
   applyMetrics(reportRequest, params, settings);
   applyDimensions(reportRequest, params, settings);
-  applySegment(reportRequest, params);
+  applySegment(reportRequest, params, settings);
   applyOrderBys(reportRequest, params, settings);
   applyPivots(reportRequest, params, settings);
   applyCohorts(reportRequest, params, settings);
