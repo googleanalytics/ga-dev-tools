@@ -18,7 +18,7 @@ export function createPivotData(report) {
   }
 
   let metricHeaderEntries = columnHeader.metricHeader.metricHeaderEntries;
-  for (let i=0, entry; entry = metricHeaderEntries[i]; ++i) {
+  for (let entry of metricHeaderEntries) {
     headers.push(entry.name);
   }
 
@@ -26,7 +26,7 @@ export function createPivotData(report) {
       columnHeader.metricHeader.pivotHeaders.length) {
     let pivotHeader = columnHeader.metricHeader.pivotHeaders[0];
     let pivotHeaderEntries = pivotHeader.pivotHeaderEntries;
-    for (let i=0, entry; entry = pivotHeaderEntries[i]; ++i) {
+    for (let entry of pivotHeaderEntries) {
       let header = '';
       for (let j=0, dimension; dimension = entry.dimensionNames[j]; ++j) {
         let value = entry.dimensionValues[j];
@@ -41,19 +41,19 @@ export function createPivotData(report) {
     for (let rowIndex=0, row; row = report.data.rows[rowIndex]; ++rowIndex) {
       let pivotTableRow = {};
       let headerIndex = 0;
-      for (let i=0, value; value = row.dimensions[i]; ++i) {
+      for (let value of row.dimensions) {
         pivotTableRow[headers[headerIndex]] = value;
         headerIndex += 1;
       }
       let metricValues = row.metrics[0].values;
-      for (let i=0, value; value = metricValues[i]; ++i) {
+      for (let value of metricValues) {
         pivotTableRow[headers[headerIndex]] = value;
         headerIndex += 1;
       }
       if (row.metrics[0].pivotValueRegions &&
           row.metrics[0].pivotValueRegions.length) {
         let pivotValues = row.metrics[0].pivotValueRegions[0].values;
-        for (let i=0, value; value = pivotValues[i]; ++i) {
+        for (let value of pivotValues) {
           pivotTableRow[headers[headerIndex]] = value;
           headerIndex += 1;
         }

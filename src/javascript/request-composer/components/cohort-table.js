@@ -33,7 +33,7 @@ export function createCohortData(report, settings) {
     }
 
   if (report.data.rows && report.data.rows.length) {
-    for (let rowIndex=0, row; row = report.data.rows[rowIndex]; ++rowIndex) {
+    for (let row of report.data.rows) {
       if (row.dimensions && row.dimensions.length == 2) {
         let rowKey = row.dimensions[0];
         let valueKey = settings.responseCohortSize + ' ' +
