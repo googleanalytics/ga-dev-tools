@@ -1,7 +1,11 @@
 import React from 'react';
 import {Table, Column, Cell} from 'fixed-data-table-2';
 
-
+/**
+ * Parses the response from the API and generates the cohort table.
+ * @param {Object} report An Analytics Reporting API V4 Request Report object.
+ * @returns {Object} A cohort table object.
+ */
 export function createCohortData(report, settings) {
   if (!report.data) {
     return;

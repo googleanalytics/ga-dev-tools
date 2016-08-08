@@ -13,13 +13,10 @@
 // limitations under the License.
 
 
-import mapValues from 'lodash/mapValues';
-import qs from 'querystring';
 import {createStore, applyMiddleware} from 'redux';
 import thunkMiddleware from 'redux-thunk';
 import {sanitize} from './query-params';
 import reducer from './reducers';
-import {gaAll} from '../analytics';
 import db from '../data-store';
 
 
@@ -75,7 +72,10 @@ function getDefaultSettingsAndUpdateTracker() {
   return settings;
 }
 
-
+/**
+ * Gets the Requet Composer default select2 options.
+ * @return {Object} The default select2 options
+ */
 function getDefaultSelect2Options() {
   return {
     metrics: [],

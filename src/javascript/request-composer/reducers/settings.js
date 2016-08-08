@@ -15,7 +15,12 @@
 
 import * as types from '../actions/types';
 
-
+/**
+ * Updates the application settings.
+ * @param {Object} state The application state.
+ * @param {Object} action The application action.
+ * @return {Object} The updated application state with updated settings.
+ */
 export default function settings(state = {}, action) {
   let {settings} = action;
 

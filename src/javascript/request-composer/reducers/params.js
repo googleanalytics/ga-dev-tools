@@ -15,7 +15,12 @@
 
 import * as types from '../actions/types';
 
-
+/**
+ * Updates the parameters.
+ * @param {Object} state The application state
+ * @param {Object} action The application action
+ * @returns {Object} The updated state with the new parameters.
+ */
 export default function params(state = {}, action) {
   let {params} = action;
 

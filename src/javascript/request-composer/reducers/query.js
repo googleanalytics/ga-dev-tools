@@ -15,7 +15,12 @@
 
 import * as types from '../actions/types';
 
-
+/**
+ * Returns weather or not the application is quering the API.
+ * @param {Object} state The application state.
+ * @param {Object} action The application action.
+ * @returns {Object} The isQuerying value of the action.
+ */
 export default function isQuerying(state = false, action) {
 
   switch (action.type) {

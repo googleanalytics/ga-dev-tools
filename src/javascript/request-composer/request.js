@@ -14,6 +14,14 @@
 
 import moment from 'moment';
 
+
+/**
+ * Builds a the top level Analytics Reporting API V4
+ * ReportRequest object, and sets all the top level
+ * fields.
+ * @param {Object} params The request composer's parameters object.
+ * @return {Object} The Report Request Object.
+ */
 function buildReportRequest(params) {
   let reportRequest = {
       viewId: params.viewId,
@@ -39,6 +47,13 @@ function buildReportRequest(params) {
   return reportRequest;
 }
 
+/**
+ * Applies the DateRange object to the Report Request object.
+ * @param {Object} request The report request object.
+ * @param {Object} params The Request Composer parameters.
+ * @param {Object} settings The Request Composer settings.
+ * @returns {Object} The Report Request object.
+ */
 function applyDateRanges(request, params, settings) {
   if (params.startDate &&
       params.endDate &&
@@ -51,6 +66,13 @@ function applyDateRanges(request, params, settings) {
   return request;
 }
 
+/**
+ * Applies the metric objects to the Report Request object.
+ * @param {Object} request The report request object.
+ * @param {Object} params The Request Composer parameters.
+ * @param {Object} settings The Request Composer settings.
+ * @returns {object} The Report Request object.
+ */
 function applyMetrics(request, params, settings) {
   if (params.metrics &&
       settings.requestType != 'COHORT') {
@@ -72,6 +94,13 @@ function applyMetrics(request, params, settings) {
   return request;
 }
 
+/**
+ * Applies the Dimension objects to the Report Request object.
+ * @param {Object} request The report request object.
+ * @param {Object} params The Request Composer parameters.
+ * @param {Object} settings The Request Composer settings.
+ * @returns {Object} The Report Request object.
+ */
 function applyDimensions(request, params, settings) {
   if (settings.requestType != 'COHORT' &&
       (params.histogramDimensions || params.dimensions)) {
@@ -117,6 +146,13 @@ function applyDimensions(request, params, settings) {
   return request;
 }
 
+/**
+ * Applies the segment objects to the Report Request object.
+ * @param {Object} request The report request object.
+ * @param {Object} params The Request Composer parameters.
+ * @param {Object} settings The Request Composer settings.
+ * @returns {Object} The Report Request object.
+ */
 function applySegment(request, params, settings) {
   if (settings.requestType != 'COHORT' && params.segment) {
     request.segments = [{'segmentId': params.segment}];
@@ -131,7 +167,13 @@ function applySegment(request, params, settings) {
   return request;
 }
 
-
+/**
+ * Applies the OrderBy objects to the Report Request object.
+ * @param {Object} request The report request object.
+ * @param {Object} params The Request Composer parameters.
+ * @param {Object} settings The Request Composer settings.
+ * @returns {Object} The Report Request object.
+ */
 function applyOrderBys(request, params, settings) {
 
   if (settings.requestType == 'COHORT') {
@@ -167,6 +209,12 @@ function applyOrderBys(request, params, settings) {
   }
 }
 
+/**
+ * Applies the Dimensions objects to the Pivot object.
+ * @param {Object} pivot The pivot object.
+ * @param {Object} params The Request Composer parameters.
+ * @returns {Object} The pivot object.
+ */
 function applyPivotDimensions(pivot, params) {
   if (params.pivotDimensions) {
     pivot.dimensions = [];
@@ -179,6 +227,12 @@ function applyPivotDimensions(pivot, params) {
   return pivot;
 }
 
+/**
+ * Applies the Metric objects to the Pivot object.
+ * @param {Object} pivot The pivot object.
+ * @param {Object} params The Request Composer parameters.
+ * @returns {Object} The pivot object.
+ */
 function applyPivotMetrics(pivot, params) {
   if (params.pivotMetrics) {
     pivot.metrics = [];
@@ -191,6 +245,13 @@ function applyPivotMetrics(pivot, params) {
   return pivot;
 }
 
+/**
+ * Applies the Pivot objects to the Report Request object.
+ * @param {Object} request The report request object.
+ * @param {Object} params The Request Composer parameters.
+ * @param {Object} settings The Request Composer settings.
+ * @returns {Object} The Report Request object.
+ */
 function applyPivots(request, params, settings) {
   if (settings.requestType == 'PIVOT' ) {
     let pivot = {};
@@ -207,6 +268,13 @@ function applyPivots(request, params, settings) {
   return request;
 }
 
+/**
+ * Applies the Cohort objects to the Report Request object.
+ * @param {Object} request The report request object.
+ * @param {Object} params The Request Composer parameters.
+ * @param {Object} settings The Request Composer settings.
+ * @returns {Object} The Report Request object.
+ */
 function applyCohorts(request, params, settings) {
   if (settings.requestType == 'COHORT') {
     let now = moment();
@@ -268,6 +336,12 @@ function applyCohorts(request, params, settings) {
   return request;
 }
 
+/**
+ * Composes the body of an Analytics Reporting API V4 request.
+ * @param {Object} params The Request Composer parameters.
+ * @param {Object} settings The Request Composer settings.
+ * @returns {Object} The Analytics Reporting API V4 request.
+ */
 export function composeRequest(params, settings) {
   if (!params || !settings) {
     return null;
@@ -287,6 +361,11 @@ export function composeRequest(params, settings) {
 const code = new RegExp('("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|'+
   '\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)', 'g');
 
+/**
+ * Highlights the JSON syntax
+ * @param {Object || String} json The JSON object to highlight.
+ * @returns {String} The highlighted JSON string.
+ */
 export function syntaxHighlight(json) {
     if (!json) {
       return;
