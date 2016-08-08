@@ -96,8 +96,6 @@ function getDefaultSettingsAndUpdateTracker() {
   let settings = db.get('request-composer:settings') || {
     'requestType': 'HISTOGRAM'
   };
-
-  gaAll('set', 'dimension3', qs.stringify(settings));
   return settings;
 }
 
@@ -131,8 +129,6 @@ store.subscribe(function() {
   let {params, settings} = store.getState();
 
   db.set('request-composer:settings', settings);
-  gaAll('set', 'dimension3', qs.stringify(settings));
-
   db.set('request-composer:params', params);
 });
 
