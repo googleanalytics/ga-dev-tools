@@ -59,8 +59,8 @@ function applyDateRanges(request, params, settings) {
       params.endDate &&
       settings.requestType != 'COHORT') {
     request.dateRanges = [{
-      'startDate': params.startDate,
-      'endDate': params.endDate
+      startDate: params.startDate,
+      endDate: params.endDate
     }];
   }
   return request;
@@ -115,7 +115,7 @@ function applyDimensions(request, params, settings) {
       return request;
     }
     for (let name of dimensions) {
-      let dimension = {'name': name};
+      let dimension = {name: name};
       if (settings.requestType &&
           settings.requestType == 'HISTOGRAM' &&
           params.buckets) {
@@ -130,16 +130,16 @@ function applyDimensions(request, params, settings) {
     }
   } else if (params.cohortSize &&
              settings.requestType == 'COHORT') {
-    request.dimensions = [{'name': 'ga:cohort'}];
+    request.dimensions = [{name: 'ga:cohort'}];
     switch(params.cohortSize) {
       case 'Day':
-        request.dimensions.push({'name': 'ga:cohortNthDay'});
+        request.dimensions.push({name: 'ga:cohortNthDay'});
         break;
       case 'Week':
-        request.dimensions.push({'name': 'ga:cohortNthWeek'});
+        request.dimensions.push({name: 'ga:cohortNthWeek'});
         break;
       case 'Month':
-        request.dimensions.push({'name': 'ga:cohortNthMonth'});
+        request.dimensions.push({name: 'ga:cohortNthMonth'});
         break;
     }
   }
@@ -155,13 +155,13 @@ function applyDimensions(request, params, settings) {
  */
 function applySegment(request, params, settings) {
   if (settings.requestType != 'COHORT' && params.segment) {
-    request.segments = [{'segmentId': params.segment}];
+    request.segments = [{segmentId: params.segment}];
 
     // Get current dimensions if they exist otherwise empty list.
     let dimensions = request.dimensions ? request.dimensions : [];
 
     // Add the `ga:segment` dimension to the list.
-    dimensions.push({'name': 'ga:segment'});
+    dimensions.push({name: 'ga:segment'});
     request.dimensions = dimensions;
   }
   return request;
@@ -239,7 +239,7 @@ function applyPivotMetrics(pivot, params) {
 
     let metrics = params.pivotMetrics.split(',');
     for (let metric of metrics) {
-      pivot.metrics.push({'expression': metric});
+      pivot.metrics.push({expression: metric});
     }
   }
   return pivot;
@@ -285,11 +285,11 @@ function applyCohorts(request, params, settings) {
         for(let i = 0; i < 7; i++) {
           now = now.subtract(1, 'days');
           let cohort = {
-            'type': 'FIRST_VISIT_DATE',
-            'name': now.format('YYYY-MM-DD'),
-            'dateRange': {
-              'startDate': now.format('YYYY-MM-DD'),
-              'endDate': now.format('YYYY-MM-DD')
+            type: 'FIRST_VISIT_DATE',
+            name: now.format('YYYY-MM-DD'),
+            dateRange: {
+              startDate: now.format('YYYY-MM-DD'),
+              endDate: now.format('YYYY-MM-DD')
             }
           };
           cohorts.push(cohort);
@@ -303,11 +303,11 @@ function applyCohorts(request, params, settings) {
               'week').startOf('week').format('YYYY-MM-DD');
             let endDate = now.endOf('week').format('YYYY-MM-DD');
             let cohort = {
-              'type': 'FIRST_VISIT_DATE',
-              'name': startDate + ' to ' + endDate,
-              'dateRange': {
-                'startDate': startDate,
-                'endDate': endDate
+              type: 'FIRST_VISIT_DATE',
+              name: startDate + ' to ' + endDate,
+              dateRange: {
+                startDate: startDate,
+                endDate: endDate
               }
           };
           cohorts.push(cohort);
@@ -320,11 +320,11 @@ function applyCohorts(request, params, settings) {
               'month').startOf('month').format('YYYY-MM-DD');
             let endDate = now.endOf('month').format('YYYY-MM-DD');
             let cohort = {
-              'type': 'FIRST_VISIT_DATE',
-              'name': startDate + ' to ' + endDate,
-              'dateRange': {
-                'startDate': startDate,
-                'endDate': endDate
+              type: 'FIRST_VISIT_DATE',
+              name: startDate + ' to ' + endDate,
+              dateRange: {
+                startDate: startDate,
+                endDate: endDate
               }
             };
             cohorts.push(cohort);

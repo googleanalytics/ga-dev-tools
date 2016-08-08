@@ -21,9 +21,9 @@ import PivotTable from './pivot-table';
 import CohortTable from './cohort-table';
 
 const RESULTS_VIEW = {
-  'HISTOGRAM': 'Chart',
-  'PIVOT': 'Table',
-  'COHORT': 'Table'
+  HISTOGRAM: 'Chart',
+  PIVOT: 'Table',
+  COHORT: 'Table'
 };
 
 export default class ResultsViewer extends React.Component {
