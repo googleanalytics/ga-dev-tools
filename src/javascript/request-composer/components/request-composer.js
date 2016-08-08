@@ -273,7 +273,7 @@ export default class RequestComposer extends React.Component {
 
 
           {settings.requestType == 'HISTOGRAM' ? (
-          <div className={formControlClass}>
+          <div className={requiredFormControlClass}>
             <label className="FormControl-label">Histogram dimension</label>
             <div className="FormControl-body">
               <div className="FlexLine">
@@ -293,7 +293,7 @@ export default class RequestComposer extends React.Component {
           null}
 
           {settings.requestType == 'PIVOT' ? (
-          <div className={formControlClass}>
+          <div className={requiredFormControlClass}>
             <label className="FormControl-label">dimensions</label>
             <div className="FormControl-body">
               <div className="FlexLine">
@@ -357,7 +357,7 @@ export default class RequestComposer extends React.Component {
 
 
           {settings.requestType == 'PIVOT' ? (
-          <div className={formControlClass}>
+          <div className={requiredFormControlClass}>
             <label className="FormControl-label">Pivot Metrics</label>
             <div className="FormControl-body">
               <div className="FlexLine">
@@ -377,7 +377,7 @@ export default class RequestComposer extends React.Component {
           null}
 
           {settings.requestType == 'PIVOT' ? (
-          <div className={formControlClass}>
+          <div className={requiredFormControlClass}>
             <label className="FormControl-label">Pivot Dimensions</label>
             <div className="FormControl-body">
               <div className="FlexLine">
@@ -454,7 +454,7 @@ export default class RequestComposer extends React.Component {
           null}
 
           {settings.requestType == 'HISTOGRAM' ? (
-          <div className={formControlClass}>
+          <div className={requiredFormControlClass}>
             <label className="FormControl-label">Buckets</label>
             <div className="FormControl-body">
               <div className="FlexLine">
