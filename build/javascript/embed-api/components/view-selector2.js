@@ -247,7 +247,6 @@
 	        account: this.account,
 	        property: this.property,
 	        view: this.view,
-	        viewId: this.view.id,
 	        ids: this.view && 'ga:' + this.view.id
 	      };
 	
