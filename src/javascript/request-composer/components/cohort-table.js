@@ -78,7 +78,6 @@ export default class CohortTable extends React.Component {
         height={500}>
         {data.headers.map((header) => (
           <Column
-            fixed={true}
             header={<Cell>{header}</Cell>}
             width={200}
             key={header}

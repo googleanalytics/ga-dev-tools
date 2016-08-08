@@ -95,7 +95,6 @@ export default class PivotTable extends React.Component {
           height={500}>
           {data.headers.map((header) => (
             <Column
-              fixed={true}
               header={<Cell>{header}</Cell>}
               key={header}
               cell={<TextCell data={data.pivotTable} col={header} />}
