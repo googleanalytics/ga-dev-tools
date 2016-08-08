@@ -91,7 +91,7 @@ function applyDimensions(request, params, settings) {
           settings.requestType == 'HISTOGRAM' &&
           params.buckets) {
         let histogramBuckets = [];
-        let buckets = params.buckets.split(/[ ,]+/);
+        let buckets = params.buckets.split(/\s*,\s*/);
         for (let j in buckets) {
           histogramBuckets.push(buckets[j]);
         }
