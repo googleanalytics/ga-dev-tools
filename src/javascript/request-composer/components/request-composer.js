@@ -53,7 +53,7 @@ export default class RequestComposer extends React.Component {
    */
   handleViewSelectorChange = (viewData) => {
     let {actions} = this.props;
-    let {viewId} = viewData;
+    let viewId = viewData.view.id;
     actions.updateParams({viewId});
     actions.updateMetricsDimensionsAndSortOptions(viewData);
   }
