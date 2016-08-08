@@ -45,7 +45,7 @@ let createStoreWithMiddleware = applyMiddleware(...middlewear)(createStore);
  * If no params exist in the URL or the datastore, the defaults are returned.
  * @return {Object} The initial params.
  */
-function getInitalQueryParamsAndUpdateUrl() {
+function getInitalQueryParams() {
 
   let defaultParams = {
     'startDate': '30daysAgo',
@@ -54,31 +54,7 @@ function getInitalQueryParamsAndUpdateUrl() {
     'cohortMetrics': 'ga:cohortActiveUsers'
   };
   let storedParams = db.get('request-composer:params');
-  let urlParams = qs.parse(location.search.slice(1));
-
-  // Don't assume that the presence any query params means it's a Query
-  // Explorer URL. Only use the query params if they exist and contain at least
-  // a metric value.
-  if (urlParams && urlParams['metrics']) {
-
-    // Some of the Query Explorer links out in the wild have double-encoded
-    // URL params. Check for the substring '%253A' (a colon, double-encoded),
-    // and if found then double-decode all params.
-    if (urlParams['metrics'].indexOf('%253A')) {
-      urlParams = mapValues(urlParams, (value) => decodeURIComponent(value));
-    }
-
-    // Remove the query params in the URL to prevent losing state on refresh.
-    // https://github.com/googleanalytics/ga-dev-tools/issues/61
-    if (history && history.replaceState) {
-      history.replaceState(history.state, document.title, location.pathname);
-    }
-
-    urlParams = sanitize({...defaultParams, ...urlParams});
-    db.set('request-composer:params', urlParams);
-    return urlParams;
-  }
-  else if (storedParams) {
+  if (storedParams) {
     return sanitize({...defaultParams, ...storedParams});
   }
   else {
@@ -117,7 +93,7 @@ function getDefaultSelect2Options() {
 let store = createStoreWithMiddleware(reducer, {
   isAuthorized: false,
   isQuerying: false,
-  params: getInitalQueryParamsAndUpdateUrl(),
+  params: getInitalQueryParams(),
   select2Options: getDefaultSelect2Options(),
   settings: getDefaultSettingsAndUpdateTracker()
 });
