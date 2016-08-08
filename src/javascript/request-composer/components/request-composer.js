@@ -206,7 +206,7 @@ export default class RequestComposer extends React.Component {
                 <input
                   className="FormField FormFieldCombo-field"
                   name="viewId"
-                  value={params.viewId}
+                  value={params.viewId || ''}
                   onChange={this.handleParamChange} />
                 <HelpIconLink
                   url={REFERENCE_URL}
@@ -258,7 +258,7 @@ export default class RequestComposer extends React.Component {
               <div className="FlexLine">
                 <Select2MultiSuggest
                   name="metrics"
-                  value={params.metrics}
+                  value={params.metrics || ''}
                   tags={select2Options.metrics}
                   onChange={this.handleParamChange}
                   maximumSelectionSize={maximumSelectionSize} />
@@ -279,7 +279,7 @@ export default class RequestComposer extends React.Component {
               <div className="FlexLine">
                 <Select2MultiSuggest
                   name="histogramDimensions"
-                  value={params.histogramDimensions}
+                  value={params.histogramDimensions || ''}
                   tags={select2Options.histogramDimensions}
                   onChange={this.handleParamChange}
                   maximumSelectionSize={1} />
@@ -299,7 +299,7 @@ export default class RequestComposer extends React.Component {
               <div className="FlexLine">
                 <Select2MultiSuggest
                   name="dimensions"
-                  value={params.dimensions}
+                  value={params.dimensions || ''}
                   tags={select2Options.dimensions}
                   onChange={this.handleParamChange}
                   maximumSelectionSize={maximumSelectionSize} />
@@ -319,7 +319,7 @@ export default class RequestComposer extends React.Component {
               <div className="FlexLine">
                 <Select2MultiSuggest
                   name="cohortMetrics"
-                  value={params.cohortMetrics}
+                  value={params.cohortMetrics || ''}
                   tags={select2Options.cohortMetrics}
                   onChange={this.handleParamChange}
                   maximumSelectionSize={1} />
@@ -339,7 +339,7 @@ export default class RequestComposer extends React.Component {
               <div className="FlexLine">
                 <select
                   className="FormField FormFieldCombo-field"
-                  value={params.cohortSize}
+                  value={params.cohortSize || ''}
                   name="cohortSize"
                   onChange={this.handleParamChange}>
                   {COHORT_SIZES.map((option) => (
@@ -363,7 +363,7 @@ export default class RequestComposer extends React.Component {
               <div className="FlexLine">
                 <Select2MultiSuggest
                   name="pivotMetrics"
-                  value={params.pivotMetrics}
+                  value={params.pivotMetrics || ''}
                   tags={select2Options.pivotMetrics}
                   onChange={this.handleParamChange}
                   maximumSelectionSize={maximumSelectionSize} />
@@ -383,7 +383,7 @@ export default class RequestComposer extends React.Component {
               <div className="FlexLine">
                 <Select2MultiSuggest
                   name="pivotDimensions"
-                  value={params.pivotDimensions}
+                  value={params.pivotDimensions || ''}
                   tags={select2Options.pivotDimensions}
                   onChange={this.handleParamChange}/>
                 <HelpIconLink
@@ -440,7 +440,7 @@ export default class RequestComposer extends React.Component {
               <div className="FlexLine">
                 <Select2MultiSuggest
                   name="sort"
-                  value={params.sort}
+                  value={params.sort || ''}
                   tags={select2Options.sort}
                   onChange={this.handleParamChange}
                   maximumSelectionSize={maximumSelectionSize} />
@@ -461,7 +461,7 @@ export default class RequestComposer extends React.Component {
                 <input
                   className="FormField FormFieldCombo-field"
                   name="buckets"
-                  value={params['buckets']}
+                  value={params['buckets'] || ''}
                   onChange={this.handleParamChange} />
                 <HelpIconLink
                   url={REFERENCE_URL}
@@ -479,7 +479,7 @@ export default class RequestComposer extends React.Component {
                 <input
                   className="FormField FormFieldCombo-field"
                   name="filters"
-                  value={params.filters}
+                  value={params.filters || ''}
                   onChange={this.handleParamChange} />
                 <HelpIconLink
                   url={REFERENCE_URL}
@@ -495,7 +495,7 @@ export default class RequestComposer extends React.Component {
               <div className="FlexLine">
                 <SearchSuggest
                   name="segment"
-                  value={params.segment}
+                  value={params.segment || ''}
                   options={select2Options.segments}
                   onChange={this.handleParamChange} />
                 <HelpIconLink
@@ -523,7 +523,7 @@ export default class RequestComposer extends React.Component {
               <div className="FlexLine">
                 <select
                   className="FormField FormFieldCombo-field"
-                  value={params['samplingLevel']}
+                  value={params['samplingLevel'] || ''}
                   name="samplingLevel"
                   onChange={this.handleParamChange}>
                   {SAMPLING_LEVELS.map((option) => (
@@ -560,7 +560,7 @@ export default class RequestComposer extends React.Component {
                 <input
                   className="FormField FormFieldCombo-field"
                   name="pageToken"
-                  value={params['pageToken']}
+                  value={params['pageToken'] || ''}
                   onChange={this.handleParamChange} />
                 <HelpIconLink
                   url={REFERENCE_URL}
@@ -576,7 +576,7 @@ export default class RequestComposer extends React.Component {
                 <input
                   className="FormField FormFieldCombo-field"
                   name="pageSize"
-                  value={params['pageSize']}
+                  value={params['pageSize'] || ''}
                   onChange={this.handleParamChange} />
                 <HelpIconLink
                   url={REFERENCE_URL}
