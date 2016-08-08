@@ -76,6 +76,7 @@ projects:
   tech: [core_reporting_api, embed_api, management_api, metadata_api]
 - title: Request Composer
   type: tool
+  status: new
   slug: request-composer
   tech: [core_reporting_api, embed_api, management_api, metadata_api]
 - title: Spreadsheet Add-on
