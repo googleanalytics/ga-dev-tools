@@ -57,16 +57,16 @@ function applyMetrics(request, params, settings) {
     request.metrics = [];
 
     let metrics = params.metrics.split(',');
-    for (let i in metrics) {
-      request.metrics.push({'expression': metrics[i]});
+    for (let metric of metrics) {
+      request.metrics.push({'expression': metric});
     }
   } else if (params.cohortMetrics &&
              settings.requestType == 'COHORT') {
     request.metrics = [];
 
     let metrics = params.cohortMetrics.split(',');
-    for (let i in metrics) {
-      request.metrics.push({'expression': metrics[i]});
+    for (let metric of metrics) {
+      request.metrics.push({'expression': metric});
     }
   }
   return request;
@@ -85,15 +85,15 @@ function applyDimensions(request, params, settings) {
     } else {
       return request;
     }
-    for (let i in dimensions) {
-      let dimension = {'name': dimensions[i]};
+    for (let name of dimensions) {
+      let dimension = {'name': name};
       if (settings.requestType &&
           settings.requestType == 'HISTOGRAM' &&
           params.buckets) {
         let histogramBuckets = [];
         let buckets = params.buckets.split(/\s*,\s*/);
-        for (let j in buckets) {
-          histogramBuckets.push(buckets[j]);
+        for (let bucket of buckets) {
+          histogramBuckets.push(bucket);
         }
         dimension.histogramBuckets = histogramBuckets;
       }
@@ -151,9 +151,8 @@ function applyOrderBys(request, params, settings) {
     request.orderBys = [];
 
     let dimsmets = params.sort.split(',');
-    for (let i in dimsmets) {
+    for (let fieldName of dimsmets) {
       let orderBy = {};
-      let fieldName = dimsmets[i];
 
       if (fieldName[0] == '-') {
         fieldName = fieldName.substring(1);
@@ -173,9 +172,8 @@ function applyPivotDimensions(pivot, params) {
     pivot.dimensions = [];
 
     let dimensions = params.pivotDimensions.split(',');
-    for (let i in dimensions) {
-      let dimension = {'name': dimensions[i]};
-      pivot.dimensions.push(dimension);
+    for (let dimension of dimensions) {
+      pivot.dimensions.push({'name': dimension});
     }
   }
   return pivot;
@@ -186,9 +184,8 @@ function applyPivotMetrics(pivot, params) {
     pivot.metrics = [];
 
     let metrics = params.pivotMetrics.split(',');
-    for (let i in metrics) {
-      let metric = {'expression': metrics[i]};
-      pivot.metrics.push(metric);
+    for (let metric of metrics) {
+      pivot.metrics.push({'expression': metric});
     }
   }
   return pivot;
