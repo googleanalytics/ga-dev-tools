@@ -136,18 +136,25 @@ export default class ParamElement extends React.Component {
   }
 
 
-  /**
-   * React lifecycyle method below:
-   * http://facebook.github.io/react/docs/component-specs.html
-   * ---------------------------------------------------------
-   */
-
+  /** React lifecycyle method */
   componentDidMount() {
     if (this.props.needsFocus) {
       ReactDOM.findDOMNode(this.refs.labelField).focus();
     }
   }
 
+
+  /**
+   * React lifecycyle methods below:
+   * http://facebook.github.io/react/docs/component-specs.html
+   * ---------------------------------------------------------
+   */
+
+
+  /**
+   * Updates the state if the component receives new props externally.
+   * @param {Object} nextProps
+  */
   componentWillReceiveProps(nextProps) {
     if (nextProps.param != this.props.param) {
       let {name, value} = nextProps.param;
@@ -155,6 +162,7 @@ export default class ParamElement extends React.Component {
     }
   }
 
+  /** @return {Object} */
   render() {
     return (
       <div className={this.getClassName()}>
@@ -163,7 +171,7 @@ export default class ParamElement extends React.Component {
           <input
             className={this.getFieldClassName()}
             data-flex
-            value={this.state.value}
+            value={this.state.value || ''}
             placeholder={this.getPlaceholder()}
             onChange={this.handleValueChange} />
           {this.renderHelpIcon()}

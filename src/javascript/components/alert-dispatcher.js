@@ -71,11 +71,12 @@ export default class AlertDispatcher extends React.Component {
 
 
   /**
-   * React lifecycyle method below:
+   * React lifecycyle methods below:
    * http://facebook.github.io/react/docs/component-specs.html
    * ---------------------------------------------------------
    */
 
+  /** @return {Object} */
   render() {
     return (
       <ReactCSSTransitionGroup
@@ -103,6 +104,9 @@ let alertDispatcherContainer = document.createElement('div');
 document.body.appendChild(alertDispatcherContainer);
 
 
+/**
+ * Renders the AlertDispatcher component to the page.
+ */
 function render() {
   ReactDOM.render(
     <AlertDispatcher alerts={alerts} />,

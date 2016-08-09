@@ -14,7 +14,7 @@
 
 
 // isAuthorized
-export const SET_AUTHORIZED_STATE = 'SET_AUTHORIZED_STATE';
+export const SET_AUTHORIZED = 'SET_AUTHORIZED';
 
 // isQuerying
 export const SET_QUERY_STATE = 'SET_QUERY_STATE';

@@ -20,13 +20,11 @@ import debounce from 'lodash/debounce';
 import site from '../site';
 
 
-//
-//  IMPORTANT!
-//
-//  The function below includes a few hacks so that the Embed API
-//  demos don't interfere with the Embed API code already on the page.
-//  In normal Embed API usage, these hacks aren't needed.
-//
+/**
+ * IMPORTANT! The function below includes a few hacks so that the Embed API
+ * demos don't interfere with the Embed API code already on the page.
+ * In normal Embed API usage, these hacks aren't needed.
+ */
 function monkeyPatchForDemos() {
 
   // `authorize` has already been called at this point, so we need to

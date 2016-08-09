@@ -16,6 +16,11 @@
 import * as types from './types';
 
 
+/**
+ * Returns the SET_HIT_STATUS action type with the new status.
+ * @param {string} status Can be 'VALID', 'INVALID', or 'UNVALIDATED'.
+ * @return {Object}
+ */
 export function setHitStatus(status) {
   return {type: types.SET_HIT_STATUS, status};
 }

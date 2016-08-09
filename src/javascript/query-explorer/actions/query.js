@@ -16,6 +16,11 @@
 import * as types from './types';
 
 
+/**
+ * Returns the SET_QUERY_STATE action type with the passed isQuerying value.
+ * @param {boolean} isQuerying
+ * @return {Object}
+ */
 export function setQueryState(isQuerying) {
   return {type: types.SET_QUERY_STATE, isQuerying};
 }

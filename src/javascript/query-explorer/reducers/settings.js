@@ -16,6 +16,12 @@
 import * as types from '../actions/types';
 
 
+/**
+ * Updates the settings state tree.
+ * @param {Object} state
+ * @param {Object} action
+ * @return {Array} The updated state.
+ */
 export default function settings(state = {}, action) {
   let {settings} = action;
 

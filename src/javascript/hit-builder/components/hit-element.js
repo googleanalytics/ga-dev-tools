@@ -261,11 +261,16 @@ export default class HitElement extends React.Component {
 
 
   /**
-   * React lifecycyle method below:
+   * React lifecycyle methods below:
    * http://facebook.github.io/react/docs/component-specs.html
    * ---------------------------------------------------------
    */
 
+
+  /**
+   * Resets the hit if a new payload is entered by the user.
+   * @param {Object} nextProps
+   */
   componentWillReceiveProps(nextProps) {
     if (nextProps.hitPayload != this.state.hitPayload) {
       this.setState({
@@ -277,6 +282,7 @@ export default class HitElement extends React.Component {
     }
   }
 
+  /** @return {Object} */
   render() {
     let className = 'HitElement';
     if (this.props.hitStatus == 'VALID') className += ' HitElement--valid';

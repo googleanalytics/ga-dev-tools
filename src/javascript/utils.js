@@ -13,6 +13,12 @@
 // limitations under the License.
 
 
+/**
+ * Returns a promise that is resolved after the specified amount of time
+ * has passed.
+ * @param {number} amount The amount of time to sleep in milliseconds.
+ * @return {Promise}
+ */
 export function sleep(amount) {
   return new Promise(function(resolve) {
     setTimeout(resolve, amount);

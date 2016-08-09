@@ -34,6 +34,11 @@ export default class Datepicker extends React.Component {
     value: this.props.value || ''
   }
 
+
+  /**
+   * Updates the state when the datepicker change event is fired.
+   * @param {Event} e
+   */
   handleChange = (e) => {
     this.setState({value: e.target.value});
     this.props.onChange.call(this, e);
@@ -41,11 +46,16 @@ export default class Datepicker extends React.Component {
 
 
   /**
-   * React lifecycyle method below:
+   * React lifecycyle methods below:
    * http://facebook.github.io/react/docs/component-specs.html
    * ---------------------------------------------------------
    */
 
+
+  /**
+   * Instantiates the jQuery datepicker instance on the component once it's
+   * mounted and adds event listeners.
+   */
   componentDidMount() {
     let isShowing = false;
     let opts = {
@@ -75,10 +85,16 @@ export default class Datepicker extends React.Component {
     });
   }
 
+
+  /**
+   * Destroys the jQuery datepicker instance when the component is unmounted.
+   */
   componentWillUnmount() {
     $(this.refs.input).datepicker('destroy').off();
   }
 
+
+  /** @return {Object} */
   render() {
     return (
       <div className="FormFieldAddOn">

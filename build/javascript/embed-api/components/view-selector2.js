@@ -123,7 +123,7 @@
 	    setup_: function setup_(cb) {
 	      var self = this;
 	
-	      function onAuthorize() {
+	      var onAuthorize = function onAuthorize() {
 	        _accountSummaries2.default.get().then(function (summaries) {
 	          self.summaries = summaries;
 	          self.accounts = self.summaries.all();
@@ -131,7 +131,7 @@
 	        }, function (err) {
 	          self.emit('error', err);
 	        });
-	      }
+	      };
 	
 	      if (gapi.analytics.auth.isAuthorized()) {
 	        onAuthorize();
@@ -143,8 +143,6 @@
 	    /**
 	     * Update the view selector instance properties with new account
 	     * information.
-	     * @throws {Error} If the user has set an ID value for an account they
-	     *     don't have access to.
 	     */
 	    updateAccounts_: function updateAccounts_() {
 	
@@ -156,7 +154,8 @@
 	
 	      // If the user does not have any accounts, emit an error.
 	      if (!this.summaries.all().length) {
-	        return this.emit('error', new Error('This user does not have any ' + 'Google Analytics accounts. You can sign up at ' + '"www.google.com/analytics".'));
+	        this.emit('error', new Error('This user does not have any ' + 'Google Analytics accounts. You can sign up at ' + '"www.google.com/analytics".'));
+	        return;
 	      }
 	
 	      // If there are no id props, set the defaults.

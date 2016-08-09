@@ -24,14 +24,17 @@ export default class IconButton extends React.Component {
   }
 
   /**
-   * React lifecycyle method below:
+   * React lifecycyle methods below:
    * http://facebook.github.io/react/docs/component-specs.html
    * ---------------------------------------------------------
    */
 
+
+  /** @return {Object} */
   render() {
+    let props = {className: this.props.className};
     let nodeType = this.props.href ? 'a' : 'button';
-    return React.createElement(nodeType, this.props,
+    return React.createElement(nodeType, props,
         <span className="Button-iconWrapper">
           <span
             className="Button-icon"

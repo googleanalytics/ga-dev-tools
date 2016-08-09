@@ -16,6 +16,12 @@
 import * as types from '../actions/types';
 
 
+/**
+ * Updates the properties state tree.
+ * @param {Arary} state
+ * @param {Object} action
+ * @return {Array} The updated state.
+ */
 export default function properties(state = [], action) {
 
   switch (action.type) {
