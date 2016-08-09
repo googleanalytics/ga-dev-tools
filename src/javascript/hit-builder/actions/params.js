@@ -13,54 +13,88 @@
 // limitations under the License.
 
 
-import * as types from './types';
 import {setHitStatus} from './hit-status';
+import * as types from './types';
 import {setValidationMessages} from './validation-messages';
 import {convertParamsToHit, convertHitToParams,
         getHitValidationResult} from '../hit';
 import AlertDispatcher from '../../components/alert-dispatcher';
 
 
+/**
+ * Resets the hit status and removes any validation messages.
+ * @param {Function} dispatch
+ */
 function resetHitValidationStatus(dispatch) {
   dispatch(setHitStatus('UNVALIDATED'));
   dispatch(setValidationMessages([]));
 }
 
 
+/**
+ * Dispatches the ADD_PARAM action type and resets the hit validation status.
+ * @return {Function}
+ */
 export function addParam() {
-  return function(dispatch) {
+  return (dispatch) => {
     dispatch({type: types.ADD_PARAM});
     resetHitValidationStatus(dispatch);
   };
 }
 
 
+/**
+ * Dispatches the REMOVE_PARAM action type with the passed ID and resets the
+ * hit validation status.
+ * @param {number} id The param ID to remove.
+ * @return {Function}
+ */
 export function removeParam(id) {
-  return function(dispatch) {
+  return (dispatch) => {
     dispatch({type: types.REMOVE_PARAM, id});
     resetHitValidationStatus(dispatch);
   };
 }
 
 
+/**
+ * Dispatches the EDIT_PARAM_NAME action type with the passed ID and name
+ * and resets the hit validation status.
+ * @param {number} id The param ID to edit.
+ * @param {string} name The param name to edit.
+ * @return {Function}
+ */
 export function editParamName(id, name) {
-  return function(dispatch) {
+  return (dispatch) => {
     dispatch({type: types.EDIT_PARAM_NAME, id, name});
     resetHitValidationStatus(dispatch);
   };
 }
 
 
+/**
+ * Dispatches the EDIT_PARAM_VALUE action type with the passed ID and value
+ * and resets the hit validation status.
+ * @param {number} id The param ID to edit.
+ * @param {string} value The param value to edit.
+ * @return {Function}
+ */
 export function editParamValue(id, value) {
-  return function(dispatch) {
+  return (dispatch) => {
     dispatch({type: types.EDIT_PARAM_VALUE, id, value});
     resetHitValidationStatus(dispatch);
   };
 }
 
 
+/**
+ * Accepts a new hit string and updates the hit if it differs from the existing
+ * hit. Also resets the validation status if the hit is new.
+ * @param {string} newHit The new hit payload.
+ * @return {Function}
+ */
 export function updateHit(newHit) {
-  return function(dispatch, getState) {
+  return (dispatch, getState) => {
     let oldHit = convertParamsToHit(getState().params);
     if (oldHit != newHit) {
       let params = convertHitToParams(newHit);
@@ -71,9 +105,13 @@ export function updateHit(newHit) {
 }
 
 
+/**
+ * Validates the hit and updates the validation status and messages with the
+ * results. If an error occurs while validating the hit it is displayed.
+ * @return {Function}
+ */
 export function validateHit() {
-
-  function formatMessage(message) {
+  const formatMessage = (message) => {
     let linkRegex = /Please see http:\/\/goo\.gl\/a8d4RP#\w+ for details\.$/;
     return {
       param: message.parameter,
@@ -81,9 +119,8 @@ export function validateHit() {
       type: message.messageType,
       code: message.messageCode
     };
-  }
-
-  return async function(dispatch, getState) {
+  };
+  return async (dispatch, getState) => {
 
     let hit = convertParamsToHit(getState().params);
     dispatch(setHitStatus('VALIDATING'));
@@ -110,8 +147,7 @@ export function validateHit() {
     }
     catch(err) {
       // TODO(philipwalton): handle timeout errors and slow network connection.
-      dispatch(setHitStatus('UNVALIDATED'));
-      dispatch(setValidationMessages([]));
+      resetHitValidationStatus(dispatch);
       AlertDispatcher.addOnce({
         title: 'Oops, an error occurred while validating the hit',
         message: `Check your connection to make sure you're still online.

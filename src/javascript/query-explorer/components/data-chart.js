@@ -30,11 +30,16 @@ export default class DataChart extends React.Component {
   isQuerying = false
 
   /**
-   * React lifecycyle method below:
+   * React lifecycyle methods below:
    * http://facebook.github.io/react/docs/component-specs.html
    * ---------------------------------------------------------
    */
 
+
+  /**
+   * Instantiates the Embed API DataChart instance on the component once
+   * it's mounted and adds event listeners.
+   */
   componentDidMount() {
     gapi.analytics.ready(() => {
       let params = sanitize(this.props.params);
@@ -55,6 +60,13 @@ export default class DataChart extends React.Component {
     });
   }
 
+
+  /**
+   * Handles updating the state when new props are passed externally.
+   * When new params are passed and isQuerying is set to true, a new request
+   * is made.
+   * @param {Object} nextProps
+   */
   componentWillReceiveProps(nextProps) {
 
     // Compares the props to the instance state to determine when the request
@@ -90,10 +102,16 @@ export default class DataChart extends React.Component {
     }
   }
 
+
+  /**
+   * Removes all DataChart events when the component unmounts.
+   */
   componentWillUnmount() {
     this.dataChart_.off();
   }
 
+
+  /** @return {Object} */
   render() {
     return (
       <div className={this.props.className} hidden={this.props.hidden} />

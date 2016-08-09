@@ -58,6 +58,12 @@ export default class HitBuilder extends React.Component {
   }
 
 
+  /**
+   * Accepts a param and returns a validation message (if one exits) for the
+   * passed param.
+   * @param {Object} param
+   * @return {?Object}
+   */
   getValidationMessageForParam(param) {
     let message = this.props.validationMessages.find((m) => m.param === param);
     return message && message.description;
@@ -65,15 +71,19 @@ export default class HitBuilder extends React.Component {
 
 
   /**
-   * React lifecycyle method below:
+   * React lifecycyle methods below:
    * http://facebook.github.io/react/docs/component-specs.html
    * ---------------------------------------------------------
    */
 
+
+  /** Forces focus on the newly created param. */
   componentDidUpdate() {
     this.newParamNeedsFocus_ = false;
   }
 
+
+  /** @return {Object} */
   render() {
 
     let {params} = this.props;

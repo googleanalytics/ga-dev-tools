@@ -24,7 +24,7 @@ export const REPLACE_PARAMS = 'REPLACE_PARAMS';
 export const SET_HIT_STATUS = 'SET_HIT_STATUS';
 
 // isAuthorized
-export const SET_AUTHORIZED_STATE = 'SET_AUTHORIZED_STATE';
+export const SET_AUTHORIZED = 'SET_AUTHORIZED';
 
 // properties
 export const SET_USER_PROPERTIES = 'SET_USER_PROPERTIES';

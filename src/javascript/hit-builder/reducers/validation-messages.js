@@ -16,6 +16,12 @@
 import * as types from '../actions/types';
 
 
+/**
+ * Updates the validationMessages state tree.
+ * @param {Arary} state
+ * @param {Object} action
+ * @return {Array} The updated state.
+ */
 export default function validationMessages(state = [], action) {
 
   switch (action.type) {

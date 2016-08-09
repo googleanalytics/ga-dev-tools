@@ -21,11 +21,13 @@ import SearchSuggest from '../../components/search-suggest';
 export default class ParamSearchSuggestElement extends ParamElement {
 
   /**
-   * React lifecycyle method below:
+   * React lifecycyle methods below:
    * http://facebook.github.io/react/docs/component-specs.html
    * ---------------------------------------------------------
    */
 
+
+  /** @return {Object} */
   render() {
     return (
       <div className={this.getClassName()}>

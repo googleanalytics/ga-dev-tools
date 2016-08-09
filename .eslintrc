@@ -21,7 +21,12 @@
     // possible errors
     "no-cond-assign": 0,
     "no-empty": 0,
-    // "valid-jsdoc": 1, // TODO(philipwalton): convert to errors.
+    "valid-jsdoc": [2, {
+      "prefer": {"return": "return"},
+      "requireParamDescription": false,
+      "requireReturn": false,
+      "requireReturnDescription": false
+    }],
     // best practices
     "no-extra-bind": 2,
     // style
@@ -36,13 +41,13 @@
     "no-trailing-spaces": 2,
     "object-curly-spacing": [2, "never"],
     "quotes": [2, "single"],
-    // "require-jsdoc": [1, { // TODO(philipwalton): convert to errors.
-    //   "require": {
-    //     "FunctionDeclaration": true,
-    //     "MethodDefinition": false,
-    //     "ClassDeclaration": false
-    //   }
-    // }],
+    "require-jsdoc": [2, {
+      "require": {
+        "FunctionDeclaration": true,
+        "MethodDefinition": true,
+        "ClassDeclaration": false
+      }
+    }],
     "semi": [2, "always"],
     "semi-spacing": [2, {"before": false, "after": true}],
     // es2015

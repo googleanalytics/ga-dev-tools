@@ -16,11 +16,17 @@
 import * as types from '../actions/types';
 
 
+/**
+ * Updates the isAuthorized state tree.
+ * @param {Boolean} state
+ * @param {Object} action
+ * @return {Object} The updated state.
+ */
 export default function isAuthorized(state = false, action) {
 
   switch (action.type) {
 
-    case types.SET_AUTHORIZED_STATE:
+    case types.SET_AUTHORIZED:
       return true;
 
     default:

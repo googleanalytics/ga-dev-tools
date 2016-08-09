@@ -16,6 +16,12 @@
 import * as types from '../actions/types';
 
 
+/**
+ * Updates the hitStatus state tree.
+ * @param {string} state
+ * @param {Object} action
+ * @return {string} The updated state.
+ */
 export default function hitStatus(state = 'UNVALIDATED', action) {
 
   switch (action.type) {

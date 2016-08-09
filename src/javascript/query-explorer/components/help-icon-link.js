@@ -24,6 +24,8 @@ const REFERENCE_URL =
 
 
 export default class HelpIconLink extends React.Component {
+
+  /** @return {Object} */
   render() {
     return (
       <a

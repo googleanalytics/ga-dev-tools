@@ -20,11 +20,13 @@ import ParamElement from './param-element';
 export default class ParamSelectElement extends ParamElement {
 
   /**
-   * React lifecycyle method below:
+   * React lifecycyle methods below:
    * http://facebook.github.io/react/docs/component-specs.html
    * ---------------------------------------------------------
    */
 
+
+  /** @return {Object} */
   render() {
     // Only render a select if the value is one of the passed options.
     if (this.props.options.includes(this.state.value)) {
@@ -34,7 +36,7 @@ export default class ParamSelectElement extends ParamElement {
           <div className="HitBuilderParam-body">
             <select
               className={this.getFieldClassName()}
-              value={this.state.value}
+              value={this.state.value || ''}
               onChange={this.handleValueChange}>
               {this.props.options.map((option) => (
                 <option value={option} key={option}>{option}</option>

@@ -74,11 +74,13 @@ export default class QueryReport extends React.Component {
 
 
   /**
-   * React lifecycyle method below:
+   * React lifecycyle methods below:
    * http://facebook.github.io/react/docs/component-specs.html
    * ---------------------------------------------------------
    */
 
+
+  /** @return {Object} */
   render() {
 
     let partials = {};

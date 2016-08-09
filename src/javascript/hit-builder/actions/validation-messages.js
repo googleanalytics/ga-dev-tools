@@ -16,6 +16,11 @@
 import * as types from './types';
 
 
+/**
+ * Returns the SET_VALIDATION_MESSAGES action type with the new messages.
+ * @param {Array} validationMessages
+ * @return {Object}
+ */
 export function setValidationMessages(validationMessages) {
   return {type: types.SET_VALIDATION_MESSAGES, validationMessages};
 }

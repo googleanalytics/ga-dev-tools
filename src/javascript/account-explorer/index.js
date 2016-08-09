@@ -20,6 +20,10 @@ import accountSummaries from 'javascript-api-utils/lib/account-summaries';
 import site from '../site';
 
 
+/**
+ * Adds event handlers and fetches the user's account information to
+ * populate the view selector.
+ */
 function setup() {
   $('#search-box').on('input', handleSearch);
   $('#search-box').trigger('focus');
@@ -95,7 +99,7 @@ function updateResults(results, opt_query) {
     '<tbody id="results-body"></tbody>' +
   '</table>');
 
-  function mark(text) {
+  let mark = (text) => {
     if (opt_query) {
       let regex = new RegExp('(' + opt_query + ')', 'ig');
       return text.replace(regex, '<mark>$1</mark>');
@@ -103,7 +107,7 @@ function updateResults(results, opt_query) {
     else {
       return text;
     }
-  }
+  };
 
   let searchResults = $('#results-body');
   if (results.length === 0) {
@@ -149,7 +153,7 @@ function setViewSelector(viewId) {
 
   viewSelector.set({viewId: viewId});
 
-  function getIdsAndUpdateResults() {
+  let getIdsAndUpdateResults = () => {
     // Use a try/catch block in case we have sparse properties or accounts.
     try {
       let allObjects = {
@@ -162,7 +166,7 @@ function setViewSelector(viewId) {
       $('#results-title').text('Showing view selected above');
     }
     catch (e) {}
-  }
+  };
 
   viewSelector.on('change', getIdsAndUpdateResults);
   $('#view-selector-container').on('focusout', getIdsAndUpdateResults);
