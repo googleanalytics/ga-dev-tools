@@ -16,6 +16,12 @@
 import * as types from '../actions/types';
 
 
+/**
+ * Updates the isQuerying state tree.
+ * @param {boolean} state
+ * @param {Object} action
+ * @return {Array} The updated state.
+ */
 export default function isQuerying(state = false, action) {
 
   switch (action.type) {

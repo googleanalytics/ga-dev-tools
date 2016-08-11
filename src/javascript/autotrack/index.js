@@ -58,8 +58,8 @@ let pieChartOptions = {
 
 /**
  * Renders a new DataChart component and returns a completion promise.
- * @param {Array} options An array of DataChart options to set on the instance.
  * @param {string} container The element ID to render the chart inside.
+ * @param {Array} options An array of DataChart options to set on the instance.
  * @return {Promise} A promise resolved when the chart is rendered.
  */
 function renderDataChart(container, options) {

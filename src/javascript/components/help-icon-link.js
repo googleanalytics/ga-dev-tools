@@ -16,6 +16,8 @@ import React from 'react';
 import Icon from './icon';
 
 export default class HelpIconLink extends React.Component {
+
+  /** @return {Object} */
   render() {
     return (
       <a

@@ -16,6 +16,11 @@
 import * as types from './types';
 
 
+/**
+ * Returns the UPDATE_REPORT action type with the report parameter.
+ * @param {Object} report
+ * @return {Object}
+ */
 export function updateReport(report) {
   return {type: types.UPDATE_REPORT, report};
 }

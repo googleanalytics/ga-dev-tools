@@ -18,8 +18,14 @@ import segments from '../segments';
 import AlertDispatcher from '../../components/alert-dispatcher';
 
 
+/**
+ * Removes any shown alerts and dispatches the UPDATE_PARAMS action type with
+ * the passed params.
+ * @param {Array} params
+ * @return {Function}
+ */
 export function updateParams(params) {
-  return function(dispatch) {
+  return (dispatch) => {
     // Hides any errors that may be showing since they may be out of date.
     // TODO(philipwalton): consider letting Redux handle the AlertDispatcher
     // component and making the errors tied to a specific param.
@@ -30,8 +36,16 @@ export function updateParams(params) {
 }
 
 
+/**
+ * Fetches the list of segments the authorized user can access and gets the
+ * current one based on the passed `useDefinition` argument. The updateParams
+ * action creator is called with the resulting segement param.
+ * @param {string} segment
+ * @param {boolean} useDefinition
+ * @return {Function}
+ */
 export function swapSegmentIdAndDefinition(segment, useDefinition) {
-  return async function(dispatch) {
+  return async (dispatch) => {
     segment = await (useDefinition
         ? segments.getDefinitionFromId(segment)
         : segments.getIdFromDefinition(segment));

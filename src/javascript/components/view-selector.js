@@ -49,11 +49,16 @@ const VIEW_SELECTOR_TEMPLATE =
 export default class ViewSelector extends React.Component {
 
   /**
-   * React lifecycyle method below:
+   * React lifecycyle methods below:
    * http://facebook.github.io/react/docs/component-specs.html
    * ---------------------------------------------------------
    */
 
+
+  /**
+   * Instantiates the Embed API ViewSelector instance on the component once
+   * it's mounted and adds event listeners.
+   */
   componentDidMount() {
 
     gapi.analytics.ready(() => {
@@ -92,6 +97,12 @@ export default class ViewSelector extends React.Component {
     });
   }
 
+
+  /**
+   * Handles updating the ViewSelector instance when new props are received
+   * externally.
+   * @param {Object} nextProps
+   */
   componentWillReceiveProps(nextProps) {
     if (nextProps.ids != this.props.ids && this.viewSelector_) {
       this.viewSelector_.set({ids: nextProps.ids}).execute();
@@ -100,10 +111,16 @@ export default class ViewSelector extends React.Component {
     }
   }
 
+
+  /**
+   * Removes all ViewSelector events when the component unmounts.
+   */
   componentWillUnmount() {
     if (this.viewSelector_) this.viewSelector_.off();
   }
 
+
+  /** @return {Object} */
   render() {
     return (
       <div dangerouslySetInnerHTML={{__html: VIEW_SELECTOR_TEMPLATE}} />

@@ -30,11 +30,13 @@ export default class ParamButtonElement extends ParamElement {
 
 
   /**
-   * React lifecycyle method below:
+   * React lifecycyle methods below:
    * http://facebook.github.io/react/docs/component-specs.html
    * ---------------------------------------------------------
    */
 
+
+  /** @return {Object} */
   render() {
     return (
       <div className={this.getClassName()}>
@@ -43,7 +45,7 @@ export default class ParamButtonElement extends ParamElement {
           <div className="FormFieldAddOn">
             <input
               className={this.getFieldClassName()}
-              value={this.state.value}
+              value={this.state.value || ''}
               placeholder={this.getPlaceholder()}
               onChange={this.handleValueChange} />
             <button

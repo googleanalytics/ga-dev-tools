@@ -20,11 +20,13 @@ import Icon from './icon';
 export default class Alert extends React.Component {
 
   /**
-   * React lifecycyle method below:
+   * React lifecycyle methods below:
    * http://facebook.github.io/react/docs/component-specs.html
    * ---------------------------------------------------------
    */
 
+
+  /** @return {Object} */
   render() {
     return (
       <div

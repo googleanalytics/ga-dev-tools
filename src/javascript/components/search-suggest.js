@@ -53,7 +53,6 @@ export default class SearchSuggest extends React.Component {
    * Sets a unique namespace used for binding and unbinding jQuery events.
    * @constructor
    * @param {Object} props The props object initially passed by React.
-   * @return {SearchSuggest}
    */
   constructor(props) {
     super(props);
@@ -273,16 +272,17 @@ export default class SearchSuggest extends React.Component {
 
 
   /**
-   * React lifecycyle method below:
+   * React lifecycyle methods below:
    * http://facebook.github.io/react/docs/component-specs.html
    * ---------------------------------------------------------
    */
 
 
+  /**
+   * Handles adding events the first time the component is added to the DOM.
+   */
   componentDidMount() {
-    this.setState({
-      matches: this.findMatches(this.state.value)
-    });
+    this.setState({matches: this.findMatches(this.state.value)});
 
     bindAll(this, ['hideMatchesOnExternalEvent', 'repositionMatchesDropdown']);
 
@@ -294,6 +294,10 @@ export default class SearchSuggest extends React.Component {
   }
 
 
+  /**
+   * Updates the state based on externally passed props.
+   * @param {Object} props
+   */
   componentWillReceiveProps(props) {
     if (props.options != this.props.options) {
       let matches = this.findMatches(this.state.value, props.options);
@@ -308,6 +312,12 @@ export default class SearchSuggest extends React.Component {
   }
 
 
+  /**
+   * Avoids updates if nothing has changed.
+   * @param {Object} nextProps
+   * @param {Object} nextState
+   * @return {boolean}
+   */
   shouldComponentUpdate(nextProps, nextState) {
     return !(
       nextState.value === this.state.value &&
@@ -320,6 +330,12 @@ export default class SearchSuggest extends React.Component {
   }
 
 
+  /**
+   * Updates the component after it has received new props/state to show the
+   * currently selected option.
+   * @param {Object} prevProps
+   * @param {Object} prevState
+   */
   componentDidUpdate(prevProps, prevState) {
     // If the update was triggered by a value change, make sure the dropdown
     // is always scrolled to the top so the first match is visible.
@@ -362,11 +378,15 @@ export default class SearchSuggest extends React.Component {
   }
 
 
+  /**
+   * Removes all added jQuery events.
+   */
   componentWillUnmount() {
     $(window).off('.' + this.namespace);
   }
 
 
+  /** @return {Object} */
   render() {
     let className = 'SearchSuggest';
     if (this.state.open && this.state.matches.length) {

@@ -103,6 +103,7 @@ export default {
    * Get the data from local storage for a given project.
    * Data is cached for quicker access.
    * @param {string} project The project name.
+   * @return {Object} The project data.
    */
   get: function(project) {
     ensureCache();

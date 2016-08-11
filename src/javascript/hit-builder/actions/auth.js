@@ -17,19 +17,34 @@ import accountSummaries from 'javascript-api-utils/lib/account-summaries';
 import * as types from './types';
 
 
-function setAuthorizedState() {
-  return {type: types.SET_AUTHORIZED_STATE};
+/**
+ * Returns the SET_AUTHORIZED action type.
+ * @return {Object}
+ */
+function setAuthorized() {
+  return {type: types.SET_AUTHORIZED};
 }
 
 
+/**
+ * Returns the SET_USER_PROPERTIES action type and the new properties.
+ * @param {Array} properties
+ * @return {Object}
+ */
 function setUserProperties(properties) {
   return {type: types.SET_USER_PROPERTIES, properties};
 }
 
 
+/**
+ * Invokes the setAuthorized action creator and the setUserProperties
+ * action creator after retrieving the list of properties for the authorized
+ * user.
+ * @return {Function}
+ */
 export function handleAuthorizationSuccess() {
-  return async function(dispatch) {
-    dispatch(setAuthorizedState());
+  return async (dispatch) => {
+    dispatch(setAuthorized());
 
     let summaries = await accountSummaries.get();
     let properties = summaries.allProperties().map((property) => ({

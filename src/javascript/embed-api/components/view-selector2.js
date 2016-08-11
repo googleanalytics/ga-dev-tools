@@ -98,7 +98,7 @@ gapi.analytics.ready(function() {
     setup_: function(cb) {
       let self = this;
 
-      function onAuthorize() {
+      let onAuthorize = function() {
         accountSummaries.get().then(
           function(summaries) {
             self.summaries = summaries;
@@ -109,7 +109,7 @@ gapi.analytics.ready(function() {
             self.emit('error', err);
           }
         );
-      }
+      };
 
       if (gapi.analytics.auth.isAuthorized()) {
         onAuthorize();
@@ -122,8 +122,6 @@ gapi.analytics.ready(function() {
     /**
      * Update the view selector instance properties with new account
      * information.
-     * @throws {Error} If the user has set an ID value for an account they
-     *     don't have access to.
      */
     updateAccounts_: function() {
 
@@ -133,9 +131,10 @@ gapi.analytics.ready(function() {
 
       // If the user does not have any accounts, emit an error.
       if (!this.summaries.all().length) {
-        return this.emit('error', new Error('This user does not have any ' +
+        this.emit('error', new Error('This user does not have any ' +
             'Google Analytics accounts. You can sign up at ' +
             '"www.google.com/analytics".'));
+        return;
       }
 
       // If there are no id props, set the defaults.

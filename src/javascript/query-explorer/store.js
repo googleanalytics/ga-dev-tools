@@ -95,6 +95,11 @@ function getDefaultSettingsAndUpdateTracker() {
 }
 
 
+/**
+ * Returns an object of empty arrays that will eventually be populated with
+ * select2 options.
+ * @return {Object}
+ */
 function getDefaultSelect2Options() {
   return {
     metrics: [],

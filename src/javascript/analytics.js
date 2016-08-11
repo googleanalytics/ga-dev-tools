@@ -63,6 +63,11 @@ const gaAll = createGaProxy(ALL_TRACKERS);
 const gaTest = createGaProxy(TEST_TRACKER);
 
 
+/**
+ * Initializes the analytics.js trackers, adds autotrack plugins, invokes each
+ * tracking customization plugin, and then sends the intial pageview after
+ * the `load` event fires.
+ */
 function init() {
   createTrackers();
   requirePlugins();
@@ -102,6 +107,12 @@ function createGaProxy(trackers) {
 }
 
 
+/**
+ * Creates the analytics.js trackers according to the data in the
+ * ALL_TRACKERS constant. In addition to this data each tracker is also
+ * created with a `siteSpeedSampleRate` of 10% (up from the default 1%),
+ * and in non-production environments, hits are aborted.
+ */
 function createTrackers() {
   for (let tracker of ALL_TRACKERS) {
     window.ga('create', tracker.trackingId, 'auto', tracker.name, {
@@ -122,14 +133,20 @@ function createTrackers() {
 }
 
 
+/**
+ * Sends the initial pageview on each of the trackers. The hit source dimension
+ * is set to `pageload` to distinguish it from virtual pageviews.
+ */
 function sendInitialPageview() {
   gaAll('send', 'pageview', {[dimensions.HIT_SOURCE]: 'pageload'});
 }
 
 
+/**
+ * Requires various autotrack plugins on each of the trackers, passing in
+ * their respective configuration options.
+ */
 function requirePlugins() {
-
-  // Autotrack plugins.
   gaAll('require', 'cleanUrlTracker', {
     stripQuery: true,
     queryDimensionIndex: getDefinitionIndex(dimensions.URL_QUERY_PARAMS),
@@ -186,6 +203,9 @@ function requirePlugins() {
 }
 
 
+/**
+ * Sets the user's client ID as a custom dimension.
+ */
 function trackClientId() {
   gaAll(function(tracker) {
     let clientId = tracker.get('clientId');
@@ -194,14 +214,18 @@ function trackClientId() {
 }
 
 
-// Accepts a custom dimension or metric and returns it's numerical index.
-function getDefinitionIndex(dimension) {
-  return +dimension.slice(-1);
+/**
+ * Accepts a custom definition or metric and returns its numerical index.
+ * @param {string} definition The definition field name.
+ * @return {number} The definition index.
+ */
+function getDefinitionIndex(definition) {
+  return +/\d+$/.exec(definition)[0];
 }
 
 
 /**
- * Randomize array element order in-place.
+ * Randomizes array element order in-place.
  * Using Durstenfeld shuffle algorithm.
  * http://goo.gl/91pjZs
  * @param {Array} array The input array.
