@@ -27,7 +27,12 @@ let defaultOptions = {
   segments: []
 };
 
-
+/**
+ * Updates the select2Options state tree.
+ * @param {Object} state
+ * @param {Object} action
+ * @return {Array} The updated state.
+ */
 export default function select2Options(state = defaultOptions, action) {
   let {select2Options} = action;
   switch (action.type) {

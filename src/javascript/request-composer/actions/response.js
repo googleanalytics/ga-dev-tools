@@ -15,7 +15,11 @@
 
 import * as types from './types';
 
-
+/**
+ * Returns the UPDATE_RESPONSE action type with the response parameter.
+ * @param {Object} response
+ * @return {Object}
+ */
 export function updateResponse(response) {
   return {type: types.UPDATE_RESPONSE, response};
 }

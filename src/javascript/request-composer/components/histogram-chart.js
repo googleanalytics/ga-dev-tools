@@ -59,6 +59,12 @@ let STROKE_COLOR = ['rgba(220,220,220,0.8)', 'rgba(151,187,205,0.8)'];
 let HIGHLIGHT_FILL = ['rgba(220,220,220,0.75)', 'rgba(151,187,205,0.75)'];
 let HIGHLIGHT_STROKE = ['rgba(220,220,220,1)', 'rgba(151,187,205,1)'];
 
+
+/**
+ * Create the histogram chart data.
+ * @param {Object} report The Analytics Reporting API V4 Report object.
+ * @return {Object} The histogram chart.
+ */
 export function createChartData(report) {
     // Parses the report and creates a chartData object.
 
@@ -94,6 +100,8 @@ export function createChartData(report) {
 }
 
 export default class HistogramChart extends React.Component {
+
+  /** @return {Object} */
   render() {
     let {response} = this.props;
     let data = createChartData(response.result.reports[0]);

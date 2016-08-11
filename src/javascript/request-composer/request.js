@@ -363,8 +363,8 @@ const code = new RegExp('("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|'+
 
 /**
  * Highlights the JSON syntax
- * @param {Object || String} json The JSON object to highlight.
- * @returns {String} The highlighted JSON string.
+ * @param {Object|String} json The JSON object to highlight.
+ * @return {String} The highlighted JSON string.
  */
 export function syntaxHighlight(json) {
     if (!json) {

@@ -4,6 +4,7 @@ import {Table, Column, Cell} from 'fixed-data-table-2';
 /**
  * Parses the response from the API and generates the cohort table.
  * @param {Object} report An Analytics Reporting API V4 Request Report object.
+ * @param {Object} settings The Application settings object.
  * @returns {Object} A cohort table object.
  */
 export function createCohortData(report, settings) {
@@ -64,10 +65,16 @@ const TextCell = ({rowIndex, data, col, ...props}) => (
 );
 
 export default class CohortTable extends React.Component {
+
+  /**
+   * @constructor
+   * @param {Object} props The props object initially passed by React.
+   */
   constructor(props) {
     super(props);
   }
 
+  /** @return {Object} */
   render() {
 
     let {response, settings} = this.props;

@@ -79,10 +79,16 @@ const TextCell = ({rowIndex, data, col, ...props}) => (
 );
 
 export default class PivotTable extends React.Component {
+
+  /**
+   * @constructor
+   * @param {Object} props The props object initially passed by React.
+   */
   constructor(props) {
     super(props);
   }
 
+  /** @return {Object} */
   render() {
 
     let {response} = this.props;

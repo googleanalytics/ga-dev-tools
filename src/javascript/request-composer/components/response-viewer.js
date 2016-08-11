@@ -27,6 +27,8 @@ const RESULTS_VIEW = {
 };
 
 export default class ResultsViewer extends React.Component {
+
+  /** @return {Object} */
   render() {
     let {response, settings} = this.props;
 

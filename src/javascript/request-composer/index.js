@@ -27,11 +27,21 @@ import store from './store';
 import site from '../site';
 
 
+/**
+ * See: https://github.com/reactjs/react-redux
+ * @param {Object} state
+ * @return {Object}
+ */
 function mapStateToProps(state) {
   return state;
 }
 
 
+/**
+ * See: https://github.com/reactjs/react-redux
+ * @param {function} dispatch
+ * @return {Object}
+ */
 function mapDispatchToProps(dispatch) {
   return {
     actions: bindActionCreators(actions, dispatch)

@@ -18,6 +18,7 @@ import React from 'react';
 
 export default class RequestViewer extends React.Component {
 
+  /** @return {Object} */
   render() {
     let {params, settings} = this.props;
 

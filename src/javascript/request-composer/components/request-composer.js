@@ -75,8 +75,7 @@ export default class RequestComposer extends React.Component {
 
   /**
    * Invoked when a user changes the request type.
-   * @param Int index The index of the selcected request tab.
-   * @param Int last The index of the last selected request tab.
+   * @param {Int} index The index of the selcected request tab.
    */
   handleRequestChange = (index) => {
     this.props.actions.updateSettings({requestType: REQUEST_TYPES[index]});
@@ -143,6 +142,8 @@ export default class RequestComposer extends React.Component {
    * http://facebook.github.io/react/docs/component-specs.html
    * ---------------------------------------------------------
    */
+
+  /** @return {Object} */
   render() {
 
     let {

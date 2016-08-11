@@ -17,10 +17,19 @@ import * as types from './types';
 import {updateSegmentsOptions} from './select2-options';
 
 
+/**
+ * Returns the SET_AUTHORIZED action type.
+ * @return {Object}
+ */
 function setAuthorizedState() {
   return {type: types.SET_AUTHORIZED_STATE};
 }
 
+/**
+ * Invokes the setAuthorized action creator and the updateSegmentsOptions
+ * action creator.
+ * @return {Function}
+ */
 export function handleAuthorizationSuccess() {
   return function(dispatch, getState) {
     let {useDefinition} = getState().settings;

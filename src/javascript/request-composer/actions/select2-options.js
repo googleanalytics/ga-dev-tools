@@ -38,6 +38,15 @@ let NUMERIC_DIMENSIONS = [
   'ga:isoWeek'
 ];
 
+
+/**
+ * Fetches the metrics and dimensions the user can access based on the passed
+ * view data, calculates the sort options based on the current metric and
+ * dimension params from the state, and dispatches the `updateSelect2Options()`
+ * action creator with the updated data.
+ * @param {Object} viewData
+ * @return {Function}
+ */
 export function updateMetricsDimensionsAndSortOptions(viewData) {
   return async function(dispatch, getState) {
     let {account, property, view} = viewData;
@@ -65,7 +74,12 @@ export function updateMetricsDimensionsAndSortOptions(viewData) {
   };
 }
 
-
+/**
+ * Gets the current metric and dimension params from the state and updates
+ * the sort options by dispatching the `updateSelect2Options()` action creator.
+ * @param {Object} viewData
+ * @return {Function}
+ */
 export function updateSortOptions() {
   return function(dispatch, getState) {
     let {params, select2Options: {metrics, dimensions}} = getState();
@@ -76,6 +90,13 @@ export function updateSortOptions() {
 }
 
 
+/**
+ * Fetches the segments the current user can access (by either ID or
+ * definition) and dispatches the `updateSelect2Options()` action creator
+ * with the updated segments.
+ * @param {boolean} useDefinition
+ * @return {Function}
+ */
 export function updateSegmentsOptions(useDefinition) {
   return async function(dispatch) {
     let segments = await getSegmentsOptions(useDefinition);
@@ -83,12 +104,24 @@ export function updateSegmentsOptions(useDefinition) {
   };
 }
 
-
+/**
+ * Returns the UPDATE_SELECT2_OPTIONS action type with the passed
+ * select2Options.
+ * @param {Object} select2Options
+ * @return {Object}
+ */
 function updateSelect2Options(select2Options) {
   return {type: types.UPDATE_SELECT2_OPTIONS, select2Options};
 }
 
-
+/**
+ * Fetches the list of metrics and dimensions the user can access for the
+ * passed view and returns a promise resolved with the fetched data.
+ * @param {Object} account The account object from the Metadata API.
+ * @param {Object} property The property object from the Metadata API.
+ * @param {Object} view The view object from the Metadata API.
+ * @return {Promise}
+ */
 function getMetricsAndDimensionsOptions(account, property, view) {
   return Promise.all([
     getMetrics(account, property, view),
@@ -150,7 +183,14 @@ function getMetricsAndDimensionsOptions(account, property, view) {
   });
 }
 
-
+/**
+ * Accepts the current query params and a list of metrics and dimensions
+ * available and returns the possible sort options.
+ * @param {Object} params
+ * @param {Array} metrics
+ * @param {Array} dimensions
+ * @return {Array}
+ */
 function getSortOptions(params, metrics, dimensions) {
 
   let sortOptions = [];
@@ -182,7 +222,13 @@ function getSortOptions(params, metrics, dimensions) {
   return sortOptions;
 }
 
-
+/**
+ * Fetches all segments the current user can access and returns a promise
+ * fulfilled with an array of segment options formatted either by ID
+ * or definition (based on the `useDefinition` argument).
+ * @param {boolean} useDefinition
+ * @return {Promise}
+ */
 function getSegmentsOptions(useDefinition) {
   return segments.get().then(function(results) {
     let segments = results.map(function(segment) {

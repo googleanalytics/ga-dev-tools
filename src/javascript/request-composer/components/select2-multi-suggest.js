@@ -105,6 +105,7 @@ export default class Select2MultiSuggest extends React.Component {
    * @param {Array} selection A list of option the user has already selected.
    * @param {Function} selectCallback A function that accepts an option and adds
    *     it to the existing selections.
+   * @return {string|undefined}
    */
   tokenizer = (input, selection, selectCallback) => {
     let parts = input.split(',');
@@ -150,6 +151,10 @@ export default class Select2MultiSuggest extends React.Component {
    * ---------------------------------------------------------
    */
 
+  /**
+   * Binds the select2 change event to the component `handleChange()` method
+   * once the component is mounted.
+   */
   componentDidMount() {
     let $input = $(ReactDOM.findDOMNode(this));
     $input.on('change', this.handleChange.bind(this));
@@ -164,7 +169,10 @@ export default class Select2MultiSuggest extends React.Component {
     $(ReactDOM.findDOMNode(this)).select2(opts);
   }
 
-
+  /**
+   * Handles updating the state when new props are passed externally.
+   * @param {Object} nextProps
+   */
   componentWillReceiveProps(nextProps) {
     if (nextProps.tags != this.props.tags) {
       this.buildTagMap(nextProps.tags);
@@ -180,6 +188,11 @@ export default class Select2MultiSuggest extends React.Component {
   }
 
 
+  /**
+   * Handles updating the select2 instance with the new options after a
+   * state update.
+   * @param {Object} prevProps
+   */
   componentDidUpdate(prevProps) {
     if (this.props.tags != prevProps.tags) {
       let opts = {
@@ -194,11 +207,15 @@ export default class Select2MultiSuggest extends React.Component {
   }
 
 
+  /**
+   * Destroys the select2 instance when the component unmounts.
+   */
   componentWillUnmount() {
     $(ReactDOM.findDOMNode(this)).select2('destroy').off();
   }
 
 
+  /** @return {Object} */
   render() {
     return (
       <select

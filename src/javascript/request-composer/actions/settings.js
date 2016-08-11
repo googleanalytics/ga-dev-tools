@@ -15,7 +15,11 @@
 
 import * as types from './types';
 
-
+/**
+ * Returns the UPDATE_SETTINGS action type with the passed settings value.
+ * @param {boolean} settings
+ * @return {Object}
+ */
 export function updateSettings(settings) {
   return {type: types.UPDATE_SETTINGS, settings};
 }
