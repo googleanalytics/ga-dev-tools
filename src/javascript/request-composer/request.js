@@ -357,38 +357,3 @@ export function composeRequest(params, settings) {
   let request = {'reportRequests': [reportRequest]};
   return request;
 }
-
-const code = new RegExp('("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|'+
-  '\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)', 'g');
-
-/**
- * Highlights the JSON syntax
- * @param {Object|String} json The JSON object to highlight.
- * @return {String} The highlighted JSON string.
- */
-export function syntaxHighlight(json) {
-    if (!json) {
-      return;
-    }
-    if (typeof json != 'string') {
-         json = JSON.stringify(json, undefined, 2);
-    }
-    json = json.replace(/&/g, '&amp;');
-    json = json.replace(/</g, '&lt;');
-    json = json.replace(/>/g, '&gt;');
-    return json.replace(code, function (match) {
-        let cls = 'number';
-        if (/^"/.test(match)) {
-            if (/:$/.test(match)) {
-                cls = 'key';
-            } else {
-                cls = 'string';
-            }
-        } else if (/true|false/.test(match)) {
-            cls = 'boolean';
-        } else if (/null/.test(match)) {
-            cls = 'null';
-        }
-        return '<span class="' + cls + '">' + match + '</span>';
-    });
-}
