@@ -1,4 +1,4 @@
-// Copyright 2014 Google Inc. All rights reserved.
+// Copyright 2016 Google Inc. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -26,15 +26,34 @@ hljs.registerLanguage(
     'javascript', require('highlight.js/lib/languages/javascript'));
 
 hljs.registerLanguage(
+    'json', require('highlight.js/lib/languages/json'));
+
+hljs.registerLanguage(
     'python', require('highlight.js/lib/languages/python'));
 
 
 export default {
 
-  highlight: function(selector) {
+  /**
+   * Adds highlight.js syntax highlighting to all elements on the page matching
+   * the passed selector.
+   * @param {string} selector
+   */
+  highlightAll: function(selector) {
     $(selector).each(function() {
       hljs.highlightBlock(this);
     });
+  },
+
+
+  /**
+   * Adds highlight.js syntax highlighting to a string of code.
+   * @param {{lang: string, code: string}} opts
+   * @return {string} The highlighted code string, it can be used as the
+   *     `innherHTML` of an element.
+   */
+  highlight: function({lang, code}) {
+    return hljs.highlight(lang, code).value;
   }
 
 };
