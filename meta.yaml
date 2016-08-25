@@ -74,6 +74,11 @@ projects:
   type: tool
   slug: query-explorer
   tech: [core_reporting_api, embed_api, management_api, metadata_api]
+- title: Request Composer
+  type: tool
+  status: new
+  slug: request-composer
+  tech: [core_reporting_api, embed_api, management_api, metadata_api]
 - title: Spreadsheet Add-on
   type: tool
   slug: spreadsheet-add-on
@@ -101,8 +106,11 @@ tech:
     name: autotrack
     url: https://github.com/googleanalytics/autotrack/
   core_reporting_api:
-    name: Core Reporting API
+    name: Analytics Reporting API
     url: https://developers.google.com/analytics/devguides/reporting/core/
+  reporting_api_v4:
+    name: Analytics Reporting API V4
+    url: https://developers.google.com/analytics/devguides/reporting/core/v4
   ecjs:
     name: Enhanced Ecommerce (ec.js)
     url: https://developers.google.com/analytics/devguides/collection/analyticsjs/enhanced-ecommerce

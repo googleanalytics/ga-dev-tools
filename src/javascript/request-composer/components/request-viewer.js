@@ -12,28 +12,28 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-
-import camelCase from 'camelcase';
+import {composeRequest, syntaxHighlight} from '../request';
 import React from 'react';
-import Icon from '../../components/icon';
 
 
-const REFERENCE_URL =
-    'https://developers.google.com' +
-    '/analytics/devguides/reporting/core/v3/reference#';
-
-
-export default class HelpIconLink extends React.Component {
+export default class RequestViewer extends React.Component {
 
   /** @return {Object} */
   render() {
+    let {params, settings} = this.props;
+
+    let formatted = syntaxHighlight(composeRequest(params, settings));
+
     return (
-      <a
-        className="FormControl-helpIcon"
-        href={REFERENCE_URL + camelCase(this.props.name)}
-        tabIndex="-1">
-        <Icon type="info-outline" />
-      </a>
+      <div>
+        <h3> JSON request</h3>
+        <pre
+          cols="80"
+          rows="20"
+          id="query-output"
+          dangerouslySetInnerHTML={{__html: formatted}}>
+        </pre>
+      </div>
     );
   }
 }
