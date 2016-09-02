@@ -24,3 +24,25 @@ export function sleep(amount) {
     setTimeout(resolve, amount);
   });
 }
+
+
+/**
+ * Copies the text content from the passed HTML element.
+ * @param {HTMLElement} element The element to copy text from.
+ * @return {boolean} true if the copy action was successful.
+ */
+export function copyElementText(element) {
+  let success = false;
+  let range = document.createRange();
+  range.selectNode(element);
+
+  window.getSelection().removeAllRanges();
+  window.getSelection().addRange(range);
+
+  try {
+    success = document.execCommand('copy');
+  } catch(e) {}
+
+  window.getSelection().removeAllRanges();
+  return success;
+}

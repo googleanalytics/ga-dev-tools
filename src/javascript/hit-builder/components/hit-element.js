@@ -22,7 +22,7 @@ import Textarea from 'react-textarea-autosize';
 import Icon from '../../components/icon';
 import IconButton from '../../components/icon-button';
 import supports from '../../supports';
-import {sleep} from '../../utils';
+import {copyElementText, sleep} from '../../utils';
 
 
 const ACTION_TIMEOUT = 1500;
@@ -315,26 +315,4 @@ export default class HitElement extends React.Component {
     );
   }
 
-}
-
-
-/**
- * Copies the text content from the passed HTML element.
- * @param {HTMLElement} element The element to copy text from.
- * @return {boolean} true if the copy action was successful.
- */
-function copyElementText(element) {
-  let success = false;
-  let range = document.createRange();
-  range.selectNode(element);
-
-  window.getSelection().removeAllRanges();
-  window.getSelection().addRange(range);
-
-  try {
-    success = document.execCommand('copy');
-  } catch(e) {}
-
-  window.getSelection().removeAllRanges();
-  return success;
 }
