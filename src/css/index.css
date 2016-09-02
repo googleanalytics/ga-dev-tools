@@ -37,6 +37,8 @@ limitations under the License.
 @import './components/button';
 @import './components/button-set';
 @import './components/checkbox';
+@import './components/campaign-url-form';
+@import './components/campaign-url-result';
 @import './components/content';
 @import './components/dashboard';
 @import './components/data-table';

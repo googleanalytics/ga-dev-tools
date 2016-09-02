@@ -46,3 +46,22 @@ export function copyElementText(element) {
   window.getSelection().removeAllRanges();
   return success;
 }
+
+
+/**
+ * Takes a script URL and return a promise that resolves once the script has
+ * been loaded on the page or rejects if the load fails.
+ * @param {string} url
+ * @return {Promise}
+ */
+export function loadScript(url) {
+  return new Promise((resolve, reject) => {
+    let js = document.createElement('script');
+    let fs = document.getElementsByTagName('script')[0];
+    js.src = url;
+    fs.parentNode.insertBefore(js, fs);
+    js.onload = resolve;
+    js.onerror = reject;
+  });
+}
+
