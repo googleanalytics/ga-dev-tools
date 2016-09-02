@@ -23,8 +23,9 @@ limitations under the License.
 .Table td,
 .Table th {
   border: 1px solid var(--border-color);
-  padding: .5em 1em;
+  padding: 1em;
   text-align: left;
+  vertical-align: top;
 }
 
 .Table th > h4 {
@@ -36,3 +37,18 @@ limitations under the License.
 .Table tbody tr:nth-child(2n-1) {
   background-color: hsla(0, 0%, 0%, .02);
 }
+
+.Table td > p {
+  margin: 0
+}
+
+.Table td > p + p {
+  margin-top: 0.5em
+}
+
+.Table td > p > strong {
+  font-weight: 600;
+  white-space: nowrap
+}
+
+
