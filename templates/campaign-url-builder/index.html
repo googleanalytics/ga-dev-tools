@@ -1,0 +1,96 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<section>
+
+<p>This tool allows you to easily add campaign parameters to URLs so you can track <a href="https://support.google.com/analytics/answer/1033863">Custom Campaigns</a> in Google Analytics.</p>
+
+<h3 class="H3--underline">Enter the website URL and campaign information</h3>
+
+<p>Fill out the required fields (marked with *) in the form below, and once complete the full campaign URL will be generated for you. <em>Note: the generated URL is automatically updated as you make changes.</em></p>
+
+<div id="campaign-url-builder"></div>
+
+<h2>More information and examples for each parameter</h2>
+
+<p>The following table gives a detailed explanation and example of each of the campaign parameters. To learn more, check out the links in the <a href="#related-resources">related resources</a> section below.</p>
+
+<table class="Table">
+  <tbody>
+    <tr>
+      <td>
+        <p><strong>Campaign Source</strong></p>
+        <p><code>utm_source</code></p>
+      </td>
+      <td>
+        <p><strong>Required.</strong></p>
+        <p>Use <code>utm_source</code> to identify a search engine, newsletter name, or other source.</p>
+        <p><em>Example:</em> <code>google</code></p>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <p><strong>Campaign Medium</strong></p>
+        <p><code>utm_medium</code></p>
+      </td>
+      <td>
+        <p>Use <code>utm_medium</code> to identify a medium such as email or cost-per- click.</p>
+        <p><em>Example:</em> <code>cpc</code></p>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <p><strong>Campaign Name</strong></p>
+        <p><code>utm_campaign</code></p>
+      </td>
+      <td>
+        <p>Used for keyword analysis. Use <code>utm_campaign</code> to identify a specific product promotion or strategic campaign.</p>
+        <p><em>Example:</em> <code>utm_campaign=spring_sale</code></p>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <p><strong>Campaign Term</strong></p>
+        <p><code>utm_term</code></p>
+      </td>
+      <td>
+        <p>Used for paid search. Use <code>utm_term</code> to note the keywords for this ad.</p>
+        <p><em>Example:</em> <code>running+shoes</code></p>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <p><strong>Campaign Content</strong></p>
+        <p><code>utm_content</code></p>
+      </td>
+      <td>
+        <p>Used for A/B testing and content-targeted ads. Use <code>utm_content</code> to differentiate ads or links that point to the same URL.</p>
+        <p><em>Examples:</em> <code>logolink</code> <em>or</em> <code>textlink</code></p>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<h2 id="related-resources">Related resources</h2>
+
+<ul>
+  <li><a href="https://support.google.com/analytics/answer/1247851">About Campaigns</a></li>
+  <li><a href="https://support.google.com/analytics/answer/1033863">About Custom Campaigns</a></li>
+  <li><a href="https://support.google.com/analytics/answer/1037445">Best practices for creating Custom Campaigns</a></li>
+  <li><a href="https://support.google.com/analytics/answer/1247839">About the Referral Traffic report</a></li>
+  <li><a href="https://support.google.com/analytics/answer/1033173">About traffic source dimensions</a></li>
+  <li><a href="https://support.google.com/adwords/answer/1752125">AdWords Auto-Tagging</a></li>
+</ul>
+
+
+</section>
+{% endblock %}
+
+{% block tech_content %}
+  This tool uses the <a href="{{ site.tech.url_shortener_api.url }}">{{ site.tech.url_shortener_api.name }}</a> to create short links for long campaign URLs.
+{% endblock %}
+
+{% block foot_scripts %}
+{{ super() }}
+<script src="/public/javascript/campaign-url-builder.js"></script>
+{% endblock %}
