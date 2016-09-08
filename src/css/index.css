@@ -25,6 +25,7 @@ limitations under the License.
 
 /* Vendor styles (which don't necessarily follow conventions) */
 @import './vendor/highlight';
+@import './vendor/react-tabs';
 @import './vendor/select2-overrides';
 @import './vendor/table-chart';
 
@@ -37,6 +38,7 @@ limitations under the License.
 @import './components/button';
 @import './components/button-set';
 @import './components/checkbox';
+@import './components/cohort-table';
 @import './components/content';
 @import './components/dashboard';
 @import './components/data-table';
