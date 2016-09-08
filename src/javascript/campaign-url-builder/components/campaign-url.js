@@ -19,6 +19,7 @@ import Textarea from 'react-textarea-autosize';
 import AlertDispatcher from '../../components/alert-dispatcher';
 import Icon from '../../components/icon';
 import IconButton from '../../components/icon-button';
+import supports from '../../supports';
 import {shortenUrl} from '../../url-shortener';
 import {copyElementText} from '../../utils';
 
@@ -162,7 +163,7 @@ export default class CampaignUrl extends React.Component {
    * @return {Object}
    */
   renderActionsButton() {
-    return (
+    return supports.copyToClipboard() ? (
       <div className="CampaignUrlResult-item">
         <div className="ButtonSet">
           <IconButton
@@ -188,7 +189,7 @@ export default class CampaignUrl extends React.Component {
           )}
         </div>
       </div>
-    );
+    ) : null;
   }
 
 
