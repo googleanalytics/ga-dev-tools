@@ -33,9 +33,10 @@ export default class CodeBlock extends React.Component {
 
   /**
    * Handles rehighlighting the syntax.
-   * @param {Object} prevProps
+   * @param {Object} nextProps
+   * @return {boolean}
    */
-  shouldComponentUpdate(nextProps, nextState) {
+  shouldComponentUpdate(nextProps) {
     return !(this.props.code === nextProps.code &&
         this.props.lang === nextProps.lang);
   }

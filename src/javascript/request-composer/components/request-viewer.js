@@ -12,8 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import {composeRequest, syntaxHighlight} from '../request';
+import {composeRequest} from '../request';
 import React from 'react';
+import CodeBlock from '../../components/code-block';
 
 
 export default class RequestViewer extends React.Component {
@@ -21,19 +22,11 @@ export default class RequestViewer extends React.Component {
   /** @return {Object} */
   render() {
     let {params, settings} = this.props;
-
-    let formatted = syntaxHighlight(composeRequest(params, settings));
+    let request = composeRequest(params, settings);
+    let requestJson = JSON.stringify(request, null, 2);
 
     return (
-      <div>
-        <h3> JSON request</h3>
-        <pre
-          cols="80"
-          rows="20"
-          id="query-output"
-          dangerouslySetInnerHTML={{__html: formatted}}>
-        </pre>
-      </div>
+      <CodeBlock code={requestJson} lang="json" />
     );
   }
 }
