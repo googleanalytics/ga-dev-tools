@@ -15,10 +15,11 @@
 
 import React from 'react';
 import {Tab, Tabs, TabList, TabPanel} from 'react-tabs';
-import {syntaxHighlight} from '../request';
 import HistogramChart from './histogram-chart';
 import PivotTable from './pivot-table';
 import CohortTable from './cohort-table';
+import CodeBlock from '../../components/code-block';
+
 
 const RESULTS_VIEW = {
   HISTOGRAM: 'Chart',
@@ -26,65 +27,59 @@ const RESULTS_VIEW = {
   COHORT: 'Table'
 };
 
+
 export default class ResultsViewer extends React.Component {
 
   /** @return {Object} */
   render() {
     let {response, settings} = this.props;
 
-    let highlighted = syntaxHighlight(response.result, null, 2);
+    if (!response.result) return null;
 
-    if (response.status > 200) {
+    let responseCode = JSON.stringify(response.result, null, 2);
 
+    if (response.status >= 400) {
       return (
-          <div>
-          <h2>API Response</h2>
-          <pre dangerouslySetInnerHTML={{__html: highlighted}}>
-          </pre>
-          </div>
+        <div>
+        <h2>API Response</h2>
+        <CodeBlock code={responseCode} lang="json" />
+        </div>
       );
-    } else if (response.status == 200) {
+    } else {
       return(
-          <div>
-          <Tabs selectedIndex={0}>
-            <TabList>
-              <Tab>Response {RESULTS_VIEW[settings.responseType]}</Tab>
-              <Tab>Response JSON</Tab>
-            </TabList>
-            <TabPanel>
-              <h2>Response {RESULTS_VIEW[settings.responseType]}</h2>
-              {settings.responseType == 'HISTOGRAM' ? (
-                <HistogramChart
-                  response={response}
-                />
-              ) :
-              null}
-              {settings.responseType == 'PIVOT' ? (
-                <PivotTable
-                  response={response}
-                />
-              ) :
-              null}
-              {settings.responseType == 'COHORT' ? (
-                <CohortTable
-                  response={response}
-                  settings={settings}
-                />
-              ) :
-              null}
-            </TabPanel>
-            <TabPanel>
-              <h2>API Response</h2>
-              <pre dangerouslySetInnerHTML={{__html: highlighted}}>
-              </pre>
-            </TabPanel>
-
-          </Tabs>
-          </div>
+        <div>
+        <Tabs selectedIndex={0}>
+          <TabList>
+            <Tab>Response {RESULTS_VIEW[settings.responseType]}</Tab>
+            <Tab>Response JSON</Tab>
+          </TabList>
+          <TabPanel>
+            {settings.responseType == 'HISTOGRAM' ? (
+              <HistogramChart
+                response={response}
+              />
+            ) :
+            null}
+            {settings.responseType == 'PIVOT' ? (
+              <PivotTable
+                response={response}
+              />
+            ) :
+            null}
+            {settings.responseType == 'COHORT' ? (
+              <CohortTable
+                response={response}
+                settings={settings}
+              />
+            ) :
+            null}
+          </TabPanel>
+          <TabPanel>
+            <CodeBlock code={responseCode} lang="json" />
+          </TabPanel>
+        </Tabs>
+        </div>
       );
     }
-    return (null);
   }
 }
-
-
