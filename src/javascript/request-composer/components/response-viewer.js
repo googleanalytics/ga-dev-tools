@@ -60,6 +60,10 @@ export default class ResultsViewer extends React.Component {
               ) :
               null}
               {settings.responseType == 'PIVOT' ? (
+                <p>Request Composer currently cannot change the ordering of pivot table dimensions and metrics.</p>
+              ) :
+              null}
+              {settings.responseType == 'PIVOT' ? (
                 <PivotTable
                   response={response}
                 />
