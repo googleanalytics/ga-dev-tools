@@ -104,6 +104,7 @@ limitations under the License.
     border-top: .4em solid #f7991c;
     box-shadow: 0 0 1em rgba(0,0,0,.3);
     flex: 1;
+    min-width: 0;
     position: relative; /* To get it stacked above the sidebar */
 
     /* TODO(philipwalton): fallback for non-flexbox
