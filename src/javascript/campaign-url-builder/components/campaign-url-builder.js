@@ -137,8 +137,7 @@ export default class CampaignUrlBuilder extends React.Component {
               <div className="FormControl-info">
                 The referrer: (e.g.&nbsp;
                   <code>google</code>,&nbsp;
-                  <code>citysearch</code>,&nbsp;
-                  <code>newsletter4</code>)
+                  <code>newsletter</code>)
               </div>
             </div>
           </div>
