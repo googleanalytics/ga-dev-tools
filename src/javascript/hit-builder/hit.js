@@ -89,7 +89,8 @@ export function convertHitToParams(hit = '') {
 export function convertParamsToHit(params) {
   let query = {};
   for (let {name, value} of params) {
-    if (name && value) query[name] = value;
+    // `name` must be present, `value` can be an empty string.
+    if (name && value != null) query[name] = value;
   }
 
   return querystring.stringify(query);
