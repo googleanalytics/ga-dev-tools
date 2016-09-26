@@ -19,6 +19,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import Textarea from 'react-textarea-autosize';
+import {gaAll} from '../../analytics';
 import Icon from '../../components/icon';
 import IconButton from '../../components/icon-button';
 import supports from '../../supports';
@@ -79,6 +80,11 @@ export default class HitElement extends React.Component {
       data: this.state.value
     });
     this.setState({hitSent: true});
+    gaAll('send', 'event', {
+      eventCategory: 'Hit Builder',
+      eventAction: 'send',
+      eventLabel: 'payload'
+    });
     await sleep(ACTION_TIMEOUT);
     this.setState({hitSent: false});
   }
@@ -93,6 +99,12 @@ export default class HitElement extends React.Component {
     let hitPayload = ReactDOM.findDOMNode(this.refs.hitPayload);
     if (copyElementText(hitPayload)) {
       this.setState({hitPayloadCopied: true, hitUriCopied: false});
+
+      gaAll('send', 'event', {
+        eventCategory: 'Hit Builder',
+        eventAction: 'copy-to-clipboard',
+        eventLabel: 'payload'
+      });
 
       // After three second, remove the success checkbox.
       clearTimeout(this.hitPayloadCopiedTimeout_);
@@ -114,6 +126,12 @@ export default class HitElement extends React.Component {
     let shareUrl = ReactDOM.findDOMNode(this.refs.shareUrl);
     if (copyElementText(shareUrl)) {
       this.setState({hitUriCopied: true, hitPayloadCopied: false});
+
+      gaAll('send', 'event', {
+        eventCategory: 'Hit Builder',
+        eventAction: 'copy-to-clipboard',
+        eventLabel: 'share URL'
+      });
 
       // After three second, remove the success checkbox.
       clearTimeout(this.hitUriCopiedTimeout_);

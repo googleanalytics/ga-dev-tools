@@ -16,6 +16,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import Textarea from 'react-textarea-autosize';
+import {gaAll} from '../../analytics';
 import AlertDispatcher from '../../components/alert-dispatcher';
 import Icon from '../../components/icon';
 import IconButton from '../../components/icon-button';
@@ -52,6 +53,12 @@ export default class CampaignUrl extends React.Component {
     if (copyElementText(url)) {
       this.setState({urlCopied: true});
 
+      gaAll('send', 'event', {
+        eventCategory: 'Campaign URL',
+        eventAction: 'copy-to-clipboard',
+        eventLabel: `${this.state.showShortUrl ? 'short' : 'long'} url`
+      });
+
       // After three second, remove the success checkbox.
       clearTimeout(this.urlCopiedTimeout_);
       this.urlCopiedTimeout_ = setTimeout(() =>
@@ -79,6 +86,11 @@ export default class CampaignUrl extends React.Component {
         shortUrl: shortUrl,
         showShortUrl: true
       });
+      gaAll('send', 'event', {
+        eventCategory: 'Campaign URL',
+        eventAction: 'shorten',
+        eventLabel: '(not set)'
+      });
     } catch (err) {
       AlertDispatcher.addOnce({
         title: 'Oops, an error occurred trying to shorten the URL',
@@ -99,6 +111,11 @@ export default class CampaignUrl extends React.Component {
   longenUrl = () => {
     this.setState({
       showShortUrl: false
+    });
+    gaAll('send', 'event', {
+      eventCategory: 'Campaign URL',
+      eventAction: 'unshorten',
+      eventLabel: '(not set)'
     });
   }
 

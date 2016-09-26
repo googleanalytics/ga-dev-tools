@@ -18,6 +18,7 @@ import * as types from './types';
 import {setValidationMessages} from './validation-messages';
 import {convertParamsToHit, convertHitToParams,
         getHitValidationResult} from '../hit';
+import {gaAll} from '../../analytics';
 import AlertDispatcher from '../../components/alert-dispatcher';
 
 
@@ -139,10 +140,20 @@ export function validateHit() {
       if (result.valid) {
         dispatch(setHitStatus('VALID'));
         dispatch(setValidationMessages([]));
+        gaAll('send', 'event', {
+          eventCategory: 'Hit Builder',
+          eventAction: 'validate',
+          eventLabel: 'valid'
+        });
       }
       else {
         dispatch(setHitStatus('INVALID'));
         dispatch(setValidationMessages(validationMessages.map(formatMessage)));
+        gaAll('send', 'event', {
+          eventCategory: 'Hit Builder',
+          eventAction: 'validate',
+          eventLabel: 'invalid'
+        });
       }
     }
     catch(err) {
@@ -152,6 +163,11 @@ export function validateHit() {
         title: 'Oops, an error occurred while validating the hit',
         message: `Check your connection to make sure you're still online.
                   If you're still having problems, try refreshing the page.`
+      });
+      gaAll('send', 'event', {
+        eventCategory: 'Hit Builder',
+        eventAction: 'validate',
+        eventLabel: 'error'
       });
     }
   };
