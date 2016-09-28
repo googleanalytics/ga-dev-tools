@@ -285,9 +285,12 @@ gulp.task('build:all', [
 ]);
 
 
-gulp.task('build', function() {
-  // Force production mode if NODE_ENV isn't set.
-  if (!('NODE_ENV' in process.env)) process.env.NODE_ENV = 'production';
+gulp.task('deploy', ['build:all'], (done) => {
+  if (!isProd()) {
+    throw new Error('The deploy task must be run in production mode.');
+  }
 
-  gulp.start('build:all');
+  const appConfig = spawn('appcfg.py', ['update', '.']);
+  appConfig.stderr.on('data', (data) => process.stdout.write(data));
+  appConfig.on('close', () => done());
 });

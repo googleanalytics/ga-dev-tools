@@ -35,6 +35,7 @@ export default class IconButton extends React.Component {
     let props = {
       className: this.props.className,
       disabled: this.props.disabled,
+      href: this.props.href,
       onClick: this.props.onClick
     };
     let nodeType = this.props.href ? 'a' : 'button';
