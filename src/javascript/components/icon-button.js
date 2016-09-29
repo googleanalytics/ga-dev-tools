@@ -32,7 +32,12 @@ export default class IconButton extends React.Component {
 
   /** @return {Object} */
   render() {
-    let props = {className: this.props.className};
+    let props = {
+      className: this.props.className,
+      disabled: this.props.disabled,
+      href: this.props.href,
+      onClick: this.props.onClick
+    };
     let nodeType = this.props.href ? 'a' : 'button';
     return React.createElement(nodeType, props,
         <span className="Button-iconWrapper">

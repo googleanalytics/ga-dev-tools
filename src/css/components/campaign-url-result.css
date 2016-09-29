@@ -15,40 +15,32 @@ limitations under the License.
 */
 
 
-.Table {
+.CampaignUrlResult {
   background: #fff;
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  margin-bottom: var(--gap);
+  padding: var(--gap) var(--gap) 0;
+}
+
+.CampaignUrlResult-title {
+  color: inherit;
+  font-size: 1.5em;
+  font-weight: 300;
+  line-height: 1;
+  margin: 0 0 .667em;
+}
+
+.CampaignUrlResult-item {
   margin: 0 0 var(--gap);
 }
 
-.Table td,
-.Table th {
-  border: 1px solid var(--border-color);
-  padding: 1em;
-  text-align: left;
-  vertical-align: top;
+@media (--break-lg) {
+  .CampaignUrlResult {
+    margin-bottom: var(--gap-lg);
+    padding: var(--gap-lg) var(--gap-lg) 0;
+  }
+  .CampaignUrlResult-item {
+    margin: 0 0 var(--gap-lg);
+  }
 }
-
-.Table th > h4 {
-  margin: 0;
-  font-size: 1.1em;
-  font-weight: 400;
-}
-
-.Table tbody tr:nth-child(2n-1) {
-  background-color: hsla(0, 0%, 0%, .02);
-}
-
-.Table td > p {
-  margin: 0
-}
-
-.Table td > p + p {
-  margin-top: 0.5em
-}
-
-.Table td > p > strong {
-  font-weight: 600;
-  white-space: nowrap
-}
-
-

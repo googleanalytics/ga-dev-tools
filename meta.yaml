@@ -11,12 +11,16 @@ projects:
 - title: Autotrack
   type: demo
   slug: autotrack
-  status: new
   tech: [autotrack, embed_api]
 - title: Account Explorer
   type: tool
   slug: account-explorer
   tech: [embed_api, management_api]
+- title: Campaign URL Builder
+  type: tool
+  slug: campaign-url-builder
+  status: new
+  tech: [url_shortener_api]
 - title: Dimensions & Metrics Explorer
   type: tool
   slug: dimensions-metrics-explorer
@@ -88,7 +92,6 @@ projects:
     url: https://chrome.google.com/webstore/detail/google-analytics/fefimfimnhjjkomigakinmjileehfopp
 - title: Tag Assistant
   type: demo
-  status: new
   slug: tag-assistant
   tech: [tag_assistant, analyticsjs]
   external:
@@ -144,7 +147,9 @@ tech:
   tag_assistant:
     name: Tag Assistant
     url: https://chrome.google.com/webstore/detail/tag-assistant-by-google/kejbdjndbnbjgmefkgdddjlbokphdefk
-
+  url_shortener_api:
+    name: Url Shortener API
+    url: https://developers.google.com/url-shortener/
 
 # Links represent external URLs that may change.
 # Setting them here makes it easier to update globally.

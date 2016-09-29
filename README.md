@@ -45,5 +45,3 @@ If you're wanting to load any of the pages that require server-side authorizatio
 Now you should be able to load [http://localhost:8080/](http://localhost:8080/) in your browser and see the site. (Note, the client ID associated with this project has the origin `localhost:8080` whitelisted. If you load the site on another port, authentication may not work properly.)
 
 If you're running App Engine on Windows or Mac, you can use the App Engine Launcher GUI to run the site as an alternative to running the above command.
-
-To have your system watch for changes and automatically rebuild the source files, you can run `npm run watch` in place of the `npm run build` command shown above.

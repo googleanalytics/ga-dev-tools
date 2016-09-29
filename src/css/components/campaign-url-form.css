@@ -15,40 +15,12 @@ limitations under the License.
 */
 
 
-.Table {
-  background: #fff;
-  margin: 0 0 var(--gap);
+.CampaignUrlForm {
+  margin: var(--gap) 0;
 }
 
-.Table td,
-.Table th {
-  border: 1px solid var(--border-color);
-  padding: 1em;
-  text-align: left;
-  vertical-align: top;
+@media (--break-lg) {
+  .CampaignUrlForm {
+    margin: var(--gap-lg) 0;
+  }
 }
-
-.Table th > h4 {
-  margin: 0;
-  font-size: 1.1em;
-  font-weight: 400;
-}
-
-.Table tbody tr:nth-child(2n-1) {
-  background-color: hsla(0, 0%, 0%, .02);
-}
-
-.Table td > p {
-  margin: 0
-}
-
-.Table td > p + p {
-  margin-top: 0.5em
-}
-
-.Table td > p > strong {
-  font-weight: 600;
-  white-space: nowrap
-}
-
-
