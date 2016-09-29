@@ -34,4 +34,4 @@ header.init();
 sidebar.init();
 
 // Highlight code blocks.
-highlighter.highlight('pre');
+highlighter.highlightAll('pre');
