@@ -187,13 +187,13 @@ export default class RequestComposer extends React.Component {
           </TabPanel>
         </Tabs>
 
-        <h3 className="H3--underline">Select a view</h3>
+        <h3 className="H3--underline">Select account, property, and view</h3>
 
         <ViewSelector
           viewId={params.viewId}
           onChange={this.handleViewSelectorChange} />
 
-        <h3 className="H3--underline">Set the query parameters</h3>
+        <h3 className="H3--underline">Set query parameters</h3>
 
         <form onSubmit={this.handleSubmit}>
 
