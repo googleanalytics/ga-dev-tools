@@ -618,6 +618,10 @@ export default class RequestComposer extends React.Component {
                 {isQuerying ? 'Loading...' : 'Make Request'}
               </button>
             </div>
+            {response.result && settings.responseType == settings.requestType? (
+              <p>Scroll down to see results.</p>
+            ) :
+            null}
           </div>
 
         </form>
