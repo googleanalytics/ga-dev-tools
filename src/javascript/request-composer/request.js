@@ -24,21 +24,32 @@ import moment from 'moment';
  * ReportRequest object, and sets all the top level
  * fields.
  * @param {Object} params The request composer's parameters object.
+ * @param {Object} settings The Request Composer settings.
  * @return {Object} The Report Request Object.
  */
-function buildReportRequest(params) {
+function buildReportRequest(params, settings) {
   let reportRequest = {
     viewId: params.viewId
   };
-  if (params.filters) {
-    reportRequest.filtersExpression = params.filters;
+
+  if (params.samplingLevel) {
+    reportRequest.samplingLevel = params.samplingLevel;
   }
-  if (params.pageSize &&
-      parseInt(params.pageSize)) {
-    reportRequest.pageSize = params.pageSize;
-  }
-  if (params.pageToken) {
-    reportRequest.pageToken = params.pageToken;
+
+  if (settings.requestType != 'COHORT') {
+
+    if (params.filters) {
+      reportRequest.filtersExpression = params.filters;
+    }
+    if (settings.requestType != 'HISTOGRAM') {
+      if (params.pageSize &&
+          parseInt(params.pageSize)) {
+        reportRequest.pageSize = params.pageSize;
+      }
+      if (params.pageToken) {
+        reportRequest.pageToken = params.pageToken;
+      }
+    }
   }
   return reportRequest;
 }
@@ -358,7 +369,7 @@ export function composeRequest(params, settings) {
   if (!params || !settings) {
     return null;
   }
-  let reportRequest = buildReportRequest(params);
+  let reportRequest = buildReportRequest(params, settings);
 
   if (settings.requestType == 'COHORT') {
     reportRequest.includeEmptyRows = true;
@@ -380,7 +391,7 @@ export function composeRequest(params, settings) {
 /**
  * Validates request for required fields.
  * @param {Object} params The Request Composer Parameters.
- * @Param {Object} settings The Request Composer settings.
+ * @param {Object} settings The Request Composer settings.
  * @returns {boolean} Wheather or not the field params are valid.
  */
  export function validateRequest(params, settings) {
