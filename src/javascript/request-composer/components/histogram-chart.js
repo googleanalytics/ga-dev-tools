@@ -54,10 +54,26 @@ const CHART_OPTIONS = {
         <%if(datasets[i].label){%><%=datasets[i].label%><%}%></li><%}%></ul>'
 };
 
-let FILL_COLOR = ['rgba(220,220,220,0.5)', 'rgba(151,187,205,0.5)'];
-let STROKE_COLOR = ['rgba(220,220,220,0.8)', 'rgba(151,187,205,0.8)'];
-let HIGHLIGHT_FILL = ['rgba(220,220,220,0.75)', 'rgba(151,187,205,0.75)'];
-let HIGHLIGHT_STROKE = ['rgba(220,220,220,1)', 'rgba(151,187,205,1)'];
+let FILL_COLOR = ['rgba(250,137,79,0.5)',
+                  'rgba(179,191,205,0.5)',
+                  'rgba(240,206,147,0.5)',
+                  'rgba(74,86,109,0.5)',
+                  'rgba(108,128,167,0.5)'];
+let STROKE_COLOR = ['rgba(250,137,79,0.8)',
+                    'rgba(179,191,205,0.8)',
+                    'rgba(240,206,147,0.5)',
+                    'rgba(74,86,109,0.8)',
+                    'rgba(108,128,167,0.8)'];
+let HIGHLIGHT_FILL = ['rgba(250,137,79,0.75)',
+                      'rgba(179,191,205,0.75)',
+                      'rgba(240,206,147,0.5)',
+                      'rgba(74,86,109,0.75)',
+                      'rgba(108,128,167,0.75)'];
+let HIGHLIGHT_STROKE = ['rgba(250,137,79,1)',
+                        'rgba(179,191,205,1)',
+                        'rgba(240,206,147,0.5)',
+                        'rgba(74,86,109,1)',
+                        'rgba(108,128,167,1)'];
 
 
 /**
@@ -79,10 +95,10 @@ export function createChartData(report) {
         for (let i=0, header; header = headers[i]; ++i) {
             datasets.push({
                 label: header.name,
-                fillColor: FILL_COLOR[i%2],
-                strokeColor: STROKE_COLOR[i%2],
-                highlightFill: HIGHLIGHT_FILL[i%2],
-                highlightStroke: HIGHLIGHT_STROKE[i%2],
+                fillColor: FILL_COLOR[i%5],
+                strokeColor: STROKE_COLOR[i%5],
+                highlightFill: HIGHLIGHT_FILL[i%5],
+                highlightStroke: HIGHLIGHT_STROKE[i%5],
                 data: []
             });
         }
