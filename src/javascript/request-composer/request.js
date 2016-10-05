@@ -376,3 +376,34 @@ export function composeRequest(params, settings) {
   let request = {'reportRequests': [reportRequest]};
   return request;
 }
+
+/**
+ * Validates request for required fields.
+ * @param {Object} params The Request Composer Parameters.
+ * @Param {Object} settings The Request Composer settings.
+ * @returns {boolean} Wheather or not the field params are valid.
+ */
+ export function validateRequest(params, settings) {
+  if (!params || !settings) {
+    return false;
+  }
+  if (!params.viewId || !params.startDate || !params.endDate) {
+    return false;
+  }
+
+  if (settings.requestType == 'HISTOGRAM') {
+    return (params.histogramDimensions &&
+            params.metrics &&
+            params.buckets);
+  } else if (settings.requestType == 'PIVOT') {
+    return (params.metrics &&
+            params.dimensions &&
+            params.pivotMetrics &&
+            params.pivotDimensions);
+  } else if (settings.requestType == 'COHORT') {
+    return (params.cohortMetrics &&
+            params.cohortSize);
+  } else {
+    return false;
+  }
+ }

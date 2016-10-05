@@ -20,7 +20,7 @@ import RequestViewer from './request-viewer';
 import Select2MultiSuggest from './select2-multi-suggest';
 import ResponseViewer from './response-viewer';
 
-import {batchGet, composeRequest} from '../request';
+import {batchGet, composeRequest, validateRequest} from '../request';
 
 import AlertDispatcher from '../../components/alert-dispatcher';
 import Datepicker from '../../components/datepicker';
@@ -104,15 +104,25 @@ export default class RequestComposer extends React.Component {
   /**
    * Invoked when a user submits the form.
    * @param {Event|Object} e The native or React event.
+   * @returns {Object} null if missing required fields.
    */
   handleSubmit = async (e) => {
     e.preventDefault();
     let {actions, params, settings} = this.props;
+
+    if (!validateRequest(params, settings)) {
+      AlertDispatcher.addOnce({
+        title: 'Oops, there was an error',
+        message: 'Please supply all required fields.'
+      });
+      return null;
+    }
+
+
     let request = composeRequest(params, settings);
     let response;
 
     actions.setQueryState(true);
-
     try {
       response = await batchGet(request);
     } catch (response) {
