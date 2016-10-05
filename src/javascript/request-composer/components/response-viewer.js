@@ -35,6 +35,7 @@ export default class ResultsViewer extends React.Component {
     let {response, settings} = this.props;
 
     if (!response.result) return null;
+    if (settings.responseType != settings.requestType) return null;
 
     let responseCode = JSON.stringify(response.result, null, 2);
 
