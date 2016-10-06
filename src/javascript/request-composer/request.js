@@ -373,7 +373,8 @@ export function composeRequest(params, settings) {
 
   if (settings.requestType == 'COHORT') {
     reportRequest.includeEmptyRows = true;
-  } else if (params.includeEmptyRows !== '') {
+  } else if (settings.requestType == 'PIVOT' &&
+             params.includeEmptyRows !== '') {
     reportRequest.includeEmptyRows = params.includeEmptyRows;
   }
 

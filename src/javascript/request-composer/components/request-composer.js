@@ -545,7 +545,7 @@ export default class RequestComposer extends React.Component {
             </div>
           </div>
 
-          {settings.requestType != 'COHORT' ? (
+          {settings.requestType == 'PIVOT' ? (
           <div className={formControlClass}>
             <label className="FormControl-label">includeEmptyRows</label>
             <div className="FormControl-body">
