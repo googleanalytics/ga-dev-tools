@@ -45,3 +45,25 @@ If you're wanting to load any of the pages that require server-side authorizatio
 Now you should be able to load [http://localhost:8080/](http://localhost:8080/) in your browser and see the site. (Note, the client ID associated with this project has the origin `localhost:8080` whitelisted. If you load the site on another port, authentication may not work properly.)
 
 If you're running App Engine on Windows or Mac, you can use the App Engine Launcher GUI to run the site as an alternative to running the above command.
+
+## Deploying the site
+
+To deploy your changes to production, follow the steps described in the pervious section to install dependencies and then run the `deploy` npm script with the `NODE_ENV` environment variable set to "production":
+
+```sh
+NODE_ENV=production npm run deploy
+```
+
+If you wish to preview your changes prior to releasing them in production, run the `stage` npm script:
+
+```sh
+NODE_ENV=production npm run stage
+```
+
+When running the `deploy` or `stage` scripts, the App Engine version number is automatically generated for you. However, the version can be overridden by setting the `APP_ENGINE_VERSION` environment variable.
+
+```sh
+NODE_ENV=production APP_ENGINE_VERSION=feature-test npm run stage
+```
+
+**Note:** running the `deploy` or `stage` script requires permissions for their respective App Engine projects.
