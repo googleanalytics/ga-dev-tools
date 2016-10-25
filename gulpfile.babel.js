@@ -285,12 +285,32 @@ gulp.task('build:all', [
 ]);
 
 
+gulp.task('stage', ['build:all'], (done) => {
+  if (!isProd()) {
+    throw new Error('The stage task must be run in production mode.');
+  }
+
+  const appId = 'google.com:ga-dev-tools';
+  const version = process.env.APP_ENGINE_VERSION || `v${Date.now()}`;
+
+  const appConfig =
+      spawn('appcfg.py', ['update', '-A', appId, '-V', version, '.']);
+
+  appConfig.stderr.on('data', (data) => process.stdout.write(data));
+  appConfig.on('close', () => done());
+});
+
 gulp.task('deploy', ['build:all'], (done) => {
   if (!isProd()) {
     throw new Error('The deploy task must be run in production mode.');
   }
 
-  const appConfig = spawn('appcfg.py', ['update', '.']);
+  const appId = 'ga-dev-tools';
+  const version = process.env.APP_ENGINE_VERSION || `v${Date.now()}`;
+
+  const appConfig =
+      spawn('appcfg.py', ['update', '-A', appId, '-V', version, '.']);
+
   appConfig.stderr.on('data', (data) => process.stdout.write(data));
   appConfig.on('close', () => done());
 });

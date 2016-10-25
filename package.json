@@ -7,6 +7,7 @@
   "scripts": {
     "start": "gulp watch",
     "test": "gulp test",
+    "stage": "gulp stage",
     "deploy": "gulp deploy"
   },
   "license": "Apache-2.0",
