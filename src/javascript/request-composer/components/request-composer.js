@@ -17,7 +17,6 @@ import React from 'react';
 import {Tab, Tabs, TabList, TabPanel} from 'react-tabs';
 
 import RequestViewer from './request-viewer';
-import Select2MultiSuggest from './select2-multi-suggest';
 import ResponseViewer from './response-viewer';
 
 import {batchGet, composeRequest, validateRequest} from '../request';
@@ -25,6 +24,7 @@ import {batchGet, composeRequest, validateRequest} from '../request';
 import AlertDispatcher from '../../components/alert-dispatcher';
 import Datepicker from '../../components/datepicker';
 import HelpIconLink from '../../components/help-icon-link';
+import Select2MultiSuggest from '../../components/select2-multi-suggest';
 import SearchSuggest from '../../components/search-suggest';
 import ViewSelector from '../../components/view-selector';
 
