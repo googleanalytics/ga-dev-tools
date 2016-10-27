@@ -20,7 +20,7 @@ import moment from 'moment';
 
 
 /**
- * Builds a the top level Analytics Reporting API V4
+ * Builds a the top level Analytics Reporting API v4
  * ReportRequest object, and sets all the top level
  * fields.
  * @param {Object} params The request composer's parameters object.
@@ -360,10 +360,10 @@ export function batchGet(request) {
 
 
 /**
- * Composes the body of an Analytics Reporting API V4 request.
+ * Composes the body of an Analytics Reporting API v4 request.
  * @param {Object} params The Request Composer parameters.
  * @param {Object} settings The Request Composer settings.
- * @returns {Object} The Analytics Reporting API V4 request.
+ * @returns {Object} The Analytics Reporting API v4 request.
  */
 export function composeRequest(params, settings) {
   if (!params || !settings) {

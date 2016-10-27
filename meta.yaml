@@ -112,7 +112,7 @@ tech:
     name: Analytics Reporting API
     url: https://developers.google.com/analytics/devguides/reporting/core/
   reporting_api_v4:
-    name: Analytics Reporting API V4
+    name: Analytics Reporting API v4
     url: https://developers.google.com/analytics/devguides/reporting/core/v4
   ecjs:
     name: Enhanced Ecommerce (ec.js)

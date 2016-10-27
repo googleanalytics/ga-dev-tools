@@ -78,7 +78,7 @@ let HIGHLIGHT_STROKE = ['rgba(250,137,79,1)',
 
 /**
  * Create the histogram chart data.
- * @param {Object} report The Analytics Reporting API V4 Report object.
+ * @param {Object} report The Analytics Reporting API v4 Report object.
  * @return {Object} The histogram chart.
  */
 export function createChartData(report) {

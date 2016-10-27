@@ -183,7 +183,7 @@ export default class RequestComposer extends React.Component {
             </p>
           </TabPanel>
           <TabPanel>
-            <p>Google Analytics Reporting API V4 allows you to generate pivot
+            <p>Google Analytics Reporting API v4 allows you to generate pivot
               tables. To construct a request with a pivot table, define the
               pivot field in the ReportRequest.
             </p>
