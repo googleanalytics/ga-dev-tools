@@ -127,7 +127,7 @@ export default class QueryReport extends React.Component {
               <a
                 href="#report-end"
                 className="InlineDefinitionList-itemName A--normal">
-                &#8595;&nbsp; Jump to bottom</a>
+                &#8595;&nbsp; Skip to bottom</a>
             </li>
           </ul>
         </aside>

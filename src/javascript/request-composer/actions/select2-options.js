@@ -260,7 +260,7 @@ function getMetrics(account, property, view) {
     return columns.allMetrics((metric, id) => {
       return metric.status == 'PUBLIC' &&
              // TODO(philipwalton): remove this temporary exclusion once
-             // calulated metrics can be templatized using the Management API.
+             // caclulated metrics can be templatized using the Management API.
              id != 'ga:calcMetric_<NAME>';
     });
   });
@@ -279,7 +279,7 @@ function getV4Metrics(account, property, view) {
       return metric.status == 'PUBLIC' &&
              metric.addedInApiVersion == '4' &&
              // TODO(philipwalton): remove this temporary exclusion once
-             // calulated metrics can be templatized using the Management API.
+             // caclulated metrics can be templatized using the Management API.
              id != 'ga:calcMetric_<NAME>';
     });
   });

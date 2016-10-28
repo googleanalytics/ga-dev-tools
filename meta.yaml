@@ -82,7 +82,7 @@ projects:
   type: tool
   status: new
   slug: request-composer
-  tech: [core_reporting_api, embed_api, management_api, metadata_api]
+  tech: [analytics_reporting_api_v4, embed_api, management_api, metadata_api]
 - title: Spreadsheet Add-on
   type: tool
   slug: spreadsheet-add-on
@@ -102,6 +102,9 @@ projects:
 # Google Analytics tech tags. Demos and tools should tag themselves with
 # one or more of these to make tech more discoverable.
 tech:
+  analytics_reporting_api_v4:
+    name: Analytics Reporting API v4
+    url: https://developers.google.com/analytics/devguides/reporting/core/
   analyticsjs:
     name: analytics.js
     url: https://developers.google.com/analytics/devguides/collection/analyticsjs/
@@ -109,11 +112,8 @@ tech:
     name: autotrack
     url: https://github.com/googleanalytics/autotrack/
   core_reporting_api:
-    name: Analytics Reporting API
-    url: https://developers.google.com/analytics/devguides/reporting/core/
-  reporting_api_v4:
-    name: Analytics Reporting API v4
-    url: https://developers.google.com/analytics/devguides/reporting/core/v4
+    name: Core Reporting API
+    url: https://developers.google.com/analytics/devguides/reporting/core/v3/
   ecjs:
     name: Enhanced Ecommerce (ec.js)
     url: https://developers.google.com/analytics/devguides/collection/analyticsjs/enhanced-ecommerce

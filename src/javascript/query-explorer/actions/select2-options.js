@@ -194,7 +194,7 @@ function getMetrics(account, property, view) {
       return metric.status == 'PUBLIC' &&
              metric.addedInApiVersion == '3' &&
              // TODO(philipwalton): remove this temporary exclusion once
-             // calulated metrics can be templatized using the Management API.
+             // caclulated metrics can be templatized using the Management API.
              id != 'ga:calcMetric_<NAME>';
     });
   });

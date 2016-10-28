@@ -41,50 +41,54 @@ export default class ResultsViewer extends React.Component {
 
     if (response.status >= 400) {
       return (
-        <div>
+        <div id="results">
         <h2>API Response</h2>
         <CodeBlock code={responseCode} lang="json" />
         </div>
       );
     } else {
       return(
-        <div>
-        <Tabs selectedIndex={0}>
-          <TabList>
-            <Tab>Response {RESULTS_VIEW[settings.responseType]}</Tab>
-            <Tab>Response JSON</Tab>
-          </TabList>
-          <TabPanel>
-            {settings.responseType == 'HISTOGRAM' ? (
-              <HistogramChart
-                response={response}
-              />
-            ) :
-            null}
-            {settings.responseType == 'PIVOT' ? (
-              <p>Request Composer currently cannot
-                change the ordering of pivot table dimensions and metrics.
-              </p>
-            ) :
-            null}
-            {settings.responseType == 'PIVOT' ? (
-              <PivotTable
-                response={response}
-              />
-            ) :
-            null}
-            {settings.responseType == 'COHORT' ? (
-              <CohortTable
-                response={response}
-                settings={settings}
-              />
-            ) :
-            null}
-          </TabPanel>
-          <TabPanel>
-            <CodeBlock code={responseCode} lang="json" />
-          </TabPanel>
-        </Tabs>
+        <div id="results">
+          <Tabs selectedIndex={0}>
+            <TabList>
+              <Tab>Response {RESULTS_VIEW[settings.responseType]}</Tab>
+              <Tab>Response JSON</Tab>
+            </TabList>
+            <TabPanel>
+              {settings.responseType == 'HISTOGRAM' ? (
+                <HistogramChart
+                  response={response}
+                />
+              ) :
+              null}
+              {settings.responseType == 'PIVOT' ? (
+                <div>
+                  <PivotTable
+                    response={response}
+                  />
+                  <p className="Message">
+                    <strong>Note:</strong>&nbsp;
+                    Request Composer does not currently support custom ordering
+                    of pivot table dimensions and metrics.
+                  </p>
+                </div>
+              ) :
+              null}
+              {settings.responseType == 'COHORT' ? (
+                <CohortTable
+                  response={response}
+                  settings={settings}
+                />
+              ) :
+              null}
+            </TabPanel>
+            <TabPanel>
+              <CodeBlock code={responseCode} lang="json" />
+            </TabPanel>
+            <p>
+              <a href="#request-composer">&#8593;&nbsp; Return to request</a>
+            </p>
+          </Tabs>
         </div>
       );
     }
