@@ -15,17 +15,18 @@
 
 import {spawn} from 'child_process';
 import createOutputStream from 'create-output-stream';
+import cssnano from 'cssnano';
 import del from 'del';
 import glob from 'glob';
 import gulp from 'gulp';
 import concat from 'gulp-concat';
-import cssnext from 'gulp-cssnext';
 import eslint from 'gulp-eslint';
 import gulpIf from 'gulp-if';
 import resize from 'gulp-image-resize';
 import imagemin from 'gulp-imagemin';
 import mocha from 'gulp-mocha';
 import plumber from 'gulp-plumber';
+import postcss from 'gulp-postcss';
 import rename from 'gulp-rename';
 import sourcemaps from 'gulp-sourcemaps';
 import uglify from 'gulp-uglify';
@@ -33,6 +34,10 @@ import gutil from 'gulp-util';
 import pngquant from 'imagemin-pngquant';
 import merge from 'merge-stream';
 import path from 'path';
+import postcssCssnext from 'postcss-cssnext';
+import postcssImport from 'postcss-import';
+import postcssReporter from 'postcss-reporter';
+import postcssUrl from 'postcss-url';
 import request from 'request';
 import webpack from 'webpack';
 
@@ -60,19 +65,27 @@ function streamError(err) {
 
 
 gulp.task('css', function() {
-  let opts = {
-    browsers: '> 1%, last 2 versions, Safari > 5, ie > 9, Firefox ESR',
-    compress: isProd(),
-    url: {url: 'inline'},
-  };
+  const processors = [
+    postcssImport(),
+    postcssUrl(),
+    postcssCssnext({
+      browsers: '> 1%, last 2 versions, Safari > 5, ie > 9, Firefox ESR',
+    }),
+    postcssReporter()
+  ];
+  // Compress in production.
+  if (isProd()) {
+    processors.push(cssnano({autoprefixer: false}));
+  }
+
   return merge(
       gulp.src('./src/css/index.css')
           .pipe(plumber({errorHandler: streamError}))
-          .pipe(cssnext(opts))
+          .pipe(postcss(processors))
           .pipe(gulp.dest('public/css')),
       gulp.src('./src/css/chartjs-visualizations.css')
           .pipe(plumber({errorHandler: streamError}))
-          .pipe(cssnext(opts))
+          .pipe(postcss(processors))
           .pipe(gulp.dest('public/css'))
   );
 });
