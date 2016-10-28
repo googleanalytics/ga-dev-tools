@@ -13,25 +13,26 @@
 // limitations under the License.
 
 
-import svg4everybody from 'svg4everybody/dist/svg4everybody';
+import * as types from '../actions/types';
 
-import * as analytics from './analytics';
-import header from './header';
-import highlighter from './highlighter';
-import sidebar from './sidebar';
+/**
+ * Updates the application settings.
+ * @param {Object} state The application state.
+ * @param {Object} action The application action.
+ * @return {Object} The updated application state with updated settings.
+ */
+export default function settings(state = {}, action) {
+  let {settings} = action;
 
+  switch (action.type) {
 
-// Polyfills SVG support in all browsers.
-svg4everybody();
+    case types.UPDATE_SETTINGS:
+      return {
+        ...state,
+        ...settings
+      };
 
-// Setup Google Analytics tracking.
-analytics.init();
-
-// Initiaze the header functionality.
-header.init();
-
-// Initiaze the sidebar functionality.
-sidebar.init();
-
-// Highlight code blocks.
-highlighter.highlightAll('pre');
+    default:
+      return state;
+  }
+}

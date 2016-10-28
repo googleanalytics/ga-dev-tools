@@ -1,4 +1,4 @@
-// Copyright 2015 Google Inc. All rights reserved.
+// Copyright 2016 Google Inc. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -31,6 +31,21 @@ export default class Select2MultiSuggest extends React.Component {
 
   state = {
     value: this.props.value
+  }
+
+
+  /**
+   * Initializes the jQuery plugin on the element
+   */
+  initialize() {
+    let opts = {
+      formatSelection: this.s2TagTemplate,
+      formatResult: this.s2DropdownItemTemplate,
+      tokenizer: this.tokenizer,
+      matcher: this.matcher,
+      maximumSelectionSize: this.props.maximumSelectionSize
+    };
+    $(ReactDOM.findDOMNode(this)).select2(opts);
   }
 
   /**
@@ -146,21 +161,20 @@ export default class Select2MultiSuggest extends React.Component {
 
 
   /**
-   * React lifecycyle methods below:
+   * React lifecycyle method below:
    * http://facebook.github.io/react/docs/component-specs.html
    * ---------------------------------------------------------
    */
-
 
   /**
    * Binds the select2 change event to the component `handleChange()` method
    * once the component is mounted.
    */
   componentDidMount() {
-    let $input = $(ReactDOM.findDOMNode(this));
-    $input.on('change', this.handleChange.bind(this));
+    this.buildTagMap(this.props.tags);
+    this.initialize();
+    $(ReactDOM.findDOMNode(this)).on('change', this.handleChange.bind(this));
   }
-
 
   /**
    * Handles updating the state when new props are passed externally.
@@ -188,13 +202,7 @@ export default class Select2MultiSuggest extends React.Component {
    */
   componentDidUpdate(prevProps) {
     if (this.props.tags != prevProps.tags) {
-      let opts = {
-        formatSelection: this.s2TagTemplate,
-        formatResult: this.s2DropdownItemTemplate,
-        tokenizer: this.tokenizer,
-        matcher: this.matcher
-      };
-      $(ReactDOM.findDOMNode(this)).select2(opts);
+      this.initialize();
     }
   }
 

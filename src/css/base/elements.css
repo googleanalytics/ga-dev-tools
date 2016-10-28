@@ -15,8 +15,8 @@ limitations under the License.
 */
 
 
-@import "normalize.css";
-@import "./variables";
+@import 'normalize.css';
+@import './variables';
 
 *,
 *:after,

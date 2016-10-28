@@ -1,4 +1,4 @@
-// Copyright 2016 Google Inc. All rights reserved.
+// Copyright 2015 Google Inc. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,26 +12,20 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+import React from 'react';
+import Icon from './icon';
 
-import svg4everybody from 'svg4everybody/dist/svg4everybody';
+export default class HelpIconLink extends React.Component {
 
-import * as analytics from './analytics';
-import header from './header';
-import highlighter from './highlighter';
-import sidebar from './sidebar';
-
-
-// Polyfills SVG support in all browsers.
-svg4everybody();
-
-// Setup Google Analytics tracking.
-analytics.init();
-
-// Initiaze the header functionality.
-header.init();
-
-// Initiaze the sidebar functionality.
-sidebar.init();
-
-// Highlight code blocks.
-highlighter.highlightAll('pre');
+  /** @return {Object} */
+  render() {
+    return (
+      <a
+        className="FormControl-helpIcon"
+        href={this.props.url + this.props.name}
+        tabIndex="-1">
+        <Icon type="info-outline" />
+      </a>
+    );
+  }
+}

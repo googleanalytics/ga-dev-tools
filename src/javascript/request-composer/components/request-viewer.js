@@ -1,4 +1,4 @@
-// Copyright 2015 Google Inc. All rights reserved.
+// Copyright 2016 Google Inc. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,28 +12,21 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-
-import camelCase from 'camelcase';
+import {composeRequest} from '../request';
 import React from 'react';
-import Icon from '../../components/icon';
+import CodeBlock from '../../components/code-block';
 
 
-const REFERENCE_URL =
-    'https://developers.google.com' +
-    '/analytics/devguides/reporting/core/v3/reference#';
-
-
-export default class HelpIconLink extends React.Component {
+export default class RequestViewer extends React.Component {
 
   /** @return {Object} */
   render() {
+    let {params, settings} = this.props;
+    let request = composeRequest(params, settings);
+    let requestJson = JSON.stringify(request, null, 2);
+
     return (
-      <a
-        className="FormControl-helpIcon"
-        href={REFERENCE_URL + camelCase(this.props.name)}
-        tabIndex="-1">
-        <Icon type="info-outline" />
-      </a>
+      <CodeBlock code={requestJson} lang="json" />
     );
   }
 }

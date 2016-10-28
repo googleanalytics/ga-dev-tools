@@ -13,25 +13,23 @@
 // limitations under the License.
 
 
-import svg4everybody from 'svg4everybody/dist/svg4everybody';
+// isAuthorized
+export const SET_AUTHORIZED_STATE = 'SET_AUTHORIZED_STATE';
 
-import * as analytics from './analytics';
-import header from './header';
-import highlighter from './highlighter';
-import sidebar from './sidebar';
+// isQuerying
+export const SET_QUERY_STATE = 'SET_QUERY_STATE';
 
+// params
+export const UPDATE_PARAMS = 'UPDATE_PARAMS';
 
-// Polyfills SVG support in all browsers.
-svg4everybody();
+// report
+export const UPDATE_REPORT = 'UPDATE_REPORT';
 
-// Setup Google Analytics tracking.
-analytics.init();
+// select2Options
+export const UPDATE_SELECT2_OPTIONS = 'UPDATE_SELECT2_OPTIONS';
 
-// Initiaze the header functionality.
-header.init();
+// settings
+export const UPDATE_SETTINGS = 'UPDATE_SETTINGS';
 
-// Initiaze the sidebar functionality.
-sidebar.init();
-
-// Highlight code blocks.
-highlighter.highlightAll('pre');
+// response
+export const UPDATE_RESPONSE = 'UPDATE_RESPONSE';

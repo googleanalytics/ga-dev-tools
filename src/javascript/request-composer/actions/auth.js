@@ -13,25 +13,27 @@
 // limitations under the License.
 
 
-import svg4everybody from 'svg4everybody/dist/svg4everybody';
-
-import * as analytics from './analytics';
-import header from './header';
-import highlighter from './highlighter';
-import sidebar from './sidebar';
+import * as types from './types';
+import {updateSegmentsOptions} from './select2-options';
 
 
-// Polyfills SVG support in all browsers.
-svg4everybody();
+/**
+ * Returns the SET_AUTHORIZED action type.
+ * @return {Object}
+ */
+function setAuthorizedState() {
+  return {type: types.SET_AUTHORIZED_STATE};
+}
 
-// Setup Google Analytics tracking.
-analytics.init();
-
-// Initiaze the header functionality.
-header.init();
-
-// Initiaze the sidebar functionality.
-sidebar.init();
-
-// Highlight code blocks.
-highlighter.highlightAll('pre');
+/**
+ * Invokes the setAuthorized action creator and the updateSegmentsOptions
+ * action creator.
+ * @return {Function}
+ */
+export function handleAuthorizationSuccess() {
+  return function(dispatch, getState) {
+    let {useDefinition} = getState().settings;
+    dispatch(setAuthorizedState());
+    dispatch(updateSegmentsOptions(useDefinition));
+  };
+}

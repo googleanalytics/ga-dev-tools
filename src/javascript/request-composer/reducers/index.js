@@ -13,25 +13,20 @@
 // limitations under the License.
 
 
-import svg4everybody from 'svg4everybody/dist/svg4everybody';
+import {combineReducers} from 'redux';
+import isAuthorized from './auth';
+import params from './params';
+import isQuerying from './query';
+import response from './response';
+import select2Options from './select2-options';
+import settings from './settings';
 
-import * as analytics from './analytics';
-import header from './header';
-import highlighter from './highlighter';
-import sidebar from './sidebar';
 
-
-// Polyfills SVG support in all browsers.
-svg4everybody();
-
-// Setup Google Analytics tracking.
-analytics.init();
-
-// Initiaze the header functionality.
-header.init();
-
-// Initiaze the sidebar functionality.
-sidebar.init();
-
-// Highlight code blocks.
-highlighter.highlightAll('pre');
+export default combineReducers({
+  isAuthorized,
+  isQuerying,
+  params,
+  response,
+  select2Options,
+  settings
+});

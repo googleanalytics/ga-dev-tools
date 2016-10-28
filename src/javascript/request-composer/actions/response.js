@@ -13,25 +13,13 @@
 // limitations under the License.
 
 
-import svg4everybody from 'svg4everybody/dist/svg4everybody';
+import * as types from './types';
 
-import * as analytics from './analytics';
-import header from './header';
-import highlighter from './highlighter';
-import sidebar from './sidebar';
-
-
-// Polyfills SVG support in all browsers.
-svg4everybody();
-
-// Setup Google Analytics tracking.
-analytics.init();
-
-// Initiaze the header functionality.
-header.init();
-
-// Initiaze the sidebar functionality.
-sidebar.init();
-
-// Highlight code blocks.
-highlighter.highlightAll('pre');
+/**
+ * Returns the UPDATE_RESPONSE action type with the response parameter.
+ * @param {Object} response
+ * @return {Object}
+ */
+export function updateResponse(response) {
+  return {type: types.UPDATE_RESPONSE, response};
+}

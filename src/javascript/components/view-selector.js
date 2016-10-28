@@ -18,8 +18,8 @@
 
 import React from 'react';
 import ReactDOM from 'react-dom';
-import AlertDispatcher from '../../components/alert-dispatcher';
-import '../../embed-api/components/view-selector2';
+import AlertDispatcher from './alert-dispatcher';
+import '../embed-api/components/view-selector2';
 
 
 /**
@@ -66,6 +66,7 @@ export default class ViewSelector extends React.Component {
       this.viewSelector_ = new gapi.analytics.ext.ViewSelector2({
         container: ReactDOM.findDOMNode(this),
         ids: this.props.ids,
+        viewId: this.props.viewId,
         template: this.props.template || VIEW_SELECTOR_TEMPLATE
       });
 
@@ -105,6 +106,8 @@ export default class ViewSelector extends React.Component {
   componentWillReceiveProps(nextProps) {
     if (nextProps.ids != this.props.ids && this.viewSelector_) {
       this.viewSelector_.set({ids: nextProps.ids}).execute();
+    } else if (nextProps.viewId != this.props.viewId && this.viewSelector_) {
+      this.viewSelector_.set({viewId: nextProps.viewId}).execute();
     }
   }
 

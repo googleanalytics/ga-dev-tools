@@ -13,25 +13,19 @@
 // limitations under the License.
 
 
-import svg4everybody from 'svg4everybody/dist/svg4everybody';
+import * as auth from './auth';
+import * as params from './params';
+import * as query from './query';
+import * as response from './response';
+import * as select2Options from './select2-options';
+import * as settings from './settings';
 
-import * as analytics from './analytics';
-import header from './header';
-import highlighter from './highlighter';
-import sidebar from './sidebar';
 
-
-// Polyfills SVG support in all browsers.
-svg4everybody();
-
-// Setup Google Analytics tracking.
-analytics.init();
-
-// Initiaze the header functionality.
-header.init();
-
-// Initiaze the sidebar functionality.
-sidebar.init();
-
-// Highlight code blocks.
-highlighter.highlightAll('pre');
+export default {
+  ...auth,
+  ...params,
+  ...query,
+  ...response,
+  ...select2Options,
+  ...settings
+};

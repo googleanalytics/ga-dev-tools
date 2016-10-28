@@ -18,6 +18,27 @@ import * as types from './types';
 import segments from '../segments';
 
 
+let NUMERIC_DIMENSIONS = [
+  'ga:sessionCount',
+  'ga:daysSinceLastSession',
+  'ga:sessionDurationBucket',
+  'ga:daysToTransaction',
+  'ga:year',
+  'ga:month',
+  'ga:week',
+  'ga:day',
+  'ga:hour',
+  'ga:minute',
+  'ga:nthMonth',
+  'ga:nthWeek',
+  'ga:nthDay',
+  'ga:nthHour',
+  'ga:nthMinute',
+  'ga:isoYear',
+  'ga:isoWeek'
+];
+
+
 /**
  * Fetches the metrics and dimensions the user can access based on the passed
  * view data, calculates the sort options based on the current metric and
@@ -30,15 +51,28 @@ export function updateMetricsDimensionsAndSortOptions(viewData) {
   return async function(dispatch, getState) {
     let {account, property, view} = viewData;
     let {params} = getState();
-    let {metrics, dimensions} = await getMetricsAndDimensionsOptions(
-        account, property, view);
+    let {
+      metrics,
+      dimensions,
+      pivotMetrics,
+      pivotDimensions,
+      cohortMetrics,
+      histogramDimensions
+    } = await getMetricsAndDimensionsOptions(account, property, view);
 
     let sort = getSortOptions(params, metrics, dimensions);
 
-    dispatch(updateSelect2Options({metrics, dimensions, sort}));
+    dispatch(updateSelect2Options({
+      metrics,
+      dimensions,
+      pivotMetrics,
+      pivotDimensions,
+      cohortMetrics,
+      histogramDimensions,
+      sort
+    }));
   };
 }
-
 
 /**
  * Gets the current metric and dimension params from the state and updates
@@ -70,7 +104,6 @@ export function updateSegmentsOptions(useDefinition) {
   };
 }
 
-
 /**
  * Returns the UPDATE_SELECT2_OPTIONS action type with the passed
  * select2Options.
@@ -80,7 +113,6 @@ export function updateSegmentsOptions(useDefinition) {
 function updateSelect2Options(select2Options) {
   return {type: types.UPDATE_SELECT2_OPTIONS, select2Options};
 }
-
 
 /**
  * Fetches the list of metrics and dimensions the user can access for the
@@ -93,7 +125,9 @@ function updateSelect2Options(select2Options) {
 function getMetricsAndDimensionsOptions(account, property, view) {
   return Promise.all([
     getMetrics(account, property, view),
-    getDimensions(account, property, view)
+    getDimensions(account, property, view),
+    getV4Metrics(account, property, view),
+    getNumericDimensions(account, property, view)
   ])
   .then(function(data) {
     let metrics = data[0].map(function(metric) {
@@ -110,10 +144,44 @@ function getMetricsAndDimensionsOptions(account, property, view) {
         group: dimension.attributes.group
       };
     });
-    return {metrics, dimensions};
+    let pivotMetrics = data[0].map(function(metric) {
+      return {
+        id: metric.id,
+        name: metric.attributes.uiName,
+        group: metric.attributes.group
+      };
+    });
+    let pivotDimensions = data[1].map(function(dimension) {
+      return {
+        id: dimension.id,
+        name: dimension.attributes.uiName,
+        group: dimension.attributes.group
+      };
+    });
+    let cohortMetrics = data[2].map(function(metric) {
+      return {
+        id: metric.id,
+        name: metric.attributes.uiName,
+        group: metric.attributes.group
+      };
+    });
+    let histogramDimensions = data[3].map(function(metric) {
+      return {
+        id: metric.id,
+        name: metric.attributes.uiName,
+        group: metric.attributes.group
+      };
+    });
+    return {
+      metrics,
+      dimensions,
+      pivotMetrics,
+      pivotDimensions,
+      cohortMetrics,
+      histogramDimensions
+    };
   });
 }
-
 
 /**
  * Accepts the current query params and a list of metrics and dimensions
@@ -154,7 +222,6 @@ function getSortOptions(params, metrics, dimensions) {
   return sortOptions;
 }
 
-
 /**
  * Fetches all segments the current user can access and returns a promise
  * fulfilled with an array of segment options formatted either by ID
@@ -183,16 +250,15 @@ function getSegmentsOptions(useDefinition) {
 
 /**
  * Gets a list of all public, v3 metrics associated with the passed view.
- * @param {Object} account An account object from the Metadata API.
- * @param {Object} property A property object from the Metadata API.
- * @param {Object} view A view object from the Metadata API.
+ * @param {Object} account An account object from accountSummaries.list.
+ * @param {Object} property A property object from accountSummaries.list.
+ * @param {Object} view A view object from accountSummaries.list.
  * @return {Promise} A promise resolved with an array of all public metrics.
  */
 function getMetrics(account, property, view) {
   return metadata.getAuthenticated(account, property, view).then((columns) => {
     return columns.allMetrics((metric, id) => {
       return metric.status == 'PUBLIC' &&
-             metric.addedInApiVersion == '3' &&
              // TODO(philipwalton): remove this temporary exclusion once
              // caclulated metrics can be templatized using the Management API.
              id != 'ga:calcMetric_<NAME>';
@@ -200,12 +266,30 @@ function getMetrics(account, property, view) {
   });
 }
 
+/**
+ * Gets a list of all public, v4 metrics associated with the passed view.
+ * @param {Object} account An account object from accountSummaries.list.
+ * @param {Object} property A property object from accountSummaries.list.
+ * @param {Object} view A view object from accountSummaries.list.
+ * @return {Promise} A promise resolved with an array of all public metrics.
+ */
+function getV4Metrics(account, property, view) {
+  return metadata.getAuthenticated(account, property, view).then((columns) => {
+    return columns.allMetrics((metric, id) => {
+      return metric.status == 'PUBLIC' &&
+             metric.addedInApiVersion == '4' &&
+             // TODO(philipwalton): remove this temporary exclusion once
+             // caclulated metrics can be templatized using the Management API.
+             id != 'ga:calcMetric_<NAME>';
+    });
+  });
+}
 
 /**
  * Gets a list of all public, v3 dimensions associated with the passed view.
- * @param {Object} account An account object from the Metadata API.
- * @param {Object} property A property object from the Metadata API.
- * @param {Object} view A view object from the Metadata API.
+ * @param {Object} account An account object from accountSummaries.list.
+ * @param {Object} property A property object from accountSummaries.list.
+ * @param {Object} view A view object from accountSummaries.list.
  * @return {Promise} A promise resolved with an array of all public dimensions.
  */
 function getDimensions(account, property, view) {
@@ -213,6 +297,23 @@ function getDimensions(account, property, view) {
     return columns.allDimensions({
       status: 'PUBLIC',
       addedInApiVersion: '3'
+    });
+  });
+}
+
+/**
+ * Gets a list of all numeric dimensions associated with the passed view.
+ * This could include custom dimensions.
+ * @param {Object} account An account object from accountSummaries.list.
+ * @param {Object} property A property object from accountSummaries.list.
+ * @param {Object} view A view object from accountSummaries.list.
+ * @return {Promise} A promise resolved with an array of all public dimensions.
+ */
+function getNumericDimensions(account, property, view) {
+
+  return metadata.getAuthenticated(account, property, view).then((columns) => {
+    return columns.allDimensions((dimension, id) => {
+      return id.match('ga:dimension') || NUMERIC_DIMENSIONS.includes(id);
     });
   });
 }
