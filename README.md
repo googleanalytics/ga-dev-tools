@@ -21,7 +21,7 @@ A showcase of demos and tools built with the various Google Analytics APIs and L
 The Google Analytics demos and tools site runs on [Google App Engine](https://cloud.google.com/appengine/) and is built with [node.js](http://nodejs.org/). To run the site locally you'll need the following software installed on your system:
 
 - [Node.js](https://nodejs.org/en/download/) (v6.0.0+)
-- [App Engine Python SDK](https://cloud.google.com/appengine/docs/python/) (v2.7+, with `dev_appserver.py` in your `PATH`)
+- [Google Cloud SDK](https://cloud.google.com/sdk/docs/) (v132.0.0+, with `dev_appserver.py` in your `PATH`)
 - [pip](https://pypi.python.org/pypi/pip)
 - [GraphicsMagick](http://www.graphicsmagick.org/) (with `gm` in your `PATH`)
 
@@ -35,6 +35,9 @@ cd ga-dev-tools
 # Install the build dependencies.
 pip install -r requirements.txt -t python_modules
 npm install
+
+# Install the 'gcloud app Python Extensions' component
+gcloud components install app-engine-python
 
 # Build the site and run the local App Engine server.
 npm start
