@@ -30,7 +30,7 @@ import site from '../site';
 /**
  * See: https://github.com/reactjs/react-redux
  * @param {Object} state
- * @return {Object}
+ * @return {Object} The props from the state.
  */
 function mapStateToProps(state) {
   return state;
@@ -40,11 +40,11 @@ function mapStateToProps(state) {
 /**
  * See: https://github.com/reactjs/react-redux
  * @param {function} dispatch
- * @return {Object}
+ * @return {Object} The props with dispatch actions.
  */
 function mapDispatchToProps(dispatch) {
   return {
-    actions: bindActionCreators(actions, dispatch)
+    actions: bindActionCreators(actions, dispatch),
   };
 }
 
@@ -80,8 +80,7 @@ function onAuthorizationSuccess() {
 gapi.analytics.ready(function() {
   if (gapi.analytics.auth.isAuthorized()) {
     onAuthorizationSuccess();
-  }
-  else {
+  } else {
     gapi.analytics.auth.once('success', onAuthorizationSuccess);
   }
 });

@@ -34,7 +34,7 @@ const PARAMS = [
   'cohortSize',
   'pivotMetrics',
   'pivotDimensions',
-  'startGroup'
+  'startGroup',
 ];
 
 

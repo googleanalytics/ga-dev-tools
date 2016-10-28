@@ -17,10 +17,13 @@ import Icon from './icon';
 import React from 'react';
 
 
+/**
+ * A components that renders a button with an icon prepended.
+ */
 export default class IconButton extends React.Component {
 
   static defaultProps = {
-    className: 'Button'
+    className: 'Button',
   }
 
   /**
@@ -30,13 +33,13 @@ export default class IconButton extends React.Component {
    */
 
 
-  /** @return {Object} */
+  /** @return {Object} The React component. */
   render() {
     let props = {
       className: this.props.className,
       disabled: this.props.disabled,
       href: this.props.href,
-      onClick: this.props.onClick
+      onClick: this.props.onClick,
     };
     let nodeType = this.props.href ? 'a' : 'button';
     return React.createElement(nodeType, props,

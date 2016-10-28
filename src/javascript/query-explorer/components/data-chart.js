@@ -25,6 +25,10 @@ import {sanitize} from '../query-params';
 const SRC_PARAM = 'query-explorer:v2';
 
 
+/**
+ * A components that renders a report table using the Embed API
+ * DataChart component.
+ */
 export default class DataChart extends React.Component {
 
   isQuerying = false
@@ -50,9 +54,9 @@ export default class DataChart extends React.Component {
           type: 'TABLE',
           container: ReactDOM.findDOMNode(this),
           options: {
-            width: '100%'
-          }
-        }
+            width: '100%',
+          },
+        },
       });
 
       this.dataChart_.on('error', this.props.onError.bind(this));
@@ -68,12 +72,10 @@ export default class DataChart extends React.Component {
    * @param {Object} nextProps
    */
   componentWillReceiveProps(nextProps) {
-
     // Compares the props to the instance state to determine when the request
     // should initiate.
     if (nextProps.params &&
         this.isQuerying === false && nextProps.isQuerying === true) {
-
       this.isQuerying = true;
 
       let newParams = sanitize(nextProps.params);
@@ -82,7 +84,7 @@ export default class DataChart extends React.Component {
       // explicitly set them in case the user doesn't.
       let defaultParams = {
         'start-date': '',
-        'end-date': ''
+        'end-date': '',
       };
 
       // Nullify the existing props
@@ -111,7 +113,7 @@ export default class DataChart extends React.Component {
   }
 
 
-  /** @return {Object} */
+  /** @return {Object} The React component. */
   render() {
     return (
       <div className={this.props.className} hidden={this.props.hidden} />

@@ -23,7 +23,6 @@ import * as types from '../actions/types';
  * @return {string} The updated state.
  */
 export default function websiteUrl(state = '', action) {
-
   switch (action.type) {
 
     case types.UPDATE_WEBSITE_URL:

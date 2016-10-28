@@ -43,18 +43,16 @@ let createStoreWithMiddleware = applyMiddleware(...middlewear)(createStore);
  * @return {Object} The initial params.
  */
 function getInitalQueryParams() {
-
   let defaultParams = {
     'startDate': '30daysAgo',
     'endDate': 'yesterday',
     'cohortSize': 'Day',
-    'cohortMetrics': 'ga:cohortActiveUsers'
+    'cohortMetrics': 'ga:cohortActiveUsers',
   };
   let storedParams = db.get('request-composer:params');
   if (storedParams) {
     return sanitize({...defaultParams, ...storedParams});
-  }
-  else {
+  } else {
     return defaultParams;
   }
 }
@@ -67,7 +65,7 @@ function getInitalQueryParams() {
  */
 function getDefaultSettingsAndUpdateTracker() {
   let settings = db.get('request-composer:settings') || {
-    'requestType': 'HISTOGRAM'
+    'requestType': 'HISTOGRAM',
   };
   return settings;
 }
@@ -85,7 +83,7 @@ function getDefaultSelect2Options() {
     cohortMetrics: [],
     histogramDimensions: [],
     sort: [],
-    segments: []
+    segments: [],
   };
 }
 
@@ -95,7 +93,7 @@ let store = createStoreWithMiddleware(reducer, {
   isQuerying: false,
   params: getInitalQueryParams(),
   select2Options: getDefaultSelect2Options(),
-  settings: getDefaultSettingsAndUpdateTracker()
+  settings: getDefaultSettingsAndUpdateTracker(),
 });
 
 

@@ -32,28 +32,24 @@ hljs.registerLanguage(
     'python', require('highlight.js/lib/languages/python'));
 
 
-export default {
-
-  /**
-   * Adds highlight.js syntax highlighting to all elements on the page matching
-   * the passed selector.
-   * @param {string} selector
-   */
-  highlightAll: function(selector) {
-    $(selector).each(function() {
-      hljs.highlightBlock(this);
-    });
-  },
+/**
+ * Adds highlight.js syntax highlighting to all elements on the page matching
+ * the passed selector.
+ * @param {string} selector
+ */
+export function highlightAll(selector) {
+  $(selector).each(function() {
+    hljs.highlightBlock(this);
+  });
+}
 
 
-  /**
-   * Adds highlight.js syntax highlighting to a string of code.
-   * @param {{lang: string, code: string}} opts
-   * @return {string} The highlighted code string, it can be used as the
-   *     `innherHTML` of an element.
-   */
-  highlight: function({lang, code}) {
-    return hljs.highlight(lang, code).value;
-  }
-
-};
+/**
+ * Adds highlight.js syntax highlighting to a string of code.
+ * @param {{lang: (string), code: (string)}} opts
+ * @return {string} The highlighted code string, it can be used as the
+ *     `innherHTML` of an element.
+ */
+export function highlight({lang, code}) {
+  return hljs.highlight(lang, code).value;
+}

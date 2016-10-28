@@ -22,5 +22,5 @@ import websiteUrl from './website-url';
 export default combineReducers({
   params,
   settings,
-  websiteUrl
+  websiteUrl,
 });

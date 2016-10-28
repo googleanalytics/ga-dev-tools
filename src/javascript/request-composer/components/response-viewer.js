@@ -24,13 +24,16 @@ import CodeBlock from '../../components/code-block';
 const RESULTS_VIEW = {
   HISTOGRAM: 'Chart',
   PIVOT: 'Table',
-  COHORT: 'Table'
+  COHORT: 'Table',
 };
 
 
+/**
+ * A components that renders the response visualization and code.
+ */
 export default class ResultsViewer extends React.Component {
 
-  /** @return {Object} */
+  /** @return {Object} The React component. */
   render() {
     let {response, settings} = this.props;
 

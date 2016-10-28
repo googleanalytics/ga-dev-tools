@@ -33,6 +33,9 @@ const SELF_BASE = location.protocol + '//' + location.host + location.pathname;
 const TSV_PATH = SELF_BASE + 'csvhandler.csv';
 
 
+/**
+ * A components that renders the query report results.
+ */
 export default class QueryReport extends React.Component {
 
   /**
@@ -80,9 +83,8 @@ export default class QueryReport extends React.Component {
    */
 
 
-  /** @return {Object} */
+  /** @return {Object} The React component. */
   render() {
-
     let partials = {};
     let {report} = this.props;
     let {params, response, viewName, propertyName} = report;

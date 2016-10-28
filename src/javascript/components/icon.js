@@ -19,6 +19,10 @@ import React from 'react';
 const ICON_PATH = '/public/images/icons.svg#icon-';
 
 
+/**
+ * A components that renders an <svg> icon from the iconset in:
+ * src/images/icons.svg
+ */
 export default class Icon extends React.Component {
 
   /**
@@ -28,7 +32,7 @@ export default class Icon extends React.Component {
    */
 
 
-  /** @return {Object} */
+  /** @return {Object} The React component. */
   render() {
     let useHtml = `<use xlink:href="${ICON_PATH}${this.props.type}"></use>`;
     return (

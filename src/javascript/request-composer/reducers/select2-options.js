@@ -24,7 +24,7 @@ let defaultOptions = {
   cohortMetrics: [],
   histogramDimensions: [],
   sort: [],
-  segments: []
+  segments: [],
 };
 
 /**
@@ -40,7 +40,7 @@ export default function select2Options(state = defaultOptions, action) {
     case types.UPDATE_SELECT2_OPTIONS:
       return {
         ...state,
-        ...select2Options
+        ...select2Options,
       };
 
     default:

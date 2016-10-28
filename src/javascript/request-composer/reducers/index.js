@@ -28,5 +28,5 @@ export default combineReducers({
   params,
   response,
   select2Options,
-  settings
+  settings,
 });

@@ -29,9 +29,8 @@ let urlShortenerLoadPromise;
 
 
 /**
- * Loads the Google APIs client and the urlshortener v1 library and returns a
- * promise that is resolved once the library is loaded.
- * @return {Promise}
+ * Loads the Google APIs client and the urlshortener v1 library.
+ * @return {Promise} A promise resolved once the library is loaded.
  */
 function loadUrlShortenerApi() {
   return new Promise((resolve, reject) => {
@@ -50,7 +49,7 @@ function loadUrlShortenerApi() {
 /**
  * Returns the cached API load promise or calls `loadUrlShortenerApi` and
  * caches the result.
- * @return {Promise}
+ * @return {Promise} A promise resolved once the library is loaded.
  */
 function urlShortenerApiReady() {
   return urlShortenerLoadPromise ||
@@ -64,7 +63,7 @@ function urlShortenerApiReady() {
  * the library is only ever loaded once. Long URLs are also cached, so multiple
  * requests for the same URL are never made.
  * @param {string} longUrl
- * @return {Promise}
+ * @return {Promise} A promise resolved with the shortend URL.
  */
 export function shortenUrl(longUrl) {
   return new Promise((resolve, reject) => {
@@ -72,10 +71,11 @@ export function shortenUrl(longUrl) {
       resolve(urlMapCache[longUrl]);
     } else {
       urlShortenerApiReady().then((urlshortener) => {
-        urlshortener.insert({longUrl}).then(
-            ({result}) => { resolve(result.id); },
-            ({result}) => { reject(new Error(result.error.message)); }
-        );
+        urlshortener.insert({longUrl}).then(({result}) => {
+          resolve(result.id);
+        }, ({result}) => {
+          reject(new Error(result.error.message));
+        });
       });
     }
   });

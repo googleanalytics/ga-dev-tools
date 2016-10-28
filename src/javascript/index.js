@@ -17,7 +17,7 @@ import svg4everybody from 'svg4everybody/dist/svg4everybody';
 
 import * as analytics from './analytics';
 import header from './header';
-import highlighter from './highlighter';
+import * as highlighter from './highlighter';
 import sidebar from './sidebar';
 
 

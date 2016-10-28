@@ -25,7 +25,7 @@ const PARAMS = [
   'samplingLevel',
   'include-empty-rows',
   'start-index',
-  'max-results'
+  'max-results',
 ];
 
 

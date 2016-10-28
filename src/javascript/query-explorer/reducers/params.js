@@ -30,7 +30,7 @@ export default function params(state = {}, action) {
     case types.UPDATE_PARAMS:
       return {
         ...state,
-        ...params
+        ...params,
       };
 
     default:

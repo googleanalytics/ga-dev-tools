@@ -17,7 +17,6 @@
 
 
 gapi.analytics.ready(function() {
-
   gapi.analytics.createComponent('ActiveUsers', {
 
     initialize: function() {
@@ -36,8 +35,7 @@ gapi.analytics.ready(function() {
       // Wait until the user is authorized.
       if (gapi.analytics.auth.isAuthorized()) {
         this.pollActiveUsers_();
-      }
-      else {
+      } else {
         gapi.analytics.auth.once('signIn', this.pollActiveUsers_.bind(this));
       }
     },
@@ -71,7 +69,6 @@ gapi.analytics.ready(function() {
       gapi.client.analytics.data.realtime
           .get({ids: options.ids, metrics: 'rt:activeUsers'})
           .then(function(response) {
-
         let result = response.result;
         let newValue = result.totalResults ? +result.rows[0][0] : 0;
         let oldValue = this.activeUsers;
@@ -97,8 +94,7 @@ gapi.analytics.ready(function() {
       this.emit('change', {activeUsers: this.activeUsers, delta: delta});
       if (delta > 0) {
         this.emit('increase', {activeUsers: this.activeUsers, delta: delta});
-      }
-      else {
+      } else {
         this.emit('decrease', {activeUsers: this.activeUsers, delta: delta});
       }
     },
@@ -116,8 +112,7 @@ gapi.analytics.ready(function() {
     template:
       '<div class="ActiveUsers">' +
         'Active Users: <b class="ActiveUsers-value"></b>' +
-      '</div>'
+      '</div>',
 
   });
-
 });

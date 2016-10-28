@@ -26,7 +26,7 @@ import 'autotrack/lib/plugins/page-visibility-tracker';
  * data is always sent first.
  */
 const ALL_TRACKERS = shuffleArray([
-  {name: 't0', trackingId: 'UA-41425441-5'}
+  {name: 't0', trackingId: 'UA-41425441-5'},
 
   // NOTE(philipwalton): testing is not currently being done, so the testing
   // tracker is not used. Uncomment these lines to resume testing.
@@ -41,7 +41,7 @@ const metrics = {
   QUERY_SUCCESS: 'metric1',
   QUERY_ERROR: 'metric2',
   PAGE_VISIBLE: 'metric3',
-  PAGE_HIDDEN: 'metric4'
+  PAGE_HIDDEN: 'metric4',
 };
 
 
@@ -54,7 +54,7 @@ const dimensions = {
   HIT_SOURCE: 'dimension6',
   URL_QUERY_PARAMS: 'dimension7',
   METRIC_VALUE: 'dimension8',
-  CLIENT_ID: 'dimension9'
+  CLIENT_ID: 'dimension9',
 };
 
 
@@ -98,8 +98,7 @@ function createGaProxy(trackers) {
         window.ga(function() {
           command(window.ga.getByName(name));
         });
-      }
-      else {
+      } else {
         window.ga(`${name}.${command}`, ...args);
       }
     }
@@ -116,18 +115,7 @@ function createGaProxy(trackers) {
 function createTrackers() {
   for (let tracker of ALL_TRACKERS) {
     window.ga('create', tracker.trackingId, 'auto', tracker.name, {
-      siteSpeedSampleRate: 10
-    });
-  }
-  if (process.env.NODE_ENV !== 'production') {
-    window.ga(function() {
-      for (let tracker of window.ga.getAll()) {
-        tracker.set('sendHitTask', function(/*model*/) {
-          // console.log(model.get('name'), Date.now(),
-          //     model.get('hitPayload').split('&').map(decodeURIComponent));
-          throw 'Abort tracking in non-production environments.';
-        });
-      }
+      siteSpeedSampleRate: 10,
     });
   }
 }
@@ -150,11 +138,11 @@ function requirePlugins() {
   gaAll('require', 'cleanUrlTracker', {
     stripQuery: true,
     queryDimensionIndex: getDefinitionIndex(dimensions.URL_QUERY_PARAMS),
-    trailingSlash: 'add'
+    trailingSlash: 'add',
   });
   gaAll('require', 'eventTracker');
   gaAll('require', 'impressionTracker', {
-    elements: ['tech-info']
+    elements: ['tech-info'],
   });
   gaAll('require', 'mediaQueryTracker', {
     definitions: [
@@ -164,29 +152,29 @@ function requirePlugins() {
         items: [
           {name: 'sm', media: 'all'},
           {name: 'md', media: '(min-width: 36em)'},
-          {name: 'lg', media: '(min-width: 48em)'}
-        ]
+          {name: 'lg', media: '(min-width: 48em)'},
+        ],
       },
       {
         name: 'Resolution',
         dimensionIndex: getDefinitionIndex(dimensions.RESOLUTION),
         items: [
-          {name: '1x',   media: 'all'},
+          {name: '1x', media: 'all'},
           {name: '1.5x', media: '(-webkit-min-device-pixel-ratio: 1.5), ' +
                                 '(min-resolution: 144dpi)'},
-          {name: '2x',   media: '(-webkit-min-device-pixel-ratio: 2), ' +
-                                '(min-resolution: 192dpi)'}
-        ]
+          {name: '2x', media: '(-webkit-min-device-pixel-ratio: 2), ' +
+                                '(min-resolution: 192dpi)'},
+        ],
       },
       {
         name: 'Orientation',
         dimensionIndex: getDefinitionIndex(dimensions.ORIENTATION),
         items: [
           {name: 'landscape', media: '(orientation: landscape)'},
-          {name: 'portrait',  media: '(orientation: portrait)'}
-        ]
-      }
-    ]
+          {name: 'portrait', media: '(orientation: portrait)'},
+        ],
+      },
+    ],
   });
   gaAll('require', 'outboundLinkTracker');
   gaAll('require', 'pageVisibilityTracker', {
@@ -194,11 +182,11 @@ function requirePlugins() {
     hiddenMetricIndex: getDefinitionIndex(metrics.PAGE_HIDDEN),
     fieldsObj: {
       nonInteraction: null,
-      [dimensions.HIT_SOURCE]: 'pageVisibilityTracker'
+      [dimensions.HIT_SOURCE]: 'pageVisibilityTracker',
     },
     hitFilter: function(model) {
       model.set(dimensions.METRIC_VALUE, String(model.get('eventValue')), true);
-    }
+    },
   });
 }
 

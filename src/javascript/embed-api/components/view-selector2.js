@@ -23,7 +23,6 @@ import accountSummaries from 'javascript-api-utils/lib/account-summaries';
  * A ViewSelector2 component for the Embed API.
  */
 gapi.analytics.ready(function() {
-
   gapi.analytics.createComponent('ViewSelector2', {
 
     /**
@@ -51,12 +50,10 @@ gapi.analytics.ready(function() {
      * @return {ViewSelector2}
      */
     set: function(opts) {
-
       if (!!opts.ids +
           !!opts.viewId +
           !!opts.propertyId +
           !!opts.accountId > 1) {
-
         throw new Error('You cannot specify more than one of the following ' +
             'options: "ids", "viewId", "accountId", "propertyId"');
       }
@@ -72,7 +69,6 @@ gapi.analytics.ready(function() {
           prevOpts.viewId != opts.viewId ||
           prevOpts.propertyId != opts.propertyId ||
           prevOpts.accountId != opts.accountId) {
-
         // If new ID data is being set, first unset all existing ID data.
         // This prevents the problem where you set an account ID then set a
         // view ID for a new view in a different account. Both IDs should not
@@ -113,8 +109,7 @@ gapi.analytics.ready(function() {
 
       if (gapi.analytics.auth.isAuthorized()) {
         onAuthorize();
-      }
-      else {
+      } else {
         gapi.analytics.auth.on('signIn', onAuthorize);
       }
     },
@@ -124,10 +119,11 @@ gapi.analytics.ready(function() {
      * information.
      */
     updateAccounts_: function() {
-
       let opts = this.get();
       let ids = getIdProp(opts);
-      let view, account, property;
+      let view;
+      let account;
+      let property;
 
       // If the user does not have any accounts, emit an error.
       if (!this.summaries.all().length) {
@@ -142,8 +138,7 @@ gapi.analytics.ready(function() {
         account = this.accounts[0];
         property = account && account.properties && account.properties[0];
         view = property && property.views && property.views[0];
-      }
-      else {
+      } else {
         switch (ids.prop) {
           case 'viewId':
             view = this.summaries.getProfile(ids.value);
@@ -164,17 +159,15 @@ gapi.analytics.ready(function() {
       }
 
       if (account || property || view) {
-
         // Only update if something has changed.
         if (account != this.account ||
             property != this.property ||
             view != this.view) {
-
           // Store what value changed.
           this.changed_ = {
             account: account && account != this.account,
             property: property && property != this.property,
-            view: view && view != this.view
+            view: view && view != this.view,
           };
 
           this.account = account;
@@ -184,8 +177,7 @@ gapi.analytics.ready(function() {
           this.view = view;
           this.ids = view && 'ga:' + view.id;
         }
-      }
-      else {
+      } else {
         this.emit('error', new Error('This user does not have access to ' +
             ids.prop.slice(0, -2) + ' : ' + ids.value));
       }
@@ -197,7 +189,6 @@ gapi.analytics.ready(function() {
      * changes.
      */
     render_: function() {
-
       let opts = this.get();
 
       this.container = typeof opts.container == 'string' ?
@@ -229,12 +220,11 @@ gapi.analytics.ready(function() {
      * programmatically via the `set` method.
      */
     onChange_: function() {
-
       let props = {
         account: this.account,
         property: this.property,
         view: this.view,
-        ids: this.view && 'ga:' + this.view.id
+        ids: this.view && 'ga:' + this.view.id,
       };
 
       if (this.changed_) {
@@ -288,7 +278,7 @@ gapi.analytics.ready(function() {
       '    <label>View</label>' +
       '    <select class="FormField"></select>' +
       '  </div>' +
-      '</div>'
+      '</div>',
   });
 
 
@@ -323,13 +313,10 @@ gapi.analytics.ready(function() {
     if (opts.ids || opts.viewId) {
       return {prop: 'viewId', value: opts.viewId ||
           (opts.ids && opts.ids.replace(/^ga:/, ''))};
-    }
-    else if (opts.propertyId) {
+    } else if (opts.propertyId) {
       return {prop: 'propertyId', value: opts.propertyId};
-    }
-    else if (opts.accountId) {
+    } else if (opts.accountId) {
       return {prop: 'accountId', value: opts.accountId};
     }
   }
-
 });

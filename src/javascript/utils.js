@@ -14,10 +14,10 @@
 
 
 /**
- * Returns a promise that is resolved after the specified amount of time
- * has passed.
+ * Awaits for a specified amount of time.
  * @param {number} amount The amount of time to sleep in milliseconds.
- * @return {Promise}
+ * @return {Promise} A promise that is resolved after the specified amount of
+ *    time has passed.
  */
 export function sleep(amount) {
   return new Promise(function(resolve) {
@@ -41,7 +41,9 @@ export function copyElementText(element) {
 
   try {
     success = document.execCommand('copy');
-  } catch(e) {}
+  } catch(e) {
+    // No action.
+  }
 
   window.getSelection().removeAllRanges();
   return success;
@@ -49,10 +51,10 @@ export function copyElementText(element) {
 
 
 /**
- * Takes a script URL and return a promise that resolves once the script has
- * been loaded on the page or rejects if the load fails.
+ * Takes a script URL.
  * @param {string} url
- * @return {Promise}
+ * @return {Promise} A promise that resolves once the script has been loaded
+ *     on the page or rejects if the load fails.
  */
 export function loadScript(url) {
   return new Promise((resolve, reject) => {
@@ -64,4 +66,3 @@ export function loadScript(url) {
     js.onerror = reject;
   });
 }
-

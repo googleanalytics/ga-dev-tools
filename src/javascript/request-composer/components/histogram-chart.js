@@ -17,41 +17,41 @@ import React from 'react';
 import {Bar} from 'react-chartjs';
 
 const CHART_OPTIONS = {
-    //Boolean - Whether the scale should start at zero.
+    // Boolean - Whether the scale should start at zero.
     scaleBeginAtZero: true,
 
-    //Boolean - Whether grid lines are shown across the chart.
+    // Boolean - Whether grid lines are shown across the chart.
     scaleShowGridLines: true,
 
-    //String - Colour of the grid lines.
+    // String - Colour of the grid lines.
     scaleGridLineColor: 'rgba(0,0,0,.05)',
 
-    //Number - Width of the grid lines
+    // Number - Width of the grid lines
     scaleGridLineWidth: 1,
 
-    //Boolean - Whether to show horizontal lines (except X axis).
+    // Boolean - Whether to show horizontal lines (except X axis).
     scaleShowHorizontalLines: true,
 
-    //Boolean - Whether to show vertical lines (except Y axis).
+    // Boolean - Whether to show vertical lines (except Y axis).
     scaleShowVerticalLines: true,
 
-    //Boolean - If there is a stroke on each bar.
+    // Boolean - If there is a stroke on each bar.
     barShowStroke: true,
 
-    //Number - Pixel width of the bar stroke.
+    // Number - Pixel width of the bar stroke.
     barStrokeWidth: 2,
 
-    //Number - Spacing between each of the X value sets.
+    // Number - Spacing between each of the X value sets.
     barValueSpacing: 5,
 
-    //Number - Spacing between data sets within X values.
+    // Number - Spacing between data sets within X values.
     barDatasetSpacing: 1,
 
-    //String - A legend template.
-    legendTemplate: '<ul class=\"<%=name.toLowerCase()%>-legend\"><% \
-      for (var i=0; i<datasets.length; i++){%><li><span \
-        style=\"background-color:<%=datasets[i].fillColor%>\"></span>\
-        <%if(datasets[i].label){%><%=datasets[i].label%><%}%></li><%}%></ul>'
+    // String - A legend template.
+    legendTemplate: '<ul class="<%=name.toLowerCase()%>-legend"><%' +
+      'for (var i=0; i<datasets.length; i++){%><li><span' +
+        'style="background-color:<%=datasets[i].fillColor%>"></span>' +
+        '<%if(datasets[i].label){%><%=datasets[i].label%><%}%></li><%}%></ul>',
 };
 
 let FILL_COLOR = ['rgba(250,137,79,0.5)',
@@ -99,7 +99,7 @@ export function createChartData(report) {
                 strokeColor: STROKE_COLOR[i%5],
                 highlightFill: HIGHLIGHT_FILL[i%5],
                 highlightStroke: HIGHLIGHT_STROKE[i%5],
-                data: []
+                data: [],
             });
         }
 
@@ -115,9 +115,13 @@ export function createChartData(report) {
     return {labels: labels, datasets: datasets};
 }
 
+
+/**
+ * A components that renders the histogram visualization.
+ */
 export default class HistogramChart extends React.Component {
 
-  /** @return {Object} */
+  /** @return {Object} The React component. */
   render() {
     let {response} = this.props;
     let data = createChartData(response.result.reports[0]);

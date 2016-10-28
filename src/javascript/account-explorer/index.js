@@ -44,7 +44,6 @@ function setup() {
  * view names and ids. Not case sensitive. Displays the results in the DOM.
  */
 function handleSearch() {
-
   let searchTerm = $('#search-box').val().toLowerCase();
 
   accountSummaries.get().then(function(summaries) {
@@ -84,9 +83,9 @@ function handleSearch() {
 /**
  * Updates the DOM with a table of account, property, and view names and ids.
  * @param {Array} results The results to be added to the DOM.
- * @param {string} opt_query The user inputed search text.
+ * @param {?string=} query The user inputed search text.
  */
-function updateResults(results, opt_query) {
+function updateResults(results, query = undefined) {
   $('#results-container').html('<table>' +
     '<thead>' +
       '<tr>' +
@@ -100,11 +99,10 @@ function updateResults(results, opt_query) {
   '</table>');
 
   let mark = (text) => {
-    if (opt_query) {
-      let regex = new RegExp('(' + opt_query + ')', 'ig');
+    if (query) {
+      let regex = new RegExp('(' + query + ')', 'ig');
       return text.replace(regex, '<mark>$1</mark>');
-    }
-    else {
+    } else {
       return text;
     }
   };
@@ -112,8 +110,7 @@ function updateResults(results, opt_query) {
   let searchResults = $('#results-body');
   if (results.length === 0) {
     searchResults.append('<td colspan="4">No results found</td>');
-  }
-  else {
+  } else {
     for (let i = 0; i < results.length; i++) {
       searchResults.append('<tr class="view-result"><td>' +
         mark(results[i].account.name) +
@@ -137,8 +134,8 @@ function updateResults(results, opt_query) {
     }
   }
 
-  if (typeof opt_query == 'string') {
-    $('#results-title').text('Showing results for "' + opt_query + '"');
+  if (typeof query == 'string') {
+    $('#results-title').text('Showing results for "' + query + '"');
   }
 }
 
@@ -148,7 +145,7 @@ function updateResults(results, opt_query) {
  */
 function setViewSelector(viewId) {
   let viewSelector = new gapi.analytics.ext.ViewSelector2({
-    container: 'view-selector-container'
+    container: 'view-selector-container',
   }).execute();
 
   viewSelector.set({viewId: viewId});
@@ -159,13 +156,14 @@ function setViewSelector(viewId) {
       let allObjects = {
         view: viewSelector.view,
         property: viewSelector.property,
-        account: viewSelector.account
+        account: viewSelector.account,
       };
       updateResults([allObjects]);
       $('#search-box').val('');
       $('#results-title').text('Showing view selected above');
+    } catch (e) {
+      // No action.
     }
-    catch (e) {}
   };
 
   viewSelector.on('change', getIdsAndUpdateResults);
@@ -220,22 +218,19 @@ function getAllIds(summaries, ids, returnObject) {
     accountObject.view = summaries.getView(ids.viewId);
     accountObject.property = summaries.getPropertyByViewId(ids.viewId);
     accountObject.account = summaries.getAccountByViewId(ids.viewId);
-  }
-  else if (ids.propertyId) {
+  } else if (ids.propertyId) {
     accountObject.property = summaries.getProperty(ids.propertyId);
     accountObject.account =
         summaries.getAccountByWebPropertyId(ids.propertyId);
     // pick first profile
     accountObject.view = accountObject.property.views[0];
-  }
-  else if (ids.accountId) {
+  } else if (ids.accountId) {
     accountObject.account = summaries.getAccount(ids.accountId);
     // pick first property and first profile
     accountObject.property = accountObject.account.properties[0];
     accountObject.view =
         summaries.getProperty(accountObject.property.id).views[0];
-  }
-  else {
+  } else {
     // pick first view property and account
     accountObject.account = summaries.all()[0];
     accountObject.property = accountObject.account.properties[0];
@@ -271,8 +266,7 @@ function getMapFromHash() {
 gapi.analytics.ready(function() {
   if (gapi.analytics.auth.isAuthorized()) {
     setup();
-  }
-  else {
+  } else {
     gapi.analytics.auth.once('success', setup);
   }
 });

@@ -23,5 +23,5 @@ export default {
   ...hitStatus,
   ...isAuthorized,
   ...params,
-  ...validationMessages
+  ...validationMessages,
 };

@@ -30,7 +30,7 @@ export default function settings(state = {}, action) {
     case types.UPDATE_SETTINGS:
       return {
         ...state,
-        ...settings
+        ...settings,
       };
 
     default:

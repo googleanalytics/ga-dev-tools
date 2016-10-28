@@ -29,7 +29,7 @@ import moment from 'moment';
  */
 function buildReportRequest(params, settings) {
   let reportRequest = {
-    viewId: params.viewId
+    viewId: params.viewId,
   };
 
   if (params.samplingLevel) {
@@ -37,7 +37,6 @@ function buildReportRequest(params, settings) {
   }
 
   if (settings.requestType != 'COHORT') {
-
     if (params.filters) {
       reportRequest.filtersExpression = params.filters;
     }
@@ -59,7 +58,7 @@ function buildReportRequest(params, settings) {
  * @param {Object} request The report request object.
  * @param {Object} params The Request Composer parameters.
  * @param {Object} settings The Request Composer settings.
- * @returns {Object} The Report Request object.
+ * @return {Object} The Report Request object.
  */
 function applyDateRanges(request, params, settings) {
   if (params.startDate &&
@@ -67,7 +66,7 @@ function applyDateRanges(request, params, settings) {
       settings.requestType != 'COHORT') {
     request.dateRanges = [{
       startDate: params.startDate,
-      endDate: params.endDate
+      endDate: params.endDate,
     }];
   }
   return request;
@@ -78,7 +77,7 @@ function applyDateRanges(request, params, settings) {
  * @param {Object} request The report request object.
  * @param {Object} params The Request Composer parameters.
  * @param {Object} settings The Request Composer settings.
- * @returns {object} The Report Request object.
+ * @return {object} The Report Request object.
  */
 function applyMetrics(request, params, settings) {
   if (params.metrics &&
@@ -106,7 +105,7 @@ function applyMetrics(request, params, settings) {
  * @param {Object} request The report request object.
  * @param {Object} params The Request Composer parameters.
  * @param {Object} settings The Request Composer settings.
- * @returns {Object} The Report Request object.
+ * @return {Object} The Report Request object.
  */
 function applyDimensions(request, params, settings) {
   if (settings.requestType != 'COHORT' &&
@@ -158,7 +157,7 @@ function applyDimensions(request, params, settings) {
  * @param {Object} request The report request object.
  * @param {Object} params The Request Composer parameters.
  * @param {Object} settings The Request Composer settings.
- * @returns {Object} The Report Request object.
+ * @return {Object} The Report Request object.
  */
 function applySegment(request, params, settings) {
   if (settings.requestType != 'COHORT' && params.segment) {
@@ -179,10 +178,9 @@ function applySegment(request, params, settings) {
  * @param {Object} request The report request object.
  * @param {Object} params The Request Composer parameters.
  * @param {Object} settings The Request Composer settings.
- * @returns {Object} The Report Request object.
+ * @return {Object} The Report Request object.
  */
 function applyOrderBys(request, params, settings) {
-
   if (settings.requestType == 'COHORT') {
     request.orderBys = [{fieldName: 'ga:cohort'}];
     return request;
@@ -192,8 +190,8 @@ function applyOrderBys(request, params, settings) {
         {
           fieldName: request.dimensions[0].name,
           orderType: 'HISTOGRAM_BUCKET',
-          sortOrder: 'ASCENDING'
-        }
+          sortOrder: 'ASCENDING',
+        },
       ];
     }
   } else if (params.sort) {
@@ -220,7 +218,7 @@ function applyOrderBys(request, params, settings) {
  * Applies the Dimensions objects to the Pivot object.
  * @param {Object} pivot The pivot object.
  * @param {Object} params The Request Composer parameters.
- * @returns {Object} The pivot object.
+ * @return {Object} The pivot object.
  */
 function applyPivotDimensions(pivot, params) {
   if (params.pivotDimensions) {
@@ -238,7 +236,7 @@ function applyPivotDimensions(pivot, params) {
  * Applies the Metric objects to the Pivot object.
  * @param {Object} pivot The pivot object.
  * @param {Object} params The Request Composer parameters.
- * @returns {Object} The pivot object.
+ * @return {Object} The pivot object.
  */
 function applyPivotMetrics(pivot, params) {
   if (params.pivotMetrics) {
@@ -257,7 +255,7 @@ function applyPivotMetrics(pivot, params) {
  * @param {Object} request The report request object.
  * @param {Object} params The Request Composer parameters.
  * @param {Object} settings The Request Composer settings.
- * @returns {Object} The Report Request object.
+ * @return {Object} The Report Request object.
  */
 function applyPivots(request, params, settings) {
   if (settings.requestType == 'PIVOT' ) {
@@ -280,7 +278,7 @@ function applyPivots(request, params, settings) {
  * @param {Object} request The report request object.
  * @param {Object} params The Request Composer parameters.
  * @param {Object} settings The Request Composer settings.
- * @returns {Object} The Report Request object.
+ * @return {Object} The Report Request object.
  */
 function applyCohorts(request, params, settings) {
   if (settings.requestType == 'COHORT') {
@@ -296,11 +294,10 @@ function applyCohorts(request, params, settings) {
             name: now.format('YYYY-MM-DD'),
             dateRange: {
               startDate: now.format('YYYY-MM-DD'),
-              endDate: now.format('YYYY-MM-DD')
-            }
+              endDate: now.format('YYYY-MM-DD'),
+            },
           };
           cohorts.push(cohort);
-
         }
         break;
       case 'Week':
@@ -314,8 +311,8 @@ function applyCohorts(request, params, settings) {
               name: startDate + ' to ' + endDate,
               dateRange: {
                 startDate: startDate,
-                endDate: endDate
-              }
+                endDate: endDate,
+              },
           };
           cohorts.push(cohort);
         }
@@ -331,8 +328,8 @@ function applyCohorts(request, params, settings) {
               name: startDate + ' to ' + endDate,
               dateRange: {
                 startDate: startDate,
-                endDate: endDate
-              }
+                endDate: endDate,
+              },
             };
             cohorts.push(cohort);
         }
@@ -363,7 +360,7 @@ export function batchGet(request) {
  * Composes the body of an Analytics Reporting API v4 request.
  * @param {Object} params The Request Composer parameters.
  * @param {Object} settings The Request Composer settings.
- * @returns {Object} The Analytics Reporting API v4 request.
+ * @return {Object} The Analytics Reporting API v4 request.
  */
 export function composeRequest(params, settings) {
   if (!params || !settings) {
@@ -393,7 +390,7 @@ export function composeRequest(params, settings) {
  * Validates request for required fields.
  * @param {Object} params The Request Composer Parameters.
  * @param {Object} settings The Request Composer settings.
- * @returns {boolean} Wheather or not the field params are valid.
+ * @return {boolean} Wheather or not the field params are valid.
  */
  export function validateRequest(params, settings) {
   if (!params || !settings) {

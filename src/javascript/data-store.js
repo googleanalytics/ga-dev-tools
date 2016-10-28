@@ -42,11 +42,11 @@ let migrationFunctions = {
     let data = JSON.parse(localStorage.getItem('mgmtData'));
     if (data && data.profileId) {
       cache['query-explorer:params'] = {
-        ids: 'ga:' + data.profileId
+        ids: 'ga:' + data.profileId,
       };
     }
     localStorage.removeItem('mgmtData');
-  }
+  },
 };
 
 
@@ -121,6 +121,6 @@ export default {
     ensureCache();
     cache[project] = data;
     saveCache();
-  }
+  },
 
 };

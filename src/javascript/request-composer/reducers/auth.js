@@ -19,10 +19,9 @@ import * as types from '../actions/types';
  * Returns True if the application is authorized otherwise returns state.
  * @param {Object} state The application state.
  * @param {Object} action The application action.
- * @returns {Object} True if the action is SET_AUTHORIZED_STATE.
+ * @return {Object} True if the action is SET_AUTHORIZED_STATE.
  */
 export default function isAuthorized(state = false, action) {
-
   switch (action.type) {
 
     case types.SET_AUTHORIZED_STATE:

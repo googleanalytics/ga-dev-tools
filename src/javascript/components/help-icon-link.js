@@ -15,9 +15,13 @@
 import React from 'react';
 import Icon from './icon';
 
+
+/**
+ * A components that renders a help link icon used inside a FormControl.
+ */
 export default class HelpIconLink extends React.Component {
 
-  /** @return {Object} */
+  /** @return {Object} The React component. */
   render() {
     return (
       <a

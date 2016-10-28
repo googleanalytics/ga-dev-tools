@@ -28,10 +28,13 @@ let iconCalendar =
      </svg>`;
 
 
+/**
+ * A components that renders a jQuery datepicker.
+ */
 export default class Datepicker extends React.Component {
 
   state = {
-    value: this.props.value || ''
+    value: this.props.value || '',
   }
 
 
@@ -68,7 +71,7 @@ export default class Datepicker extends React.Component {
       onClose: function() {
         // Use setTimeout to avoid race conditions with the icon click event.
         setTimeout(() => isShowing = false, ANIMATION_DURATION);
-      }
+      },
     };
 
     let $input = $(this.refs.input);
@@ -94,7 +97,7 @@ export default class Datepicker extends React.Component {
   }
 
 
-  /** @return {Object} */
+  /** @return {Object} The React component. */
   render() {
     return (
       <div className="FormFieldAddOn">

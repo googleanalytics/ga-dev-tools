@@ -32,10 +32,13 @@ const HIT_TYPES = [
   'item',
   'social',
   'exception',
-  'timing'
+  'timing',
 ];
 
 
+/**
+ * The primary Hit Builder app component.
+ */
 export default class HitBuilder extends React.Component {
 
 
@@ -83,9 +86,8 @@ export default class HitBuilder extends React.Component {
   }
 
 
-  /** @return {Object} */
+  /** @return {Object} The React component. */
   render() {
-
     let {params} = this.props;
 
     return (

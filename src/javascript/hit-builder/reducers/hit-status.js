@@ -23,7 +23,6 @@ import * as types from '../actions/types';
  * @return {string} The updated state.
  */
 export default function hitStatus(state = 'UNVALIDATED', action) {
-
   switch (action.type) {
 
     case types.SET_HIT_STATUS:

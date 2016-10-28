@@ -33,13 +33,16 @@ const INSTRUCTIONS_TEXT =
     'automatically generated for you here.';
 
 
+/**
+ * A component that renders the generated campaign URL.
+ */
 export default class CampaignUrl extends React.Component {
 
   state = {
     urlCopied: false,
     shortUrl: null,
     showShortUrl: false,
-    isShorteningUrl: false
+    isShorteningUrl: false,
   }
 
 
@@ -56,15 +59,14 @@ export default class CampaignUrl extends React.Component {
       gaAll('send', 'event', {
         eventCategory: 'Campaign URL',
         eventAction: 'copy-to-clipboard',
-        eventLabel: `${this.state.showShortUrl ? 'short' : 'long'} url`
+        eventLabel: `${this.state.showShortUrl ? 'short' : 'long'} url`,
       });
 
       // After three second, remove the success checkbox.
       clearTimeout(this.urlCopiedTimeout_);
       this.urlCopiedTimeout_ = setTimeout(() =>
           this.setState({urlCopied: false}), ACTION_TIMEOUT);
-    }
-    else {
+    } else {
       // TODO(philipwalton): handle error case
     }
   }
@@ -84,22 +86,22 @@ export default class CampaignUrl extends React.Component {
       this.setState({
         isShorteningUrl: false,
         shortUrl: shortUrl,
-        showShortUrl: true
+        showShortUrl: true,
       });
       gaAll('send', 'event', {
         eventCategory: 'Campaign URL',
         eventAction: 'shorten',
-        eventLabel: '(not set)'
+        eventLabel: '(not set)',
       });
     } catch (err) {
       AlertDispatcher.addOnce({
         title: 'Oops, an error occurred trying to shorten the URL',
-        message: err.message
+        message: err.message,
       });
       this.setState({
         isShorteningUrl: false,
         shortUrl: null,
-        showShortUrl: false
+        showShortUrl: false,
       });
     }
   }
@@ -110,12 +112,12 @@ export default class CampaignUrl extends React.Component {
    */
   longenUrl = () => {
     this.setState({
-      showShortUrl: false
+      showShortUrl: false,
     });
     gaAll('send', 'event', {
       eventCategory: 'Campaign URL',
       eventAction: 'unshorten',
-      eventLabel: '(not set)'
+      eventLabel: '(not set)',
     });
   }
 
@@ -130,7 +132,7 @@ export default class CampaignUrl extends React.Component {
       urlCopied: false,
       shortUrl: null,
       showShortUrl: false,
-      isShorteningUrl: false
+      isShorteningUrl: false,
     });
     this.props.onUseFragmentToggle.call(this, e);
   }
@@ -227,13 +229,13 @@ export default class CampaignUrl extends React.Component {
       this.setState({
         shortUrl: null,
         showShortUrl: false,
-        isShorteningUrl: false
+        isShorteningUrl: false,
       });
     }
   }
 
 
-  /** @return {Object} */
+  /** @return {Object} The React component. */
   render() {
     return (
       <div className="CampaignUrlResult">

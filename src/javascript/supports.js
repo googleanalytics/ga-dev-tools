@@ -20,7 +20,6 @@ export default {
    * @return {boolean}
    */
   copyToClipboard: (function() {
-
     let isCopySupported;
 
     return function() {
@@ -42,6 +41,6 @@ export default {
         /Chrome\/(\d+)/.test(navigator.userAgent) && (+RegExp.$1 >= 43)
       );
     };
-  }())
+  }()),
 
 };

@@ -46,6 +46,10 @@ const VIEW_SELECTOR_TEMPLATE =
     '</div>';
 
 
+/**
+ * A components that renders a Google Analytics view selector using the
+ * Embed API ViewSelector component.
+ */
 export default class ViewSelector extends React.Component {
 
   /**
@@ -60,14 +64,12 @@ export default class ViewSelector extends React.Component {
    * it's mounted and adds event listeners.
    */
   componentDidMount() {
-
     gapi.analytics.ready(() => {
-
       this.viewSelector_ = new gapi.analytics.ext.ViewSelector2({
         container: ReactDOM.findDOMNode(this),
         ids: this.props.ids,
         viewId: this.props.viewId,
-        template: this.props.template || VIEW_SELECTOR_TEMPLATE
+        template: this.props.template || VIEW_SELECTOR_TEMPLATE,
       });
 
       this.viewSelector_.on('viewChange', (...args) => {
@@ -83,12 +85,11 @@ export default class ViewSelector extends React.Component {
           if (!this.hasSuccessfullyShownView_) {
             this.viewSelector_.set({ids: undefined}).execute();
           }
-        }
-        // For all other errors, display an alert message.
-        else {
+        } else {
+          // For all other errors, display an alert message.
           AlertDispatcher.addOnce({
             title: 'Oops, there was an error',
-            message: err.message
+            message: err.message,
           });
         }
       });
@@ -120,7 +121,7 @@ export default class ViewSelector extends React.Component {
   }
 
 
-  /** @return {Object} */
+  /** @return {Object} The React component. */
   render() {
     return (
       <div dangerouslySetInnerHTML={{__html: VIEW_SELECTOR_TEMPLATE}} />

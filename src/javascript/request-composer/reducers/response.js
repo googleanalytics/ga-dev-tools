@@ -19,7 +19,7 @@ import * as types from '../actions/types';
  * If action is update response returns the updated state.
  * @param {Object} state The application state.
  * @param {Object} action The application action.
- * @returns {Object} The updated state with the new response.
+ * @return {Object} The updated state with the new response.
  */
 export default function response(state = {}, action) {
   let {response} = action;

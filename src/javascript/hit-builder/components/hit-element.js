@@ -29,13 +29,16 @@ import {copyElementText, sleep} from '../../utils';
 const ACTION_TIMEOUT = 1500;
 
 
+/**
+ * A component that renders the generated hit element.
+ */
 export default class HitElement extends React.Component {
 
   state = {
     value: this.props.hitPayload,
     hitSent: false,
     hitPayloadCopied: false,
-    hitUriCopied: false
+    hitUriCopied: false,
   }
 
 
@@ -77,13 +80,13 @@ export default class HitElement extends React.Component {
     await $.ajax({
       method: 'POST',
       url: 'https://www.google-analytics.com/collect',
-      data: this.state.value
+      data: this.state.value,
     });
     this.setState({hitSent: true});
     gaAll('send', 'event', {
       eventCategory: 'Hit Builder',
       eventAction: 'send',
-      eventLabel: 'payload'
+      eventLabel: 'payload',
     });
     await sleep(ACTION_TIMEOUT);
     this.setState({hitSent: false});
@@ -103,15 +106,14 @@ export default class HitElement extends React.Component {
       gaAll('send', 'event', {
         eventCategory: 'Hit Builder',
         eventAction: 'copy-to-clipboard',
-        eventLabel: 'payload'
+        eventLabel: 'payload',
       });
 
       // After three second, remove the success checkbox.
       clearTimeout(this.hitPayloadCopiedTimeout_);
       this.hitPayloadCopiedTimeout_ = setTimeout(() =>
           this.setState({hitPayloadCopied: false}), ACTION_TIMEOUT);
-    }
-    else {
+    } else {
       // TODO(philipwalton): handle error case
     }
   }
@@ -130,15 +132,14 @@ export default class HitElement extends React.Component {
       gaAll('send', 'event', {
         eventCategory: 'Hit Builder',
         eventAction: 'copy-to-clipboard',
-        eventLabel: 'share URL'
+        eventLabel: 'share URL',
       });
 
       // After three second, remove the success checkbox.
       clearTimeout(this.hitUriCopiedTimeout_);
       this.hitUriCopiedTimeout_ = setTimeout(() =>
           this.setState({hitUriCopied: false}), ACTION_TIMEOUT);
-    }
-    else {
+    } else {
       // TODO(philipwalton): handle error case
     }
   }
@@ -267,8 +268,7 @@ export default class HitElement extends React.Component {
           </div>
         </div>
       );
-    }
-    else {
+    } else {
       return (
         <div className="HitElement-action">
           {sendHitButton}
@@ -295,12 +295,12 @@ export default class HitElement extends React.Component {
         value: nextProps.hitPayload,
         hitSent: false,
         hitPayloadCopied: false,
-        hitUriCopied: false
+        hitUriCopied: false,
       });
     }
   }
 
-  /** @return {Object} */
+  /** @return {Object} The React component. */
   render() {
     let className = 'HitElement';
     if (this.props.hitStatus == 'VALID') className += ' HitElement--valid';

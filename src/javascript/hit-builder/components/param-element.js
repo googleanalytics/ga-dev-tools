@@ -22,11 +22,14 @@ const REFERENCE_URL = 'https://developers.google.com/' +
                       'analytics/devguides/collection/protocol/v1/parameters';
 
 
+/**
+ * A component that renders an individual hit param name and value pair.
+ */
 export default class ParamElement extends React.Component {
 
   state = {
     name: this.props.param.name || '',
-    value: this.props.param.value || ''
+    value: this.props.param.value || '',
   }
 
   /**
@@ -86,8 +89,7 @@ export default class ParamElement extends React.Component {
     let {name} = this.state;
     if (this.props.param.required) {
       return <label className="HitBuilderParam-label">{name}</label>;
-    }
-    else {
+    } else {
       return (
         <div className="HitBuilderParam-label">
           <span
@@ -162,7 +164,7 @@ export default class ParamElement extends React.Component {
     }
   }
 
-  /** @return {Object} */
+  /** @return {Object} The React component. */
   render() {
     return (
       <div className={this.getClassName()}>
