@@ -41,8 +41,7 @@ export function getInitialHitAndUpdateUrl() {
       history.replaceState(history.state, document.title, location.pathname);
     }
     return query;
-  }
-  else {
+  } else {
     return DEFAULT_HIT;
   }
 }
@@ -68,7 +67,7 @@ export function convertHitToParams(hit = '') {
       id: id++,
       name: name,
       value: query[name],
-      required: true
+      required: true,
     });
     delete query[name];
   }
@@ -111,7 +110,7 @@ export function getHitValidationResult(hit) {
       data: hit,
       dataType: 'json',
       success: (response) => resolve({response, hit}),
-      error: reject
+      error: reject,
     });
   });
 }

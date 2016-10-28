@@ -21,5 +21,5 @@ import * as websiteUrl from './website-url';
 export default {
   ...params,
   ...settings,
-  ...websiteUrl
+  ...websiteUrl,
 };

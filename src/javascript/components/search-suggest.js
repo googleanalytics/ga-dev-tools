@@ -29,15 +29,18 @@ const keyCodes = {
   ENTER: 13,
   ESC: 27,
   UP_ARROW: 38,
-  DOWN_ARROW: 40
+  DOWN_ARROW: 40,
 };
 
 
+/**
+ * A components that renders a search suggest dropdown.
+ */
 export default class SearchSuggest extends React.Component {
 
   static defaultProps = {
     value: '',
-    options: []
+    options: [],
   }
 
   state = {
@@ -46,7 +49,7 @@ export default class SearchSuggest extends React.Component {
     selectedMatchIndex: 0,
     open: false,
     above: false,
-    invalid: this.props.inavlid
+    invalid: this.props.inavlid,
   };
 
   /**
@@ -72,7 +75,7 @@ export default class SearchSuggest extends React.Component {
       value: value,
       matches: this.findMatches(value),
       selectedMatchIndex: 0,
-      open: true
+      open: true,
     });
     this.props.onChange.call(this, {target: {name, value}});
   }
@@ -93,8 +96,7 @@ export default class SearchSuggest extends React.Component {
           this.isKeyboardScrolling_ = true;
           this.setState({selectedMatchIndex: selectedMatchIndex + 1});
           e.preventDefault();
-        }
-        else {
+        } else {
           this.setShowMatchesState();
         }
         break;
@@ -108,8 +110,7 @@ export default class SearchSuggest extends React.Component {
       case keyCodes.ENTER:
         if (this.state.open && selectedMatch) {
           this.setSelectedMatchState(selectedMatch.id);
-        }
-        else {
+        } else {
           this.setShowMatchesState();
         }
         e.preventDefault();
@@ -153,7 +154,7 @@ export default class SearchSuggest extends React.Component {
     this.setState({
       open: true,
       selectedMatchIndex: 0,
-      above: spaceBelow < 0 && spaceAbove > spaceBelow
+      above: spaceBelow < 0 && spaceAbove > spaceBelow,
     });
   }
 
@@ -198,7 +199,7 @@ export default class SearchSuggest extends React.Component {
    * search string should be considered a match.
    * @param {string} search The string to search.
    * @param {Object} option An item in the `props.options` array.
-   * @returns {boolean} true if search is a match.
+   * @return {boolean} true if search is a match.
    */
   matchesOption(search, option) {
     search = search.toLowerCase();
@@ -346,7 +347,6 @@ export default class SearchSuggest extends React.Component {
     // If the user is scrolling through the matches via the up and down arrows
     // keys, make sure the selected match is always in view.
     if (this.isKeyboardScrolling_) {
-
       // TODO(philipwalton): is there a more React-y way of getting access
       // to this node? Using refs seems like overkill...
       let selectedElement = ReactDOM.findDOMNode(this.refs.matches)
@@ -364,12 +364,10 @@ export default class SearchSuggest extends React.Component {
       // If the select match element is below the visible part of the container.
       if (selectedElementOffsetTop + selectedElementClientHeight >
           containerScrollTop + containerClientHeight) {
-
         container.scrollTop = selectedElementOffsetTop +
             selectedElementClientHeight - containerClientHeight;
-      }
-      // If the select match element is above the visible part of the container.
-      else if (selectedElementOffsetTop < containerScrollTop) {
+      } else if (selectedElementOffsetTop < containerScrollTop) {
+        // The select match element is above the visible part of the container.
         container.scrollTop = selectedElementOffsetTop;
       }
 
@@ -386,7 +384,7 @@ export default class SearchSuggest extends React.Component {
   }
 
 
-  /** @return {Object} */
+  /** @return {Object} The React component. */
   render() {
     let className = 'SearchSuggest';
     if (this.state.open && this.state.matches.length) {

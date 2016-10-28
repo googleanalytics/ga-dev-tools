@@ -27,5 +27,5 @@ export default {
   ...query,
   ...report,
   ...select2Options,
-  ...settings
+  ...settings,
 };

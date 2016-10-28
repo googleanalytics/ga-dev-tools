@@ -17,6 +17,9 @@ import React from 'react';
 import ParamElement from './param-element';
 
 
+/**
+ * A ParamElement component whose value is a select dropdown.
+ */
 export default class ParamSelectElement extends ParamElement {
 
   /**
@@ -26,7 +29,7 @@ export default class ParamSelectElement extends ParamElement {
    */
 
 
-  /** @return {Object} */
+  /** @return {Object} The React component. */
   render() {
     // Only render a select if the value is one of the passed options.
     if (this.props.options.includes(this.state.value)) {
@@ -47,9 +50,8 @@ export default class ParamSelectElement extends ParamElement {
           </div>
         </div>
       );
-    }
-    // Otherwise render a regular input.
-    else {
+    } else {
+      // Otherwise render a regular input.
       return super.render.call(this);
     }
   }

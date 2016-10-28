@@ -18,6 +18,9 @@ import ParamElement from './param-element';
 import SearchSuggest from '../../components/search-suggest';
 
 
+/**
+ * A ParamElement component whose value is a SearchSuggest component.
+ */
 export default class ParamSearchSuggestElement extends ParamElement {
 
   /**
@@ -27,7 +30,7 @@ export default class ParamSearchSuggestElement extends ParamElement {
    */
 
 
-  /** @return {Object} */
+  /** @return {Object} The React component. */
   render() {
     return (
       <div className={this.getClassName()}>

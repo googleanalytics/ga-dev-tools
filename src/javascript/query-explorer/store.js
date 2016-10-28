@@ -46,7 +46,6 @@ let createStoreWithMiddleware = applyMiddleware(...middlewear)(createStore);
  * @return {Object} The initial params.
  */
 function getInitalQueryParamsAndUpdateUrl() {
-
   let defaultParams = {'start-date': '30daysAgo', 'end-date': 'yesterday'};
   let storedParams = db.get('query-explorer:params');
   let urlParams = qs.parse(location.search.slice(1));
@@ -55,7 +54,6 @@ function getInitalQueryParamsAndUpdateUrl() {
   // Explorer URL. Only use the query params if they exist and contain at least
   // a metric value.
   if (urlParams && urlParams['metrics']) {
-
     // Some of the Query Explorer links out in the wild have double-encoded
     // URL params. Check for the substring '%253A' (a colon, double-encoded),
     // and if found then double-decode all params.
@@ -72,11 +70,9 @@ function getInitalQueryParamsAndUpdateUrl() {
     urlParams = sanitize({...defaultParams, ...urlParams});
     db.set('query-explorer:params', urlParams);
     return urlParams;
-  }
-  else if (storedParams) {
+  } else if (storedParams) {
     return sanitize({...defaultParams, ...storedParams});
-  }
-  else {
+  } else {
     return defaultParams;
   }
 }
@@ -105,7 +101,7 @@ function getDefaultSelect2Options() {
     metrics: [],
     dimensions: [],
     sort: [],
-    segments: []
+    segments: [],
   };
 }
 
@@ -116,7 +112,7 @@ let store = createStoreWithMiddleware(reducer, {
   params: getInitalQueryParamsAndUpdateUrl(),
   report: {},
   select2Options: getDefaultSelect2Options(),
-  settings: getDefaultSettingsAndUpdateTracker()
+  settings: getDefaultSettingsAndUpdateTracker(),
 });
 
 

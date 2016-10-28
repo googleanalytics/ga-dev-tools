@@ -20,7 +20,6 @@
  * A DateRangeSelector component for the Embed API.
  */
 gapi.analytics.ready(function() {
-
   let nDaysAgo = /(\d+)daysAgo/;
   let dateFormat = /\d{4}\-\d{2}\-\d{2}/;
 
@@ -105,7 +104,7 @@ gapi.analytics.ready(function() {
       this.setMinMax();
       this.emit('change', {
         'start-date': this['start-date'],
-        'end-date': this['end-date']
+        'end-date': this['end-date'],
       });
     },
 
@@ -141,7 +140,6 @@ gapi.analytics.ready(function() {
       '    <label>End Date</label> ' +
       '    <input type="date">' +
       '  </div>' +
-      '</div>'
+      '</div>',
   });
-
 });

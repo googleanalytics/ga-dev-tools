@@ -50,7 +50,7 @@ export function handleAuthorizationSuccess() {
     let properties = summaries.allProperties().map((property) => ({
       name: property.name,
       id: property.id,
-      group: summaries.getAccountByPropertyId(property.id).name
+      group: summaries.getAccountByPropertyId(property.id).name,
     }));
 
     dispatch(setUserProperties(properties));

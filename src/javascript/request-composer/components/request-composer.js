@@ -44,6 +44,9 @@ const REFERENCE_URL =
     '/analytics/devguides/reporting/core/v4/rest/v4/reports/batchGet#';
 
 
+/**
+ * The primary Request Composer app component.
+ */
 export default class RequestComposer extends React.Component {
 
   /**
@@ -104,7 +107,7 @@ export default class RequestComposer extends React.Component {
   /**
    * Invoked when a user submits the form.
    * @param {Event|Object} e The native or React event.
-   * @returns {Object} null if missing required fields.
+   * @return {Object} null if missing required fields.
    */
   handleSubmit = async (e) => {
     e.preventDefault();
@@ -113,7 +116,7 @@ export default class RequestComposer extends React.Component {
     if (!validateRequest(params, settings)) {
       AlertDispatcher.addOnce({
         title: 'Oops, there was an error',
-        message: 'Please supply all required fields.'
+        message: 'Please supply all required fields.',
       });
       return null;
     }
@@ -128,7 +131,7 @@ export default class RequestComposer extends React.Component {
     } catch (response) {
       AlertDispatcher.addOnce({
         title: 'Oops, there was an error',
-        message: response.result.error.message
+        message: response.result.error.message,
       });
       actions.updateResponse(response);
     }
@@ -136,7 +139,7 @@ export default class RequestComposer extends React.Component {
     actions.updateResponse(response);
     actions.updateSettings({
       responseType: settings.requestType,
-      responseCohortSize: params.cohortSize
+      responseCohortSize: params.cohortSize,
     });
 
     actions.setQueryState(false);
@@ -149,15 +152,14 @@ export default class RequestComposer extends React.Component {
    * ---------------------------------------------------------
    */
 
-  /** @return {Object} */
+  /** @return {Object} The React component. */
   render() {
-
     let {
       isQuerying,
       params,
       response,
       settings,
-      select2Options
+      select2Options,
     } = this.props;
 
     let formControlClass = 'FormControl FormControl--inline';

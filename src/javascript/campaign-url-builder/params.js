@@ -22,7 +22,7 @@ export const PARAMS = [
   'utm_campaign',
   'utm_medium',
   'utm_term',
-  'utm_content'
+  'utm_content',
 ];
 
 
@@ -34,7 +34,7 @@ export const REQUIRED_PARAMS = PARAMS.slice(0, 1);
  * extracted campaign params as well as the new fragment string with the params
  * removed.
  * @param {string} fragment
- * @return {Object}
+ * @return {Object} The extracted params and the bare, resulting string.
  */
 function extractParamsFromFragment(fragment) {
   let extractedFragmentParams = {};
@@ -54,7 +54,7 @@ function extractParamsFromFragment(fragment) {
  * extracted campaign params as well as the new query string with the params
  * removed.
  * @param {string} query
- * @return {Object}
+ * @return {Object} The extracted params and the bare, resulting string.
  */
 function extractParamsFromQuery(query) {
   let queryParams = qs.parse(query);
@@ -80,7 +80,7 @@ function extractParamsFromQuery(query) {
  * (from either the query or fragment parts) as well as a new URL with the
  * params removed.
  * @param {string} websiteUrl
- * @return {Object}
+ * @return {Object} The extracted params and the new URL.
  */
 export function extractParamsFromWebsiteUrl(websiteUrl) {
   let websiteUrlObj = url.parse(websiteUrl);
@@ -99,7 +99,7 @@ export function extractParamsFromWebsiteUrl(websiteUrl) {
 
   let params = {
     ...extractedQueryParams,
-    ...extractedFragmentParams
+    ...extractedFragmentParams,
   };
 
   let bareUrl = url.format(websiteUrlObj);

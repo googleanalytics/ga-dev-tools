@@ -118,11 +118,10 @@ export function validateHit() {
       param: message.parameter,
       description: message.description.replace(linkRegex, '').trim(),
       type: message.messageType,
-      code: message.messageCode
+      code: message.messageCode,
     };
   };
   return async (dispatch, getState) => {
-
     let hit = convertParamsToHit(getState().params);
     dispatch(setHitStatus('VALIDATING'));
 
@@ -143,31 +142,29 @@ export function validateHit() {
         gaAll('send', 'event', {
           eventCategory: 'Hit Builder',
           eventAction: 'validate',
-          eventLabel: 'valid'
+          eventLabel: 'valid',
         });
-      }
-      else {
+      } else {
         dispatch(setHitStatus('INVALID'));
         dispatch(setValidationMessages(validationMessages.map(formatMessage)));
         gaAll('send', 'event', {
           eventCategory: 'Hit Builder',
           eventAction: 'validate',
-          eventLabel: 'invalid'
+          eventLabel: 'invalid',
         });
       }
-    }
-    catch(err) {
+    } catch(err) {
       // TODO(philipwalton): handle timeout errors and slow network connection.
       resetHitValidationStatus(dispatch);
       AlertDispatcher.addOnce({
         title: 'Oops, an error occurred while validating the hit',
         message: `Check your connection to make sure you're still online.
-                  If you're still having problems, try refreshing the page.`
+                  If you're still having problems, try refreshing the page.`,
       });
       gaAll('send', 'event', {
         eventCategory: 'Hit Builder',
         eventAction: 'validate',
-        eventLabel: 'error'
+        eventLabel: 'error',
       });
     }
   };

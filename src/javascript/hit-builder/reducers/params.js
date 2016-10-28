@@ -23,7 +23,6 @@ import * as types from '../actions/types';
  * @return {Array} The updated state.
  */
 export default function params(state = [], action) {
-
   switch (action.type) {
 
     case types.ADD_PARAM:
@@ -32,8 +31,8 @@ export default function params(state = [], action) {
         {
           id: state.reduce((max, param) => Math.max(param.id, max), -1) + 1,
           name: '',
-          value: ''
-        }
+          value: '',
+        },
       ];
 
     case types.REMOVE_PARAM:

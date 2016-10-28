@@ -26,7 +26,6 @@ import site from '../site';
  * In normal Embed API usage, these hacks aren't needed.
  */
 function monkeyPatchForDemos() {
-
   // `authorize` has already been called at this point, so we need to
   // override the function so subsequent calls in the demo do nothing.
   gapi.analytics.auth.authorize = function() {
@@ -36,11 +35,11 @@ function monkeyPatchForDemos() {
   // Keep a reference to all created DataChart instances so they can be
   // redrawn on resize. Do this here instead of in the demo code to
   // avoid introducing unnecessary complexity.
-  let originalDataChart = gapi.analytics.googleCharts.DataChart;
+  let OriginalDataChart = gapi.analytics.googleCharts.DataChart;
   let dataCharts = [];
 
   gapi.analytics.googleCharts.DataChart = function DataChart(options) {
-    let dataChart = new originalDataChart(options);
+    let dataChart = new OriginalDataChart(options);
     dataCharts.push(dataChart);
     return dataChart;
   };
@@ -54,8 +53,9 @@ function monkeyPatchForDemos() {
         if (dataChart.get().chart.type != 'TABLE') {
           dataChart.execute();
         }
+      } catch(e) {
+        // No action.
       }
-      catch(e) {}
     });
   }, 200));
 }

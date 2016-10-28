@@ -18,11 +18,14 @@ import ParamElement from './param-element';
 import Icon from '../../components/icon';
 
 
+/**
+ * A ParamElement component whose value has a Button component appended.
+ */
 export default class ParamButtonElement extends ParamElement {
 
   /**
    * Returns the class name for the form field.
-   * @returns {string}
+   * @return {string}
    */
   getFieldClassName() {
     return super.getFieldClassName() + ' FormFieldAddOn-field';
@@ -36,7 +39,7 @@ export default class ParamButtonElement extends ParamElement {
    */
 
 
-  /** @return {Object} */
+  /** @return {Object} The React component. */
   render() {
     return (
       <div className={this.getClassName()}>

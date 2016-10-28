@@ -29,18 +29,22 @@ import ViewSelector from '../../components/view-selector';
 /**
  * The parameters that are safe to track the values entered by users.
  * All other params are either uninteresting or may possibly contain PII and
- * therefore only their presence/absense is tracked.
+ * therefore only their presence/absence is tracked.
  */
 const PARAMS_TO_TRACK = ['start-date', 'end-date', 'metrics', 'dimensions'];
 const REFERENCE_URL =
     'https://developers.google.com' +
     '/analytics/devguides/reporting/core/v3/reference#';
 
+
+/**
+ * The primary Query Explorer app component.
+ */
 export default class QueryExplorer extends React.Component {
 
   /**
    * Invoked when a user changes the ViewSelector2 instance.
-   * @param {Object} viewData The object emited by the ViewSelector2's
+   * @param {Object} viewData The object emitted by the ViewSelector2's
    * `changeView` event.
    */
   handleViewSelectorChange = (viewData) => {
@@ -108,7 +112,7 @@ export default class QueryExplorer extends React.Component {
 
     actions.updateReport({
       propertyName: property.name,
-      viewName: view.name
+      viewName: view.name,
     });
   }
 
@@ -126,7 +130,7 @@ export default class QueryExplorer extends React.Component {
       eventCategory: 'query',
       eventAction: 'submit',
       eventLabel: '(200) OK',
-      metric1: 1
+      metric1: 1,
     });
   }
 
@@ -141,7 +145,7 @@ export default class QueryExplorer extends React.Component {
 
     AlertDispatcher.addOnce({
       title: `Ack! There was an error (${code})`,
-      message: message
+      message: message,
     });
 
     gaAll('send', {
@@ -149,7 +153,7 @@ export default class QueryExplorer extends React.Component {
       eventCategory: 'query',
       eventAction: 'submit',
       eventLabel: `(${code}) ${message}`,
-      metric2: 1
+      metric2: 1,
     });
   }
 
@@ -201,15 +205,14 @@ export default class QueryExplorer extends React.Component {
    * ---------------------------------------------------------
    */
 
-  /** @return {Object} */
+  /** @return {Object} The React component. */
   render() {
-
     let {
       isQuerying,
       params,
       report,
       settings,
-      select2Options
+      select2Options,
     } = this.props;
 
     let formControlClass = 'FormControl FormControl--inline';

@@ -28,7 +28,6 @@ export default {
   addOpenHandler: function() {
     $(document).on('touchend.sidebar click.sidebar',
         '#header-menu', function(event) {
-
       event.preventDefault();
       $(document).off('.sidebar');
       this.open();
@@ -38,14 +37,12 @@ export default {
 
   addCloseHandler: function() {
     $(document).on('touchend.sidebar click.sidebar', function(event) {
-
       let $target = $(event.target);
 
       // Close of the user clicked the close icon or clicked
       // outside of the sidebar.
       if ($target.closest('#sidebar-close').length ||
           !$target.closest('#sidebar').length) {
-
         event.preventDefault();
         $(document).off('.sidebar');
         this.close();
@@ -62,7 +59,7 @@ export default {
   close: function() {
     $(document.body).removeClass('is-expanded');
     gaAll('send', 'event', 'Sidebar', 'close');
-  }
+  },
 
 };
 

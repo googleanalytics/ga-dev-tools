@@ -23,7 +23,6 @@ import * as types from '../actions/types';
  * @return {Object} The updated state.
  */
 export default function isAuthorized(state = false, action) {
-
   switch (action.type) {
 
     case types.SET_AUTHORIZED:

@@ -22,5 +22,5 @@ let createStoreWithMiddleware = applyMiddleware(...middlewear)(createStore);
 export default createStoreWithMiddleware(reducer, {
   hitStatus: 'UNVALIDATED',
   isAuthorized: false,
-  params: convertHitToParams(getInitialHitAndUpdateUrl())
+  params: convertHitToParams(getInitialHitAndUpdateUrl()),
 });

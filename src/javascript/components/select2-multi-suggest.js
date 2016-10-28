@@ -23,14 +23,17 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 
 
+/**
+ * A components that renders a multi-suggest dropdown using select2.
+ */
 export default class Select2MultiSuggest extends React.Component {
 
   static defaultProps = {
-    value: ''
+    value: '',
   }
 
   state = {
-    value: this.props.value
+    value: this.props.value,
   }
 
 
@@ -43,7 +46,7 @@ export default class Select2MultiSuggest extends React.Component {
       formatResult: this.s2DropdownItemTemplate,
       tokenizer: this.tokenizer,
       matcher: this.matcher,
-      maximumSelectionSize: this.props.maximumSelectionSize
+      maximumSelectionSize: this.props.maximumSelectionSize,
     };
     $(ReactDOM.findDOMNode(this)).select2(opts);
   }
@@ -215,7 +218,7 @@ export default class Select2MultiSuggest extends React.Component {
   }
 
 
-  /** @return {Object} */
+  /** @return {Object} The React component. */
   render() {
     return (
       <select

@@ -17,6 +17,10 @@ import React from 'react';
 import Icon from './icon';
 
 
+/**
+ * A single alert component that gets dispatched from the AlertDispatcher
+ * global singleton.
+ */
 export default class Alert extends React.Component {
 
   /**
@@ -26,7 +30,7 @@ export default class Alert extends React.Component {
    */
 
 
-  /** @return {Object} */
+  /** @return {Object} The React component. */
   render() {
     return (
       <div

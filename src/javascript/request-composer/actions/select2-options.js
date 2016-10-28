@@ -35,7 +35,7 @@ let NUMERIC_DIMENSIONS = [
   'ga:nthHour',
   'ga:nthMinute',
   'ga:isoYear',
-  'ga:isoWeek'
+  'ga:isoWeek',
 ];
 
 
@@ -57,7 +57,7 @@ export function updateMetricsDimensionsAndSortOptions(viewData) {
       pivotMetrics,
       pivotDimensions,
       cohortMetrics,
-      histogramDimensions
+      histogramDimensions,
     } = await getMetricsAndDimensionsOptions(account, property, view);
 
     let sort = getSortOptions(params, metrics, dimensions);
@@ -69,7 +69,7 @@ export function updateMetricsDimensionsAndSortOptions(viewData) {
       pivotDimensions,
       cohortMetrics,
       histogramDimensions,
-      sort
+      sort,
     }));
   };
 }
@@ -127,49 +127,49 @@ function getMetricsAndDimensionsOptions(account, property, view) {
     getMetrics(account, property, view),
     getDimensions(account, property, view),
     getV4Metrics(account, property, view),
-    getNumericDimensions(account, property, view)
+    getNumericDimensions(account, property, view),
   ])
   .then(function(data) {
     let metrics = data[0].map(function(metric) {
       return {
         id: metric.id,
         name: metric.attributes.uiName,
-        group: metric.attributes.group
+        group: metric.attributes.group,
       };
     });
     let dimensions = data[1].map(function(dimension) {
       return {
         id: dimension.id,
         name: dimension.attributes.uiName,
-        group: dimension.attributes.group
+        group: dimension.attributes.group,
       };
     });
     let pivotMetrics = data[0].map(function(metric) {
       return {
         id: metric.id,
         name: metric.attributes.uiName,
-        group: metric.attributes.group
+        group: metric.attributes.group,
       };
     });
     let pivotDimensions = data[1].map(function(dimension) {
       return {
         id: dimension.id,
         name: dimension.attributes.uiName,
-        group: dimension.attributes.group
+        group: dimension.attributes.group,
       };
     });
     let cohortMetrics = data[2].map(function(metric) {
       return {
         id: metric.id,
         name: metric.attributes.uiName,
-        group: metric.attributes.group
+        group: metric.attributes.group,
       };
     });
     let histogramDimensions = data[3].map(function(metric) {
       return {
         id: metric.id,
         name: metric.attributes.uiName,
-        group: metric.attributes.group
+        group: metric.attributes.group,
       };
     });
     return {
@@ -178,7 +178,7 @@ function getMetricsAndDimensionsOptions(account, property, view) {
       pivotMetrics,
       pivotDimensions,
       cohortMetrics,
-      histogramDimensions
+      histogramDimensions,
     };
   });
 }
@@ -192,18 +192,16 @@ function getMetricsAndDimensionsOptions(account, property, view) {
  * @return {Array}
  */
 function getSortOptions(params, metrics, dimensions) {
-
   let sortOptions = [];
   let metsAndDims = [...metrics, ...dimensions];
   let chosenMetsAndDims = [
     ...(params.metrics && params.metrics.split(',') || []),
-    ...(params.dimensions && params.dimensions.split(',') || [])
+    ...(params.dimensions && params.dimensions.split(',') || []),
   ];
 
   for (let choice of chosenMetsAndDims) {
     for (let option of metsAndDims) {
       if (choice == option.id) {
-
         let descending = {...option};
         descending.name += ' (descending)';
         descending.text += ' (descending)';
@@ -236,7 +234,7 @@ function getSegmentsOptions(useDefinition) {
         id: useDefinition ? segment.definition : segment.segmentId,
         name: segment.name,
         group: segment.type == 'BUILT_IN' ?
-            'Built in Segment' : 'Custom Segment'
+            'Built in Segment' : 'Custom Segment',
       };
     });
 
@@ -296,7 +294,7 @@ function getDimensions(account, property, view) {
   return metadata.getAuthenticated(account, property, view).then((columns) => {
     return columns.allDimensions({
       status: 'PUBLIC',
-      addedInApiVersion: '3'
+      addedInApiVersion: '3',
     });
   });
 }
@@ -310,7 +308,6 @@ function getDimensions(account, property, view) {
  * @return {Promise} A promise resolved with an array of all public dimensions.
  */
 function getNumericDimensions(account, property, view) {
-
   return metadata.getAuthenticated(account, property, view).then((columns) => {
     return columns.allDimensions((dimension, id) => {
       return id.match('ga:dimension') || NUMERIC_DIMENSIONS.includes(id);

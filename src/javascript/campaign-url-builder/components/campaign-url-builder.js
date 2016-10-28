@@ -21,10 +21,13 @@ import {
   extractParamsFromWebsiteUrl,
   removeEmptyParams,
   trimParams,
-  REQUIRED_PARAMS
+  REQUIRED_PARAMS,
 } from '../params';
 
 
+/**
+ * The Campaign URL Builder app component.
+ */
 export default class CampaignUrlBuilder extends React.Component {
 
 
@@ -99,9 +102,8 @@ export default class CampaignUrlBuilder extends React.Component {
    */
 
 
-  /** @return {Object} */
+  /** @return {Object} The React component. */
   render() {
-
     let {params, settings, websiteUrl} = this.props;
 
     let formControlClass = 'FormControl FormControl--inline';

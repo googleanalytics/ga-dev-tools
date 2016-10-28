@@ -22,20 +22,20 @@ import AlertDispatcher from '../components/alert-dispatcher';
 
 let baseOptions = {
   query: {
-    ids: 'ga:100367422', // The Demos & Tools website view.
+    'ids': 'ga:100367422', // The Demos & Tools website view.
     'start-date': '7daysAgo',
-    'end-date': 'today'
+    'end-date': 'today',
   },
   chart: {
     options: {
       width: '100%',
       vAxis: {
         'gridlines': {
-          'color': '#e8e8e8'
-        }
-      }
-    }
-  }
+          'color': '#e8e8e8',
+        },
+      },
+    },
+  },
 };
 
 
@@ -46,13 +46,13 @@ let pieChartOptions = {
       height: 280,
       chartArea: {
         top: 16,
-        height: 200
+        height: 200,
       },
       legend: {
-        position: 'bottom'
-      }
-    }
-  }
+        position: 'bottom',
+      },
+    },
+  },
 };
 
 
@@ -80,7 +80,6 @@ function renderDataChart(container, options) {
 
 
 gapi.analytics.ready(function() {
-
   /**
    * Creates a new DataChart instance showing top outbound link clicks.
    */
@@ -88,14 +87,14 @@ gapi.analytics.ready(function() {
     baseOptions,
     {
       query: {
-        metrics: 'ga:totalEvents',
-        dimensions: 'ga:eventLabel',
-        sort: '-ga:totalEvents',
-        filters: 'ga:eventCategory==Outbound Link;ga:eventAction==click',
-        'max-results': 10
+        'metrics': 'ga:totalEvents',
+        'dimensions': 'ga:eventLabel',
+        'sort': '-ga:totalEvents',
+        'filters': 'ga:eventCategory==Outbound Link;ga:eventAction==click',
+        'max-results': 10,
       },
-      chart: {'type': 'TABLE'}
-    }
+      chart: {'type': 'TABLE'},
+    },
   ]);
 
 
@@ -110,10 +109,10 @@ gapi.analytics.ready(function() {
         'dimensions': 'ga:eventCategory,ga:eventAction',
         'sort': '-ga:totalEvents',
         'filters': 'ga:eventCategory==User;ga:eventAction=~sign(in|out)',
-        'max-results': 2
+        'max-results': 2,
       },
-      chart: {'type': 'TABLE'}
-    }
+      chart: {'type': 'TABLE'},
+    },
   ]);
 
 
@@ -128,10 +127,10 @@ gapi.analytics.ready(function() {
         'metrics': 'ga:sessions',
         'dimensions': 'ga:dimension1',
         'sort': '-ga:sessions',
-        'max-results': 4
+        'max-results': 4,
       },
-      chart: {'type': 'PIE'}
-    }
+      chart: {'type': 'PIE'},
+    },
   ]);
 
 
@@ -146,10 +145,10 @@ gapi.analytics.ready(function() {
         'metrics': 'ga:sessions',
         'dimensions': 'ga:dimension4',
         'sort': '-ga:sessions',
-        'max-results': 3
+        'max-results': 3,
       },
-      chart: {'type': 'PIE'}
-    }
+      chart: {'type': 'PIE'},
+    },
   ]);
 
 
@@ -164,10 +163,10 @@ gapi.analytics.ready(function() {
         'metrics': 'ga:sessions',
         'dimensions': 'ga:dimension5',
         'sort': '-ga:sessions',
-        'max-results': 2
+        'max-results': 2,
       },
-      chart: {'type': 'PIE'}
-    }
+      chart: {'type': 'PIE'},
+    },
   ]);
 
 
@@ -178,14 +177,14 @@ gapi.analytics.ready(function() {
     baseOptions,
     {
       query: {
-        metrics: 'ga:totalEvents',
-        dimensions: 'ga:eventLabel',
-        sort: '-ga:totalEvents',
-        filters: 'ga:eventCategory==Breakpoint;ga:eventAction==change',
-        'max-results': 8
+        'metrics': 'ga:totalEvents',
+        'dimensions': 'ga:eventLabel',
+        'sort': '-ga:totalEvents',
+        'filters': 'ga:eventCategory==Breakpoint;ga:eventAction==change',
+        'max-results': 8,
       },
-      chart: {type: 'COLUMN'}
-    }
+      chart: {type: 'COLUMN'},
+    },
   ]);
 
 
@@ -196,14 +195,13 @@ gapi.analytics.ready(function() {
     breakpoint,
     resolution,
     orientation,
-    breakpointChange
+    breakpointChange,
   ])
   .catch(function() {
     AlertDispatcher.addOnce({
       title: 'Oops! Something went wrong.',
       message: 'There was an error executing some of the queries. ' +
-          'Try refreshing the page to run them again.'
+          'Try refreshing the page to run them again.',
     });
   });
-
 });

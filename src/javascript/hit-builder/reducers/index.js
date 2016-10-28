@@ -26,5 +26,5 @@ export default combineReducers({
   isAuthorized,
   params,
   properties,
-  validationMessages
+  validationMessages,
 });

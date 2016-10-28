@@ -65,6 +65,6 @@ export default {
     this.addOpenHandler();
     $('#header').removeClass('is-open');
     gaAll('send', 'event', 'Header', 'close');
-  }
+  },
 
 };

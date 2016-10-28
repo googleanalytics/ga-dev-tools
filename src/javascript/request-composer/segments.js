@@ -63,7 +63,7 @@ let segments = {
       let segment = segments.find((s) => definition === s.definition);
       return segment && segment.segmentId;
     });
-  }
+  },
 };
 
 

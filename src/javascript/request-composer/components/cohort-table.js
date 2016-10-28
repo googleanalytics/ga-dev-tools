@@ -19,7 +19,7 @@ import React from 'react';
 const cohortDateRanges = {
   Day: 8,
   Week: 6,
-  Month: 3
+  Month: 3,
 };
 
 
@@ -70,11 +70,13 @@ function tablizeCohortReportData(report, cohortSize) {
 }
 
 
+/**
+ * A components that renders the cohort table visualization.
+ */
 export default class CohortTable extends React.Component {
 
-  /** @return {Object} */
+  /** @return {Object} The React component. */
   render() {
-
     let {response, settings} = this.props;
     let report = response.result.reports[0];
     let [headers, ...rows] = tablizeCohortReportData(

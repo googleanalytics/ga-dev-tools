@@ -23,7 +23,6 @@ import * as types from '../actions/types';
  * @return {Array} The updated state.
  */
 export default function properties(state = [], action) {
-
   switch (action.type) {
 
     case types.SET_USER_PROPERTIES:
