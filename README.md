@@ -1,5 +1,4 @@
-Google Analytics Demos and Tools
-================================
+# Google Analytics Demos and Tools [![Build Status](https://travis-ci.org/googleanalytics/ga-dev-tools.svg?branch=master)](https://travis-ci.org/googleanalytics/ga-dev-tools)
 
 A showcase of demos and tools built with the various Google Analytics APIs and Libraries.
 **[View the Site (https://ga-dev-tools.appspot.com)](https://ga-dev-tools.appspot.com)**
