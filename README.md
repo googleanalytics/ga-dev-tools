@@ -25,6 +25,9 @@ The Google Analytics demos and tools site runs on [Google App Engine](https://cl
 - [pip](https://pypi.python.org/pypi/pip)
 - [GraphicsMagick](http://www.graphicsmagick.org/)
 
+Ensure the Node.js, App Engine Python SDK, and GraphicsMagick binaries are in
+your `PATH`.
+
 Once all dependencies are installed, follow these steps to build and run the site locally:
 
 ```sh
@@ -35,6 +38,9 @@ cd ga-dev-tools
 # Install the build dependencies.
 pip install -r requirements.txt -t python_modules
 npm install
+
+# Install the gcloud app Python Extensions
+gcloud components install app-engine-python
 
 # Build the site and run the local App Engine server.
 npm start
