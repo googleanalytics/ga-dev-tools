@@ -85,10 +85,10 @@ export default class ResultsViewer extends React.Component {
             <TabPanel>
               <CodeBlock code={responseCode} lang="json" />
             </TabPanel>
-            <p>
-              <a href="#request-composer">&#8593;&nbsp; Return to request</a>
-            </p>
           </Tabs>
+          <p>
+            <a href="#request-composer">&#8593;&nbsp; Return to request</a>
+          </p>
         </div>
       );
     }
