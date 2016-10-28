@@ -19,12 +19,11 @@ import * as queryParams from '../../src/javascript/query-explorer/query-params';
 describe('query-explorer', function() {
   describe('queryParams', function() {
     describe('.sanitize', function() {
-
       it('removes unsupported params from the object.', function() {
         let dirtyParams = {
           'ids': 'ga:1234',
           'start-date': '30daysAgo',
-          'foo': 'bar'
+          'foo': 'bar',
         };
         let sanitizedParams = queryParams.sanitize(dirtyParams);
         assert.deepEqual(sanitizedParams, {
@@ -39,7 +38,7 @@ describe('query-explorer', function() {
           'start-date': '30daysAgo',
           'ids': 'ga:1234',
           'max-results': '10',
-          'end-date': 'yesterday'
+          'end-date': 'yesterday',
         };
         let sanitizedParams = queryParams.sanitize(dirtyParams);
         assert.deepEqual(Object.keys(sanitizedParams), [
@@ -47,7 +46,7 @@ describe('query-explorer', function() {
           'start-date',
           'end-date',
           'segment',
-          'max-results'
+          'max-results',
         ]);
       });
 
@@ -55,12 +54,11 @@ describe('query-explorer', function() {
         let dirtyParams = {
           'ids': 'ga:1234',
           'start-date': '',
-          'end-date': null
+          'end-date': null,
         };
         let sanitizedParams = queryParams.sanitize(dirtyParams);
         assert.deepEqual(sanitizedParams, {'ids': 'ga:1234'});
       });
-
     });
   });
 });

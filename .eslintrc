@@ -8,7 +8,8 @@
   "env": {
     "browser": true,
     "node": true,
-    "es6": true
+    "es6": true,
+    "mocha": true
   },
   "plugins": [
     "react",
@@ -19,12 +20,15 @@
     "google"
   ],
   "rules": {
+    // TODO(philipwalton): remove the following two rules once #31 is added:
+    // https://github.com/google/eslint-config-google/pull/31
     "valid-jsdoc": [2, {
       "requireParamDescription": false,
       "requireReturnDescription": false,
       "requireReturn": false,
       "prefer": {"returns": "return"},
     }],
+    "camelcase": [2, {"properties": "never"}],
     // React and jQuery use `this`
     "no-invalid-this": 0,
     // Unset rules conflicting with babel

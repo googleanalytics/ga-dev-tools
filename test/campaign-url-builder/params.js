@@ -20,12 +20,11 @@ import * as params from '../../src/javascript/campaign-url-builder/params';
 describe('campaign-url-builder', () => {
   describe('params', () => {
     describe('.extractParamsFromWebsiteUrl', () => {
-
       it('extracts campaign params from a URL query', () => {
         let url = 'https://example.com/?utm_source=foo&utm_medium=bar';
         let ret = params.extractParamsFromWebsiteUrl(url);
 
-        assert.equal(ret.bareUrl, 'https://example.com/')
+        assert.equal(ret.bareUrl, 'https://example.com/');
         assert.deepEqual(ret.params, {
           utm_source: 'foo',
           utm_medium: 'bar',
@@ -36,7 +35,7 @@ describe('campaign-url-builder', () => {
         let url = 'https://example.com/#utm_source=foo&utm_medium=bar';
         let ret = params.extractParamsFromWebsiteUrl(url);
 
-        assert.equal(ret.bareUrl, 'https://example.com/')
+        assert.equal(ret.bareUrl, 'https://example.com/');
         assert.deepEqual(ret.params, {
           utm_source: 'foo',
           utm_medium: 'bar',
@@ -47,7 +46,7 @@ describe('campaign-url-builder', () => {
         let url = 'https://example.com/?utm_source=foo&foo=bar';
         let ret = params.extractParamsFromWebsiteUrl(url);
 
-        assert.equal(ret.bareUrl, 'https://example.com/?foo=bar')
+        assert.equal(ret.bareUrl, 'https://example.com/?foo=bar');
         assert.deepEqual(ret.params, {
           utm_source: 'foo',
         });
@@ -57,7 +56,7 @@ describe('campaign-url-builder', () => {
         let url = 'https://example.com/#heading&utm_source=foo&foo=bar';
         let ret = params.extractParamsFromWebsiteUrl(url);
 
-        assert.equal(ret.bareUrl, 'https://example.com/#heading&foo=bar')
+        assert.equal(ret.bareUrl, 'https://example.com/#heading&foo=bar');
         assert.deepEqual(ret.params, {
           utm_source: 'foo',
         });
@@ -69,18 +68,16 @@ describe('campaign-url-builder', () => {
 
         let ret = params.extractParamsFromWebsiteUrl(url);
 
-        assert.equal(ret.bareUrl, 'https://example.com/')
+        assert.equal(ret.bareUrl, 'https://example.com/');
         assert.deepEqual(ret.params, {
           utm_source: 'qux',
           utm_medium: 'bar',
         });
       });
-
     });
 
 
     describe('.addParamsToUrl', () => {
-
       it('adds params to a URL query', () => {
         let bareUrl = 'https://example.com/?foo=bar#hash';
         let campaignParams = {utm_source: 'foo', utm_medium: 'bar'};
@@ -98,31 +95,27 @@ describe('campaign-url-builder', () => {
         assert.equal(paramUrl,
             'https://example.com/?foo=bar#hash&utm_source=foo&utm_medium=bar');
       });
-
     });
 
 
     describe('.sanitizeParams', () => {
-
       it('removes non-campaign params from a query object', () => {
         let allParams = {
           utm_source: 'foo',
           utm_medium: 'bar',
-          foo: 'bar'
+          foo: 'bar',
         };
         let sanitizedParams = params.sanitizeParams(allParams);
 
         assert.deepEqual(sanitizedParams, {
           utm_source: 'foo',
-          utm_medium: 'bar'
+          utm_medium: 'bar',
         });
       });
-
     });
 
 
     describe('.trimParams', () => {
-
       it('removes leading/trailing whitespace from param values', () => {
         let allParams = {
           utm_source: '  foo ',
@@ -135,17 +128,15 @@ describe('campaign-url-builder', () => {
           utm_medium: 'bar',
         });
       });
-
     });
 
 
     describe('.removeEmptyParams', () => {
-
       it('removes params with falsy values from a query object', () => {
         let allParams = {
           utm_source: 'foo',
           utm_medium: '',
-          utm_campaign: null
+          utm_campaign: null,
         };
         let nonEmptyParams = params.removeEmptyParams(allParams);
 
@@ -153,7 +144,6 @@ describe('campaign-url-builder', () => {
           utm_source: 'foo',
         });
       });
-
     });
   });
 });

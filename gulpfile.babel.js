@@ -16,10 +16,8 @@
 import {spawn} from 'child_process';
 import createOutputStream from 'create-output-stream';
 import del from 'del';
-import fse from 'fs-extra';
 import glob from 'glob';
 import gulp from 'gulp';
-import prefix from 'gulp-autoprefixer';
 import concat from 'gulp-concat';
 import cssnext from 'gulp-cssnext';
 import eslint from 'gulp-eslint';
@@ -42,11 +40,19 @@ import webpack from 'webpack';
 let devServer;
 
 
+/**
+ * Returns true if the NODE_ENV environment variable is production.
+ * @return {boolean}
+ */
 function isProd() {
   return process.env.NODE_ENV == 'production';
 }
 
 
+/**
+ * An error handler that logs the error and beeps in the console.
+ * @param {Error} err
+ */
 function streamError(err) {
   gutil.beep();
   gutil.log(err instanceof gutil.PluginError ? err.toString() : err.stack);
@@ -57,8 +63,8 @@ gulp.task('css', function() {
   let opts = {
     browsers: '> 1%, last 2 versions, Safari > 5, ie > 9, Firefox ESR',
     compress: isProd(),
-    url: {url: 'inline'}
-  }
+    url: {url: 'inline'},
+  };
   return merge(
       gulp.src('./src/css/index.css')
           .pipe(plumber({errorHandler: streamError}))
@@ -80,7 +86,7 @@ gulp.task('images', function() {
           .pipe(imagemin({use: [pngquant()]}))
           .pipe(gulp.dest('public/images')),
       gulp.src('src/images/**/*.png')
-          .pipe(resize({width : '50%'}))
+          .pipe(resize({width: '50%'}))
           .pipe(imagemin({use: [pngquant()]}))
           .pipe(rename((p) => p.basename = p.basename.replace('-2x', '')))
           .pipe(gulp.dest('public/images'))
@@ -91,7 +97,7 @@ gulp.task('images', function() {
 gulp.task('javascript:bundle', ['javascript:webpack'], function(done) {
   gulp.src([
     'public/javascript/common.js',
-    'public/javascript/index.js'
+    'public/javascript/index.js',
   ])
   .pipe(sourcemaps.init())
   .pipe(concat('app.js'))
@@ -101,7 +107,7 @@ gulp.task('javascript:bundle', ['javascript:webpack'], function(done) {
   .on('end', function() {
     del([
       'public/javascript/common*',
-      'public/javascript/index*'
+      'public/javascript/index*',
     ])
     .then(() => done(), (err) => done(err));
   });
@@ -109,11 +115,10 @@ gulp.task('javascript:bundle', ['javascript:webpack'], function(done) {
 
 
 gulp.task('javascript:webpack', (function() {
-
   let compiler;
 
-  function createCompiler() {
-    let sourceFiles = glob.sync('./*/index.js', {cwd: './src/javascript/'})
+  const createCompiler = () => {
+    let sourceFiles = glob.sync('./*/index.js', {cwd: './src/javascript/'});
     let entry = {index: ['babel-polyfill', './src/javascript/index.js']};
 
     for (let filename of sourceFiles) {
@@ -124,22 +129,22 @@ gulp.task('javascript:webpack', (function() {
 
     let plugins = [new webpack.optimize.CommonsChunkPlugin({
       name: 'common',
-      minChunks: 2
+      minChunks: 2,
     })];
 
     // Uglify and remove dev-only code in production.
     if (isProd()) {
       plugins.push(new webpack.optimize.UglifyJsPlugin());
       plugins.push(new webpack.DefinePlugin({
-        'process.env': {NODE_ENV: '"production"'}
+        'process.env': {NODE_ENV: '"production"'},
       }));
     }
 
     return webpack({
-      entry:  entry,
+      entry: entry,
       output: {
         path: 'public/javascript',
-        filename: '[name].js'
+        filename: '[name].js',
       },
       cache: {},
       devtool: '#source-map',
@@ -152,30 +157,29 @@ gulp.task('javascript:webpack', (function() {
             loader: 'babel',
             query: {
               cacheDirectory: true,
-            }
-          }
-        ]
-      }
+            },
+          },
+        ],
+      },
     });
-  }
+  };
 
-  function compile(done) {
+  const compile = (done) => {
     (compiler || (compiler = createCompiler())).run(function(err, stats) {
       if (err) throw new gutil.PluginError('webpack', err);
       gutil.log('[webpack]', stats.toString('minimal'));
       done();
     });
-  }
+  };
 
   return compile;
 }()));
 
 
 gulp.task('javascript:embed-api-components', (function() {
-
   let compiler;
 
-  function createCompiler() {
+  const createCompiler = () => {
     const COMPONENT_PATH = './javascript/embed-api/components';
     let components = ['active-users', 'date-range-selector', 'view-selector2'];
     let entry = {};
@@ -188,7 +192,7 @@ gulp.task('javascript:embed-api-components', (function() {
       entry: entry,
       output: {
         path: path.join('./public', COMPONENT_PATH),
-        filename: '[name].js'
+        filename: '[name].js',
       },
       cache: {},
       devtool: '#source-map',
@@ -198,20 +202,20 @@ gulp.task('javascript:embed-api-components', (function() {
           {
             test: /\.js$/,
             exclude: /node_modules/,
-            loader: 'babel-loader'
-          }
-        ]
-      }
+            loader: 'babel-loader',
+          },
+        ],
+      },
     });
-  }
+  };
 
-  function compile(done) {
+  const compile = (done) => {
     (compiler || (compiler = createCompiler())).run(function(err, stats) {
       if (err) throw new gutil.PluginError('webpack', err);
       gutil.log('[webpack]', stats.toString('minimal'));
       done();
     });
-  }
+  };
 
   return compile;
 }()));
@@ -219,7 +223,7 @@ gulp.task('javascript:embed-api-components', (function() {
 
 gulp.task('javascript', [
   'javascript:bundle',
-  'javascript:embed-api-components'
+  'javascript:embed-api-components',
 ]);
 
 
@@ -233,15 +237,19 @@ gulp.task('json', function() {
 });
 
 
-gulp.task('lint', function () {
-  return gulp.src(['src/javascript/**/*.js'])
+gulp.task('lint', function() {
+  return gulp.src([
+        'src/javascript/**/*.js',
+        'test/**/*.js',
+        'gulpfile.js',
+      ])
       .pipe(eslint())
       .pipe(eslint.format())
       .pipe(eslint.failAfterError());
 });
 
 
-gulp.task('test', function() {
+gulp.task('test', ['lint'], function() {
   return gulp.src('test/**/*.js', {read: false})
       .pipe(mocha());
 });
@@ -274,14 +282,13 @@ gulp.task('build:core', [
   'css',
   'images',
   'json',
-  'build:embed-api-components'
-])
+  'build:embed-api-components',
+]);
 
 
 gulp.task('build:all', [
-  'lint',
   'test',
-  'build:core'
+  'build:core',
 ]);
 
 
