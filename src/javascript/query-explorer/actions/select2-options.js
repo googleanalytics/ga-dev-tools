@@ -189,11 +189,15 @@ function getSegmentsOptions(useDefinition) {
 function getMetrics(account, property, view) {
   return metadata.getAuthenticated(account, property, view).then((columns) => {
     return columns.allMetrics((metric, id) => {
-      return metric.status == 'PUBLIC' &&
-             metric.addedInApiVersion == '3' &&
-             // TODO(philipwalton): remove this temporary exclusion once
-             // caclulated metrics can be templatized using the Management API.
-             id != 'ga:calcMetric_<NAME>';
+      let isPublicV3Metric = metric.status == 'PUBLIC' &&
+          metric.addedInApiVersion == '3';
+      // TODO(philipwalton): remove this temporary exclusion once
+      // caclulated metrics can be templatized using the Management API.
+      let isNotCalculatedMetric = id != 'ga:calcMetric_<NAME>';
+      // TODO(philipwalton): remove this temporary inclusion once the new
+      // ga:uniqueEvents metric is no longer listed as deprecated in the API.
+      let isUniqueEvents = id == 'ga:uniqueEvents';
+      return (isPublicV3Metric && isNotCalculatedMetric) || isUniqueEvents;
     });
   });
 }
