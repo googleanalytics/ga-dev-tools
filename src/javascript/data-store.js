@@ -1,4 +1,4 @@
-// Copyright 2015 Google Inc. All rights reserved.
+// Copyright 2016 Google Inc. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -32,22 +32,13 @@ let cache;
 
 
 /**
- * Functions to migrate from a particular version of the schema to the next
- * version. When running migrations, each function is executed in order until
- * the schema is current.
+ * @return {Object} The default storage data.
  */
-let migrationFunctions = {
-  // Version `0` means no schema detected or the original Query Explorer data.
-  0: function() {
-    let data = JSON.parse(localStorage.getItem('mgmtData'));
-    if (data && data.profileId) {
-      cache['query-explorer:params'] = {
-        ids: 'ga:' + data.profileId,
-      };
-    }
-    localStorage.removeItem('mgmtData');
-  },
-};
+function getDefaults() {
+  return {
+    version_: SCHEMA_VERSION,
+  };
+}
 
 
 /**
@@ -56,36 +47,28 @@ let migrationFunctions = {
  */
 function ensureCache() {
   if (!cache) {
-    cache = JSON.parse(localStorage.getItem(APP_NAMESPACE)) || {};
+    let storedData;
+    try {
+      storedData = JSON.parse(localStorage.getItem(APP_NAMESPACE));
+    } catch(err) {
+      // No action.
+    }
+    cache = verifySchema(storedData) ? storedData : getDefaults();
   }
-  verifySchema();
 }
 
 
 /**
  * Verifies that the schema version stored in local storage is current.
  * If it's not, migrate the schema to the current version.
+ * @param {*} storedData The value to test.
+ * @return {boolean} True if the stored data matches the expected schema.
  */
-function verifySchema() {
-  cache.version_ = cache.version_ || 0;
-  if (cache.version_ < SCHEMA_VERSION) {
-    migrate(cache.version_);
-  }
-}
-
-
-/**
- * Run the migration fuctions from the version in local storage to the current
- * version.
- * @param {number} fromVersion The version to run migration functions from.
- */
-function migrate(fromVersion) {
-  while (fromVersion < SCHEMA_VERSION) {
-    migrationFunctions[fromVersion]();
-    fromVersion++;
-  }
-  cache.version_ = SCHEMA_VERSION;
-  saveCache();
+function verifySchema(storedData) {
+  // TODO(philipwalton): add migration functions if the schema changes.
+  return (storedData &&
+      typeof storedData == 'object' &&
+      storedData.version_ == SCHEMA_VERSION);
 }
 
 
@@ -93,7 +76,11 @@ function migrate(fromVersion) {
  * Save the data in the cache back to local storage.
  */
 function saveCache() {
-  localStorage.setItem(APP_NAMESPACE, JSON.stringify(cache));
+  try {
+    localStorage.setItem(APP_NAMESPACE, JSON.stringify(cache));
+  } catch(err) {
+    // No action.
+  }
 }
 
 
