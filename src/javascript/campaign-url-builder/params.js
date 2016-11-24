@@ -141,50 +141,25 @@ export function addParamsToUrl(bareUrl, params, useFragment) {
  * Accepts an object of params and returns a new object only containing keys
  * of known campaign params.
  * @param {Object} params The params to be sanitized.
+ * @param {{trim: (boolean), removeBlanks: (boolean)}} opts
+ *     trim: If true param values are stripped of leading/trailing whitespace.
+ *     removeBlanks: If try empty string values ignored.
  * @return {Object} The sanitized params
  */
-export function sanitizeParams(params = {}) {
+export function sanitizeParams(params, opts = {}) {
   let sanitizedParams = {};
-  for (let param of PARAMS) {
-    if (params[param] != null) {
-      sanitizedParams[param] = params[param];
+
+  if (params && typeof params == 'object') {
+    for (let param of PARAMS) {
+      let value = params[param];
+
+      // The param value can only be a string.
+      if (typeof value != 'string') continue;
+
+      if (value || !opts.removeBlanks) {
+        sanitizedParams[param] = opts.trim ? value.trim() : value;
+      }
     }
   }
   return sanitizedParams;
-}
-
-
-/**
- * Accepts an object of params and returns a new object where all object values
- * have been trimmed or leading or trailing whitespace.
- * @param {Object} params The params to be trimmed.
- * @return {Object} The trimmed params.
- */
-export function trimParams(params = {}) {
-  if (!(params && typeof params == 'object')) return {};
-
-  let trimmedParams = {};
-  for (let param of Object.keys(params)) {
-    trimmedParams[param] = params[param].trim();
-  }
-  return trimmedParams;
-}
-
-
-/**
- * Accepts an object of params and returns a new object only containing params
- * with truthy values.
- * @param {Object} params The user submitted params.
- * @return {Object} The new params object without any falsy param values.
- */
-export function removeEmptyParams(params) {
-  if (!(params && typeof params == 'object')) return {};
-
-  let nonEmptyParams = {};
-  for (let param of Object.keys(params)) {
-    if (params[param]) {
-      nonEmptyParams[param] = params[param];
-    }
-  }
-  return nonEmptyParams;
 }

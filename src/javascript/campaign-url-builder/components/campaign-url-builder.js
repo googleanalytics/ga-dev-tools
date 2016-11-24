@@ -19,9 +19,8 @@ import CampaignUrl from './campaign-url';
 import {
   addParamsToUrl,
   extractParamsFromWebsiteUrl,
-  removeEmptyParams,
-  trimParams,
   REQUIRED_PARAMS,
+  sanitizeParams,
 } from '../params';
 
 
@@ -87,7 +86,7 @@ export default class CampaignUrlBuilder extends React.Component {
   getCampaignUrl() {
     let {bareUrl} = this;
     let {params, settings} = this.props;
-    let urlParams = trimParams(removeEmptyParams(params));
+    let urlParams = sanitizeParams(params, {trim: true, removeBlanks: true});
 
     if (bareUrl && REQUIRED_PARAMS.every((param) => urlParams[param])) {
       return addParamsToUrl(bareUrl, urlParams, settings.useFragment);

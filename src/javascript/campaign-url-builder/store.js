@@ -15,7 +15,7 @@
 
 import {createStore, applyMiddleware} from 'redux';
 import thunkMiddleware from 'redux-thunk';
-import {removeEmptyParams, sanitizeParams} from './params';
+import {sanitizeParams} from './params';
 import reducer from './reducers';
 import db from '../data-store';
 
@@ -42,7 +42,7 @@ function getStoredInitialState() {
 
   return {
     websiteUrl: typeof websiteUrl == 'string' ? websiteUrl : '',
-    params: removeEmptyParams(sanitizeParams(params)),
+    params: sanitizeParams(params, {removeBlanks: true}),
     settings: (settings && typeof settings == 'object') ? settings : {},
   };
 }

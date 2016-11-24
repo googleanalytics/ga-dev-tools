@@ -112,33 +112,43 @@ describe('campaign-url-builder', () => {
           utm_medium: 'bar',
         });
       });
-    });
 
+      it('ignores non-string values', () => {
+        let allParams = {
+          utm_source: 'foo',
+          utm_medium: 1,
+        };
+        let sanitizedParams = params.sanitizeParams(allParams);
 
-    describe('.trimParams', () => {
-      it('removes leading/trailing whitespace from param values', () => {
+        assert.deepEqual(sanitizedParams, {
+          utm_source: 'foo',
+        });
+      });
+
+      it('optionally strips leading/trailing whitespace from values', () => {
         let allParams = {
           utm_source: '  foo ',
           utm_medium: 'bar  ',
+          utm_campaign: 'baz',
         };
-        let trimmedParams = params.trimParams(allParams);
+        let trimmedParams = params.sanitizeParams(allParams, {trim: true});
 
         assert.deepEqual(trimmedParams, {
           utm_source: 'foo',
           utm_medium: 'bar',
+          utm_campaign: 'baz',
         });
       });
-    });
 
-
-    describe('.removeEmptyParams', () => {
-      it('removes params with falsy values from a query object', () => {
+      it('optionally ignores emptry string values', () => {
         let allParams = {
           utm_source: 'foo',
           utm_medium: '',
           utm_campaign: null,
         };
-        let nonEmptyParams = params.removeEmptyParams(allParams);
+        let nonEmptyParams = params.sanitizeParams(allParams, {
+          removeBlanks: true,
+        });
 
         assert.deepEqual(nonEmptyParams, {
           utm_source: 'foo',
