@@ -18,6 +18,7 @@
 
 import accountSummaries from 'javascript-api-utils/lib/account-summaries';
 import site from '../site';
+import {escapeHtml} from '../utils';
 
 
 /**
@@ -98,12 +99,12 @@ function updateResults(results, query = undefined) {
     '<tbody id="results-body"></tbody>' +
   '</table>');
 
-  let mark = (text) => {
+  let highlightSafe = (text) => {
     if (query) {
       let regex = new RegExp('(' + query + ')', 'ig');
-      return text.replace(regex, '<mark>$1</mark>');
+      return escapeHtml(text.replace(regex, '<mark>$1</mark>'));
     } else {
-      return text;
+      return escapeHtml(text);
     }
   };
 
@@ -113,24 +114,24 @@ function updateResults(results, query = undefined) {
   } else {
     for (let i = 0; i < results.length; i++) {
       searchResults.append('<tr class="view-result"><td>' +
-        mark(results[i].account.name) +
+        highlightSafe(results[i].account.name) +
         ' <div class="AccountExplorerResults-id">' +
-        mark(results[i].account.id) + '</div></td><td>' +
-        mark(results[i].property.name) +
+        highlightSafe(results[i].account.id) + '</div></td><td>' +
+        highlightSafe(results[i].property.name) +
         ' <div class="AccountExplorerResults-id">' +
-        mark(results[i].property.id) + '</div></td><td>' +
+        highlightSafe(results[i].property.id) + '</div></td><td>' +
         '<a href="//www.google.com/analytics/web/#report/visitors-overview/a' +
         results[i].account.id + 'w' +
         results[i].property.internalWebPropertyId + 'p' +
         results[i].view.id + '" title="Open this view in Google Analytics">' +
-        mark(results[i].view.name) + ' ' +
+        highlightSafe(results[i].view.name) + ' ' +
         '<svg class="Icon" viewBox="0 0 24 24">' +
           '<use xlink:href="/public/images/icons.svg#icon-call-made"></use>' +
         '</svg></a> ' +
         '<div class="AccountExplorerResults-id">' +
-        mark(results[i].view.id) + '</div></td><td><div ' +
+        highlightSafe(results[i].view.id) + '</div></td><td><div ' +
         'class="AccountExplorerResults-id">' +
-        mark('ga:' + results[i].view.id) + '</div></td></tr>');
+        highlightSafe('ga:' + results[i].view.id) + '</div></td></tr>');
     }
   }
 

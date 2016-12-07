@@ -66,3 +66,15 @@ export function loadScript(url) {
     js.onerror = reject;
   });
 }
+
+
+/**
+ * Escapes a potentially unsafe HTML string.
+ * @param {string} str An string that may contain HTML entities.
+ * @return {string} The HTML-escaped string.
+ */
+export function escapeHtml(str) {
+  const div = document.createElement('div');
+  div.appendChild(document.createTextNode(str));
+  return div.innerHTML;
+}
