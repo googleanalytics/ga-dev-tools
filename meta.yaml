@@ -104,7 +104,7 @@ projects:
 tech:
   analytics_reporting_api_v4:
     name: Analytics Reporting API v4
-    url: https://developers.google.com/analytics/devguides/reporting/core/
+    url: https://developers.google.com/analytics/devguides/reporting/core/v4/
   analyticsjs:
     name: analytics.js
     url: https://developers.google.com/analytics/devguides/collection/analyticsjs/
