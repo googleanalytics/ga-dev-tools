@@ -17,6 +17,7 @@ limitations under the License.
 
 .DataTable .gapi-analytics-data-chart {
   overflow-x: auto;
+  word-break: break-all;
 }
 
 .DataTable .gapi-analytics-data-chart .gapi-analytics-data-chart-styles-table-tr-head {
