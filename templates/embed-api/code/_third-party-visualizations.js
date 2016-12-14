@@ -63,7 +63,7 @@ gapi.analytics.ready(function() {
    */
   viewSelector.on('viewChange', function(data) {
     var title = document.getElementById('view-name');
-    title.innerHTML = data.property.name + ' (' + data.view.name + ')';
+    title.textContent = data.property.name + ' (' + data.view.name + ')';
 
     // Start tracking active users for this view.
     activeUsers.set(data).execute();
@@ -317,7 +317,8 @@ gapi.analytics.ready(function() {
     legend.innerHTML = items.map(function(item) {
       var color = item.color || item.fillColor;
       var label = item.label;
-      return '<li><i style="background:' + color + '"></i>' + label + '</li>';
+      return '<li><i style="background:' + color + '"></i>' +
+          escapeHtml(label) + '</li>';
     }).join('');
   }
 
@@ -327,5 +328,17 @@ gapi.analytics.ready(function() {
   Chart.defaults.global.animationEasing = 'easeInOutQuart';
   Chart.defaults.global.responsive = true;
   Chart.defaults.global.maintainAspectRatio = false;
+
+
+  /**
+   * Escapes a potentially unsafe HTML string.
+   * @param {string} str An string that may contain HTML entities.
+   * @return {string} The HTML-escaped string.
+   */
+  function escapeHtml(str) {
+    var div = document.createElement('div');
+    div.appendChild(document.createTextNode(str));
+    return div.innerHTML;
+  }
 
 });

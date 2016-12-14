@@ -110,7 +110,7 @@ gapi.analytics.ready(function() {
     dataChart2.set({query: {ids: data.ids}}).execute();
 
     var title = document.getElementById('view-name');
-    title.innerHTML = data.property.name + ' (' + data.view.name + ')';
+    title.textContent = data.property.name + ' (' + data.view.name + ')';
   });
 
 
@@ -124,7 +124,7 @@ gapi.analytics.ready(function() {
 
     // Update the "from" dates text.
     var datefield = document.getElementById('from-dates');
-    datefield.innerHTML = data['start-date'] + '&mdash;' + data['end-date'];
+    datefield.textContent = data['start-date'] + '&mdash;' + data['end-date'];
   });
 
 
@@ -138,7 +138,7 @@ gapi.analytics.ready(function() {
 
     // Update the "to" dates text.
     var datefield = document.getElementById('to-dates');
-    datefield.innerHTML = data['start-date'] + '&mdash;' + data['end-date'];
+    datefield.textContent = data['start-date'] + '&mdash;' + data['end-date'];
   });
 
 });
