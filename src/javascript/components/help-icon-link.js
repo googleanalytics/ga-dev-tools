@@ -27,6 +27,7 @@ export default class HelpIconLink extends React.Component {
       <a
         className="FormControl-helpIcon"
         href={this.props.url + this.props.name}
+        target="_blank"
         tabIndex="-1">
         <Icon type="info-outline" />
       </a>
