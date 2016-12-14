@@ -197,6 +197,8 @@ function getMetrics(account, property, view) {
       // TODO(philipwalton): remove this temporary inclusion once the new
       // ga:uniqueEvents metric is no longer listed as deprecated in the API.
       let isUniqueEvents = id == 'ga:uniqueEvents';
+      if (isUniqueEvents) metric.uiName = 'Unique Events';
+
       return (isPublicV3Metric && isNotCalculatedMetric) || isUniqueEvents;
     });
   });
