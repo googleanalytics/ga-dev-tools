@@ -102,7 +102,7 @@ function updateResults(results, query = undefined) {
   let highlightSafe = (text) => {
     if (query) {
       let regex = new RegExp('(' + query + ')', 'ig');
-      return escapeHtml(text.replace(regex, '<mark>$1</mark>'));
+      return escapeHtml(text).replace(regex, '<mark>$1</mark>');
     } else {
       return escapeHtml(text);
     }
