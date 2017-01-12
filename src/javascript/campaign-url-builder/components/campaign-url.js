@@ -29,7 +29,7 @@ const ACTION_TIMEOUT = 1500;
 
 
 const INSTRUCTIONS_TEXT =
-    'Fill out all the requried fields above and a URL will be ' +
+    'Fill out all the required fields above and a URL will be ' +
     'automatically generated for you here.';
 
 
