@@ -17,7 +17,10 @@
   {% include '_head.html' %}
 
   {% block head_scripts %}
-    <script>window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;</script>
+    <script>
+    window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+    window.onerror=function fn(){fn.q=fn.q||[];fn.q.push(arguments)};
+    </script>
     <script async src="https://www.google-analytics.com/analytics.js"></script>
   {% endblock %}
 </head>

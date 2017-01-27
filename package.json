@@ -12,7 +12,7 @@
   },
   "license": "Apache-2.0",
   "devDependencies": {
-    "autotrack": "^1.0.3",
+    "autotrack": "2.0.0-rc.2",
     "babel-core": "^6.18.0",
     "babel-eslint": "^7.1.0",
     "babel-loader": "^6.2.7",
@@ -75,6 +75,6 @@
     "sinon": "^1.17.6",
     "svg4everybody": "^2.1.0",
     "uuid": "^2.0.3",
-    "webpack": "^1.13.3"
+    "webpack": "^2.2.0"
   }
 }

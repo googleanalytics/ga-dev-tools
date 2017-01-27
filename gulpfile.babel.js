@@ -71,7 +71,7 @@ gulp.task('css', function() {
     postcssCssnext({
       browsers: '> 1%, last 2 versions, Safari > 5, ie > 9, Firefox ESR',
     }),
-    postcssReporter()
+    postcssReporter(),
   ];
   // Compress in production.
   if (isProd()) {
@@ -166,10 +166,15 @@ gulp.task('javascript:webpack', (function() {
         loaders: [
           {
             test: /\.js$/,
-            exclude: /node_modules/,
-            loader: 'babel',
+            loader: 'babel-loader',
             query: {
-              cacheDirectory: true,
+              babelrc: false,
+              cacheDirectory: false,
+              presets: [
+                ['es2015', {'modules': false}],
+                'react',
+                'stage-0',
+              ],
             },
           },
         ],
@@ -214,8 +219,16 @@ gulp.task('javascript:embed-api-components', (function() {
         loaders: [
           {
             test: /\.js$/,
-            exclude: /node_modules/,
             loader: 'babel-loader',
+            query: {
+              babelrc: false,
+              cacheDirectory: false,
+              presets: [
+                ['es2015', {'modules': false}],
+                'react',
+                'stage-0',
+              ],
+            },
           },
         ],
       },
