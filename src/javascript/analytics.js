@@ -28,15 +28,7 @@ import uuid from 'uuid';
  * implementation. This allows you to create a segment or view filter
  * that isolates only data captured with the most recent tracking changes.
  */
-const TRACKING_VERSION = '1';
-
-
-/**
- * A default value for dimensions so unset values always are reported as
- * something. This is needed since Google Analytics will drop empty dimension
- * values in reports.
- */
-const NULL_VALUE = '(not set)';
+const TRACKING_VERSION = '2';
 
 
 /**
@@ -49,18 +41,51 @@ const ALL_TRACKERS = [
 ];
 
 
-const TEST_TRACKER = ALL_TRACKERS.filter(({name}) => /test/.test(name));
+/**
+ * Just the trackers with a name matching `test`.
+ */
+const TEST_TRACKERS = ALL_TRACKERS.filter(({name}) => /test/.test(name));
 
 
-const metrics = {
-  QUERY_SUCCESS: 'metric1',
-  QUERY_ERROR: 'metric2',
-  PAGE_VISIBLE: 'metric3',
-  MAX_SCROLL_PERCENTAGE: 'metric4',
+/**
+ * A default value for dimensions so unset values always are reported as
+ * something. This is needed since Google Analytics will drop empty dimension
+ * values in reports.
+ */
+const NULL_VALUE = '(not set)';
+
+
+/**
+ * Creates a ga() proxy function that calls commands on all but the
+ * excluded trackers.
+ * @param {Array} trackers an array or objects containing the `name` and
+ *     `trackingId` fields.
+ * @return {Function} The proxied ga() function.
+ */
+const createGaProxy = (trackers) => {
+  return (command, ...args) => {
+    for (let {name} of trackers) {
+      if (typeof command == 'function') {
+        window.ga(() => command(window.ga.getByName(name)));
+      } else {
+        window.ga(`${name}.${command}`, ...args);
+      }
+    }
+  };
 };
 
 
-const dimensions = {
+/**
+ * Command queue proxies.
+ */
+export const gaAll = createGaProxy(ALL_TRACKERS);
+export const gaTest = createGaProxy(TEST_TRACKERS);
+
+
+/**
+ * A maping between custom dimension names and their indexes.
+ */
+export const dimensions = {
   BREAKPOINT: 'dimension1',
   QUERY_EXPLORER_PARAMS: 'dimension2',
   QUERY_EXPLORER_SETTINGS: 'dimension3',
@@ -76,35 +101,18 @@ const dimensions = {
   HIT_TYPE: 'dimension13',
   HIT_TIME: 'dimension14',
   VISIBILITY_STATE: 'dimension15',
-  PAGE_PATH: 'dimension16',
 };
 
 
 /**
- * Creates a ga() proxy function that calls commands on all but the
- * excluded trackers.
- * @param {Array} trackers an array or objects containing the `name` and
- *     `trackingId` fields.
- * @return {Function} The proxied ga() function.
+ * A maping between custom dimension names and their indexes.
  */
-const createGaProxy = (trackers) => {
-  return (command, ...args) => {
-    for (let {name} of trackers) {
-      if (typeof command == 'function') {
-        window.ga(() => {
-          command(window.ga.getByName(name));
-        });
-      } else {
-        window.ga(`${name}.${command}`, ...args);
-      }
-    }
-  };
+export const metrics = {
+  QUERY_SUCCESS: 'metric1',
+  QUERY_ERROR: 'metric2',
+  PAGE_VISIBLE: 'metric3',
+  MAX_SCROLL_PERCENTAGE: 'metric4',
 };
-
-
-// The command queue proxies.
-const gaAll = createGaProxy(ALL_TRACKERS);
-const gaTest = createGaProxy(TEST_TRACKER);
 
 
 /**
@@ -112,20 +120,13 @@ const gaTest = createGaProxy(TEST_TRACKER);
  * tracking customization plugin, and then sends the intial pageview after
  * the `load` event fires.
  */
-const init = () => {
-  // Delays sending any beacons until after the load event
-  // to ensure beacons don't block resources.
-  window.onload = () => {
-    createTrackers();
-    trackErrors();
-    trackCustomDimensions();
-    requirePlugins();
-    sendInitialPageview();
-  };
+export const init = () => {
+  createTrackers();
+  trackErrors();
+  trackCustomDimensions();
+  requireAutotrackPlugins();
+  sendInitialPageview();
 };
-
-
-export {init, gaAll, gaTest};
 
 
 /**
@@ -180,35 +181,47 @@ const createTrackers = () => {
 
 
 /**
+ * Tracks a JavaScript error with optional fields object overrides.
+ * This function is exported so it can be used in other parts of the codebase.
+ * E.g.:
+ *
+ *    `fetch('/api.json').catch(trackError);`
+ *
+ * @param {Error|undefined} error
+ * @param {FieldsObj=} fieldsObj
+ */
+export const trackError = (error, fieldsObj = {}) => {
+  gaAll('send', 'event', Object.assign({
+    eventCategory: 'Script',
+    eventAction: 'error',
+    eventLabel: (error && error.stack) || NULL_VALUE,
+    nonInteraction: true,
+  }, fieldsObj));
+};
+
+
+/**
  * Tracks any errors that may have occured on the page prior to analytics being
  * initialized, then adds an event handler to track future errors.
  */
 const trackErrors = () => {
   // Errors that have occurred prior to this script running are stored on
-  // the `q` property of the window.onerror function.
-  const errorQueue = window.onerror.q || [];
+  // `window.__e.q`, as specified in `index.html`.
+  const loadErrorEvents = window.__e && window.__e.q || [];
 
-  /**
-   * Overrides the temp `onerror()` handler to now send hits to GA.
-   * @param {string} msg
-   * @param {string} file
-   * @param {number} line
-   * @param {number=} col
-   * @param {Error=} error
-   */
-  window.onerror = (msg, file, line, col, error) => {
-    gaAll('send', 'event', {
-      eventCategory: 'Script',
-      eventAction: 'uncaught error',
-      eventLabel: error ? error.stack : `${msg}\n${file}:${line}:${col}`,
-      nonInteraction: true,
-    });
-  };
+  // Use a different eventAction for uncaught errors.
+  /** @type {FieldsObj} */
+  const fieldsObj = {eventAction: 'uncaught error'};
 
-  // Replay any stored errors in the queue.
-  for (let error of errorQueue) {
-    window.onerror(...error);
+  // Replay any stored load error events.
+  for (let event of loadErrorEvents) {
+    trackError(event.error, fieldsObj);
   }
+
+  // Add a new listener to track event immediately.
+  window.addEventListener('error', (event) => {
+    trackError(event.error, fieldsObj);
+  });
 };
 
 
@@ -243,9 +256,6 @@ const trackCustomDimensions = () => {
       model.set(dimensions.HIT_TYPE, model.get('hitType'), true);
       model.set(dimensions.VISIBILITY_STATE, document.visibilityState, true);
 
-      const page = model.get('page') || (location.pathname + location.search);
-      model.set(dimensions.PAGE_PATH, page, true),
-
       originalBuildHitTask(model);
     });
   });
@@ -253,19 +263,9 @@ const trackCustomDimensions = () => {
 
 
 /**
- * Sends the initial pageview on each of the trackers. The hit source dimension
- * is set to `pageload` to distinguish it from virtual pageviews.
+ * Requires select autotrack plugins for each tracker.
  */
-const sendInitialPageview = () => {
-  gaAll('send', 'pageview', {[dimensions.HIT_SOURCE]: 'pageload'});
-};
-
-
-/**
- * Requires various autotrack plugins on each of the trackers, passing in
- * their respective configuration options.
- */
-const requirePlugins = () => {
+const requireAutotrackPlugins = () => {
   gaAll('require', 'cleanUrlTracker', {
     stripQuery: true,
     queryDimensionIndex: getDefinitionIndex(dimensions.URL_QUERY_PARAMS),
@@ -312,13 +312,23 @@ const requirePlugins = () => {
       },
     ],
   });
-  gaAll('require', 'outboundLinkTracker');
+  gaAll('require', 'outboundLinkTracker', {
+    events: ['click', 'contextmenu'],
+  });
   gaTest('require', 'pageVisibilityTracker', {
     visibleMetricIndex: getDefinitionIndex(metrics.PAGE_VISIBLE),
     sessionTimeout: 30,
     timeZone: 'America/Los_Angeles',
     fieldsObj: {[dimensions.HIT_SOURCE]: 'pageVisibilityTracker'},
   });
+};
+
+
+/**
+ * Sends the initial pageview.
+ */
+const sendInitialPageview = () => {
+  gaAll('send', 'pageview', {[dimensions.HIT_SOURCE]: 'pageload'});
 };
 
 

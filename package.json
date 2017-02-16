@@ -27,7 +27,7 @@
     "cssnano": "^3.8.0",
     "del": "^2.2.2",
     "eslint": "^3.9.0",
-    "eslint-config-google": "^0.7.0",
+    "eslint-config-google": "^0.7.1",
     "eslint-plugin-babel": "^3.3.0",
     "eslint-plugin-react": "^6.4.1",
     "fixed-data-table-2": "^0.7.6",
