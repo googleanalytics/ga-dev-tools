@@ -28,7 +28,7 @@ import uuid from 'uuid';
  * implementation. This allows you to create a segment or view filter
  * that isolates only data captured with the most recent tracking changes.
  */
-const TRACKING_VERSION = '2';
+const TRACKING_VERSION = '3';
 
 
 /**
@@ -36,8 +36,8 @@ const TRACKING_VERSION = '2';
  * data is always sent first.
  */
 const ALL_TRACKERS = [
-  {name: 't0', trackingId: 'UA-41425441-5'},
-  {name: 'testing', trackingId: 'UA-41425441-7'},
+  {name: 'prod', trackingId: 'UA-41425441-5'},
+  {name: 'test', trackingId: 'UA-41425441-7'},
 ];
 
 
@@ -192,9 +192,9 @@ const createTrackers = () => {
  */
 export const trackError = (error, fieldsObj = {}) => {
   gaAll('send', 'event', Object.assign({
-    eventCategory: 'Script',
-    eventAction: 'error',
-    eventLabel: (error && error.stack) || NULL_VALUE,
+    eventCategory: 'Error',
+    eventAction: err.name,
+    eventLabel: `${err.message}\n${err.stack || '(no stack trace)'}`,
     nonInteraction: true,
   }, fieldsObj));
 };
@@ -209,9 +209,9 @@ const trackErrors = () => {
   // `window.__e.q`, as specified in `index.html`.
   const loadErrorEvents = window.__e && window.__e.q || [];
 
-  // Use a different eventAction for uncaught errors.
+  // Use a different eventCategory for uncaught errors.
   /** @type {FieldsObj} */
-  const fieldsObj = {eventAction: 'uncaught error'};
+  const fieldsObj = {eventCategory: 'Uncaught Error'};
 
   // Replay any stored load error events.
   for (let event of loadErrorEvents) {

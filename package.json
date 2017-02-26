@@ -12,7 +12,7 @@
   },
   "license": "Apache-2.0",
   "devDependencies": {
-    "autotrack": "2.0.0-rc.2",
+    "autotrack": "^2.0.4",
     "babel-core": "^6.18.0",
     "babel-eslint": "^7.1.0",
     "babel-loader": "^6.2.7",
