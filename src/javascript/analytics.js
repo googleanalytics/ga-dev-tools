@@ -28,7 +28,7 @@ import uuid from 'uuid';
  * implementation. This allows you to create a segment or view filter
  * that isolates only data captured with the most recent tracking changes.
  */
-const TRACKING_VERSION = '3';
+const TRACKING_VERSION = '4';
 
 
 /**
@@ -187,10 +187,10 @@ const createTrackers = () => {
  *
  *    `fetch('/api.json').catch(trackError);`
  *
- * @param {Error|undefined} error
+ * @param {Error|undefined} err
  * @param {FieldsObj=} fieldsObj
  */
-export const trackError = (error, fieldsObj = {}) => {
+export const trackError = (err, fieldsObj = {}) => {
   gaAll('send', 'event', Object.assign({
     eventCategory: 'Error',
     eventAction: err.name,
