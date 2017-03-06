@@ -28,7 +28,7 @@ import uuid from 'uuid';
  * implementation. This allows you to create a segment or view filter
  * that isolates only data captured with the most recent tracking changes.
  */
-const TRACKING_VERSION = '4';
+const TRACKING_VERSION = '5';
 
 
 /**
@@ -252,9 +252,11 @@ const trackCustomDimensions = () => {
     const originalBuildHitTask = tracker.get('buildHitTask');
     tracker.set('buildHitTask', (model) => {
       model.set(dimensions.HIT_ID, uuid(), true);
-      model.set(dimensions.HIT_TIME, String(+new Date), true);
       model.set(dimensions.HIT_TYPE, model.get('hitType'), true);
       model.set(dimensions.VISIBILITY_STATE, document.visibilityState, true);
+
+      const qt = model.get('queueTime') || 0;
+      model.set(dimensions.HIT_TIME, String(new Date - qt), true);
 
       originalBuildHitTask(model);
     });
