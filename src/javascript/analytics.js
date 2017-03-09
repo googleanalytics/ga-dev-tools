@@ -28,7 +28,7 @@ import uuid from 'uuid';
  * implementation. This allows you to create a segment or view filter
  * that isolates only data captured with the most recent tracking changes.
  */
-const TRACKING_VERSION = '5';
+const TRACKING_VERSION = '6';
 
 
 /**
@@ -52,7 +52,7 @@ const TEST_TRACKERS = ALL_TRACKERS.filter(({name}) => /test/.test(name));
  * something. This is needed since Google Analytics will drop empty dimension
  * values in reports.
  */
-const NULL_VALUE = '(not set)';
+export const NULL_VALUE = '(not set)';
 
 
 /**
@@ -93,7 +93,7 @@ export const dimensions = {
   ORIENTATION: 'dimension5',
   HIT_SOURCE: 'dimension6',
   URL_QUERY_PARAMS: 'dimension7',
-  METRIC_VALUE: 'dimension8',
+  SIGNED_IN: 'dimension8',
   CLIENT_ID: 'dimension9',
   TRACKING_VERSION: 'dimension10',
   WINDOW_ID: 'dimension11',
@@ -126,6 +126,34 @@ export const init = () => {
   trackCustomDimensions();
   requireAutotrackPlugins();
   sendInitialPageview();
+};
+
+
+/**
+ * Tracks a JavaScript error with optional fields object overrides.
+ * This function is exported so it can be used in other parts of the codebase.
+ * E.g.:
+ *
+ *    `fetch('/api.json').catch(trackError);`
+ *
+ * @param {Error|undefined} err
+ * @param {FieldsObj=} fieldsObj
+ */
+export const trackError = (err, fieldsObj = {}) => {
+  gaAll('send', 'event', Object.assign({
+    eventCategory: 'Error',
+    eventAction: err.name,
+    eventLabel: `${err.message}\n${err.stack || '(no stack trace)'}`,
+    nonInteraction: true,
+  }, fieldsObj));
+};
+
+
+/**
+ * Tracks that the logged-in user doesn't have any Google Analytics accounts.
+ */
+export const trackNoGoogleAnalyticsAccounts = () => {
+  gaAll('send', 'event', 'Google Analytics', 'error', 'no accounts');
 };
 
 
@@ -177,26 +205,6 @@ const createTrackers = () => {
       window['console'].log(...parts, hit);
     });
   }
-};
-
-
-/**
- * Tracks a JavaScript error with optional fields object overrides.
- * This function is exported so it can be used in other parts of the codebase.
- * E.g.:
- *
- *    `fetch('/api.json').catch(trackError);`
- *
- * @param {Error|undefined} err
- * @param {FieldsObj=} fieldsObj
- */
-export const trackError = (err, fieldsObj = {}) => {
-  gaAll('send', 'event', Object.assign({
-    eventCategory: 'Error',
-    eventAction: err.name,
-    eventLabel: `${err.message}\n${err.stack || '(no stack trace)'}`,
-    nonInteraction: true,
-  }, fieldsObj));
 };
 
 

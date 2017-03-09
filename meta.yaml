@@ -19,7 +19,6 @@ projects:
 - title: Campaign URL Builder
   type: tool
   slug: campaign-url-builder
-  status: new
   tech: [url_shortener_api]
 - title: Dimensions & Metrics Explorer
   type: tool
@@ -80,7 +79,6 @@ projects:
   tech: [core_reporting_api, embed_api, management_api, metadata_api]
 - title: Request Composer
   type: tool
-  status: new
   slug: request-composer
   tech: [analytics_reporting_api_v4, embed_api, management_api, metadata_api]
 - title: Spreadsheet Add-on
@@ -97,6 +95,11 @@ projects:
   external:
     action: Get Extension
     url: https://chrome.google.com/webstore/detail/tag-assistant-by-google/kejbdjndbnbjgmefkgdddjlbokphdefk
+- title: Usage Trends
+  type: tool
+  slug: usage-trends
+  status: new
+  tech: [analytics_reporting_api_v4, management_api, metadata_api]
 
 
 # Google Analytics tech tags. Demos and tools should tag themselves with
