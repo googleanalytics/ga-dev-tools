@@ -19,8 +19,8 @@ import url from 'url';
 
 export const PARAMS = [
   'utm_source',
-  'utm_campaign',
   'utm_medium',
+  'utm_campaign',
   'utm_term',
   'utm_content',
 ];
