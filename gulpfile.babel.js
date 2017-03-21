@@ -157,6 +157,7 @@ gulp.task('javascript:webpack', (function() {
       entry: entry,
       output: {
         path: 'public/javascript',
+        publicPath: '/public/javascript/',
         filename: '[name].js',
       },
       cache: {},
@@ -167,6 +168,7 @@ gulp.task('javascript:webpack', (function() {
           {
             test: /\.js$/,
             loader: 'babel-loader',
+            exclude: /node_modules\/(?!(autotrack|dom-utils))/,
             query: {
               babelrc: false,
               cacheDirectory: false,
@@ -175,7 +177,23 @@ gulp.task('javascript:webpack', (function() {
                 'react',
                 'stage-0',
               ],
+              plugins: ['dynamic-import-system-import'],
             },
+          },
+          // "postcss" loader applies autoprefixer to our CSS.
+          // "css" loader resolves paths in CSS and adds assets as dependencies.
+          // "style" loader turns CSS into JS modules that inject <style> tags.
+          // In production, we use a plugin to extract that CSS to a file, but
+          // in development "style" loader enables hot editing of CSS.
+          {
+            test: /\.css$/,
+            loaders: [
+              'style-loader',
+              'css-loader?modules&importLoaders=1&localIdentName=' +
+                  `${isProd() ? '' : '[name]__[local]___'}[hash:base64:5]` +
+                  '!postcss-loader',
+              'postcss-loader',
+            ],
           },
         ],
       },
@@ -223,11 +241,7 @@ gulp.task('javascript:embed-api-components', (function() {
             query: {
               babelrc: false,
               cacheDirectory: false,
-              presets: [
-                ['es2015', {'modules': false}],
-                'react',
-                'stage-0',
-              ],
+              presets: [['es2015', {'modules': false}]],
             },
           },
         ],
@@ -269,7 +283,7 @@ gulp.task('lint', function() {
         'test/**/*.js',
         'gulpfile.js',
       ])
-      .pipe(eslint())
+      .pipe(eslint({fix: true}))
       .pipe(eslint.format())
       .pipe(eslint.failAfterError());
 });

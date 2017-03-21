@@ -78,3 +78,17 @@ export function escapeHtml(str) {
   div.appendChild(document.createTextNode(str));
   return div.innerHTML;
 }
+
+
+/**
+ * A class for thowing errors that can be easily turned into UI alerts.
+ */
+export class UserError extends Error {
+  /**
+   * @param {{title: (string), message: (string)}} arg1
+   */
+  constructor({title, message}) {
+    super(message);
+    this.title = title;
+  }
+}
