@@ -54,8 +54,11 @@ export default class BreakdownChart extends TrendChart {
     options.chartArea.height = 400;
     options.vAxis.viewWindow = this.calculateRange();
     options.trendlines = {0: {
-      type: 'linear',
+      type: 'polynomial',
       color: '#000',
+      showR2: true,
+      degree: 3,
+      visibleInLegend: true,
       lineWidth: 3,
       opacity: 0.1,
       pointSize: 0,
