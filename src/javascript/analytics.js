@@ -28,7 +28,7 @@ import uuid from 'uuid';
  * implementation. This allows you to create a segment or view filter
  * that isolates only data captured with the most recent tracking changes.
  */
-const TRACKING_VERSION = '6';
+const TRACKING_VERSION = '7';
 
 
 /**
@@ -136,10 +136,10 @@ export const init = () => {
  *
  *    `fetch('/api.json').catch(trackError);`
  *
- * @param {Error|undefined} err
- * @param {FieldsObj=} fieldsObj
+ * @param {(Error|Object)=} err
+ * @param {Object=} fieldsObj
  */
-export const trackError = (err, fieldsObj = {}) => {
+export const trackError = (err = {}, fieldsObj = {}) => {
   gaAll('send', 'event', Object.assign({
     eventCategory: 'Error',
     eventAction: err.name,
@@ -217,19 +217,25 @@ const trackErrors = () => {
   // `window.__e.q`, as specified in `index.html`.
   const loadErrorEvents = window.__e && window.__e.q || [];
 
-  // Use a different eventCategory for uncaught errors.
-  /** @type {FieldsObj} */
-  const fieldsObj = {eventCategory: 'Uncaught Error'};
+  const trackErrorEvent = (event) => {
+    // Use a different eventCategory for uncaught errors.
+    const fieldsObj = {eventCategory: 'Uncaught Error'};
+
+    // Some browsers don't have an error property, so we fake it.
+    const err = event.error || {
+      message: `${event.message} + ${event.lineno}${event.colno}`,
+    };
+
+    trackError(err, fieldsObj);
+  };
 
   // Replay any stored load error events.
   for (let event of loadErrorEvents) {
-    trackError(event.error, fieldsObj);
+    trackErrorEvent(event);
   }
 
   // Add a new listener to track event immediately.
-  window.addEventListener('error', (event) => {
-    trackError(event.error, fieldsObj);
-  });
+  window.addEventListener('error', trackErrorEvent);
 };
 
 
