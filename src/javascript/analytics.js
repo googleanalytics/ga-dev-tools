@@ -121,6 +121,9 @@ export const metrics = {
  * the `load` event fires.
  */
 export const init = () => {
+  // Initialize the command queue in case analytics.js hasn't loaded yet.
+  window.ga = window.ga || ((...args) => (ga.q = ga.q || []).push(args));
+
   createTrackers();
   trackErrors();
   trackCustomDimensions();
@@ -142,7 +145,7 @@ export const init = () => {
 export const trackError = (err = {}, fieldsObj = {}) => {
   gaAll('send', 'event', Object.assign({
     eventCategory: 'Error',
-    eventAction: err.name,
+    eventAction: err.name || '(no error name)',
     eventLabel: `${err.message}\n${err.stack || '(no stack trace)'}`,
     nonInteraction: true,
   }, fieldsObj));
@@ -223,7 +226,7 @@ const trackErrors = () => {
 
     // Some browsers don't have an error property, so we fake it.
     const err = event.error || {
-      message: `${event.message} + ${event.lineno}${event.colno}`,
+      message: `${event.message} (${event.lineno}:${event.colno})`,
     };
 
     trackError(err, fieldsObj);
