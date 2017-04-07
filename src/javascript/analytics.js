@@ -13,6 +13,9 @@
 // limitations under the License.
 
 
+/* global ga */
+
+
 import 'autotrack/lib/plugins/clean-url-tracker';
 import 'autotrack/lib/plugins/event-tracker';
 import 'autotrack/lib/plugins/impression-tracker';
