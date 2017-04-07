@@ -107,26 +107,6 @@ gulp.task('images', function() {
 });
 
 
-gulp.task('javascript:bundle', ['javascript:webpack'], function(done) {
-  gulp.src([
-    'public/javascript/common.js',
-    'public/javascript/index.js',
-  ])
-  .pipe(sourcemaps.init())
-  .pipe(concat('app.js'))
-  .pipe(gulpIf(isProd(), uglify()))
-  .pipe(sourcemaps.write('.'))
-  .pipe(gulp.dest('public/javascript'))
-  .on('end', function() {
-    del([
-      'public/javascript/common*',
-      'public/javascript/index*',
-    ])
-    .then(() => done(), (err) => done(err));
-  });
-});
-
-
 gulp.task('javascript:webpack', (function() {
   let compiler;
 
@@ -156,7 +136,7 @@ gulp.task('javascript:webpack', (function() {
     return webpack({
       entry: entry,
       output: {
-        path: 'public/javascript',
+        path: path.join(__dirname, 'public/javascript'),
         publicPath: '/public/javascript/',
         filename: '[name].js',
       },
@@ -227,7 +207,7 @@ gulp.task('javascript:embed-api-components', (function() {
     return webpack({
       entry: entry,
       output: {
-        path: path.join('./public', COMPONENT_PATH),
+        path: path.join(__dirname, './public', COMPONENT_PATH),
         filename: '[name].js',
       },
       cache: {},
@@ -262,7 +242,7 @@ gulp.task('javascript:embed-api-components', (function() {
 
 
 gulp.task('javascript', [
-  'javascript:bundle',
+  'javascript:webpack',
   'javascript:embed-api-components',
 ]);
 
