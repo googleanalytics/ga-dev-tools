@@ -31,7 +31,7 @@ import uuid from 'uuid';
  * implementation. This allows you to create a segment or view filter
  * that isolates only data captured with the most recent tracking changes.
  */
-const TRACKING_VERSION = '7';
+const TRACKING_VERSION = '8';
 
 
 /**
@@ -115,6 +115,7 @@ export const metrics = {
   QUERY_ERROR: 'metric2',
   PAGE_VISIBLE: 'metric3',
   MAX_SCROLL_PERCENTAGE: 'metric4',
+  PAGE_LOADS: 'metric5',
 };
 
 
@@ -131,7 +132,6 @@ export const init = () => {
   trackErrors();
   trackCustomDimensions();
   requireAutotrackPlugins();
-  sendInitialPageview();
 };
 
 
@@ -271,12 +271,19 @@ const trackCustomDimensions = () => {
   gaAll((tracker) => {
     const originalBuildHitTask = tracker.get('buildHitTask');
     tracker.set('buildHitTask', (model) => {
+      const hitType = model.get('hitType');
       model.set(dimensions.HIT_ID, uuid(), true);
-      model.set(dimensions.HIT_TYPE, model.get('hitType'), true);
+      model.set(dimensions.HIT_TYPE, hitType, true);
       model.set(dimensions.VISIBILITY_STATE, document.visibilityState, true);
 
       const qt = model.get('queueTime') || 0;
       model.set(dimensions.HIT_TIME, String(new Date - qt), true);
+
+      // TODO(philipwalton): temporary fix to address an analytics.js bug where
+      // custom metrics on the initial pageview are added to timing hits.
+      if (hitType == 'timing') {
+        model.set(metrics.PAGE_LOADS, undefined, true);
+      }
 
       originalBuildHitTask(model);
     });
@@ -299,7 +306,7 @@ const requireAutotrackPlugins = () => {
     timeZone: 'America/Los_Angeles',
     maxScrollMetricIndex: getDefinitionIndex(metrics.MAX_SCROLL_PERCENTAGE),
   });
-  gaAll('require', 'impressionTracker', {
+  gaTest('require', 'impressionTracker', {
     elements: ['tech-info'],
   });
   gaAll('require', 'mediaQueryTracker', {
@@ -335,22 +342,15 @@ const requireAutotrackPlugins = () => {
     ],
   });
   gaAll('require', 'outboundLinkTracker', {
-    events: ['click', 'contextmenu'],
+    events: ['click', 'auxclick', 'contextmenu'],
   });
-  gaTest('require', 'pageVisibilityTracker', {
+  gaAll('require', 'pageVisibilityTracker', {
+    sendInitialPageview: true,
+    pageLoadMetricIndex: getDefinitionIndex(metrics.PAGE_LOADS),
     visibleMetricIndex: getDefinitionIndex(metrics.PAGE_VISIBLE),
-    sessionTimeout: 30,
     timeZone: 'America/Los_Angeles',
     fieldsObj: {[dimensions.HIT_SOURCE]: 'pageVisibilityTracker'},
   });
-};
-
-
-/**
- * Sends the initial pageview.
- */
-const sendInitialPageview = () => {
-  gaAll('send', 'pageview', {[dimensions.HIT_SOURCE]: 'pageload'});
 };
 
 
