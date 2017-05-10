@@ -72,7 +72,7 @@
     "react-tabs": "^0.8.2",
     "react-textarea-autosize": "^4.0.5",
     "redux": "^3.6.0",
-    "redux-logger": "^2.7.2",
+    "redux-logger": "^3.0.1",
     "redux-thunk": "^2.1.0",
     "request": "^2.76.0",
     "select2": "select2/select2#3.5.2",

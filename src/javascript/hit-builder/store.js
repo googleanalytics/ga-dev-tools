@@ -12,7 +12,8 @@ let middlewear = [thunkMiddleware];
 if (process.env.NODE_ENV != 'production') {
   // Uses `require` here instead of `import` so the module isn't included
   // in the production build.
-  middlewear.push(require('redux-logger')());
+  const {createLogger} = require('redux-logger');
+  middlewear.push(createLogger());
 }
 
 
