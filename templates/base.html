@@ -20,6 +20,37 @@
     addEventListener('error', window.__e=function f(e){f.q=f.q||[];f.q.push(e)});
     </script>
     <script async src="https://www.google-analytics.com/analytics.js"></script>
+
+    <script>
+    !function() {
+    if (window.PerformanceLongTaskTiming) {
+      var g = window.__tti = {e: []};
+      g.o = new PerformanceObserver(function(l){
+        g.e=g.e.concat(l.getEntries())
+      });
+      g.o.observe({entryTypes:['longtask']});
+    }
+    }();
+    </script>
+
+    <script>
+    window.__trackAbandons = () => {
+      const ANALYTICS_URL = 'https://www.google-analytics.com/collect';
+      const GA_COOKIE = document.cookie.replace(
+        /(?:(?:^|.*;)\s*_ga\s*\=\s*(?:\w+\.\d\.)([^;]*).*$)|^.*$/, '$1');
+      const TRACKING_ID = 'UA-41425441-7';
+      const CLIENT_ID =  GA_COOKIE || (Math.random() * Math.pow(2, 52));
+
+      navigator.sendBeacon && navigator.sendBeacon(ANALYTICS_URL, [
+        'v=1', 't=event', 'ec=Load', 'ea=abandon', 'el=pre-load', 'ni=1',
+        'tid=' + TRACKING_ID,
+        'cid=' + CLIENT_ID,
+        'cd9' + CLIENT_ID, // client ID custom dimension
+        'ev=' + Math.round(performance.now()),
+      ].join('&'));
+    };
+    window.addEventListener('unload', window.__trackAbandons);
+    </script>
   {% endblock %}
 </head>
 <body class="Site {{ initial_state }}">

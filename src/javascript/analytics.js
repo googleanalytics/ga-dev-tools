@@ -23,6 +23,7 @@ import 'autotrack/lib/plugins/max-scroll-tracker';
 import 'autotrack/lib/plugins/media-query-tracker';
 import 'autotrack/lib/plugins/outbound-link-tracker';
 import 'autotrack/lib/plugins/page-visibility-tracker';
+import {getFirstConsistentlyInteractive} from 'tti-polyfill/src';
 import uuid from 'uuid';
 
 
@@ -31,7 +32,7 @@ import uuid from 'uuid';
  * implementation. This allows you to create a segment or view filter
  * that isolates only data captured with the most recent tracking changes.
  */
-const TRACKING_VERSION = '8';
+const TRACKING_VERSION = '10';
 
 
 /**
@@ -116,6 +117,7 @@ export const metrics = {
   PAGE_VISIBLE: 'metric3',
   MAX_SCROLL_PERCENTAGE: 'metric4',
   PAGE_LOADS: 'metric5',
+  TTCI: 'metric6',
 };
 
 
@@ -132,6 +134,8 @@ export const init = () => {
   trackErrors();
   trackCustomDimensions();
   requireAutotrackPlugins();
+  stopPreloadAbandonTracking();
+  trackTimeToFirstConsistentlyInteractive();
 };
 
 
@@ -350,6 +354,42 @@ const requireAutotrackPlugins = () => {
     visibleMetricIndex: getDefinitionIndex(metrics.PAGE_VISIBLE),
     timeZone: 'America/Los_Angeles',
     fieldsObj: {[dimensions.HIT_SOURCE]: 'pageVisibilityTracker'},
+  });
+};
+
+
+const stopPreloadAbandonTracking = () => {
+  window.removeEventListener('unload', window.__trackAbandons);
+}
+
+
+const trackTimeToFirstConsistentlyInteractive = () => {
+  const postLoadAbandonTracking = () => {
+    gaTest('send', 'event', 'Load', 'abandon', {
+      eventCategory: 'Load',
+      eventAction: 'abandon',
+      eventLabel: 'post-load',
+      eventValue: Math.round(performance.now()),
+      nonInteraction: true,
+    });
+  };
+  window.addEventListener('unload', postLoadAbandonTracking);
+
+  getFirstConsistentlyInteractive().then((ttci) => {
+    if (ttci > 0) {
+      gaTest('send', 'event', {
+        eventCategory: 'PW Metrics',
+        eventAction: 'track',
+        eventLabel: NULL_VALUE,
+        eventValue: 1, // Number of metrics track with event.
+        nonInteraction: true,
+        [metrics.TTCI]: Math.round(ttci),
+      });
+    }
+  })
+  .catch((err) => trackError(err))
+  .then(() => {
+    window.removeEventListener('unload', postLoadAbandonTracking)
   });
 };
 

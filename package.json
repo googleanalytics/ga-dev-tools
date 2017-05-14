@@ -79,6 +79,7 @@
     "sinon": "^1.17.6",
     "style-loader": "^0.13.1",
     "svg4everybody": "^2.1.0",
+    "tti-polyfill": "github:deepanjanroy/tti-polyfill#npmify",
     "uuid": "^2.0.3",
     "webpack": "^2.3.3"
   }
