@@ -34,7 +34,7 @@ import ViewSelector from '../../components/view-selector';
  * All other params are either uninteresting or may possibly contain PII and
  * therefore only their presence/absense is tracked.
  */
-const REQUEST_TYPES = ['HISTOGRAM', 'PIVOT', 'COHORT'];
+const REQUEST_TYPES = ['HISTOGRAM', 'PIVOT', 'COHORT', 'EXPRESSION'];
 const COHORT_SIZES = ['Day', 'Week', 'Month'];
 const SAMPLING_LEVELS = ['', 'DEFAULT', 'SMALL', 'LARGE'];
 const INCLUDE_EMPTY_ROWS_VALUES = ['', false, true];
@@ -178,6 +178,7 @@ export default class RequestComposer extends React.Component {
             <Tab>Histogram Request</Tab>
             <Tab>Pivot Request</Tab>
             <Tab>Cohort Request</Tab>
+            <Tab>Metric Expression</Tab>
           </TabList>
           <TabPanel>
             <p>For dimensions with integer values, it is easier to understand
@@ -195,6 +196,12 @@ export default class RequestComposer extends React.Component {
               For example, all users with the same Acquisition Date belong to
               the same cohort. The cohort analysis report lets you isolate and
               analyze cohort behavior.
+            </p>
+          </TabPanel>
+          <TabPanel>
+            <p>A metric expression is a mathematical expression you define on
+              existing metrics; it operates like dynamic calculated metrics.
+              You can also define an alias to represent the metric expression.
             </p>
           </TabPanel>
         </Tabs>
@@ -261,7 +268,7 @@ export default class RequestComposer extends React.Component {
           ) :
           null}
 
-          {settings.requestType != 'COHORT' ? (
+          { ['COHORT', 'EXPRESSION'].indexOf(settings.requestType) == -1 ? (
           <div className={requiredFormControlClass}>
             <label className="FormControl-label">metrics</label>
             <div className="FormControl-body">
@@ -279,6 +286,44 @@ export default class RequestComposer extends React.Component {
             </div>
           </div>
           ) :
+          null}
+
+          {settings.requestType == 'EXPRESSION' ? (
+            <div className={requiredFormControlClass}>
+              <label className="FormControl-label">metric expression</label>
+              <div className="FormControl-body">
+                <div className="FlexLine">
+                <input
+                  className="FormField FormFieldCombo-field"
+                  name="expression"
+                  value={params.expression || ''}
+                  onChange={this.handleParamChange} />
+                <HelpIconLink
+                  url={REFERENCE_URL}
+                  name="Metric.FIELDS.Expression" />
+              </div>
+              </div>
+            </div>
+            ) : 
+          null}
+
+          {settings.requestType == 'EXPRESSION' ? (
+            <div className={requiredFormControlClass}>
+              <label className="FormControl-label">metric alias</label>
+              <div className="FormControl-body">
+                <div className="FlexLine">
+                <input
+                  className="FormField FormFieldCombo-field"
+                  name="alias"
+                  value={params.alias || ''}
+                  onChange={this.handleParamChange} />
+                <HelpIconLink
+                  url={REFERENCE_URL}
+                  name="Metric.FIELDS.alias" />
+              </div>
+              </div>
+            </div>
+            ) : 
           null}
 
 
@@ -302,7 +347,7 @@ export default class RequestComposer extends React.Component {
           ) :
           null}
 
-          {settings.requestType == 'PIVOT' ? (
+          {['PIVOT', 'EXPRESSION'].indexOf(settings.requestType) != -1 ? (
           <div className={requiredFormControlClass}>
             <label className="FormControl-label">dimensions</label>
             <div className="FormControl-body">

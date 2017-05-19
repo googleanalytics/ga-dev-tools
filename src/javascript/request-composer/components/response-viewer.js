@@ -17,6 +17,7 @@ import React from 'react';
 import {Tab, Tabs, TabList, TabPanel} from 'react-tabs';
 import HistogramChart from './histogram-chart';
 import PivotTable from './pivot-table';
+import ExpressionTable from './expression-table';
 import CohortTable from './cohort-table';
 import CodeBlock from '../../components/code-block';
 
@@ -76,6 +77,14 @@ export default class ResultsViewer extends React.Component {
                   </p>
                 </div>
               ) :
+              null}
+              {settings.responseType == 'EXPRESSION' ? (
+                <div>
+                  <ExpressionTable
+                    response={response}
+                    />
+                </div>
+              ) : 
               null}
               {settings.responseType == 'COHORT' ? (
                 <CohortTable

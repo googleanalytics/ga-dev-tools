@@ -96,6 +96,15 @@ function applyMetrics(request, params, settings) {
     for (let metric of metrics) {
       request.metrics.push({'expression': metric});
     }
+  } else if (params.expression &&
+             settings.requestType == 'EXPRESSION') {
+    request.metrics = []
+    let metric = {'expression': params.expression};
+  
+    if (params.alias) {
+      metric.alias = params.alias;
+    }
+    request.metrics.push(metric);
   }
   return request;
 }
@@ -412,6 +421,8 @@ export function composeRequest(params, settings) {
   } else if (settings.requestType == 'COHORT') {
     return (params.cohortMetrics &&
             params.cohortSize);
+  } else if (settings.requestType == 'EXPRESSION') {
+    return (params.expression)
   } else {
     return false;
   }
