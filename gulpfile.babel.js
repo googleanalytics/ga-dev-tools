@@ -276,7 +276,7 @@ gulp.task('test', ['lint'], function() {
 
 
 gulp.task('serve', [], function(done) {
-  devServer = spawn('dev_appserver.py', ['.']);
+  devServer = spawn('dev_appserver.py', [ '--skip_sdk_update_check', '1', '.']);
   devServer.stderr.on('data', (data) => {
     if (data.includes('Starting module')) done();
     process.stdout.write(data);
