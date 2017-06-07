@@ -148,10 +148,9 @@ gulp.task('javascript:webpack', (function() {
           {
             test: /\.js$/,
             loader: 'babel-loader',
-            exclude: /node_modules\/(?!(autotrack|dom-utils))/,
+            exclude: /node_modules\/(?!(autotrack|dom-utils|tti-polyfill))/,
             query: {
               babelrc: false,
-              cacheDirectory: false,
               presets: [
                 ['es2015', {'modules': false}],
                 'react',
