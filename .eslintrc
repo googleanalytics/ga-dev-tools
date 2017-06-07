@@ -20,6 +20,22 @@
     "google"
   ],
   "rules": {
+    // TODO(philipwalton): it looks like some ES2016+ feature are not
+    // compatible with the eslint babel parser, so temporarily disabling the
+    // following jsdoc rules.
+    "valid-jsdoc": [1, {
+      "requireParamDescription": false,
+      "requireReturnDescription": false,
+      "requireReturn": false,
+      "prefer": {"returns": "return"},
+    }],
+    "require-jsdoc": [1, {
+      "require": {
+        "FunctionDeclaration": true,
+        "MethodDefinition": true,
+        "ClassDeclaration": true,
+      },
+    }],
      // React and jQuery use `this`
     "no-invalid-this": 0,
     // Unset rules conflicting with babel
