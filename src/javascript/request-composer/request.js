@@ -81,7 +81,7 @@ function applyDateRanges(request, params, settings) {
  */
 function applyMetrics(request, params, settings) {
   if (params.metrics &&
-      settings.requestType != 'COHORT') {
+      ['HISTOGRAM', 'PIVOT'].indexOf(settings.requestType) != -1) {
     request.metrics = [];
 
     let metrics = params.metrics.split(',');
