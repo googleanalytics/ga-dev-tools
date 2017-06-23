@@ -16,6 +16,7 @@
 import uniq from 'lodash/uniq';
 import React from 'react';
 import metadata from 'javascript-api-utils/lib/metadata';
+import {formatValue, formatDimension, mergeCellWithNeighborIfSame} from './pivot-table';
 
 let columns;
 window.addEventListener('load', () => {
@@ -24,36 +25,6 @@ window.addEventListener('load', () => {
   });
 });
 
-
-/**
- * Accepts a string value and API type and formats it accordingly.
- * @param {string} value
- * @param {string} type
- * @return {string} The formatted value.
- */
-function formatValue(value, type) {
-  if (type == 'PERCENT') {
-    value = (Math.round(value * 100) / 100) + '%';
-  } else if (type == 'CURRENCY') {
-    value = '$' + (+value).toFixed(2);
-  }
-  return value;
-}
-
-
-/**
- * Accepts a string dimension value and the name of a dimensions and formats
- * the value if necessary.
- * @param {string} value
- * @param {string} name
- * @return {string} The formatted value.
- */
-function formatDimension(value, name) {
-  if (name == 'ga:date') {
-    value = `${value.slice(0, 4)}-${value.slice(4, 6)}-${value.slice(6)}`;
-  }
-  return value;
-}
 
 
 /**
@@ -69,25 +40,19 @@ function constructTableCellFromReport(report) {
   if (!rows) return;
 
   let {metricHeaderEntries = []} = columnHeader.metricHeader;
-
-  //let {pivotHeaderEntries = []} = columnHeader.metricHeader.pivotHeaders[0];
   let {dimensions} = columnHeader;
-  //let pivotDimensions = pivotHeaderEntries[0].dimensionNames;
 
-  //let dimensionHeaderEndRow = dimensions.length - 1;
-  let metricHeaderRow = 0;//dimensionHeaderEndRow + 1;
+  let metricHeaderRow = 0;
   let resultsStartRow = metricHeaderRow + 1;
-  let resultsEndRow = rows.length - 1;
-  //let totalsRow = resultsEndRow + 1;
+  let resultsEndRow = rows.length;
+  let totalsRow = resultsEndRow + 1;
 
   let dimensionEndCol = dimensions.length - 1;
-  let metricStartCol = 1;// dimensionEndCol + 1;
-  let metricEndCol = metricStartCol + metricHeaderEntries.length - 1;
-  //let pivotStartCol = metricEndCol + 1;
-  //let pivotEndCol = pivotStartCol + pivotHeaderEntries.length - 1;
+  let metricStartCol = dimensionEndCol + 1;
+  let metricEndCol = dimensionEndCol + metricHeaderEntries.length;
 
-  let rowCount = rows.length + 1;
-  let colCount = dimensions.length + 1;
+  let rowCount = rows.length + 2;
+  let colCount = dimensions.length + metricHeaderEntries.length;
 
   // Creates the initial list of cells.
   // This will be a two-dimensional array: cells[<tr>][<td>].
@@ -110,17 +75,12 @@ function constructTableCellFromReport(report) {
         if (c >= metricStartCol && c <= metricEndCol) {
           let metric = metricHeaderEntries[c - metricStartCol].name;
           cell.classes.push('PivotTable-metricHeader');
-          cell.text = columns.get(metric).uiName;
+          cell.text = metric;
         }
-      } if (r === metricHeaderRow) {
-        // Result rows
-        let row = rows[r];
 
         // Dimension results.
         if (c <= dimensionEndCol) {
           let dimensionName = dimensions[c];
-          console.log(row);
-          let dimensionValue = row.dimensions[c];
           cell.isHeader = true;
           cell.classes.push('PivotTable-dimensionHeader');
           if (c === dimensionEndCol) {
@@ -130,36 +90,53 @@ function constructTableCellFromReport(report) {
             cell.classes.push('PivotTable-dimensionHeader--lastRow');
           }
 
-          cell.text = formatDimension(dimensionValue, dimensionName);
-          cell.dimensions = row.dimensions.slice(0, c + 1).join(',');
+          cell.text = columns.get(dimensionName).uiName;
+          cell.dimensions = dimensionName;
         } else if (c >= metricStartCol && c <= metricEndCol) {
           // Primary metric results.
-          let value = row.metrics[0].values[c - metricStartCol];
+          let metricName = metricHeaderEntries[c - metricStartCol].name;
           let type = metricHeaderEntries[c - metricStartCol].type;
           cell.classes.push('PivotTable-value');
           if (r === resultsEndRow) {
             cell.classes.push('PivotTable-value--lastRow');
           }
+          cell.text = metricName;
+        }
+      } else if (r > metricHeaderRow && r <= resultsEndRow ) {
+        
+        // Data value rows.
+        cell.classes.push('PivotTable-value'); 
+        let row = rows[r - 1];
+        if (c <= dimensionEndCol) {
+          // Dimension value cells.
+          let dimensionValue = row.dimensions[c];
+          let dimensionName = dimensions[c];
+          cell.text = formatDimension(dimensionValue, dimensionName);
+        } else {
+          // Metric value cells.
+          let value = row.metrics[0].values[c - metricStartCol];
+          let type = metricHeaderEntries[c - metricStartCol].type;
+
           cell.text = formatValue(value, type);
         }
+
       } else {
         // Totals row
-        // The totals label under the dimension row headers.
+        cell.isHeader = true;
+        cell.classes.push('PivotTable-total');
         if (c <= dimensionEndCol) {
           cell.isHeader = true;
           cell.text = cell.dimensions = 'Totals';
-          cell.classes.push('PivotTable-total');
+          if (c > 0) mergeCellWithNeighborIfSame(cell, cells[r][c - 1]);
         } else if (c >= metricStartCol && c <= metricEndCol) {
-          // Primary metric totals.
+          // Metric totals.
           let value = totals[0].values[c - metricStartCol];
           let type = metricHeaderEntries[c - metricStartCol].type;
-          cell.classes.push('PivotTable-total');
           cell.text = formatValue(value, type);
         }
       }
     }
   }
-
   return cells;
 }
 
