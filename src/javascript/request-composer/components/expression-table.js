@@ -16,7 +16,10 @@
 import uniq from 'lodash/uniq';
 import React from 'react';
 import metadata from 'javascript-api-utils/lib/metadata';
-import {formatValue, formatDimension, mergeCellWithNeighborIfSame} from './pivot-table';
+import {
+  formatValue, 
+  formatDimension, 
+  mergeCellWithNeighborIfSame} from './pivot-table';
 
 let columns;
 window.addEventListener('load', () => {
@@ -43,9 +46,7 @@ function constructTableCellFromReport(report) {
   let {dimensions} = columnHeader;
 
   let metricHeaderRow = 0;
-  let resultsStartRow = metricHeaderRow + 1;
   let resultsEndRow = rows.length;
-  let totalsRow = resultsEndRow + 1;
 
   let dimensionEndCol = dimensions.length - 1;
   let metricStartCol = dimensionEndCol + 1;
@@ -95,7 +96,6 @@ function constructTableCellFromReport(report) {
         } else if (c >= metricStartCol && c <= metricEndCol) {
           // Primary metric results.
           let metricName = metricHeaderEntries[c - metricStartCol].name;
-          let type = metricHeaderEntries[c - metricStartCol].type;
           cell.classes.push('PivotTable-value');
           if (r === resultsEndRow) {
             cell.classes.push('PivotTable-value--lastRow');
