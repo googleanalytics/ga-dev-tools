@@ -200,8 +200,8 @@ export default class RequestComposer extends React.Component {
           </TabPanel>
           <TabPanel>
             <p>A metric expression is a mathematical expression you define on
-              existing metrics; it operates like dynamic calculated metrics.
-              You can also define an alias to represent the metric expression.
+              existing metrics; it operates like a dynamic calculated metric.
+              You can also define aliases to represent the metric expressions.
             </p>
           </TabPanel>
         </Tabs>
@@ -290,13 +290,13 @@ export default class RequestComposer extends React.Component {
 
           {settings.requestType == 'EXPRESSION' ? (
             <div className={requiredFormControlClass}>
-              <label className="FormControl-label">metric expression</label>
+              <label className="FormControl-label">metric expressions</label>
               <div className="FormControl-body">
                 <div className="FlexLine">
                 <input
                   className="FormField FormFieldCombo-field"
-                  name="expression"
-                  value={params.expression || ''}
+                  name="expressions"
+                  value={params.expressions || ''}
                   onChange={this.handleParamChange} />
                 <HelpIconLink
                   url={REFERENCE_URL}
@@ -308,14 +308,14 @@ export default class RequestComposer extends React.Component {
           null}
 
           {settings.requestType == 'EXPRESSION' ? (
-            <div className={requiredFormControlClass}>
-              <label className="FormControl-label">metric alias</label>
+            <div className={formControlClass}>
+              <label className="FormControl-label">metric aliases</label>
               <div className="FormControl-body">
                 <div className="FlexLine">
                 <input
                   className="FormField FormFieldCombo-field"
-                  name="alias"
-                  value={params.alias || ''}
+                  name="aliases"
+                  value={params.aliases || ''}
                   onChange={this.handleParamChange} />
                 <HelpIconLink
                   url={REFERENCE_URL}

@@ -78,8 +78,8 @@ function getDefaultSettingsAndUpdateTracker() {
 function getDefaultSelect2Options() {
   return {
     metrics: [],
-    expression: [],
-    alias: [],
+    expressions: [],
+    aliases: [],
     dimensions: [],
     pivotMetrics: [],
     pivotDimensions: [],
