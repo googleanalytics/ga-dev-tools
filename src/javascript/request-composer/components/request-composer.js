@@ -347,8 +347,28 @@ export default class RequestComposer extends React.Component {
           ) :
           null}
 
-          {['PIVOT', 'EXPRESSION'].indexOf(settings.requestType) != -1 ? (
+          {settings.requestType == 'PIVOT' ? (
           <div className={requiredFormControlClass}>
+            <label className="FormControl-label">dimensions</label>
+            <div className="FormControl-body">
+              <div className="FlexLine">
+                <Select2MultiSuggest
+                  name="dimensions"
+                  value={params.dimensions || ''}
+                  tags={select2Options.dimensions}
+                  onChange={this.handleParamChange}
+                  maximumSelectionSize={maximumSelectionSize} />
+                <HelpIconLink
+                  url={REFERENCE_URL}
+                  name="ReportRequest.FIELDS.dimensions" />
+              </div>
+            </div>
+          </div>
+          ) :
+          null}
+
+          {settings.requestType == 'EXPRESSION' ? (
+          <div className={formControlClass}>
             <label className="FormControl-label">dimensions</label>
             <div className="FormControl-body">
               <div className="FlexLine">

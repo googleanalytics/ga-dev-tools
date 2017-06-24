@@ -43,15 +43,13 @@ function constructTableCellFromReport(report) {
   if (!rows) return;
 
   let {metricHeaderEntries = []} = columnHeader.metricHeader;
-  let {dimensions} = columnHeader;
+  let {dimensions = []} = columnHeader;
 
   let metricHeaderRow = 0;
   let resultsEndRow = rows.length;
-
   let dimensionEndCol = dimensions.length - 1;
   let metricStartCol = dimensionEndCol + 1;
   let metricEndCol = dimensionEndCol + metricHeaderEntries.length;
-
   let rowCount = rows.length + 2;
   let colCount = dimensions.length + metricHeaderEntries.length;
 
@@ -59,7 +57,6 @@ function constructTableCellFromReport(report) {
   // This will be a two-dimensional array: cells[<tr>][<td>].
   let cells = [];
 
-  // Adds empty cells in the upper left corner.
   for (let r = 0; r < rowCount; r++) {
     cells[r] = cells[r] || [];
 
