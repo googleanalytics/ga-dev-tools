@@ -26,6 +26,7 @@ const RESULTS_VIEW = {
   HISTOGRAM: 'Chart',
   PIVOT: 'Table',
   COHORT: 'Table',
+  EXPRESSION: 'Table'
 };
 
 
