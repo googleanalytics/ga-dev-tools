@@ -73,6 +73,21 @@ function applyDateRanges(request, params, settings) {
 }
 
 /**
+ * Mimics python zip function to iterate through multiple lists.
+ * @return {Object} a list of the zipped lists.
+ */
+function zip(...args) {
+    let argv = [].slice.call(args);
+    let shortest = argv.length==0 ? [] : argv.reduce(function(a,b){
+        return a.length<b.length ? a : b
+    });
+
+    return shortest.map(function(_,i){
+        return args.map(function(array){return array[i]})
+    });
+}
+
+/**
  * Applies the metric objects to the Report Request object.
  * @param {Object} request The report request object.
  * @param {Object} params The Request Composer parameters.
@@ -96,15 +111,24 @@ function applyMetrics(request, params, settings) {
     for (let metric of metrics) {
       request.metrics.push({'expression': metric});
     }
-  } else if (params.expression &&
+  } else if (params.expressions &&
              settings.requestType == 'EXPRESSION') {
-    request.metrics = []
-    let metric = {'expression': params.expression};
-  
-    if (params.alias) {
-      metric.alias = params.alias;
+    request.metrics = [];
+
+    let metrics = params.expressions.split(',');
+    let aliases = params.aliases.split(',');
+    if (aliases.length < metrics.length) {
+      let difference = metrics.length - aliases.length;
+      for (let i = 0; i < difference; i++) {
+        aliases.push('');
+      }
     }
-    request.metrics.push(metric);
+    for (let metric of zip(metrics, aliases)) {
+      request.metrics.push(
+        {'expression': metric[0].trim(),
+         'alias': metric[1].trim()
+      });
+    }
   }
   return request;
 }
@@ -422,7 +446,7 @@ export function composeRequest(params, settings) {
     return (params.cohortMetrics &&
             params.cohortSize);
   } else if (settings.requestType == 'EXPRESSION') {
-    return (params.expression)
+    return (params.expressions)
   } else {
     return false;
   }
