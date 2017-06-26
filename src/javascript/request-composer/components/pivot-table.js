@@ -52,9 +52,11 @@ export function formatDimension(value, name) {
   if (name == 'ga:date') {
     value = `${value.slice(0, 4)}-${value.slice(4, 6)}-${value.slice(6)}`;
   } else if (name == 'ga:dateHour') {
-    value = `${value.slice(0, 4)}-${value.slice(4, 6)}-${value.slice(6,8)} ${value.slice(8)}h`;
+    value = `${value.slice(0, 4)}-${value.slice(4, 6)}-${value.slice(6,8)} ` + 
+    ` ${value.slice(8)}h`;
   } else if (name == 'ga:dateHourMinute') {
-    value = `${value.slice(0, 4)}-${value.slice(4, 6)}-${value.slice(6, 8)} ${value.slice(8, 10)}:${value.slice(10)}`;
+    value = `${value.slice(0, 4)}-${value.slice(4, 6)}-${value.slice(6, 8)} ` +
+      `${value.slice(8, 10)}:${value.slice(10)}`;
   }
   return value;
 }
