@@ -639,7 +639,7 @@ export default class RequestComposer extends React.Component {
           ) :
           null}
 
-          {settings.requestType == 'PIVOT' ? (
+          { ['PIVOT', 'EXPRESSION'].indexOf(settings.requestType) != -1 ? (
           <div className={formControlClass}>
             <label className="FormControl-label">pageToken</label>
             <div className="FormControl-body">
@@ -658,7 +658,7 @@ export default class RequestComposer extends React.Component {
           ) :
           null}
 
-          {settings.requestType == 'PIVOT' ? (
+          { ['PIVOT', 'EXPRESSION'].indexOf(settings.requestType) != -1 ? (
           <div className={formControlClass}>
             <label className="FormControl-label">pageSize</label>
             <div className="FormControl-body">
