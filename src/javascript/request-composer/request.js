@@ -116,7 +116,7 @@ function applyMetrics(request, params, settings) {
     request.metrics = [];
 
     let metrics = params.expressions.split(',');
-    let aliases = params.aliases.split(',');
+    let aliases = params.aliases ? params.aliases.split(',') : [];
     if (aliases.length < metrics.length) {
       let difference = metrics.length - aliases.length;
       for (let i = 0; i < difference; i++) {
