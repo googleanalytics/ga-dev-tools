@@ -31,7 +31,7 @@ window.addEventListener('load', () => {
  * @param {string} type
  * @return {string} The formatted value.
  */
-function formatValue(value, type) {
+export function formatValue(value, type) {
   if (type == 'PERCENT') {
     value = (Math.round(value * 100) / 100) + '%';
   } else if (type == 'CURRENCY') {
@@ -48,9 +48,15 @@ function formatValue(value, type) {
  * @param {string} name
  * @return {string} The formatted value.
  */
-function formatDimension(value, name) {
+export function formatDimension(value, name) {
   if (name == 'ga:date') {
     value = `${value.slice(0, 4)}-${value.slice(4, 6)}-${value.slice(6)}`;
+  } else if (name == 'ga:dateHour') {
+    value = `${value.slice(0, 4)}-${value.slice(4, 6)}-${value.slice(6,8)} ` + 
+    ` ${value.slice(8)}h`;
+  } else if (name == 'ga:dateHourMinute') {
+    value = `${value.slice(0, 4)}-${value.slice(4, 6)}-${value.slice(6, 8)} ` +
+      `${value.slice(8, 10)}:${value.slice(10)}`;
   }
   return value;
 }
@@ -65,7 +71,7 @@ function formatDimension(value, name) {
  * @param {Object} cell A cell object to compare with a neighoring cell.
  * @param {Object} neighbor A cell object to update if a merge is possible.
  */
-function mergeCellWithNeighborIfSame(cell, neighbor) {
+export function mergeCellWithNeighborIfSame(cell, neighbor) {
   if (cell.dimensions === neighbor.dimensions) {
     cell.ref = neighbor.ref || neighbor;
     cell.ref.classes.push(...cell.classes);

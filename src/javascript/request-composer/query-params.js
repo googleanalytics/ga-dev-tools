@@ -18,6 +18,8 @@ const PARAMS = [
   'startDate',
   'endDate',
   'metrics',
+  'aliases',
+  'expressions',
   'dimensions',
   'histogramDimensions',
   'buckets',
