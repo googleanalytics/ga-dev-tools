@@ -257,7 +257,7 @@ export default class QueryExplorer extends React.Component {
                   onChange={this.handleParamChange} />
                 <HelpIconLink
                   url={REFERENCE_URL}
-                  name="start-date" />
+                  name="startDate" />
               </div>
             </div>
           </div>
@@ -272,7 +272,7 @@ export default class QueryExplorer extends React.Component {
                   onChange={this.handleParamChange} />
                 <HelpIconLink
                   url={REFERENCE_URL}
-                  name="end-date" />
+                  name="endDate" />
               </div>
             </div>
           </div>
@@ -394,7 +394,7 @@ export default class QueryExplorer extends React.Component {
                   onChange={this.handleParamChange} />
                 <HelpIconLink
                   url={REFERENCE_URL}
-                  name="include-empty-rows" />
+                  name="includeEmptyRows" />
               </div>
             </div>
           </div>
@@ -410,7 +410,7 @@ export default class QueryExplorer extends React.Component {
                   onChange={this.handleParamChange} />
                 <HelpIconLink
                   url={REFERENCE_URL}
-                  name="start-index" />
+                  name="startIndex" />
               </div>
             </div>
           </div>
@@ -426,7 +426,7 @@ export default class QueryExplorer extends React.Component {
                   onChange={this.handleParamChange} />
                 <HelpIconLink
                   url={REFERENCE_URL}
-                  name="max-results" />
+                  name="maxResults" />
               </div>
             </div>
           </div>
