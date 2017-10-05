@@ -68,4 +68,4 @@ When running the `deploy` or `stage` scripts, the App Engine version number is a
 NODE_ENV=production APP_ENGINE_VERSION=feature-test npm run stage
 ```
 
-**Note:** running the `deploy` or `stage` script requires permissions for their respective App Engine projects.
+**Note:** running the `deploy` or `stage` script requires permissions for their respective App Engine Projects.
