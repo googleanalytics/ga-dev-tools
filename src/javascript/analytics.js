@@ -87,7 +87,7 @@ export const gaTest = createGaProxy(TEST_TRACKERS);
 
 
 /**
- * A maping between custom dimension names and their indexes.
+ * A mapping between custom dimension names and their indexes.
  */
 export const dimensions = {
   BREAKPOINT: 'dimension1',
@@ -109,7 +109,7 @@ export const dimensions = {
 
 
 /**
- * A maping between custom dimension names and their indexes.
+ * A mapping between custom dimension names and their indexes.
  */
 export const metrics = {
   QUERY_SUCCESS: 'metric1',
