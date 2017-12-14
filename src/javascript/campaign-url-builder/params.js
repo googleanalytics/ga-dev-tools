@@ -14,6 +14,10 @@
 
 
 import qs from 'querystring';
+
+// TODO(nathanwest): url isn't actually a dependency of this project.
+// it seems like url-parse is the better library, anyway, so switch
+// to that at some point.
 import url from 'url';
 
 
@@ -72,7 +76,7 @@ function extractParamsFromQuery(query) {
   let bareQuery = qs.stringify(nonQueryParams);
 
   return {bareQuery, extractedQueryParams};
-}
+OB}
 
 
 /**

@@ -22,31 +22,9 @@ import actions from './actions';
 import CampaignUrlBuilder from './components/campaign-url-builder';
 import store from './store';
 
-
-/**
- * Maps Redux state to component props
- * @param {Object} state The redux state.
- * @return {Object} The props from the state.
- */
-function mapStateToProps(state) {
-  return state;
-}
-
-
-/**
- * Maps Redux action dispatchers to component props.
- * @param {function} dispatch The redux dispatch function.
- * @return {Object} The props with dispatch actions.
- */
-function mapDispatchToProps(dispatch) {
-  return {
-    actions: bindActionCreators(actions, dispatch),
-  };
-}
-
-
-let CampaignUrlBuilderApp = connect(
-    mapStateToProps, mapDispatchToProps)(CampaignUrlBuilder);
+const CampaignUrlBuilderApp = connect(
+    (state => state), actions,
+)(CampaignUrlBuilder);
 
 
 /**

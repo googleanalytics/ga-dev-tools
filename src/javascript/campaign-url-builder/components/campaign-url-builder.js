@@ -53,8 +53,8 @@ export default class CampaignUrlBuilder extends React.Component {
     let {params, bareUrl} = extractParamsFromWebsiteUrl(target.value);
 
     this.bareUrl = bareUrl;
-    this.props.actions.updateWebsiteUrl(target.value);
-    this.props.actions.updateParams(params);
+    this.props.updateWebsiteUrl(target.value);
+    this.props.updateParams(params);
   }
 
 
@@ -64,7 +64,7 @@ export default class CampaignUrlBuilder extends React.Component {
    *     containing the target.name and target.value properties.
    */
   handleParamChange = ({target: {name, value}}) => {
-    this.props.actions.updateParams({[name]: value});
+    this.props.updateParams({[name]: value});
   }
 
 
@@ -74,7 +74,7 @@ export default class CampaignUrlBuilder extends React.Component {
    *     containing the target.checked property.
    */
   handleUseFragmentToggle = ({target}) => {
-    this.props.actions.updateSettings({useFragment: target.checked});
+    this.props.updateSettings({useFragment: target.checked});
   }
 
 
@@ -88,7 +88,7 @@ export default class CampaignUrlBuilder extends React.Component {
     let {params, settings} = this.props;
     let urlParams = sanitizeParams(params, {trim: true, removeBlanks: true});
 
-    if (bareUrl && REQUIRED_PARAMS.every((param) => urlParams[param])) {
+    if (bareUrl && REQUIRED_PARAMS.every(param => urlParams[param])) {
       return addParamsToUrl(bareUrl, urlParams, settings.useFragment);
     }
   }

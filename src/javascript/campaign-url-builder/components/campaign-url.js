@@ -16,6 +16,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import Textarea from 'react-textarea-autosize';
+import classNames from 'classnames'
 import {gaAll} from '../../analytics';
 import AlertDispatcher from '../../components/alert-dispatcher';
 import Icon from '../../components/icon';
@@ -23,6 +24,7 @@ import IconButton from '../../components/icon-button';
 import supports from '../../supports';
 import {shortenUrl} from '../../url-shortener';
 import {copyElementText} from '../../utils';
+import renderProblematic from './problematic.js'
 
 
 const ACTION_TIMEOUT = 1500;
@@ -140,9 +142,9 @@ export default class CampaignUrl extends React.Component {
 
   /**
    * Renders the URL box and the "use fragment" toggle below it.
-   * @return {Object}
+   * @return {JSX Literal}
    */
-  renderUrl() {
+  renderUrl(problematicElement) {
     let url = this.state.showShortUrl ? this.state.shortUrl : this.props.url;
     return (
       <div>
@@ -169,6 +171,11 @@ export default class CampaignUrl extends React.Component {
               </label>
             </div>
           </div>
+          {problematicElement ?
+            <div className="CampaignUrlResult-alert-box">
+              {problematicElement}
+            </div> : null
+          }
           {this.renderActionsButton()}
           <div ref="url" className="u-visuallyHidden">{url}</div>
         </div>
@@ -176,10 +183,9 @@ export default class CampaignUrl extends React.Component {
     );
   }
 
-
   /**
    * Renders the Copy to Clipboard and Shorten URL buttons.
-   * @return {Object}
+   * @return {JSX Literal}
    */
   renderActionsButton() {
     return supports.copyToClipboard() ? (
@@ -237,14 +243,19 @@ export default class CampaignUrl extends React.Component {
 
   /** @return {Object} The React component. */
   render() {
+    const problematicElement = renderProblematic(this.props.url)
+    const className = classNames("CampaignUrlResult", {
+      'CampaignUrlResult-problem': problematicElement !== null
+    })
+
     return (
-      <div className="CampaignUrlResult">
+      <div className={className}>
         {this.props.url ?
           <h3 className="CampaignUrlResult-title">
             Share the generated campaign URL
           </h3>
           : null }
-        {this.props.url ? this.renderUrl() :
+        {this.props.url ? this.renderUrl(problematicElement) :
           <p className="CampaignUrlResult-item">
             <span
               style={{fontSize: '2em', color: '#bbb', verticalAlign: '-0.4em'}}
