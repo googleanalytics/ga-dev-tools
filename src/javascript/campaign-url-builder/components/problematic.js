@@ -34,8 +34,9 @@ import {isFunction, isString, isNil} from 'lodash'
  * returning a React Element.
  */
 
-const matches = pattern => url => (new RegExp(pattern, 'i')).test(url)
-const domainMatches = domain => matches(`^(?:https?://)?(:?${domain})`)
+const matchesRegexp = regexp => url => regexp.test(url)
+const matches = pattern => matchesRegexp(new RegExp(pattern, 'i'))
+const domainMatches = domain => matches('^(?:https?://)?(:?' + domain.replace('.', '\\.') + ')')
 // NOTE: technically this pattern is incorrect, as the - character can
 // only appear in a domain BETWEEN two other characters.
 const domainSuffix = suffix => domainMatches(`(?:[a-z0-9-]+\.)*(?:${suffix})`)
