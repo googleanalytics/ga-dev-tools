@@ -17,6 +17,7 @@ python_modules
 
 # Built files
 public/
+build/
 
 # Private keys
 service-account-key.json
