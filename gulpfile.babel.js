@@ -41,10 +41,6 @@ import postcssUrl from 'postcss-url';
 import request from 'request';
 import webpack from 'webpack';
 
-
-let devServer;
-
-
 /**
  * Returns true if the NODE_ENV environment variable is production.
  * @return {boolean}
@@ -273,11 +269,15 @@ gulp.task('test', ['lint'], function() {
       .pipe(mocha());
 });
 
-
-gulp.task('serve', [], function(done) {
-  devServer = spawn('dev_appserver.py', ['.']);
-  devServer.stderr.on('data', (data) => {
-    if (data.includes('Starting module')) done();
+gulp.task('serve', [], done => {
+  const devServer = spawn('dev_appserver.py', [
+    '.',
+    '--host', process.env.GA_TOOLS_HOST || 'localhost',
+    '--port', process.env.GA_TOOLS_PORT || '8080',
+  ]);
+  devServer.stderr.on('data', data => {
+    if (data.includes('Starting module'))
+      done();
     process.stdout.write(data);
   });
 });
