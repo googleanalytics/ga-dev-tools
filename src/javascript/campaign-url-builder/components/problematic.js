@@ -97,8 +97,8 @@ const badList = [{
   render: literal(<div>
     <strong>It appears you are creating a Google Play Store url.
     </strong> You should use the <a href={googlePlayBuilderUrl}
-    target="_blank">Google Play URL Builder</a> instead, to create URLS
-    to track app install campaigns.
+    target="_blank">Google Play URL Builder</a> instead when creating
+    tracking links for Play Store apps.
   </div>),
   eventLabel: "Google Play Store",
 }, {
@@ -107,8 +107,8 @@ const badList = [{
   render: literal(<div>
     <strong>It appears you are creating an iOS App Store url.
     </strong> You should use the <a href={itunesStoreBuilderUrl}
-    target="_blank">iOS Campaign Tracking URL Builder</a> instead, to
-    create URLs to track iOS app install campaigns.
+    target="_blank">iOS Campaign Tracking URL Builder</a> instead when
+    creating tracking links for iOS App Store apps.
   </div>),
   eventLabel: "iOS App Store",
 }, {
