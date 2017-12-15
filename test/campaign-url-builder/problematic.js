@@ -13,6 +13,7 @@
 // limitations under the License.
 
 import { expect } from 'chai'
+import ReactTestUtils from 'react-dom/test-utils';
 import renderProblematic from
   '../../src/javascript/campaign-url-builder/components/problematic.js'
 
@@ -21,8 +22,7 @@ import renderProblematic from
 const thoroughlyTestDomain = (domain, test) =>
   ["", "http://", "https://"].forEach(proto =>
     ["", "www.", "play.google.com."].forEach(subdomain =>
-      ["", "/", "/object/path", "/trailing/slash/"]
-      .forEach(path =>
+      ["", "/", "/object/path", "/trailing/slash/"].forEach(path =>
         ["", "?utm_content=test"].forEach(query =>
           ["", "#fragment"].forEach(fragment =>
             test(`${proto}${subdomain}${domain}${path}${query}${fragment}`)
@@ -33,32 +33,30 @@ const thoroughlyTestDomain = (domain, test) =>
   )
 
 describe('campaign-url-builder', () => {
-  describe('problematic-urls', () => {
-    describe('None of these URLs should be problematic:', () => {
-      ['example.com', 'mail.google.com'].forEach(domain =>
-        it(domain, () =>
-          thoroughlyTestDomain(domain, url => {
-            const renderResult = renderProblematic(url)
-            expect(renderResult, url).to.be.null
-          })
-        )
-      )
-    })
-
-    describe('All of these URLs should be problematic:', () => {
-      [
-        'play.google.com',
-        'itunes.apple.com',
-        'ga-dev-tools.appspot.com'
-      ].forEach(domain => it(domain, () =>
+  describe('renderProblematic', () => {
+    // TODO(nathanwest): Find out what the ideal style is, here. One test
+    // case per full URL? per domain? Per behavior?
+    it("does not flag ordinary URLs as problematic", () => {
+      ['example.com', 'mail.google.com']
+      .forEach(domain => {
         thoroughlyTestDomain(domain, url => {
           const renderResult = renderProblematic(url)
-          expect(renderResult, url).to.not.be.null
+          expect(renderResult, url).to.be.null
+        })
+      })
+    })
+
+    it("returns a React element for problematic URLs", () => {
+      ['play.google.com', 'itunes.apple.com', 'ga-dev-tools.appspot.com']
+      .forEach(domain => {
+        thoroughlyTestDomain(domain, url => {
+          const renderResult = renderProblematic(url)
+          expect(renderResult, url).to.satisfy(ReactTestUtils.isElement)
           // TODO(nathanwest): Test that the returned React element includes
           // a url to the correct url builder. This requires introspecting
-          // React elements, which I don't know how to do yet.s
+          // React elements, which I don't know how to do yet.
         })
-      ))
+      })
     })
 
     describe('performance', () => {
