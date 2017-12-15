@@ -76,7 +76,7 @@ function extractParamsFromQuery(query) {
   let bareQuery = qs.stringify(nonQueryParams);
 
   return {bareQuery, extractedQueryParams};
-OB}
+}
 
 
 /**

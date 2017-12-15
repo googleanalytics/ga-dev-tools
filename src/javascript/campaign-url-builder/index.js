@@ -16,7 +16,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import {connect, Provider} from 'react-redux';
-import {bindActionCreators} from 'redux';
 
 import actions from './actions';
 import CampaignUrlBuilder from './components/campaign-url-builder';

@@ -21,14 +21,20 @@
  */
 
 import React from 'react';
-import {isFunction, isString, isNil, isRegExp} from 'lodash'
+import {isFunction, isRegExp} from 'lodash'
 
 
+// Create a function that checks if a url matches a regular expression.
+// I've refactored this into a separate function, because doing something
+// like this:
+//
+//   matchesPattern = pattern => url => (new Regexp(pattern)).test(url)
+//
+// Would result in recompiling the regex every time.
 const matchesRegexp = regexp => url => regexp.test(url)
-const matchesPattern = pattern => matchesRegexp(new RegExp(pattern, 'i'))
 const matches = pattern => isRegExp(pattern) ?
   matchesRegexp(pattern) :
-  matchesPattern(pattern)
+  matchesRegexp(new RegExp(pattern, 'i'))
 
 
 /**
@@ -37,6 +43,9 @@ const matches = pattern => isRegExp(pattern) ?
  * be prepended with http:// or https://.
  *
  * This function accepts regex patterns, but escapes all . characters.
+ *
+ * @return {(url:string) => boolean} a function that returns true if the
+ * domain matches the given url exactly
  */
 const domainMatches = domain =>
   matches('^(?:https?://)?(:?' + domain.replace('.', '\\.') + ')(?:$|[/?#])')
@@ -48,6 +57,9 @@ const domainMatches = domain =>
  * "mail.google.com", etc, as well as just "google.com".
  *
  * This function accepts regex patterns, but escapes all . characters.
+ *
+ * @return {(url:string) => boolean} a function that returns true if the
+ * domain matches the given url as a suffix
  */
 const domainSuffix = suffix =>
   domainMatches(`(?:[a-z0-9-]+.)*(?:${suffix})`)

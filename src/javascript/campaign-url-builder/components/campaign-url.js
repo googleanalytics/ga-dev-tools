@@ -256,7 +256,7 @@ export default class CampaignUrl extends React.Component {
    * @param {Object} nextProps
    */
   componentWillReceiveProps(nextProps) {
-    if (nextProps.url != this.props.url) {
+    if (nextProps.url !== this.props.url) {
       AlertDispatcher.removeAll();
       this.setState({
         shortUrl: null,
