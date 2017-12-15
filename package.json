@@ -25,6 +25,7 @@
     "babel-register": "^6.26.0",
     "camelcase": "^3.0.0",
     "caniuse-db": "^1.0.30000783",
+    "chai": "^4.1.2",
     "chart.js": "1.1.1",
     "classnames": "^2.2.5",
     "core-js": "^2.5.3",
