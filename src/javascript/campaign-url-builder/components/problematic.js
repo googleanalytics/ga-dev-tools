@@ -27,8 +27,8 @@ import {isFunction, isString, isNil, isRegExp} from 'lodash'
 const matchesRegexp = regexp => url => regexp.test(url)
 const matchesPattern = pattern => matchesRegexp(new RegExp(pattern, 'i'))
 const matches = pattern => isRegExp(pattern) ?
-	matchesRegexp(pattern) :
-	matchesPattern(pattern)
+  matchesRegexp(pattern) :
+  matchesPattern(pattern)
 
 
 /**
@@ -39,7 +39,7 @@ const matches = pattern => isRegExp(pattern) ?
  * This function accepts regex patterns, but escapes all . characters.
  */
 const domainMatches = domain =>
-	matches('^(?:https?://)?(:?' + domain.replace('.', '\\.') + ')(?:$|[/?#])')
+  matches('^(?:https?://)?(:?' + domain.replace('.', '\\.') + ')(?:$|[/?#])')
 
 /**
  * Given a domain suffix, create a function that returns true if the
@@ -50,7 +50,7 @@ const domainMatches = domain =>
  * This function accepts regex patterns, but escapes all . characters.
  */
 const domainSuffix = suffix =>
-	domainMatches(`(?:[a-z0-9-]+.)*(?:${suffix})`)
+  domainMatches(`(?:[a-z0-9-]+.)*(?:${suffix})`)
 
 const googlePlayBuilderUrl = "https://developers.google.com/analytics/devguides/collection/android/v4/campaigns#google-play-url-builder"
 const itunesStoreBuilderUrl = "https://developers.google.com/analytics/devguides/collection/ios/v3/campaigns#url-builder"
@@ -68,29 +68,29 @@ const itunesStoreBuilderUrl = "https://developers.google.com/analytics/devguides
  * field
  */
 const badList = [{
-	name: "Play Store URL",  // This is just for reference
-	test: domainSuffix('play.google.com'),
-	render: <div>
-		<strong>It appears you are creating a Google Play Store url.
-		</strong> Please consider using the <a href={googlePlayBuilderUrl}
-		target="_blank">Google Play URL Builder</a> instead!
-	</div>,
+  name: "Play Store URL",  // This is just for reference
+  test: domainSuffix('play.google.com'),
+  render: <div>
+    <strong>It appears you are creating a Google Play Store url.
+    </strong> Please consider using the <a href={googlePlayBuilderUrl}
+    target="_blank">Google Play URL Builder</a> instead!
+  </div>,
 }, {
-	name: "iOS App Store URL",
-	test: domainSuffix('itunes.apple.com'),
-	render: <div>
-		<strong>It appears you are creating an iOS App Store url.
-		</strong> Please consider using the <a href={itunesStoreBuilderUrl}
-		target="_blank">iOS Campaign Tracking URL Builder</a> instead!
-	</div>,
+  name: "iOS App Store URL",
+  test: domainSuffix('itunes.apple.com'),
+  render: <div>
+    <strong>It appears you are creating an iOS App Store url.
+    </strong> Please consider using the <a href={itunesStoreBuilderUrl}
+    target="_blank">iOS Campaign Tracking URL Builder</a> instead!
+  </div>,
 }, {
-	name: "GA Dev Tools URL",
-	test: domainSuffix('ga-dev-tools.appspot.com'),
-	render: <div>
-		It appears that you are linking to this site, <code>ga-dev-tools.appspot.com
-		</code>, instead of your own. You should put your own site's URL in
-		the <strong> Website URL</strong> field, above.
-	</div>,
+  name: "GA Dev Tools URL",
+  test: domainSuffix('ga-dev-tools.appspot.com'),
+  render: <div>
+    It appears that you are linking to this site, <code>ga-dev-tools.appspot.com
+    </code>, instead of your own. You should put your own site's URL in
+    the <strong> Website URL</strong> field, above.
+  </div>,
 }];
 
 /**
@@ -102,17 +102,17 @@ const badList = [{
  * @return {Element | null}
  */
 export default function renderProblematic(url) {
-	// TODO(nathanwest): It's kind of inneficient to convert a string to
-	// a URL every time. Modify the call site to pass around a URL
-	// instance, and don't render it to a string until the last possible
-	// moment
-	for(const {test, render} of badList) {
-		if(test(url)) {
-			return <div className="CampaignUrlResult-alert-box">
-				{isFunction(render) ? render(url) : render}
-			</div>
-		}
-	}
+  // TODO(nathanwest): It's kind of inneficient to convert a string to
+  // a URL every time. Modify the call site to pass around a URL
+  // instance, and don't render it to a string until the last possible
+  // moment
+  for(const {test, render} of badList) {
+    if(test(url)) {
+      return <div className="CampaignUrlResult-alert-box">
+        {isFunction(render) ? render(url) : render}
+      </div>
+    }
+  }
 
-	return null
+  return null
 }
