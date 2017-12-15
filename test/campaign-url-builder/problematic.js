@@ -39,23 +39,34 @@ describe('campaign-url-builder', () => {
       .forEach(domain => {
         thoroughlyTestDomain(domain, url => {
           const renderResult = renderProblematic(url)
-          expect(renderResult, url).to.be.null
+          expect(renderResult)
+            .to.be.an('object')
+            .that.deep.equals({element: null, eventLabel: null})
         })
       })
     })
 
-    it("returns a React element for problematic URLs", () => {
-      ['play.google.com', 'itunes.apple.com', 'ga-dev-tools.appspot.com']
-      .forEach(domain => {
-        thoroughlyTestDomain(domain, url => {
-          const renderResult = renderProblematic(url)
-          expect(renderResult, url).to.satisfy(ReactTestUtils.isElement)
-          // TODO(nathanwest): Test that the returned React element includes
-          // a url to the correct url builder. This requires introspecting
-          // React elements, which I don't know how to do yet.
+    it("returns a React element and analytics alert for problematic URLs",
+      () => {
+        [
+          {domain: 'play.google.com', event: "Google Play Store"},
+          {domain: 'itunes.apple.com', event: "iOS App Store"},
+          {domain: 'ga-dev-tools.appspot.com', event: "GA Dev Tools"},
+        ].forEach(({domain, event}) => {
+          thoroughlyTestDomain(domain, url => {
+            const renderResult = renderProblematic(url)
+            expect(renderResult)
+              .to.be.an('object')
+              .that.includes({eventLabel: event})
+              .and.has.property('element')
+                .that.satisfies(ReactTestUtils.isElement)
+            // TODO(nathanwest): Test that the returned React element includes
+            // a url to the correct url builder. This requires introspecting
+            // React elements, which I don't know how to do yet.
+          })
         })
-      })
-    })
+      }
+    )
 
     describe('performance', () => {
       // TODO(nathanwest): during development, there was a major

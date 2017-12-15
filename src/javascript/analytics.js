@@ -16,6 +16,7 @@
 /* global ga */
 
 
+import {isFunction} from 'lodash'
 import 'autotrack/lib/plugins/clean-url-tracker';
 import 'autotrack/lib/plugins/event-tracker';
 import 'autotrack/lib/plugins/impression-tracker';
@@ -66,16 +67,14 @@ export const NULL_VALUE = '(not set)';
  *     `trackingId` fields.
  * @return {Function} The proxied ga() function.
  */
-const createGaProxy = (trackers) => {
-  return (command, ...args) => {
-    for (let {name} of trackers) {
-      if (typeof command == 'function') {
-        window.ga(() => command(window.ga.getByName(name)));
-      } else {
-        window.ga(`${name}.${command}`, ...args);
-      }
+const createGaProxy = trackers => (command, ...args) => {
+  for (const {name} of trackers) {
+    if (isFunction(command)) {
+      window.ga(() => command(window.ga.getByName(name)));
+    } else {
+      window.ga(`${name}.${command}`, ...args);
     }
-  };
+  }
 };
 
 

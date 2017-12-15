@@ -21,7 +21,7 @@
  */
 
 import React from 'react';
-import {isFunction, isRegExp} from 'lodash'
+import {isRegExp} from 'lodash'
 
 
 // Create a function that checks if a url matches a regular expression.
@@ -67,6 +67,10 @@ const domainSuffix = suffix =>
 const googlePlayBuilderUrl = "https://developers.google.com/analytics/devguides/collection/android/v4/campaigns#google-play-url-builder"
 const itunesStoreBuilderUrl = "https://developers.google.com/analytics/devguides/collection/ios/v3/campaigns#url-builder"
 
+// Many fields in the badlist require a function with the signature
+// "url => thing". Use literal to make a function that just returns a
+// literal value
+const literal = thing => url => thing
 /**
  * BADLIST
  *
@@ -74,53 +78,70 @@ const itunesStoreBuilderUrl = "https://developers.google.com/analytics/devguides
  * a series of problematic conditions, which are problably mistakes on
  * the part of the user. Each problematic item is a test, which is a
  * function that returns true if the url object is problematic, along
- * with a render, which is either a React Element or a function taking
- * a url and returning a React Element. The rendered element is used to
- * alert the user that there's a problem.
- * field
+ * with a render, which is a function taking a url and returning a React
+ * Element. The rendered element is used to alert the user that there's
+ * a problem.
+ *
+ * The eventLabel is used for Google Analytics reporting. This app
+ * reports Problematic URL event; the label states which kind of URL
+ * triggered the event.
+ *
+ * NOTE: In the future, we'll likely re-think these tools/pages based
+ * on the fact that you're meant to use the URL builder in the Network
+ * Settings section of our product for everything EXCEPT custom
+ * campaigns. See b/69681865
  */
 const badList = [{
   name: "Play Store URL",  // This is just for reference
   test: domainSuffix('play.google.com'),
-  render: <div>
+  render: literal(<div>
     <strong>It appears you are creating a Google Play Store url.
-    </strong> Please consider using the <a href={googlePlayBuilderUrl}
-    target="_blank">Google Play URL Builder</a> instead!
-  </div>,
+    </strong> You should use the <a href={googlePlayBuilderUrl}
+    target="_blank">Google Play URL Builder</a>, instead, to tack app
+    install campaigns.
+  </div>),
+  eventLabel: "Google Play Store",
 }, {
   name: "iOS App Store URL",
   test: domainSuffix('itunes.apple.com'),
-  render: <div>
+  render: literal(<div>
     <strong>It appears you are creating an iOS App Store url.
-    </strong> Please consider using the <a href={itunesStoreBuilderUrl}
-    target="_blank">iOS Campaign Tracking URL Builder</a> instead!
-  </div>,
+    </strong> You should use the <a href={itunesStoreBuilderUrl}
+    target="_blank">iOS Campaign Tracking URL Builder</a>, instead, to
+    track iOS app install campaigns.
+  </div>),
+  eventLabel: "iOS App Store",
 }, {
   name: "GA Dev Tools URL",
   test: domainSuffix('ga-dev-tools.appspot.com'),
-  render: <div>
-    It appears that you are linking to this site, <code>ga-dev-tools.appspot.com
-    </code>, instead of your own. You should put your own site's URL in
-    the <strong> Website URL</strong> field, above.
-  </div>,
+  render: literal(<div>
+    It appears that you are linking to this site, <code>
+    ga-dev-tools.appspot.com</code>, instead of your own. You should
+    put your own site's URL in the <strong> Website URL</strong> field,
+    above.
+  </div>),
+  eventLabel: "GA Dev Tools",
 }];
 
 /**
  * Given a URL, use the problematic URLs list to either return a React
  * Element if the URL is problematic, or null if it's acceptable.
+ * Additionally return an event label for Google Analytics Reporting.
  *
  * @param  {string | URL} url The URL to check. Should either be a
  *     string or a URL object.
- * @return {Element | null}
+ * @return {Object} An object containing the keys 'element'
  */
 export default function renderProblematic(url) {
-  for(const {test, render} of badList) {
+  for(const {test, render, eventLabel} of badList) {
     if(test(url)) {
-      return <div className="CampaignUrlResult-alert-box">
-        {isFunction(render) ? render(url) : render}
-      </div>
+      return {
+        element:
+          <div className="CampaignUrlResult-alert-box">{render(url)}</div>,
+        eventLabel: eventLabel,
+      }
     }
   }
 
-  return null
+  return {element: null, eventLabel: null}
 }

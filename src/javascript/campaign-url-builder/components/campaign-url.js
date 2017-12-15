@@ -17,6 +17,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import Textarea from 'react-textarea-autosize';
 import classNames from 'classnames'
+import {isNil} from 'lodash'
 import {gaAll} from '../../analytics';
 import AlertDispatcher from '../../components/alert-dispatcher';
 import Icon from '../../components/icon';
@@ -35,17 +36,39 @@ const INSTRUCTIONS_TEXT =
     'automatically generated for you here.';
 
 
+const gaSendEvent = ({category, action, label}) =>
+  gaAll('send', 'event', {
+    eventCategory: category,
+    eventAction: action,
+    eventLabel: label
+  })
+
+
 /**
  * A component that renders the generated campaign URL.
  */
 export default class CampaignUrl extends React.Component {
+  constructor(props) {
+    super(props)
 
-  state = {
-    urlCopied: false,
-    shortUrl: null,
-    showShortUrl: false,
-    isShorteningUrl: false,
-    problematicBypass: false,
+    const {element, eventLabel} = renderProblematic(props.url)
+    if(!isNil(element)) {
+      gaSendEvent({
+        category: 'Campaign URL',
+        action: 'Problematic URL',
+        label: eventLabel,
+      })
+    }
+
+    this.state = {
+      urlCopied: false,
+      shortUrl: null,
+      showShortUrl: false,
+      isShorteningUrl: false,
+      problematicBypass: false,
+      problematicAlert: element,
+      problematicEventLabel: eventLabel
+    }
   }
 
 
@@ -59,10 +82,10 @@ export default class CampaignUrl extends React.Component {
     if (copyElementText(url)) {
       this.setState({urlCopied: true});
 
-      gaAll('send', 'event', {
-        eventCategory: 'Campaign URL',
-        eventAction: 'copy-to-clipboard',
-        eventLabel: `${this.state.showShortUrl ? 'short' : 'long'} url`,
+      gaSendEvent({
+        category: 'Campaign URL',
+        action: 'copy-to-clipboard',
+        label: `${this.state.showShortUrl ? 'short' : 'long'} url`,
       });
 
       // After three second, remove the success checkbox.
@@ -75,6 +98,12 @@ export default class CampaignUrl extends React.Component {
   }
 
   confirmProblematic = () => {
+    gaSendEvent({
+      category: "CampaignUrl",
+      action: 'bypass-problematic',
+      label: this.state.problematicEventLabel
+    })
+
     this.setState({problematicBypass: true})
   }
 
@@ -95,10 +124,10 @@ export default class CampaignUrl extends React.Component {
         shortUrl: shortUrl,
         showShortUrl: true,
       });
-      gaAll('send', 'event', {
-        eventCategory: 'Campaign URL',
-        eventAction: 'shorten',
-        eventLabel: '(not set)',
+      gaSendEvent({
+        category: 'Campaign URL',
+        action: 'shorten',
+        label: '(not set)',
       });
     } catch (err) {
       AlertDispatcher.addOnce({
@@ -121,10 +150,10 @@ export default class CampaignUrl extends React.Component {
     this.setState({
       showShortUrl: false,
     });
-    gaAll('send', 'event', {
-      eventCategory: 'Campaign URL',
-      eventAction: 'unshorten',
-      eventLabel: '(not set)',
+    gaSendEvent({
+      category: 'Campaign URL',
+      action: 'unshorten',
+      label: '(not set)',
     });
   }
 
@@ -134,7 +163,7 @@ export default class CampaignUrl extends React.Component {
    * the fragment (rather than the query).
    * @param {Event} e
    */
-  handleUseFragmentToggle = (e) => {
+  handleUseFragmentToggle = e => {
     this.setState({
       urlCopied: false,
       shortUrl: null,
@@ -269,13 +298,31 @@ export default class CampaignUrl extends React.Component {
         isShorteningUrl: false,
         problematicBypass: false,
       });
+
+      // Compute the renderProblematic, and dispatch a GA event if the
+      // state went from Not Problematic to Problematic
+      // TODO(nathanwest): deduplicate this and the constructor code
+      const {element, eventLabel} = renderProblematic(nextProps.url)
+      this.setState(prevState => {
+        if(isNil(prevState.problematicElement) && !isNil(element)) {
+          gaSendEvent({
+            category: 'Campaign URL',
+            action: 'Problematic URL',
+            label: eventLabel,
+          })
+        }
+        return {
+          problematicAlert: element,
+          problematicEventLabel: eventLabel
+        }
+      })
     }
   }
 
 
   /** @return {Object} The React component. */
   render() {
-    const problematicElement = renderProblematic(this.props.url)
+    const problematicElement = this.state.problematicAlert
     const className = classNames("CampaignUrlResult", {
       'CampaignUrlResult-problem': problematicElement !== null
     })
