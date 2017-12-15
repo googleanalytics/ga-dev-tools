@@ -34,8 +34,6 @@ const thoroughlyTestDomain = (domain, test) =>
 
 describe('campaign-url-builder', () => {
   describe('renderProblematic', () => {
-    // TODO(nathanwest): Find out what the ideal style is, here. One test
-    // case per full URL? per domain? Per behavior?
     it("does not flag ordinary URLs as problematic", () => {
       ['example.com', 'mail.google.com']
       .forEach(domain => {

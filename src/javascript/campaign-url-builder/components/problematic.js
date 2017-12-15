@@ -114,10 +114,6 @@ const badList = [{
  * @return {Element | null}
  */
 export default function renderProblematic(url) {
-  // TODO(nathanwest): It's kind of inneficient to convert a string to
-  // a URL every time. Modify the call site to pass around a URL
-  // instance, and don't render it to a string until the last possible
-  // moment
   for(const {test, render} of badList) {
     if(test(url)) {
       return <div className="CampaignUrlResult-alert-box">

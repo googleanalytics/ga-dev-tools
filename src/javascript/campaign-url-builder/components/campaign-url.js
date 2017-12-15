@@ -147,7 +147,10 @@ export default class CampaignUrl extends React.Component {
 
   /**
    * Renders the URL box and the "use fragment" toggle below it.
-   * @return {JSX Literal}
+   * @param {React Element|null} problematicElement If not null, this
+   * elemenet is rendered near the Copy/Shorten buttons, to warn the
+   * user that the URL is problematic.
+   * @return {React Element}
    */
   renderUrl(problematicElement) {
     let url = this.state.showShortUrl ? this.state.shortUrl : this.props.url;
@@ -195,6 +198,8 @@ export default class CampaignUrl extends React.Component {
 
   /**
    * Renders the Copy to Clipboard and Shorten URL buttons.
+   * @param {boolean} isProblematic If this parameter is true, the buttons
+   * are hidden behind an "I know what I'm doing" warning button.
    * @return {JSX Literal}
    */
   renderActionsButton(isProblematic) {
