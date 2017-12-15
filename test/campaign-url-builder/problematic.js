@@ -21,7 +21,8 @@ import renderProblematic from
 const thoroughlyTestDomain = (domain, test) =>
   ["", "http://", "https://"].forEach(proto =>
     ["", "www.", "play.google.com."].forEach(subdomain =>
-      ["", "/", "/object/path", "/trailing/slash/"].forEach(path =>
+      ["", "/", "/object/path", "/trailing/slash/"]
+      .forEach(path =>
         ["", "?utm_content=test"].forEach(query =>
           ["", "#fragment"].forEach(fragment =>
             test(`${proto}${subdomain}${domain}${path}${query}${fragment}`)
@@ -32,30 +33,30 @@ const thoroughlyTestDomain = (domain, test) =>
   )
 
 describe('campaign-url-builder', () => {
-  describe('problematic URL detection', () => {
-    describe('acceptable URLs', () => {
+  describe('problematic-urls', () => {
+    describe('None of these URLs should be problematic:', () => {
       ['example.com', 'mail.google.com'].forEach(domain =>
-        thoroughlyTestDomain(domain, url =>
-          it(`doesn't flag this url as problematic: "${url}"`, () => {
+        it(domain, () =>
+          thoroughlyTestDomain(domain, url => {
             const renderResult = renderProblematic(url)
-            expect(renderResult).to.be.null
+            expect(renderResult, url).to.be.null
           })
         )
       )
     })
 
-    describe('problematic URLs', () => {
+    describe('All of these URLs should be problematic:', () => {
       [
         'play.google.com',
         'itunes.apple.com',
         'ga-dev-tools.appspot.com'
-      ].forEach(domain => thoroughlyTestDomain(domain, url =>
-        it(`flags this url as problematic: "${url}"`, () => {
+      ].forEach(domain => it(domain, () =>
+        thoroughlyTestDomain(domain, url => {
           const renderResult = renderProblematic(url)
-          expect(renderResult).to.not.be.null
+          expect(renderResult, url).to.not.be.null
           // TODO(nathanwest): Test that the returned React element includes
           // a url to the correct url builder. This requires introspecting
-          // React elements, which I don't know how to do yet.
+          // React elements, which I don't know how to do yet.s
         })
       ))
     })
