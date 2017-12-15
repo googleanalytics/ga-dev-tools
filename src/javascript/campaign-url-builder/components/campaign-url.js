@@ -45,6 +45,7 @@ export default class CampaignUrl extends React.Component {
     shortUrl: null,
     showShortUrl: false,
     isShorteningUrl: false,
+    problematicBypass: false,
   }
 
 
@@ -71,6 +72,10 @@ export default class CampaignUrl extends React.Component {
     } else {
       // TODO(philipwalton): handle error case
     }
+  }
+
+  confirmProblematic = () => {
+    this.setState({problematicBypass: true})
   }
 
 
@@ -171,48 +176,69 @@ export default class CampaignUrl extends React.Component {
               </label>
             </div>
           </div>
-          {problematicElement ?
-            <div className="CampaignUrlResult-alert-box">
-              {problematicElement}
-            </div> : null
-          }
-          {this.renderActionsButton()}
+          {problematicElement}
+          {this.renderActionsButton(problematicElement ? true : false)}
           <div ref="url" className="u-visuallyHidden">{url}</div>
         </div>
       </div>
     );
   }
 
+  // NOTE(nathanwest): In the renderActionsButton, below, the IconButton
+  // elements all have keys. This is because many of them are conditionally
+  // rendered, which can confuse React's renderer, because it thinks that
+  // a button that just disappeared and a button that just appeared are
+  // all the same button. The keys let react know that they are different
+  // buttons, which ensures that things like button state
+  // (idle/hover/active/pressed) aren't eroneously preserved between
+  // different buttons.
+
   /**
    * Renders the Copy to Clipboard and Shorten URL buttons.
    * @return {JSX Literal}
    */
-  renderActionsButton() {
+  renderActionsButton(isProblematic) {
     return supports.copyToClipboard() ? (
       <div className="CampaignUrlResult-item">
-        <div className="ButtonSet">
-          <IconButton
-            type={this.state.urlCopied ? 'check' : 'content-paste'}
-            onClick={this.copyUrl}>
-            Copy URL
-          </IconButton>
+        {isProblematic && !this.state.problematicBypass ?
+          <div className="ButtonSet">
+            <IconButton
+              type="warning"
+              onClick={this.confirmProblematic}
+              key="confirmProblematicButton"
+            >
+              I know what I'm doing
+            </IconButton>
+          </div> :
+          <div className="ButtonSet">
+            <IconButton
+              type={this.state.urlCopied ? 'check' : 'content-paste'}
+              onClick={this.copyUrl}
+              key="copyUrlButton"
+            >
+              Copy URL
+            </IconButton>
 
-          {this.state.showShortUrl ? (
-            <IconButton
-              type="refresh"
-              onClick={this.longenUrl}>
-              Show full URL
-            </IconButton>
-          ) : (
-            <IconButton
-              type="link"
-              disabled={this.state.isShorteningUrl}
-              onClick={this.shortenUrl}>
-              {this.state.isShorteningUrl ?
-                'Shortening...' : 'Convert URL to Short Link'}
-            </IconButton>
-          )}
-        </div>
+            {this.state.showShortUrl ? (
+              <IconButton
+                type="refresh"
+                onClick={this.longenUrl}
+                key="refreshButton">
+                Show full URL
+              </IconButton>
+            ) : (
+              <IconButton
+                type="link"
+                disabled={this.state.isShorteningUrl}
+                onClick={this.shortenUrl}
+                key="shortenButton"
+              >
+                {this.state.isShorteningUrl ?
+                  'Shortening...' : 'Convert URL to Short Link'}
+              </IconButton>
+            )}
+          </div>
+        }
       </div>
     ) : null;
   }
@@ -236,6 +262,7 @@ export default class CampaignUrl extends React.Component {
         shortUrl: null,
         showShortUrl: false,
         isShorteningUrl: false,
+        problematicBypass: false,
       });
     }
   }
