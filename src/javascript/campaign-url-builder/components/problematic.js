@@ -97,8 +97,8 @@ const badList = [{
   render: literal(<div>
     <strong>It appears you are creating a Google Play Store url.
     </strong> You should use the <a href={googlePlayBuilderUrl}
-    target="_blank">Google Play URL Builder</a>, instead, to tack app
-    install campaigns.
+    target="_blank">Google Play URL Builder</a> instead, to create URLS
+    to track app install campaigns.
   </div>),
   eventLabel: "Google Play Store",
 }, {
@@ -107,8 +107,8 @@ const badList = [{
   render: literal(<div>
     <strong>It appears you are creating an iOS App Store url.
     </strong> You should use the <a href={itunesStoreBuilderUrl}
-    target="_blank">iOS Campaign Tracking URL Builder</a>, instead, to
-    track iOS app install campaigns.
+    target="_blank">iOS Campaign Tracking URL Builder</a> instead, to
+    create URLs to track iOS app install campaigns.
   </div>),
   eventLabel: "iOS App Store",
 }, {
@@ -117,7 +117,7 @@ const badList = [{
   render: literal(<div>
     It appears that you are linking to this site, <code>
     ga-dev-tools.appspot.com</code>, instead of your own. You should
-    put your own site's URL in the <strong> Website URL</strong> field,
+    put your own site's URL in the <strong>Website URL</strong> field,
     above.
   </div>),
   eventLabel: "GA Dev Tools",
