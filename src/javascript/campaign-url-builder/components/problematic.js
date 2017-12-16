@@ -24,14 +24,27 @@ import React from 'react';
 import {isRegExp} from 'lodash'
 
 
-// Create a function that checks if a url matches a regular expression.
-// I've refactored this into a separate function, because doing something
-// like this:
-//
-//   matchesPattern = pattern => url => (new Regexp(pattern)).test(url)
-//
-// Would result in recompiling the regex every time.
+/**
+ * Create a function that, given a RegExp instance, returns a function
+ * that tests a url against that regex.
+ *
+ * @param  {RegExp} regexp compiled regular expression object used in
+ * the test
+ * @return {(url:string) => boolean} function that tests the given URL
+ * against the regex
+ */
 const matchesRegexp = regexp => url => regexp.test(url)
+
+/**
+ * Given either a RegExp or a pattern, return a function that tests if
+ * a given URL matches that pattern.
+ *
+ * @param  {string|Regexp} pattern to use in the returned testing
+ * function. If the pattern is a string, it is compiled (case-insensitive)
+ * to a Regexp
+ * @return {(url:string) => boolean} function that tests if a URL matches
+ * the given regexp
+ */
 const matches = pattern => isRegExp(pattern) ?
   matchesRegexp(pattern) :
   matchesRegexp(new RegExp(pattern, 'i'))

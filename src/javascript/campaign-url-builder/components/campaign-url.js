@@ -99,7 +99,7 @@ export default class CampaignUrl extends React.Component {
 
   confirmProblematic = () => {
     gaSendEvent({
-      category: "CampaignUrl",
+      category: 'CampaignUrl',
       action: 'bypass-problematic',
       label: this.state.problematicEventLabel
     })
@@ -209,7 +209,7 @@ export default class CampaignUrl extends React.Component {
             </div>
           </div>
           {problematicElement}
-          {this.renderActionsButton(problematicElement ? true : false)}
+          {this.renderButtons(problematicElement ? true : false)}
           <div ref="url" className="u-visuallyHidden">{url}</div>
         </div>
       </div>
@@ -226,52 +226,67 @@ export default class CampaignUrl extends React.Component {
   // different buttons.
 
   /**
-   * Renders the Copy to Clipboard and Shorten URL buttons.
-   * @param {boolean} isProblematic If this parameter is true, the buttons
-   * are hidden behind an "I know what I'm doing" warning button.
-   * @return {JSX Literal}
+   * Renders the problematic URL warning button
+   * @return {React Element} [description]
    */
-  renderActionsButton(isProblematic) {
+  renderProblematicWarningButton() {
+    return <div className="ButtonSet">
+      <IconButton
+        type="warning"
+        onClick={this.confirmProblematic}
+        key="confirmProblematicButton"
+      >
+        I know what I'm doing
+      </IconButton>
+    </div>
+  }
+
+  /**
+   * Renders the Copy to Clipboard and Shorten URL buttons.
+   * @return {React Element}
+   */
+  renderActionButtons() {
+    return <div className="ButtonSet">
+      <IconButton
+        type={this.state.urlCopied ? 'check' : 'content-paste'}
+        onClick={this.copyUrl}
+        key="copyUrlButton"
+      >
+        Copy URL
+      </IconButton>
+      {this.state.showShortUrl ? (
+        <IconButton
+          type="refresh"
+          onClick={this.longenUrl}
+          key="refreshButton">
+          Show full URL
+        </IconButton>
+      ) : (
+        <IconButton
+          type="link"
+          disabled={this.state.isShorteningUrl}
+          onClick={this.shortenUrl}
+          key="shortenButton"
+        >
+          {this.state.isShorteningUrl ?
+            'Shortening...' : 'Convert URL to Short Link'}
+        </IconButton>
+      )}
+    </div>
+  }
+
+  /**
+   * Render the button controls, under the URL. This will either be the
+   * copy/shorten buttons, or a button warning the user that their URL
+   * is problematic if that's the case.
+   * @return {React Element}
+   */
+  renderButtons(isProblematic) {
     return supports.copyToClipboard() ? (
       <div className="CampaignUrlResult-item">
         {isProblematic && !this.state.problematicBypass ?
-          <div className="ButtonSet">
-            <IconButton
-              type="warning"
-              onClick={this.confirmProblematic}
-              key="confirmProblematicButton"
-            >
-              I know what I'm doing
-            </IconButton>
-          </div> :
-          <div className="ButtonSet">
-            <IconButton
-              type={this.state.urlCopied ? 'check' : 'content-paste'}
-              onClick={this.copyUrl}
-              key="copyUrlButton"
-            >
-              Copy URL
-            </IconButton>
-
-            {this.state.showShortUrl ? (
-              <IconButton
-                type="refresh"
-                onClick={this.longenUrl}
-                key="refreshButton">
-                Show full URL
-              </IconButton>
-            ) : (
-              <IconButton
-                type="link"
-                disabled={this.state.isShorteningUrl}
-                onClick={this.shortenUrl}
-                key="shortenButton"
-              >
-                {this.state.isShorteningUrl ?
-                  'Shortening...' : 'Convert URL to Short Link'}
-              </IconButton>
-            )}
-          </div>
+          this.renderProblematicWarningButton() :
+          this.renderActionButtons()
         }
       </div>
     ) : null;
