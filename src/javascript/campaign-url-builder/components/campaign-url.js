@@ -65,8 +65,13 @@ export default class CampaignUrl extends React.Component {
       shortUrl: null,
       showShortUrl: false,
       isShorteningUrl: false,
+
+      // True if the user was warned and clicked "I know what I'm doing"
       problematicBypass: false,
-      problematicAlert: element,
+      // If the url is problematic, this is the React Element containing
+      // a warning that will be shown
+      problematicElement: element,
+      // The label sent to google analytics
       problematicEventLabel: eventLabel
     }
   }
@@ -327,7 +332,7 @@ export default class CampaignUrl extends React.Component {
           })
         }
         return {
-          problematicAlert: element,
+          problematicElement: element,
           problematicEventLabel: eventLabel
         }
       })
@@ -337,7 +342,7 @@ export default class CampaignUrl extends React.Component {
 
   /** @return {Object} The React component. */
   render() {
-    const problematicElement = this.state.problematicAlert
+    const problematicElement = this.state.problematicElement
     const className = classNames("CampaignUrlResult", {
       'CampaignUrlResult-problem': problematicElement !== null
     })
