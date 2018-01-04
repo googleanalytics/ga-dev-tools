@@ -30,7 +30,7 @@ import {isRegExp} from 'lodash'
  *
  * @param  {RegExp} regexp compiled regular expression object used in
  * the test
- * @return {(url:string) => boolean} function that tests the given URL
+ * @return {Function} function that tests the given URL
  * against the regex
  */
 const matchesRegexp = regexp => url => regexp.test(url)
@@ -42,7 +42,7 @@ const matchesRegexp = regexp => url => regexp.test(url)
  * @param  {string|Regexp} pattern to use in the returned testing
  * function. If the pattern is a string, it is compiled (case-insensitive)
  * to a Regexp
- * @return {(url:string) => boolean} function that tests if a URL matches
+ * @return {Function} function that tests if a URL matches
  * the given regexp
  */
 const matches = pattern => isRegExp(pattern) ?
@@ -55,9 +55,10 @@ const matches = pattern => isRegExp(pattern) ?
  * matches a given URL. The domain is matched exactly, and can optionally
  * be prepended with http:// or https://.
  *
- * This function accepts regex patterns, but escapes all . characters.
+ * @param {string} domain the domain to match. Can be a regex pattern, but all
+ * . characters are unconditionally escaped
  *
- * @return {(url:string) => boolean} a function that returns true if the
+ * @return {Function} a function that returns true if the
  * domain matches the given url exactly
  */
 const domainMatches = domain =>
@@ -69,9 +70,10 @@ const domainMatches = domain =>
  * is, the domain "google.com" will match "play.google.com",
  * "mail.google.com", etc, as well as just "google.com".
  *
- * This function accepts regex patterns, but escapes all . characters.
+ * @param {string} suffix Suffix of the domain to match. Can be a pattern,
+ * but all . characters are unconditionally escaped
  *
- * @return {(url:string) => boolean} a function that returns true if the
+ * @return {Function} a function that returns true if the
  * domain matches the given url as a suffix
  */
 const domainSuffix = suffix =>

@@ -19,7 +19,11 @@ import {sanitizeParams} from './params';
 import reducer from './reducers';
 import db from '../data-store';
 
-
+/**
+ * Generate the list of middlewares. Contains logic for conditional and
+ * development-only middleware, as well as conditional requires.
+ * @yield {Middleware} each middleware to apply to the store
+ */
 function* getMiddlewares() {
   yield thunkMiddleware
 
@@ -29,8 +33,9 @@ function* getMiddlewares() {
     // in the production build.
     const {createLogger} = require('redux-logger');
     yield createLogger();
-  } 
+  }
 }
+
 /**
  * Gets the initial redux state tree from local storage.
  * @return {Object} The state object.

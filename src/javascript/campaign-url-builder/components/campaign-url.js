@@ -48,6 +48,12 @@ const gaSendEvent = ({category, action, label}) =>
  * A component that renders the generated campaign URL.
  */
 export default class CampaignUrl extends React.Component {
+  /**
+   * Constructor for a campain URL component.
+   *
+   * @param {Object} props the initial props sent to the Rendered
+   * Campaign URL
+   */
   constructor(props) {
     super(props)
 
@@ -178,13 +184,12 @@ export default class CampaignUrl extends React.Component {
     this.props.onUseFragmentToggle.call(this, e);
   }
 
-
   /**
    * Renders the URL box and the "use fragment" toggle below it.
-   * @param {React Element|null} problematicElement If not null, this
+   * @param {Element|null} problematicElement If not null, this
    * elemenet is rendered near the Copy/Shorten buttons, to warn the
    * user that the URL is problematic.
-   * @return {React Element}
+   * @return {Element}
    */
   renderUrl(problematicElement) {
     let url = this.state.showShortUrl ? this.state.shortUrl : this.props.url;
@@ -232,7 +237,7 @@ export default class CampaignUrl extends React.Component {
 
   /**
    * Renders the problematic URL warning button
-   * @return {React Element} [description]
+   * @return {Element}
    */
   renderProblematicWarningButton() {
     return <div className="ButtonSet">
@@ -248,7 +253,7 @@ export default class CampaignUrl extends React.Component {
 
   /**
    * Renders the Copy to Clipboard and Shorten URL buttons.
-   * @return {React Element}
+   * @return {Element}
    */
   renderActionButtons() {
     return <div className="ButtonSet">
@@ -284,7 +289,9 @@ export default class CampaignUrl extends React.Component {
    * Render the button controls, under the URL. This will either be the
    * copy/shorten buttons, or a button warning the user that their URL
    * is problematic if that's the case.
-   * @return {React Element}
+   * @param {bool} isProblematic Whether the component considers the URL
+   * problematic
+   * @return {Element}
    */
   renderButtons(isProblematic) {
     return supports.copyToClipboard() ? (
