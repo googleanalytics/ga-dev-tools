@@ -41,7 +41,7 @@ export function copyElementText(element) {
 
   try {
     success = document.execCommand('copy');
-  } catch(e) {
+  } catch (e) {
     // No action.
   }
 

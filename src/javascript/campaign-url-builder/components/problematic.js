@@ -21,7 +21,7 @@
  */
 
 import React from 'react';
-import {isRegExp} from 'lodash'
+import {isRegExp} from 'lodash';
 
 
 /**
@@ -33,7 +33,7 @@ import {isRegExp} from 'lodash'
  * @return {Function} function that tests the given URL
  * against the regex
  */
-const matchesRegexp = regexp => url => regexp.test(url)
+const matchesRegexp = regexp => url => regexp.test(url);
 
 /**
  * Given either a RegExp or a pattern, return a function that tests if
@@ -47,7 +47,7 @@ const matchesRegexp = regexp => url => regexp.test(url)
  */
 const matches = pattern => isRegExp(pattern) ?
   matchesRegexp(pattern) :
-  matchesRegexp(new RegExp(pattern, 'i'))
+  matchesRegexp(new RegExp(pattern, 'i'));
 
 
 /**
@@ -62,7 +62,7 @@ const matches = pattern => isRegExp(pattern) ?
  * domain matches the given url exactly
  */
 const domainMatches = domain =>
-  matches('^(?:https?://)?(:?' + domain.replace('.', '\\.') + ')(?:$|[/?#])')
+  matches('^(?:https?://)?(:?' + domain.replace('.', '\\.') + ')(?:$|[/?#])');
 
 /**
  * Given a domain suffix, create a function that returns true if the
@@ -77,15 +77,15 @@ const domainMatches = domain =>
  * domain matches the given url as a suffix
  */
 const domainSuffix = suffix =>
-  domainMatches(`(?:[a-z0-9-]+.)*(?:${suffix})`)
+  domainMatches(`(?:[a-z0-9-]+.)*(?:${suffix})`);
 
-const googlePlayBuilderUrl = "https://developers.google.com/analytics/devguides/collection/android/v4/campaigns#google-play-url-builder"
-const itunesStoreBuilderUrl = "https://developers.google.com/analytics/devguides/collection/ios/v3/campaigns#url-builder"
+const googlePlayBuilderUrl = 'https://developers.google.com/analytics/devguides/collection/android/v4/campaigns#google-play-url-builder';
+const itunesStoreBuilderUrl = 'https://developers.google.com/analytics/devguides/collection/ios/v3/campaigns#url-builder';
 
 // Many fields in the badlist require a function with the signature
 // "url => thing". Use literal to make a function that just returns a
 // literal value
-const literal = thing => url => thing
+const literal = thing => url => thing;
 /**
  * BADLIST
  *
@@ -107,7 +107,7 @@ const literal = thing => url => thing
  * campaigns. See b/69681865
  */
 const badList = [{
-  name: "Play Store URL",  // This is just for reference
+  name: 'Play Store URL',  // This is just for reference
   test: domainSuffix('play.google.com'),
   render: literal(<div>
     <strong>It appears you are creating a Google Play Store url.
@@ -115,9 +115,9 @@ const badList = [{
     target="_blank">Google Play URL Builder</a> instead when creating
     tracking links for Play Store apps.
   </div>),
-  eventLabel: "Google Play Store",
+  eventLabel: 'Google Play Store',
 }, {
-  name: "iOS App Store URL",
+  name: 'iOS App Store URL',
   test: domainSuffix('itunes.apple.com'),
   render: literal(<div>
     <strong>It appears you are creating an iOS App Store url.
@@ -125,9 +125,9 @@ const badList = [{
     target="_blank">iOS Campaign Tracking URL Builder</a> instead when
     creating tracking links for iOS App Store apps.
   </div>),
-  eventLabel: "iOS App Store",
+  eventLabel: 'iOS App Store',
 }, {
-  name: "GA Dev Tools URL",
+  name: 'GA Dev Tools URL',
   test: domainSuffix('ga-dev-tools.appspot.com'),
   render: literal(<div>
     It appears that you are linking to this site, <code>
@@ -135,7 +135,7 @@ const badList = [{
     put your own site's URL in the <strong>Website URL</strong> field,
     above.
   </div>),
-  eventLabel: "GA Dev Tools",
+  eventLabel: 'GA Dev Tools',
 }];
 
 /**
@@ -148,15 +148,15 @@ const badList = [{
  * @return {Object} An object containing the keys 'element'
  */
 export default function renderProblematic(url) {
-  for(const {test, render, eventLabel} of badList) {
-    if(test(url)) {
+  for (const {test, render, eventLabel} of badList) {
+    if (test(url)) {
       return {
         element:
           <div className="CampaignUrlResult-alert-box">{render(url)}</div>,
         eventLabel: eventLabel,
-      }
+      };
     }
   }
 
-  return {element: null, eventLabel: null}
+  return {element: null, eventLabel: null};
 }

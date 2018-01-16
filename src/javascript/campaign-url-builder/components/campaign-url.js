@@ -16,8 +16,8 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import Textarea from 'react-textarea-autosize';
-import classNames from 'classnames'
-import {isNil} from 'lodash'
+import classNames from 'classnames';
+import {isNil} from 'lodash';
 import {gaAll} from '../../analytics';
 import AlertDispatcher from '../../components/alert-dispatcher';
 import Icon from '../../components/icon';
@@ -25,7 +25,7 @@ import IconButton from '../../components/icon-button';
 import supports from '../../supports';
 import {shortenUrl} from '../../url-shortener';
 import {copyElementText} from '../../utils';
-import renderProblematic from './problematic.js'
+import renderProblematic from './problematic.js';
 
 
 const ACTION_TIMEOUT = 1500;
@@ -40,8 +40,8 @@ const gaSendEvent = ({category, action, label}) =>
   gaAll('send', 'event', {
     eventCategory: category,
     eventAction: action,
-    eventLabel: label
-  })
+    eventLabel: label,
+  });
 
 
 /**
@@ -55,15 +55,15 @@ export default class CampaignUrl extends React.Component {
    * Campaign URL
    */
   constructor(props) {
-    super(props)
+    super(props);
 
-    const {element, eventLabel} = renderProblematic(props.url)
-    if(!isNil(element)) {
+    const {element, eventLabel} = renderProblematic(props.url);
+    if (!isNil(element)) {
       gaSendEvent({
         category: 'Campaign URL',
         action: 'Problematic URL',
         label: eventLabel,
-      })
+      });
     }
 
     this.state = {
@@ -78,8 +78,8 @@ export default class CampaignUrl extends React.Component {
       // a warning that will be shown
       problematicElement: element,
       // The label sent to google analytics
-      problematicEventLabel: eventLabel
-    }
+      problematicEventLabel: eventLabel,
+    };
   }
 
 
@@ -112,10 +112,10 @@ export default class CampaignUrl extends React.Component {
     gaSendEvent({
       category: 'CampaignUrl',
       action: 'bypass-problematic',
-      label: this.state.problematicEventLabel
-    })
+      label: this.state.problematicEventLabel,
+    });
 
-    this.setState({problematicBypass: true})
+    this.setState({problematicBypass: true});
   }
 
 
@@ -248,7 +248,7 @@ export default class CampaignUrl extends React.Component {
       >
         I know what I'm doing
       </IconButton>
-    </div>
+    </div>;
   }
 
   /**
@@ -282,7 +282,7 @@ export default class CampaignUrl extends React.Component {
             'Shortening...' : 'Convert URL to Short Link'}
         </IconButton>
       )}
-    </div>
+    </div>;
   }
 
   /**
@@ -329,30 +329,30 @@ export default class CampaignUrl extends React.Component {
       // Compute the renderProblematic, and dispatch a GA event if the
       // state went from Not Problematic to Problematic
       // TODO(nathanwest): deduplicate this and the constructor code
-      const {element, eventLabel} = renderProblematic(nextProps.url)
+      const {element, eventLabel} = renderProblematic(nextProps.url);
       this.setState(prevState => {
-        if(isNil(prevState.problematicElement) && !isNil(element)) {
+        if (isNil(prevState.problematicElement) && !isNil(element)) {
           gaSendEvent({
             category: 'Campaign URL',
             action: 'Problematic URL',
             label: eventLabel,
-          })
+          });
         }
         return {
           problematicElement: element,
-          problematicEventLabel: eventLabel
-        }
-      })
+          problematicEventLabel: eventLabel,
+        };
+      });
     }
   }
 
 
   /** @return {Object} The React component. */
   render() {
-    const problematicElement = this.state.problematicElement
-    const className = classNames("CampaignUrlResult", {
-      'CampaignUrlResult-problem': problematicElement !== null
-    })
+    const problematicElement = this.state.problematicElement;
+    const className = classNames('CampaignUrlResult', {
+      'CampaignUrlResult-problem': problematicElement !== null,
+    });
 
     return (
       <div className={className}>

@@ -35,7 +35,7 @@ import site from '../site';
  */
 const mapStateToProps = (state) => {
   return state;
-}
+};
 
 
 /**
@@ -47,7 +47,7 @@ const mapDispatchToProps = (dispatch) => {
   return {
     actions: bindActionCreators(actions, dispatch),
   };
-}
+};
 
 
 const preloadGoogleChartLibrary = () => {

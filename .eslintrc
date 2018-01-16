@@ -36,16 +36,15 @@
         "ClassDeclaration": true,
       },
     }],
+    "arrow-parens": 0,
      // React and jQuery use `this`
     "no-invalid-this": 0,
-    // Unset rules conflicting with babel
-    "generator-star-spacing": 0,
     // react
     "react/jsx-key": 2,
     "react/jsx-uses-react": 2,
     "react/jsx-uses-vars": 2,
     "react/prefer-es6-class": [2, "always"],
     // babel
-    "babel/generator-star-spacing": [2, "after"]
+    "generator-star-spacing": [2, "after"],
   }
 }

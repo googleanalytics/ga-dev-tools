@@ -16,20 +16,15 @@
 import {spawn} from 'child_process';
 import createOutputStream from 'create-output-stream';
 import cssnano from 'cssnano';
-import del from 'del';
 import glob from 'glob';
 import gulp from 'gulp';
-import concat from 'gulp-concat';
 import eslint from 'gulp-eslint';
-import gulpIf from 'gulp-if';
 import resize from 'gulp-image-resize';
 import imagemin from 'gulp-imagemin';
 import mocha from 'gulp-mocha';
 import plumber from 'gulp-plumber';
 import postcss from 'gulp-postcss';
 import rename from 'gulp-rename';
-import sourcemaps from 'gulp-sourcemaps';
-import uglify from 'gulp-uglify';
 import gutil from 'gulp-util';
 import pngquant from 'imagemin-pngquant';
 import merge from 'merge-stream';
@@ -276,8 +271,9 @@ gulp.task('serve', [], done => {
     '--port', process.env.GA_TOOLS_PORT || '8080',
   ]);
   devServer.stderr.on('data', data => {
-    if (data.includes('Starting module'))
-      done();
+    if (data.includes('Starting module')) {
+done();
+}
     process.stdout.write(data);
   });
 });

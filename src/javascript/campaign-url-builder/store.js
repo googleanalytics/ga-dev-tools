@@ -25,7 +25,7 @@ import db from '../data-store';
  * @yield {Middleware} each middleware to apply to the store
  */
 function* getMiddlewares() {
-  yield thunkMiddleware
+  yield thunkMiddleware;
 
   // Adds a logger in non-production mode.
   if (process.env.NODE_ENV !== 'production') {

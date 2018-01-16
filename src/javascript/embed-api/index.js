@@ -53,7 +53,7 @@ function monkeyPatchForDemos() {
         if (dataChart.get().chart.type != 'TABLE') {
           dataChart.execute();
         }
-      } catch(e) {
+      } catch (e) {
         // No action.
       }
     });

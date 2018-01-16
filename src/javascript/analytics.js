@@ -16,7 +16,7 @@
 /* global ga */
 
 
-import {isFunction} from 'lodash'
+import {isFunction} from 'lodash';
 import 'autotrack/lib/plugins/clean-url-tracker';
 import 'autotrack/lib/plugins/event-tracker';
 import 'autotrack/lib/plugins/impression-tracker';
@@ -359,7 +359,7 @@ const requireAutotrackPlugins = () => {
 
 const stopPreloadAbandonTracking = () => {
   window.removeEventListener('unload', window.__trackAbandons);
-}
+};
 
 
 const trackTimeToFirstConsistentlyInteractive = () => {
@@ -388,7 +388,7 @@ const trackTimeToFirstConsistentlyInteractive = () => {
   })
   .catch((err) => trackError(err))
   .then(() => {
-    window.removeEventListener('unload', postLoadAbandonTracking)
+    window.removeEventListener('unload', postLoadAbandonTracking);
   });
 };
 

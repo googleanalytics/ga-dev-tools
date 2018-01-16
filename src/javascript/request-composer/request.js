@@ -78,12 +78,14 @@ function applyDateRanges(request, params, settings) {
  */
 function zip(...args) {
     let argv = [].slice.call(args);
-    let shortest = argv.length==0 ? [] : argv.reduce(function(a,b){
-        return a.length<b.length ? a : b
+    let shortest = argv.length==0 ? [] : argv.reduce(function(a, b) {
+        return a.length<b.length ? a : b;
     });
 
-    return shortest.map(function(_,i){
-        return args.map(function(array){return array[i]})
+    return shortest.map(function(_, i) {
+        return args.map(function(array) {
+return array[i];
+});
     });
 }
 
@@ -126,7 +128,7 @@ function applyMetrics(request, params, settings) {
     for (let metric of zip(metrics, aliases)) {
       request.metrics.push(
         {'expression': metric[0].trim(),
-         'alias': metric[1].trim()
+         'alias': metric[1].trim(),
       });
     }
   }
@@ -170,7 +172,7 @@ function applyDimensions(request, params, settings) {
   } else if (params.cohortSize &&
              settings.requestType == 'COHORT') {
     request.dimensions = [{name: 'ga:cohort'}];
-    switch(params.cohortSize) {
+    switch (params.cohortSize) {
       case 'Day':
         request.dimensions.push({name: 'ga:cohortNthDay'});
         break;
@@ -317,10 +319,10 @@ function applyCohorts(request, params, settings) {
   if (settings.requestType == 'COHORT') {
     let now = moment();
     let cohorts = [];
-    switch(params.cohortSize) {
+    switch (params.cohortSize) {
       case 'Day':
         // Create cohorts for the past seven days.
-        for(let i = 0; i < 7; i++) {
+        for (let i = 0; i < 7; i++) {
           now = now.subtract(1, 'days');
           let cohort = {
             type: 'FIRST_VISIT_DATE',
@@ -335,7 +337,7 @@ function applyCohorts(request, params, settings) {
         break;
       case 'Week':
         // Create cohorts for the past 6 weeks.
-        for(let i = 0; i < 6; i++) {
+        for (let i = 0; i < 6; i++) {
             let startDate = now.subtract(1,
               'week').startOf('week').format('YYYY-MM-DD');
             let endDate = now.endOf('week').format('YYYY-MM-DD');
@@ -352,7 +354,7 @@ function applyCohorts(request, params, settings) {
         break;
       case 'Month':
         // Create cohorts for the past 3 months.
-        for(let i = 0; i < 3; i++) {
+        for (let i = 0; i < 3; i++) {
             let startDate = now.subtract(1,
               'month').startOf('month').format('YYYY-MM-DD');
             let endDate = now.endOf('month').format('YYYY-MM-DD');
@@ -446,7 +448,7 @@ export function composeRequest(params, settings) {
     return (params.cohortMetrics &&
             params.cohortSize);
   } else if (settings.requestType == 'EXPRESSION') {
-    return (params.expressions)
+    return (params.expressions);
   } else {
     return false;
   }

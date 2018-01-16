@@ -153,7 +153,7 @@ export function validateHit() {
           eventLabel: 'invalid',
         });
       }
-    } catch(err) {
+    } catch (err) {
       // TODO(philipwalton): handle timeout errors and slow network connection.
       resetHitValidationStatus(dispatch);
       AlertDispatcher.addOnce({
