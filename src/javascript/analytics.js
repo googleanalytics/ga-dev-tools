@@ -16,7 +16,7 @@
 /* global ga */
 
 
-import {isFunction} from 'lodash';
+import isFunction from 'lodash/isFunction';
 import 'autotrack/lib/plugins/clean-url-tracker';
 import 'autotrack/lib/plugins/event-tracker';
 import 'autotrack/lib/plugins/impression-tracker';

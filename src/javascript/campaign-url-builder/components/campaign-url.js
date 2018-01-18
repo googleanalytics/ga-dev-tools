@@ -17,7 +17,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import Textarea from 'react-textarea-autosize';
 import classNames from 'classnames';
-import {isNil} from 'lodash';
+import isNil from 'lodash/isNil';
 import {gaAll} from '../../analytics';
 import AlertDispatcher from '../../components/alert-dispatcher';
 import Icon from '../../components/icon';
@@ -51,8 +51,8 @@ export default class CampaignUrl extends React.Component {
   /**
    * Constructor for a campain URL component.
    *
-   * @param {Object} props the initial props sent to the Rendered
-   * Campaign URL
+   * @param {Object} props The initial props sent to the Rendered
+   *     Campaign URL.
    */
   constructor(props) {
     super(props);
@@ -187,8 +187,8 @@ export default class CampaignUrl extends React.Component {
   /**
    * Renders the URL box and the "use fragment" toggle below it.
    * @param {Element|null} problematicElement If not null, this
-   * elemenet is rendered near the Copy/Shorten buttons, to warn the
-   * user that the URL is problematic.
+   *     element is rendered near the Copy/Shorten buttons, to warn the
+   *     user that the URL is problematic.
    * @return {Element}
    */
   renderUrl(problematicElement) {
@@ -226,7 +226,7 @@ export default class CampaignUrl extends React.Component {
     );
   }
 
-  // NOTE(nathanwest): In the renderActionsButton, below, the IconButton
+  // NOTE(Lucretiel): In the renderActionsButton, below, the IconButton
   // elements all have keys. This is because many of them are conditionally
   // rendered, which can confuse React's renderer, because it thinks that
   // a button that just disappeared and a button that just appeared are
@@ -286,11 +286,11 @@ export default class CampaignUrl extends React.Component {
   }
 
   /**
-   * Render the button controls, under the URL. This will either be the
+   * Renders the button controls, under the URL. This will either be the
    * copy/shorten buttons, or a button warning the user that their URL
    * is problematic if that's the case.
    * @param {bool} isProblematic Whether the component considers the URL
-   * problematic
+   *     problematic
    * @return {Element}
    */
   renderButtons(isProblematic) {
@@ -328,7 +328,7 @@ export default class CampaignUrl extends React.Component {
 
       // Compute the renderProblematic, and dispatch a GA event if the
       // state went from Not Problematic to Problematic
-      // TODO(nathanwest): deduplicate this and the constructor code
+      // TODO(Lucretiel): deduplicate this and the constructor code
       const {element, eventLabel} = renderProblematic(nextProps.url);
       this.setState(prevState => {
         if (isNil(prevState.problematicElement) && !isNil(element)) {

@@ -271,9 +271,7 @@ gulp.task('serve', [], done => {
     '--port', process.env.GA_TOOLS_PORT || '8080',
   ]);
   devServer.stderr.on('data', data => {
-    if (data.includes('Starting module')) {
-done();
-}
+    if (data.includes('Starting module')) done();
     process.stdout.write(data);
   });
 });

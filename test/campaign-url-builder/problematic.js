@@ -60,7 +60,7 @@ describe('campaign-url-builder', () => {
               .that.includes({eventLabel: event})
               .and.has.property('element')
                 .that.satisfies(ReactTestUtils.isElement);
-            // TODO(nathanwest): Test that the returned React element includes
+            // TODO(Lucretiel): Test that the returned React element includes
             // a url to the correct url builder. This requires introspecting
             // React elements, which I don't know how to do yet.
           });
@@ -69,7 +69,7 @@ describe('campaign-url-builder', () => {
     );
 
     describe('performance', () => {
-      // TODO(nathanwest): during development, there was a major
+      // TODO(Lucretiel): during development, there was a major
       // performance issue related to a pathological regex. Test that
       // it doesn't take 3 seconds to match a 10 character string.
       // Need to review JS performance testing libraries.
