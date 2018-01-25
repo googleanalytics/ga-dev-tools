@@ -16,7 +16,6 @@
 /* global ga */
 
 
-import isFunction from 'lodash/isFunction';
 import 'autotrack/lib/plugins/clean-url-tracker';
 import 'autotrack/lib/plugins/event-tracker';
 import 'autotrack/lib/plugins/impression-tracker';
@@ -69,7 +68,7 @@ export const NULL_VALUE = '(not set)';
  */
 const createGaProxy = trackers => (command, ...args) => {
   for (const {name} of trackers) {
-    if (isFunction(command)) {
+    if (typeof command === 'function') {
       window.ga(() => command(window.ga.getByName(name)));
     } else {
       window.ga(`${name}.${command}`, ...args);

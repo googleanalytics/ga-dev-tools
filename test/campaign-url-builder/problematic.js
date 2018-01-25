@@ -46,27 +46,25 @@ describe('campaign-url-builder', () => {
       });
     });
 
-    it('returns a React element and analytics alert for problematic URLs',
-      () => {
-        [
-          {domain: 'play.google.com', event: 'Google Play Store'},
-          {domain: 'itunes.apple.com', event: 'iOS App Store'},
-          {domain: 'ga-dev-tools.appspot.com', event: 'GA Dev Tools'},
-        ].forEach(({domain, event}) => {
-          thoroughlyTestDomain(domain, url => {
-            const renderResult = renderProblematic(url);
-            expect(renderResult)
+    it('returns a React element and analytics alert for bad URLs', () => {
+      [
+        {domain: 'play.google.com', event: 'Google Play Store'},
+        {domain: 'itunes.apple.com', event: 'iOS App Store'},
+        {domain: 'ga-dev-tools.appspot.com', event: 'GA Dev Tools'},
+      ].forEach(({domain, event}) => {
+        thoroughlyTestDomain(domain, url => {
+          const renderResult = renderProblematic(url);
+          expect(renderResult)
               .to.be.an('object')
               .that.includes({eventLabel: event})
               .and.has.property('element')
-                .that.satisfies(ReactTestUtils.isElement);
-            // TODO(Lucretiel): Test that the returned React element includes
-            // a url to the correct url builder. This requires introspecting
-            // React elements, which I don't know how to do yet.
-          });
+                  .that.satisfies(ReactTestUtils.isElement);
+          // TODO(Lucretiel): Test that the returned React element includes
+          // a url to the correct url builder. This requires introspecting
+          // React elements, which I don't know how to do yet.
         });
-      }
-    );
+      });
+    });
 
     describe('performance', () => {
       // TODO(Lucretiel): during development, there was a major

@@ -61,7 +61,7 @@ export default class CampaignUrl extends React.Component {
     if (!isNil(element)) {
       gaSendEvent({
         category: 'Campaign URL',
-        action: 'Problematic URL',
+        action: 'entered-problematic-url',
         label: eventLabel,
       });
     }
@@ -297,8 +297,8 @@ export default class CampaignUrl extends React.Component {
     return supports.copyToClipboard() ? (
       <div className="CampaignUrlResult-item">
         {isProblematic && !this.state.problematicBypass ?
-          this.renderProblematicWarningButton() :
-          this.renderActionButtons()
+            this.renderProblematicWarningButton() :
+            this.renderActionButtons()
         }
       </div>
     ) : null;
@@ -334,7 +334,7 @@ export default class CampaignUrl extends React.Component {
         if (isNil(prevState.problematicElement) && !isNil(element)) {
           gaSendEvent({
             category: 'Campaign URL',
-            action: 'Problematic URL',
+            action: 'entered-problematic-url',
             label: eventLabel,
           });
         }
