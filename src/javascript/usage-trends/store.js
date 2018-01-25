@@ -44,7 +44,7 @@ const getInitialState = () => {
   return idb.get(IDB_KEY)
       .then((params) => getDefaults(params))
       .catch(() => getDefaults());
-}
+};
 
 
 /**
@@ -59,11 +59,11 @@ const createStoreWithMiddlewarePromise = () => {
   if (process.env.NODE_ENV != 'production') {
     middlewearPromises.push(
         import('redux-logger').then((logger) => logger()));
-  };
+  }
 
   return Promise.all(middlewearPromises)
-      .then((middlewear) => applyMiddleware(...middlewear)(createStore))
-}
+      .then((middlewear) => applyMiddleware(...middlewear)(createStore));
+};
 
 
 /**

@@ -13,24 +13,28 @@
 // limitations under the License.
 
 
-import {createStore, applyMiddleware} from 'redux';
+import {createStore, applyMiddleware, compose} from 'redux';
 import thunkMiddleware from 'redux-thunk';
 import {sanitizeParams} from './params';
 import reducer from './reducers';
 import db from '../data-store';
 
+/**
+ * Generate the list of middlewares. Contains logic for conditional and
+ * development-only middleware, as well as conditional requires.
+ * @yield {Middleware} each middleware to apply to the store
+ */
+function* getMiddlewares() {
+  yield thunkMiddleware;
 
-let middlewear = [thunkMiddleware];
-
-
-// Adds a logger in non-production mode.
-if (process.env.NODE_ENV != 'production') {
-  // Uses `require` here instead of `import` so the module isn't included
-  // in the production build.
-  const {createLogger} = require('redux-logger');
-  middlewear.push(createLogger());
+  // Adds a logger in non-production mode.
+  if (process.env.NODE_ENV !== 'production') {
+    // Uses `require` here instead of `import` so the module isn't included
+    // in the production build.
+    const {createLogger} = require('redux-logger');
+    yield createLogger();
+  }
 }
-
 
 /**
  * Gets the initial redux state tree from local storage.
@@ -42,18 +46,24 @@ function getStoredInitialState() {
   let settings = db.get('campaign-url-builder:settings');
 
   return {
-    websiteUrl: typeof websiteUrl == 'string' ? websiteUrl : '',
+    websiteUrl: typeof websiteUrl === 'string' ? websiteUrl : '',
     params: sanitizeParams(params, {removeBlanks: true}),
-    settings: (settings && typeof settings == 'object') ? settings : {},
+    settings: (settings && typeof settings === 'object') ? settings : {},
   };
 }
 
+const composeEnhancers = process.env.NODE_ENV !== 'production' ?
+  (window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose) :
+  compose;
 
-let createStoreWithMiddleware = applyMiddleware(...middlewear)(createStore);
 
-
-let store = createStoreWithMiddleware(reducer, getStoredInitialState());
-
+const store = createStore(
+  reducer,
+  getStoredInitialState(),
+  composeEnhancers(
+    applyMiddleware(...getMiddlewares())
+  )
+);
 
 // TODO(philipwalton): create middleware to save the params and settings
 // to localStorage.

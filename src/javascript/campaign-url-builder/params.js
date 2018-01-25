@@ -14,6 +14,10 @@
 
 
 import qs from 'querystring';
+
+// TODO(Lucretiel): url isn't actually a dependency of this project.
+// it seems like url-parse is the better library, anyway, so switch
+// to that at some point.
 import url from 'url';
 
 

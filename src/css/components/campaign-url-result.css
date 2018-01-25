@@ -23,6 +23,18 @@ limitations under the License.
   padding: var(--gap) var(--gap) 0;
 }
 
+.CampaignUrlResult-problem {
+  background: #fff3cd
+}
+
+.CampaignUrlResult-alertBox {
+  background: #f8d7da;
+  padding: .5em 1em;
+  margin-bottom: 1rem;
+  border-radius: 4px;
+  border: 1px solid #f5c6cb;
+}
+
 .CampaignUrlResult-title {
   color: inherit;
   font-size: 1.5em;

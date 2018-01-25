@@ -66,16 +66,14 @@ export const NULL_VALUE = '(not set)';
  *     `trackingId` fields.
  * @return {Function} The proxied ga() function.
  */
-const createGaProxy = (trackers) => {
-  return (command, ...args) => {
-    for (let {name} of trackers) {
-      if (typeof command == 'function') {
-        window.ga(() => command(window.ga.getByName(name)));
-      } else {
-        window.ga(`${name}.${command}`, ...args);
-      }
+const createGaProxy = trackers => (command, ...args) => {
+  for (const {name} of trackers) {
+    if (typeof command === 'function') {
+      window.ga(() => command(window.ga.getByName(name)));
+    } else {
+      window.ga(`${name}.${command}`, ...args);
     }
-  };
+  }
 };
 
 
@@ -360,7 +358,7 @@ const requireAutotrackPlugins = () => {
 
 const stopPreloadAbandonTracking = () => {
   window.removeEventListener('unload', window.__trackAbandons);
-}
+};
 
 
 const trackTimeToFirstConsistentlyInteractive = () => {
@@ -389,7 +387,7 @@ const trackTimeToFirstConsistentlyInteractive = () => {
   })
   .catch((err) => trackError(err))
   .then(() => {
-    window.removeEventListener('unload', postLoadAbandonTracking)
+    window.removeEventListener('unload', postLoadAbandonTracking);
   });
 };
 

@@ -304,7 +304,7 @@ export default class RequestComposer extends React.Component {
               </div>
               </div>
             </div>
-            ) : 
+            ) :
           null}
 
           {settings.requestType == 'EXPRESSION' ? (
@@ -323,7 +323,7 @@ export default class RequestComposer extends React.Component {
               </div>
               </div>
             </div>
-            ) : 
+            ) :
           null}
 
 

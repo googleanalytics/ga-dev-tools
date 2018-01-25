@@ -17,8 +17,8 @@ import uniq from 'lodash/uniq';
 import React from 'react';
 import metadata from 'javascript-api-utils/lib/metadata';
 import {
-  formatValue, 
-  formatDimension, 
+  formatValue,
+  formatDimension,
   mergeCellWithNeighborIfSame} from './pivot-table';
 
 let columns;
@@ -27,7 +27,6 @@ window.addEventListener('load', () => {
     columns = c;
   });
 });
-
 
 
 /**
@@ -100,9 +99,8 @@ function constructTableCellFromReport(report) {
           cell.text = metricName;
         }
       } else if (r > metricHeaderRow && r <= resultsEndRow ) {
-        
         // Data value rows.
-        cell.classes.push('PivotTable-value'); 
+        cell.classes.push('PivotTable-value');
         let row = rows[r - 1];
         if (c <= dimensionEndCol) {
           // Dimension value cells.
@@ -116,7 +114,6 @@ function constructTableCellFromReport(report) {
 
           cell.text = formatValue(value, type);
         }
-
       } else {
         // Totals row
         cell.isHeader = true;

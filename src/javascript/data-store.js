@@ -50,7 +50,7 @@ function ensureCache() {
     let storedData;
     try {
       storedData = JSON.parse(localStorage.getItem(APP_NAMESPACE));
-    } catch(err) {
+    } catch (err) {
       // No action.
     }
     cache = verifySchema(storedData) ? storedData : getDefaults();
@@ -78,7 +78,7 @@ function verifySchema(storedData) {
 function saveCache() {
   try {
     localStorage.setItem(APP_NAMESPACE, JSON.stringify(cache));
-  } catch(err) {
+  } catch (err) {
     // No action.
   }
 }

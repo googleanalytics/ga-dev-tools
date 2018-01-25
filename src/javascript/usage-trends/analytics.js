@@ -31,7 +31,7 @@ export const setParams = (paramValues) => {
     [dimensions.DATE_RANGE]: String(paramValues.dateRange),
     [dimensions.MAX_RESULTS]: String(paramValues.maxResults),
   });
-}
+};
 
 export const trackParamChange = (fieldName) => {
   gaAll('send', 'event', 'Trend Report', 'update', fieldName);

@@ -16,6 +16,8 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import Textarea from 'react-textarea-autosize';
+import classNames from 'classnames';
+import isNil from 'lodash/isNil';
 import {gaAll} from '../../analytics';
 import AlertDispatcher from '../../components/alert-dispatcher';
 import Icon from '../../components/icon';
@@ -23,6 +25,7 @@ import IconButton from '../../components/icon-button';
 import supports from '../../supports';
 import {shortenUrl} from '../../url-shortener';
 import {copyElementText} from '../../utils';
+import renderProblematic from './problematic.js';
 
 
 const ACTION_TIMEOUT = 1500;
@@ -33,16 +36,50 @@ const INSTRUCTIONS_TEXT =
     'automatically generated for you here.';
 
 
+const gaSendEvent = ({category, action, label}) =>
+  gaAll('send', 'event', {
+    eventCategory: category,
+    eventAction: action,
+    eventLabel: label,
+  });
+
+
 /**
  * A component that renders the generated campaign URL.
  */
 export default class CampaignUrl extends React.Component {
+  /**
+   * Constructor for a campain URL component.
+   *
+   * @param {Object} props The initial props sent to the Rendered
+   *     Campaign URL.
+   */
+  constructor(props) {
+    super(props);
 
-  state = {
-    urlCopied: false,
-    shortUrl: null,
-    showShortUrl: false,
-    isShorteningUrl: false,
+    const {element, eventLabel} = renderProblematic(props.url);
+    if (!isNil(element)) {
+      gaSendEvent({
+        category: 'Campaign URL',
+        action: 'entered-problematic-url',
+        label: eventLabel,
+      });
+    }
+
+    this.state = {
+      urlCopied: false,
+      shortUrl: null,
+      showShortUrl: false,
+      isShorteningUrl: false,
+
+      // True if the user was warned and clicked "I know what I'm doing"
+      problematicBypass: false,
+      // If the url is problematic, this is the React Element containing
+      // a warning that will be shown
+      problematicElement: element,
+      // The label sent to google analytics
+      problematicEventLabel: eventLabel,
+    };
   }
 
 
@@ -56,10 +93,10 @@ export default class CampaignUrl extends React.Component {
     if (copyElementText(url)) {
       this.setState({urlCopied: true});
 
-      gaAll('send', 'event', {
-        eventCategory: 'Campaign URL',
-        eventAction: 'copy-to-clipboard',
-        eventLabel: `${this.state.showShortUrl ? 'short' : 'long'} url`,
+      gaSendEvent({
+        category: 'Campaign URL',
+        action: 'copy-to-clipboard',
+        label: `${this.state.showShortUrl ? 'short' : 'long'} url`,
       });
 
       // After three second, remove the success checkbox.
@@ -69,6 +106,16 @@ export default class CampaignUrl extends React.Component {
     } else {
       // TODO(philipwalton): handle error case
     }
+  }
+
+  confirmProblematic = () => {
+    gaSendEvent({
+      category: 'CampaignUrl',
+      action: 'bypass-problematic',
+      label: this.state.problematicEventLabel,
+    });
+
+    this.setState({problematicBypass: true});
   }
 
 
@@ -88,10 +135,10 @@ export default class CampaignUrl extends React.Component {
         shortUrl: shortUrl,
         showShortUrl: true,
       });
-      gaAll('send', 'event', {
-        eventCategory: 'Campaign URL',
-        eventAction: 'shorten',
-        eventLabel: '(not set)',
+      gaSendEvent({
+        category: 'Campaign URL',
+        action: 'shorten',
+        label: '(not set)',
       });
     } catch (err) {
       AlertDispatcher.addOnce({
@@ -114,10 +161,10 @@ export default class CampaignUrl extends React.Component {
     this.setState({
       showShortUrl: false,
     });
-    gaAll('send', 'event', {
-      eventCategory: 'Campaign URL',
-      eventAction: 'unshorten',
-      eventLabel: '(not set)',
+    gaSendEvent({
+      category: 'Campaign URL',
+      action: 'unshorten',
+      label: '(not set)',
     });
   }
 
@@ -127,7 +174,7 @@ export default class CampaignUrl extends React.Component {
    * the fragment (rather than the query).
    * @param {Event} e
    */
-  handleUseFragmentToggle = (e) => {
+  handleUseFragmentToggle = e => {
     this.setState({
       urlCopied: false,
       shortUrl: null,
@@ -137,12 +184,14 @@ export default class CampaignUrl extends React.Component {
     this.props.onUseFragmentToggle.call(this, e);
   }
 
-
   /**
    * Renders the URL box and the "use fragment" toggle below it.
-   * @return {Object}
+   * @param {Element|null} problematicElement If not null, this
+   *     element is rendered near the Copy/Shorten buttons, to warn the
+   *     user that the URL is problematic.
+   * @return {Element}
    */
-  renderUrl() {
+  renderUrl(problematicElement) {
     let url = this.state.showShortUrl ? this.state.shortUrl : this.props.url;
     return (
       <div>
@@ -169,44 +218,88 @@ export default class CampaignUrl extends React.Component {
               </label>
             </div>
           </div>
-          {this.renderActionsButton()}
+          {problematicElement}
+          {this.renderButtons(problematicElement ? true : false)}
           <div ref="url" className="u-visuallyHidden">{url}</div>
         </div>
       </div>
     );
   }
 
+  // NOTE(Lucretiel): In the renderActionsButton, below, the IconButton
+  // elements all have keys. This is because many of them are conditionally
+  // rendered, which can confuse React's renderer, because it thinks that
+  // a button that just disappeared and a button that just appeared are
+  // all the same button. The keys let react know that they are different
+  // buttons, which ensures that things like button state
+  // (idle/hover/active/pressed) aren't eroneously preserved between
+  // different buttons.
+
+  /**
+   * Renders the problematic URL warning button
+   * @return {Element}
+   */
+  renderProblematicWarningButton() {
+    return <div className="ButtonSet">
+      <IconButton
+        type="warning"
+        onClick={this.confirmProblematic}
+        key="confirmProblematicButton"
+      >
+        I know what I'm doing
+      </IconButton>
+    </div>;
+  }
 
   /**
    * Renders the Copy to Clipboard and Shorten URL buttons.
-   * @return {Object}
+   * @return {Element}
    */
-  renderActionsButton() {
+  renderActionButtons() {
+    return <div className="ButtonSet">
+      <IconButton
+        type={this.state.urlCopied ? 'check' : 'content-paste'}
+        onClick={this.copyUrl}
+        key="copyUrlButton"
+      >
+        Copy URL
+      </IconButton>
+      {this.state.showShortUrl ? (
+        <IconButton
+          type="refresh"
+          onClick={this.longenUrl}
+          key="refreshButton">
+          Show full URL
+        </IconButton>
+      ) : (
+        <IconButton
+          type="link"
+          disabled={this.state.isShorteningUrl}
+          onClick={this.shortenUrl}
+          key="shortenButton"
+        >
+          {this.state.isShorteningUrl ?
+            'Shortening...' : 'Convert URL to Short Link'}
+        </IconButton>
+      )}
+    </div>;
+  }
+
+  /**
+   * Renders the button controls, under the URL. This will either be the
+   * copy/shorten buttons, or a button warning the user that their URL
+   * is problematic if that's the case.
+   * @param {bool} isProblematic Whether the component considers the URL
+   *     problematic
+   * @return {Element}
+   */
+  renderButtons(isProblematic) {
     return supports.copyToClipboard() ? (
       <div className="CampaignUrlResult-item">
-        <div className="ButtonSet">
-          <IconButton
-            type={this.state.urlCopied ? 'check' : 'content-paste'}
-            onClick={this.copyUrl}>
-            Copy URL
-          </IconButton>
-
-          {this.state.showShortUrl ? (
-            <IconButton
-              type="refresh"
-              onClick={this.longenUrl}>
-              Show full URL
-            </IconButton>
-          ) : (
-            <IconButton
-              type="link"
-              disabled={this.state.isShorteningUrl}
-              onClick={this.shortenUrl}>
-              {this.state.isShorteningUrl ?
-                'Shortening...' : 'Convert URL to Short Link'}
-            </IconButton>
-          )}
-        </div>
+        {isProblematic && !this.state.problematicBypass ?
+            this.renderProblematicWarningButton() :
+            this.renderActionButtons()
+        }
       </div>
     ) : null;
   }
@@ -224,12 +317,31 @@ export default class CampaignUrl extends React.Component {
    * @param {Object} nextProps
    */
   componentWillReceiveProps(nextProps) {
-    if (nextProps.url != this.props.url) {
+    if (nextProps.url !== this.props.url) {
       AlertDispatcher.removeAll();
       this.setState({
         shortUrl: null,
         showShortUrl: false,
         isShorteningUrl: false,
+        problematicBypass: false,
+      });
+
+      // Compute the renderProblematic, and dispatch a GA event if the
+      // state went from Not Problematic to Problematic
+      // TODO(Lucretiel): deduplicate this and the constructor code
+      const {element, eventLabel} = renderProblematic(nextProps.url);
+      this.setState(prevState => {
+        if (isNil(prevState.problematicElement) && !isNil(element)) {
+          gaSendEvent({
+            category: 'Campaign URL',
+            action: 'entered-problematic-url',
+            label: eventLabel,
+          });
+        }
+        return {
+          problematicElement: element,
+          problematicEventLabel: eventLabel,
+        };
       });
     }
   }
@@ -237,14 +349,19 @@ export default class CampaignUrl extends React.Component {
 
   /** @return {Object} The React component. */
   render() {
+    const problematicElement = this.state.problematicElement;
+    const className = classNames('CampaignUrlResult', {
+      'CampaignUrlResult-problem': problematicElement !== null,
+    });
+
     return (
-      <div className="CampaignUrlResult">
+      <div className={className}>
         {this.props.url ?
           <h3 className="CampaignUrlResult-title">
             Share the generated campaign URL
           </h3>
           : null }
-        {this.props.url ? this.renderUrl() :
+        {this.props.url ? this.renderUrl(problematicElement) :
           <p className="CampaignUrlResult-item">
             <span
               style={{fontSize: '2em', color: '#bbb', verticalAlign: '-0.4em'}}

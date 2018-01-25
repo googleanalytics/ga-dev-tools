@@ -26,7 +26,7 @@ const RESULTS_VIEW = {
   HISTOGRAM: 'Chart',
   PIVOT: 'Table',
   COHORT: 'Table',
-  EXPRESSION: 'Table'
+  EXPRESSION: 'Table',
 };
 
 
@@ -52,7 +52,7 @@ export default class ResultsViewer extends React.Component {
         </div>
       );
     } else {
-      return(
+      return (
         <div id="results">
           <Tabs selectedIndex={0}>
             <TabList>
@@ -85,7 +85,7 @@ export default class ResultsViewer extends React.Component {
                     response={response}
                     />
                 </div>
-              ) : 
+              ) :
               null}
               {settings.responseType == 'COHORT' ? (
                 <CohortTable

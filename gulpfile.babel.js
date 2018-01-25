@@ -16,20 +16,15 @@
 import {spawn} from 'child_process';
 import createOutputStream from 'create-output-stream';
 import cssnano from 'cssnano';
-import del from 'del';
 import glob from 'glob';
 import gulp from 'gulp';
-import concat from 'gulp-concat';
 import eslint from 'gulp-eslint';
-import gulpIf from 'gulp-if';
 import resize from 'gulp-image-resize';
 import imagemin from 'gulp-imagemin';
 import mocha from 'gulp-mocha';
 import plumber from 'gulp-plumber';
 import postcss from 'gulp-postcss';
 import rename from 'gulp-rename';
-import sourcemaps from 'gulp-sourcemaps';
-import uglify from 'gulp-uglify';
 import gutil from 'gulp-util';
 import pngquant from 'imagemin-pngquant';
 import merge from 'merge-stream';
@@ -40,10 +35,6 @@ import postcssReporter from 'postcss-reporter';
 import postcssUrl from 'postcss-url';
 import request from 'request';
 import webpack from 'webpack';
-
-
-let devServer;
-
 
 /**
  * Returns true if the NODE_ENV environment variable is production.
@@ -273,10 +264,13 @@ gulp.task('test', ['lint'], function() {
       .pipe(mocha());
 });
 
-
-gulp.task('serve', [], function(done) {
-  devServer = spawn('dev_appserver.py', ['.']);
-  devServer.stderr.on('data', (data) => {
+gulp.task('serve', [], done => {
+  const devServer = spawn('dev_appserver.py', [
+    '.',
+    '--host', process.env.GA_TOOLS_HOST || 'localhost',
+    '--port', process.env.GA_TOOLS_PORT || '8080',
+  ]);
+  devServer.stderr.on('data', data => {
     if (data.includes('Starting module')) done();
     process.stdout.write(data);
   });
