@@ -94,7 +94,7 @@ def render(project='index', page='index', template_data=None):
     return template.render(template_data)
 
   except Exception as err:
-    logging.error(err)
+    logging.exception(err)
     template = JINJA_ENVIRONMENT.get_template('404.html')
     return template.render({
       'site': data,
