@@ -19,7 +19,7 @@ import cssnano from 'cssnano';
 import glob from 'glob';
 import gulp from 'gulp';
 import eslint from 'gulp-eslint';
-import fs from 'fs';
+import fs from 'fs-extra';
 import resize from 'gulp-image-resize';
 import imagemin from 'gulp-imagemin';
 import mocha from 'gulp-mocha';
@@ -34,7 +34,6 @@ import postcssCssnext from 'postcss-cssnext';
 import postcssImport from 'postcss-import';
 import postcssReporter from 'postcss-reporter';
 import postcssUrl from 'postcss-url';
-import {promisify} from 'util';
 import request from 'request';
 import webpack from 'webpack';
 
@@ -249,16 +248,14 @@ gulp.task('json', function() {
 });
 
 
-const accessAsync = promisify(fs.access);
-
-
 gulp.task('keycheck', () =>
-  accessAsync('./service-account-key.json')
-  .catch(error => Promise.reject(error +
-    '\nNeed a service account key. See ' +
-    'https://ga-dev-tools.appspot.com/embed-api/server-side-authorization/ ' +
-    'for details on how to get one.'
-  ))
+  fs.access('./service-account-key.json').catch(
+    error => Promise.reject(error +
+      '\nNeed a service account key. See ' +
+      'https://ga-dev-tools.appspot.com/embed-api/server-side-authorization/ ' +
+      'for details on how to get one.'
+    )
+  )
 );
 
 
