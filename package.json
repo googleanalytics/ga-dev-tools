@@ -38,6 +38,7 @@
     "eslint-plugin-babel": "^4.1.1",
     "eslint-plugin-react": "^7.0.1",
     "fixed-data-table-2": "^0.7.6",
+    "fs-extra": "^5.0.0",
     "glob": "^7.1.1",
     "gulp": "^3.9.1",
     "gulp-concat": "^2.6.0",
