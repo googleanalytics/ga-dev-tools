@@ -248,15 +248,13 @@ gulp.task('json', function() {
 });
 
 
-gulp.task('keycheck', () =>
-  fs.access('./service-account-key.json').catch(
-    error => Promise.reject(error +
-      '\nNeed a service account key. See ' +
-      'https://ga-dev-tools.appspot.com/embed-api/server-side-authorization/ ' +
-      'for details on how to get one.'
-    )
+gulp.task('keycheck', () => fs.access('./service-account-key.json').catch(
+  error => Promise.reject(error +
+    '\nNeed a service account key. See ' +
+    'https://ga-dev-tools.appspot.com/embed-api/server-side-authorization/ ' +
+    'for details on how to get one.'
   )
-);
+));
 
 
 gulp.task('lint', function() {
