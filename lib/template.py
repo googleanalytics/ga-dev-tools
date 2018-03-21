@@ -28,10 +28,8 @@ JINJA_ENVIRONMENT = jinja2.Environment(
   autoescape=True)
 
 # This only needs to be loaded once.
-file = open('meta.yaml')
-data = yaml.load(file.read())
-file.close()
-
+with open('meta.yaml') as file:
+  data = yaml.load(file)
 
 # Generate the path data from the project and page slugs.
 for project in data['projects']:
