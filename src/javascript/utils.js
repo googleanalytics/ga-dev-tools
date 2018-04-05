@@ -105,7 +105,7 @@ const strIsEmpty = value => value == null || value === '';
  * be escaped.
  *
  * See https://mzl.la/2EnDB7Q for details on the function signature for
- * tagged template literals
+ * tagged template literals.
  *
  * @param  {string[]} rawParts The literal text between each substitution
  *     of the template string.
