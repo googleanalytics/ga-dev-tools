@@ -69,7 +69,8 @@ export function loadScript(url) {
 
 
 /**
- * Escapes a potentially unsafe HTML string.
+ * Escapes a potentially unsafe HTML string. Makes no attempt to preserve
+ * entities like &nbsp;.
  * @param {string} str A string that may contain HTML entities.
  * @return {string} The HTML-escaped string.
  */
