@@ -99,6 +99,8 @@ function updateResults(results, query = undefined) {
     '<tbody id="results-body"></tbody>' +
   '</table>');
 
+  // TODO(nathanwest): replace the HTML escaping here with
+  //     htmlTag (from utils.js)
   let highlightSafe = (text) => {
     if (query) {
       let regex = new RegExp('(' + query + ')', 'ig');

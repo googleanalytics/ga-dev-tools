@@ -70,14 +70,61 @@ export function loadScript(url) {
 
 /**
  * Escapes a potentially unsafe HTML string.
- * @param {string} str An string that may contain HTML entities.
+ * @param {string} str A string that may contain HTML entities.
  * @return {string} The HTML-escaped string.
  */
-export function escapeHtml(str) {
-  const div = document.createElement('div');
-  div.appendChild(document.createTextNode(str));
-  return div.innerHTML;
-}
+export const escapeHtml = str => str
+  .replace(/&/g, '&amp;')
+  .replace(/</g, '&lt;')
+  .replace(/>/g, '&gt;')
+  .replace(/"/g, '&quot;')
+  .replace(/'/g, '&#039;');
+
+
+/**
+ * Returns true if a string is null, undefined, or an empty string.
+ * Returns false for non strings.
+ *
+ * @param {object} value to check.
+ * @return {boolean} true if the argument is null, undefined, or an empty
+ *     string.
+ */
+const strIsEmpty = value => value == null || value === '';
+
+
+/**
+ * Template interface for creating HTML snippets safely. Uses the tagged
+ * template syntax:
+ *
+ *     text = "x > y"
+ *     snippet = tagHtml`<span>${text}</span>`
+ *     // snippet === <span>x &gt y</span>
+ *
+ * The HTML in the template will be preserved, but all substitutions will
+ * be escaped.
+ *
+ * See https://mzl.la/2EnDB7Q for details on the function signature for
+ * tagged template literals
+ *
+ * @param  {string[]} rawParts The literal text between each substitution
+ *     of the template string.
+ * @param  {...object} substitutions The value of each substituton, after
+ *     evaluation, but not coerced to a string. These are interleaved with
+ *     the rawParts to produce the final string.
+ * @return {string} An HTML snippet, where all the substitutions have been
+ *     safely HTML escaped.
+ */
+export const tagHtml = (rawParts, ...substitutions) => {
+  const result = [];
+
+  rawParts.forEach((raw, index) => {
+    const substitution = substitutions[index];
+    if (!strIsEmpty(raw)) result.push(raw);
+    if (!strIsEmpty(substitution)) result.push(escapeHtml(substitution));
+  });
+
+  return result.join('');
+};
 
 
 /**

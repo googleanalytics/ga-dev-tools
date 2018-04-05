@@ -21,7 +21,7 @@ import map from 'lodash/map';
 import some from 'lodash/some';
 import React from 'react';
 import ReactDOM from 'react-dom';
-
+import {tagHtml as html} from '../utils.js';
 
 /**
  * A components that renders a multi-suggest dropdown using select2.
@@ -93,7 +93,7 @@ export default class Select2MultiSuggest extends React.Component {
    */
   s2TagTemplate(opt) {
     let data = opt.element ? $(opt.element).data() : opt;
-    return `<span title="${data.name}">${data.id}</span>`;
+    return html`<span title="${data.name}">${data.id}</span>`;
   }
 
 
@@ -105,7 +105,7 @@ export default class Select2MultiSuggest extends React.Component {
    */
   s2DropdownItemTemplate(opt) {
     let data = opt.element ? $(opt.element).data() : opt;
-    return `
+    return html`
       <div class="SearchSuggestMatch">
         <span class="SearchSuggestMatch-category">${data.group}</span>
         <div class="SearchSuggestMatch-content">${data.name}</div>
