@@ -289,8 +289,8 @@ gapi.analytics.ready(function() {
    * @param {HTMLSelectElement} select The select element to update.
    * @param {Array} options An Array of objects with the keys
    *     `name` and `id`.
-   * @param {string} [id] An optional value used to determine the selected
-   *     option.
+   * @param {string} [selectedId] An optional value used to determine
+   *     the selected option.
    */
   function updateSelect(select, options, selectedId) {
     select.innerHTML = options.map(({id, name}) =>

@@ -14,45 +14,49 @@
 
 
 import {expect} from 'chai';
-import {escapeHtml, tagHtml} from '../../src/javascript/utils.js';
+import {escapeHtml, tagHtml} from '../src/javascript/utils.js';
 
-describe('html escaping', () => {
-  const unescapedSampleText =
-    '<div class="hello">abc &nbsp; def</div>';
-  const correctlyEscapedSampleText =
-    '&lt;div class=&quot;hello&quot;&gt;abc &amp;nbsp; def&lt;/div&gt;';
+describe('utils', () => {
+  describe('HTML escaping', () => {
+    const unescapedSampleText =
+      '<div class="hello">abc &nbsp; def</div>';
+    const correctlyEscapedSampleText =
+      '&lt;div class=&quot;hello&quot;&gt;abc &amp;nbsp; def&lt;/div&gt;';
 
-  describe('escapeHtml', () => {
-    it('should leave regular text untouched', () => {
-      expect(escapeHtml('Hello, World!'))
-        .to.equal('Hello, World!');
+    describe('escapeHtml', () => {
+      it('should leave regular text untouched', () => {
+        expect(escapeHtml('Hello, World!'))
+          .to.equal('Hello, World!');
+      });
+
+      it('should replace special characters with escaped versions', () => {
+        expect(escapeHtml(unescapedSampleText))
+          .to.equal(correctlyEscapedSampleText);
+      });
+
+      it('should not attempt to preserve user-escapes like &nbsp', () => {
+        expect(escapeHtml(correctlyEscapedSampleText))
+          .to.not.equal(correctlyEscapedSampleText);
+      });
     });
 
-    it('should replace special characters with escaped versions', () => {
-      expect(escapeHtml(unescapedSampleText))
-        .to.equal(correctlyEscapedSampleText);
-    });
+    describe('tagHtml', () => {
+      it('should leave template HTML untouched', () => {
+        // Tester's note: make sure the template is the same as
+        // unescapedSampleText
+        const tagged = tagHtml`<div class="hello">abc &nbsp; def</div>`;
 
-    it('should not attempt to preserve user-escapes like &nbsp', () => {
-      expect(escapeHtml(correctlyEscapedSampleText))
-        .to.not.equal(correctlyEscapedSampleText);
-    });
-  });
+        expect(tagged).to.equal(unescapedSampleText);
+      });
 
-  describe('tagHtml', () => {
-    it('should leave template HTML untouched', () => {
-      // Tester's note: make sure the template is the same as
-      // unescapedSampleText
-      const tagged = tagHtml`<div class="hello">abc &nbsp; def</div>`;
+      it('should escape substitutions, but leave template content', () => {
+        const tagged =
+          tagHtml`<div class="outer">${unescapedSampleText}</div>`;
+        const expected =
+          `<div class="outer">${correctlyEscapedSampleText}</div>`;
 
-      expect(tagged).to.equal(unescapedSampleText);
-    });
-
-    it('should escape substituted content', () => {
-      const tagged = tagHtml`<div class="outer">${unescapedSampleText}</div>`;
-      const expected = `<div class="outer">${correctlyEscapedSampleText}</div>`;
-
-      expect(tagged).to.equal(expected);
+        expect(tagged).to.equal(expected);
+      });
     });
   });
 });
