@@ -15,31 +15,17 @@
 
 import React from 'react';
 
-
-const ICON_PATH = '/public/images/icons.svg#icon-';
-
-
 /**
  * A components that renders an <svg> icon from the iconset in:
  * src/images/icons.svg
  */
 export default class Icon extends React.Component {
-
-  /**
-   * React lifecycyle methods below:
-   * http://facebook.github.io/react/docs/component-specs.html
-   * ---------------------------------------------------------
-   */
-
-
   /** @return {Object} The React component. */
   render() {
-    let useHtml = `<use xlink:href="${ICON_PATH}${this.props.type}"></use>`;
     return (
-      <svg
-        className="Icon"
-        viewBox="0 0 24 24"
-        dangerouslySetInnerHTML={{__html: useHtml}} />
+      <svg className="Icon" viewBox="0 0 24 24">
+        <use xlinkHref={`/public/images/icons.svg#icon-${this.props.type}`} />
+      </svg>
     );
   }
 }
