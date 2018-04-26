@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+import escapeHtml from 'lodash/escape'
 
 /**
  * Awaits for a specified amount of time.
@@ -66,21 +67,6 @@ export function loadScript(url) {
     js.onerror = reject;
   });
 }
-
-
-/**
- * Escapes a potentially unsafe HTML string. Makes no attempt to preserve
- * entities like &nbsp;.
- * @param {string} str A string that may contain HTML entities.
- * @return {string} The HTML-escaped string.
- */
-export const escapeHtml = str => str
-  .replace(/&/g, '&amp;')
-  .replace(/</g, '&lt;')
-  .replace(/>/g, '&gt;')
-  .replace(/"/g, '&quot;')
-  .replace(/'/g, '&#039;');
-
 
 /**
  * Returns true if a string is null, undefined, or an empty string.

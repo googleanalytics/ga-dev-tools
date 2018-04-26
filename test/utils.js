@@ -14,7 +14,7 @@
 
 
 import {expect} from 'chai';
-import {escapeHtml, tagHtml} from '../src/javascript/utils.js';
+import {tagHtml} from '../src/javascript/utils.js';
 
 describe('utils', () => {
   describe('HTML escaping', () => {
@@ -22,23 +22,6 @@ describe('utils', () => {
       '<div class="hello">abc &nbsp; def</div>';
     const correctlyEscapedSampleText =
       '&lt;div class=&quot;hello&quot;&gt;abc &amp;nbsp; def&lt;/div&gt;';
-
-    describe('escapeHtml', () => {
-      it('should leave regular text untouched', () => {
-        expect(escapeHtml('Hello, World!'))
-          .to.equal('Hello, World!');
-      });
-
-      it('should replace special characters with escaped versions', () => {
-        expect(escapeHtml(unescapedSampleText))
-          .to.equal(correctlyEscapedSampleText);
-      });
-
-      it('should not attempt to preserve user-escapes like &nbsp', () => {
-        expect(escapeHtml(correctlyEscapedSampleText))
-          .to.not.equal(correctlyEscapedSampleText);
-      });
-    });
 
     describe('tagHtml', () => {
       it('should leave template HTML untouched', () => {
