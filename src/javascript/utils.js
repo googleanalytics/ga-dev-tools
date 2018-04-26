@@ -93,6 +93,11 @@ const strIsEmpty = value => value == null || value === '';
  * See https://mzl.la/2EnDB7Q for details on the function signature for
  * tagged template literals.
  *
+ * Some safety notes: in order to prevent additional vulnerability, this
+ * function should never be used to insert template content into javascript.
+ * Additionally, do not use unquted attributes (such as
+ * tagHtml`<div class=${cls}></div>`).
+ *
  * @param  {string[]} rawParts The literal text between each substitution
  *     of the template string.
  * @param  {...object} substitutions The value of each substituton, after
