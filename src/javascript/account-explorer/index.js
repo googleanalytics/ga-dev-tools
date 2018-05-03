@@ -16,9 +16,9 @@
 /* global $, gapi */
 
 
+import escapeHtml from 'lodash/escape'
 import accountSummaries from 'javascript-api-utils/lib/account-summaries';
 import site from '../site';
-import {escapeHtml} from '../utils';
 
 
 /**
@@ -99,14 +99,12 @@ function updateResults(results, query = undefined) {
     '<tbody id="results-body"></tbody>' +
   '</table>');
 
-  let highlightSafe = (text) => {
-    if (query) {
-      let regex = new RegExp('(' + query + ')', 'ig');
-      return escapeHtml(text).replace(regex, '<mark>$1</mark>');
-    } else {
-      return escapeHtml(text);
-    }
-  };
+  // TODO(nathanwest): replace the HTML escaping here with
+  //     htmlTag (from utils.js)
+  const regex = query ? new RegExp('(' + query + ')', 'ig') : undefined
+  const highlightSafe = regex ?
+    (text => escapeHtml(text).replace(regex, '<mark>$1</mark>')) :
+    (text => escapeHtml(text));
 
   let searchResults = $('#results-body');
   if (results.length === 0) {

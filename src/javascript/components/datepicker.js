@@ -17,15 +17,10 @@
 
 
 import React from 'react';
+import Icon from './icon.js';
 
 
 const ANIMATION_DURATION = 200;
-
-
-let iconCalendar =
-    `<svg class="Icon" viewBox="0 0 24 24">
-       <use xlink:href="/public/images/icons.svg#icon-event"></use>
-     </svg>`;
 
 
 /**
@@ -112,9 +107,10 @@ export default class Datepicker extends React.Component {
           ref="icon"
           type="button"
           className="FormFieldAddOn-item"
-          onClick={this.handleIconClick}
           tabIndex="-1"
-          dangerouslySetInnerHTML={{__html: iconCalendar}} />
+        >
+          <Icon type="event" />
+        </button>
       </div>
     );
   }

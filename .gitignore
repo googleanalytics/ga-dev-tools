@@ -4,6 +4,10 @@ Thumbs.db
 .cache
 .idea
 
+# Sublime editor files
+*.sublime-project
+*.sublime-workspace
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]

@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+import escapeHtml from 'lodash/escape'
 
 /**
  * Awaits for a specified amount of time.
@@ -67,17 +68,55 @@ export function loadScript(url) {
   });
 }
 
+/**
+ * Returns true if a string is null, undefined, or an empty string.
+ * Returns false for non strings.
+ *
+ * @param {object} value to check.
+ * @return {boolean} true if the argument is null, undefined, or an empty
+ *     string.
+ */
+const strIsEmpty = value => value == null || value === '';
+
 
 /**
- * Escapes a potentially unsafe HTML string.
- * @param {string} str An string that may contain HTML entities.
- * @return {string} The HTML-escaped string.
+ * Template interface for creating HTML snippets safely. Uses the tagged
+ * template syntax:
+ *
+ *     text = "x > y"
+ *     snippet = tagHtml`<span>${text}</span>`
+ *     // snippet === <span>x &gt y</span>
+ *
+ * The HTML in the template will be preserved, but all substitutions will
+ * be escaped.
+ *
+ * See https://mzl.la/2EnDB7Q for details on the function signature for
+ * tagged template literals.
+ *
+ * Some safety notes: in order to prevent additional vulnerability, this
+ * function should never be used to insert template content into javascript.
+ * Additionally, do not use unquted attributes (such as
+ * tagHtml`<div class=${cls}></div>`).
+ *
+ * @param  {string[]} rawParts The literal text between each substitution
+ *     of the template string.
+ * @param  {...object} substitutions The value of each substituton, after
+ *     evaluation, but not coerced to a string. These are interleaved with
+ *     the rawParts to produce the final string.
+ * @return {string} An HTML snippet, where all the substitutions have been
+ *     safely HTML escaped.
  */
-export function escapeHtml(str) {
-  const div = document.createElement('div');
-  div.appendChild(document.createTextNode(str));
-  return div.innerHTML;
-}
+export const tagHtml = (rawParts, ...substitutions) => {
+  const result = [];
+
+  rawParts.forEach((raw, index) => {
+    const substitution = substitutions[index];
+    if (!strIsEmpty(raw)) result.push(raw);
+    if (!strIsEmpty(substitution)) result.push(escapeHtml(substitution));
+  });
+
+  return result.join('');
+};
 
 
 /**

@@ -17,6 +17,7 @@
 
 
 import accountSummaries from 'javascript-api-utils/lib/account-summaries';
+import {tagHtml as html} from '../../utils.js';
 
 
 /**
@@ -288,15 +289,15 @@ gapi.analytics.ready(function() {
    * @param {HTMLSelectElement} select The select element to update.
    * @param {Array} options An Array of objects with the keys
    *     `name` and `id`.
-   * @param {string} [id] An optional value used to determine the selected
-   *     option.
+   * @param {string} [selectedId] An optional value used to determine
+   *     the selected option.
    */
-  function updateSelect(select, options, id) {
-    select.innerHTML = options.map(function(option) {
-      let selected = option.id == id ? 'selected ' : ' ';
-      return '<option ' + selected + 'value="' + option.id + '">' +
-          option.name + '</option>';
-    }).join('');
+  function updateSelect(select, options, selectedId) {
+    select.innerHTML = options.map(({id, name}) =>
+      html`<option ${id == selectedId ? 'selected' : ''} value="${id}">
+        ${name}
+      </option>`
+    ).join('');
   }
 
 
