@@ -139,7 +139,7 @@ export default class CampaignUrl extends React.Component {
       gaSendEvent({
         category: 'Campaign URL',
         action: 'shorten',
-        label: '(not set)'
+        label: 'success'
       })
     })
     .catch(err => {
@@ -154,7 +154,7 @@ export default class CampaignUrl extends React.Component {
       gaSendEvent({
         category: "Campaign URL",
         action: "shorten",
-        label: "failed",
+        label: `failed: ${err.message}`,
       })
     })
     .finally(() => {
