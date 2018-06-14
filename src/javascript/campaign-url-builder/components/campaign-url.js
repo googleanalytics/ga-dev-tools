@@ -131,6 +131,7 @@ export default class CampaignUrl extends React.Component {
     shortenUrl(this.props.url)
     .then(shortUrl => {
       this.setState({
+        isShorteningUrl: false,
         shortUrl: shortUrl,
         showShortUrl: true,
       });
@@ -148,6 +149,7 @@ export default class CampaignUrl extends React.Component {
         message: err.message,
       })
       this.setState({
+        isShorteningUrl: false,
         shortUrl: null,
         showShortUrl: false,
       })
@@ -157,9 +159,6 @@ export default class CampaignUrl extends React.Component {
         label: `failed: ${err.message}`,
       })
     })
-    .finally(() => {
-      this.setState({isShorteningUrl: false})
-    });
   }
 
   /**
