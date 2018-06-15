@@ -18,7 +18,7 @@
 
 import once from 'lodash/once'
 
-import {loadScript} from './utils';
+import {loadScript, encodeQuery} from './utils';
 
 
 const bitly_client_id_promise = new Promise((resolve, reject) => {
@@ -45,48 +45,89 @@ const forbiddenError = new Error("Forbidden")
  * @return {Promise} A promise resolved with the shortend URL.
  */
 export async function shortenUrl(longUrl) {
+  // First, see if it's cached.
   const cachedUrl = urlMapCache.get(longUrl)
   if(cachedUrl != undefined)
     return cachedUrl
 
   const bitly_api_token = localStorage.getItem("BITLY_API_TOKEN")
+
+  // Attempt the API call with the stored token, but be ready to get a new
+  // token and retry if it fails.
   if(bitly_api_token != undefined) {
     try {
-      return await createBitlink(longUrl, bitly_api_token)
+      return await createBitlink({
+        longUrl: longUrl,
+        token: bitly_api_token,
+        checkForbidden: true
+      })
     } catch(e) {
       // If it wasn't a forbidden error, return it to the caller. Otherwise,
       // it's possible we have a bad token and should retry with a fresh one.
       if(e !== forbiddenError)
-        throw e
+        throw
+
+      // Hmm. I guess the token was bad. Clear the saved one before proceeding.
+      localStorage.removeItem("BITLY_API_TOKEN")
     }
   }
-}
 
-const acceptableOrigin = origin => {
-  throw new Error("NOT IMPLEMENTED")
+  // Okay, so we have no token. Send the user to the bitly oauth url.
+
+  // This client ID should be attached as a global by the server template
+  // renderer. This way we don't have to make a whole round trip to an API to
+  // get it.
+  const bitly_client_id = window.BITLY_CLIENT_ID
+  if(!bitly_client_id)
+    throw new Error("No OAuth client ID available. Make sure to attach it as a global in the server!")
+
+  // All the work happens on the auth site + callback
+  const {token, error} = await spawnWindow(
+    "https://Bitly.com/oauth/authorize" + encodeQuery({
+      client_id: bitly_client_id,
+      redirect_uri: "SOMEWHERE"
+    })
+  )
+
+  if(error)
+    throw new Error(error)
+
+  // We have a token! Save it to localStorage, then retry the API call. At this
+  // point, all errors should just be sent to the client; we've done all we can
+  // to make it successful
+
+  localStorage.setItem("BITLY_API_TOKEN", token)
+
+  return await createBitlink({
+    longUrl: longUrl,
+    token: token,
+    checkForbidden: false,
+  })
 }
 
 // Like addEventListener, but returns a function to clear the listener. Makes
 // it more amenable to inline arrow functions.
-const addClearableListener = (event, listener) => {
-  window.addEventListener(event, listener)
-  return () => window.removeEventListener(event, listener)
+const addClearableListener = (target, event, listener) => {
+  target.addEventListener(event, listener)
+  return () => target.removeEventListener(event, listener)
 }
+
 
 /**
  * Create a promise that cleans up after itself. This is the same as a regular
  * promise, but the executor function is passed an additonal function called
  * cleanup. Cleanup can be called to add cleanup handlers to the promise.
  * When the promise is fullfilled in any way, all the cleanup handlers are
- * called in reverse order. Return values are ignored, but exceptions or rejected
- * promises are propogated outwards.
+ * called in an unspecified order. Return values are ignored, but exceptions
+ * or rejected promises are propogated outwards.
  *
- * Cleanup handlers must be added during the executor function. They cannot be
- * added asynchronously. If you need asynchronous cleanup, use a nested
- * cleanuping promise.
- *
- * @param  {[type]} executor [description]
- * @return {[type]}          [description]
+ * @param  {Function(resolve, reject, cleanup)} executor An executor function,
+ *   similar to what would be passed to new Promise(). It is given a third
+ *   argument, cleanup, which it may call 0 or more times to add cleanup
+ *   functions. These cleanup functions are all executed before the promise
+ *   resolves.
+ * @return {Promise} A new Promise. Will run to completion, and additionally
+ *   run (and resolve) all cleanup handlers before resolving itself.
  */
 const cleanupingPromise = executor => {
   const cleanups = []
@@ -98,19 +139,20 @@ const cleanupingPromise = executor => {
 
   addCleanup = () => { throw new Error("Can't add new cleanup handlers asynchronously")}
 
-  return cleanups.reduceRight((p, cleanup) => p.finally(cleanup), promise)
+  const cleanupPromise = Promise.all(
+    cleanups.map(cleanup => promise.finally(cleanup))
+  )
 
-
+  return promise.finally(() => cleanupPromise)
 }
-
-
 // TODO(nathanwest): replace this noise with a bluebird disposer
 
 // Spawn a window and wait for a message from it. Reject if the window is closed
 // with no message.
 const spawnWindow = (url, features) => cleanupingPromise((resolve, reject, cleanup) => {
-  cleanup(addClearableListener('message', event => {
-    if(acceptableOrigin(event.origin) && event.source === childWindow)
+  // Await a message
+  cleanup(addClearableListener(window, 'message', event => {
+    if(event.origin === window.location.origin && event.source === childWindow)
       resolve(event.data)
   }))
 
@@ -126,42 +168,35 @@ const spawnWindow = (url, features) => cleanupingPromise((resolve, reject, clean
   cleanup(() => window.clearInterval(intervalHandle))
 })
 
-  return promise.finally(() => {
-    if(childWindow)
-      childWindow.close()
-    clearListener()
-    window.clearInterval(intervalHandle)
-  })
-}
-
-new Promise((resolve, reject) => {
-  const windowHandle = window.open(url, "_blank", features)
-  if(windowHandle == null)
-    reject(new Error(`Failed to open '${url}' in a new window`))
-
-
-
-  const closeHandler = window.setInterval(() => {
-    // Check for window closed
-  }, 1000)
-})
-
-
 /**
  * Attempt to create a short URL by POSTing to the bitly API
+ *
+ * TODO(nathanwest): If we're rate limited, either hold off, or report an
+ * error to the user.
  */
-const createBitlink = (longUrl, token) =>
-  fetch("https://api-ssl.bitly.com/v4/shorten", {
-    body: JSON.stringify({ long_url: longUrl }),
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'Accept': 'application/json',
-      'Authorization': `bearer ${token}`,
-    }
-  }).then(response => {
-    if(!response.ok)
-      throw (response.status === 403 ? forbiddenError : response)
+const createBitlink = async ({longUrl, token, checkForbidden=false}) => {
+  const response = await fetch(
+    "https://api-ssl.bitly.com/v4/shorten", {
+      body: JSON.stringify({ long_url: longUrl }),
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        'Authorization': `bearer ${token}`,
+      }
+    },
+  )
 
-    return response.json()
-  }).then(responseBlob => responseBlob.link)
+  if(checkForbidden && response.status === 403)
+    throw forbiddenError
+
+  const body = await response.json()
+
+  if(!response.ok)
+    throw new Error(`Error ${response.status} from bitly: ${body.message}`)
+
+  // While we're here, go ahead and cache it
+  const link = body.link
+  urlMapCache.set(longUrl, link)
+  return link
+}

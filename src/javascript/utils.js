@@ -13,7 +13,7 @@
 // limitations under the License.
 
 import escapeHtml from 'lodash/escape'
-
+import map from 'lodash/map'
 /**
  * Awaits for a specified amount of time.
  * @param {number} amount The amount of time to sleep in milliseconds.
@@ -129,5 +129,16 @@ export class UserError extends Error {
   constructor({title, message}) {
     super(message);
     this.title = title;
+  }
+}
+
+export const encodeQuery = query => {
+  if(query) {
+    const encoded = map(query, (value, key) =>
+      `${encodeURIComponent(key)}=${encodeURIComponent(value)}`
+    ).join('&')
+    return encoded ? `?${encoded}` : ""
+  } else {
+    return ""
   }
 }
