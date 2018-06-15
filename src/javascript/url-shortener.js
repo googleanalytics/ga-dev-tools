@@ -20,17 +20,6 @@ import once from 'lodash/once'
 
 import {loadScript, encodeQuery} from './utils';
 
-
-const bitly_client_id_promise = new Promise((resolve, reject) => {
-  const key = window.BITLY_CLIENT_ID
-  if(key) {
-    resolve(key)
-  } else {
-    reject(new Error("No BITLY_CLIENT_ID found! Need to attach it to window as a global"))
-  }
-})
-
-
 const urlMapCache = new Map();
 
 // Use a global object to distinguish forbidden errors from other errors
@@ -170,9 +159,6 @@ const spawnWindow = (url, features) => cleanupingPromise((resolve, reject, clean
 
 /**
  * Attempt to create a short URL by POSTing to the bitly API
- *
- * TODO(nathanwest): If we're rate limited, either hold off, or report an
- * error to the user.
  */
 const createBitlink = async ({longUrl, token, checkForbidden=false}) => {
   const response = await fetch(
