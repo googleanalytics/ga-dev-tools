@@ -18,7 +18,7 @@
 
 import once from 'lodash/once'
 
-import {loadScript, encodeQuery} from './utils';
+import {encodeQuery} from './utils';
 
 const urlMapCache = new Map();
 
