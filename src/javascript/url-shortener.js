@@ -12,15 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-
-/* global gapi */
-
-
-import once from 'lodash/once'
-
 import {encodeQuery} from './utils';
 
 const urlMapCache = new Map();
+
+const BITLY_TOKEN_STORAGE_KEY = "BITLY_API_TOKEN"
 
 // Use a global object to distinguish forbidden errors from other errors
 const forbiddenError = new Error("Forbidden")
@@ -39,7 +35,7 @@ export async function shortenUrl(longUrl) {
   if(cachedUrl != undefined)
     return cachedUrl
 
-  const bitly_api_token = localStorage.getItem("BITLY_API_TOKEN")
+  const bitly_api_token = localStorage.getItem("BITLY_TOKEN_STORAGE_KEY")
 
   // Attempt the API call with the stored token, but be ready to get a new
   // token and retry if it fails.
@@ -57,7 +53,7 @@ export async function shortenUrl(longUrl) {
         throw
 
       // Hmm. I guess the token was bad. Clear the saved one before proceeding.
-      localStorage.removeItem("BITLY_API_TOKEN")
+      localStorage.removeItem("BITLY_TOKEN_STORAGE_KEY")
     }
   }
 
@@ -71,7 +67,7 @@ export async function shortenUrl(longUrl) {
     throw new Error("No OAuth client ID available. Make sure to attach it as a global in the server!")
 
   // All the work happens on the auth site + callback
-  const {token, error} = await spawnWindow(
+  const {token, error} = await spawnWindowAndWait(
     "https://Bitly.com/oauth/authorize" + encodeQuery({
       client_id: bitly_client_id,
       redirect_uri: "SOMEWHERE"
@@ -85,7 +81,7 @@ export async function shortenUrl(longUrl) {
   // point, all errors should just be sent to the client; we've done all we can
   // to make it successful
 
-  localStorage.setItem("BITLY_API_TOKEN", token)
+  localStorage.setItem("BITLY_TOKEN_STORAGE_KEY", token)
 
   return await createBitlink({
     longUrl: longUrl,
@@ -94,21 +90,15 @@ export async function shortenUrl(longUrl) {
   })
 }
 
-// Like addEventListener, but returns a function to clear the listener. Makes
-// it more amenable to inline arrow functions.
-const addClearableListener = (target, event, listener) => {
-  target.addEventListener(event, listener)
-  return () => target.removeEventListener(event, listener)
-}
-
-
 /**
  * Create a promise that cleans up after itself. This is the same as a regular
  * promise, but the executor function is passed an additonal function called
  * cleanup. Cleanup can be called to add cleanup handlers to the promise.
- * When the promise is fullfilled in any way, all the cleanup handlers are
- * called in an unspecified order. Return values are ignored, but exceptions
- * or rejected promises are propogated outwards.
+ * When the executor promise is fullfilled in any way, all the cleanup handlers
+ * are called in an unspecified order. Returned values are ignored, but returned
+ * promises are awaited before the outer promise resolved with the same value
+ * as the inner promise. Any execeptions or rejected promises in cleanup
+ * handlers are propogated to the outer promise as a rejection.
  *
  * @param  {Function(resolve, reject, cleanup)} executor An executor function,
  *   similar to what would be passed to new Promise(). It is given a third
@@ -122,28 +112,31 @@ const cleanupingPromise = executor => {
   const cleanups = []
   let addCleanup = cleaner => { cleanups.push(cleaner) }
 
-  const promise = new Promise((resolve, reject) =>
+  const innerPromise = new Promise((resolve, reject) =>
     executor(resolve, reject, cleaner => { addCleanup(cleaner) })
   )
 
   addCleanup = () => { throw new Error("Can't add new cleanup handlers asynchronously")}
 
   const cleanupPromise = Promise.all(
-    cleanups.map(cleanup => promise.finally(cleanup))
+    cleanups.map(cleanup => innerPromise.finally(cleanup))
   )
 
-  return promise.finally(() => cleanupPromise)
+  return innerPromise.finally(() => cleanupPromise)
 }
-// TODO(nathanwest): replace this noise with a bluebird disposer
 
 // Spawn a window and wait for a message from it. Reject if the window is closed
 // with no message.
-const spawnWindow = (url, features) => cleanupingPromise((resolve, reject, cleanup) => {
+const spawnWindowAndWait = (url, features) => cleanupingPromise((resolve, reject, cleanup) => {
   // Await a message
-  cleanup(addClearableListener(window, 'message', event => {
+  const listener = event => {
     if(event.origin === window.location.origin && event.source === childWindow)
       resolve(event.data)
-  }))
+  }
+  window.addEventListener('message', listener, {
+    once: true
+  })
+  cleanup(() => window.removeEventListener('message', listener))
 
   const childWindow = window.open(url, "_blank", features)
   if(childWindow == null)

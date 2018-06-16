@@ -33,6 +33,7 @@ router = webapp2.WSGIApplication([
 
   # Static routes
   (r'/query-explorer/csvhandler.*', ExplorerCsvHandler),
+  (r'/url-shorten/auth-callback/?', UrlShortenAuthHandler),
 
   # Dynamic routes
   RedirectRoute(r'/',

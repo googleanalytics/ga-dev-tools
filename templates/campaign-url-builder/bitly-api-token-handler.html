@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Sending you back to Demos & Tools</title>
+
+	<script>
+		(function() {
+			var oauth_token = {{ oauth_token | tojson | safe }};
+			var oauth_state = {{ oauth_state | tojson | safe }};
+			var oauth_error = {{ oauth_error | tojson | safe }};
+
+			window.opener.postMessage()
+
+
+		})();
+	</script>
+</head>
+<body>
+	{{ body }}
+</body>
+</html>
