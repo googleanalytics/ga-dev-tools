@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Sending you back to Demos & Tools</title>
+
+	<script>
+		((function() {
+			window.setTimeout(function() { window.close(); }, 1000);
+
+			var oauth_token = {{ oauth_token | tojson | safe }};
+			var oauth_state = {{ oauth_state | tojson | safe }};
+			var oauth_error = {{ oauth_error | tojson | safe }};
+
+			// Note that this will throw an exception if window.opener is null.
+			// We don't really care about that, because users aren't supposed
+			// to navigate to this page manually in the first place.
+			window.opener.postMessage({
+				error: oauth_error,
+				token: oauth_token,
+				state: oauth_state,
+			}, window.location.origin);
+		})());
+	</script>
+</head>
+<body>
+	{{ body }}
+</body>
+</html>

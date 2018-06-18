@@ -33,6 +33,17 @@ import webapp2
 from google.appengine.api import urlfetch
 from lib import bitly_api_credentials, template
 
+def make_response(status, data):
+	return webapp2.Response(
+		status=status,
+		content_type='text/html',
+		body=template.render(
+			project='bitly-api-token-handler',
+			template_data=data
+		)
+	)
+
+
 # TODO(nathanwest): Replace the local file containing the secret key with
 # something more durable, like Google Cloud Key Management Service.
 
@@ -46,6 +57,8 @@ class UrlShortenAuthHandler(webapp2.RequestHandler):
 		try:
 			auth_code = self.request.params.getone('code')
 		except KeyError as e:
+			# We don't use the template here, because we assume that if we
+			# didn't even get a ?code=something, the caller
 			return webapp2.Response(
 				status=400,
 				unicode_body="Missing query parameter: code",
