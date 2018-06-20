@@ -35,7 +35,7 @@ export async function shortenUrl(longUrl) {
   if(cachedUrl != undefined)
     return cachedUrl
 
-  const bitly_api_token = localStorage.getItem("BITLY_TOKEN_STORAGE_KEY")
+  const bitly_api_token = localStorage.getItem(BITLY_TOKEN_STORAGE_KEY)
 
   // Attempt the API call with the stored token, but be ready to get a new
   // token and retry if it fails.
@@ -50,10 +50,10 @@ export async function shortenUrl(longUrl) {
       // If it wasn't a forbidden error, return it to the caller. Otherwise,
       // it's possible we have a bad token and should retry with a fresh one.
       if(e !== forbiddenError)
-        throw
+        throw e
 
       // Hmm. I guess the token was bad. Clear the saved one before proceeding.
-      localStorage.removeItem("BITLY_TOKEN_STORAGE_KEY")
+      localStorage.removeItem(BITLY_TOKEN_STORAGE_KEY)
     }
   }
 
@@ -67,21 +67,29 @@ export async function shortenUrl(longUrl) {
     throw new Error("No OAuth client ID available. Make sure to attach it as a global in the server!")
 
   // All the work happens on the auth site + callback
-  const {token, error} = await spawnWindowAndWait(
-    "https://Bitly.com/oauth/authorize" + encodeQuery({
-      client_id: bitly_client_id,
-      redirect_uri: "SOMEWHERE"
+  const auth_url = "https://Bitly.com/oauth/authorize" + encodeQuery({
+    client_id: bitly_client_id,
+    redirect_uri: window.location.origin + "/url-shorten/auth-callback/"
+  })
+
+  const {token} = await (
+    spawnWindowAndWait(auth_url)
+    .catch(e => {
+      if(e === WINDOW_EARLY_CLOSE) {
+        throw new Error("Authorization window closed before authorization was completed")
+      } else if(e === WINDOW_OPEN_FAILURE) {
+        throw new Error("Failed open new window for authorizing bitly. Are you blocking popups?")
+      } else {
+        throw e
+      }
     })
   )
-
-  if(error)
-    throw new Error(error)
 
   // We have a token! Save it to localStorage, then retry the API call. At this
   // point, all errors should just be sent to the client; we've done all we can
   // to make it successful
 
-  localStorage.setItem("BITLY_TOKEN_STORAGE_KEY", token)
+  localStorage.setItem(BITLY_TOKEN_STORAGE_KEY, token)
 
   return await createBitlink({
     longUrl: longUrl,
@@ -125,27 +133,36 @@ const cleanupingPromise = executor => {
   return innerPromise.finally(() => cleanupPromise)
 }
 
+const WINDOW_EARLY_CLOSE = new Error("Window was closed before sending a message")
+const WINDOW_OPEN_FAILURE = new Error("Failed to open url in a new window")
+
 // Spawn a window and wait for a message from it. Reject if the window is closed
 // with no message.
 const spawnWindowAndWait = (url, features) => cleanupingPromise((resolve, reject, cleanup) => {
   // Await a message
   const listener = event => {
-    if(event.origin === window.location.origin && event.source === childWindow)
-      resolve(event.data)
+    if(event.origin === window.location.origin && event.source === childWindow) {
+      const data = event.data
+      if(data.error) {
+        reject(new Error(data.error))
+      } else {
+        resolve(data)
+      }
+    }
   }
-  window.addEventListener('message', listener, {
-    once: true
-  })
+  window.addEventListener('message', listener, { once: true })
   cleanup(() => window.removeEventListener('message', listener))
 
   const childWindow = window.open(url, "_blank", features)
+
   if(childWindow == null)
-    throw new Error(`Failed to open '${url}' in a new window`)
-  cleanup(() => childWindow.close())
+    throw WINDOW_OPEN_FAILURE
+  else
+    cleanup(() => childWindow.close())
 
   const intervalHandle = window.setInterval(() => {
-    if(window.closed)
-      reject(new Error("Window was closed before sending a message"))
+    if(childWindow.closed)
+      reject(WINDOW_EARLY_CLOSE)
   }, 1000)
   cleanup(() => window.clearInterval(intervalHandle))
 })
@@ -161,7 +178,7 @@ const createBitlink = async ({longUrl, token, checkForbidden=false}) => {
       headers: {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
-        'Authorization': `bearer ${token}`,
+        'Authorization': `Bearer ${token}`,
       }
     },
   )

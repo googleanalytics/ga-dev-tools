@@ -21,6 +21,10 @@ import jinja2
 import os.path
 import yaml
 import lib.service_account as service_account
+from lib import bitly_api_credentials
+import pdb
+
+print dir(jinja2)
 
 JINJA_ENVIRONMENT = jinja2.Environment(
   loader=jinja2.FileSystemLoader('templates'),
@@ -82,6 +86,7 @@ def render(project='index', page='index', template_data=None):
   try:
     template_data = template_data if template_data else get_data(project, page)
     template_data['site']['get_access_token'] = service_account.get_access_token
+    template_data['site']['bitly_client_id'] = bitly_api_credentials.CLIENT_ID
 
     if project == 'index':
       template_file = 'index.html'

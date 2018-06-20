@@ -22,6 +22,7 @@ from webapp2_extras.routes import RedirectRoute
 from lib.handlers.base import BaseHandler
 from lib.handlers.explorer_csv import ExplorerCsvHandler
 from lib.handlers.server_side_auth import ServerSideAuthHandler
+from lib.handlers.url_shorten_auth import UrlShortenAuthHandler
 
 
 router = webapp2.WSGIApplication([

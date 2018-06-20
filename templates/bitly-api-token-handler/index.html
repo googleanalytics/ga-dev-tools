@@ -7,9 +7,9 @@
 		((function() {
 			window.setTimeout(function() { window.close(); }, 1000);
 
-			var oauth_token = {{ oauth_token | tojson | safe }};
-			var oauth_state = {{ oauth_state | tojson | safe }};
-			var oauth_error = {{ oauth_error | tojson | safe }};
+			var oauth_token = {{ site.token | default(None) | tojson | safe }};
+			var oauth_state = {{ site.state | default(None) | tojson | safe }};
+			var oauth_error = {{ site.error | default(None) | tojson | safe }};
 
 			// Note that this will throw an exception if window.opener is null.
 			// We don't really care about that, because users aren't supposed

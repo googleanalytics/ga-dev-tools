@@ -26,14 +26,17 @@
 # This handler specifically handles step 3 of bitly's OAuth web flow, documented
 # here: https://dev.bitly.com/v4/#section/OAuth-Web-Flow
 
-from __future__ import unicode_literals
+import urllib
+import json
 
 import webapp2
 
 from google.appengine.api import urlfetch
 from lib import bitly_api_credentials, template
 
-def make_response(status, data):
+def make_response(status, site_data):
+	data = template.get_data('bitly-api-token-handler')
+	data['site'].update(site_data)
 	return webapp2.Response(
 		status=status,
 		content_type='text/html',
@@ -58,7 +61,8 @@ class UrlShortenAuthHandler(webapp2.RequestHandler):
 			auth_code = self.request.params.getone('code')
 		except KeyError as e:
 			# We don't use the template here, because we assume that if we
-			# didn't even get a ?code=something, the caller
+			# didn't even get a ?code=something, the caller arrived at this
+			# page without going through the standard OAuth flow
 			return webapp2.Response(
 				status=400,
 				unicode_body="Missing query parameter: code",
@@ -83,7 +87,7 @@ class UrlShortenAuthHandler(webapp2.RequestHandler):
 					'client_id': client_id,
 					'client_secret': client_secret,
 					'code': auth_code,
-					'redirect_uri': 'WHO KNOWS',
+					'redirect_uri': self.request.path_url,
 				}),
 				headers={
 					'Content-Type': "application/x-www-form-urlencoded",
@@ -92,30 +96,32 @@ class UrlShortenAuthHandler(webapp2.RequestHandler):
 				validate_certificate=True,
 				follow_redirects=True,
 			)
-
 		except Exception as e:
-			return webapp2.Response(
-				status=500,
-				unicode_body="Error getting access token from bit.ly",
-				content_type="text/plain",
-				content_type_params={'charset': 'utf8'},
-			)
+			raise
+
+		#except Exception as e:
+		#	return make_response(
+		#		status=500,
+		#		site_data={
+		#			"error": "Error getting an access token from bitly"
+		#		})
 
 		if auth_response.status_code >= 300:
-			return webapp2.Response(
+			return make_response(
 				status=500,
-				unicode_body="Error: bitly returned error code {}"
-					.format(auth_response.status_code),
-				content_type="text/plain",
-				content_type_params={'charset': 'utf8'},
+				site_data={
+					"error": "Error: bitly returned error code {} instead of a token"
+						.format(auth_response.status_code)
+				}
 			)
 
-		auth_body = auth_response.json
+		auth_body = json.loads(auth_response.content)
 
 		# This response body includes the Javascript that will forward the
 		# token and state to the client via postMessage
-		return webapp2.Response(
+		return make_response(
 			status=200,
-			body=template.render("SOMETHING"),
-			content_type="text/html"
-		)
+			site_data={
+				"token": auth_body['access_token'],
+				"state": state,
+			})

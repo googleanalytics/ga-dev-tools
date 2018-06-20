@@ -5,12 +5,12 @@ A showcase of demos and tools built with the various Google Analytics APIs and L
 
 ## Submitting Feedback / Reporting Bugs
 
-#### For the Demos & Tools site
+### For the Demos & Tools site
 
 - You may report bugs by [submitting an issue](https://github.com/googleanalytics/ga-dev-tools/issues/new).
 - You may also submit an issue to [request a new demo or tool](https://github.com/googleanalytics/ga-dev-tools/issues/new).
 
-#### For the Google Analytics platform
+### For the Google Analytics platform
 
 - Documentation for all Google Analytics API, libraries and SDKs can be found on [Google Analytics Developers](http://developers.google.com/analytics).
 - If you have questions, please refer to the getting [help section](http://developers.google.com/analytics/help/) of the developers site to find the best place to get your questions answered.
@@ -69,3 +69,7 @@ NODE_ENV=production APP_ENGINE_VERSION=feature-test npm run stage
 ```
 
 **Note:** running the `deploy` or `stage` script requires permissions for their respective App Engine projects.
+
+## Note for Googlers:
+
+Additional (priveleged) information about our deployment at https://ga-dev-tools.appspot.com can be found at go/ga-dev-tools-infoser
