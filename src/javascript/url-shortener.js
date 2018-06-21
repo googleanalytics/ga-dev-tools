@@ -189,8 +189,8 @@ const bitlyApiFetch = async ({token, endpoint, options, payload=undefined, check
     options.method = options.method || "POST"
   }
 
-  const url = `https://api-ssl.bitly.com/v4/${endpoint}`
-  const response = await fetch(url, finalOptions)
+  const url = `https://api-ssl.bitly.com/v4/${endpoint.replace(/^\//, '')}`
+  const response = await fetch(url, options)
 
   if(checkForbidden && response.status === 403)
     throw forbiddenError
@@ -221,11 +221,7 @@ const createBitlinkCall = ({longUrl, token, checkForbidden, guid}) =>
       long_url: longUrl,
       group_guid: guid,
     }
-  }).then(data => {
-    const link = data.link
-    urlMapCache.set(longUrl, link)
-    return link
-  })
+  }).then(data => data.link)
 
 
 const getBitlyGroup = async ({token, checkForbidden}) => {
@@ -234,17 +230,22 @@ const getBitlyGroup = async ({token, checkForbidden}) => {
     return guid
 
   guid = await fetchBitlyGroup({token, checkForbidden})
-  localStorage.setItem(guid)
+  localStorage.setItem(BITLY_GUID_STORAGE_KEY, guid)
   return guid
 }
 
-
+// Get the user's bitly group. Users can have more than one group, and
+// we don't really have a good way to identify which one is the "primary",
+// so for now we just return the first one in the array.
+// TODO(nathanwest): that's almost certainly not the behavior we actually
+// want; fix it.
 const fetchBitlyGroup = ({token, checkForbidden}) =>
   bitlyApiFetch({
     token: token,
     endpoint: "/groups",
     checkForbidden: checkForbidden,
+  }).then(data => {
+    const groups = data.groups
+    if(groups.length > 0) return groups[0].guid
+    else throw new Error("bitly user has no associated groups!")
   })
-  // For now we want to use the "default" group, which we'll just say is the
-  // earliest one
-  .then(data => minBy(data.groups, group => new Date(group.created)).guid)
