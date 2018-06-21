@@ -4,7 +4,7 @@
 	<title>Sending you back to Demos & Tools</title>
 
 	<script>
-		((function() {
+		window.addEventListener("load", function() {
 			var parent = window.opener;
 			if(parent) {
 				var oauth_token = {{ site.token | default(None) | tojson | safe }};
@@ -20,7 +20,7 @@
 			} else {
 				document.body.append("This page is an automated oauth handler. Please don't visit it manually.");
 			}
-		})());
+		});
 	</script>
 </head>
 <body>
