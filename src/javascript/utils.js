@@ -148,11 +148,13 @@ export const encodeQuery = query => {
 // rejects, and multiple concurrent calls to an ongoing promise will all
 // return the same promise.
 export const promiseMemoize = func => {
+  // This is a mapping of key => Promise. storing the promise directly
+  // simplifies our implementation, since we just return it on a cache hit.
   const cache = new Map()
 
   return argument => {
     const result = cache.get(argument)
-    if(result !== undefined)
+    if(result != undefined)
       return result
 
     const promise = new Promise(res => res(func(argument)))
@@ -163,4 +165,38 @@ export const promiseMemoize = func => {
     cache.set(argument, promise)
     return promise
   }
+}
+
+/**
+ * Create a promise that cleans up after itself. This is the same as a regular
+ * promise, but the executor function is passed an additonal function called
+ * cleanup. Cleanup can be called to add cleanup handlers to the promise.
+ * When the executor promise is fullfilled in any way, all the cleanup handlers
+ * are called in an unspecified order. Returned values from cleanups are
+ * ignored, but returned promises are awaited before the outer promise resolved
+ * with the same value as the inner promise. Any execeptions or rejected
+ * promises in cleanup handlers are propogated to the outer promise as a
+ * rejection.
+ *
+ * @param  {Function(resolve, reject, cleanup)} executor An executor function,
+ *   similar to what would be passed to new Promise(). It is given a third
+ *   argument, cleanup, which it may call 0 or more times to add cleanup
+ *   functions. These cleanup functions are all executed before the promise
+ *   resolves. cleanup() must be called during the executor; it cannot be
+ *   called asynchronously (mostly due to issues with consistent error propogation)
+ * @return {Promise} A new Promise. Will run to completion, and additionally
+ *   run (and resolve) all cleanup handlers before resolving itself.
+ */
+export const cleanupingPromise = executor => {
+  const cleanups = []
+  let addCleanup = cleaner => { cleanups.push(cleaner) }
+
+  const innerPromise = new Promise((resolve, reject) =>
+    executor(resolve, reject, cleaner => { addCleanup(cleaner) })
+  )
+
+  addCleanup = () => { throw new Error("Can't add new cleanup handlers asynchronously")}
+
+  return Promise.all(cleanups.map(cleanup => innerPromise.finally(() => cleanup())))
+    .then(() => innerPromise)
 }

@@ -12,8 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import {encodeQuery, promiseMemoize} from './utils';
-import minBy from 'lodash/minBy';
+import {encodeQuery, promiseMemoize, cleanupingPromise} from './utils';
 
 const BITLY_TOKEN_STORAGE_KEY = "BITLY_API_TOKEN"
 const BITLY_GUID_STORAGE_KEY = "BITLY_GUID"
@@ -23,9 +22,13 @@ const forbiddenError = new Error("Forbidden")
 
 /**
  * Accepts a long URL and returns a promise that is resolved with its shortened
- * version. This function loads the urlshortener API if it's not loaded, but
- * the library is only ever loaded once. Long URLs are also cached, so multiple
- * requests for the same URL are never made.
+ * version, using the bitly API. This function independently handles
+ * authentication flow by spawning a new window to authenticate against bitly
+ * if necessary, and caches tokens and other stuff to localStorage.
+ *
+ * This function memoizes, so calling it with the same longUrl will
+ * automatically return a resolved promise with the shortened URL.
+ *
  * @param {string} longUrl
  * @return {Promise} A promise resolved with the shortend URL.
  */
@@ -57,31 +60,64 @@ export const shortenUrl = promiseMemoize(async (longUrl) => {
 
   // This client ID should be attached as a global by the server template
   // renderer. This way we don't have to make a whole round trip to an API to
-  // get it.
+  // get it. This currently happens inside of lib/template.py:render, so it's
+  // always available.
   const bitly_client_id = window.BITLY_CLIENT_ID
   if(!bitly_client_id)
     throw new Error("No OAuth client ID available. Make sure to attach it as a global in the server!")
 
-  // All the work happens on the auth site + callback
-  const auth_url = "https://Bitly.com/oauth/authorize" + encodeQuery({
-    client_id: bitly_client_id,
-    redirect_uri: window.location.origin + "/url-shorten/auth-callback/"
-  })
-
-  const {token} = await (
-    spawnWindowAndWait(auth_url)
-    .catch(e => {
-      if(e === WINDOW_EARLY_CLOSE) {
-        throw new Error("Authorization window closed before authorization was completed")
-      } else if(e === WINDOW_OPEN_FAILURE) {
-        throw new Error("Failed open new window for authorizing bitly. Are you blocking popups?")
-      } else if(e === CHILD_WINDOW_TIMEOUT) {
-        throw new Error("Timed out waiting for authorization")
-      } else {
-        throw e
+  // Initiate OAuth flow. Spawn a new window, which sends the user to bitly's
+  // auth page. That will redirect us to /url-shorten/auth-callback, which
+  // will get an authentication token, then send us a message via postMessage
+  // with the token.
+  //
+  // We can't use try-finally here because the various APIs we're using (
+  // addEventListener, timers, etc) aren't promisified or awaitable, so we have
+  // to wrap them up in a promise abstraction that cleans up after itself.
+  const {token} = await cleanupingPromise((resolve, reject, cleanup) => {
+    // Attach a listener that will await a message via postMessage
+    const messageListener = event => {
+      if(event.origin === window.location.origin && event.source === childWindow) {
+        const data = event.data
+        if(data.error) {
+          reject(new Error(data.error))
+        } else {
+          resolve(data)
+        }
       }
+    }
+    window.addEventListener('message', messageListener, { once: true })
+    cleanup(() => window.removeEventListener('message', messageListener))
+
+    const auth_url = "https://bitly.com/oauth/authorize" + encodeQuery({
+      client_id: bitly_client_id,
+      // The auth callback does about half the work here: it receieves an
+      // authorization code, converts it into a token, then sends the token
+      // back to us. This happens server side because it requires the
+      // client_secret, which we don't want to share with our users.
+      redirect_uri: window.location.origin + "/url-shorten/auth-callback/"
     })
-  )
+    // Open a new window to do authentication.
+    const childWindow = window.open(auth_url, "_blank")
+    if(childWindow == null)
+      throw new Error("Failed open new window for authorizing bitly. Are you blocking popups?")
+
+    // Close the window as soon as auth flow completes.
+    cleanup(() => childWindow.close())
+
+    // If the user closes the window, that's an error
+    const intervalHandle = window.setInterval(() => {
+      if(childWindow.closed)
+        reject(new Error("Authorization window closed before authorization was completed"))
+    }, 1000)
+    cleanup(() => window.clearInterval(intervalHandle))
+
+    // If the user takes too long, that's an error.
+    const timeoutHandle = window.setTimeout(() => {
+      reject(new Error("Timed out waiting for authorization"))
+    }, 1000 * 60 * 5)
+    cleanup(() => window.clearTimeout(timeoutHandle))
+  })
 
   // We have a token! Save it to localStorage, then retry the API call. At this
   // point, all errors should just be sent to the client; we've done all we can
@@ -96,82 +132,18 @@ export const shortenUrl = promiseMemoize(async (longUrl) => {
   })
 })
 
-/**
- * Create a promise that cleans up after itself. This is the same as a regular
- * promise, but the executor function is passed an additonal function called
- * cleanup. Cleanup can be called to add cleanup handlers to the promise.
- * When the executor promise is fullfilled in any way, all the cleanup handlers
- * are called in an unspecified order. Returned values are ignored, but returned
- * promises are awaited before the outer promise resolved with the same value
- * as the inner promise. Any execeptions or rejected promises in cleanup
- * handlers are propogated to the outer promise as a rejection.
- *
- * @param  {Function(resolve, reject, cleanup)} executor An executor function,
- *   similar to what would be passed to new Promise(). It is given a third
- *   argument, cleanup, which it may call 0 or more times to add cleanup
- *   functions. These cleanup functions are all executed before the promise
- *   resolves.
- * @return {Promise} A new Promise. Will run to completion, and additionally
- *   run (and resolve) all cleanup handlers before resolving itself.
- */
-const cleanupingPromise = executor => {
-  const cleanups = []
-  let addCleanup = cleaner => { cleanups.push(cleaner) }
-
-  const innerPromise = new Promise((resolve, reject) =>
-    executor(resolve, reject, cleaner => { addCleanup(cleaner) })
-  )
-
-  addCleanup = () => { throw new Error("Can't add new cleanup handlers asynchronously")}
-
-  const cleanupPromise = Promise.all(
-    cleanups.map(cleanup => innerPromise.finally(cleanup))
-  )
-
-  return innerPromise.finally(() => cleanupPromise)
-}
-
-const WINDOW_EARLY_CLOSE = new Error("Window was closed before sending a message")
-const WINDOW_OPEN_FAILURE = new Error("Failed to open url in a new window")
-const CHILD_WINDOW_TIMEOUT = new Error("Window timed out")
-
-// Spawn a window and wait for a message from it. Reject if the window is closed
-// with no message.
-const spawnWindowAndWait = (url, features) => cleanupingPromise((resolve, reject, cleanup) => {
-  // Await a message
-  const listener = event => {
-    if(event.origin === window.location.origin && event.source === childWindow) {
-      const data = event.data
-      if(data.error) {
-        reject(new Error(data.error))
-      } else {
-        resolve(data)
-      }
-    }
-  }
-  window.addEventListener('message', listener, { once: true })
-  cleanup(() => window.removeEventListener('message', listener))
-
-  const childWindow = window.open(url, "_blank", features)
-
-  if(childWindow == null)
-    throw WINDOW_OPEN_FAILURE
-  else
-    cleanup(() => childWindow.close())
-
-  const intervalHandle = window.setInterval(() => {
-    if(childWindow.closed)
-      reject(WINDOW_EARLY_CLOSE)
-  }, 1000)
-  cleanup(() => window.clearInterval(intervalHandle))
-
-  const timeoutHandle = window.setTimeout(() => {
-    reject(CHILD_WINDOW_TIMEOUT)
-  }, 1000 * 60 * 5)
-  cleanup(() => window.clearTimeout(timeoutHandle))
-})
-
-
+// Generic bitly v4 API calls. Makes a request to https://api-ssl.bitly.com/v4/{endpoint},
+// using the options. If payload is given, it is JSON encoded and used as the
+// body, and the content-type header is set. Uses token for authentication.
+//
+// If a payload is given and no method is set, the method is POST.
+//
+// This function uses fetch api, so all options are as to the fetch() function.
+//
+// HTTP errors are rejected with a summary message; otherwise, the response
+// JSON payload is returned. If checkForbidden is true, 403 errors cause the
+// forbiddenError object to be returned (as a rejection); this allows for
+// easily detecting this case for OAuth flow.
 const bitlyApiFetch = async ({token, endpoint, options, payload=undefined, checkForbidden=false}) => {
   options = options || {}
 
@@ -205,14 +177,18 @@ const bitlyApiFetch = async ({token, endpoint, options, payload=undefined, check
 
 /**
  * Attempt to create a short URL by POSTing to the bitly API. Return the
- * created short link.
+ * created short link. The bitly create-link API requires a group, and doesn't
+ * have any notion of a default group, so we also look up a group to use.
  */
 const createBitlink = ({longUrl, token, checkForbidden}) =>
   getBitlyGroup({token, checkForbidden})
   .then(guid => createBitlinkCall({longUrl, token, checkForbidden, guid}))
 
 
-const createBitlinkCall = ({longUrl, token, checkForbidden, guid}) =>
+/**
+ * Create a bitlink with the bitly API.
+ */
+const createBitlinkCall = ({longUrl, token, guid, checkForbidden}) =>
   bitlyApiFetch({
     token: token,
     endpoint: '/shorten',
@@ -224,14 +200,19 @@ const createBitlinkCall = ({longUrl, token, checkForbidden, guid}) =>
   }).then(data => data.link)
 
 
-const getBitlyGroup = async ({token, checkForbidden}) => {
+/**
+ * Get the user's "default" bitly group. This group is cached as in localStorage
+ * using BITLY_GUID_STORAGE_KEY, and looked up with that key. If the key doesn't
+ * exist, use the bitly API to fetch the group.
+ */
+const getBitlyGroup = ({token, checkForbidden}) => {
   let guid = localStorage.getItem(BITLY_GUID_STORAGE_KEY)
-  if(guid)
-    return guid
-
-  guid = await fetchBitlyGroup({token, checkForbidden})
-  localStorage.setItem(BITLY_GUID_STORAGE_KEY, guid)
-  return guid
+  return guid ?
+    Promise.resolve(guid) :
+    fetchBitlyGroup({token, checkForbidden}).then(guid => {
+      localStorage.setItem(BITLY_GUID_STORAGE_KEY, guid)
+      return guid
+    })
 }
 
 // Get the user's bitly group. Users can have more than one group, and
