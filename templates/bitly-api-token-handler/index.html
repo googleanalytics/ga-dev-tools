@@ -5,20 +5,21 @@
 
 	<script>
 		((function() {
-			window.setTimeout(function() { window.close(); }, 1000);
+			var parent = window.opener;
+			if(parent) {
+				var oauth_token = {{ site.token | default(None) | tojson | safe }};
+				var oauth_state = {{ site.state | default(None) | tojson | safe }};
+				var oauth_error = {{ site.error | default(None) | tojson | safe }};
 
-			var oauth_token = {{ site.token | default(None) | tojson | safe }};
-			var oauth_state = {{ site.state | default(None) | tojson | safe }};
-			var oauth_error = {{ site.error | default(None) | tojson | safe }};
-
-			// Note that this will throw an exception if window.opener is null.
-			// We don't really care about that, because users aren't supposed
-			// to navigate to this page manually in the first place.
-			window.opener.postMessage({
-				error: oauth_error,
-				token: oauth_token,
-				state: oauth_state,
-			}, window.location.origin);
+				parent.postMessage({
+					error: oauth_error,
+					token: oauth_token,
+					state: oauth_state,
+				}, window.location.origin);
+				window.setTimeout(function() { window.close(); }, 1000);
+			} else {
+				document.body.append("This page is an automated oauth handler. Please don't visit it manually.");
+			}
 		})());
 	</script>
 </head>
