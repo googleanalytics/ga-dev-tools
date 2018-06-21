@@ -173,18 +173,20 @@ const spawnWindowAndWait = (url, features) => cleanupingPromise((resolve, reject
 
 
 const bitlyApiFetch = async ({token, endpoint, options, payload=undefined, checkForbidden=false}) => {
+  options = options || {}
+
   const headers = {
     ...(options.headers || {}),
     Authorization: `Bearer ${token}`,
     Accept: "application/json",
   }
 
-  const finalOptions = {...options, headers}
+  options = {...options, headers}
 
   if(payload !== undefined) {
-    finalOptions.headers['Content-Type'] = "application/json"
-    finalOptions.body = JSON.stringify(payload)
-    finalOptions.method = finalOptions.method || "POST"
+    options.headers['Content-Type'] = "application/json"
+    options.body = JSON.stringify(payload)
+    options.method = options.method || "POST"
   }
 
   const url = `https://api-ssl.bitly.com/v4/${endpoint}`
