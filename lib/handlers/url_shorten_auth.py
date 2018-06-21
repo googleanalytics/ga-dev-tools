@@ -63,13 +63,11 @@ class UrlShortenAuthHandler(webapp2.RequestHandler):
 			# We don't use the template here, because we assume that if we
 			# didn't even get a ?code=something, the caller arrived at this
 			# page without going through the standard OAuth flow
-			return webapp2.Response(
+			return make_response(
 				status=400,
-				unicode_body=u"Missing query parameter: code",
-				content_type="text/plain",
-				content_type_params={'charset': 'utf8'},
-			)
-
+				site_data={
+					"error": "No access code provided"
+				})
 		state = self.request.params.get('state')
 
 		# Unfortunately, there doesn't seem to be a way to do "real" async at
