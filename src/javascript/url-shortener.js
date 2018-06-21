@@ -17,6 +17,7 @@ import {encodeQuery} from './utils';
 const urlMapCache = new Map();
 
 const BITLY_TOKEN_STORAGE_KEY = "BITLY_API_TOKEN"
+const BITLY_GUID_STORAGE_KEY = "BITLY_GUID"
 
 // Use a global object to distinguish forbidden errors from other errors
 const forbiddenError = new Error("Forbidden")
@@ -54,6 +55,7 @@ export async function shortenUrl(longUrl) {
 
       // Hmm. I guess the token was bad. Clear the saved one before proceeding.
       localStorage.removeItem(BITLY_TOKEN_STORAGE_KEY)
+      localStorage.removeItem(BITLY_GUID_STORAGE_KEY)
     }
   }
 
@@ -167,21 +169,24 @@ const spawnWindowAndWait = (url, features) => cleanupingPromise((resolve, reject
   cleanup(() => window.clearInterval(intervalHandle))
 })
 
-/**
- * Attempt to create a short URL by POSTing to the bitly API
- */
-const createBitlink = async ({longUrl, token, checkForbidden=false}) => {
-  const response = await fetch(
-    "https://api-ssl.bitly.com/v4/shorten", {
-      body: JSON.stringify({ long_url: longUrl }),
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json',
-        'Authorization': `Bearer ${token}`,
-      }
-    },
-  )
+
+const bitlyApiFetch = async ({token, endpoint, options, payload=undefined, checkForbidden=false}) => {
+  const headers = {
+    ...(options.headers || {}),
+    Authorization: `Bearer ${token}`,
+    Accept: "application/json",
+  }
+
+  const finalOptions = {...options, headers}
+
+  if(payload !== undefined) {
+    finalOptions.headers['Content-Type'] = "application/json"
+    finalOptions.body = JSON.stringify(payload)
+    finalOptions.method = finalOptions.method || "POST"
+  }
+
+  const url = `https://api-ssl.bitly.com/v4/${endpoint}`
+  const response = await fetch(url, finalOptions)
 
   if(checkForbidden && response.status === 403)
     throw forbiddenError
@@ -189,10 +194,30 @@ const createBitlink = async ({longUrl, token, checkForbidden=false}) => {
   const body = await response.json()
 
   if(!response.ok)
-    throw new Error(`Error ${response.status} from bitly: ${body.message}`)
+    throw new Error(`Error ${response.code} from ${url}: ${body.message}`)
 
-  // While we're here, go ahead and cache it
-  const link = body.link
-  urlMapCache.set(longUrl, link)
-  return link
+  return body
 }
+
+
+/**
+ * Attempt to create a short URL by POSTing to the bitly API
+ */
+const createBitlink = ({longUrl, token, checkForbidden, guid}) =>
+  bitlyApiFetch({
+    token: token,
+    endpoint: '/shorten',
+    checkForbidden: checkForbidden,
+    payload: {
+      long_url: longUrl,
+      group_guid: guid,
+    }
+  })
+
+
+const fetchBitlyGroup = ({token, checkForbidden}) =>
+ bitlyApiFetch({
+  token: token,
+  endpoint: "/groups",
+  checkForbidden: checkForbidden,
+})

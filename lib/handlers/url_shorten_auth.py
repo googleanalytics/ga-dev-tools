@@ -96,15 +96,13 @@ class UrlShortenAuthHandler(webapp2.RequestHandler):
 				validate_certificate=True,
 				follow_redirects=True,
 			)
-		except Exception as e:
-			raise
 
-		#except Exception as e:
-		#	return make_response(
-		#		status=500,
-		#		site_data={
-		#			"error": "Error getting an access token from bitly"
-		#		})
+		except Exception as e:
+			return make_response(
+				status=500,
+				site_data={
+					"error": "Error getting an access token from bitly"
+				})
 
 		if auth_response.status_code >= 300:
 			return make_response(

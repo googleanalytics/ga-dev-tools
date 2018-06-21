@@ -24,8 +24,6 @@ import lib.service_account as service_account
 from lib import bitly_api_credentials
 import pdb
 
-print dir(jinja2)
-
 JINJA_ENVIRONMENT = jinja2.Environment(
   loader=jinja2.FileSystemLoader('templates'),
   extensions=['jinja2.ext.autoescape'],
