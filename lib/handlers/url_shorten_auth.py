@@ -66,7 +66,7 @@ class UrlShortenAuthHandler(webapp2.RequestHandler):
 			return make_response(
 				status=400,
 				site_data={
-					"error": "No access code provided"
+					"error": "No access code provided; was permission denied?"
 				})
 		state = self.request.params.get('state')
 
