@@ -16,7 +16,7 @@
 /* global $, gapi */
 
 
-import escapeHtml from 'lodash/escape'
+import escapeHtml from 'lodash/escape';
 import accountSummaries from 'javascript-api-utils/lib/account-summaries';
 import site from '../site';
 
@@ -101,7 +101,7 @@ function updateResults(results, query = undefined) {
 
   // TODO(nathanwest): replace the HTML escaping here with
   //     htmlTag (from utils.js)
-  const regex = query ? new RegExp('(' + query + ')', 'ig') : undefined
+  const regex = query ? new RegExp('(' + query + ')', 'ig') : undefined;
   const highlightSafe = regex ?
     (text => escapeHtml(text).replace(regex, '<mark>$1</mark>')) :
     (text => escapeHtml(text));
