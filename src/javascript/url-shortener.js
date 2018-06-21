@@ -12,9 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import {encodeQuery} from './utils';
-
-const urlMapCache = new Map();
+import {encodeQuery, promiseMemoize} from './utils';
+import minBy from 'lodash/minBy';
 
 const BITLY_TOKEN_STORAGE_KEY = "BITLY_API_TOKEN"
 const BITLY_GUID_STORAGE_KEY = "BITLY_GUID"
@@ -30,12 +29,7 @@ const forbiddenError = new Error("Forbidden")
  * @param {string} longUrl
  * @return {Promise} A promise resolved with the shortend URL.
  */
-export async function shortenUrl(longUrl) {
-  // First, see if it's cached.
-  const cachedUrl = urlMapCache.get(longUrl)
-  if(cachedUrl != undefined)
-    return cachedUrl
-
+export const shortenUrl = promiseMemoize(async (longUrl) => {
   const bitly_api_token = localStorage.getItem(BITLY_TOKEN_STORAGE_KEY)
 
   // Attempt the API call with the stored token, but be ready to get a new
@@ -53,7 +47,7 @@ export async function shortenUrl(longUrl) {
       if(e !== forbiddenError)
         throw e
 
-      // Hmm. I guess the token was bad. Clear the saved one before proceeding.
+      // Hmm. I guess the token was bad. Clear the saved stuff before proceeding.
       localStorage.removeItem(BITLY_TOKEN_STORAGE_KEY)
       localStorage.removeItem(BITLY_GUID_STORAGE_KEY)
     }
@@ -81,6 +75,8 @@ export async function shortenUrl(longUrl) {
         throw new Error("Authorization window closed before authorization was completed")
       } else if(e === WINDOW_OPEN_FAILURE) {
         throw new Error("Failed open new window for authorizing bitly. Are you blocking popups?")
+      } else if(e === CHILD_WINDOW_TIMEOUT) {
+        throw new Error("Timed out waiting for authorization")
       } else {
         throw e
       }
@@ -98,7 +94,7 @@ export async function shortenUrl(longUrl) {
     token: token,
     checkForbidden: false,
   })
-}
+})
 
 /**
  * Create a promise that cleans up after itself. This is the same as a regular
@@ -137,6 +133,7 @@ const cleanupingPromise = executor => {
 
 const WINDOW_EARLY_CLOSE = new Error("Window was closed before sending a message")
 const WINDOW_OPEN_FAILURE = new Error("Failed to open url in a new window")
+const CHILD_WINDOW_TIMEOUT = new Error("Window timed out")
 
 // Spawn a window and wait for a message from it. Reject if the window is closed
 // with no message.
@@ -167,6 +164,11 @@ const spawnWindowAndWait = (url, features) => cleanupingPromise((resolve, reject
       reject(WINDOW_EARLY_CLOSE)
   }, 1000)
   cleanup(() => window.clearInterval(intervalHandle))
+
+  const timeoutHandle = window.setTimeout(() => {
+    reject(CHILD_WINDOW_TIMEOUT)
+  }, 1000 * 60 * 5)
+  cleanup(() => window.clearTimeout(timeoutHandle))
 })
 
 
@@ -199,11 +201,16 @@ const bitlyApiFetch = async ({token, endpoint, options, payload=undefined, check
   return body
 }
 
-
 /**
- * Attempt to create a short URL by POSTing to the bitly API
+ * Attempt to create a short URL by POSTing to the bitly API. Return the
+ * created short link.
  */
-const createBitlink = ({longUrl, token, checkForbidden, guid}) =>
+const createBitlink = ({longUrl, token, checkForbidden}) =>
+  getBitlyGroup({token, checkForbidden})
+  .then(guid => createBitlinkCall({longUrl, token, checkForbidden, guid}))
+
+
+const createBitlinkCall = ({longUrl, token, checkForbidden, guid}) =>
   bitlyApiFetch({
     token: token,
     endpoint: '/shorten',
@@ -212,12 +219,30 @@ const createBitlink = ({longUrl, token, checkForbidden, guid}) =>
       long_url: longUrl,
       group_guid: guid,
     }
+  }).then(data => {
+    const link = data.link
+    urlMapCache.set(longUrl, link)
+    return link
   })
 
 
+const getBitlyGroup = async ({token, checkForbidden}) => {
+  let guid = localStorage.getItem(BITLY_GUID_STORAGE_KEY)
+  if(guid)
+    return guid
+
+  guid = await fetchBitlyGroup({token, checkForbidden})
+  localStorage.setItem(guid)
+  return guid
+}
+
+
 const fetchBitlyGroup = ({token, checkForbidden}) =>
- bitlyApiFetch({
-  token: token,
-  endpoint: "/groups",
-  checkForbidden: checkForbidden,
-})
+  bitlyApiFetch({
+    token: token,
+    endpoint: "/groups",
+    checkForbidden: checkForbidden,
+  })
+  // For now we want to use the "default" group, which we'll just say is the
+  // earliest one
+  .then(data => minBy(data.groups, group => new Date(group.created)).guid)

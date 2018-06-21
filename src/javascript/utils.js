@@ -142,3 +142,25 @@ export const encodeQuery = query => {
     return ""
   }
 }
+
+// Given a function taking a single argument and returning a promise, wrap
+// that function to memoize the result. The memoize fails if the promise
+// rejects, and multiple concurrent calls to an ongoing promise will all
+// return the same promise.
+export const promiseMemoize = func => {
+  const cache = new Map()
+
+  return argument => {
+    const result = cache.get(argument)
+    if(result !== undefined)
+      return result
+
+    const promise = new Promise(res => res(func(argument)))
+      .catch(error => {
+        cache.delete(argument)
+        throw error
+      })
+    cache.set(argument, promise)
+    return promise
+  }
+}
