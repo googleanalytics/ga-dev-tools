@@ -65,7 +65,7 @@ class UrlShortenAuthHandler(webapp2.RequestHandler):
 			# page without going through the standard OAuth flow
 			return webapp2.Response(
 				status=400,
-				unicode_body="Missing query parameter: code",
+				unicode_body=u"Missing query parameter: code",
 				content_type="text/plain",
 				content_type_params={'charset': 'utf8'},
 			)
