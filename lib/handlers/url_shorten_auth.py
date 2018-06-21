@@ -28,6 +28,7 @@
 
 import urllib
 import json
+import copy
 
 import webapp2
 
@@ -35,7 +36,8 @@ from google.appengine.api import urlfetch
 from lib import bitly_api_credentials, template
 
 def make_response(status, site_data):
-	data = template.get_data('bitly-api-token-handler')
+	# TODO(nathanwest): find a better way to do this than deepcopy
+	data = copy.deepcopy(template.get_data('bitly-api-token-handler'))
 	data['site'].update(site_data)
 	return webapp2.Response(
 		status=status,
