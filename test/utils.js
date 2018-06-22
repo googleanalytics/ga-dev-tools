@@ -120,11 +120,11 @@ describe('utils', () => {
       // promises that aren't in a resolved state yet
 
       return Promise.resolve()
-        .then(expect(memoized(1)).to.be.rejectedWith(1))
-        .then(expect(memoized(1)).to.be.rejectedWith(1))
-        .then(expect(memoized(2)).to.be.rejectedWith(2))
-        .then(expect(memoized(2)).to.be.rejectedWith(2))
-        .then(expect(makePromise.count).to.equal(4));
+          .then(() => expect(memoized(1)).to.be.rejectedWith(1))
+          .then(() => expect(memoized(1)).to.be.rejectedWith(1))
+          .then(() => expect(memoized(2)).to.be.rejectedWith(2))
+          .then(() => expect(memoized(2)).to.be.rejectedWith(2))
+          .then(() => expect(makePromise.count).to.equal(4));
     });
     // Needs test: it should cache in-progress promises
   });
@@ -167,8 +167,9 @@ describe('utils', () => {
           expect(() => cleanup(() => value += 1)).to.throw()
         ));
         cleanup(() => value += 1);
+        cleanup(() => value += 1);
       }).then(() =>
-        expect(value).to.equal(2)
+        expect(value).to.equal(3)
       );
     });
 
@@ -188,4 +189,3 @@ describe('utils', () => {
     // - it shoudl execute all cleanups concurrently, if they're promises
   });
 });
-
