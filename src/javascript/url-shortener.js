@@ -30,7 +30,7 @@ const BITLY_GUID_STORAGE_KEY = 'BITLY_GUID';
 // Use a global object to distinguish forbidden errors from other errors
 const forbiddenError = new Error('Forbidden');
 
-/** ********
+/**
  * This section manages subscribing to authorization state changes.
  * Ordinarily we'd just use window.addEventListener('storeage', ...), but
  * 'storage' events only fire when localStorage is touched by tabs other than
@@ -40,7 +40,7 @@ const forbiddenError = new Error('Forbidden');
  *
  * These are provided as an aid to React elements that render based on whether
  * we're authorized or not.
- **********/
+ */
 
 // authorizationEventFromThisTab allows us to manually send auth events
 const authorizationEventsFromThisTab = new BehaviorSubject(
@@ -155,6 +155,10 @@ export const shortenUrl = promiseMemoize(async (longUrl) => {
   // We can't use try-finally here because the various APIs we're using (
   // addEventListener, timers, etc) aren't promisified or awaitable, so we have
   // to wrap them up in a promise abstraction that cleans up after itself.
+  //
+  // TODO(nathanwest): RxJS was a relatively late addition to the URL shortener
+  // design, but now that we have it, see if any of this cleanup stuff can be
+  // more easily or cleanly expressed using that library.
   const {token} = await cleanupingPromise((resolve, reject, cleanup) => {
     // Attach a listener that will await a message via postMessage
     const messageListener = event => {
@@ -223,13 +227,12 @@ export const shortenUrl = promiseMemoize(async (longUrl) => {
   });
 });
 
-// Generic bitly v4 API calls. Makes a request to https://api-ssl.bitly.com/v4/{endpoint},
-// using the options. If payload is given, it is JSON encoded and used as the
-// body, and the content-type header is set. Uses token for authentication.
-//
-// If a payload is given and no method is set, the method is POST.
-//
-// This function uses fetch api, so all options are as to the fetch() function.
+// Generic bitly v4 API calls. Makes a request to
+// https://api-ssl.bitly.com/v4/{endpoint}, using the options. If payload is
+// given, it is JSON encoded and used as the body, and the content-type header
+// is set. Uses token for authentication. If a payload is given and no method
+// is set, the method is POST. This function uses fetch api, so all options
+// are as to the fetch() function.
 //
 // HTTP errors are rejected with a summary message; otherwise, the response
 // JSON payload is returned. If checkForbidden is true, 403 errors cause the
