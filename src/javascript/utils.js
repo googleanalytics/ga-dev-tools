@@ -12,8 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import escapeHtml from 'lodash/escape'
-import map from 'lodash/map'
+import escapeHtml from 'lodash/escape';
+import map from 'lodash/map';
 /**
  * Awaits for a specified amount of time.
  * @param {number} amount The amount of time to sleep in milliseconds.
@@ -132,16 +132,22 @@ export class UserError extends Error {
   }
 }
 
+/**
+ * Given an object containing key-value pairs, produce a URL encodes query
+ * string. This string uses the ?key=value&key2=value2 syntax. If the provided
+ * object is null or empty, return an empty string, otherwise return a string
+ * with a prepended ?
+ */
 export const encodeQuery = query => {
-  if(query) {
+  if (query) {
     const encoded = map(query, (value, key) =>
       `${encodeURIComponent(key)}=${encodeURIComponent(value)}`
-    ).join('&')
-    return encoded ? `?${encoded}` : ""
+    ).join('&');
+    return encoded ? `?${encoded}` : '';
   } else {
-    return ""
+    return '';
   }
-}
+};
 
 // Given a function taking a single argument and returning a promise, wrap
 // that function to memoize the result. The memoize fails if the promise
@@ -150,22 +156,23 @@ export const encodeQuery = query => {
 export const promiseMemoize = func => {
   // This is a mapping of key => Promise. storing the promise directly
   // simplifies our implementation, since we just return it on a cache hit.
-  const cache = new Map()
+  const cache = new Map();
 
   return argument => {
-    const result = cache.get(argument)
-    if(result != undefined)
-      return result
+    const result = cache.get(argument);
+    if (result != undefined) {
+return result;
+}
 
     const promise = new Promise(res => res(func(argument)))
       .catch(error => {
-        cache.delete(argument)
-        throw error
-      })
-    cache.set(argument, promise)
-    return promise
-  }
-}
+        cache.delete(argument);
+        throw error;
+      });
+    cache.set(argument, promise);
+    return promise;
+  };
+};
 
 /**
  * Create a promise that cleans up after itself. This is the same as a regular
@@ -188,15 +195,21 @@ export const promiseMemoize = func => {
  *   run (and resolve) all cleanup handlers before resolving itself.
  */
 export const cleanupingPromise = executor => {
-  const cleanups = []
-  let addCleanup = cleaner => { cleanups.push(cleaner) }
+  const cleanups = [];
+  let addCleanup = cleaner => {
+ cleanups.push(cleaner);
+};
 
   const innerPromise = new Promise((resolve, reject) =>
-    executor(resolve, reject, cleaner => { addCleanup(cleaner) })
-  )
+    executor(resolve, reject, cleaner => {
+ addCleanup(cleaner);
+})
+  );
 
-  addCleanup = () => { throw new Error("Can't add new cleanup handlers asynchronously")}
+  addCleanup = () => {
+ throw new Error('Can\'t add new cleanup handlers asynchronously');
+};
 
   return Promise.all(cleanups.map(cleanup => innerPromise.finally(() => cleanup())))
-    .then(() => innerPromise)
-}
+    .then(() => innerPromise);
+};

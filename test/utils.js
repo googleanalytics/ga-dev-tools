@@ -13,8 +13,26 @@
 // limitations under the License.
 
 
-import {expect} from 'chai';
-import {tagHtml} from '../src/javascript/utils.js';
+import {expect, use} from 'chai';
+import chaiAsPromised from 'chai-as-promised';
+use(chaiAsPromised);
+
+import {
+  tagHtml,
+  encodeQuery,
+  promiseMemoize,
+  cleanupingPromise,
+  } from '../src/javascript/utils.js';
+
+// Wrap a function to keep track of how often it is called
+const counted = func => {
+  const wrapper = function() {
+    wrapper.count += 1;
+    return func.apply(this, arguments);
+  };
+  wrapper.count = 0;
+  return wrapper;
+};
 
 describe('utils', () => {
   describe('HTML escaping', () => {
@@ -42,4 +60,130 @@ describe('utils', () => {
       });
     });
   });
+
+  describe('encodeQuery', () => {
+    it('should return an empty string given a falsey value', () => {
+      expect(encodeQuery(null)).to.equal('');
+    });
+
+    it('should return an empty string given an empty object', () => {
+      expect(encodeQuery({})).to.equal('');
+    });
+
+    it('should return an encoded query string', () => {
+      // Order is arbitrary, so make sure to test for all possibilites
+      expect(encodeQuery({
+        key1: 'value1',
+        key2: 'value2',
+      })).to.be.oneOf([
+        '?key1=value1&key2=value2',
+        '?key2=value2&key1=value1',
+      ]);
+    });
+
+    encodeURIComponent('/&=?');
+    '%2F%26%3D%3F';
+
+    it('should safely escape special characters in keys and values', () => {
+      expect(encodeQuery({
+        '/key': '?value',
+        '=key': '&value',
+      })).to.be.oneOf([
+        '?%2Fkey=%3Fvalue&%3Dkey=%26value',
+        '?%3Dkey=%26value&%2Fkey=%3Fvalue',
+      ]);
+    });
+  });
+
+  describe('promiseMemoize', () => {
+    it('should cache promise results', () => {
+      const makeResolved = counted(value => Promise.resolve(value));
+      const memoized = promiseMemoize(makeResolved);
+
+      return Promise.all(
+        expect(memoized(1)).to.eventually.equal(1),
+        expect(memoized(1)).to.eventually.equal(1),
+        expect(memoized(2)).to.eventually.equal(2),
+        expect(memoized(2)).to.eventually.equal(2),
+      ).then(() =>
+        expect(makeResolved.count).to.equal(2),
+      );
+    });
+
+    it('should not cache errors', () => {
+      const makeRejected = counted(err => Promise.reject(err));
+      const memoized = promiseMemoize(makeRejected);
+      // Make sure to do these in strict sequence, as memoized DOES cache
+      // promises that aren't in a resolved state yet
+
+      return Promise.resolve()
+        .then(expect(memoized(1)).to.be.rejectedWith(1))
+        .then(expect(memoized(1)).to.be.rejectedWith(1))
+        .then(expect(memoized(2)).to.be.rejectedWith(2))
+        .then(expect(memoized(2)).to.be.rejectedWith(2))
+        .then(expect(makeResolved.count).to.equal(4));
+    });
+    // Needs test: it should cache in-progress promises
+  });
+
+    describe('cleanupingPromise', () => {
+    it('should run cleanup functions when resolved', () => {
+      let value = 0;
+
+      return cleanupingPromise((resolve, reject, cleanup) => {
+        value += 1;
+        cleanup(() => value -= 1);
+        expect(value).to.equal(1);
+
+        value += 1;
+        cleanup(() => value -= 1);
+        expect(value).to.equal(2);
+        resolve(null);
+      }).then(() => {
+        expect(value).to.equal(0);
+      });
+    });
+
+    it('should run cleanup functions if an error is thrown', () => {
+      let value = 0;
+
+      return cleanupingPromise((resolve, reject, cleanup) => {
+        cleanup(() => value += 1);
+        cleanup(() => value += 1);
+        if (true) {
+          throw new Error();
+        }
+        cleanup(() => value += 1);
+      }).catch(e =>
+        expect(value).to.equal(2)
+      );
+    });
+
+    it('should not allow asynchronous cleanups', () => {
+      let value = 0;
+      return cleanupingPromise((resolve, reject, cleanup) => {
+        cleanup(() => value += 1);
+        resolve(Promise.resolve().then(() =>
+          expect(() => cleanup(() => value += 1)).to.throw()
+        ));
+        cleanup(() => value += 1);
+      }).then(() =>
+        expect(value).to.equal(2)
+      );
+    });
+
+    it('should propogate cleanup errors', () => {
+      return expect(cleanupingPromise((resolve, reject, cleanup) => {
+        cleanup(() => {
+          throw new Error();
+        });
+        resolve('SUCCESS');
+      })).to.be.rejected;
+    });
+
+    // Needs test:
+    // - it should wait for cleanup promises
+    // - it shoudl execute all cleanups concurrently, if they're promises
+  });
 });
+

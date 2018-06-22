@@ -87,11 +87,11 @@ export default class CampaignUrl extends React.Component {
   componentDidMount() {
     this.bitlyAuthSubscription = isAuthorizedEvents.subscribe(
       isAuthorized => this.setState({isUrlShorteningAuthorized: isAuthorized})
-    )
+    );
   }
 
   componentWillUnmount() {
-    this.bitlyAuthSubscription.unsubscribe()
+    this.bitlyAuthSubscription.unsubscribe();
   }
 
 
@@ -290,12 +290,12 @@ export default class CampaignUrl extends React.Component {
           onClick={this.shortenUrl}
           key="shortenButton"
           title={this.state.isUrlShorteningAuthorized ? null :
-            "Requires authorization with bitly"
+            'Requires authorization with bitly'
           }
         >{
           this.state.isShorteningUrl ? 'Shortening...' :
           this.state.isUrlShorteningAuthorized ? 'Convert URL to Short Link' :
-          "Convert URL to Short Link (authorization required)"
+          'Convert URL to Short Link (authorization required)'
         }</IconButton>
       )}
     </div>;
