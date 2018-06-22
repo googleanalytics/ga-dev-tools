@@ -174,9 +174,11 @@ describe('utils', () => {
 
     it('should propogate cleanup errors', () => {
       return expect(cleanupingPromise((resolve, reject, cleanup) => {
+        cleanup(() => {});
         cleanup(() => {
           throw new Error();
         });
+        cleanup(() => {});
         resolve('SUCCESS');
       })).to.be.rejected;
     });
