@@ -32,6 +32,9 @@ def get_client_key(file_path, header):
 		warnings.warn(
 			"Error reading bitly API credentials. "
 			"API shortening will be disabled.\n"
+			"If you want to do bit.ly API shortening, add a bitly_api_key.cfg "
+			"file to the project root, which should include client_id and "
+			"client_secret under the header [Production].\n"
 			"{}".format(e))
 		return None, None
 
