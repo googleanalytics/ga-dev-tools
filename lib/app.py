@@ -34,7 +34,7 @@ router = webapp2.WSGIApplication([
 
   # Static routes
   (r'/query-explorer/csvhandler.*', ExplorerCsvHandler),
-  (r'/url-shorten/auth-callback/?', UrlShortenAuthHandler),
+  (r'/bitly-api-token-handler/?', UrlShortenAuthHandler),
 
   # Dynamic routes
   RedirectRoute(r'/',

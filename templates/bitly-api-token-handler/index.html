@@ -7,23 +7,27 @@
 		window.addEventListener("load", function() {
 			var parent = window.opener;
 			if(parent) {
-				var oauth_token = {{ site.token | default(None) | tojson | safe }};
-				var oauth_state = {{ site.state | default(None) | tojson | safe }};
-				var oauth_error = {{ site.error | default(None) | tojson | safe }};
+				var oauth_token = {{ site.token | tojson | safe }};
+				var oauth_state = {{ site.state | tojson | safe }};
+				var oauth_error = {{ site.error | tojson | safe }};
 
 				parent.postMessage({
 					error: oauth_error,
 					token: oauth_token,
 					state: oauth_state,
 				}, window.location.origin);
+				// We put this here as a sanity check, but the
 				window.setTimeout(function() { window.close(); }, 1000);
 			} else {
-				document.body.append("This page is an automated oauth handler. Please don't visit it manually.");
+				document.getElementById('automation-warning').innerText =
+					"This page is an automated oauth handler. " +
+					"Please don't visit it manually.";
 			}
 		});
 	</script>
 </head>
 <body>
-	{{ body }}
+	<div id="automation-warning">
+	</div>
 </body>
 </html>

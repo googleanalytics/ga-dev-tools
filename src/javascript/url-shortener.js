@@ -20,6 +20,22 @@ const BITLY_GUID_STORAGE_KEY = "BITLY_GUID"
 // Use a global object to distinguish forbidden errors from other errors
 const forbiddenError = new Error("Forbidden")
 
+// Check if bitly is currently authorized, by checking to see if we have a
+// saved token.
+export const isBitlyAuthorized = () => {
+  return localStorage.getItem(BITLY_TOKEN_STORAGE_KEY) != null
+}
+
+// Helper for react: Subscribe to "is authorized". Calls handler with the
+// authorization state every time it changes. Calls it with the token if
+// authorization has been granted, and with null if it has been removed.
+// Returns a function which can be called to cancel the subscription.
+//
+// TODO(nathanwest): Do this in an Observer/Observable, once those become
+// standardized.
+export const isAuthorizedSubscription = handler => {
+}
+
 /**
  * Accepts a long URL and returns a promise that is resolved with its shortened
  * version, using the bitly API. This function independently handles
@@ -95,7 +111,7 @@ export const shortenUrl = promiseMemoize(async (longUrl) => {
       // authorization code, converts it into a token, then sends the token
       // back to us. This happens server side because it requires the
       // client_secret, which we don't want to share with our users.
-      redirect_uri: window.location.origin + "/url-shorten/auth-callback/"
+      redirect_uri: window.location.origin + "/bitly-api-token-handler/"
     })
     // Open a new window to do authentication.
     const childWindow = window.open(auth_url, "_blank")

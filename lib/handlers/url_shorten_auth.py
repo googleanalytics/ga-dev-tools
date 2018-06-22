@@ -35,10 +35,10 @@ import webapp2
 from google.appengine.api import urlfetch
 from lib import bitly_api_credentials, template
 
-def make_response(status, site_data):
+def make_response(status, error=None, token=None, state=None):
 	# TODO(nathanwest): find a better way to do this than deepcopy
 	data = copy.deepcopy(template.get_data('bitly-api-token-handler'))
-	data['site'].update(site_data)
+	data['site'].update(error=error, token=token, state=state)
 	return webapp2.Response(
 		status=status,
 		content_type='text/html',
@@ -51,7 +51,7 @@ def make_response(status, site_data):
 
 # TODO(nathanwest): Replace the local file containing the secret key with
 # something more durable, like Google Cloud Key Management Service.
-
+# TODO(nathanwest): Add logging to this thing
 class UrlShortenAuthHandler(webapp2.RequestHandler):
 	def get(self):
 		# Per the bitly docs: When we arrive at this URL, it is with a code and
@@ -67,9 +67,8 @@ class UrlShortenAuthHandler(webapp2.RequestHandler):
 			# page without going through the standard OAuth flow
 			return make_response(
 				status=400,
-				site_data={
-					"error": "No access code provided; was permission denied?"
-				})
+				error="No access code provided; was permission denied?",
+			)
 		state = self.request.params.get('state')
 
 		# Unfortunately, there doesn't seem to be a way to do "real" async at
@@ -100,17 +99,14 @@ class UrlShortenAuthHandler(webapp2.RequestHandler):
 		except Exception as e:
 			return make_response(
 				status=500,
-				site_data={
-					"error": "Error getting an access token from bitly"
-				})
+				error="Error getting an access token from bitly",
+			)
 
 		if auth_response.status_code >= 300:
 			return make_response(
 				status=500,
-				site_data={
-					"error": "Error: bitly returned error code {} instead of a token"
-						.format(auth_response.status_code)
-				}
+				error="Error: bitly returned error code {} instead of a token"
+					.format(auth_response.status_code),
 			)
 
 		auth_body = json.loads(auth_response.content)
@@ -119,7 +115,6 @@ class UrlShortenAuthHandler(webapp2.RequestHandler):
 		# token and state to the client via postMessage
 		return make_response(
 			status=200,
-			site_data={
-				"token": auth_body['access_token'],
-				"state": state,
-			})
+			token=auth_body['access_token'],
+			state=state
+		)

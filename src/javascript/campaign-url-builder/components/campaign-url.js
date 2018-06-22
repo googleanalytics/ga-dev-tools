@@ -79,6 +79,9 @@ export default class CampaignUrl extends React.Component {
       problematicElement: element,
       // The label sent to google analytics
       problematicEventLabel: eventLabel,
+      // True if we have a saved bitly API token.
+      // Uses url-shortener.js:isAuthorizedSubscription
+      isUrlShorteningAuthorized: false,
     };
   }
 
