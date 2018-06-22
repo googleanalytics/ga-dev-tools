@@ -15,14 +15,17 @@
 
 import {expect, use} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
+import promiseFinally from 'promise.prototype.finally';
+
 use(chaiAsPromised);
+promiseFinally.shim();
 
 import {
   tagHtml,
   encodeQuery,
   promiseMemoize,
   cleanupingPromise,
-  } from '../src/javascript/utils.js';
+} from '../src/javascript/utils.js';
 
 // Wrap a function to keep track of how often it is called
 const counted = func => {
