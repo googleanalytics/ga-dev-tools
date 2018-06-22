@@ -62,9 +62,6 @@ class UrlShortenAuthHandler(webapp2.RequestHandler):
 		try:
 			auth_code = self.request.params.getone('code')
 		except KeyError as e:
-			# We don't use the template here, because we assume that if we
-			# didn't even get a ?code=something, the caller arrived at this
-			# page without going through the standard OAuth flow
 			return make_response(
 				status=400,
 				error="No access code provided; was permission denied?",
