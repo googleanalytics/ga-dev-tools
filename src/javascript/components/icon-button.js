@@ -40,10 +40,11 @@ export default class IconButton extends React.Component {
       disabled: this.props.disabled,
       href: this.props.href,
       onClick: this.props.onClick,
+      title: this.props.title,
     };
     let nodeType = this.props.href ? 'a' : 'button';
     return React.createElement(nodeType, props,
-        <span className="Button-iconWrapper">
+        <span className="Button-iconWrapper" title={this.props.title}>
           <span
             className="Button-icon"
             style={this.props.iconStyle}>

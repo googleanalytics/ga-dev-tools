@@ -289,10 +289,14 @@ export default class CampaignUrl extends React.Component {
           disabled={this.state.isShorteningUrl}
           onClick={this.shortenUrl}
           key="shortenButton"
-        >
-          {this.state.isShorteningUrl ?
-            'Shortening...' : 'Convert URL to Short Link'}
-        </IconButton>
+          title={this.state.isUrlShorteningAuthorized ? null :
+            "Requires authorization with bitly"
+          }
+        >{
+          this.state.isShorteningUrl ? 'Shortening...' :
+          this.state.isUrlShorteningAuthorized ? 'Convert URL to Short Link' :
+          "Convert URL to Short Link (authorization required)"
+        }</IconButton>
       )}
     </div>;
   }
