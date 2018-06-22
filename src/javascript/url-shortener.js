@@ -158,7 +158,10 @@ export const shortenUrl = promiseMemoize(async (longUrl) => {
   const {token} = await cleanupingPromise((resolve, reject, cleanup) => {
     // Attach a listener that will await a message via postMessage
     const messageListener = event => {
-      if (event.origin === window.location.origin && event.source === childWindow) {
+      if (
+        event.origin === window.location.origin &&
+        event.source === childWindow
+      ) {
         const data = event.data;
         if (data.error) {
           reject(new Error(data.error));
@@ -170,7 +173,7 @@ export const shortenUrl = promiseMemoize(async (longUrl) => {
     window.addEventListener('message', messageListener, {once: true});
     cleanup(() => window.removeEventListener('message', messageListener));
 
-    const auth_url = 'https://bitly.com/oauth/authorize' + encodeQuery({
+    const authUrl = 'https://bitly.com/oauth/authorize' + encodeQuery({
       client_id: bitlyClientId,
       // The auth callback does about half the work here: it receieves an
       // authorization code, converts it into a token, then sends the token
@@ -179,10 +182,13 @@ export const shortenUrl = promiseMemoize(async (longUrl) => {
       redirect_uri: window.location.origin + '/bitly-api-token-handler/',
     });
     // Open a new window to do authentication.
-    const childWindow = window.open(auth_url, '_blank');
+    const childWindow = window.open(authUrl, '_blank');
     if (childWindow == null) {
-throw new Error('Failed open new window for authorizing bitly. Are you blocking popups?');
-}
+      throw new Error(
+        'Failed open new window for authorizing bitly. ' +
+        'Are you blocking popups?'
+      );
+    }
 
     // Close the window as soon as auth flow completes.
     cleanup(() => childWindow.close());
@@ -190,8 +196,10 @@ throw new Error('Failed open new window for authorizing bitly. Are you blocking 
     // If the user closes the window, that's an error
     const intervalHandle = window.setInterval(() => {
       if (childWindow.closed) {
-reject(new Error('Authorization window closed before authorization was completed'));
-}
+        reject(new Error(
+          'Authorization window closed before authorization was completed'
+        ));
+      }
     }, 1000);
     cleanup(() => window.clearInterval(intervalHandle));
 
@@ -227,7 +235,13 @@ reject(new Error('Authorization window closed before authorization was completed
 // JSON payload is returned. If checkForbidden is true, 403 errors cause the
 // forbiddenError object to be returned (as a rejection); this allows for
 // easily detecting this case for OAuth flow.
-const bitlyApiFetch = async ({token, endpoint, options, payload=undefined, checkForbidden=false}) => {
+const bitlyApiFetch = async ({
+  token,
+  endpoint,
+  options,
+  payload=undefined,
+  checkForbidden=false,
+}) => {
   options = options || {};
 
   const headers = {
