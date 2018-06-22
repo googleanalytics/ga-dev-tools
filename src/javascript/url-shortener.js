@@ -13,7 +13,11 @@
 // limitations under the License.
 
 import {encodeQuery, promiseMemoize, cleanupingPromise} from './utils';
-import {BehaviorSubject, fromEvent as rxFromEvent, merge as rxMerge} from 'rxjs';
+import {
+  BehaviorSubject,
+  fromEvent as rxFromEvent,
+  merge as rxMerge,
+} from 'rxjs';
 import {
   filter as rxFilter,
   map as rxMap,
@@ -104,25 +108,26 @@ const removeToken = () => {
  * @return {Promise} A promise resolved with the shortend URL.
  */
 export const shortenUrl = promiseMemoize(async (longUrl) => {
-  const bitly_api_token = getToken();
+  const bitlyApiToken = getToken();
 
   // Attempt the API call with the stored token, but be ready to get a new
   // token and retry if it fails.
-  if (bitly_api_token != undefined) {
+  if (bitlyApiToken != undefined) {
     try {
       return await createBitlink({
         longUrl: longUrl,
-        token: bitly_api_token,
+        token: bitlyApiToken,
         checkForbidden: true,
       });
     } catch (e) {
       // If it wasn't a forbidden error, return it to the caller. Otherwise,
       // it's possible we have a bad token and should retry with a fresh one.
       if (e !== forbiddenError) {
-throw e;
-}
+        throw e;
+      }
 
-      // Hmm. I guess the token was bad. Clear the saved stuff before proceeding.
+      // Hmm. I guess the token was bad. Clear the saved stuff before
+      // proceeding.
       removeToken();
       localStorage.removeItem(BITLY_GUID_STORAGE_KEY);
     }
@@ -134,10 +139,13 @@ throw e;
   // renderer. This way we don't have to make a whole round trip to an API to
   // get it. This currently happens inside of lib/template.py:render, so it's
   // always available.
-  const bitly_client_id = window.BITLY_CLIENT_ID;
-  if (!bitly_client_id) {
-throw new Error('No OAuth client ID available. Make sure to attach it as a global in the server!');
-}
+  const bitlyClientId = window.BITLY_CLIENT_ID;
+  if (!bitlyClientId) {
+    throw new Error(
+      'No OAuth client ID available. Make sure to attach it as a ' +
+      'global in the server!'
+    );
+  }
 
   // Initiate OAuth flow. Spawn a new window, which sends the user to bitly's
   // auth page. That will redirect us to /url-shorten/auth-callback, which
@@ -163,7 +171,7 @@ throw new Error('No OAuth client ID available. Make sure to attach it as a globa
     cleanup(() => window.removeEventListener('message', messageListener));
 
     const auth_url = 'https://bitly.com/oauth/authorize' + encodeQuery({
-      client_id: bitly_client_id,
+      client_id: bitlyClientId,
       // The auth callback does about half the work here: it receieves an
       // authorization code, converts it into a token, then sends the token
       // back to us. This happens server side because it requires the
