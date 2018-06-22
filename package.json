@@ -71,6 +71,7 @@
     "postcss-loader": "^1.2.2",
     "postcss-reporter": "^1.4.1",
     "postcss-url": "^5.1.2",
+    "promise.prototype.finally": "^3.1.0",
     "react": "^15.3.2",
     "react-addons-css-transition-group": "^15.3.2",
     "react-chartjs": "^0.8.0",
