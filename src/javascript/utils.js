@@ -14,6 +14,7 @@
 
 import escapeHtml from 'lodash/escape';
 import map from 'lodash/map';
+
 /**
  * Awaits for a specified amount of time.
  * @param {number} amount The amount of time to sleep in milliseconds.

@@ -137,22 +137,26 @@ export default class CampaignUrl extends React.Component {
    * state is activated. If there's an error shortening the URL, an alert
    * is displayed.
    */
-  shortenUrl = async () => {
+  shortenUrl = () => {
     this.setState({isShorteningUrl: true});
 
-    try {
-      let shortUrl = await shortenUrl(this.props.url);
+    return shortenUrl(this.props.url)
+    .then(shortUrl => {
       this.setState({
         isShorteningUrl: false,
         shortUrl: shortUrl,
         showShortUrl: true,
       });
+      // TODO(nathanwest): Only send the event if the API was hit. Don't send
+      // events for cache hits. Alternatively, attach cache information to
+      // label or value.
       gaSendEvent({
         category: 'Campaign URL',
         action: 'shorten',
         label: '(not set)',
       });
-    } catch (err) {
+    })
+    .catch(err => {
       AlertDispatcher.addOnce({
         title: 'Oops, an error occurred trying to shorten the URL',
         message: err.message,
@@ -162,9 +166,13 @@ export default class CampaignUrl extends React.Component {
         shortUrl: null,
         showShortUrl: false,
       });
-    }
+      gaSendEvent({
+        category: 'Campaign URL',
+        action: 'shorten-failure',
+        label: err.message,
+      });
+    });
   }
-
 
   /**
    * Updates the state to show the original URL instead of the shortened one.
