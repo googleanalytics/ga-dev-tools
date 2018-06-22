@@ -262,14 +262,14 @@ const bitlyApiFetch = async ({
   const response = await fetch(url, options);
 
   if (checkForbidden && response.status === 403) {
-throw forbiddenError;
-}
+    throw forbiddenError;
+  }
 
   const body = await response.json();
 
   if (!response.ok) {
-throw new Error(`Error ${response.code} from ${url}: ${body.message}`);
-}
+    throw new Error(`Error ${response.code} from ${url}: ${body.message}`);
+  }
 
   return body;
 };

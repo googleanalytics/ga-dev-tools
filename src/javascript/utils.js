@@ -126,7 +126,7 @@ export class UserError extends Error {
   /**
    * @param {{title: (string), message: (string)}} arg1
    */
-  constructor({title, message}) {
+   constructor({title, message}) {
     super(message);
     this.title = title;
   }
@@ -142,7 +142,7 @@ export const encodeQuery = query => {
   if (query) {
     const encoded = map(query, (value, key) =>
       `${encodeURIComponent(key)}=${encodeURIComponent(value)}`
-    ).join('&');
+      ).join('&');
     return encoded ? `?${encoded}` : '';
   } else {
     return '';
@@ -161,14 +161,14 @@ export const promiseMemoize = func => {
   return argument => {
     const result = cache.get(argument);
     if (result != undefined) {
-return result;
-}
+      return result;
+    }
 
     const promise = new Promise(res => res(func(argument)))
-      .catch(error => {
-        cache.delete(argument);
-        throw error;
-      });
+    .catch(error => {
+      cache.delete(argument);
+      throw error;
+    });
     cache.set(argument, promise);
     return promise;
   };
@@ -194,22 +194,24 @@ return result;
  * @return {Promise} A new Promise. Will run to completion, and additionally
  *   run (and resolve) all cleanup handlers before resolving itself.
  */
+
 export const cleanupingPromise = executor => {
   const cleanups = [];
   let addCleanup = cleaner => {
- cleanups.push(cleaner);
-};
+   cleanups.push(cleaner);
+  };
 
   const innerPromise = new Promise((resolve, reject) =>
     executor(resolve, reject, cleaner => {
- addCleanup(cleaner);
-})
+      addCleanup(cleaner);
+    })
   );
 
   addCleanup = () => {
- throw new Error('Can\'t add new cleanup handlers asynchronously');
-};
+    throw new Error('Can\'t add new cleanup handlers asynchronously');
+  };
 
-  return Promise.all(cleanups.map(cleanup => innerPromise.finally(() => cleanup())))
-    .then(() => innerPromise);
+  return Promise.all(cleanups.map(
+    cleanup => innerPromise.finally(() => cleanup())
+  )).then(() => innerPromise);
 };
