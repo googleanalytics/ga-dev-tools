@@ -23,7 +23,7 @@ import AlertDispatcher from '../../components/alert-dispatcher';
 import Icon from '../../components/icon';
 import IconButton from '../../components/icon-button';
 import supports from '../../supports';
-import {shortenUrl} from '../../url-shortener';
+import {shortenUrl, isAuthorizedEvents} from '../../url-shortener';
 import {copyElementText} from '../../utils';
 import renderProblematic from './problematic.js';
 
@@ -80,9 +80,18 @@ export default class CampaignUrl extends React.Component {
       // The label sent to google analytics
       problematicEventLabel: eventLabel,
       // True if we have a saved bitly API token.
-      // Uses url-shortener.js:isAuthorizedSubscription
       isUrlShorteningAuthorized: false,
     };
+  }
+
+  componentDidMount() {
+    this.bitlyAuthSubscription = isAuthorizedEvents.subscribe(
+      isAuthorized => this.setState({isUrlShorteningAuthorized: isAuthorized})
+    )
+  }
+
+  componentWillUnmount() {
+    this.bitlyAuthSubscription.unsubscribe()
   }
 
 

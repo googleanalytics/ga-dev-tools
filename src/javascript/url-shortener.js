@@ -13,6 +13,12 @@
 // limitations under the License.
 
 import {encodeQuery, promiseMemoize, cleanupingPromise} from './utils';
+import Rx from 'rxjs'
+import {
+  filter as rxFilter,
+  map as rxMap,
+  distinctUntilChanged
+} from 'rxjs/operators'
 
 const BITLY_TOKEN_STORAGE_KEY = "BITLY_API_TOKEN"
 const BITLY_GUID_STORAGE_KEY = "BITLY_GUID"
@@ -20,21 +26,69 @@ const BITLY_GUID_STORAGE_KEY = "BITLY_GUID"
 // Use a global object to distinguish forbidden errors from other errors
 const forbiddenError = new Error("Forbidden")
 
-// Check if bitly is currently authorized, by checking to see if we have a
-// saved token.
-export const isBitlyAuthorized = () => {
-  return localStorage.getItem(BITLY_TOKEN_STORAGE_KEY) != null
+/**********
+ * This section manages subscribing to authorization state changes.
+ * Ordinarily we'd just use window.addEventListener('storeage', ...), but
+ * 'storage' events only fire when localStorage is touched by tabs other than
+ * outselves. We therefore use RxJS to compose the two event streams: 'storage'
+ * events from the DOM, and local change events fired manually from the code in
+ * this manually.
+ *
+ * These are provided as an aid to React elements that render based on whether
+ * we're authorized or not.
+ **********/
+
+// authorizationEventFromThisTab allows us to manually send auth events
+const authorizationEventsFromThisTab = new Rx.BehaviorSubject(
+  localStorage.getItem(BITLY_API_TOKEN)
+)
+
+const authorizationEventsFromOtherTabs = Rx.fromEvent(window, 'storage').pipe(
+  rxFilter(event => event.storageArea === window.localStorage),
+  rxFilter(event => event.key === BITLY_TOKEN_STORAGE_KEY),
+  rxMap(event => event.newValue),
+)
+
+// This Observable provides a stream of authorization stream events.
+// Specifically, any time the token changes or becomes null, that token
+// is sent to the observable. This observatle merges events from two sources:
+// 'storage' events in the DOM, and authorizationEventFromThisTab, above.
+export const authorizationEvents = Rx.merge(
+  authorizationEventsFromOtherTabs,
+  authorizationEventsFromThisTab,
+).pipe(
+  // Normalize tokens; make everything falsey -> null
+  rxMap(token => token ? token : null)
+  // Only show tokens that differ from the previous one
+  distinctUntilChanged()
+)
+
+// similar to authorizationEvents, this Observable provides a stream of
+// boolean true/false values, which corrospond to isAuthorized and
+// isNotAuthorized
+export const isAuthorizedEvents = authorizationEvents.pipe(
+  rxMap(token => token !== null),
+  distinctUntilChanged(),
+)
+
+// These functions wrap localStorage.*Item, and emit events with
+// authorizationEventsFromThisTab when called.
+const getToken = () => window.getItem(BITLY_TOKEN_STORAGE_KEY)
+
+const setToken = token => {
+  if(token) {
+    authorizationEventsFromThisTab.next(token)
+    window.localStorage.setItem(BITLY_TOKEN_STORAGE_KEY, token)
+  } else {
+    removeToken()
+  }
 }
 
-// Helper for react: Subscribe to "is authorized". Calls handler with the
-// authorization state every time it changes. Calls it with the token if
-// authorization has been granted, and with null if it has been removed.
-// Returns a function which can be called to cancel the subscription.
-//
-// TODO(nathanwest): Do this in an Observer/Observable, once those become
-// standardized.
-export const isAuthorizedSubscription = handler => {
+const removeToken = () => {
+  authorizationEventsFromThisTab.next(null)
+  window.localStorage.removeItem(BITLY_TOKEN_STORAGE_KEY)
 }
+
 
 /**
  * Accepts a long URL and returns a promise that is resolved with its shortened
@@ -49,7 +103,7 @@ export const isAuthorizedSubscription = handler => {
  * @return {Promise} A promise resolved with the shortend URL.
  */
 export const shortenUrl = promiseMemoize(async (longUrl) => {
-  const bitly_api_token = localStorage.getItem(BITLY_TOKEN_STORAGE_KEY)
+  const bitly_api_token = getToken()
 
   // Attempt the API call with the stored token, but be ready to get a new
   // token and retry if it fails.
@@ -67,7 +121,7 @@ export const shortenUrl = promiseMemoize(async (longUrl) => {
         throw e
 
       // Hmm. I guess the token was bad. Clear the saved stuff before proceeding.
-      localStorage.removeItem(BITLY_TOKEN_STORAGE_KEY)
+      removeToken()
       localStorage.removeItem(BITLY_GUID_STORAGE_KEY)
     }
   }
@@ -139,7 +193,7 @@ export const shortenUrl = promiseMemoize(async (longUrl) => {
   // point, all errors should just be sent to the client; we've done all we can
   // to make it successful
 
-  localStorage.setItem(BITLY_TOKEN_STORAGE_KEY, token)
+  setToken(token)
 
   return await createBitlink({
     longUrl: longUrl,

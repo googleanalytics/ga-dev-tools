@@ -82,6 +82,7 @@
     "redux-logger": "^3.0.1",
     "redux-thunk": "^2.1.0",
     "request": "^2.85.0",
+    "rxjs": "^6.2.1",
     "select2": "select2/select2#3.5.2",
     "sinon": "^1.17.6",
     "style-loader": "^0.13.1",
@@ -90,5 +91,6 @@
     "url-parse": "^1.2.0",
     "uuid": "^2.0.3",
     "webpack": "^2.3.3"
-  }
+  },
+  "dependencies": {}
 }
