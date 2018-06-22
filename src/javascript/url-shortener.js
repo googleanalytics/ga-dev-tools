@@ -78,7 +78,7 @@ export const isAuthorizedEvents = authorizationEvents.pipe(
 // These functions wrap localStorage.*Item, and emit events with
 // authorizationEventsFromThisTab when called. We assume that no one calls
 // localStorage.clear, or modifies the token outside of this file.
-const getToken = () => window.getItem(BITLY_TOKEN_STORAGE_KEY);
+const getToken = () => window.localStorage.getItem(BITLY_TOKEN_STORAGE_KEY);
 
 const setToken = token => {
   if (token) {
