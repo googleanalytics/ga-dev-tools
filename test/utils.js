@@ -103,12 +103,12 @@ describe('utils', () => {
       const makePromise = counted(value => Promise.resolve(value));
       const memoized = promiseMemoize(makePromise);
 
-      return Promise.all(
+      return Promise.all([
         expect(memoized(1)).to.eventually.equal(1),
         expect(memoized(1)).to.eventually.equal(1),
         expect(memoized(2)).to.eventually.equal(2),
         expect(memoized(2)).to.eventually.equal(2),
-      ).then(() =>
+      ]).then(() =>
         expect(makePromise.count).to.equal(2),
       );
     });
