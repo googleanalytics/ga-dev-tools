@@ -84,9 +84,6 @@ describe('utils', () => {
       ]);
     });
 
-    encodeURIComponent('/&=?');
-    '%2F%26%3D%3F';
-
     it('should safely escape special characters in keys and values', () => {
       expect(encodeQuery({
         '/key': '?value',

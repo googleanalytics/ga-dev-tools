@@ -72,4 +72,4 @@ NODE_ENV=production APP_ENGINE_VERSION=feature-test npm run stage
 
 ## Note for Googlers:
 
-Additional (priveleged) information about our deployment at https://ga-dev-tools.appspot.com can be found at go/ga-dev-tools-infoser
+Additional (priveleged) information about our deployment at https://ga-dev-tools.appspot.com can be found at go/ga-dev-tools-info

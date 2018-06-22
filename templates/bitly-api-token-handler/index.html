@@ -16,7 +16,6 @@
 					token: oauth_token,
 					state: oauth_state,
 				}, window.location.origin);
-				// We put this here as a sanity check, but the
 				window.setTimeout(function() { window.close(); }, 1000);
 			} else {
 				document.getElementById('automation-warning').innerText =

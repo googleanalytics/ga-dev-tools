@@ -127,7 +127,7 @@ export class UserError extends Error {
   /**
    * @param {{title: (string), message: (string)}} arg1
    */
-   constructor({title, message}) {
+  constructor({title, message}) {
     super(message);
     this.title = title;
   }
