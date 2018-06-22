@@ -104,6 +104,9 @@ const removeToken = () => {
  * This function memoizes, so calling it with the same longUrl will
  * automatically return a resolved promise with the shortened URL.
  *
+ * TODO(nathanwest): as a courtesy to bitly, cache shortened URLs more durably
+ * (like in localStorage).
+ *
  * @param {string} longUrl
  * @return {Promise} A promise resolved with the shortend URL.
  */
@@ -276,6 +279,7 @@ const bitlyApiFetch = async ({
 
   return body;
 };
+
 
 /**
  * Attempt to create a short URL by POSTing to the bitly API. Return the
