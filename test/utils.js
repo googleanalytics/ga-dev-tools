@@ -150,10 +150,7 @@ describe('utils', () => {
       return cleanupingPromise((resolve, reject, cleanup) => {
         cleanup(() => value += 1);
         cleanup(() => value += 1);
-        if (true) {
-          throw new Error();
-        }
-        cleanup(() => value += 1);
+        throw new Error();
       }).catch(e =>
         expect(value).to.equal(2)
       );
