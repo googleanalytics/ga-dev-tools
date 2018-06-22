@@ -13,7 +13,7 @@
 // limitations under the License.
 
 import {encodeQuery, promiseMemoize, cleanupingPromise} from './utils';
-import Rx from 'rxjs'
+import {BehaviorSubject, fromEvent as rxFromEvent, merge as rxMerge} from 'rxjs';
 import {
   filter as rxFilter,
   map as rxMap,
@@ -39,11 +39,11 @@ const forbiddenError = new Error("Forbidden")
  **********/
 
 // authorizationEventFromThisTab allows us to manually send auth events
-const authorizationEventsFromThisTab = new Rx.BehaviorSubject(
-  localStorage.getItem(BITLY_API_TOKEN)
+const authorizationEventsFromThisTab = new BehaviorSubject(
+  localStorage.getItem(BITLY_TOKEN_STORAGE_KEY)
 )
 
-const authorizationEventsFromOtherTabs = Rx.fromEvent(window, 'storage').pipe(
+const authorizationEventsFromOtherTabs = rxFromEvent(window, 'storage').pipe(
   rxFilter(event => event.storageArea === window.localStorage),
   rxFilter(event => event.key === BITLY_TOKEN_STORAGE_KEY),
   rxMap(event => event.newValue),
@@ -53,14 +53,14 @@ const authorizationEventsFromOtherTabs = Rx.fromEvent(window, 'storage').pipe(
 // Specifically, any time the token changes or becomes null, that token
 // is sent to the observable. This observatle merges events from two sources:
 // 'storage' events in the DOM, and authorizationEventFromThisTab, above.
-export const authorizationEvents = Rx.merge(
+export const authorizationEvents = rxMerge(
   authorizationEventsFromOtherTabs,
   authorizationEventsFromThisTab,
 ).pipe(
   // Normalize tokens; make everything falsey -> null
-  rxMap(token => token ? token : null)
+  rxMap(token => token ? token : null),
   // Only show tokens that differ from the previous one
-  distinctUntilChanged()
+  distinctUntilChanged(),
 )
 
 // similar to authorizationEvents, this Observable provides a stream of
