@@ -26,9 +26,9 @@ import {
 
 // Wrap a function to keep track of how often it is called
 const counted = func => {
-  const wrapper = function() {
+  const wrapper = function(...args) {
     wrapper.count += 1;
-    return func.apply(this, arguments);
+    return func.apply(this, args);
   };
   wrapper.count = 0;
   return wrapper;
@@ -97,8 +97,8 @@ describe('utils', () => {
 
   describe('promiseMemoize', () => {
     it('should cache promise results', () => {
-      const makeResolved = counted(value => Promise.resolve(value));
-      const memoized = promiseMemoize(makeResolved);
+      const makePromise = counted(value => Promise.resolve(value));
+      const memoized = promiseMemoize(makePromise);
 
       return Promise.all(
         expect(memoized(1)).to.eventually.equal(1),
@@ -106,13 +106,13 @@ describe('utils', () => {
         expect(memoized(2)).to.eventually.equal(2),
         expect(memoized(2)).to.eventually.equal(2),
       ).then(() =>
-        expect(makeResolved.count).to.equal(2),
+        expect(makePromise.count).to.equal(2),
       );
     });
 
     it('should not cache errors', () => {
-      const makeRejected = counted(err => Promise.reject(err));
-      const memoized = promiseMemoize(makeRejected);
+      const makePromise = counted(err => Promise.reject(err));
+      const memoized = promiseMemoize(makePromise);
       // Make sure to do these in strict sequence, as memoized DOES cache
       // promises that aren't in a resolved state yet
 
@@ -121,7 +121,7 @@ describe('utils', () => {
         .then(expect(memoized(1)).to.be.rejectedWith(1))
         .then(expect(memoized(2)).to.be.rejectedWith(2))
         .then(expect(memoized(2)).to.be.rejectedWith(2))
-        .then(expect(makeResolved.count).to.equal(4));
+        .then(expect(makePromise.count).to.equal(4));
     });
     // Needs test: it should cache in-progress promises
   });

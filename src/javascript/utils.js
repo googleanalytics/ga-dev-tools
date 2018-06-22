@@ -190,11 +190,11 @@ export const promiseMemoize = func => {
  *   argument, cleanup, which it may call 0 or more times to add cleanup
  *   functions. These cleanup functions are all executed before the promise
  *   resolves. cleanup() must be called during the executor; it cannot be
- *   called asynchronously (mostly due to issues with consistent error propogation)
+ *   called asynchronously (mostly due to issues with consistent error
+ *   propogation)
  * @return {Promise} A new Promise. Will run to completion, and additionally
  *   run (and resolve) all cleanup handlers before resolving itself.
  */
-
 export const cleanupingPromise = executor => {
   const cleanups = [];
   let addCleanup = cleaner => {
