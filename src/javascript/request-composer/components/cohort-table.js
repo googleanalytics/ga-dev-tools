@@ -39,12 +39,16 @@ function tablizeCohortReportData(report, cohortSize) {
     headers.push(`${cohortSize} ${i}`);
   }
 
+  const cohortColumnIndex = report.columnHeader.dimensions.indexOf('ga:cohort')
+  if(cohortColumnIndex === -1)
+    throw new Error("Report data doesn't include a cohort column!")
+
   if (report.data.rows && report.data.rows.length) {
     for (let row of report.data.rows) {
-      if (row.dimensions && row.dimensions.length == 2) {
-        let rowKey = row.dimensions[0];
+      if (row.dimensions && row.dimensions.length > cohortColumnIndex) {
+        let rowKey = row.dimensions[cohortColumnIndex];
 
-        if (rowKey != currentDataRow[0]) {
+        if (rowKey != currentDataRow[cohortColumnIndex]) {
           currentDataRow = [];
           dataRows.push(currentDataRow);
           currentDataRow[0] = rowKey;
