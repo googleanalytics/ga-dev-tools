@@ -36,7 +36,7 @@ const forbiddenError = new Error('Forbidden');
  * 'storage' events only fire when localStorage is touched by tabs other than
  * outselves. We therefore use RxJS to compose the two event streams: 'storage'
  * events from the DOM, and local change events fired manually from the code in
- * this manually.
+ * this file.
  *
  * These are provided as an aid to React elements that render based on whether
  * we're authorized or not.
