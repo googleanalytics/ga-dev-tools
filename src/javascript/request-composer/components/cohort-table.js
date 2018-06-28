@@ -41,8 +41,8 @@ function tablizeCohortReportData(report, cohortSize) {
 
   const cohortColumnIndex = report.columnHeader.dimensions.indexOf('ga:cohort');
   if (cohortColumnIndex === -1) {
-throw new Error('Report data doesn\'t include a cohort column!');
-}
+    throw new Error('Report data doesn\'t include a cohort column!');
+  }
 
   if (report.data.rows && report.data.rows.length) {
     for (let row of report.data.rows) {
