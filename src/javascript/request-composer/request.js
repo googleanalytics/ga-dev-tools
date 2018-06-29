@@ -195,7 +195,7 @@ function applyDimensions(request, params, settings) {
  * @return {Object} The Report Request object.
  */
 function applySegment(request, params, settings) {
-  if (settings.requestType != 'COHORT' && params.segment) {
+  if (params.segment) {
     request.segments = [{segmentId: params.segment}];
 
     // Get current dimensions if they exist otherwise empty list.
