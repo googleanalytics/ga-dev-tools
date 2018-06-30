@@ -138,6 +138,11 @@ export class UserError extends Error {
  * string. This string uses the ?key=value&key2=value2 syntax. If the provided
  * object is null or empty, return an empty string, otherwise return a string
  * with a prepended ?
+ *
+ * @param {Object<string, string>} query The query to encode. Should contain
+ *   key-value data.
+ * @return {string} The encoded query. Includes a prepended ? if the query is
+ *   not empty.
  */
 export const encodeQuery = query => {
   if (query) {
@@ -150,10 +155,10 @@ export const encodeQuery = query => {
   }
 };
 
-// Given a function taking a single argument and returning a promise, wrap
-// that function to memoize the result. The memoize fails if the promise
-// rejects, and multiple concurrent calls to an ongoing promise will all
-// return the same promise.
+// Given a unary function which returns a promise, wrap that function to
+// memoize the result. This memoize is keyed on the function argument. The
+// memoize fails if the promise rejects, and multiple concurrent calls to an
+// ongoing promise will all return the same promise.
 export const promiseMemoize = func => {
   // This is a mapping of key => Promise. storing the promise directly
   // simplifies our implementation, since we just return it on a cache hit.
@@ -186,7 +191,7 @@ export const promiseMemoize = func => {
  * promises in cleanup handlers are propogated to the outer promise as a
  * rejection.
  *
- * @param  {Function(resolve, reject, cleanup)} executor An executor function,
+ * @param  {function(resolve, reject, cleanup)} executor An executor function,
  *   similar to what would be passed to new Promise(). It is given a third
  *   argument, cleanup, which it may call 0 or more times to add cleanup
  *   functions. These cleanup functions are all executed before the promise
@@ -199,7 +204,7 @@ export const promiseMemoize = func => {
 export const cleanupingPromise = executor => {
   const cleanups = [];
   let addCleanup = cleaner => {
-   cleanups.push(cleaner);
+    cleanups.push(cleaner);
   };
 
   const innerPromise = new Promise((resolve, reject) =>

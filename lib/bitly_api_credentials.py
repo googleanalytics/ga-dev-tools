@@ -23,40 +23,40 @@ KEY_CFG_PATH = 'bitly_api_key.cfg'
 KEY_CFG_HEADER = 'Production'
 
 def get_client_key(file_path, header):
-	config = ConfigParser.SafeConfigParser()
+    config = ConfigParser.SafeConfigParser()
 
-	try:
-		with open(file_path) as file:
-			config.readfp(file, file_path)
-	except Exception as e:
-		warnings.warn(
-			"Error reading bitly API credentials. "
-			"API shortening will be disabled.\n"
-			"If you want to do bit.ly API shortening, add a bitly_api_key.cfg "
-			"file to the project root, which should include client_id and "
-			"client_secret under the header [Production].\n"
-			"{}".format(e))
-		return None, None
+    try:
+        with open(file_path) as file:
+            config.readfp(file, file_path)
+    except Exception as e:
+        warnings.warn(
+            "Error reading bitly API credentials. "
+            "API shortening will be disabled.\n"
+            "If you want to do bit.ly API shortening, add a bitly_api_key.cfg "
+            "file to the project root, which should include client_id and "
+            "client_secret under the header [Production].\n"
+            "{}".format(e))
+        return None, None
 
 
-	client_id = config.get(header, 'client_id')
-	client_secret = config.get(header, 'client_secret')
+    client_id = config.get(header, 'client_id')
+    client_secret = config.get(header, 'client_secret')
 
-	return client_id, client_secret
+    return client_id, client_secret
 
 CLIENT_ID = None
 CLIENT_SECRET = None
 
 def refresh_global_client_key(file_path=None, header=None):
-	file_path = file_path or KEY_CFG_PATH
-	header = header or KEY_CFG_HEADER
+    file_path = file_path or KEY_CFG_PATH
+    header = header or KEY_CFG_HEADER
 
-	global CLIENT_ID
-	global CLIENT_SECRET
+    global CLIENT_ID
+    global CLIENT_SECRET
 
-	CLIENT_ID, CLIENT_SECRET = get_client_key(file_path, header)
+    CLIENT_ID, CLIENT_SECRET = get_client_key(file_path, header)
 
-	return CLIENT_ID, CLIENT_SECRET
+    return CLIENT_ID, CLIENT_SECRET
 
 # We assume that we'll only want to load once per process invocation, so we just
 # do it on import

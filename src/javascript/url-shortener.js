@@ -32,7 +32,7 @@ const forbiddenError = new Error('Forbidden');
 
 /**
  * This section manages subscribing to authorization state changes.
- * Ordinarily we'd just use window.addEventListener('storeage', ...), but
+ * Ordinarily we'd just use window.addEventListener('storage', ...), but
  * 'storage' events only fire when localStorage is touched by tabs other than
  * outselves. We therefore use RxJS to compose the two event streams: 'storage'
  * events from the DOM, and local change events fired manually from the code in
@@ -55,7 +55,7 @@ const authorizationEventsFromOtherTabs = rxFromEvent(window, 'storage').pipe(
 
 // This Observable provides a stream of authorization stream events.
 // Specifically, any time the token changes or becomes null, that token
-// is sent to the observable. This observatle merges events from two sources:
+// is sent to the observable. This observable merges events from two sources:
 // 'storage' events in the DOM, and authorizationEventFromThisTab, above.
 export const authorizationEvents = rxMerge(
   authorizationEventsFromOtherTabs,
@@ -82,8 +82,8 @@ const getToken = () => window.localStorage.getItem(BITLY_TOKEN_STORAGE_KEY);
 
 const setToken = token => {
   if (token) {
-    authorizationEventsFromThisTab.next(token);
     window.localStorage.setItem(BITLY_TOKEN_STORAGE_KEY, token);
+    authorizationEventsFromThisTab.next(token);
   } else {
     removeToken();
   }
@@ -93,6 +93,10 @@ const removeToken = () => {
   authorizationEventsFromThisTab.next(null);
   window.localStorage.removeItem(BITLY_TOKEN_STORAGE_KEY);
 };
+
+
+const BITLY_AUTH_WINDOW_TIMEOUT = 1000 * 60 * 15;
+const BITLY_AUTH_PREMATURE_CLOSE_INTERVAL = 1000;
 
 
 /**
@@ -146,7 +150,7 @@ export const shortenUrl = promiseMemoize(async (longUrl) => {
   if (!bitlyClientId) {
     throw new Error(
       'No OAuth client ID available. Make sure to attach it as a ' +
-      'global in the server!'
+      'global in the server! This is a developer error, not a user error.'
     );
   }
 
@@ -192,7 +196,7 @@ export const shortenUrl = promiseMemoize(async (longUrl) => {
     const childWindow = window.open(authUrl, '_blank');
     if (childWindow == null) {
       throw new Error(
-        'Failed open new window for authorizing bitly. ' +
+        'Couldn\'t open bit.ly authorization page. ' +
         'Are you blocking popups?'
       );
     }
@@ -207,13 +211,13 @@ export const shortenUrl = promiseMemoize(async (longUrl) => {
           'Authorization window closed before authorization was completed'
         ));
       }
-    }, 1000);
+    }, BITLY_AUTH_PREMATURE_CLOSE_INTERVAL);
     cleanup(() => window.clearInterval(intervalHandle));
 
     // If the user takes too long, that's an error.
     const timeoutHandle = window.setTimeout(() => {
       reject(new Error('Timed out waiting for authorization'));
-    }, 1000 * 60 * 5);
+    }, BITLY_AUTH_WINDOW_TIMEOUT);
     cleanup(() => window.clearTimeout(timeoutHandle));
   });
 
@@ -234,8 +238,9 @@ export const shortenUrl = promiseMemoize(async (longUrl) => {
 // https://api-ssl.bitly.com/v4/{endpoint}, using the options. If payload is
 // given, it is JSON encoded and used as the body, and the content-type header
 // is set. Uses token for authentication. If a payload is given and no method
-// is set, the method is POST. This function uses fetch api, so all options
-// are as to the fetch() function.
+// is set, the method is POST. Additional HTTP options can be passed in
+// `options`; these are merged with the other parameters and passed as the
+// second argument to window.fetch()
 //
 // HTTP errors are rejected with a summary message; otherwise, the response
 // JSON payload is returned. If checkForbidden is true, 403 errors cause the
@@ -244,12 +249,10 @@ export const shortenUrl = promiseMemoize(async (longUrl) => {
 const bitlyApiFetch = async ({
   token,
   endpoint,
-  options,
+  options={},
   payload=undefined,
   checkForbidden=false,
 }) => {
-  options = options || {};
-
   const headers = {
     ...(options.headers || {}),
     Authorization: `Bearer ${token}`,
@@ -321,11 +324,12 @@ const getBitlyGroup = ({token, checkForbidden}) => {
     });
 };
 
-// Get the user's bitly group. Users can have more than one group, and
-// we don't really have a good way to identify which one is the "primary",
-// so for now we just return the first one in the array.
-// TODO(nathanwest): that's almost certainly not the behavior we actually
-// want; fix it.
+// Get the user's bitly group. Enterprise bitly users can have more than one
+// group, but we assume for now that enterprise users will be doing their own
+// link creation, rather than using our built-in shortener, so we throw an
+// error if there is more than one group attached to their account.
+//
+// See https://dev.bitly.com/v4/#section/Group-Aware for details
 const fetchBitlyGroup = ({token, checkForbidden}) =>
   bitlyApiFetch({
     token: token,
@@ -333,6 +337,17 @@ const fetchBitlyGroup = ({token, checkForbidden}) =>
     checkForbidden: checkForbidden,
   }).then(data => {
     const groups = data.groups;
-    if (groups.length > 0) return groups[0].guid;
-    else throw new Error('bitly user has no associated groups!');
+
+    if (groups.length === 0) {
+      throw new Error('bitly user has no associated groups!');
+    } else if (groups.length > 1) {
+      // NOTE(nathanwest): I'm assuming that, if people have this issue and
+      // are unhappy, they'll file github issues about it, at which time we can
+      // revisit.
+      throw new Error(
+        'bitly user has more than one associated group; ' +
+        'not sure which group to create the link in.');
+    } else {
+      return groups[0].guid;
+    }
   });
