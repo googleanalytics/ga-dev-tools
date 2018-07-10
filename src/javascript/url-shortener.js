@@ -174,14 +174,11 @@ export const shortenUrl = promiseMemoize(async (longUrl) => {
         event.source === childWindow
       ) {
         const data = event.data;
-        if (data.error) {
-          reject(new Error(data.error));
-        } else {
-          resolve(data);
-        }
+        if (data.error) { reject(new Error(data.error)); }
+        else { resolve(data); }
       }
     };
-    window.addEventListener('message', messageListener, {once: true});
+    window.addEventListener('message', messageListener);
     cleanup(() => window.removeEventListener('message', messageListener));
 
     const authUrl = 'https://bitly.com/oauth/authorize' + encodeQuery({
