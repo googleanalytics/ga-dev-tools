@@ -26,6 +26,7 @@
     "camelcase": "^3.0.0",
     "caniuse-db": "^1.0.30000823",
     "chai": "^4.1.2",
+    "chai-as-promised": "^7.1.1",
     "chart.js": "1.1.1",
     "classnames": "^2.2.5",
     "core-js": "^2.5.4",
@@ -70,6 +71,7 @@
     "postcss-loader": "^1.2.2",
     "postcss-reporter": "^1.4.1",
     "postcss-url": "^5.1.2",
+    "promise.prototype.finally": "^3.1.0",
     "react": "^15.3.2",
     "react-addons-css-transition-group": "^15.3.2",
     "react-chartjs": "^0.8.0",
@@ -82,6 +84,7 @@
     "redux-logger": "^3.0.1",
     "redux-thunk": "^2.1.0",
     "request": "^2.85.0",
+    "rxjs": "^6.2.1",
     "select2": "select2/select2#3.5.2",
     "sinon": "^1.17.6",
     "style-loader": "^0.13.1",
@@ -90,5 +93,6 @@
     "url-parse": "^1.2.0",
     "uuid": "^2.0.3",
     "webpack": "^2.3.3"
-  }
+  },
+  "dependencies": {}
 }

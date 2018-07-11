@@ -13,6 +13,7 @@
 // limitations under the License.
 
 import escapeHtml from 'lodash/escape';
+import map from 'lodash/map';
 
 /**
  * Awaits for a specified amount of time.
@@ -131,3 +132,92 @@ export class UserError extends Error {
     this.title = title;
   }
 }
+
+/**
+ * Given an object containing key-value pairs, produce a URL encodes query
+ * string. This string uses the ?key=value&key2=value2 syntax. If the provided
+ * object is null or empty, return an empty string, otherwise return a string
+ * with a prepended ?
+ *
+ * @param {Object<string, string>} query The query to encode. Should contain
+ *   key-value data.
+ * @return {string} The encoded query. Includes a prepended ? if the query is
+ *   not empty.
+ */
+export const encodeQuery = query => {
+  if (query) {
+    const encoded = map(query, (value, key) =>
+      `${encodeURIComponent(key)}=${encodeURIComponent(value)}`
+      ).join('&');
+    return encoded ? `?${encoded}` : '';
+  } else {
+    return '';
+  }
+};
+
+// Given a unary function which returns a promise, wrap that function to
+// memoize the result. This memoize is keyed on the function argument. The
+// memoize fails if the promise rejects, and multiple concurrent calls to an
+// ongoing promise will all return the same promise.
+export const promiseMemoize = func => {
+  // This is a mapping of key => Promise. storing the promise directly
+  // simplifies our implementation, since we just return it on a cache hit.
+  const cache = new Map();
+
+  return argument => {
+    const result = cache.get(argument);
+    if (result != undefined) {
+      return result;
+    }
+
+    const promise = new Promise(res => res(func(argument)))
+    .catch(error => {
+      cache.delete(argument);
+      throw error;
+    });
+    cache.set(argument, promise);
+    return promise;
+  };
+};
+
+/**
+ * Create a promise that cleans up after itself. This is the same as a regular
+ * promise, but the executor function is passed an additonal function called
+ * cleanup. Cleanup can be called to add cleanup handlers to the promise.
+ * When the executor promise is fullfilled in any way, all the cleanup handlers
+ * are called in an unspecified order. Returned values from cleanups are
+ * ignored, but returned promises are awaited before the outer promise resolved
+ * with the same value as the inner promise. Any execeptions or rejected
+ * promises in cleanup handlers are propogated to the outer promise as a
+ * rejection.
+ *
+ * @param  {function(resolve, reject, cleanup)} executor An executor function,
+ *   similar to what would be passed to new Promise(). It is given a third
+ *   argument, cleanup, which it may call 0 or more times to add cleanup
+ *   functions. These cleanup functions are all executed before the promise
+ *   resolves. cleanup() must be called during the executor; it cannot be
+ *   called asynchronously (mostly due to issues with consistent error
+ *   propogation)
+ * @return {Promise} A new Promise. Will run to completion, and additionally
+ *   run (and resolve) all cleanup handlers before resolving itself.
+ */
+export const cleanupingPromise = executor => {
+  const cleanups = [];
+  let addCleanup = cleaner => {
+    cleanups.push(cleaner);
+  };
+
+  const innerPromise = new Promise((resolve, reject) =>
+    executor(resolve, reject, cleaner => {
+      addCleanup(cleaner);
+    })
+  );
+
+  addCleanup = () => {
+    throw new Error('Can\'t add new cleanup handlers asynchronously');
+  };
+
+  return Promise.all(cleanups.map(
+    cleanup => innerPromise.finally(() => cleanup())
+  )).then(() => innerPromise);
+};

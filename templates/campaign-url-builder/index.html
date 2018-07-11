@@ -92,5 +92,10 @@
 
 {% block foot_scripts %}
 {{ super() }}
+<script>
+  ((function() {
+    window.BITLY_CLIENT_ID = {{ site.bitly_client_id | tojson | safe }};
+  })());
+</script>
 <script src="/public/javascript/campaign-url-builder.js"></script>
 {% endblock %}

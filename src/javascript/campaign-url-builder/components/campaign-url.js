@@ -23,7 +23,7 @@ import AlertDispatcher from '../../components/alert-dispatcher';
 import Icon from '../../components/icon';
 import IconButton from '../../components/icon-button';
 import supports from '../../supports';
-import {shortenUrl} from '../../url-shortener';
+import {shortenUrl, isAuthorizedEvents} from '../../url-shortener';
 import {copyElementText} from '../../utils';
 import renderProblematic from './problematic.js';
 
@@ -79,7 +79,19 @@ export default class CampaignUrl extends React.Component {
       problematicElement: element,
       // The label sent to google analytics
       problematicEventLabel: eventLabel,
+      // True if we have a saved bitly API token.
+      isUrlShorteningAuthorized: false,
     };
+  }
+
+  componentDidMount() {
+    this.bitlyAuthSubscription = isAuthorizedEvents.subscribe(
+      isAuthorized => this.setState({isUrlShorteningAuthorized: isAuthorized})
+    );
+  }
+
+  componentWillUnmount() {
+    this.bitlyAuthSubscription.unsubscribe();
   }
 
 
@@ -285,10 +297,14 @@ export default class CampaignUrl extends React.Component {
           disabled={this.state.isShorteningUrl}
           onClick={this.shortenUrl}
           key="shortenButton"
-        >
-          {this.state.isShorteningUrl ?
-            'Shortening...' : 'Convert URL to Short Link'}
-        </IconButton>
+          title={this.state.isUrlShorteningAuthorized ? null :
+            'Requires authorization with bitly'
+          }
+        >{
+          this.state.isShorteningUrl ? 'Shortening...' :
+          this.state.isUrlShorteningAuthorized ? 'Convert URL to Short Link' :
+          'Convert URL to Short Link (authorization required)'
+        }</IconButton>
       )}
     </div>;
   }
