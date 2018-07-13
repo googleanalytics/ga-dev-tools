@@ -36,9 +36,18 @@ from google.appengine.api import urlfetch
 from lib import bitly_api_credentials, template
 
 def make_response(status, error=None, token=None, state=None):
-	# TODO(nathanwest): find a better way to do this than deepcopy
-	data = copy.deepcopy(template.get_data('bitly-api-token-handler'))
-	data['site'].update(error=error, token=token, state=state)
+	# NOTE: yes, this is very dissimilar to how the existing template system
+	# is designed to be used. We want to use as much as the code as possible,
+	# but the existing system is deeply tied to meta.yaml, and this page isn't
+	# really a part of that whole system (since it's not a project page).
+	data = {
+		"site": {
+			"token": token,
+			"error": error,
+			"state": state,
+		}
+	}
+
 	return webapp2.Response(
 		status=status,
 		content_type='text/html',
