@@ -20,10 +20,6 @@ projects:
   type: tool
   slug: campaign-url-builder
   tech: [url_shortener_api]
-- title: Bitly API OAuth Callback Handler
-  type: misc
-  slug: bitly-api-token-handler
-  tech: []
 - title: Dimensions & Metrics Explorer
   type: tool
   slug: dimensions-metrics-explorer
