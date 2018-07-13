@@ -19,7 +19,7 @@ projects:
 - title: Campaign URL Builder
   type: tool
   slug: campaign-url-builder
-  tech: [url_shortener_api]
+  tech: []
 - title: Dimensions & Metrics Explorer
   type: tool
   slug: dimensions-metrics-explorer
