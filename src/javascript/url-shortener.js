@@ -303,7 +303,21 @@ const createBitlinkCall = ({longUrl, token, guid, checkForbidden}) =>
       long_url: longUrl,
       group_guid: guid,
     },
-  }).then(data => data.link);
+  })
+  .catch(error => {
+    //TODO(nathanwest): use a more structured error type
+    if(
+      error.message.includes("INVALID_ARG_LONG_URL") &&
+      !longUrl.match(/^[a-zA-Z]+:\/\//)
+    ) {
+      throw new Error(
+        "Can't shorten URLs that don't have a scheme. " +
+        "Add 'http://' or 'https://' to the beginning of your URL.");
+    } else {
+      throw error;
+    }
+  })
+  .then(data => data.link);
 
 
 /**
