@@ -308,7 +308,7 @@ const createBitlinkCall = ({longUrl, token, guid, checkForbidden}) =>
     //TODO(nathanwest): use a more structured error type
     if(
       error.message.includes("INVALID_ARG_LONG_URL") &&
-      !error.longUrl.match(/^[a-zA-Z]+:\/\//)
+      !longUrl.match(/^[a-zA-Z]+:\/\//)
     ) {
       throw new Error(
         "Can't shorten URLs that don't have a scheme. " +
