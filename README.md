@@ -1,8 +1,3 @@
-NOTICE: We will be transitioning to a new URL shortener on July 17, 2018.
-Until that happens, the production deployment of this tool will be on the
-bitly-notice branch, which contains the notice. It will go back to master
-on the 17th.
-
 # Google Analytics Demos and Tools [![Build Status](https://travis-ci.org/googleanalytics/ga-dev-tools.svg?branch=master)](https://travis-ci.org/googleanalytics/ga-dev-tools)
 
 A showcase of demos and tools built with the various Google Analytics APIs and Libraries.
