@@ -312,7 +312,7 @@ const createBitlinkCall = ({longUrl, token, guid, checkForbidden}) =>
     ) {
       throw new Error(
         "Can't shorten URLs that don't have a scheme. " +
-        "Add 'http:ß//' or 'https://' to the beginning of your URL.");
+        "Add 'http://' or 'https://' to the beginning of your URL.");
     } else {
       throw error;
     }
