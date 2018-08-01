@@ -293,7 +293,7 @@ export default class CampaignUrl extends React.Component {
         </IconButton>
       ) : (
         <IconButton
-          type="link"
+          type="bitly-logo"
           disabled={this.state.isShorteningUrl}
           onClick={this.shortenUrl}
           key="shortenButton"
