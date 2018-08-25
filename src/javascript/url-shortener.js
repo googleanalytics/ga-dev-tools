@@ -305,7 +305,7 @@ const createBitlink = async ({longUrl, guid=null, token, checkForbidden}) => {
 
   const cache = JSON.parse(localStorage.getItem(BITLY_CACHE_KEY)) || {};
   const group_cache = cache[realGuid] || {};
-  const cached_link = cache[longUrl];
+  const cached_link = group_cache[longUrl];
 
   if(cached_link) {
     return cached_link
