@@ -233,7 +233,7 @@ export const shortenUrl = async (longUrl, bitlyGuid) => {
     guid: bitlyGuid,
     checkForbidden: false,
   });
-});
+};
 
 // Generic bitly v4 API calls. Makes a request to
 // https://api-ssl.bitly.com/v4/{endpoint}, using the options. If payload is
