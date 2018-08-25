@@ -156,9 +156,10 @@ export const encodeQuery = query => {
 };
 
 // Given a unary function which returns a promise, wrap that function to
-// memoize the result. This memoize is keyed on the function argument. The
-// memoize fails if the promise rejects, and multiple concurrent calls to an
-// ongoing promise will all return the same promise.
+// memoize the result. This memoize is keyed on the function's argument
+// (currently only single-argument functions are supported). The memoize fails
+// if the promise rejects, and multiple concurrent calls to an ongoing promise
+// will all return the same promise.
 export const promiseMemoize = func => {
   // This is a mapping of key => Promise. storing the promise directly
   // simplifies our implementation, since we just return it on a cache hit.
