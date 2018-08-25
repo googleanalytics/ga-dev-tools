@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import {encodeQuery, promiseMemoize, cleanupingPromise} from './utils';
+import {encodeQuery, cleanupingPromise} from './utils';
 import {
   BehaviorSubject,
   fromEvent as rxFromEvent,
@@ -124,7 +124,7 @@ const BITLY_AUTH_PREMATURE_CLOSE_INTERVAL = 1000;
  * @param {string} longUrl
  * @return {Promise} A promise resolved with the shortend URL.
  */
-export const shortenUrl = promiseMemoize(async ({longUrl, bitlyGuid}) => {
+export const shortenUrl = async (longUrl, bitlyGuid) => {
   // Attempt the API call with the stored token, but be ready to get a new
   // token and retry if it fails.
   try {
