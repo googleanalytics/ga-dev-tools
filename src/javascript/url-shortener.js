@@ -81,12 +81,8 @@ export const isAuthorizedEvents = authorizationEvents.pipe(
 // authorizationEventsFromThisTab when called. We assume that no one calls
 // localStorage.clear, or modifies the token outside of this file.
 const getToken = () => {
-  const token = window.localStorage.getItem(BITLY_TOKEN_STORAGE_KEY)
-  if (!token) {
-    throw noTokenError
-  } else {
-    return token
-  }
+  const token = window.localStorage.getItem(BITLY_TOKEN_STORAGE_KEY);
+  return token ? token : null;
 }
 
 const setToken = token => {
@@ -254,8 +250,9 @@ export const bitlyApiFetch = async ({
   payload=undefined,
   checkForbidden=false,
 }) => {
-  // May throw noTokenError
   token = token == null ? getToken() : token;
+  if(!token)
+    throw noTokenError;
 
   const headers = {
     ...(options.headers || {}),
