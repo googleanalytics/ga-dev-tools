@@ -351,7 +351,7 @@ const createBitlinkCall = ({longUrl, token, guid, checkForbidden}) =>
   .then(data => data.link);
 
 
-// Get the user's default bitly group.
+// Get the authorized user's default bitly group.
 const getBitlyGroup = ({token, checkForbidden}) =>
   bitlyApiFetch({
     token: token,
