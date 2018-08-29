@@ -26,11 +26,11 @@ import {
 
 const BITLY_TOKEN_STORAGE_KEY = 'BITLY_API_TOKEN';
 const BITLY_MULTIPLE_GUID_STORAGE_KEY = 'BITLY_MANY_GROUPS';
-const BITLY_CACHE_KEY = 'BITLY_CACHE'
+const BITLY_CACHE_KEY = 'BITLY_CACHE';
 
 // Use a global object to distinguish known errors from other errors
 const forbiddenError = new Error('Forbidden');
-const noTokenError = new Error('No token provided')
+const noTokenError = new Error('No token provided');
 
 /**
  * This section manages subscribing to authorization state changes.
@@ -80,10 +80,17 @@ export const isAuthorizedEvents = authorizationEvents.pipe(
 // These functions wrap localStorage.*Item, and emit events with
 // authorizationEventsFromThisTab when called. We assume that no one calls
 // localStorage.clear, or modifies the token outside of this file.
+
+/**
+ * Get the stored bitly authorization token.
+ *
+ * @return {string?} The currently cached authorization. Returns null if not
+ *   set or if it's a falsey value.
+ */
 const getToken = () => {
   const token = window.localStorage.getItem(BITLY_TOKEN_STORAGE_KEY);
   return token ? token : null;
-}
+};
 
 const setToken = token => {
   if (token) {
@@ -103,7 +110,7 @@ const clearState = () => {
   removeToken();
   localStorage.removeItem(BITLY_MULTIPLE_GUID_STORAGE_KEY);
   localStorage.removeItem(BITLY_CACHE_KEY);
-}
+};
 
 const BITLY_AUTH_WINDOW_TIMEOUT = 1000 * 60 * 15;
 const BITLY_AUTH_PREMATURE_CLOSE_INTERVAL = 1000;
@@ -117,7 +124,9 @@ const BITLY_AUTH_PREMATURE_CLOSE_INTERVAL = 1000;
  * This function memoizes its results in localStorage. This cache is reset
  * whenever the function puts the user through Authorization flow.
  *
- * @param {string} longUrl
+ * @param {string} longUrl The URL to shorten
+ * @param {string} bitlyGuid The bitly group id in which to create the group.
+ *   If not provided, the user's default group is used.
  * @return {Promise} A promise resolved with the shortend URL.
  */
 export const shortenUrl = async (longUrl, bitlyGuid) => {
@@ -174,8 +183,11 @@ export const shortenUrl = async (longUrl, bitlyGuid) => {
         event.source === childWindow
       ) {
         const data = event.data;
-        if (data.error) { reject(new Error(data.error)); }
-        else { resolve(data); }
+        if (data.error) {
+ reject(new Error(data.error));
+} else {
+ resolve(data);
+}
       }
     };
     window.addEventListener('message', messageListener);
@@ -251,8 +263,9 @@ export const bitlyApiFetch = async ({
   checkForbidden=false,
 }) => {
   token = token == null ? getToken() : token;
-  if(!token)
+  if (!token) {
     throw noTokenError;
+  }
 
   const headers = {
     ...(options.headers || {}),
@@ -293,7 +306,9 @@ export const bitlyApiFetch = async ({
  * looked up.
  *
  * This function caches its results in localStorage, though it doesn't cache
- * the default grouo.
+ * the default group.
+ *
+ * @return {string} The shortened link.
  */
 const createBitlink = async ({longUrl, guid=null, token, checkForbidden}) => {
   const realGuid = guid == null ?
@@ -301,11 +316,11 @@ const createBitlink = async ({longUrl, guid=null, token, checkForbidden}) => {
     guid;
 
   const cache = JSON.parse(localStorage.getItem(BITLY_CACHE_KEY)) || {};
-  const group_cache = cache[realGuid] || {};
-  const cached_link = group_cache[longUrl];
+  const groupCache = cache[realGuid] || {};
+  const cachedLink = groupCache[longUrl];
 
-  if(cached_link) {
-    return cached_link
+  if (cachedLink) {
+    return cachedLink;
   }
 
   const link = await createBitlinkCall({
@@ -315,13 +330,13 @@ const createBitlink = async ({longUrl, guid=null, token, checkForbidden}) => {
     guid: realGuid,
   });
 
-  group_cache[longUrl] = link;
-  cache[realGuid] = group_cache;
+  groupCache[longUrl] = link;
+  cache[realGuid] = groupCache;
 
   localStorage.setItem(BITLY_CACHE_KEY, JSON.stringify(cache));
 
   return link;
-}
+};
 
 
 // Create a bitlink with the bitly API
@@ -336,14 +351,14 @@ const createBitlinkCall = ({longUrl, token, guid, checkForbidden}) =>
     },
   })
   .catch(error => {
-    //TODO(nathanwest): use a more structured error type
-    if(
-      error.message.includes("INVALID_ARG_LONG_URL") &&
+    // TODO(nathanwest): use a more structured error type
+    if (
+      error.message.includes('INVALID_ARG_LONG_URL') &&
       !longUrl.match(/^[a-zA-Z]+:\/\//)
     ) {
       throw new Error(
-        "Can't shorten URLs that don't have a scheme. " +
-        "Add 'http://' or 'https://' to the beginning of your URL.");
+        'Can\'t shorten URLs that don\'t have a scheme. ' +
+        'Add \'http://\' or \'https://\' to the beginning of your URL.');
     } else {
       throw error;
     }
