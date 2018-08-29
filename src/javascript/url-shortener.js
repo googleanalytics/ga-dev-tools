@@ -95,14 +95,14 @@ const setToken = token => {
 };
 
 const removeToken = () => {
-  authorizationEventsFromThisTab.next(null);
   window.localStorage.removeItem(BITLY_TOKEN_STORAGE_KEY);
+  authorizationEventsFromThisTab.next(null);
 };
 
 const clearState = () => {
   removeToken();
   localStorage.removeItem(BITLY_MULTIPLE_GUID_STORAGE_KEY);
-  localStorage.removeItem(BITLY_CACHE_KEY)
+  localStorage.removeItem(BITLY_CACHE_KEY);
 }
 
 const BITLY_AUTH_WINDOW_TIMEOUT = 1000 * 60 * 15;
