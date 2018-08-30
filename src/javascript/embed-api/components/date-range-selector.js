@@ -53,19 +53,11 @@ gapi.analytics.ready(function() {
    * @return {string} The formatted date.
    */
   function firstDayOfMonth() {
-    let now = new Date();
-    let firstDayOfMonth = new Date(now.getFullYear(), now.getMonth(), 1)
+    const now = new Date();
+    const year = now.getFullYear().toString().padStart(4, 0);
+    const month = now.getMonth().toString().padStart(2, 0);
 
-    let year = firstDayOfMonth.getFullYear();
-
-    let month = String(firstDayOfMonth.getMonth() + 1);
-    month = month.length == 1 ? '0' + month : month;
-
-    let date = String(firstDayOfMonth.getDate());
-    date = date.length == 1 ? '0' + date : date;
-
-    let fotmatted = year + '-' + month + '-' + date;
-    return fotmatted;
+    return `${year}-${month}-01`;
   }
 
   /**
