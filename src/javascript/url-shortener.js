@@ -1,4 +1,4 @@
-// Copyright 2016 Google Inc. All rights reserved.
+// Copyright 2018 Google Inc. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import {encodeQuery, promiseMemoize, cleanupingPromise} from './utils';
+import {encodeQuery, cleanupingPromise} from './utils';
 import {
   BehaviorSubject,
   fromEvent as rxFromEvent,
@@ -25,10 +25,12 @@ import {
 } from 'rxjs/operators';
 
 const BITLY_TOKEN_STORAGE_KEY = 'BITLY_API_TOKEN';
-const BITLY_GUID_STORAGE_KEY = 'BITLY_GUID';
+const BITLY_MULTIPLE_GUID_STORAGE_KEY = 'BITLY_MANY_GROUPS';
+const BITLY_CACHE_KEY = 'BITLY_CACHE';
 
-// Use a global object to distinguish forbidden errors from other errors
+// Use a global object to distinguish known errors from other errors
 const forbiddenError = new Error('Forbidden');
+const noTokenError = new Error('No token provided');
 
 /**
  * This section manages subscribing to authorization state changes.
@@ -78,7 +80,17 @@ export const isAuthorizedEvents = authorizationEvents.pipe(
 // These functions wrap localStorage.*Item, and emit events with
 // authorizationEventsFromThisTab when called. We assume that no one calls
 // localStorage.clear, or modifies the token outside of this file.
-const getToken = () => window.localStorage.getItem(BITLY_TOKEN_STORAGE_KEY);
+
+/**
+ * Get the stored bitly authorization token.
+ *
+ * @return {string?} The currently cached authorization. Returns null if not
+ *   set or if it's a falsey value.
+ */
+const getToken = () => {
+  const token = window.localStorage.getItem(BITLY_TOKEN_STORAGE_KEY);
+  return token ? token : null;
+};
 
 const setToken = token => {
   if (token) {
@@ -90,14 +102,18 @@ const setToken = token => {
 };
 
 const removeToken = () => {
-  authorizationEventsFromThisTab.next(null);
   window.localStorage.removeItem(BITLY_TOKEN_STORAGE_KEY);
+  authorizationEventsFromThisTab.next(null);
 };
 
+const clearState = () => {
+  removeToken();
+  localStorage.removeItem(BITLY_MULTIPLE_GUID_STORAGE_KEY);
+  localStorage.removeItem(BITLY_CACHE_KEY);
+};
 
 const BITLY_AUTH_WINDOW_TIMEOUT = 1000 * 60 * 15;
 const BITLY_AUTH_PREMATURE_CLOSE_INTERVAL = 1000;
-
 
 /**
  * Accepts a long URL and returns a promise that is resolved with its shortened
@@ -105,38 +121,31 @@ const BITLY_AUTH_PREMATURE_CLOSE_INTERVAL = 1000;
  * authentication flow by spawning a new window to authenticate against bitly
  * if necessary, and caches tokens and other stuff to localStorage.
  *
- * This function memoizes, so calling it with the same longUrl will
- * automatically return a resolved promise with the shortened URL.
+ * This function memoizes its results in localStorage. This cache is reset
+ * whenever the function puts the user through Authorization flow.
  *
- * TODO(nathanwest): as a courtesy to bitly, cache shortened URLs more durably
- * (like in localStorage).
- *
- * @param {string} longUrl
+ * @param {string} longUrl The URL to shorten
+ * @param {string} bitlyGuid The bitly group id in which to create the group.
+ *   If not provided, the user's default group is used.
  * @return {Promise} A promise resolved with the shortend URL.
  */
-export const shortenUrl = promiseMemoize(async (longUrl) => {
-  const bitlyApiToken = getToken();
-
+export const shortenUrl = async (longUrl, bitlyGuid) => {
   // Attempt the API call with the stored token, but be ready to get a new
   // token and retry if it fails.
-  if (bitlyApiToken != undefined) {
-    try {
-      return await createBitlink({
-        longUrl: longUrl,
-        token: bitlyApiToken,
-        checkForbidden: true,
-      });
-    } catch (e) {
-      // If it wasn't a forbidden error, return it to the caller. Otherwise,
-      // it's possible we have a bad token and should retry with a fresh one.
-      if (e !== forbiddenError) {
-        throw e;
-      }
-
+  try {
+    return await createBitlink({
+      longUrl: longUrl,
+      guid: bitlyGuid,
+      checkForbidden: true,
+    });
+  } catch (e) {
+    if (e === forbiddenError || e === noTokenError) {
       // Hmm. I guess the token was bad. Clear the saved stuff before
       // proceeding.
-      removeToken();
-      localStorage.removeItem(BITLY_GUID_STORAGE_KEY);
+      clearState();
+    } else {
+      // If it was a real error, throw it to the caller
+      throw e;
     }
   }
 
@@ -174,8 +183,11 @@ export const shortenUrl = promiseMemoize(async (longUrl) => {
         event.source === childWindow
       ) {
         const data = event.data;
-        if (data.error) { reject(new Error(data.error)); }
-        else { resolve(data); }
+        if (data.error) {
+ reject(new Error(data.error));
+} else {
+ resolve(data);
+}
       }
     };
     window.addEventListener('message', messageListener);
@@ -226,10 +238,10 @@ export const shortenUrl = promiseMemoize(async (longUrl) => {
 
   return await createBitlink({
     longUrl: longUrl,
-    token: token,
+    guid: bitlyGuid,
     checkForbidden: false,
   });
-});
+};
 
 // Generic bitly v4 API calls. Makes a request to
 // https://api-ssl.bitly.com/v4/{endpoint}, using the options. If payload is
@@ -243,13 +255,18 @@ export const shortenUrl = promiseMemoize(async (longUrl) => {
 // JSON payload is returned. If checkForbidden is true, 403 errors cause the
 // forbiddenError object to be returned (as a rejection); this allows for
 // easily detecting this case for OAuth flow.
-const bitlyApiFetch = async ({
-  token,
+export const bitlyApiFetch = async ({
   endpoint,
+  token=null,
   options={},
   payload=undefined,
   checkForbidden=false,
 }) => {
+  token = token == null ? getToken() : token;
+  if (!token) {
+    throw noTokenError;
+  }
+
   const headers = {
     ...(options.headers || {}),
     Authorization: `Bearer ${token}`,
@@ -283,17 +300,46 @@ const bitlyApiFetch = async ({
 
 /**
  * Attempt to create a short URL by POSTing to the bitly API. Return the
- * created short link. The bitly create-link API requires a group, and doesn't
- * have any notion of a default group, so we also look up a group to use.
+ * created short link.
+ *
+ * The bitly group `guid` is used. If not given, the user's default group is
+ * looked up.
+ *
+ * This function caches its results in localStorage, though it doesn't cache
+ * the default group.
+ *
+ * @return {string} The shortened link.
  */
-const createBitlink = ({longUrl, token, checkForbidden}) =>
-  getBitlyGroup({token, checkForbidden})
-  .then(guid => createBitlinkCall({longUrl, token, checkForbidden, guid}));
+const createBitlink = async ({longUrl, guid=null, token, checkForbidden}) => {
+  const realGuid = guid == null ?
+    (await getBitlyGroup({token, checkForbidden})) :
+    guid;
+
+  const cache = JSON.parse(localStorage.getItem(BITLY_CACHE_KEY)) || {};
+  const groupCache = cache[realGuid] || {};
+  const cachedLink = groupCache[longUrl];
+
+  if (cachedLink) {
+    return cachedLink;
+  }
+
+  const link = await createBitlinkCall({
+    longUrl,
+    token,
+    checkForbidden,
+    guid: realGuid,
+  });
+
+  groupCache[longUrl] = link;
+  cache[realGuid] = groupCache;
+
+  localStorage.setItem(BITLY_CACHE_KEY, JSON.stringify(cache));
+
+  return link;
+};
 
 
-/**
- * Create a bitlink with the bitly API.
- */
+// Create a bitlink with the bitly API
 const createBitlinkCall = ({longUrl, token, guid, checkForbidden}) =>
   bitlyApiFetch({
     token: token,
@@ -305,14 +351,14 @@ const createBitlinkCall = ({longUrl, token, guid, checkForbidden}) =>
     },
   })
   .catch(error => {
-    //TODO(nathanwest): use a more structured error type
-    if(
-      error.message.includes("INVALID_ARG_LONG_URL") &&
+    // TODO(nathanwest): use a more structured error type
+    if (
+      error.message.includes('INVALID_ARG_LONG_URL') &&
       !longUrl.match(/^[a-zA-Z]+:\/\//)
     ) {
       throw new Error(
-        "Can't shorten URLs that don't have a scheme. " +
-        "Add 'http://' or 'https://' to the beginning of your URL.");
+        'Can\'t shorten URLs that don\'t have a scheme. ' +
+        'Add \'http://\' or \'https://\' to the beginning of your URL.');
     } else {
       throw error;
     }
@@ -320,45 +366,10 @@ const createBitlinkCall = ({longUrl, token, guid, checkForbidden}) =>
   .then(data => data.link);
 
 
-/**
- * Get the user's "default" bitly group. This group is cached as in localStorage
- * using BITLY_GUID_STORAGE_KEY, and looked up with that key. If the key doesn't
- * exist, use the bitly API to fetch the group.
- */
-const getBitlyGroup = ({token, checkForbidden}) => {
-  let guid = localStorage.getItem(BITLY_GUID_STORAGE_KEY);
-  return guid ?
-    Promise.resolve(guid) :
-    fetchBitlyGroup({token, checkForbidden}).then(guid => {
-      localStorage.setItem(BITLY_GUID_STORAGE_KEY, guid);
-      return guid;
-    });
-};
-
-// Get the user's bitly group. Enterprise bitly users can have more than one
-// group, but we assume for now that enterprise users will be doing their own
-// link creation, rather than using our built-in shortener, so we throw an
-// error if there is more than one group attached to their account.
-//
-// See https://dev.bitly.com/v4/#section/Group-Aware for details
-const fetchBitlyGroup = ({token, checkForbidden}) =>
+// Get the authorized user's default bitly group.
+const getBitlyGroup = ({token, checkForbidden}) =>
   bitlyApiFetch({
     token: token,
-    endpoint: '/groups',
+    endpoint: '/user',
     checkForbidden: checkForbidden,
-  }).then(data => {
-    const groups = data.groups;
-
-    if (groups.length === 0) {
-      throw new Error('bitly user has no associated groups!');
-    } else if (groups.length > 1) {
-      // NOTE(nathanwest): I'm assuming that, if people have this issue and
-      // are unhappy, they'll file github issues about it, at which time we can
-      // revisit.
-      throw new Error(
-        'bitly user has more than one associated group; ' +
-        'not sure which group to create the link in.');
-    } else {
-      return groups[0].guid;
-    }
-  });
+  }).then(data => data.default_group_guid);
