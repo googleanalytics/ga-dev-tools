@@ -41,9 +41,23 @@ gapi.analytics.ready(function() {
       return daysAgo(0);
     } else if (str == 'yesterday') {
       return daysAgo(1);
+    } else if (str == 'firstDayOfMonth') {
+      return firstDayOfMonth();
     } else {
       throw new Error('Cannot convert date ' + str);
     }
+  }
+
+  /**
+   * Get a firstDayOfMonth formatted as YYYY-MM-DD
+   * @return {string} The formatted date.
+   */
+  function firstDayOfMonth() {
+    const now = new Date();
+    const year = now.getFullYear().toString().padStart(4, 0);
+    const month = (now.getMonth() + 1).toString().padStart(2, 0);
+
+    return `${year}-${month}-01`;
   }
 
   /**
