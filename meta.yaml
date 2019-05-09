@@ -68,11 +68,6 @@ projects:
     - embed_api
     - api_client_library_python
     excerpt: 'This demo shows how you can use server-side authorization to display your Google Analytics data to users without granting them access to your Google Analytics account.'
-- title: Dimensions and Metrics Explorer
-  type: tool
-  slug: dimensions-metrics-explorer
-  tech:
-
 - title: Enhanced Ecommerce
   type: demo
   slug: enhanced-ecommerce
