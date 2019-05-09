@@ -75,8 +75,7 @@ projects:
   - analyticsjs
   - ecjs
   external:
-    action: View Demo
-    url: https://enhancedecommerce.appspot.com
+    action: View Demo url: https://enhancedecommerce.appspot.com
 - title: Hit Builder
   type: tool
   slug: hit-builder
@@ -94,15 +93,27 @@ projects:
 - title: Query Explorer
   type: tool
   slug: query-explorer
-  tech: [core_reporting_api, embed_api, management_api, metadata_api]
+  tech:
+  - core_reporting_api
+  - embed_api
+  - management_api
+  - metadata_api
 - title: Request Composer
   type: tool
   slug: request-composer
-  tech: [analytics_reporting_api_v4, embed_api, management_api, metadata_api]
+  tech:
+  - analytics_reporting_api_v4
+  - embed_api
+  - management_api
+  - metadata_api
 - title: Spreadsheet Add-on
   type: tool
   slug: spreadsheet-add-on
-  tech: [core_reporting_api, management_api, mcf_reporting_api, metadata_api]
+  tech:
+  - core_reporting_api
+  - management_api
+  - mcf_reporting_api
+  - metadata_api
   external:
     action: Get Add-on
     url: https://chrome.google.com/webstore/detail/google-analytics/fefimfimnhjjkomigakinmjileehfopp
