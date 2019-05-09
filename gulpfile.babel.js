@@ -28,6 +28,7 @@ import postcss from 'gulp-postcss';
 import rename from 'gulp-rename';
 import gutil from 'gulp-util';
 import pngquant from 'imagemin-pngquant';
+import { once } from 'lodash'
 import merge from 'merge-stream';
 import path from 'path';
 import postcssCssnext from 'postcss-cssnext';
@@ -55,8 +56,7 @@ function streamError(err) {
   gutil.log(err instanceof gutil.PluginError ? err.toString() : err.stack);
 }
 
-
-gulp.task('css', function() {
+export const css = () => {
   const processors = [
     postcssImport(),
     postcssUrl(),
@@ -80,10 +80,9 @@ gulp.task('css', function() {
           .pipe(postcss(processors))
           .pipe(gulp.dest('public/css'))
   );
-});
+}
 
-
-gulp.task('images', function() {
+export const images = () => {
   return merge(
       gulp.src('src/images/**/*.svg')
           .pipe(gulp.dest('public/images')),
@@ -96,147 +95,135 @@ gulp.task('images', function() {
           .pipe(rename((p) => p.basename = p.basename.replace('-2x', '')))
           .pipe(gulp.dest('public/images'))
   );
+}
+
+const webpackCompiler = once(() => {
+  let sourceFiles = glob.sync('./*/index.js', {cwd: './src/javascript/'});
+  let entry = {index: ['babel-polyfill', './src/javascript/index.js']};
+
+  for (let filename of sourceFiles) {
+    let name = path.join('.', path.dirname(filename));
+    let filepath = './' + path.join('./src/javascript', filename);
+    entry[name] = ['babel-polyfill', filepath];
+  }
+
+  let plugins = [new webpack.optimize.CommonsChunkPlugin({
+    name: 'common',
+    minChunks: 2,
+  })];
+
+  // Uglify and remove dev-only code in production.
+  if (isProd()) {
+    plugins.push(new webpack.optimize.UglifyJsPlugin());
+    plugins.push(new webpack.DefinePlugin({
+      'process.env': {NODE_ENV: '"production"'},
+    }));
+  }
+
+  return webpack({
+    entry: entry,
+    output: {
+      path: path.join(__dirname, 'public/javascript'),
+      publicPath: '/public/javascript/',
+      filename: '[name].js',
+    },
+    cache: {},
+    devtool: '#source-map',
+    plugins: plugins,
+    module: {
+      loaders: [
+        {
+          test: /\.js$/,
+          loader: 'babel-loader',
+          exclude: /node_modules\/(?!(autotrack|dom-utils|tti-polyfill))/,
+          query: {
+            babelrc: false,
+            presets: [
+              ['es2015', {'modules': false}],
+              'react',
+              'stage-0',
+            ],
+            plugins: ['dynamic-import-system-import'],
+          },
+        },
+        // "postcss" loader applies autoprefixer to our CSS.
+        // "css" loader resolves paths in CSS and adds assets as dependencies.
+        // "style" loader turns CSS into JS modules that inject <style> tags.
+        // In production, we use a plugin to extract that CSS to a file, but
+        // in development "style" loader enables hot editing of CSS.
+        {
+          test: /\.css$/,
+          loaders: [
+            'style-loader',
+            'css-loader?modules&importLoaders=1&localIdentName=' +
+                `${isProd() ? '' : '[name]__[local]___'}[hash:base64:5]` +
+                '!postcss-loader',
+            'postcss-loader',
+          ],
+        },
+      ],
+    },
+  });
+});
+
+export const js_webpack = () => new Promise((resolve, reject) => {
+  webpackCompiler().run(err => {
+    if (err) {
+      reject(new gutil.PluginError('webpack', err));
+    } else {
+      gutil.log('[webpack]', stats.toString('minimal'));
+      resolve()
+    }
+  }
 });
 
 
-gulp.task('javascript:webpack', (function() {
-  let compiler;
+const embedApiCompiler = once(() => {
+  const COMPONENT_PATH = './javascript/embed-api/components';
+  let components = ['active-users', 'date-range-selector', 'view-selector2'];
+  let entry = {};
 
-  const createCompiler = () => {
-    let sourceFiles = glob.sync('./*/index.js', {cwd: './src/javascript/'});
-    let entry = {index: ['babel-polyfill', './src/javascript/index.js']};
+  for (let component of components) {
+    entry[component] = './' + path.join('./src', COMPONENT_PATH, component);
+  }
 
-    for (let filename of sourceFiles) {
-      let name = path.join('.', path.dirname(filename));
-      let filepath = './' + path.join('./src/javascript', filename);
-      entry[name] = ['babel-polyfill', filepath];
-    }
-
-    let plugins = [new webpack.optimize.CommonsChunkPlugin({
-      name: 'common',
-      minChunks: 2,
-    })];
-
-    // Uglify and remove dev-only code in production.
-    if (isProd()) {
-      plugins.push(new webpack.optimize.UglifyJsPlugin());
-      plugins.push(new webpack.DefinePlugin({
-        'process.env': {NODE_ENV: '"production"'},
-      }));
-    }
-
-    return webpack({
-      entry: entry,
-      output: {
-        path: path.join(__dirname, 'public/javascript'),
-        publicPath: '/public/javascript/',
-        filename: '[name].js',
-      },
-      cache: {},
-      devtool: '#source-map',
-      plugins: plugins,
-      module: {
-        loaders: [
-          {
-            test: /\.js$/,
-            loader: 'babel-loader',
-            exclude: /node_modules\/(?!(autotrack|dom-utils|tti-polyfill))/,
-            query: {
-              babelrc: false,
-              presets: [
-                ['es2015', {'modules': false}],
-                'react',
-                'stage-0',
-              ],
-              plugins: ['dynamic-import-system-import'],
-            },
+  return webpack({
+    entry: entry,
+    output: {
+      path: path.join(__dirname, './public', COMPONENT_PATH),
+      filename: '[name].js',
+    },
+    cache: {},
+    devtool: '#source-map',
+    plugins: isProd() ? [new webpack.optimize.UglifyJsPlugin()] : [],
+    module: {
+      loaders: [
+        {
+          test: /\.js$/,
+          loader: 'babel-loader',
+          query: {
+            babelrc: false,
+            cacheDirectory: false,
+            presets: [['es2015', {'modules': false}]],
           },
-          // "postcss" loader applies autoprefixer to our CSS.
-          // "css" loader resolves paths in CSS and adds assets as dependencies.
-          // "style" loader turns CSS into JS modules that inject <style> tags.
-          // In production, we use a plugin to extract that CSS to a file, but
-          // in development "style" loader enables hot editing of CSS.
-          {
-            test: /\.css$/,
-            loaders: [
-              'style-loader',
-              'css-loader?modules&importLoaders=1&localIdentName=' +
-                  `${isProd() ? '' : '[name]__[local]___'}[hash:base64:5]` +
-                  '!postcss-loader',
-              'postcss-loader',
-            ],
-          },
-        ],
-      },
-    });
-  };
+        },
+      ],
+    },
+  });
+});
 
-  const compile = (done) => {
-    (compiler || (compiler = createCompiler())).run(function(err, stats) {
-      if (err) throw new gutil.PluginError('webpack', err);
+export const js_embedComponents = () => new Promise((resolve, reject) => {
+  embedApiCompiler.run(err => {
+    if(err) {
+      reject(new gutil.PluginError('webpack', err));
+    } else {
       gutil.log('[webpack]', stats.toString('minimal'));
-      done();
-    });
-  };
-
-  return compile;
-}()));
-
-
-gulp.task('javascript:embed-api-components', (function() {
-  let compiler;
-
-  const createCompiler = () => {
-    const COMPONENT_PATH = './javascript/embed-api/components';
-    let components = ['active-users', 'date-range-selector', 'view-selector2'];
-    let entry = {};
-
-    for (let component of components) {
-      entry[component] = './' + path.join('./src', COMPONENT_PATH, component);
+      resolve();
     }
+  })
+})
 
-    return webpack({
-      entry: entry,
-      output: {
-        path: path.join(__dirname, './public', COMPONENT_PATH),
-        filename: '[name].js',
-      },
-      cache: {},
-      devtool: '#source-map',
-      plugins: isProd() ? [new webpack.optimize.UglifyJsPlugin()] : [],
-      module: {
-        loaders: [
-          {
-            test: /\.js$/,
-            loader: 'babel-loader',
-            query: {
-              babelrc: false,
-              cacheDirectory: false,
-              presets: [['es2015', {'modules': false}]],
-            },
-          },
-        ],
-      },
-    });
-  };
-
-  const compile = (done) => {
-    (compiler || (compiler = createCompiler())).run(function(err, stats) {
-      if (err) throw new gutil.PluginError('webpack', err);
-      gutil.log('[webpack]', stats.toString('minimal'));
-      done();
-    });
-  };
-
-  return compile;
-}()));
-
-
-gulp.task('javascript', [
-  'javascript:webpack',
-  'javascript:embed-api-components',
-]);
-
+export const javascript = gulp.parallel(js_webpack, js_embedComponents)
 
 gulp.task('json', function() {
   const PARAMETER_REFERENCE_URL =
