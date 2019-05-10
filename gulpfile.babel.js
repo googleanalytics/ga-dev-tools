@@ -167,14 +167,14 @@ const webpackCompiler = once(() => {
 });
 
 export const js_webpack = () => new Promise((resolve, reject) => {
-  webpackCompiler().run(err => {
+  webpackCompiler().run((err, stats) => {
     if (err) {
       reject(new gutil.PluginError('webpack', err));
     } else {
       gutil.log('[webpack]', stats.toString('minimal'));
-      resolve()
+      resolve();
     }
-  }
+  });
 });
 
 
@@ -213,7 +213,7 @@ const embedApiCompiler = once(() => {
 });
 
 export const js_embedComponents = () => new Promise((resolve, reject) => {
-  embedApiCompiler.run(err => {
+  embedApiCompiler().run((err, stats) => {
     if(err) {
       reject(new gutil.PluginError('webpack', err));
     } else {
@@ -221,106 +221,86 @@ export const js_embedComponents = () => new Promise((resolve, reject) => {
       resolve();
     }
   })
-})
+});
 
-export const javascript = gulp.parallel(js_webpack, js_embedComponents)
+export const build_embedComponents = gulp.series(
+  js_embedComponents,
+  () => gulp.src('public/javascript/embed-api/components/*')
+    .pipe(gulp.dest('build/javascript/embed-api/components'))
+);
 
-gulp.task('json', function() {
+export const javascript = gulp.parallel(js_webpack, build_embedComponents)
+
+export const json = () => {
   const PARAMETER_REFERENCE_URL =
-      'https://developers.google.com/analytics' +
-      '/devguides/collection/protocol/v1/parameters.json';
+    'https://developers.google.com/analytics' +
+    '/devguides/collection/protocol/v1/parameters.json';
 
-  request(PARAMETER_REFERENCE_URL)
-      .pipe(createOutputStream('public/json/parameter-reference.json'));
+  return request(PARAMETER_REFERENCE_URL)
+    .pipe(createOutputStream('public/json/parameter-reference.json'))
+}
+
+export const keycheck = () => fs.access('./service-account-key.json').catch(err => {
+  throw err + '\nNeed a service account key. See ' +
+    'https://ga-dev-tools.appspot.com/embed-api/server-side-authorization/ ' +
+    'for details on how to get one.'
 });
 
+export const lint = () => (
+  gulp.src([
+    'src/javascript/**/*.js',
+    'test/**/*.js',
+    'gulpfile.js',
+  ])
+  .pipe(eslint({fix: true}))
+  .pipe(eslint.format())
+  .pipe(eslint.failAfterError())
+);
 
-gulp.task('keycheck', () => fs.access('./service-account-key.json').catch(
-    error => Promise.reject(error +
-        '\nNeed a service account key. See ' +
-        'https://ga-dev-tools.appspot.com/embed-api/server-side-authorization/ ' +
-        'for details on how to get one.'
-    )
-));
+export const test = gulp.series(lint, () =>
+  gulp.src('test/**/*.js', {read: false}).pipe(mocha())
+);
 
-
-gulp.task('lint', function() {
-  return gulp.src([
-        'src/javascript/**/*.js',
-        'test/**/*.js',
-        'gulpfile.js',
-      ])
-      .pipe(eslint({fix: true}))
-      .pipe(eslint.format())
-      .pipe(eslint.failAfterError());
+export const serve = () => spawn('dev_appserver.py', [
+  '.',
+  '--host', process.env.GA_TOOLS_HOST || 'localhost',
+  '--port', process.env.GA_TOOLS_PORT || '8080',
+], {
+  stdio: 'inherit'
 });
 
+export const build_core = gulp.parallel(
+  javascript,
+  css,
+  images,
+  json,
+)
 
-gulp.task('test', ['lint'], function() {
-  return gulp.src('test/**/*.js', {read: false})
-      .pipe(mocha());
-});
+export const build_all = gulp.parallel(test, keycheck, build_core)
 
-gulp.task('serve', [], done => {
-  const devServer = spawn('dev_appserver.py', [
-    '.',
-    '--host', process.env.GA_TOOLS_HOST || 'localhost',
-    '--port', process.env.GA_TOOLS_PORT || '8080',
-  ]);
-  devServer.stderr.on('data', data => {
-    if (data.includes('Starting module')) done();
-    process.stdout.write(data);
-  });
-});
+export const watch = () => {
+  gulp.watch('src/css/**/*.css', css);
+  gulp.watch('src/images/**/*', images);
+  gulp.watch('src/javascript/**/*', javascript);
+};
 
+export const run = gulp.series(build_core, gulp.parallel(watch, serve))
 
-gulp.task('watch', ['build:core', 'serve'], function() {
-  gulp.watch('src/css/**/*.css', ['css']);
-  gulp.watch('src/images/**/*', ['images']);
-  gulp.watch('src/javascript/**/*', ['javascript']);
-});
-
-
-gulp.task('build:embed-api-components', ['javascript'], function() {
-  gulp.src('public/javascript/embed-api/components/*')
-      .pipe(gulp.dest('build/javascript/embed-api/components'));
-});
-
-
-gulp.task('build:core', [
-  'javascript',
-  'css',
-  'images',
-  'json',
-  'build:embed-api-components',
-]);
-
-
-gulp.task('build:all', [
-  'test',
-  'keycheck',
-  'build:core',
-]);
-
-
-gulp.task('stage', ['build:all'], (done) => {
+export const stage = gulp.series(build_all, () => {
   if (!isProd()) {
     throw new Error('The stage task must be run in production mode.');
   }
 
-  spawn('gcloud',
+  return spawn('gcloud',
       ['app', 'deploy', '--project', 'google.com:ga-dev-tools'],
-      {stdio: 'inherit'})
-          .on('error', (err) => done(err))
-          .on('close', () => done());
-});
+      {stdio: 'inherit'}
+  );
+})
 
-gulp.task('deploy', ['build:all'], (done) => {
+export const deploy = gulp.series(build_all, () => {
   if (!isProd()) {
     throw new Error('The deploy task must be run in production mode.');
   }
 
-  spawn('gcloud', ['app', 'deploy'], {stdio: 'inherit'})
-      .on('error', (err) => done(err))
-      .on('close', () => done());
+  return spawn('gcloud', ['app', 'deploy'], {stdio: 'inherit'});
 });

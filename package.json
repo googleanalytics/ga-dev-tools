@@ -5,7 +5,7 @@
     "url": "git://github.com/googleanalytics/ga-dev-tools.git"
   },
   "scripts": {
-    "start": "gulp watch",
+    "start": "gulp run",
     "test": "gulp test",
     "stage": "gulp stage",
     "deploy": "gulp deploy"
