@@ -21,7 +21,7 @@
   ],
   "settings" : {
     "react": {
-      "version": "15.3"
+      "version": "16.8"
     }
   },
   "rules": {
@@ -41,7 +41,7 @@
         "ClassDeclaration": true,
       },
     }],
-    "arrow-parens": 0,
+    "arrow-parens": [2, "as-needed"],
     "generator-star-spacing": [2, "after"],
      // React and jQuery use `this`
     "no-invalid-this": 0,

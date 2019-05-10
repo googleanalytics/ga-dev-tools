@@ -22,13 +22,13 @@ import eslint from 'gulp-eslint';
 import fs from 'fs-extra';
 import resize from 'gulp-image-resize';
 import imagemin from 'gulp-imagemin';
-import gulp_mocha from 'gulp-mocha';
+import gulpMocha from 'gulp-mocha';
 import plumber from 'gulp-plumber';
 import postcss from 'gulp-postcss';
 import rename from 'gulp-rename';
 import gutil from 'gulp-util';
 import pngquant from 'imagemin-pngquant';
-import { once } from 'lodash'
+import {once} from 'lodash';
 import merge from 'merge-stream';
 import path from 'path';
 import postcssCssnext from 'postcss-cssnext';
@@ -80,9 +80,10 @@ export const css = () => {
           .pipe(postcss(processors))
           .pipe(gulp.dest('public/css'))
   );
-}
+};
 
-export const watch_css = () => gulp.watch('./src/css/**/*.css', css)
+// eslint-disable-next-line camelcase
+export const watch_css = () => gulp.watch('./src/css/**/*.css', css);
 
 export const images = () => merge(
     gulp.src('src/images/**/*.svg')
@@ -93,11 +94,14 @@ export const images = () => merge(
     gulp.src('src/images/**/*.png')
         .pipe(resize({width: '50%'}))
         .pipe(imagemin({use: [pngquant()]}))
-        .pipe(rename((p) => p.basename = p.basename.replace('-2x', '')))
+        .pipe(rename(p => p.basename = p.basename.replace('-2x', '')))
         .pipe(gulp.dest('public/images'))
 );
 
-export const watch_images = () => gulp.watch('./src/images/**/*.(png|svg)', images)
+// eslint-disable-next-line camelcase
+export const watch_images = () => (
+  gulp.watch('./src/images/**/*.(png|svg)', images)
+);
 
 const webpackCompiler = once(() => {
   let sourceFiles = glob.sync('./*/index.js', {cwd: './src/javascript/'});
@@ -168,6 +172,7 @@ const webpackCompiler = once(() => {
   });
 });
 
+// eslint-disable-next-line camelcase
 export const js_webpack = () => new Promise((resolve, reject) => {
   webpackCompiler().run((err, stats) => {
     if (err) {
@@ -213,22 +218,27 @@ const embedApiCompiler = once(() => {
   });
 });
 
-export const js_webpack_embedComponents = () => new Promise((resolve, reject) => {
-  embedApiCompiler().run((err, stats) => {
-    if(err) {
-      reject(new gutil.PluginError('webpack', err));
-    } else {
-      gutil.log('[webpack]', stats.toString('minimal'));
-      resolve();
-    }
+// eslint-disable-next-line camelcase
+export const js_webpack_embedComponents = () => (
+  new Promise((resolve, reject) => {
+    embedApiCompiler().run((err, stats) => {
+      if (err) {
+        reject(new gutil.PluginError('webpack', err));
+      } else {
+        gutil.log('[webpack]', stats.toString('minimal'));
+        resolve();
+      }
+    });
   })
-});
+);
 
+// eslint-disable-next-line camelcase
 export const build_embedComponents = () => (
   gulp.src('public/javascript/embed-api/components/*')
     .pipe(gulp.dest('build/javascript/embed-api/components'))
-)
+);
 
+// eslint-disable-next-line camelcase
 export const js_embedComponents = gulp.series(
   js_webpack_embedComponents,
   build_embedComponents,
@@ -236,7 +246,10 @@ export const js_embedComponents = gulp.series(
 
 export const javascript = gulp.parallel(js_webpack, js_embedComponents);
 
-export const watch_js = () => gulp.watch('./src/javascript/**/*.(js|jsx)', javascript);
+// eslint-disable-next-line camelcase
+export const watch_js = () => (
+  gulp.watch('./src/javascript/**/*.(js|jsx)', javascript)
+);
 
 export const json = () => {
   const PARAMETER_REFERENCE_URL =
@@ -244,14 +257,19 @@ export const json = () => {
     '/devguides/collection/protocol/v1/parameters.json';
 
   return request(PARAMETER_REFERENCE_URL)
-    .pipe(createOutputStream('public/json/parameter-reference.json'))
-}
+    .pipe(createOutputStream('public/json/parameter-reference.json'));
+};
 
-export const keycheck = () => fs.access('./service-account-key.json').catch(err => {
-  throw err + '\nNeed a service account key. See ' +
-    'https://ga-dev-tools.appspot.com/embed-api/server-side-authorization/ ' +
-    'for details on how to get one.'
-});
+export const keycheck = () => (
+  fs
+    .access('./service-account-key.json')
+    .catch(err => {
+      throw new Error(err + '\nNeed a service account key. See ' +
+        'https://ga-dev-tools.appspot.com' +
+        '/embed-api/server-side-authorization/ ' +
+        'for details on how to get one.');
+    })
+);
 
 export const lint = () => (
   gulp.src([
@@ -259,12 +277,14 @@ export const lint = () => (
     'test/**/*.js',
     'gulpfile.babel.js',
   ])
-  .pipe(eslint({fix: true}))
+  .pipe(eslint())
   .pipe(eslint.format())
   .pipe(eslint.failAfterError())
 );
 
-export const mocha = () => gulp.src('test/**/*.js', {read: false}).pipe(gulp_mocha())
+export const mocha = () => (
+  gulp.src('test/**/*.js', {read: false}).pipe(gulpMocha())
+);
 
 export const test = gulp.series(lint, mocha);
 
@@ -273,23 +293,25 @@ export const serve = () => spawn('dev_appserver.py', [
   '--host', process.env.GA_TOOLS_HOST || 'localhost',
   '--port', process.env.GA_TOOLS_PORT || '8080',
 ], {
-  stdio: 'inherit'
+  stdio: 'inherit',
 });
 
+// eslint-disable-next-line camelcase
 export const build_core = gulp.parallel(
   javascript,
   css,
   images,
   json,
-)
+);
 
-export const build_all = gulp.parallel(test, keycheck, build_core)
+// eslint-disable-next-line camelcase
+export const build_all = gulp.parallel(build_core, test, keycheck);
 
 export const watch = () => {
   watch_css();
   watch_js();
   watch_images();
-}
+};
 
 export const run = gulp.series(build_core, gulp.parallel(serve, watch));
 
@@ -302,7 +324,7 @@ export const stage = gulp.series(build_all, () => {
       ['app', 'deploy', '--project', 'google.com:ga-dev-tools'],
       {stdio: 'inherit'}
   );
-})
+});
 
 export const deploy = gulp.series(build_all, () => {
   if (!isProd()) {
