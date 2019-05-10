@@ -29,7 +29,7 @@ import rename from 'gulp-rename';
 import gutil from 'gulp-util';
 import pngquant from 'imagemin-pngquant';
 import {once} from 'lodash';
-import merge from 'merge-stream';
+import merge2 from 'merge2';
 import path from 'path';
 import postcssCssnext from 'postcss-cssnext';
 import postcssImport from 'postcss-import';
@@ -70,33 +70,31 @@ export const css = () => {
     processors.push(cssnano({autoprefixer: false}));
   }
 
-  return merge(
-      gulp.src('./src/css/index.css')
-          .pipe(plumber({errorHandler: streamError}))
-          .pipe(postcss(processors))
-          .pipe(gulp.dest('public/css')),
-      gulp.src('./src/css/chartjs-visualizations.css')
-          .pipe(plumber({errorHandler: streamError}))
-          .pipe(postcss(processors))
-          .pipe(gulp.dest('public/css'))
-  );
+  return gulp.src([
+    './src/css/index.css',
+    './src/css/chartjs-visualizations.css',
+  ]).pipe(plumber({errorHandler: streamError}))
+    .pipe(postcss(processors))
+    .pipe(gulp.dest('public/css'));
 };
 
 // eslint-disable-next-line camelcase
 export const watch_css = () => gulp.watch('./src/css/**/*.css', css);
 
-export const images = () => merge(
-    gulp.src('src/images/**/*.svg')
-        .pipe(gulp.dest('public/images')),
-    gulp.src('src/images/**/*.png')
-        .pipe(imagemin({use: [pngquant()]}))
-        .pipe(gulp.dest('public/images')),
-    gulp.src('src/images/**/*.png')
-        .pipe(resize({width: '50%'}))
-        .pipe(imagemin({use: [pngquant()]}))
-        .pipe(rename(p => p.basename = p.basename.replace('-2x', '')))
-        .pipe(gulp.dest('public/images'))
-);
+export const images = () => {
+  const basePngs = gulp.src('src/images/**/*.png');
+
+  const smallPngs = basePngs
+    .pipe(resize({width: '50%'}))
+    .pipe(rename(p => p.basename = p.basename.replace('-2x', '')));
+
+  const pngs = merge2([basePngs, smallPngs])
+    .pipe(imagemin({use: [pngquant()]}));
+
+  const svgs = gulp.src('src/images/**/*.svg');
+
+  return merge2([svgs, pngs]).pipe(gulp.dest('public/images'))
+};
 
 // eslint-disable-next-line camelcase
 export const watch_images = () => (
@@ -105,12 +103,12 @@ export const watch_images = () => (
 
 const webpackCompiler = once(() => {
   let sourceFiles = glob.sync('./*/index.js', {cwd: './src/javascript/'});
-  let entry = {index: ['babel-polyfill', './src/javascript/index.js']};
+  let entry = {index: ['@babel/polyfill', './src/javascript/index.js']};
 
   for (let filename of sourceFiles) {
     let name = path.join('.', path.dirname(filename));
     let filepath = './' + path.join('./src/javascript', filename);
-    entry[name] = ['babel-polyfill', filepath];
+    entry[name] = ['@babel/polyfill', filepath];
   }
 
   let plugins = [new webpack.optimize.CommonsChunkPlugin({
@@ -145,11 +143,13 @@ const webpackCompiler = once(() => {
           query: {
             babelrc: false,
             presets: [
-              ['es2015', {'modules': false}],
-              'react',
-              'stage-0',
+              '@babel/preset-env',
+              '@babel/preset-react',
             ],
-            plugins: ['dynamic-import-system-import'],
+            plugins: [
+              'dynamic-import-system-import',
+              '@babel/plugin-proposal-class-properties',
+            ],
           },
         },
         // "postcss" loader applies autoprefixer to our CSS.
@@ -210,7 +210,7 @@ const embedApiCompiler = once(() => {
           query: {
             babelrc: false,
             cacheDirectory: false,
-            presets: [['es2015', {'modules': false}]],
+            presets: ['@babel/preset-env'],
           },
         },
       ],
