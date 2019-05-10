@@ -22,7 +22,7 @@ import eslint from 'gulp-eslint';
 import fs from 'fs-extra';
 import resize from 'gulp-image-resize';
 import imagemin from 'gulp-imagemin';
-import mocha from 'gulp-mocha';
+import gulp_mocha from 'gulp-mocha';
 import plumber from 'gulp-plumber';
 import postcss from 'gulp-postcss';
 import rename from 'gulp-rename';
@@ -82,20 +82,22 @@ export const css = () => {
   );
 }
 
-export const images = () => {
-  return merge(
-      gulp.src('src/images/**/*.svg')
-          .pipe(gulp.dest('public/images')),
-      gulp.src('src/images/**/*.png')
-          .pipe(imagemin({use: [pngquant()]}))
-          .pipe(gulp.dest('public/images')),
-      gulp.src('src/images/**/*.png')
-          .pipe(resize({width: '50%'}))
-          .pipe(imagemin({use: [pngquant()]}))
-          .pipe(rename((p) => p.basename = p.basename.replace('-2x', '')))
-          .pipe(gulp.dest('public/images'))
-  );
-}
+export const watch_css = () => gulp.watch('./src/css/**/*.css', css)
+
+export const images = () => merge(
+    gulp.src('src/images/**/*.svg')
+        .pipe(gulp.dest('public/images')),
+    gulp.src('src/images/**/*.png')
+        .pipe(imagemin({use: [pngquant()]}))
+        .pipe(gulp.dest('public/images')),
+    gulp.src('src/images/**/*.png')
+        .pipe(resize({width: '50%'}))
+        .pipe(imagemin({use: [pngquant()]}))
+        .pipe(rename((p) => p.basename = p.basename.replace('-2x', '')))
+        .pipe(gulp.dest('public/images'))
+);
+
+export const watch_images = () => gulp.watch('./src/images/**/*.(png|svg)', images)
 
 const webpackCompiler = once(() => {
   let sourceFiles = glob.sync('./*/index.js', {cwd: './src/javascript/'});
@@ -177,7 +179,6 @@ export const js_webpack = () => new Promise((resolve, reject) => {
   });
 });
 
-
 const embedApiCompiler = once(() => {
   const COMPONENT_PATH = './javascript/embed-api/components';
   let components = ['active-users', 'date-range-selector', 'view-selector2'];
@@ -212,7 +213,7 @@ const embedApiCompiler = once(() => {
   });
 });
 
-export const js_embedComponents = () => new Promise((resolve, reject) => {
+export const js_webpack_embedComponents = () => new Promise((resolve, reject) => {
   embedApiCompiler().run((err, stats) => {
     if(err) {
       reject(new gutil.PluginError('webpack', err));
@@ -223,13 +224,19 @@ export const js_embedComponents = () => new Promise((resolve, reject) => {
   })
 });
 
-export const build_embedComponents = gulp.series(
-  js_embedComponents,
-  () => gulp.src('public/javascript/embed-api/components/*')
+export const build_embedComponents = () => (
+  gulp.src('public/javascript/embed-api/components/*')
     .pipe(gulp.dest('build/javascript/embed-api/components'))
+)
+
+export const js_embedComponents = gulp.series(
+  js_webpack_embedComponents,
+  build_embedComponents,
 );
 
-export const javascript = gulp.parallel(js_webpack, build_embedComponents)
+export const javascript = gulp.parallel(js_webpack, js_embedComponents);
+
+export const watch_js = () => gulp.watch('./src/javascript/**/*.(js|jsx)', javascript);
 
 export const json = () => {
   const PARAMETER_REFERENCE_URL =
@@ -250,16 +257,16 @@ export const lint = () => (
   gulp.src([
     'src/javascript/**/*.js',
     'test/**/*.js',
-    'gulpfile.js',
+    'gulpfile.babel.js',
   ])
   .pipe(eslint({fix: true}))
   .pipe(eslint.format())
   .pipe(eslint.failAfterError())
 );
 
-export const test = gulp.series(lint, () =>
-  gulp.src('test/**/*.js', {read: false}).pipe(mocha())
-);
+export const mocha = () => gulp.src('test/**/*.js', {read: false}).pipe(gulp_mocha())
+
+export const test = gulp.series(lint, mocha);
 
 export const serve = () => spawn('dev_appserver.py', [
   '.',
@@ -279,12 +286,12 @@ export const build_core = gulp.parallel(
 export const build_all = gulp.parallel(test, keycheck, build_core)
 
 export const watch = () => {
-  gulp.watch('src/css/**/*.css', css);
-  gulp.watch('src/images/**/*', images);
-  gulp.watch('src/javascript/**/*', javascript);
-};
+  watch_css();
+  watch_js();
+  watch_images();
+}
 
-export const run = gulp.series(build_core, gulp.parallel(watch, serve))
+export const run = gulp.series(build_core, gulp.parallel(serve, watch));
 
 export const stage = gulp.series(build_all, () => {
   if (!isProd()) {
