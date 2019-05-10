@@ -75,7 +75,8 @@ projects:
   - analyticsjs
   - ecjs
   external:
-    action: View Demo url: https://enhancedecommerce.appspot.com
+    action: View Demo
+    url: https://enhancedecommerce.appspot.com
 - title: Hit Builder
   type: tool
   slug: hit-builder
