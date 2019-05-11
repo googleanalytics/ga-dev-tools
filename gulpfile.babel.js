@@ -93,7 +93,7 @@ export const images = () => {
 
   const svgs = gulp.src('src/images/**/*.svg');
 
-  return merge2([svgs, pngs]).pipe(gulp.dest('public/images'))
+  return merge2([svgs, pngs]).pipe(gulp.dest('public/images'));
 };
 
 // eslint-disable-next-line camelcase
@@ -102,12 +102,12 @@ export const watch_images = () => (
 );
 
 const webpackCompiler = once(() => {
-  let sourceFiles = glob.sync('.src/javascript/*/index.js');
+  let sourceFiles = glob.sync('./src/javascript/*/index.js');
   let entry = {index: ['@babel/polyfill', './src/javascript/index.js']};
 
   for (let indexPath of sourceFiles) {
     // The entry name is the name of the directory containing the index.js file
-    let name = path.basename(path.dirname(indexPath))
+    let name = path.basename(path.dirname(indexPath));
     entry[name] = ['@babel/polyfill', indexPath];
   }
 
@@ -139,10 +139,10 @@ const webpackCompiler = once(() => {
             '@babel/preset-react',
           ],
           plugins: [
-            'dynamic-import-system-import',
             '@babel/plugin-proposal-class-properties',
+            '@babel/plugin-syntax-dynamic-import',
           ],
-        }
+        },
       }, {
         test: /\.css$/,
         // "postcss" loader applies autoprefixer to our CSS.
@@ -151,16 +151,16 @@ const webpackCompiler = once(() => {
         // In production, we use a plugin to extract that CSS to a file, but
         // in development "style" loader enables hot editing of CSS.
         use: [
-          "style-loader",
+          'style-loader',
           {
-            loader: "css-loader",
+            loader: 'css-loader',
             options: {
               importLoaders: true,
               modules: true,
               localIdentName: '[name]__[local]__[hash:base64]',
             },
           },
-          "postcss-loader",
+          'postcss-loader',
         ],
       }],
     },
