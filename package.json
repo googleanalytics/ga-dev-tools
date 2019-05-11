@@ -91,7 +91,7 @@
     "tti-polyfill": "github:deepanjanroy/tti-polyfill#npmify",
     "url-parse": "^1.2.0",
     "uuid": "^2.0.3",
-    "webpack": "^2.3.3"
+    "webpack": "^4.31.0"
   },
   "dependencies": {}
 }

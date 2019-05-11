@@ -102,29 +102,17 @@ export const watch_images = () => (
 );
 
 const webpackCompiler = once(() => {
-  let sourceFiles = glob.sync('./*/index.js', {cwd: './src/javascript/'});
+  let sourceFiles = glob.sync('.src/javascript/*/index.js');
   let entry = {index: ['@babel/polyfill', './src/javascript/index.js']};
 
-  for (let filename of sourceFiles) {
-    let name = path.join('.', path.dirname(filename));
-    let filepath = './' + path.join('./src/javascript', filename);
-    entry[name] = ['@babel/polyfill', filepath];
-  }
-
-  let plugins = [new webpack.optimize.CommonsChunkPlugin({
-    name: 'common',
-    minChunks: 2,
-  })];
-
-  // Uglify and remove dev-only code in production.
-  if (isProd()) {
-    plugins.push(new webpack.optimize.UglifyJsPlugin());
-    plugins.push(new webpack.DefinePlugin({
-      'process.env': {NODE_ENV: '"production"'},
-    }));
+  for (let indexPath of sourceFiles) {
+    // The entry name is the name of the directory containing the index.js file
+    let name = path.basename(path.dirname(indexPath))
+    entry[name] = ['@babel/polyfill', indexPath];
   }
 
   return webpack({
+    mode: isProd() ? 'production' : 'development',
     entry: entry,
     output: {
       path: path.join(__dirname, 'public/javascript'),
@@ -133,41 +121,48 @@ const webpackCompiler = once(() => {
     },
     cache: {},
     devtool: '#source-map',
-    plugins: plugins,
+    optimization: {
+      splitChunks: {
+        minChunks: 2,
+        name: 'common',
+      },
+    },
     module: {
-      loaders: [
-        {
-          test: /\.js$/,
-          loader: 'babel-loader',
-          exclude: /node_modules\/(?!(autotrack|dom-utils|tti-polyfill))/,
-          query: {
-            babelrc: false,
-            presets: [
-              '@babel/preset-env',
-              '@babel/preset-react',
-            ],
-            plugins: [
-              'dynamic-import-system-import',
-              '@babel/plugin-proposal-class-properties',
-            ],
-          },
-        },
+      rules: [{
+        test: /\.js$/,
+        loader: 'babel-loader',
+        exclude: /node_modules\/(?!(autotrack|dom-utils|tti-polyfill))/,
+        options: {
+          babelrc: false,
+          presets: [
+            '@babel/preset-env',
+            '@babel/preset-react',
+          ],
+          plugins: [
+            'dynamic-import-system-import',
+            '@babel/plugin-proposal-class-properties',
+          ],
+        }
+      }, {
+        test: /\.css$/,
         // "postcss" loader applies autoprefixer to our CSS.
         // "css" loader resolves paths in CSS and adds assets as dependencies.
         // "style" loader turns CSS into JS modules that inject <style> tags.
         // In production, we use a plugin to extract that CSS to a file, but
         // in development "style" loader enables hot editing of CSS.
-        {
-          test: /\.css$/,
-          loaders: [
-            'style-loader',
-            'css-loader?modules&importLoaders=1&localIdentName=' +
-                `${isProd() ? '' : '[name]__[local]___'}[hash:base64:5]` +
-                '!postcss-loader',
-            'postcss-loader',
-          ],
-        },
-      ],
+        use: [
+          "style-loader",
+          {
+            loader: "css-loader",
+            options: {
+              importLoaders: true,
+              modules: true,
+              localIdentName: '[name]__[local]__[hash:base64]',
+            },
+          },
+          "postcss-loader",
+        ],
+      }],
     },
   });
 });
@@ -178,22 +173,23 @@ export const js_webpack = () => new Promise((resolve, reject) => {
     if (err) {
       reject(new gutil.PluginError('webpack', err));
     } else {
-      gutil.log('[webpack]', stats.toString('minimal'));
+      gutil.log('[webpack]', stats.toString({colors: true}));
       resolve();
     }
   });
 });
 
 const embedApiCompiler = once(() => {
-  const COMPONENT_PATH = './javascript/embed-api/components';
+  const COMPONENT_PATH = 'javascript/embed-api/components';
   let components = ['active-users', 'date-range-selector', 'view-selector2'];
   let entry = {};
 
   for (let component of components) {
-    entry[component] = './' + path.join('./src', COMPONENT_PATH, component);
+    entry[component] = './' + path.join('src', COMPONENT_PATH, component);
   }
 
   return webpack({
+    mode: isProd() ? 'production' : 'development',
     entry: entry,
     output: {
       path: path.join(__dirname, './public', COMPONENT_PATH),
@@ -201,19 +197,16 @@ const embedApiCompiler = once(() => {
     },
     cache: {},
     devtool: '#source-map',
-    plugins: isProd() ? [new webpack.optimize.UglifyJsPlugin()] : [],
     module: {
-      loaders: [
-        {
-          test: /\.js$/,
-          loader: 'babel-loader',
-          query: {
-            babelrc: false,
-            cacheDirectory: false,
-            presets: ['@babel/preset-env'],
-          },
+      rules: [{
+        test: /\.js$/,
+        loader: 'babel-loader',
+        options: {
+          babelrc: false,
+          cacheDirectory: false,
+          presets: ['@babel/preset-env'],
         },
-      ],
+      }],
     },
   });
 });
@@ -225,7 +218,7 @@ export const js_webpack_embedComponents = () => (
       if (err) {
         reject(new gutil.PluginError('webpack', err));
       } else {
-        gutil.log('[webpack]', stats.toString('minimal'));
+        gutil.log('[webpack]', stats.toString({colors: true}));
         resolve();
       }
     });
@@ -297,7 +290,7 @@ export const serve = () => spawn('dev_appserver.py', [
 });
 
 // eslint-disable-next-line camelcase
-export const build_core = gulp.parallel(
+export const build = gulp.parallel(
   javascript,
   css,
   images,
@@ -305,7 +298,7 @@ export const build_core = gulp.parallel(
 );
 
 // eslint-disable-next-line camelcase
-export const build_all = gulp.parallel(build_core, test, keycheck);
+export const build_test = gulp.parallel(build, test, keycheck);
 
 export const watch = () => {
   watch_css();
@@ -313,9 +306,9 @@ export const watch = () => {
   watch_images();
 };
 
-export const run = gulp.series(build_core, gulp.parallel(serve, watch));
+export const run = gulp.series(build, gulp.parallel(serve, watch));
 
-export const stage = gulp.series(build_all, () => {
+export const stage = gulp.series(build_test, () => {
   if (!isProd()) {
     throw new Error('The stage task must be run in production mode.');
   }
@@ -326,7 +319,7 @@ export const stage = gulp.series(build_all, () => {
   );
 });
 
-export const deploy = gulp.series(build_all, () => {
+export const deploy = gulp.series(build_test, () => {
   if (!isProd()) {
     throw new Error('The deploy task must be run in production mode.');
   }
