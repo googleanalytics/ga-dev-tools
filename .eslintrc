@@ -41,7 +41,7 @@
         "ClassDeclaration": true,
       },
     }],
-    "arrow-parens": [2, "as-needed"],
+    "arrow-parens": 0,
     "generator-star-spacing": [2, "after"],
      // React and jQuery use `this`
     "no-invalid-this": 0,
