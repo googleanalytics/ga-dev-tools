@@ -295,10 +295,11 @@ export const build = gulp.parallel(
   css,
   images,
   json,
+  keycheck,
 );
 
 // eslint-disable-next-line camelcase
-export const build_test = gulp.parallel(build, test, keycheck);
+export const build_test = gulp.parallel(build, test);
 
 export const watch = () => {
   watch_css();
