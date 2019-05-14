@@ -1,0 +1,20 @@
+{
+    "compilerOptions": {
+        "outDir": "./public/",
+        "sourceMap": true,
+        "strict": true,
+        "module": "esnext",
+        "moduleResolution": "node",
+        "jsx": "react",
+        "target": "es5",
+        "allowSyntheticDefaultImports": true,
+        "skipLibCheck": true,
+        "esModuleInterop": true,
+
+        "lib": ["dom.iterable", "dom", "esnext"],
+
+    },
+    "include": [
+        "./src/"
+    ]
+}

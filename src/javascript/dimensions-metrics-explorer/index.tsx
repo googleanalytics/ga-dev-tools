@@ -1,4 +1,4 @@
-// Copyright 2015 Google Inc. All rights reserved.
+// Copyright 2019 Google Inc. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -13,19 +13,9 @@
 // limitations under the License.
 
 
-import React from 'react';
+import * as React from 'react';
+import {render} from 'react-dom';
 
-/**
- * A components that renders an <svg> icon from the iconset in:
- * src/images/icons.svg
- */
-export default class Icon extends React.Component {
-  /** @return {Object} The React component. */
-  render() {
-    return (
-      <svg className="Icon" viewBox="0 0 24 24">
-        <use xlinkHref={`/public/images/icons.svg#icon-${this.props.type}`} />
-      </svg>
-    );
-  }
-}
+import Main from './components/main';
+
+render(<Main />, document.getElementById("dimensions-metrics-explorer"));

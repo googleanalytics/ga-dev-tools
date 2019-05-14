@@ -102,13 +102,19 @@ export const watch_images = () => (
 );
 
 const webpackCompiler = once(() => {
-  let sourceFiles = glob.sync('./src/javascript/*/index.js');
+  let sourceFiles = glob.sync('./src/javascript/*/index.@(js|jsx|ts|tsx)');
   let entry = {index: ['@babel/polyfill', './src/javascript/index.js']};
 
   for (let indexPath of sourceFiles) {
     // The entry name is the name of the directory containing the index.js file
     let name = path.basename(path.dirname(indexPath));
-    entry[name] = ['@babel/polyfill', indexPath];
+
+    // Only babel polyfill the js files
+    if (/\.jsx?/.test(name)) {
+      entry[name] = ['@babel/polyfill', indexPath];
+    } else {
+      entry[name] = [indexPath];
+    }
   }
 
   return webpack({
@@ -127,6 +133,9 @@ const webpackCompiler = once(() => {
         name: 'common',
       },
     },
+    resolve: {
+      extensions: ['.ts', '.js', '.tsx', '.jsx']
+    },
     module: {
       rules: [{
         test: /\.js$/,
@@ -143,6 +152,10 @@ const webpackCompiler = once(() => {
             '@babel/plugin-syntax-dynamic-import',
           ],
         },
+      }, {
+        test: /\.tsx?$/,
+        loader: 'awesome-typescript-loader',
+        exclude: /node_modules/,
       }, {
         test: /\.css$/,
         // "postcss" loader applies autoprefixer to our CSS.
@@ -241,7 +254,7 @@ export const javascript = gulp.parallel(js_webpack, js_embedComponents);
 
 // eslint-disable-next-line camelcase
 export const watch_js = () => (
-  gulp.watch('./src/javascript/**/*.(js|jsx)', javascript)
+  gulp.watch('./src/javascript/**/*.@(js|jsx|ts|tsx)', javascript)
 );
 
 export const json = () => {
