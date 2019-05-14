@@ -21,7 +21,6 @@ import CodeBlock from '../../components/code-block';
  * A components that renders the request JSON.
  */
 export default class RequestViewer extends React.Component {
-
   /** @return {Object} The React component. */
   render() {
     let {params, settings} = this.props;

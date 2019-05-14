@@ -24,7 +24,6 @@ import * as types from '../actions/types';
 export default function response(state = {}, action) {
   let {response} = action;
   switch (action.type) {
-
     case types.UPDATE_RESPONSE:
       return {...state, ...response};
 

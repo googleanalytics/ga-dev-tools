@@ -37,7 +37,6 @@ const TSV_PATH = SELF_BASE + 'csvhandler.csv';
  * A components that renders the query report results.
  */
 export default class QueryReport extends React.Component {
-
   /**
    * Build a URL that directly links to this report
    * @return {string}

@@ -24,7 +24,6 @@ import * as types from '../actions/types';
  */
 export default function settings(state = {}, action) {
   switch (action.type) {
-
     case types.UPDATE_SETTINGS:
       return {...state, ...action.settings};
 

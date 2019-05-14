@@ -33,7 +33,6 @@ const ACTION_TIMEOUT = 1500;
  * A component that renders the generated hit element.
  */
 export default class HitElement extends React.Component {
-
   state = {
     value: this.props.hitPayload,
     hitSent: false,
@@ -76,7 +75,7 @@ export default class HitElement extends React.Component {
    * to indicate the hit was successfully sent. After 1 second the button
    * gets restored to its original state.
    */
-  sendHit = async () => {
+  sendHit = async() => {
     await $.ajax({
       method: 'POST',
       url: 'https://www.google-analytics.com/collect',
@@ -332,5 +331,4 @@ export default class HitElement extends React.Component {
       </section>
     );
   }
-
 }

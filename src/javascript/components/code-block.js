@@ -21,7 +21,6 @@ import {highlight} from '../highlighter';
  * A component that renders highlighted code blocks.
  */
 export default class CodeBlock extends React.Component {
-
   static defaultProps = {
     code: '',
     lang: null,

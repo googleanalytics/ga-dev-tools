@@ -21,7 +21,6 @@ import React from 'react';
  * A components that renders a button with an icon prepended.
  */
 export default class IconButton extends React.Component {
-
   static defaultProps = {
     className: 'Button',
   }

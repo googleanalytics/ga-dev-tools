@@ -28,8 +28,6 @@ import {
  * The Campaign URL Builder app component.
  */
 export default class CampaignUrlBuilder extends React.Component {
-
-
   /**
    * @constructor
    * @param {Object} props

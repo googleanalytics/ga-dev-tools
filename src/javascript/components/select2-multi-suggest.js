@@ -27,7 +27,6 @@ import {tagHtml as html} from '../utils.js';
  * A components that renders a multi-suggest dropdown using select2.
  */
 export default class Select2MultiSuggest extends React.Component {
-
   static defaultProps = {
     value: '',
   }

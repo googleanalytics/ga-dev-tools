@@ -120,7 +120,6 @@ export function createChartData(report) {
  * A components that renders the histogram visualization.
  */
 export default class HistogramChart extends React.Component {
-
   /** @return {Object} The React component. */
   render() {
     let {response} = this.props;

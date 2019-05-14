@@ -27,7 +27,6 @@ let alerts = [];
  * A singleton component that manages displaying alerts at the top of the page.
  */
 export default class AlertDispatcher extends React.Component {
-
   /**
    * Adds an alert to the list of alerts.
    * @param {Object} alert An object of alert properties.

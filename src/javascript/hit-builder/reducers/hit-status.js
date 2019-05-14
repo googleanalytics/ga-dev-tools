@@ -24,7 +24,6 @@ import * as types from '../actions/types';
  */
 export default function hitStatus(state = 'UNVALIDATED', action) {
   switch (action.type) {
-
     case types.SET_HIT_STATUS:
       return action.status;
 

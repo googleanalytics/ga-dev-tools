@@ -40,8 +40,6 @@ const HIT_TYPES = [
  * The primary Hit Builder app component.
  */
 export default class HitBuilder extends React.Component {
-
-
   /**
    * Adds a new param after a user clicks to the "Add parameter" button.
    * Also turns on a flag to indicate that this param needs focus after

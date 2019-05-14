@@ -30,7 +30,6 @@ const SRC_PARAM = 'query-explorer:v2';
  * DataChart component.
  */
 export default class DataChart extends React.Component {
-
   isQuerying = false
 
   /**

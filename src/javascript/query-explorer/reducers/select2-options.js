@@ -34,7 +34,6 @@ export default function select2Options(state = defaultOptions, action) {
   let {select2Options} = action;
 
   switch (action.type) {
-
     case types.UPDATE_SELECT2_OPTIONS:
       return {
         ...state,

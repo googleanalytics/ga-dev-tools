@@ -37,7 +37,6 @@ const keyCodes = {
  * A components that renders a search suggest dropdown.
  */
 export default class SearchSuggest extends React.Component {
-
   static defaultProps = {
     value: '',
     options: [],

@@ -48,7 +48,6 @@ const REFERENCE_URL =
  * The primary Request Composer app component.
  */
 export default class RequestComposer extends React.Component {
-
   /**
    * Invoked when a user changes the ViewSelector2 instance.
    * @param {Object} viewData The object emited by the ViewSelector2's
@@ -109,7 +108,7 @@ export default class RequestComposer extends React.Component {
    * @param {Event|Object} e The native or React event.
    * @return {Object} null if missing required fields.
    */
-  handleSubmit = async (e) => {
+  handleSubmit = async(e) => {
     e.preventDefault();
     let {actions, params, settings} = this.props;
 

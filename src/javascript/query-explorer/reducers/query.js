@@ -24,7 +24,6 @@ import * as types from '../actions/types';
  */
 export default function isQuerying(state = false, action) {
   switch (action.type) {
-
     case types.SET_QUERY_STATE:
       return action.isQuerying;
 

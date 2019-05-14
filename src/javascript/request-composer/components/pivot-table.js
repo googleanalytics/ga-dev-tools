@@ -235,7 +235,6 @@ function constructPivotTableCellFromReport(report) {
  * A components that renders the pivot table visualization.
  */
 export default class PivotTable extends React.Component {
-
   /**
    * React lifecycyle method below:
    * http://facebook.github.io/react/docs/component-specs.html

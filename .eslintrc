@@ -19,6 +19,11 @@
     "eslint:recommended",
     "google"
   ],
+  "settings" : {
+    "react": {
+      "version": "15.3"
+    }
+  },
   "rules": {
     // TODO(philipwalton): it looks like some ES2016+ feature are not
     // compatible with the eslint babel parser, so temporarily disabling the

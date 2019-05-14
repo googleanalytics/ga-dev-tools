@@ -25,7 +25,6 @@ export default function settings(state = {}, action) {
   let {settings} = action;
 
   switch (action.type) {
-
     case types.UPDATE_SETTINGS:
       return {
         ...state,

@@ -121,7 +121,7 @@ export function validateHit() {
       code: message.messageCode,
     };
   };
-  return async (dispatch, getState) => {
+  return async(dispatch, getState) => {
     let hit = convertParamsToHit(getState().params);
     dispatch(setHitStatus('VALIDATING'));
 

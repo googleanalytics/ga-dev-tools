@@ -79,7 +79,6 @@ function tablizeCohortReportData(report, cohortSize) {
  * A components that renders the cohort table visualization.
  */
 export default class CohortTable extends React.Component {
-
   /** @return {Object} The React component. */
   render() {
     let {response, settings} = this.props;

@@ -26,7 +26,6 @@ const REFERENCE_URL = 'https://developers.google.com/' +
  * A component that renders an individual hit param name and value pair.
  */
 export default class ParamElement extends React.Component {
-
   state = {
     name: this.props.param.name || '',
     value: this.props.param.value || '',
@@ -182,5 +181,4 @@ export default class ParamElement extends React.Component {
       </div>
     );
   }
-
 }

@@ -129,7 +129,7 @@ const BITLY_AUTH_PREMATURE_CLOSE_INTERVAL = 1000;
  *   If not provided, the user's default group is used.
  * @return {Promise} A promise resolved with the shortend URL.
  */
-export const shortenUrl = async (longUrl, bitlyGuid) => {
+export const shortenUrl = async(longUrl, bitlyGuid) => {
   // Attempt the API call with the stored token, but be ready to get a new
   // token and retry if it fails.
   try {
@@ -255,7 +255,7 @@ export const shortenUrl = async (longUrl, bitlyGuid) => {
 // JSON payload is returned. If checkForbidden is true, 403 errors cause the
 // forbiddenError object to be returned (as a rejection); this allows for
 // easily detecting this case for OAuth flow.
-export const bitlyApiFetch = async ({
+export const bitlyApiFetch = async({
   endpoint,
   token=null,
   options={},
@@ -310,7 +310,7 @@ export const bitlyApiFetch = async ({
  *
  * @return {string} The shortened link.
  */
-const createBitlink = async ({longUrl, guid=null, token, checkForbidden}) => {
+const createBitlink = async({longUrl, guid=null, token, checkForbidden}) => {
   const realGuid = guid == null ?
     (await getBitlyGroup({token, checkForbidden})) :
     guid;

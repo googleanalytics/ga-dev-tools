@@ -41,7 +41,6 @@ const REFERENCE_URL =
  * The primary Query Explorer app component.
  */
 export default class QueryExplorer extends React.Component {
-
   /**
    * Invoked when a user changes the ViewSelector2 instance.
    * @param {Object} viewData The object emitted by the ViewSelector2's
@@ -90,7 +89,7 @@ export default class QueryExplorer extends React.Component {
    * Invoked when a user submits the <QueryForm>.
    * @param {Event|Object} e The native or React event.
    */
-  handleSubmit = async (e) => {
+  handleSubmit = async(e) => {
     e.preventDefault();
     let {actions, params} = this.props;
     let paramsClone = {...params};

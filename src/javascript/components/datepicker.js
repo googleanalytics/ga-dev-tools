@@ -27,7 +27,6 @@ const ANIMATION_DURATION = 200;
  * A components that renders a jQuery datepicker.
  */
 export default class Datepicker extends React.Component {
-
   state = {
     value: this.props.value || '',
   }

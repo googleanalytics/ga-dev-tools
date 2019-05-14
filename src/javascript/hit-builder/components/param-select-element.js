@@ -21,7 +21,6 @@ import ParamElement from './param-element';
  * A ParamElement component whose value is a select dropdown.
  */
 export default class ParamSelectElement extends ParamElement {
-
   /**
    * React lifecycyle methods below:
    * http://facebook.github.io/react/docs/component-specs.html

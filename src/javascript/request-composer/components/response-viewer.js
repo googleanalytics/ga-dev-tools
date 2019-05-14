@@ -34,7 +34,6 @@ const RESULTS_VIEW = {
  * A components that renders the response visualization and code.
  */
 export default class ResultsViewer extends React.Component {
-
   /** @return {Object} The React component. */
   render() {
     let {response, settings} = this.props;

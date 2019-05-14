@@ -26,7 +26,6 @@ export default function params(state = {}, action) {
   let {params} = action;
 
   switch (action.type) {
-
     case types.UPDATE_PARAMS:
       return {
         ...state,

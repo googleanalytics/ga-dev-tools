@@ -43,7 +43,7 @@ function setUserProperties(properties) {
  * @return {Function}
  */
 export function handleAuthorizationSuccess() {
-  return async (dispatch) => {
+  return async(dispatch) => {
     dispatch(setAuthorized());
 
     let summaries = await accountSummaries.get();

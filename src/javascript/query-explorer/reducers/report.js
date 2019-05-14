@@ -25,7 +25,6 @@ import * as types from '../actions/types';
 export default function report(state = {}, action) {
   let {report} = action;
   switch (action.type) {
-
     case types.UPDATE_REPORT:
       return {...state, ...report};
 

@@ -107,7 +107,7 @@ const itunesStoreBuilderUrl = 'https://developers.google.com/analytics/devguides
  * campaigns. See b/69681865
  */
 const badList = [{
-  name: 'Play Store URL',  // This is just for reference
+  name: 'Play Store URL', // This is just for reference
   test: domainSuffix('play.google.com'),
   render: <div>
     <strong>It appears you are creating a Google Play Store url.
