@@ -109,12 +109,12 @@ export default class UsageTrends extends Component {
             <h3>Results breakdown</h3>
             {props.report.breakdownRowData &&
                 Object.keys(props.report.breakdownRowData).map((key, i) => (
-              <BreakdownChart
-                title={key}
-                key={key}
-                index={i}
-                dataset={props.report.breakdownRowData[key]} />
-            ))}
+                  <BreakdownChart
+                    title={key}
+                    key={key}
+                    index={i}
+                    dataset={props.report.breakdownRowData[key]} />
+                ))}
           </div>
         )}
       </div>

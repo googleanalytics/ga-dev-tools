@@ -18,7 +18,7 @@ import * as types from './types';
 import segments from '../segments';
 
 
-let NUMERIC_DIMENSIONS = [
+const NUMERIC_DIMENSIONS = [
   'ga:sessionCount',
   'ga:daysSinceLastSession',
   'ga:sessionDurationBucket',
@@ -49,9 +49,9 @@ let NUMERIC_DIMENSIONS = [
  */
 export function updateMetricsDimensionsAndSortOptions(viewData) {
   return async function(dispatch, getState) {
-    let {account, property, view} = viewData;
-    let {params} = getState();
-    let {
+    const {account, property, view} = viewData;
+    const {params} = getState();
+    const {
       metrics,
       dimensions,
       pivotMetrics,
@@ -60,7 +60,7 @@ export function updateMetricsDimensionsAndSortOptions(viewData) {
       histogramDimensions,
     } = await getMetricsAndDimensionsOptions(account, property, view);
 
-    let sort = getSortOptions(params, metrics, dimensions);
+    const sort = getSortOptions(params, metrics, dimensions);
 
     dispatch(updateSelect2Options({
       metrics,
@@ -82,8 +82,8 @@ export function updateMetricsDimensionsAndSortOptions(viewData) {
  */
 export function updateSortOptions() {
   return function(dispatch, getState) {
-    let {params, select2Options: {metrics, dimensions}} = getState();
-    let sort = getSortOptions(params, metrics, dimensions);
+    const {params, select2Options: {metrics, dimensions}} = getState();
+    const sort = getSortOptions(params, metrics, dimensions);
 
     dispatch(updateSelect2Options({sort}));
   };
@@ -99,7 +99,7 @@ export function updateSortOptions() {
  */
 export function updateSegmentsOptions(useDefinition) {
   return async function(dispatch) {
-    let segments = await getSegmentsOptions(useDefinition);
+    const segments = await getSegmentsOptions(useDefinition);
     dispatch(updateSelect2Options({segments}));
   };
 }
@@ -129,58 +129,58 @@ function getMetricsAndDimensionsOptions(account, property, view) {
     getV4Metrics(account, property, view),
     getNumericDimensions(account, property, view),
   ])
-  .then(function(data) {
-    let metrics = data[0].map(function(metric) {
-      return {
-        id: metric.id,
-        name: metric.attributes.uiName,
-        group: metric.attributes.group,
-      };
-    });
-    let dimensions = data[1].map(function(dimension) {
-      return {
-        id: dimension.id,
-        name: dimension.attributes.uiName,
-        group: dimension.attributes.group,
-      };
-    });
-    let pivotMetrics = data[0].map(function(metric) {
-      return {
-        id: metric.id,
-        name: metric.attributes.uiName,
-        group: metric.attributes.group,
-      };
-    });
-    let pivotDimensions = data[1].map(function(dimension) {
-      return {
-        id: dimension.id,
-        name: dimension.attributes.uiName,
-        group: dimension.attributes.group,
-      };
-    });
-    let cohortMetrics = data[2].map(function(metric) {
-      return {
-        id: metric.id,
-        name: metric.attributes.uiName,
-        group: metric.attributes.group,
-      };
-    });
-    let histogramDimensions = data[3].map(function(metric) {
-      return {
-        id: metric.id,
-        name: metric.attributes.uiName,
-        group: metric.attributes.group,
-      };
-    });
-    return {
-      metrics,
-      dimensions,
-      pivotMetrics,
-      pivotDimensions,
-      cohortMetrics,
-      histogramDimensions,
-    };
-  });
+      .then(function(data) {
+        const metrics = data[0].map(function(metric) {
+          return {
+            id: metric.id,
+            name: metric.attributes.uiName,
+            group: metric.attributes.group,
+          };
+        });
+        const dimensions = data[1].map(function(dimension) {
+          return {
+            id: dimension.id,
+            name: dimension.attributes.uiName,
+            group: dimension.attributes.group,
+          };
+        });
+        const pivotMetrics = data[0].map(function(metric) {
+          return {
+            id: metric.id,
+            name: metric.attributes.uiName,
+            group: metric.attributes.group,
+          };
+        });
+        const pivotDimensions = data[1].map(function(dimension) {
+          return {
+            id: dimension.id,
+            name: dimension.attributes.uiName,
+            group: dimension.attributes.group,
+          };
+        });
+        const cohortMetrics = data[2].map(function(metric) {
+          return {
+            id: metric.id,
+            name: metric.attributes.uiName,
+            group: metric.attributes.group,
+          };
+        });
+        const histogramDimensions = data[3].map(function(metric) {
+          return {
+            id: metric.id,
+            name: metric.attributes.uiName,
+            group: metric.attributes.group,
+          };
+        });
+        return {
+          metrics,
+          dimensions,
+          pivotMetrics,
+          pivotDimensions,
+          cohortMetrics,
+          histogramDimensions,
+        };
+      });
 }
 
 /**
@@ -192,22 +192,22 @@ function getMetricsAndDimensionsOptions(account, property, view) {
  * @return {Array}
  */
 function getSortOptions(params, metrics, dimensions) {
-  let sortOptions = [];
-  let metsAndDims = [...metrics, ...dimensions];
-  let chosenMetsAndDims = [
+  const sortOptions = [];
+  const metsAndDims = [...metrics, ...dimensions];
+  const chosenMetsAndDims = [
     ...(params.metrics && params.metrics.split(',') || []),
     ...(params.dimensions && params.dimensions.split(',') || []),
   ];
 
-  for (let choice of chosenMetsAndDims) {
-    for (let option of metsAndDims) {
+  for (const choice of chosenMetsAndDims) {
+    for (const option of metsAndDims) {
       if (choice == option.id) {
-        let descending = {...option};
+        const descending = {...option};
         descending.name += ' (descending)';
         descending.text += ' (descending)';
         descending.id = '-' + choice;
 
-        let ascending = {...option};
+        const ascending = {...option};
         ascending.name += ' (ascending)';
         ascending.text += ' (ascending)';
         ascending.id = choice;

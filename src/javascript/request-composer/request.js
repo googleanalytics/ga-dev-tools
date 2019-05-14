@@ -28,7 +28,7 @@ import moment from 'moment';
  * @return {Object} The Report Request Object.
  */
 function buildReportRequest(params, settings) {
-  let reportRequest = {
+  const reportRequest = {
     viewId: params.viewId,
   };
 
@@ -77,16 +77,16 @@ function applyDateRanges(request, params, settings) {
  * @return {Object} a list of the zipped lists.
  */
 function zip(...args) {
-    let argv = [].slice.call(args);
-    let shortest = argv.length==0 ? [] : argv.reduce(function(a, b) {
-        return a.length<b.length ? a : b;
-    });
+  const argv = [].slice.call(args);
+  const shortest = argv.length==0 ? [] : argv.reduce(function(a, b) {
+    return a.length<b.length ? a : b;
+  });
 
-    return shortest.map(function(_, i) {
-        return args.map(function(array) {
-return array[i];
-});
+  return shortest.map(function(_, i) {
+    return args.map(function(array) {
+      return array[i];
     });
+  });
 }
 
 /**
@@ -101,35 +101,35 @@ function applyMetrics(request, params, settings) {
       ['HISTOGRAM', 'PIVOT'].indexOf(settings.requestType) != -1) {
     request.metrics = [];
 
-    let metrics = params.metrics.split(',');
-    for (let metric of metrics) {
+    const metrics = params.metrics.split(',');
+    for (const metric of metrics) {
       request.metrics.push({'expression': metric});
     }
   } else if (params.cohortMetrics &&
              settings.requestType == 'COHORT') {
     request.metrics = [];
 
-    let metrics = params.cohortMetrics.split(',');
-    for (let metric of metrics) {
+    const metrics = params.cohortMetrics.split(',');
+    for (const metric of metrics) {
       request.metrics.push({'expression': metric});
     }
   } else if (params.expressions &&
              settings.requestType == 'EXPRESSION') {
     request.metrics = [];
 
-    let metrics = params.expressions.split(',');
-    let aliases = params.aliases ? params.aliases.split(',') : [];
+    const metrics = params.expressions.split(',');
+    const aliases = params.aliases ? params.aliases.split(',') : [];
     if (aliases.length < metrics.length) {
-      let difference = metrics.length - aliases.length;
+      const difference = metrics.length - aliases.length;
       for (let i = 0; i < difference; i++) {
         aliases.push('');
       }
     }
-    for (let metric of zip(metrics, aliases)) {
+    for (const metric of zip(metrics, aliases)) {
       request.metrics.push(
-        {'expression': metric[0].trim(),
-         'alias': metric[1].trim(),
-      });
+          {'expression': metric[0].trim(),
+            'alias': metric[1].trim(),
+          });
     }
   }
   return request;
@@ -155,14 +155,14 @@ function applyDimensions(request, params, settings) {
     } else {
       return request;
     }
-    for (let name of dimensions) {
-      let dimension = {name: name};
+    for (const name of dimensions) {
+      const dimension = {name: name};
       if (settings.requestType &&
           settings.requestType == 'HISTOGRAM' &&
           params.buckets) {
-        let histogramBuckets = [];
-        let buckets = params.buckets.split(/\s*,\s*/);
-        for (let bucket of buckets) {
+        const histogramBuckets = [];
+        const buckets = params.buckets.split(/\s*,\s*/);
+        for (const bucket of buckets) {
           histogramBuckets.push(bucket);
         }
         dimension.histogramBuckets = histogramBuckets;
@@ -199,7 +199,7 @@ function applySegment(request, params, settings) {
     request.segments = [{segmentId: params.segment}];
 
     // Get current dimensions if they exist otherwise empty list.
-    let dimensions = request.dimensions ? request.dimensions : [];
+    const dimensions = request.dimensions ? request.dimensions : [];
 
     // Add the `ga:segment` dimension to the list.
     dimensions.push({name: 'ga:segment'});
@@ -232,9 +232,9 @@ function applyOrderBys(request, params, settings) {
   } else if (params.sort) {
     request.orderBys = [];
 
-    let dimsmets = params.sort.split(',');
+    const dimsmets = params.sort.split(',');
     for (let fieldName of dimsmets) {
-      let orderBy = {};
+      const orderBy = {};
 
       if (fieldName[0] == '-') {
         fieldName = fieldName.substring(1);
@@ -259,8 +259,8 @@ function applyPivotDimensions(pivot, params) {
   if (params.pivotDimensions) {
     pivot.dimensions = [];
 
-    let dimensions = params.pivotDimensions.split(',');
-    for (let dimension of dimensions) {
+    const dimensions = params.pivotDimensions.split(',');
+    for (const dimension of dimensions) {
       pivot.dimensions.push({'name': dimension});
     }
   }
@@ -277,8 +277,8 @@ function applyPivotMetrics(pivot, params) {
   if (params.pivotMetrics) {
     pivot.metrics = [];
 
-    let metrics = params.pivotMetrics.split(',');
-    for (let metric of metrics) {
+    const metrics = params.pivotMetrics.split(',');
+    for (const metric of metrics) {
       pivot.metrics.push({expression: metric});
     }
   }
@@ -294,7 +294,7 @@ function applyPivotMetrics(pivot, params) {
  */
 function applyPivots(request, params, settings) {
   if (settings.requestType == 'PIVOT' ) {
-    let pivot = {};
+    const pivot = {};
     applyPivotDimensions(pivot, params);
     applyPivotMetrics(pivot, params);
     if (params.maxGroupCount) {
@@ -318,13 +318,13 @@ function applyPivots(request, params, settings) {
 function applyCohorts(request, params, settings) {
   if (settings.requestType == 'COHORT') {
     let now = moment();
-    let cohorts = [];
+    const cohorts = [];
     switch (params.cohortSize) {
       case 'Day':
         // Create cohorts for the past seven days.
         for (let i = 0; i < 7; i++) {
           now = now.subtract(1, 'days');
-          let cohort = {
+          const cohort = {
             type: 'FIRST_VISIT_DATE',
             name: now.format('YYYY-MM-DD'),
             dateRange: {
@@ -338,16 +338,16 @@ function applyCohorts(request, params, settings) {
       case 'Week':
         // Create cohorts for the past 6 weeks.
         for (let i = 0; i < 6; i++) {
-            let startDate = now.subtract(1,
+          const startDate = now.subtract(1,
               'week').startOf('week').format('YYYY-MM-DD');
-            let endDate = now.endOf('week').format('YYYY-MM-DD');
-            let cohort = {
-              type: 'FIRST_VISIT_DATE',
-              name: startDate + ' to ' + endDate,
-              dateRange: {
-                startDate: startDate,
-                endDate: endDate,
-              },
+          const endDate = now.endOf('week').format('YYYY-MM-DD');
+          const cohort = {
+            type: 'FIRST_VISIT_DATE',
+            name: startDate + ' to ' + endDate,
+            dateRange: {
+              startDate: startDate,
+              endDate: endDate,
+            },
           };
           cohorts.push(cohort);
         }
@@ -355,18 +355,18 @@ function applyCohorts(request, params, settings) {
       case 'Month':
         // Create cohorts for the past 3 months.
         for (let i = 0; i < 3; i++) {
-            let startDate = now.subtract(1,
+          const startDate = now.subtract(1,
               'month').startOf('month').format('YYYY-MM-DD');
-            let endDate = now.endOf('month').format('YYYY-MM-DD');
-            let cohort = {
-              type: 'FIRST_VISIT_DATE',
-              name: startDate + ' to ' + endDate,
-              dateRange: {
-                startDate: startDate,
-                endDate: endDate,
-              },
-            };
-            cohorts.push(cohort);
+          const endDate = now.endOf('month').format('YYYY-MM-DD');
+          const cohort = {
+            type: 'FIRST_VISIT_DATE',
+            name: startDate + ' to ' + endDate,
+            dateRange: {
+              startDate: startDate,
+              endDate: endDate,
+            },
+          };
+          cohorts.push(cohort);
         }
         break;
     }
@@ -401,7 +401,7 @@ export function composeRequest(params, settings) {
   if (!params || !settings) {
     return null;
   }
-  let reportRequest = buildReportRequest(params, settings);
+  const reportRequest = buildReportRequest(params, settings);
 
   if (settings.requestType == 'COHORT') {
     reportRequest.includeEmptyRows = true;
@@ -417,7 +417,7 @@ export function composeRequest(params, settings) {
   applyOrderBys(reportRequest, params, settings);
   applyPivots(reportRequest, params, settings);
   applyCohorts(reportRequest, params, settings);
-  let request = {'reportRequests': [reportRequest]};
+  const request = {'reportRequests': [reportRequest]};
   return request;
 }
 
@@ -427,7 +427,7 @@ export function composeRequest(params, settings) {
  * @param {Object} settings The Request Composer settings.
  * @return {boolean} Wheather or not the field params are valid.
  */
- export function validateRequest(params, settings) {
+export function validateRequest(params, settings) {
   if (!params || !settings) {
     return false;
   }
@@ -452,4 +452,4 @@ export function composeRequest(params, settings) {
   } else {
     return false;
   }
- }
+}

@@ -49,7 +49,7 @@ function mapDispatchToProps(dispatch) {
 }
 
 
-let RequestComposerApp =
+const RequestComposerApp =
     connect(mapStateToProps, mapDispatchToProps)(RequestComposer);
 
 
@@ -58,10 +58,10 @@ let RequestComposerApp =
  */
 function render() {
   ReactDOM.render(
-    <Provider store={store}>
-      <RequestComposerApp />
-    </Provider>,
-    document.getElementById('request-composer')
+      <Provider store={store}>
+        <RequestComposerApp />
+      </Provider>,
+      document.getElementById('request-composer')
   );
 }
 

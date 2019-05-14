@@ -37,31 +37,31 @@ window.addEventListener('load', () => {
  */
 function constructTableCellFromReport(report) {
   // Create local aliases.
-  let {columnHeader, data: {rows, totals}} = report;
+  const {columnHeader, data: {rows, totals}} = report;
 
   if (!rows) return;
 
-  let {metricHeaderEntries = []} = columnHeader.metricHeader;
-  let {dimensions = []} = columnHeader;
+  const {metricHeaderEntries = []} = columnHeader.metricHeader;
+  const {dimensions = []} = columnHeader;
 
-  let metricHeaderRow = 0;
-  let resultsEndRow = rows.length;
-  let dimensionEndCol = dimensions.length - 1;
-  let metricStartCol = dimensionEndCol + 1;
-  let metricEndCol = dimensionEndCol + metricHeaderEntries.length;
-  let rowCount = rows.length + 2;
-  let colCount = dimensions.length + metricHeaderEntries.length;
+  const metricHeaderRow = 0;
+  const resultsEndRow = rows.length;
+  const dimensionEndCol = dimensions.length - 1;
+  const metricStartCol = dimensionEndCol + 1;
+  const metricEndCol = dimensionEndCol + metricHeaderEntries.length;
+  const rowCount = rows.length + 2;
+  const colCount = dimensions.length + metricHeaderEntries.length;
 
   // Creates the initial list of cells.
   // This will be a two-dimensional array: cells[<tr>][<td>].
-  let cells = [];
+  const cells = [];
 
   for (let r = 0; r < rowCount; r++) {
     cells[r] = cells[r] || [];
 
     for (let c = 0; c < colCount; c++) {
       // Creates a new cell object.
-      let cell = cells[r][c] = {r, c, classes: [], text: ''};
+      const cell = cells[r][c] = {r, c, classes: [], text: ''};
 
 
       if (r === metricHeaderRow) {
@@ -70,14 +70,14 @@ function constructTableCellFromReport(report) {
 
         // Primary metric column headers.
         if (c >= metricStartCol && c <= metricEndCol) {
-          let metric = metricHeaderEntries[c - metricStartCol].name;
+          const metric = metricHeaderEntries[c - metricStartCol].name;
           cell.classes.push('PivotTable-metricHeader');
           cell.text = metric;
         }
 
         // Dimension results.
         if (c <= dimensionEndCol) {
-          let dimensionName = dimensions[c];
+          const dimensionName = dimensions[c];
           cell.isHeader = true;
           cell.classes.push('PivotTable-dimensionHeader');
           if (c === dimensionEndCol) {
@@ -91,7 +91,7 @@ function constructTableCellFromReport(report) {
           cell.dimensions = dimensionName;
         } else if (c >= metricStartCol && c <= metricEndCol) {
           // Primary metric results.
-          let metricName = metricHeaderEntries[c - metricStartCol].name;
+          const metricName = metricHeaderEntries[c - metricStartCol].name;
           cell.classes.push('PivotTable-value');
           if (r === resultsEndRow) {
             cell.classes.push('PivotTable-value--lastRow');
@@ -101,16 +101,16 @@ function constructTableCellFromReport(report) {
       } else if (r > metricHeaderRow && r <= resultsEndRow ) {
         // Data value rows.
         cell.classes.push('PivotTable-value');
-        let row = rows[r - 1];
+        const row = rows[r - 1];
         if (c <= dimensionEndCol) {
           // Dimension value cells.
-          let dimensionValue = row.dimensions[c];
-          let dimensionName = dimensions[c];
+          const dimensionValue = row.dimensions[c];
+          const dimensionName = dimensions[c];
           cell.text = formatDimension(dimensionValue, dimensionName);
         } else {
           // Metric value cells.
-          let value = row.metrics[0].values[c - metricStartCol];
-          let type = metricHeaderEntries[c - metricStartCol].type;
+          const value = row.metrics[0].values[c - metricStartCol];
+          const type = metricHeaderEntries[c - metricStartCol].type;
 
           cell.text = formatValue(value, type);
         }
@@ -124,8 +124,8 @@ function constructTableCellFromReport(report) {
           if (c > 0) mergeCellWithNeighborIfSame(cell, cells[r][c - 1]);
         } else if (c >= metricStartCol && c <= metricEndCol) {
           // Metric totals.
-          let value = totals[0].values[c - metricStartCol];
-          let type = metricHeaderEntries[c - metricStartCol].type;
+          const value = totals[0].values[c - metricStartCol];
+          const type = metricHeaderEntries[c - metricStartCol].type;
           cell.text = formatValue(value, type);
         }
       }
@@ -138,7 +138,6 @@ function constructTableCellFromReport(report) {
  * A components that renders the pivot table visualization.
  */
 export default class ExpressionTable extends React.Component {
-
   /**
    * React lifecycyle method below:
    * http://facebook.github.io/react/docs/component-specs.html
@@ -148,11 +147,11 @@ export default class ExpressionTable extends React.Component {
 
   /** @return {Object} The React component. */
   render() {
-    let {result} = this.props.response;
+    const {result} = this.props.response;
 
     if (result) {
-      let report = result.reports[0];
-      let cells = constructTableCellFromReport(report);
+      const report = result.reports[0];
+      const cells = constructTableCellFromReport(report);
 
       if (cells) {
         return (
@@ -160,11 +159,11 @@ export default class ExpressionTable extends React.Component {
             <table className="PivotTable-table">
               <tbody>
                 {cells.map((row, r) => (
-                 <tr className="PivotTable-tr" key={r}>
+                  <tr className="PivotTable-tr" key={r}>
                     {row.map((cell, c) => {
                       if (cell.ref) return undefined;
-                      let tag = cell.isHeader ? 'th' : 'td';
-                      let props = {key: c};
+                      const tag = cell.isHeader ? 'th' : 'td';
+                      const props = {key: c};
                       cell.classes.push(`PivotTable-${tag}`);
 
                       if (cell.colSpan) props.colSpan = cell.colSpan;

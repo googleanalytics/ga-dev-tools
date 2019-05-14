@@ -21,7 +21,6 @@ import {highlight} from '../highlighter';
  * A component that renders highlighted code blocks.
  */
 export default class CodeBlock extends React.Component {
-
   static defaultProps = {
     code: '',
     lang: null,
@@ -47,7 +46,7 @@ export default class CodeBlock extends React.Component {
 
   /** @return {Object} The React component. */
   render() {
-    let code = highlight(this.props);
+    const code = highlight(this.props);
     return (
       <pre className="hljs" dangerouslySetInnerHTML={{__html: code}} />
     );

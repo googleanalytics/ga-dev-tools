@@ -41,15 +41,14 @@ const REFERENCE_URL =
  * The primary Query Explorer app component.
  */
 export default class QueryExplorer extends React.Component {
-
   /**
    * Invoked when a user changes the ViewSelector2 instance.
    * @param {Object} viewData The object emitted by the ViewSelector2's
    * `changeView` event.
    */
   handleViewSelectorChange = (viewData) => {
-    let {actions} = this.props;
-    let {ids} = viewData;
+    const {actions} = this.props;
+    const {ids} = viewData;
     actions.updateParams({ids});
     actions.updateMetricsDimensionsAndSortOptions(viewData);
   }
@@ -74,8 +73,8 @@ export default class QueryExplorer extends React.Component {
    * @param {{target: Element}} The React event.
    */
   handleSegmentDefinitionToggle = ({target: {checked: useDefinition}}) => {
-    let {actions} = this.props;
-    let {segment} = this.props.params;
+    const {actions} = this.props;
+    const {segment} = this.props.params;
 
     actions.updateSettings({useDefinition});
     actions.updateSegmentsOptions(useDefinition);
@@ -92,23 +91,23 @@ export default class QueryExplorer extends React.Component {
    */
   handleSubmit = async (e) => {
     e.preventDefault();
-    let {actions, params} = this.props;
-    let paramsClone = {...params};
+    const {actions, params} = this.props;
+    const paramsClone = {...params};
 
     actions.updateReport({params: paramsClone});
     actions.setQueryState(true);
 
-    let trackableParamData = Object.keys(paramsClone).map((key) =>
+    const trackableParamData = Object.keys(paramsClone).map((key) =>
         PARAMS_TO_TRACK.includes(key) ? `${key}=${paramsClone[key]}` : key)
         .join('&');
 
     // Set it on the tracker so it gets sent with all Query Explorer hits.
     gaAll('set', 'dimension2', trackableParamData);
 
-    let summaries = await accountSummaries.get();
-    let viewId = params.ids.slice(3);
-    let view = summaries.getView(viewId);
-    let property = summaries.getPropertyByViewId(viewId);
+    const summaries = await accountSummaries.get();
+    const viewId = params.ids.slice(3);
+    const view = summaries.getView(viewId);
+    const property = summaries.getPropertyByViewId(viewId);
 
     actions.updateReport({
       propertyName: property.name,
@@ -207,7 +206,7 @@ export default class QueryExplorer extends React.Component {
 
   /** @return {Object} The React component. */
   render() {
-    let {
+    const {
       isQuerying,
       params,
       report,
@@ -215,9 +214,9 @@ export default class QueryExplorer extends React.Component {
       select2Options,
     } = this.props;
 
-    let formControlClass = 'FormControl FormControl--inline';
-    let formActionClass = formControlClass + ' FormControl--action';
-    let requiredFormControlClass = formControlClass +' FormControl--required';
+    const formControlClass = 'FormControl FormControl--inline';
+    const formActionClass = formControlClass + ' FormControl--action';
+    const requiredFormControlClass = formControlClass +' FormControl--required';
 
     return (
       <div>

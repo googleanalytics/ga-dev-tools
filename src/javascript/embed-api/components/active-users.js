@@ -47,7 +47,7 @@ gapi.analytics.ready(function() {
     },
 
     render_: function() {
-      let opts = this.get();
+      const opts = this.get();
 
       // Render the component inside the container.
       this.container = typeof opts.container == 'string' ?
@@ -58,8 +58,8 @@ gapi.analytics.ready(function() {
     },
 
     pollActiveUsers_: function() {
-      let options = this.get();
-      let pollingInterval = (options.pollingInterval || 5) * 1000;
+      const options = this.get();
+      const pollingInterval = (options.pollingInterval || 5) * 1000;
 
       if (isNaN(pollingInterval) || pollingInterval < 5000) {
         throw new Error('Frequency must be 5 seconds or more.');
@@ -69,26 +69,26 @@ gapi.analytics.ready(function() {
       gapi.client.analytics.data.realtime
           .get({ids: options.ids, metrics: 'rt:activeUsers'})
           .then(function(response) {
-        let result = response.result;
-        let newValue = result.totalResults ? +result.rows[0][0] : 0;
-        let oldValue = this.activeUsers;
+            const result = response.result;
+            const newValue = result.totalResults ? +result.rows[0][0] : 0;
+            const oldValue = this.activeUsers;
 
-        this.emit('success', {activeUsers: this.activeUsers});
+            this.emit('success', {activeUsers: this.activeUsers});
 
-        if (newValue != oldValue) {
-          this.activeUsers = newValue;
-          this.onChange_(newValue - oldValue);
-        }
+            if (newValue != oldValue) {
+              this.activeUsers = newValue;
+              this.onChange_(newValue - oldValue);
+            }
 
-        if (this.polling_ == true) {
-          this.timeout_ = setTimeout(this.pollActiveUsers_.bind(this),
-              pollingInterval);
-        }
-      }.bind(this));
+            if (this.polling_ == true) {
+              this.timeout_ = setTimeout(this.pollActiveUsers_.bind(this),
+                  pollingInterval);
+            }
+          }.bind(this));
     },
 
     onChange_: function(delta) {
-      let valueContainer = this.container.querySelector('b');
+      const valueContainer = this.container.querySelector('b');
       if (valueContainer) valueContainer.innerHTML = this.activeUsers;
 
       this.emit('change', {activeUsers: this.activeUsers, delta: delta});

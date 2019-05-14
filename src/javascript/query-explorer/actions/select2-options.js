@@ -28,12 +28,12 @@ import segments from '../segments';
  */
 export function updateMetricsDimensionsAndSortOptions(viewData) {
   return async function(dispatch, getState) {
-    let {account, property, view} = viewData;
-    let {params} = getState();
-    let {metrics, dimensions} = await getMetricsAndDimensionsOptions(
+    const {account, property, view} = viewData;
+    const {params} = getState();
+    const {metrics, dimensions} = await getMetricsAndDimensionsOptions(
         account, property, view);
 
-    let sort = getSortOptions(params, metrics, dimensions);
+    const sort = getSortOptions(params, metrics, dimensions);
 
     dispatch(updateSelect2Options({metrics, dimensions, sort}));
   };
@@ -48,8 +48,8 @@ export function updateMetricsDimensionsAndSortOptions(viewData) {
  */
 export function updateSortOptions() {
   return function(dispatch, getState) {
-    let {params, select2Options: {metrics, dimensions}} = getState();
-    let sort = getSortOptions(params, metrics, dimensions);
+    const {params, select2Options: {metrics, dimensions}} = getState();
+    const sort = getSortOptions(params, metrics, dimensions);
 
     dispatch(updateSelect2Options({sort}));
   };
@@ -65,7 +65,7 @@ export function updateSortOptions() {
  */
 export function updateSegmentsOptions(useDefinition) {
   return async function(dispatch) {
-    let segments = await getSegmentsOptions(useDefinition);
+    const segments = await getSegmentsOptions(useDefinition);
     dispatch(updateSelect2Options({segments}));
   };
 }
@@ -95,23 +95,23 @@ function getMetricsAndDimensionsOptions(account, property, view) {
     getMetrics(account, property, view),
     getDimensions(account, property, view),
   ])
-  .then(function(data) {
-    let metrics = data[0].map(function(metric) {
-      return {
-        id: metric.id,
-        name: metric.attributes.uiName,
-        group: metric.attributes.group,
-      };
-    });
-    let dimensions = data[1].map(function(dimension) {
-      return {
-        id: dimension.id,
-        name: dimension.attributes.uiName,
-        group: dimension.attributes.group,
-      };
-    });
-    return {metrics, dimensions};
-  });
+      .then(function(data) {
+        const metrics = data[0].map(function(metric) {
+          return {
+            id: metric.id,
+            name: metric.attributes.uiName,
+            group: metric.attributes.group,
+          };
+        });
+        const dimensions = data[1].map(function(dimension) {
+          return {
+            id: dimension.id,
+            name: dimension.attributes.uiName,
+            group: dimension.attributes.group,
+          };
+        });
+        return {metrics, dimensions};
+      });
 }
 
 
@@ -124,22 +124,22 @@ function getMetricsAndDimensionsOptions(account, property, view) {
  * @return {Array}
  */
 function getSortOptions(params, metrics, dimensions) {
-  let sortOptions = [];
-  let metsAndDims = [...metrics, ...dimensions];
-  let chosenMetsAndDims = [
+  const sortOptions = [];
+  const metsAndDims = [...metrics, ...dimensions];
+  const chosenMetsAndDims = [
     ...(params.metrics && params.metrics.split(',') || []),
     ...(params.dimensions && params.dimensions.split(',') || []),
   ];
 
-  for (let choice of chosenMetsAndDims) {
-    for (let option of metsAndDims) {
+  for (const choice of chosenMetsAndDims) {
+    for (const option of metsAndDims) {
       if (choice == option.id) {
-        let descending = {...option};
+        const descending = {...option};
         descending.name += ' (descending)';
         descending.text += ' (descending)';
         descending.id = '-' + choice;
 
-        let ascending = {...option};
+        const ascending = {...option};
         ascending.name += ' (ascending)';
         ascending.text += ' (ascending)';
         ascending.id = choice;
@@ -189,14 +189,14 @@ function getSegmentsOptions(useDefinition) {
 function getMetrics(account, property, view) {
   return metadata.getAuthenticated(account, property, view).then((columns) => {
     return columns.allMetrics((metric, id) => {
-      let isPublicV3Metric = metric.status == 'PUBLIC' &&
+      const isPublicV3Metric = metric.status == 'PUBLIC' &&
           metric.addedInApiVersion == '3';
       // TODO(philipwalton): remove this temporary exclusion once
       // caclulated metrics can be templatized using the Management API.
-      let isNotCalculatedMetric = id != 'ga:calcMetric_<NAME>';
+      const isNotCalculatedMetric = id != 'ga:calcMetric_<NAME>';
       // TODO(philipwalton): remove this temporary inclusion once the new
       // ga:uniqueEvents metric is no longer listed as deprecated in the API.
-      let isUniqueEvents = id == 'ga:uniqueEvents';
+      const isUniqueEvents = id == 'ga:uniqueEvents';
       if (isUniqueEvents) metric.uiName = 'Unique Events';
 
       return (isPublicV3Metric && isNotCalculatedMetric) || isUniqueEvents;

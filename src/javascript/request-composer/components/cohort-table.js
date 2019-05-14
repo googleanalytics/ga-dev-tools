@@ -31,9 +31,9 @@ const cohortDateRanges = {
  * @return {Array}
  */
 function tablizeCohortReportData(report, cohortSize) {
-  let headers = ['Cohort'];
+  const headers = ['Cohort'];
   let currentDataRow = [];
-  let dataRows = [headers];
+  const dataRows = [headers];
 
   for (let i = 0; i <= cohortDateRanges[cohortSize]; i++) {
     headers.push(`${cohortSize} ${i}`);
@@ -45,9 +45,9 @@ function tablizeCohortReportData(report, cohortSize) {
   }
 
   if (report.data.rows && report.data.rows.length) {
-    for (let row of report.data.rows) {
+    for (const row of report.data.rows) {
       if (row.dimensions && row.dimensions.length > cohortColumnIndex) {
-        let rowKey = row.dimensions[cohortColumnIndex];
+        const rowKey = row.dimensions[cohortColumnIndex];
 
         if (rowKey != currentDataRow[cohortColumnIndex]) {
           currentDataRow = [];
@@ -56,7 +56,7 @@ function tablizeCohortReportData(report, cohortSize) {
         }
 
         let value = row.metrics[0].values[0];
-        let valueType =
+        const valueType =
             report.columnHeader.metricHeader.metricHeaderEntries[0].type;
 
         if (valueType == 'PERCENT') {
@@ -79,12 +79,11 @@ function tablizeCohortReportData(report, cohortSize) {
  * A components that renders the cohort table visualization.
  */
 export default class CohortTable extends React.Component {
-
   /** @return {Object} The React component. */
   render() {
-    let {response, settings} = this.props;
-    let report = response.result.reports[0];
-    let [headers, ...rows] = tablizeCohortReportData(
+    const {response, settings} = this.props;
+    const report = response.result.reports[0];
+    const [headers, ...rows] = tablizeCohortReportData(
         report, settings.responseCohortSize);
 
     return (

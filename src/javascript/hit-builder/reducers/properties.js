@@ -24,7 +24,6 @@ import * as types from '../actions/types';
  */
 export default function properties(state = [], action) {
   switch (action.type) {
-
     case types.SET_USER_PROPERTIES:
       return action.properties;
 

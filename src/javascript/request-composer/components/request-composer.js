@@ -48,15 +48,14 @@ const REFERENCE_URL =
  * The primary Request Composer app component.
  */
 export default class RequestComposer extends React.Component {
-
   /**
    * Invoked when a user changes the ViewSelector2 instance.
    * @param {Object} viewData The object emited by the ViewSelector2's
    * `changeView` event.
    */
   handleViewSelectorChange = (viewData) => {
-    let {actions} = this.props;
-    let viewId = viewData.view.id;
+    const {actions} = this.props;
+    const viewId = viewData.view.id;
     actions.updateParams({viewId});
     actions.updateMetricsDimensionsAndSortOptions(viewData);
   }
@@ -92,8 +91,8 @@ export default class RequestComposer extends React.Component {
    * @param {{target: Element}} The React event.
    */
   handleSegmentDefinitionToggle = ({target: {checked: useDefinition}}) => {
-    let {actions} = this.props;
-    let {segment} = this.props.params;
+    const {actions} = this.props;
+    const {segment} = this.props.params;
 
     actions.updateSettings({useDefinition});
     actions.updateSegmentsOptions(useDefinition);
@@ -111,7 +110,7 @@ export default class RequestComposer extends React.Component {
    */
   handleSubmit = async (e) => {
     e.preventDefault();
-    let {actions, params, settings} = this.props;
+    const {actions, params, settings} = this.props;
 
     if (!validateRequest(params, settings)) {
       AlertDispatcher.addOnce({
@@ -122,7 +121,7 @@ export default class RequestComposer extends React.Component {
     }
 
 
-    let request = composeRequest(params, settings);
+    const request = composeRequest(params, settings);
     let response;
 
     actions.setQueryState(true);
@@ -154,7 +153,7 @@ export default class RequestComposer extends React.Component {
 
   /** @return {Object} The React component. */
   render() {
-    let {
+    const {
       isQuerying,
       params,
       response,
@@ -162,10 +161,10 @@ export default class RequestComposer extends React.Component {
       select2Options,
     } = this.props;
 
-    let formControlClass = 'FormControl FormControl--inline';
-    let formActionClass = formControlClass + ' FormControl--action';
-    let requiredFormControlClass = formControlClass +' FormControl--required';
-    let maximumSelectionSize = 7;
+    const formControlClass = 'FormControl FormControl--inline';
+    const formActionClass = formControlClass + ' FormControl--action';
+    const requiredFormControlClass = formControlClass +' FormControl--required';
+    const maximumSelectionSize = 7;
 
     return (
       <div>
@@ -293,15 +292,15 @@ export default class RequestComposer extends React.Component {
               <label className="FormControl-label">metric expressions</label>
               <div className="FormControl-body">
                 <div className="FlexLine">
-                <input
-                  className="FormField FormFieldCombo-field"
-                  name="expressions"
-                  value={params.expressions || ''}
-                  onChange={this.handleParamChange} />
-                <HelpIconLink
-                  url={REFERENCE_URL}
-                  name="Metric.FIELDS.Expression" />
-              </div>
+                  <input
+                    className="FormField FormFieldCombo-field"
+                    name="expressions"
+                    value={params.expressions || ''}
+                    onChange={this.handleParamChange} />
+                  <HelpIconLink
+                    url={REFERENCE_URL}
+                    name="Metric.FIELDS.Expression" />
+                </div>
               </div>
             </div>
             ) :
@@ -312,15 +311,15 @@ export default class RequestComposer extends React.Component {
               <label className="FormControl-label">metric aliases</label>
               <div className="FormControl-body">
                 <div className="FlexLine">
-                <input
-                  className="FormField FormFieldCombo-field"
-                  name="aliases"
-                  value={params.aliases || ''}
-                  onChange={this.handleParamChange} />
-                <HelpIconLink
-                  url={REFERENCE_URL}
-                  name="Metric.FIELDS.alias" />
-              </div>
+                  <input
+                    className="FormField FormFieldCombo-field"
+                    name="aliases"
+                    value={params.aliases || ''}
+                    onChange={this.handleParamChange} />
+                  <HelpIconLink
+                    url={REFERENCE_URL}
+                    name="Metric.FIELDS.alias" />
+                </div>
               </div>
             </div>
             ) :

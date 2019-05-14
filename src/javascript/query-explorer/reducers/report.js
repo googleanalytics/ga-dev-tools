@@ -23,9 +23,8 @@ import * as types from '../actions/types';
  * @return {Array} The updated state.
  */
 export default function report(state = {}, action) {
-  let {report} = action;
+  const {report} = action;
   switch (action.type) {
-
     case types.UPDATE_REPORT:
       return {...state, ...report};
 

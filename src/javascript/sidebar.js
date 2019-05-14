@@ -28,16 +28,16 @@ export default {
   addOpenHandler: function() {
     $(document).on('touchend.sidebar click.sidebar',
         '#header-menu', function(event) {
-      event.preventDefault();
-      $(document).off('.sidebar');
-      this.open();
-      this.addCloseHandler();
-    }.bind(this));
+          event.preventDefault();
+          $(document).off('.sidebar');
+          this.open();
+          this.addCloseHandler();
+        }.bind(this));
   },
 
   addCloseHandler: function() {
     $(document).on('touchend.sidebar click.sidebar', function(event) {
-      let $target = $(event.target);
+      const $target = $(event.target);
 
       // Close of the user clicked the close icon or clicked
       // outside of the sidebar.

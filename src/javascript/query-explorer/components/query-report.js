@@ -37,13 +37,12 @@ const TSV_PATH = SELF_BASE + 'csvhandler.csv';
  * A components that renders the query report results.
  */
 export default class QueryReport extends React.Component {
-
   /**
    * Build a URL that directly links to this report
    * @return {string}
    */
   reportLink() {
-    let params = (this.props.includeIds) ?
+    const params = (this.props.includeIds) ?
         this.props.report.params : omit(this.props.report.params, 'ids');
     return SELF_BASE + '?' + qs.stringify(sanitize(params));
   }
@@ -54,7 +53,7 @@ export default class QueryReport extends React.Component {
    * @return {string}
    */
   apiQueryUri() {
-    let params = sanitize(this.props.report.params);
+    const params = sanitize(this.props.report.params);
     if (this.props.includeAccessToken) {
       params['access_token'] =
           gapi.analytics.auth.getAuthResponse().access_token;
@@ -68,7 +67,7 @@ export default class QueryReport extends React.Component {
    * @return {string}
    */
   downloadTsvLink() {
-    let params = sanitize(this.props.report.params);
+    const params = sanitize(this.props.report.params);
     params['access_token'] =
         gapi.analytics.auth.getAuthResponse().access_token;
 
@@ -85,9 +84,9 @@ export default class QueryReport extends React.Component {
 
   /** @return {Object} The React component. */
   render() {
-    let partials = {};
-    let {report} = this.props;
-    let {params, response, viewName, propertyName} = report;
+    const partials = {};
+    const {report} = this.props;
+    const {params, response, viewName, propertyName} = report;
 
     if (propertyName && viewName) {
       partials.reportTitle = (
@@ -98,10 +97,10 @@ export default class QueryReport extends React.Component {
     }
 
     if (response) {
-      let resultsShowing = response.dataTable.rows &&
+      const resultsShowing = response.dataTable.rows &&
           response.dataTable.rows.length || 0;
-      let totalResults = response.totalResults || 0;
-      let sampledData = response.containsSampledData ? 'Yes' : 'No';
+      const totalResults = response.totalResults || 0;
+      const sampledData = response.containsSampledData ? 'Yes' : 'No';
 
       partials.reportMeta = (
         <aside className="QueryReport-meta">

@@ -24,7 +24,6 @@ import * as types from '../actions/types';
  */
 export default function websiteUrl(state = '', action) {
   switch (action.type) {
-
     case types.UPDATE_WEBSITE_URL:
       return action.websiteUrl;
 

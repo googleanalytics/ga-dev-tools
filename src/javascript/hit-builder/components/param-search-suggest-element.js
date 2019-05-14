@@ -22,7 +22,6 @@ import SearchSuggest from '../../components/search-suggest';
  * A ParamElement component whose value is a SearchSuggest component.
  */
 export default class ParamSearchSuggestElement extends ParamElement {
-
   /**
    * React lifecycyle methods below:
    * http://facebook.github.io/react/docs/component-specs.html

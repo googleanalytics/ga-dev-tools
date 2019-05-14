@@ -22,9 +22,8 @@ import * as types from '../actions/types';
  * @return {Object} The updated state with the new response.
  */
 export default function response(state = {}, action) {
-  let {response} = action;
+  const {response} = action;
   switch (action.type) {
-
     case types.UPDATE_RESPONSE:
       return {...state, ...response};
 

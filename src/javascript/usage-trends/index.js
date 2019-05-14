@@ -100,11 +100,11 @@ const main = () => {
     store.subscribe(renderApp);
     renderApp();
   })
-  .catch((err) => {
+      .catch((err) => {
     import('../analytics.js').then((analytics) => {
       analytics.trackError(err);
     });
-  });
+      });
 };
 
 

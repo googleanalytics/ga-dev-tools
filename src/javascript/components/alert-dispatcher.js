@@ -27,7 +27,6 @@ let alerts = [];
  * A singleton component that manages displaying alerts at the top of the page.
  */
 export default class AlertDispatcher extends React.Component {
-
   /**
    * Adds an alert to the list of alerts.
    * @param {Object} alert An object of alert properties.
@@ -43,8 +42,8 @@ export default class AlertDispatcher extends React.Component {
    * @param {Object} props The alert props to check for before adding.
    */
   static addOnce({title, message}) {
-    let existingAlert = alerts.find((a) =>
-        a.title === title && a.message === message);
+    const existingAlert = alerts.find((a) =>
+      a.title === title && a.message === message);
 
     if (!existingAlert) {
       AlertDispatcher.add({title, message});
@@ -103,7 +102,7 @@ export default class AlertDispatcher extends React.Component {
 
 
 // Only add AlertDispatcher to the DOM if this module gets imported.
-let alertDispatcherContainer = document.createElement('div');
+const alertDispatcherContainer = document.createElement('div');
 document.body.appendChild(alertDispatcherContainer);
 
 
@@ -112,8 +111,8 @@ document.body.appendChild(alertDispatcherContainer);
  */
 function render() {
   ReactDOM.render(
-    <AlertDispatcher alerts={alerts} />,
-    alertDispatcherContainer
+      <AlertDispatcher alerts={alerts} />,
+      alertDispatcherContainer
   );
 }
 render();

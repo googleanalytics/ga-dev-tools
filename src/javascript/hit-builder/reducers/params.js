@@ -24,7 +24,6 @@ import * as types from '../actions/types';
  */
 export default function params(state = [], action) {
   switch (action.type) {
-
     case types.ADD_PARAM:
       return [
         ...state,

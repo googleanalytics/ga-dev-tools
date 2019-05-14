@@ -22,7 +22,6 @@ import Icon from '../../components/icon';
  * A ParamElement component whose value has a Button component appended.
  */
 export default class ParamButtonElement extends ParamElement {
-
   /**
    * Returns the class name for the form field.
    * @return {string}

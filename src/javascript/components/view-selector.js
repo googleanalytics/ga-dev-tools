@@ -51,7 +51,6 @@ const VIEW_SELECTOR_TEMPLATE =
  * Embed API ViewSelector component.
  */
 export default class ViewSelector extends React.Component {
-
   /**
    * React lifecycyle methods below:
    * http://facebook.github.io/react/docs/component-specs.html

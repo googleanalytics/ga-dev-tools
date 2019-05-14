@@ -23,10 +23,9 @@ import * as types from '../actions/types';
  * @return {Array} The updated state.
  */
 export default function settings(state = {}, action) {
-  let {settings} = action;
+  const {settings} = action;
 
   switch (action.type) {
-
     case types.UPDATE_SETTINGS:
       return {
         ...state,

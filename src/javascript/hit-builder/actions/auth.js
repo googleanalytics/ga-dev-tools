@@ -46,8 +46,8 @@ export function handleAuthorizationSuccess() {
   return async (dispatch) => {
     dispatch(setAuthorized());
 
-    let summaries = await accountSummaries.get();
-    let properties = summaries.allProperties().map((property) => ({
+    const summaries = await accountSummaries.get();
+    const properties = summaries.allProperties().map((property) => ({
       name: property.name,
       id: property.id,
       group: summaries.getAccountByPropertyId(property.id).name,

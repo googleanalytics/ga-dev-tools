@@ -103,16 +103,16 @@ gulp.task('javascript:webpack', (function() {
   let compiler;
 
   const createCompiler = () => {
-    let sourceFiles = glob.sync('./*/index.js', {cwd: './src/javascript/'});
-    let entry = {index: ['babel-polyfill', './src/javascript/index.js']};
+    const sourceFiles = glob.sync('./*/index.js', {cwd: './src/javascript/'});
+    const entry = {index: ['babel-polyfill', './src/javascript/index.js']};
 
-    for (let filename of sourceFiles) {
-      let name = path.join('.', path.dirname(filename));
-      let filepath = './' + path.join('./src/javascript', filename);
+    for (const filename of sourceFiles) {
+      const name = path.join('.', path.dirname(filename));
+      const filepath = './' + path.join('./src/javascript', filename);
       entry[name] = ['babel-polyfill', filepath];
     }
 
-    let plugins = [new webpack.optimize.CommonsChunkPlugin({
+    const plugins = [new webpack.optimize.CommonsChunkPlugin({
       name: 'common',
       minChunks: 2,
     })];
@@ -188,10 +188,10 @@ gulp.task('javascript:embed-api-components', (function() {
 
   const createCompiler = () => {
     const COMPONENT_PATH = './javascript/embed-api/components';
-    let components = ['active-users', 'date-range-selector', 'view-selector2'];
-    let entry = {};
+    const components = ['active-users', 'date-range-selector', 'view-selector2'];
+    const entry = {};
 
-    for (let component of components) {
+    for (const component of components) {
       entry[component] = './' + path.join('./src', COMPONENT_PATH, component);
     }
 
@@ -259,10 +259,10 @@ gulp.task('keycheck', () => fs.access('./service-account-key.json').catch(
 
 gulp.task('lint', function() {
   return gulp.src([
-        'src/javascript/**/*.js',
-        'test/**/*.js',
-        'gulpfile.js',
-      ])
+    'src/javascript/**/*.js',
+    'test/**/*.js',
+    'gulpfile.js',
+  ])
       .pipe(eslint({fix: true}))
       .pipe(eslint.format())
       .pipe(eslint.failAfterError());
@@ -324,8 +324,8 @@ gulp.task('stage', ['build:all'], (done) => {
   spawn('gcloud',
       ['app', 'deploy', '--project', 'google.com:ga-dev-tools'],
       {stdio: 'inherit'})
-          .on('error', (err) => done(err))
-          .on('close', () => done());
+      .on('error', (err) => done(err))
+      .on('close', () => done());
 });
 
 gulp.task('deploy', ['build:all'], (done) => {

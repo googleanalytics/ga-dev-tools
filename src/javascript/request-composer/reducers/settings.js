@@ -22,10 +22,9 @@ import * as types from '../actions/types';
  * @return {Object} The updated application state with updated settings.
  */
 export default function settings(state = {}, action) {
-  let {settings} = action;
+  const {settings} = action;
 
   switch (action.type) {
-
     case types.UPDATE_SETTINGS:
       return {
         ...state,

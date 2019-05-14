@@ -22,7 +22,6 @@ import Icon from './icon';
  * global singleton.
  */
 export default class Alert extends React.Component {
-
   /**
    * React lifecycyle methods below:
    * http://facebook.github.io/react/docs/component-specs.html

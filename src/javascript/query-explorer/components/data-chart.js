@@ -30,7 +30,6 @@ const SRC_PARAM = 'query-explorer:v2';
  * DataChart component.
  */
 export default class DataChart extends React.Component {
-
   isQuerying = false
 
   /**
@@ -46,7 +45,7 @@ export default class DataChart extends React.Component {
    */
   componentDidMount() {
     gapi.analytics.ready(() => {
-      let params = sanitize(this.props.params);
+      const params = sanitize(this.props.params);
 
       this.dataChart_ = new gapi.analytics.googleCharts.DataChart({
         query: {...params, _src: SRC_PARAM},
@@ -78,11 +77,11 @@ export default class DataChart extends React.Component {
         this.isQuerying === false && nextProps.isQuerying === true) {
       this.isQuerying = true;
 
-      let newParams = sanitize(nextProps.params);
+      const newParams = sanitize(nextProps.params);
 
       // The Embed API has its own defaults for these values, so we need to
       // explicitly set them in case the user doesn't.
-      let defaultParams = {
+      const defaultParams = {
         'start-date': '',
         'end-date': '',
       };
@@ -90,9 +89,9 @@ export default class DataChart extends React.Component {
       // Nullify the existing props
       // TODO(philipwalton): .set() should ideally be able to handle
       // sending it new properties without merging.
-      let nulledOldParams = mapValues(this.dataChart_.get().query, () => null);
+      const nulledOldParams = mapValues(this.dataChart_.get().query, () => null);
 
-      let params = {...defaultParams, ...nulledOldParams, ...newParams};
+      const params = {...defaultParams, ...nulledOldParams, ...newParams};
 
       this.dataChart_.set({query: params}).execute();
     }

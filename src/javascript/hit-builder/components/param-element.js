@@ -26,7 +26,6 @@ const REFERENCE_URL = 'https://developers.google.com/' +
  * A component that renders an individual hit param name and value pair.
  */
 export default class ParamElement extends React.Component {
-
   state = {
     name: this.props.param.name || '',
     value: this.props.param.value || '',
@@ -86,7 +85,7 @@ export default class ParamElement extends React.Component {
    * @return {Object}
    */
   renderLabel() {
-    let {name} = this.state;
+    const {name} = this.state;
     if (this.props.param.required) {
       return <label className="HitBuilderParam-label">{name}</label>;
     } else {
@@ -159,7 +158,7 @@ export default class ParamElement extends React.Component {
   */
   componentWillReceiveProps(nextProps) {
     if (nextProps.param != this.props.param) {
-      let {name, value} = nextProps.param;
+      const {name, value} = nextProps.param;
       this.setState({name, value});
     }
   }
@@ -182,5 +181,4 @@ export default class ParamElement extends React.Component {
       </div>
     );
   }
-
 }

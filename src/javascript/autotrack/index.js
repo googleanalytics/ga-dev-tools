@@ -20,7 +20,7 @@ import debounce from 'lodash/debounce';
 import AlertDispatcher from '../components/alert-dispatcher';
 
 
-let baseOptions = {
+const baseOptions = {
   query: {
     'ids': 'ga:100367422', // The Demos & Tools website view.
     'start-date': '7daysAgo',
@@ -39,7 +39,7 @@ let baseOptions = {
 };
 
 
-let pieChartOptions = {
+const pieChartOptions = {
   chart: {
     options: {
       pieHole: 4/9,
@@ -64,11 +64,11 @@ let pieChartOptions = {
  */
 function renderDataChart(container, options) {
   return new Promise(function(resolve, reject) {
-    let chart = new gapi.analytics.googleCharts.DataChart({chart: {container}});
-    for (let option of options) {
+    const chart = new gapi.analytics.googleCharts.DataChart({chart: {container}});
+    for (const option of options) {
       chart.set(option);
     }
-    let chartOptions = chart.get().chart;
+    const chartOptions = chart.get().chart;
     if (chartOptions.type != 'TABLE') {
       $(window).on('resize', debounce(() => chart.execute(), 200));
     }
@@ -83,7 +83,7 @@ gapi.analytics.ready(function() {
   /**
    * Creates a new DataChart instance showing top outbound link clicks.
    */
-  let outboundLink = renderDataChart('outbound-links-chart-container', [
+  const outboundLink = renderDataChart('outbound-links-chart-container', [
     baseOptions,
     {
       query: {
@@ -101,7 +101,7 @@ gapi.analytics.ready(function() {
   /**
    * Creates a new DataChart instance showing sign-in/out events.
    */
-  let authEvents = renderDataChart('auth-events-chart-container', [
+  const authEvents = renderDataChart('auth-events-chart-container', [
     baseOptions,
     {
       query: {
@@ -119,7 +119,7 @@ gapi.analytics.ready(function() {
   /**
    * Creates a new DataChart instance showing breakpoint usage.
    */
-  let breakpoint = renderDataChart('breakpoint-chart-container', [
+  const breakpoint = renderDataChart('breakpoint-chart-container', [
     baseOptions,
     pieChartOptions,
     {
@@ -137,7 +137,7 @@ gapi.analytics.ready(function() {
   /**
    * Creates a new DataChart instance showing device resolution.
    */
-  let resolution = renderDataChart('resolution-chart-container', [
+  const resolution = renderDataChart('resolution-chart-container', [
     baseOptions,
     pieChartOptions,
     {
@@ -155,7 +155,7 @@ gapi.analytics.ready(function() {
   /**
    * Creates a new DataChart instance showing device orientation.
    */
-  let orientation = renderDataChart('orientation-chart-container', [
+  const orientation = renderDataChart('orientation-chart-container', [
     baseOptions,
     pieChartOptions,
     {
@@ -173,7 +173,7 @@ gapi.analytics.ready(function() {
   /**
    * Creates a new DataChart instance showing breakpoint change events.
    */
-  let breakpointChange = renderDataChart('breakpoint-change-chart-container', [
+  const breakpointChange = renderDataChart('breakpoint-change-chart-container', [
     baseOptions,
     {
       query: {
@@ -197,11 +197,11 @@ gapi.analytics.ready(function() {
     orientation,
     breakpointChange,
   ])
-  .catch(function() {
-    AlertDispatcher.addOnce({
-      title: 'Oops! Something went wrong.',
-      message: 'There was an error executing some of the queries. ' +
+      .catch(function() {
+        AlertDispatcher.addOnce({
+          title: 'Oops! Something went wrong.',
+          message: 'There was an error executing some of the queries. ' +
           'Try refreshing the page to run them again.',
-    });
-  });
+        });
+      });
 });

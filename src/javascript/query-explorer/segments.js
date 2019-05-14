@@ -25,7 +25,7 @@ let cache;
 // TODO(philipwalton): this module should eventually live at:
 // https://github.com/googleanalytics/javascript-api-utils
 
-let segments = {
+const segments = {
 
   /**
    * Returns a promise that is resolved with an array of all segments this user
@@ -46,7 +46,7 @@ let segments = {
    */
   getDefinitionFromId(segmentId) {
     return segments.get().then(function(segments) {
-      let segment = segments.find((s) => segmentId === s.segmentId);
+      const segment = segments.find((s) => segmentId === s.segmentId);
       return segment && segment.definition;
     });
   },
@@ -60,7 +60,7 @@ let segments = {
    */
   getIdFromDefinition(definition) {
     return segments.get().then(function(segments) {
-      let segment = segments.find((s) => definition === s.definition);
+      const segment = segments.find((s) => definition === s.definition);
       return segment && segment.segmentId;
     });
   },

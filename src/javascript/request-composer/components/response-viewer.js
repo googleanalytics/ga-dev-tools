@@ -34,21 +34,20 @@ const RESULTS_VIEW = {
  * A components that renders the response visualization and code.
  */
 export default class ResultsViewer extends React.Component {
-
   /** @return {Object} The React component. */
   render() {
-    let {response, settings} = this.props;
+    const {response, settings} = this.props;
 
     if (!response.result) return null;
     if (settings.responseType != settings.requestType) return null;
 
-    let responseCode = JSON.stringify(response.result, null, 2);
+    const responseCode = JSON.stringify(response.result, null, 2);
 
     if (response.status >= 400) {
       return (
         <div id="results">
-        <h2>API Response</h2>
-        <CodeBlock code={responseCode} lang="json" />
+          <h2>API Response</h2>
+          <CodeBlock code={responseCode} lang="json" />
         </div>
       );
     } else {
@@ -83,7 +82,7 @@ export default class ResultsViewer extends React.Component {
                 <div>
                   <ExpressionTable
                     response={response}
-                    />
+                  />
                 </div>
               ) :
               null}

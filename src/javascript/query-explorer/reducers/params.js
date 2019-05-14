@@ -23,10 +23,9 @@ import * as types from '../actions/types';
  * @return {Array} The updated state.
  */
 export default function params(state = {}, action) {
-  let {params} = action;
+  const {params} = action;
 
   switch (action.type) {
-
     case types.UPDATE_PARAMS:
       return {
         ...state,

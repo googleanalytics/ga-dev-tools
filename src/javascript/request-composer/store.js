@@ -20,7 +20,7 @@ import reducer from './reducers';
 import db from '../data-store';
 
 
-let middlewear = [thunkMiddleware];
+const middlewear = [thunkMiddleware];
 
 
 // Adds a logger in non-production mode.
@@ -32,7 +32,7 @@ if (process.env.NODE_ENV != 'production') {
 }
 
 
-let createStoreWithMiddleware = applyMiddleware(...middlewear)(createStore);
+const createStoreWithMiddleware = applyMiddleware(...middlewear)(createStore);
 
 
 /**
@@ -44,13 +44,13 @@ let createStoreWithMiddleware = applyMiddleware(...middlewear)(createStore);
  * @return {Object} The initial params.
  */
 function getInitalQueryParams() {
-  let defaultParams = {
+  const defaultParams = {
     'startDate': '30daysAgo',
     'endDate': 'yesterday',
     'cohortSize': 'Day',
     'cohortMetrics': 'ga:cohortActiveUsers',
   };
-  let storedParams = db.get('request-composer:params');
+  const storedParams = db.get('request-composer:params');
   if (storedParams) {
     return sanitize({...defaultParams, ...storedParams});
   } else {
@@ -65,7 +65,7 @@ function getInitalQueryParams() {
  * @return {Object} The settings object.
  */
 function getDefaultSettingsAndUpdateTracker() {
-  let settings = db.get('request-composer:settings') || {
+  const settings = db.get('request-composer:settings') || {
     'requestType': 'HISTOGRAM',
   };
   return settings;
@@ -91,7 +91,7 @@ function getDefaultSelect2Options() {
 }
 
 
-let store = createStoreWithMiddleware(reducer, {
+const store = createStoreWithMiddleware(reducer, {
   isAuthorized: false,
   isQuerying: false,
   params: getInitalQueryParams(),
@@ -103,7 +103,7 @@ let store = createStoreWithMiddleware(reducer, {
 // TODO(philipwalton): create middleware to save the params and settings
 // to localStorage.
 store.subscribe(function() {
-  let {params, settings} = store.getState();
+  const {params, settings} = store.getState();
 
   db.set('request-composer:settings', settings);
   db.set('request-composer:params', params);

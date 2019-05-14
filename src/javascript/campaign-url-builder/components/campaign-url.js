@@ -86,7 +86,7 @@ export default class CampaignUrl extends React.Component {
 
   componentDidMount() {
     this.bitlyAuthSubscription = isAuthorizedEvents.subscribe(
-      isAuthorized => this.setState({isUrlShorteningAuthorized: isAuthorized})
+        isAuthorized => this.setState({isUrlShorteningAuthorized: isAuthorized})
     );
   }
 
@@ -101,7 +101,7 @@ export default class CampaignUrl extends React.Component {
    * original state.
    */
   copyUrl = () => {
-    let url = ReactDOM.findDOMNode(this.refs.url);
+    const url = ReactDOM.findDOMNode(this.refs.url);
     if (copyElementText(url)) {
       this.setState({urlCopied: true});
 
@@ -114,7 +114,7 @@ export default class CampaignUrl extends React.Component {
       // After three second, remove the success checkbox.
       clearTimeout(this.urlCopiedTimeout_);
       this.urlCopiedTimeout_ = setTimeout(() =>
-          this.setState({urlCopied: false}), ACTION_TIMEOUT);
+        this.setState({urlCopied: false}), ACTION_TIMEOUT);
     } else {
       // TODO(philipwalton): handle error case
     }
@@ -141,37 +141,37 @@ export default class CampaignUrl extends React.Component {
     this.setState({isShorteningUrl: true});
 
     return shortenUrl(this.props.url)
-    .then(shortUrl => {
-      this.setState({
-        isShorteningUrl: false,
-        shortUrl: shortUrl,
-        showShortUrl: true,
-      });
-      // TODO(nathanwest): Only send the event if the API was hit. Don't send
-      // events for cache hits. Alternatively, attach cache information to
-      // label or value.
-      gaSendEvent({
-        category: 'Campaign URL',
-        action: 'shorten',
-        label: '(not set)',
-      });
-    })
-    .catch(err => {
-      AlertDispatcher.addOnce({
-        title: 'Oops, an error occurred trying to shorten the URL',
-        message: err.message,
-      });
-      this.setState({
-        isShorteningUrl: false,
-        shortUrl: null,
-        showShortUrl: false,
-      });
-      gaSendEvent({
-        category: 'Campaign URL',
-        action: 'shorten-failure',
-        label: err.message,
-      });
-    });
+        .then(shortUrl => {
+          this.setState({
+            isShorteningUrl: false,
+            shortUrl: shortUrl,
+            showShortUrl: true,
+          });
+          // TODO(nathanwest): Only send the event if the API was hit. Don't send
+          // events for cache hits. Alternatively, attach cache information to
+          // label or value.
+          gaSendEvent({
+            category: 'Campaign URL',
+            action: 'shorten',
+            label: '(not set)',
+          });
+        })
+        .catch(err => {
+          AlertDispatcher.addOnce({
+            title: 'Oops, an error occurred trying to shorten the URL',
+            message: err.message,
+          });
+          this.setState({
+            isShorteningUrl: false,
+            shortUrl: null,
+            showShortUrl: false,
+          });
+          gaSendEvent({
+            category: 'Campaign URL',
+            action: 'shorten-failure',
+            label: err.message,
+          });
+        });
   }
 
   /**
@@ -212,7 +212,7 @@ export default class CampaignUrl extends React.Component {
    * @return {Element}
    */
   renderUrl(problematicElement) {
-    let url = this.state.showShortUrl ? this.state.shortUrl : this.props.url;
+    const url = this.state.showShortUrl ? this.state.shortUrl : this.props.url;
     return (
       <div>
         <p>Use this URL in any promotional channels you want to be associated
@@ -232,7 +232,7 @@ export default class CampaignUrl extends React.Component {
                   type="checkbox"
                   onChange={this.handleUseFragmentToggle}
                   checked={!!this.props.useFragment}
-                  />
+                />
                   Set the campaign parameters in the fragment portion of the URL
                   (not recommended).
               </label>
@@ -304,7 +304,7 @@ export default class CampaignUrl extends React.Component {
           this.state.isShorteningUrl ? 'Shortening...' :
           this.state.isUrlShorteningAuthorized ? 'Convert URL to Short Link' :
           'Convert URL to Short Link (authorization required)'
-        }</IconButton>
+          }</IconButton>
       )}
     </div>;
   }
@@ -393,7 +393,7 @@ export default class CampaignUrl extends React.Component {
               <Icon type="error-outline" />
             </span>
             {INSTRUCTIONS_TEXT}
-        </p>}
+          </p>}
       </div>
     );
   }
