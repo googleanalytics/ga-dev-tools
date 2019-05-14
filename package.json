@@ -75,7 +75,7 @@
     "react": "^15.3.2",
     "react-addons-css-transition-group": "^15.3.2",
     "react-chartjs": "^0.8.0",
-    "react-dom": "^16.8",
+    "react-dom": "^15.3.2",
     "react-redux": "^4.4.9",
     "react-select": "^1.2.1",
     "react-tabs": "^0.8.2",
