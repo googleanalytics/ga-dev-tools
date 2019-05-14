@@ -20,8 +20,8 @@
  * A DateRangeSelector component for the Embed API.
  */
 gapi.analytics.ready(function() {
-  let nDaysAgo = /(\d+)daysAgo/;
-  let dateFormat = /\d{4}\-\d{2}\-\d{2}/;
+  const nDaysAgo = /(\d+)daysAgo/;
+  const dateFormat = /\d{4}\-\d{2}\-\d{2}/;
 
   /**
    * Convert a date acceptable to the Core Reporting API (e.g. `today`,
@@ -34,7 +34,7 @@ gapi.analytics.ready(function() {
     // If str is in the proper format, do nothing.
     if (dateFormat.test(str)) return str;
 
-    let match = nDaysAgo.exec(str);
+    const match = nDaysAgo.exec(str);
     if (match) {
       return daysAgo(+match[1]);
     } else if (str == 'today') {
@@ -67,7 +67,7 @@ gapi.analytics.ready(function() {
    * @return {string} The formatted date.
    */
   function daysAgo(numDays) {
-    let date = new Date();
+    const date = new Date();
     date.setDate(date.getDate() - numDays);
     let month = String(date.getMonth() + 1);
     month = month.length == 1 ? '0' + month: month;
@@ -83,7 +83,7 @@ gapi.analytics.ready(function() {
      * @return {DateRangeSelector} The instance.
      */
     execute: function() {
-      let options = this.get();
+      const options = this.get();
       options['start-date'] = options['start-date'] || '7daysAgo';
       options['end-date'] = options['end-date'] || 'yesterday';
 
@@ -95,7 +95,7 @@ gapi.analytics.ready(function() {
       if (options.template) this.template = options.template;
 
       this.container.innerHTML = this.template;
-      let dateInputs = this.container.querySelectorAll('input');
+      const dateInputs = this.container.querySelectorAll('input');
 
       this.startDateInput = dateInputs[0];
       this.startDateInput.value = convertDate(options['start-date']);

@@ -23,7 +23,7 @@ import {gaAll} from '../analytics';
 import db from '../data-store';
 
 
-let middlewear = [thunkMiddleware];
+const middlewear = [thunkMiddleware];
 
 
 // Adds a logger in non-production mode.
@@ -35,7 +35,7 @@ if (process.env.NODE_ENV != 'production') {
 }
 
 
-let createStoreWithMiddleware = applyMiddleware(...middlewear)(createStore);
+const createStoreWithMiddleware = applyMiddleware(...middlewear)(createStore);
 
 
 /**
@@ -47,8 +47,8 @@ let createStoreWithMiddleware = applyMiddleware(...middlewear)(createStore);
  * @return {Object} The initial params.
  */
 function getInitalQueryParamsAndUpdateUrl() {
-  let defaultParams = {'start-date': '30daysAgo', 'end-date': 'yesterday'};
-  let storedParams = db.get('query-explorer:params');
+  const defaultParams = {'start-date': '30daysAgo', 'end-date': 'yesterday'};
+  const storedParams = db.get('query-explorer:params');
   let urlParams = qs.parse(location.search.slice(1));
 
   // Don't assume that the presence any query params means it's a Query
@@ -85,7 +85,7 @@ function getInitalQueryParamsAndUpdateUrl() {
  * @return {Object} The settings object.
  */
 function getDefaultSettingsAndUpdateTracker() {
-  let settings = db.get('query-explorer:settings') || {};
+  const settings = db.get('query-explorer:settings') || {};
 
   gaAll('set', 'dimension3', qs.stringify(settings));
   return settings;
@@ -107,7 +107,7 @@ function getDefaultSelect2Options() {
 }
 
 
-let store = createStoreWithMiddleware(reducer, {
+const store = createStoreWithMiddleware(reducer, {
   isAuthorized: false,
   isQuerying: false,
   params: getInitalQueryParamsAndUpdateUrl(),
@@ -120,7 +120,7 @@ let store = createStoreWithMiddleware(reducer, {
 // TODO(philipwalton): create middleware to save the params and settings
 // to localStorage.
 store.subscribe(function() {
-  let {params, settings} = store.getState();
+  const {params, settings} = store.getState();
 
   db.set('query-explorer:settings', settings);
   gaAll('set', 'dimension3', qs.stringify(settings));

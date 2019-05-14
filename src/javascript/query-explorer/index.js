@@ -50,7 +50,7 @@ function mapDispatchToProps(dispatch) {
 }
 
 
-let QueryExplorerApp =
+const QueryExplorerApp =
     connect(mapStateToProps, mapDispatchToProps)(QueryExplorer);
 
 
@@ -59,10 +59,10 @@ let QueryExplorerApp =
  */
 function render() {
   ReactDOM.render(
-    <Provider store={store}>
-      <QueryExplorerApp />
-    </Provider>,
-    document.getElementById('query-explorer')
+      <Provider store={store}>
+        <QueryExplorerApp />
+      </Provider>,
+      document.getElementById('query-explorer')
   );
 }
 

@@ -40,7 +40,7 @@ export default class Select2MultiSuggest extends React.Component {
    * Initializes the jQuery plugin on the element
    */
   initialize() {
-    let opts = {
+    const opts = {
       formatSelection: this.s2TagTemplate,
       formatResult: this.s2DropdownItemTemplate,
       tokenizer: this.tokenizer,
@@ -66,7 +66,7 @@ export default class Select2MultiSuggest extends React.Component {
    */
   buildTagMap(tags) {
     this.tagMap_ = {};
-    for (let tag of tags) {
+    for (const tag of tags) {
       this.tagMap_[tag.id.toLowerCase()] = tag;
     }
   }
@@ -77,8 +77,8 @@ export default class Select2MultiSuggest extends React.Component {
    * the `this.props.onChange` handler.
    */
   handleChange() {
-    let name = this.props.name;
-    let value = ($(ReactDOM.findDOMNode(this)).val() || []).join(',');
+    const name = this.props.name;
+    const value = ($(ReactDOM.findDOMNode(this)).val() || []).join(',');
     this.setState({value});
     this.props.onChange({target: {name, value}});
   }
@@ -91,7 +91,7 @@ export default class Select2MultiSuggest extends React.Component {
    * @return {string} The rendered HTML string.
    */
   s2TagTemplate(opt) {
-    let data = opt.element ? $(opt.element).data() : opt;
+    const data = opt.element ? $(opt.element).data() : opt;
     return html`<span title="${data.name}">${data.id}</span>`;
   }
 
@@ -103,7 +103,7 @@ export default class Select2MultiSuggest extends React.Component {
    * @return {string} The rendered HTML string.
    */
   s2DropdownItemTemplate(opt) {
-    let data = opt.element ? $(opt.element).data() : opt;
+    const data = opt.element ? $(opt.element).data() : opt;
     return html`
       <div class="SearchSuggestMatch">
         <span class="SearchSuggestMatch-category">${data.group}</span>
@@ -125,12 +125,12 @@ export default class Select2MultiSuggest extends React.Component {
    * @return {string|undefined}
    */
   tokenizer = (input, selection, selectCallback) => {
-    let parts = input.split(',');
+    const parts = input.split(',');
 
     // If there aren't any parts, return immediately;
     if (parts.length <= 1) return input;
 
-    for (let part of parts) {
+    for (const part of parts) {
       if (part && this.getTagById(part) &&
           !some(selection, {id: part})) {
         selectCallback(this.getTagById(part));
@@ -149,12 +149,12 @@ export default class Select2MultiSuggest extends React.Component {
    * @return {boolean} Whether or not the text is a match for the tag.
    */
   matcher = (text, id) => {
-    let tag = this.getTagById(id);
-    let search = text.toLowerCase();
-    let selectedTags = this.props.name == 'sort' ?
+    const tag = this.getTagById(id);
+    const search = text.toLowerCase();
+    const selectedTags = this.props.name == 'sort' ?
         map(this.state.value.split(','), (item) => item.replace(/\-/, '')) : [];
 
-    let matches = tag.id.toLowerCase().includes(search) ||
+    const matches = tag.id.toLowerCase().includes(search) ||
         tag.name.toLowerCase().includes(search) ||
         tag.group.toLowerCase().includes(search);
 
@@ -185,11 +185,11 @@ export default class Select2MultiSuggest extends React.Component {
   componentWillReceiveProps(nextProps) {
     if (nextProps.tags != this.props.tags) {
       this.buildTagMap(nextProps.tags);
-      let value = filter(this.state.value.split(','), (part) =>
-          this.getTagById(part)).join(',');
+      const value = filter(this.state.value.split(','), (part) =>
+        this.getTagById(part)).join(',');
 
       if (value != this.state.value) {
-        let name = this.props.name;
+        const name = this.props.name;
         this.setState({value});
         this.props.onChange({target: {name, value}});
       }

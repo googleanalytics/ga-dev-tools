@@ -36,9 +36,9 @@ const PARAMS = [
  * @return {Object} The sanitized object.
  */
 export function sanitize(dirtyParams = {}) {
-  let sanitizedParams = {};
+  const sanitizedParams = {};
 
-  for (let param of PARAMS) {
+  for (const param of PARAMS) {
     if (typeof dirtyParams[param] == 'string' && dirtyParams[param].length) {
       sanitizedParams[param] = dirtyParams[param];
     }

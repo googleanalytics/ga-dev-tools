@@ -37,7 +37,7 @@ export default class CampaignUrlBuilder extends React.Component {
 
     if (this.props.websiteUrl) {
       this.bareUrl = extractParamsFromWebsiteUrl(
-        this.props.websiteUrl).bareUrl;
+          this.props.websiteUrl).bareUrl;
     }
   }
 
@@ -48,7 +48,7 @@ export default class CampaignUrlBuilder extends React.Component {
    *     containing the target.name and target.value properties.
    */
   handleWebsiteUrlChange = ({target}) => {
-    let {params, bareUrl} = extractParamsFromWebsiteUrl(target.value);
+    const {params, bareUrl} = extractParamsFromWebsiteUrl(target.value);
 
     this.bareUrl = bareUrl;
     this.props.updateWebsiteUrl(target.value);
@@ -82,9 +82,9 @@ export default class CampaignUrlBuilder extends React.Component {
    *     present; undefined otherwise.
    */
   getCampaignUrl() {
-    let {bareUrl} = this;
-    let {params, settings} = this.props;
-    let urlParams = sanitizeParams(params, {trim: true, removeBlanks: true});
+    const {bareUrl} = this;
+    const {params, settings} = this.props;
+    const urlParams = sanitizeParams(params, {trim: true, removeBlanks: true});
 
     if (bareUrl && REQUIRED_PARAMS.every(param => urlParams[param])) {
       return addParamsToUrl(bareUrl, urlParams, settings.useFragment);
@@ -101,10 +101,10 @@ export default class CampaignUrlBuilder extends React.Component {
 
   /** @return {Object} The React component. */
   render() {
-    let {params, settings, websiteUrl} = this.props;
+    const {params, settings, websiteUrl} = this.props;
 
-    let formControlClass = 'FormControl FormControl--inline';
-    let requiredFormControlClass = formControlClass +' FormControl--required';
+    const formControlClass = 'FormControl FormControl--inline';
+    const requiredFormControlClass = formControlClass +' FormControl--required';
 
     return (
       <div>
@@ -135,8 +135,8 @@ export default class CampaignUrlBuilder extends React.Component {
                 onChange={this.handleParamChange} />
               <div className="FormControl-info">
                 The referrer: (e.g.&nbsp;
-                  <code>google</code>,&nbsp;
-                  <code>newsletter</code>)
+                <code>google</code>,&nbsp;
+                <code>newsletter</code>)
               </div>
             </div>
           </div>
@@ -152,9 +152,9 @@ export default class CampaignUrlBuilder extends React.Component {
                 onChange={this.handleParamChange} />
               <div className="FormControl-info">
                 Marketing medium: (e.g.&nbsp;
-                  <code>cpc</code>,&nbsp;
-                  <code>banner</code>,&nbsp;
-                  <code>email</code>)
+                <code>cpc</code>,&nbsp;
+                <code>banner</code>,&nbsp;
+                <code>email</code>)
               </div>
             </div>
           </div>

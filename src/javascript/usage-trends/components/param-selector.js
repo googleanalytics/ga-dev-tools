@@ -52,7 +52,7 @@ export default class ParamSelector extends Component {
                   ))
                 }</optgroup>
               ))
-          }</select>
+            }</select>
         )}
       </FormControl>
     );
@@ -74,7 +74,7 @@ export default class ParamSelector extends Component {
                   ))
                 }</optgroup>
               ))
-          }</select>
+            }</select>
         )}
       </FormControl>
     );

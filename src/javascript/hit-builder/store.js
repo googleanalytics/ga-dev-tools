@@ -5,7 +5,7 @@ import {convertHitToParams, getInitialHitAndUpdateUrl} from './hit';
 import reducer from './reducers';
 
 
-let middlewear = [thunkMiddleware];
+const middlewear = [thunkMiddleware];
 
 
 // Adds a logger in non-production mode.
@@ -17,7 +17,7 @@ if (process.env.NODE_ENV != 'production') {
 }
 
 
-let createStoreWithMiddleware = applyMiddleware(...middlewear)(createStore);
+const createStoreWithMiddleware = applyMiddleware(...middlewear)(createStore);
 
 
 export default createStoreWithMiddleware(reducer, {

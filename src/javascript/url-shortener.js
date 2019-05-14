@@ -46,13 +46,13 @@ const noTokenError = new Error('No token provided');
 
 // authorizationEventFromThisTab allows us to manually send auth events
 const authorizationEventsFromThisTab = new BehaviorSubject(
-  localStorage.getItem(BITLY_TOKEN_STORAGE_KEY)
+    localStorage.getItem(BITLY_TOKEN_STORAGE_KEY)
 );
 
 const authorizationEventsFromOtherTabs = rxFromEvent(window, 'storage').pipe(
-  rxFilter(event => event.storageArea === window.localStorage),
-  rxFilter(event => event.key === BITLY_TOKEN_STORAGE_KEY),
-  rxMap(event => event.newValue),
+    rxFilter(event => event.storageArea === window.localStorage),
+    rxFilter(event => event.key === BITLY_TOKEN_STORAGE_KEY),
+    rxMap(event => event.newValue),
 );
 
 // This Observable provides a stream of authorization stream events.
@@ -60,21 +60,21 @@ const authorizationEventsFromOtherTabs = rxFromEvent(window, 'storage').pipe(
 // is sent to the observable. This observable merges events from two sources:
 // 'storage' events in the DOM, and authorizationEventFromThisTab, above.
 export const authorizationEvents = rxMerge(
-  authorizationEventsFromOtherTabs,
-  authorizationEventsFromThisTab,
+    authorizationEventsFromOtherTabs,
+    authorizationEventsFromThisTab,
 ).pipe(
-  // Normalize tokens; make everything falsey -> null
-  rxMap(token => token ? token : null),
-  // Only show tokens that differ from the previous one
-  distinctUntilChanged(),
+    // Normalize tokens; make everything falsey -> null
+    rxMap(token => token ? token : null),
+    // Only show tokens that differ from the previous one
+    distinctUntilChanged(),
 );
 
 // similar to authorizationEvents, this Observable provides a stream of
 // boolean true/false values, which corrospond to isAuthorized and
 // isNotAuthorized
 export const isAuthorizedEvents = authorizationEvents.pipe(
-  rxMap(token => token !== null),
-  distinctUntilChanged(),
+    rxMap(token => token !== null),
+    distinctUntilChanged(),
 );
 
 // These functions wrap localStorage.*Item, and emit events with
@@ -129,7 +129,7 @@ const BITLY_AUTH_PREMATURE_CLOSE_INTERVAL = 1000;
  *   If not provided, the user's default group is used.
  * @return {Promise} A promise resolved with the shortend URL.
  */
-export const shortenUrl = async(longUrl, bitlyGuid) => {
+export const shortenUrl = async (longUrl, bitlyGuid) => {
   // Attempt the API call with the stored token, but be ready to get a new
   // token and retry if it fails.
   try {
@@ -158,7 +158,7 @@ export const shortenUrl = async(longUrl, bitlyGuid) => {
   const bitlyClientId = window.BITLY_CLIENT_ID;
   if (!bitlyClientId) {
     throw new Error(
-      'No OAuth client ID available. Make sure to attach it as a ' +
+        'No OAuth client ID available. Make sure to attach it as a ' +
       'global in the server! This is a developer error, not a user error.'
     );
   }
@@ -184,10 +184,10 @@ export const shortenUrl = async(longUrl, bitlyGuid) => {
       ) {
         const data = event.data;
         if (data.error) {
- reject(new Error(data.error));
-} else {
- resolve(data);
-}
+          reject(new Error(data.error));
+        } else {
+          resolve(data);
+        }
       }
     };
     window.addEventListener('message', messageListener);
@@ -205,7 +205,7 @@ export const shortenUrl = async(longUrl, bitlyGuid) => {
     const childWindow = window.open(authUrl, '_blank');
     if (childWindow == null) {
       throw new Error(
-        'Couldn\'t open bit.ly authorization page. ' +
+          'Couldn\'t open bit.ly authorization page. ' +
         'Are you blocking popups?'
       );
     }
@@ -217,7 +217,7 @@ export const shortenUrl = async(longUrl, bitlyGuid) => {
     const intervalHandle = window.setInterval(() => {
       if (childWindow.closed) {
         reject(new Error(
-          'Authorization window closed before authorization was completed'
+            'Authorization window closed before authorization was completed'
         ));
       }
     }, BITLY_AUTH_PREMATURE_CLOSE_INTERVAL);
@@ -255,7 +255,7 @@ export const shortenUrl = async(longUrl, bitlyGuid) => {
 // JSON payload is returned. If checkForbidden is true, 403 errors cause the
 // forbiddenError object to be returned (as a rejection); this allows for
 // easily detecting this case for OAuth flow.
-export const bitlyApiFetch = async({
+export const bitlyApiFetch = async ({
   endpoint,
   token=null,
   options={},
@@ -310,7 +310,7 @@ export const bitlyApiFetch = async({
  *
  * @return {string} The shortened link.
  */
-const createBitlink = async({longUrl, guid=null, token, checkForbidden}) => {
+const createBitlink = async ({longUrl, guid=null, token, checkForbidden}) => {
   const realGuid = guid == null ?
     (await getBitlyGroup({token, checkForbidden})) :
     guid;
@@ -350,20 +350,20 @@ const createBitlinkCall = ({longUrl, token, guid, checkForbidden}) =>
       group_guid: guid,
     },
   })
-  .catch(error => {
-    // TODO(nathanwest): use a more structured error type
-    if (
-      error.message.includes('INVALID_ARG_LONG_URL') &&
+      .catch(error => {
+        // TODO(nathanwest): use a more structured error type
+        if (
+          error.message.includes('INVALID_ARG_LONG_URL') &&
       !longUrl.match(/^[a-zA-Z]+:\/\//)
-    ) {
-      throw new Error(
-        'Can\'t shorten URLs that don\'t have a scheme. ' +
+        ) {
+          throw new Error(
+              'Can\'t shorten URLs that don\'t have a scheme. ' +
         'Add \'http://\' or \'https://\' to the beginning of your URL.');
-    } else {
-      throw error;
-    }
-  })
-  .then(data => data.link);
+        } else {
+          throw error;
+        }
+      })
+      .then(data => data.link);
 
 
 // Get the authorized user's default bitly group.

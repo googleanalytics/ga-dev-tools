@@ -66,7 +66,7 @@ export default class HitBuilder extends React.Component {
    * @return {?Object}
    */
   getValidationMessageForParam(param) {
-    let message = this.props.validationMessages.find((m) => m.param === param);
+    const message = this.props.validationMessages.find((m) => m.param === param);
     return message && message.description;
   }
 
@@ -86,7 +86,7 @@ export default class HitBuilder extends React.Component {
 
   /** @return {Object} The React component. */
   render() {
-    let {params} = this.props;
+    const {params} = this.props;
 
     return (
       <div>
@@ -146,7 +146,7 @@ export default class HitBuilder extends React.Component {
             onClick={this.handleGenerateUuid} />
 
           {params.slice(4).map((param) => {
-            let isLast = (param === params[params.length - 1]);
+            const isLast = (param === params[params.length - 1]);
             return (
               <ParamElement
                 key={param.id}

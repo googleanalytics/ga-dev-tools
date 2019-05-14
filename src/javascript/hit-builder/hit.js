@@ -34,7 +34,7 @@ let id = 1;
  * @return {string} The default hit.
  */
 export function getInitialHitAndUpdateUrl() {
-  let query = location.search.slice(1);
+  const query = location.search.slice(1);
 
   if (query) {
     if (history && history.replaceState) {
@@ -55,14 +55,14 @@ export function getInitialHitAndUpdateUrl() {
  */
 export function convertHitToParams(hit = '') {
   // If the hit contains a "?", remove it and all characters before it.
-  let searchIndex = hit.indexOf('?');
+  const searchIndex = hit.indexOf('?');
   if (searchIndex > -1) hit = hit.slice(searchIndex + 1);
 
-  let query = querystring.parse(hit);
+  const query = querystring.parse(hit);
 
   // Create required params first, regardless of order in the hit.
-  let requiredParams = [];
-  for (let name of REQUIRED_PARAMS) {
+  const requiredParams = [];
+  for (const name of REQUIRED_PARAMS) {
     requiredParams.push({
       id: id++,
       name: name,
@@ -73,8 +73,8 @@ export function convertHitToParams(hit = '') {
   }
 
   // Create optional params after required params.
-  let optionalParams = map(query, (value, name) =>
-      ({name, value, id: id++, isOptional: true}));
+  const optionalParams = map(query, (value, name) =>
+    ({name, value, id: id++, isOptional: true}));
 
   return requiredParams.concat(optionalParams);
 }
@@ -86,8 +86,8 @@ export function convertHitToParams(hit = '') {
  * @return {string}
  */
 export function convertParamsToHit(params) {
-  let query = {};
-  for (let {name, value} of params) {
+  const query = {};
+  for (const {name, value} of params) {
     // `name` must be present, `value` can be an empty string.
     if (name && value != null) query[name] = value;
   }
