@@ -30,9 +30,9 @@ function setup() {
   $('#search-box').trigger('focus');
 
   accountSummaries.get().then(function(summaries) {
-    let urlHash = getMapFromHash();
-    let validIds = returnValidIds(summaries, urlHash);
-    let allIds = getAllIds(summaries, validIds);
+    const urlHash = getMapFromHash();
+    const validIds = returnValidIds(summaries, urlHash);
+    const allIds = getAllIds(summaries, validIds);
 
     setViewSelector(allIds.viewId);
     site.setReadyState();
@@ -45,25 +45,25 @@ function setup() {
  * view names and ids. Not case sensitive. Displays the results in the DOM.
  */
 function handleSearch() {
-  let searchTerm = $('#search-box').val().toLowerCase();
+  const searchTerm = $('#search-box').val().toLowerCase();
 
   accountSummaries.get().then(function(summaries) {
-    let results = [];
+    const results = [];
     if (searchTerm) {
       for (let i = 0; i < summaries.all().length; i++) {
-        let account = summaries.all()[i];
+        const account = summaries.all()[i];
         if (!account.webProperties) {
           continue;
         }
         for (let j = 0; j < account.webProperties.length; j++) {
-          let property = account.webProperties[j];
+          const property = account.webProperties[j];
           if (!property.profiles) {
             continue;
           }
           for (let k = 0; k < property.profiles.length; k++) {
-            let view = property.profiles[k];
-            let tableId = 'ga:' + view.id;
-            let match = tableId.indexOf(searchTerm) > -1 ||
+            const view = property.profiles[k];
+            const tableId = 'ga:' + view.id;
+            const match = tableId.indexOf(searchTerm) > -1 ||
                         view.id.indexOf(searchTerm) > -1 ||
                         view.name.toLowerCase().indexOf(searchTerm) > -1 ||
                         property.id.toLowerCase().indexOf(searchTerm) > -1 ||
@@ -106,7 +106,7 @@ function updateResults(results, query = undefined) {
     (text => escapeHtml(text).replace(regex, '<mark>$1</mark>')) :
     (text => escapeHtml(text));
 
-  let searchResults = $('#results-body');
+  const searchResults = $('#results-body');
   if (results.length === 0) {
     searchResults.append('<td colspan="4">No results found</td>');
   } else {
@@ -143,16 +143,16 @@ function updateResults(results, query = undefined) {
  * @param {String} viewId The view ID to set the viewSelector to
  */
 function setViewSelector(viewId) {
-  let viewSelector = new gapi.analytics.ext.ViewSelector2({
+  const viewSelector = new gapi.analytics.ext.ViewSelector2({
     container: 'view-selector-container',
   }).execute();
 
   viewSelector.set({viewId: viewId});
 
-  let getIdsAndUpdateResults = () => {
+  const getIdsAndUpdateResults = () => {
     // Use a try/catch block in case we have sparse properties or accounts.
     try {
-      let allObjects = {
+      const allObjects = {
         view: viewSelector.view,
         property: viewSelector.property,
         account: viewSelector.account,
@@ -182,15 +182,15 @@ function setViewSelector(viewId) {
  */
 function returnValidIds(summaries, ids) {
   if (ids.viewId) {
-    let view = summaries.getProfile(ids.viewId);
+    const view = summaries.getProfile(ids.viewId);
     ids.viewId = view ? view.id : null;
   }
   if (ids.propertyId) {
-    let property = summaries.getProperty(ids.propertyId);
+    const property = summaries.getProperty(ids.propertyId);
     ids.propertyId = property ? property.id : null;
   }
   if (ids.accountId) {
-    let account = summaries.getAccount(ids.accountId);
+    const account = summaries.getAccount(ids.accountId);
     ids.accountId = account ? account.id : null;
   }
   return ids;
@@ -212,7 +212,7 @@ function returnValidIds(summaries, ids) {
  *     returnObject is true, will return the account objects, not the IDs.
  */
 function getAllIds(summaries, ids, returnObject) {
-  let accountObject = {};
+  const accountObject = {};
   if (ids.viewId) {
     accountObject.view = summaries.getView(ids.viewId);
     accountObject.property = summaries.getPropertyByViewId(ids.viewId);
@@ -237,8 +237,8 @@ function getAllIds(summaries, ids, returnObject) {
   }
 
   return returnObject ? accountObject : {viewId: accountObject.view.id,
-                                         propertyId: accountObject.property.id,
-                                         accountId: accountObject.account.id};
+    propertyId: accountObject.property.id,
+    accountId: accountObject.account.id};
 }
 
 
@@ -250,11 +250,11 @@ function getAllIds(summaries, ids, returnObject) {
  * @return {Object} An object containing the parameters and values in the hash
  */
 function getMapFromHash() {
-  let urlHash = document.location.hash.substr(1);
-  let params = urlHash.split('&');
-  let map = {};
+  const urlHash = document.location.hash.substr(1);
+  const params = urlHash.split('&');
+  const map = {};
   for (let i = 0, param; param = params[i]; i++) {
-    let fragment = param.split('=');
+    const fragment = param.split('=');
     map[fragment[0]] = fragment[1];
   }
   return map;

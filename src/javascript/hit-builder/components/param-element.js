@@ -85,7 +85,7 @@ export default class ParamElement extends React.Component {
    * @return {Object}
    */
   renderLabel() {
-    let {name} = this.state;
+    const {name} = this.state;
     if (this.props.param.required) {
       return <label className="HitBuilderParam-label">{name}</label>;
     } else {
@@ -158,7 +158,7 @@ export default class ParamElement extends React.Component {
   */
   componentWillReceiveProps(nextProps) {
     if (nextProps.param != this.props.param) {
-      let {name, value} = nextProps.param;
+      const {name, value} = nextProps.param;
       this.setState({name, value});
     }
   }

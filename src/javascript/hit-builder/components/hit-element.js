@@ -75,7 +75,7 @@ export default class HitElement extends React.Component {
    * to indicate the hit was successfully sent. After 1 second the button
    * gets restored to its original state.
    */
-  sendHit = async() => {
+  sendHit = async () => {
     await $.ajax({
       method: 'POST',
       url: 'https://www.google-analytics.com/collect',
@@ -98,7 +98,7 @@ export default class HitElement extends React.Component {
    * original state.
    */
   copyHitPayload = () => {
-    let hitPayload = ReactDOM.findDOMNode(this.refs.hitPayload);
+    const hitPayload = ReactDOM.findDOMNode(this.refs.hitPayload);
     if (copyElementText(hitPayload)) {
       this.setState({hitPayloadCopied: true, hitUriCopied: false});
 
@@ -111,7 +111,7 @@ export default class HitElement extends React.Component {
       // After three second, remove the success checkbox.
       clearTimeout(this.hitPayloadCopiedTimeout_);
       this.hitPayloadCopiedTimeout_ = setTimeout(() =>
-          this.setState({hitPayloadCopied: false}), ACTION_TIMEOUT);
+        this.setState({hitPayloadCopied: false}), ACTION_TIMEOUT);
     } else {
       // TODO(philipwalton): handle error case
     }
@@ -124,7 +124,7 @@ export default class HitElement extends React.Component {
    * original state.
    */
   copyShareUrl = () => {
-    let shareUrl = ReactDOM.findDOMNode(this.refs.shareUrl);
+    const shareUrl = ReactDOM.findDOMNode(this.refs.shareUrl);
     if (copyElementText(shareUrl)) {
       this.setState({hitUriCopied: true, hitPayloadCopied: false});
 
@@ -137,7 +137,7 @@ export default class HitElement extends React.Component {
       // After three second, remove the success checkbox.
       clearTimeout(this.hitUriCopiedTimeout_);
       this.hitUriCopiedTimeout_ = setTimeout(() =>
-          this.setState({hitUriCopied: false}), ACTION_TIMEOUT);
+        this.setState({hitUriCopied: false}), ACTION_TIMEOUT);
     } else {
       // TODO(philipwalton): handle error case
     }
@@ -210,11 +210,11 @@ export default class HitElement extends React.Component {
    * @return {Object}
    */
   renderHitActions() {
-    let {props, state} = this;
-    let {actions, hitStatus} = props;
+    const {props, state} = this;
+    const {actions, hitStatus} = props;
 
     if (hitStatus != 'VALID') {
-      let buttonText = (hitStatus == 'INVALID' ? 'Rev' : 'V') +
+      const buttonText = (hitStatus == 'INVALID' ? 'Rev' : 'V') +
           'alidate hit';
 
       return (
@@ -229,7 +229,7 @@ export default class HitElement extends React.Component {
       );
     }
 
-    let sendHitButton = (
+    const sendHitButton = (
       <IconButton
         className="Button Button--success Button--withIcon"
         type={state.hitSent ? 'check' : 'send'}

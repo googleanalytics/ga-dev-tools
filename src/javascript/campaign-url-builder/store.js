@@ -41,9 +41,9 @@ function* getMiddlewares() {
  * @return {Object} The state object.
  */
 function getStoredInitialState() {
-  let websiteUrl = db.get('campaign-url-builder:websiteUrl');
-  let params = db.get('campaign-url-builder:params');
-  let settings = db.get('campaign-url-builder:settings');
+  const websiteUrl = db.get('campaign-url-builder:websiteUrl');
+  const params = db.get('campaign-url-builder:params');
+  const settings = db.get('campaign-url-builder:settings');
 
   return {
     websiteUrl: typeof websiteUrl === 'string' ? websiteUrl : '',
@@ -58,17 +58,17 @@ const composeEnhancers = process.env.NODE_ENV !== 'production' ?
 
 
 const store = createStore(
-  reducer,
-  getStoredInitialState(),
-  composeEnhancers(
-    applyMiddleware(...getMiddlewares())
-  )
+    reducer,
+    getStoredInitialState(),
+    composeEnhancers(
+        applyMiddleware(...getMiddlewares())
+    )
 );
 
 // TODO(philipwalton): create middleware to save the params and settings
 // to localStorage.
 store.subscribe(function() {
-  let {websiteUrl, params, settings} = store.getState();
+  const {websiteUrl, params, settings} = store.getState();
   db.set('campaign-url-builder:websiteUrl', websiteUrl);
   db.set('campaign-url-builder:params', params);
   db.set('campaign-url-builder:settings', settings);

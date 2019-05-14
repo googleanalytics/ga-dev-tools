@@ -33,7 +33,7 @@ function setAuthorizedState() {
  */
 export function handleAuthorizationSuccess() {
   return function(dispatch, getState) {
-    let {useDefinition} = getState().settings;
+    const {useDefinition} = getState().settings;
     dispatch(setAuthorizedState());
     dispatch(updateSegmentsOptions(useDefinition));
   };

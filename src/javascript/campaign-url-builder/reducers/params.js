@@ -24,7 +24,7 @@ import {sanitizeParams} from '../params';
  * @return {Array} The updated state.
  */
 export default function params(state = {}, action) {
-  let params = sanitizeParams(action.params);
+  const params = sanitizeParams(action.params);
 
   switch (action.type) {
     case types.UPDATE_PARAMS:

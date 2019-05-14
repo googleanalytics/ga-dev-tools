@@ -35,7 +35,7 @@ export function sleep(amount) {
  */
 export function copyElementText(element) {
   let success = false;
-  let range = document.createRange();
+  const range = document.createRange();
   range.selectNode(element);
 
   window.getSelection().removeAllRanges();
@@ -60,8 +60,8 @@ export function copyElementText(element) {
  */
 export function loadScript(url) {
   return new Promise((resolve, reject) => {
-    let js = document.createElement('script');
-    let fs = document.getElementsByTagName('script')[0];
+    const js = document.createElement('script');
+    const fs = document.getElementsByTagName('script')[0];
     js.src = url;
     fs.parentNode.insertBefore(js, fs);
     js.onload = resolve;
@@ -148,7 +148,7 @@ export const encodeQuery = query => {
   if (query) {
     const encoded = map(query, (value, key) =>
       `${encodeURIComponent(key)}=${encodeURIComponent(value)}`
-      ).join('&');
+    ).join('&');
     return encoded ? `?${encoded}` : '';
   } else {
     return '';
@@ -172,10 +172,10 @@ export const promiseMemoize = func => {
     }
 
     const promise = new Promise(res => res(func(argument)))
-    .catch(error => {
-      cache.delete(argument);
-      throw error;
-    });
+        .catch(error => {
+          cache.delete(argument);
+          throw error;
+        });
     cache.set(argument, promise);
     return promise;
   };
@@ -219,6 +219,6 @@ export const cleanupingPromise = executor => {
   };
 
   return Promise.all(cleanups.map(
-    cleanup => innerPromise.finally(() => cleanup())
+      cleanup => innerPromise.finally(() => cleanup())
   )).then(() => innerPromise);
 };

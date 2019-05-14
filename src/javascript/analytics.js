@@ -172,7 +172,7 @@ export const trackNoGoogleAnalyticsAccounts = () => {
  * and in non-production environments, hits are aborted.
  */
 const createTrackers = () => {
-  for (let tracker of ALL_TRACKERS) {
+  for (const tracker of ALL_TRACKERS) {
     window.ga('create', tracker.trackingId, 'auto', tracker.name, {
       siteSpeedSampleRate: 10,
     });
@@ -185,12 +185,12 @@ const createTrackers = () => {
   // Log hits in non-production environments.
   if (process.env.NODE_ENV != 'production') {
     gaAll('set', 'sendHitTask', function(model) {
-      let paramsToIgnore = ['v', 'did', 't', 'tid', 'ec', 'ea', 'el', 'ev',
-          'a', 'z', 'ul', 'de', 'sd', 'sr', 'vp', 'je', 'fl', 'jid'];
+      const paramsToIgnore = ['v', 'did', 't', 'tid', 'ec', 'ea', 'el', 'ev',
+        'a', 'z', 'ul', 'de', 'sd', 'sr', 'vp', 'je', 'fl', 'jid'];
 
-      let hitType = model.get('&t');
-      let hitPayload = model.get('hitPayload');
-      let hit = hitPayload
+      const hitType = model.get('&t');
+      const hitPayload = model.get('hitPayload');
+      const hit = hitPayload
           .split('&')
           .map(decodeURIComponent)
           .filter((item) => {
@@ -238,7 +238,7 @@ const trackErrors = () => {
   };
 
   // Replay any stored load error events.
-  for (let event of loadErrorEvents) {
+  for (const event of loadErrorEvents) {
     trackErrorEvent(event);
   }
 
@@ -385,10 +385,10 @@ const trackTimeToFirstConsistentlyInteractive = () => {
       });
     }
   })
-  .catch((err) => trackError(err))
-  .then(() => {
-    window.removeEventListener('unload', postLoadAbandonTracking);
-  });
+      .catch((err) => trackError(err))
+      .then(() => {
+        window.removeEventListener('unload', postLoadAbandonTracking);
+      });
 };
 
 

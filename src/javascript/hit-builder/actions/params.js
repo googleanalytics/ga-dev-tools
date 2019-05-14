@@ -17,7 +17,7 @@ import {setHitStatus} from './hit-status';
 import * as types from './types';
 import {setValidationMessages} from './validation-messages';
 import {convertParamsToHit, convertHitToParams,
-        getHitValidationResult} from '../hit';
+  getHitValidationResult} from '../hit';
 import {gaAll} from '../../analytics';
 import AlertDispatcher from '../../components/alert-dispatcher';
 
@@ -96,9 +96,9 @@ export function editParamValue(id, value) {
  */
 export function updateHit(newHit) {
   return (dispatch, getState) => {
-    let oldHit = convertParamsToHit(getState().params);
+    const oldHit = convertParamsToHit(getState().params);
     if (oldHit != newHit) {
-      let params = convertHitToParams(newHit);
+      const params = convertHitToParams(newHit);
       dispatch({type: types.REPLACE_PARAMS, params});
       resetHitValidationStatus(dispatch);
     }
@@ -113,7 +113,7 @@ export function updateHit(newHit) {
  */
 export function validateHit() {
   const formatMessage = (message) => {
-    let linkRegex = /Please see http:\/\/goo\.gl\/a8d4RP#\w+ for details\.$/;
+    const linkRegex = /Please see http:\/\/goo\.gl\/a8d4RP#\w+ for details\.$/;
     return {
       param: message.parameter,
       description: message.description.replace(linkRegex, '').trim(),
@@ -121,20 +121,20 @@ export function validateHit() {
       code: message.messageCode,
     };
   };
-  return async(dispatch, getState) => {
-    let hit = convertParamsToHit(getState().params);
+  return async (dispatch, getState) => {
+    const hit = convertParamsToHit(getState().params);
     dispatch(setHitStatus('VALIDATING'));
 
     try {
-      let data = await getHitValidationResult(hit);
+      const data = await getHitValidationResult(hit);
 
       // In some cases the query will have changed before the response gets
       // back, so we need to check that the result is for the current query.
       // If it's not, ignore it.
       if (data.hit != convertParamsToHit(getState().params)) return;
 
-      let result = data.response.hitParsingResult[0];
-      let validationMessages = result.parserMessage;
+      const result = data.response.hitParsingResult[0];
+      const validationMessages = result.parserMessage;
 
       if (result.valid) {
         dispatch(setHitStatus('VALID'));

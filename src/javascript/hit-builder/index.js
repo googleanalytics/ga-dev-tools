@@ -50,7 +50,7 @@ function mapDispatchToProps(dispatch) {
 }
 
 
-let HitBuilderApp = connect(mapStateToProps, mapDispatchToProps)(HitBuilder);
+const HitBuilderApp = connect(mapStateToProps, mapDispatchToProps)(HitBuilder);
 
 
 /**
@@ -58,10 +58,10 @@ let HitBuilderApp = connect(mapStateToProps, mapDispatchToProps)(HitBuilder);
  */
 function render() {
   ReactDOM.render(
-    <Provider store={store}>
-      <HitBuilderApp />
-    </Provider>,
-    document.getElementById('hit-builder')
+      <Provider store={store}>
+        <HitBuilderApp />
+      </Provider>,
+      document.getElementById('hit-builder')
   );
 }
 

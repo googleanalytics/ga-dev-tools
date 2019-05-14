@@ -67,8 +67,8 @@ export default class SearchSuggest extends React.Component {
    * @param {Object} e The React event wrapper.
    */
   handleChange(e) {
-    let value = e.target.value;
-    let name = this.props.name;
+    const value = e.target.value;
+    const name = this.props.name;
 
     this.setState({
       value: value,
@@ -85,9 +85,9 @@ export default class SearchSuggest extends React.Component {
    * @param {Object} e The React event wrapper.
    */
   handleKeyDown(e) {
-    let selectedMatchIndex = this.state.selectedMatchIndex;
-    let selectedMatch = this.state.matches[selectedMatchIndex];
-    let totalMatches = this.state.matches.length;
+    const selectedMatchIndex = this.state.selectedMatchIndex;
+    const selectedMatch = this.state.matches[selectedMatchIndex];
+    const totalMatches = this.state.matches.length;
 
     switch (e.keyCode) {
       case keyCodes.DOWN_ARROW:
@@ -149,7 +149,7 @@ export default class SearchSuggest extends React.Component {
    * Updates the component state to show the matches dropdown.
    */
   setShowMatchesState() {
-    let {spaceAbove, spaceBelow} = this.calculateDropdownSpace();
+    const {spaceAbove, spaceBelow} = this.calculateDropdownSpace();
     this.setState({
       open: true,
       selectedMatchIndex: 0,
@@ -202,7 +202,7 @@ export default class SearchSuggest extends React.Component {
    */
   matchesOption(search, option) {
     search = search.toLowerCase();
-    for (let key in option) {
+    for (const key in option) {
       if (option[key].toLowerCase().includes(search)) return true;
     }
     return false;
@@ -229,7 +229,7 @@ export default class SearchSuggest extends React.Component {
     // Only run the below calculations if the dropdown is open.
     if (!this.state.open) return;
 
-    let {spaceAbove, spaceBelow} = this.calculateDropdownSpace();
+    const {spaceAbove, spaceBelow} = this.calculateDropdownSpace();
 
     // Don't update the `above` state if there is space in both directions.
     if (spaceAbove < 0 || spaceBelow < 0) {
@@ -244,16 +244,16 @@ export default class SearchSuggest extends React.Component {
    * @return {Object} An object with `spaceAbove` and `spaceBelow` properties.
    */
   calculateDropdownSpace() {
-    let $input = $(ReactDOM.findDOMNode(this.refs.input));
-    let $dropdown = $(ReactDOM.findDOMNode(this.refs.matches));
+    const $input = $(ReactDOM.findDOMNode(this.refs.input));
+    const $dropdown = $(ReactDOM.findDOMNode(this.refs.matches));
 
-    let inputTop = $input.offset().top;
-    let inputBottom = inputTop + $input.outerHeight();
-    let dropdownHeight = $dropdown.outerHeight();
-    let viewportTop = $(window).scrollTop();
-    let viewportBottom = viewportTop + $(window).height();
-    let spaceAbove = (inputTop - dropdownHeight) - viewportTop;
-    let spaceBelow = viewportBottom - (inputBottom + dropdownHeight);
+    const inputTop = $input.offset().top;
+    const inputBottom = inputTop + $input.outerHeight();
+    const dropdownHeight = $dropdown.outerHeight();
+    const viewportTop = $(window).scrollTop();
+    const viewportBottom = viewportTop + $(window).height();
+    const spaceAbove = (inputTop - dropdownHeight) - viewportTop;
+    const spaceBelow = viewportBottom - (inputBottom + dropdownHeight);
 
     return {spaceAbove, spaceBelow};
   }
@@ -266,7 +266,7 @@ export default class SearchSuggest extends React.Component {
    * @return {string} The jQuery formatted event argument.
    */
   namespaceEvents(...events) {
-    let namespace = '.SearchSuggest:' + this.props.name;
+    const namespace = '.SearchSuggest:' + this.props.name;
     return map(events, (event) => event + namespace).join(' ');
   }
 
@@ -300,7 +300,7 @@ export default class SearchSuggest extends React.Component {
    */
   componentWillReceiveProps(props) {
     if (props.options != this.props.options) {
-      let matches = this.findMatches(this.state.value, props.options);
+      const matches = this.findMatches(this.state.value, props.options);
       this.setState({matches});
     }
     if (props.value != this.state.value) {
@@ -348,17 +348,17 @@ export default class SearchSuggest extends React.Component {
     if (this.isKeyboardScrolling_) {
       // TODO(philipwalton): is there a more React-y way of getting access
       // to this node? Using refs seems like overkill...
-      let selectedElement = ReactDOM.findDOMNode(this.refs.matches)
+      const selectedElement = ReactDOM.findDOMNode(this.refs.matches)
           .children[this.state.selectedMatchIndex];
 
       // If there is no selected match, return immediately.
       if (!selectedElement) return;
 
-      let selectedElementOffsetTop = selectedElement.offsetTop;
-      let selectedElementClientHeight = selectedElement.clientHeight;
-      let container = ReactDOM.findDOMNode(this.refs.matches);
-      let containerScrollTop = container.scrollTop;
-      let containerClientHeight = container.clientHeight;
+      const selectedElementOffsetTop = selectedElement.offsetTop;
+      const selectedElementClientHeight = selectedElement.clientHeight;
+      const container = ReactDOM.findDOMNode(this.refs.matches);
+      const containerScrollTop = container.scrollTop;
+      const containerClientHeight = container.clientHeight;
 
       // If the select match element is below the visible part of the container.
       if (selectedElementOffsetTop + selectedElementClientHeight >

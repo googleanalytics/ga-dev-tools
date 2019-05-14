@@ -31,10 +31,10 @@ const CampaignUrlBuilderApp = connect(
  */
 function render() {
   ReactDOM.render(
-    <Provider store={store}>
-      <CampaignUrlBuilderApp />
-    </Provider>,
-    document.getElementById('campaign-url-builder')
+      <Provider store={store}>
+        <CampaignUrlBuilderApp />
+      </Provider>,
+      document.getElementById('campaign-url-builder')
   );
 }
 

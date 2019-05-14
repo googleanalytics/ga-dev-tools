@@ -55,7 +55,7 @@ export default class Datepicker extends React.Component {
    */
   componentDidMount() {
     let isShowing = false;
-    let opts = {
+    const opts = {
       changeMonth: true,
       changeYear: true,
       constrainInput: false,
@@ -68,8 +68,8 @@ export default class Datepicker extends React.Component {
       },
     };
 
-    let $input = $(this.refs.input);
-    let $icon = $(this.refs.icon);
+    const $input = $(this.refs.input);
+    const $icon = $(this.refs.icon);
 
     $input.datepicker(opts).on('change', (e) => {
       this.handleChange(e);

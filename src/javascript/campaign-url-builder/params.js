@@ -41,8 +41,8 @@ export const REQUIRED_PARAMS = PARAMS.slice(0, 1);
  * @return {Object} The extracted params and the bare, resulting string.
  */
 function extractParamsFromFragment(fragment) {
-  let extractedFragmentParams = {};
-  let bareFragment = fragment.replace(
+  const extractedFragmentParams = {};
+  const bareFragment = fragment.replace(
       /&?(utm_(?:campaign|source|medium|term|content))(?:=([^&]+))?/g,
       (match, name, value) => {
         extractedFragmentParams[name] = value;
@@ -61,11 +61,11 @@ function extractParamsFromFragment(fragment) {
  * @return {Object} The extracted params and the bare, resulting string.
  */
 function extractParamsFromQuery(query) {
-  let queryParams = qs.parse(query);
-  let extractedQueryParams = {};
-  let nonQueryParams = {};
+  const queryParams = qs.parse(query);
+  const extractedQueryParams = {};
+  const nonQueryParams = {};
 
-  for (let param of Object.keys(queryParams)) {
+  for (const param of Object.keys(queryParams)) {
     if (PARAMS.includes(param)) {
       extractedQueryParams[param] = queryParams[param];
     } else {
@@ -73,7 +73,7 @@ function extractParamsFromQuery(query) {
     }
   }
 
-  let bareQuery = qs.stringify(nonQueryParams);
+  const bareQuery = qs.stringify(nonQueryParams);
 
   return {bareQuery, extractedQueryParams};
 }
@@ -87,26 +87,26 @@ function extractParamsFromQuery(query) {
  * @return {Object} The extracted params and the new URL.
  */
 export function extractParamsFromWebsiteUrl(websiteUrl) {
-  let websiteUrlObj = url.parse(websiteUrl);
-  let query = (websiteUrlObj.search && websiteUrlObj.search.slice(1)) || '';
-  let fragment = (websiteUrlObj.hash && websiteUrlObj.hash.slice(1)) || '';
+  const websiteUrlObj = url.parse(websiteUrl);
+  const query = (websiteUrlObj.search && websiteUrlObj.search.slice(1)) || '';
+  const fragment = (websiteUrlObj.hash && websiteUrlObj.hash.slice(1)) || '';
 
-  let {bareFragment, extractedFragmentParams} =
+  const {bareFragment, extractedFragmentParams} =
       extractParamsFromFragment(fragment);
 
   websiteUrlObj.hash = bareFragment ? `#${bareFragment}` : null;
 
-  let {bareQuery, extractedQueryParams} =
+  const {bareQuery, extractedQueryParams} =
       extractParamsFromQuery(query);
 
   websiteUrlObj.search = bareQuery ? `?${bareQuery}` : null;
 
-  let params = {
+  const params = {
     ...extractedQueryParams,
     ...extractedFragmentParams,
   };
 
-  let bareUrl = url.format(websiteUrlObj);
+  const bareUrl = url.format(websiteUrlObj);
 
   return {params, bareUrl};
 }
@@ -121,7 +121,7 @@ export function extractParamsFromWebsiteUrl(websiteUrl) {
  * @return {string} The URL with the params added.
  */
 export function addParamsToUrl(bareUrl, params, useFragment) {
-  let bareUrlObj = url.parse(bareUrl);
+  const bareUrlObj = url.parse(bareUrl);
 
   if (useFragment) {
     if (!bareUrlObj.hash) {
@@ -132,7 +132,7 @@ export function addParamsToUrl(bareUrl, params, useFragment) {
       bareUrlObj.hash += `&${qs.stringify(params)}`;
     }
   } else {
-    let queryParams = qs.parse(bareUrlObj.query);
+    const queryParams = qs.parse(bareUrlObj.query);
     Object.assign(queryParams, params);
     bareUrlObj.search = `?${qs.stringify(queryParams)}`;
   }
@@ -151,11 +151,11 @@ export function addParamsToUrl(bareUrl, params, useFragment) {
  * @return {Object} The sanitized params
  */
 export function sanitizeParams(params, opts = {}) {
-  let sanitizedParams = {};
+  const sanitizedParams = {};
 
   if (params && typeof params == 'object') {
-    for (let param of PARAMS) {
-      let value = params[param];
+    for (const param of PARAMS) {
+      const value = params[param];
 
       // The param value can only be a string.
       if (typeof value != 'string') continue;

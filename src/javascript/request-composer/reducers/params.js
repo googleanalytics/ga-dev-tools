@@ -22,7 +22,7 @@ import * as types from '../actions/types';
  * @return {Object} The updated state with the new parameters.
  */
 export default function params(state = {}, action) {
-  let {params} = action;
+  const {params} = action;
 
   switch (action.type) {
     case types.UPDATE_PARAMS:

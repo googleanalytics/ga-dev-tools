@@ -16,7 +16,7 @@
 import * as types from '../actions/types';
 
 
-let defaultOptions = {
+const defaultOptions = {
   metrics: [],
   dimensions: [],
   sort: [],
@@ -31,7 +31,7 @@ let defaultOptions = {
  * @return {Array} The updated state.
  */
 export default function select2Options(state = defaultOptions, action) {
-  let {select2Options} = action;
+  const {select2Options} = action;
 
   switch (action.type) {
     case types.UPDATE_SELECT2_OPTIONS:
