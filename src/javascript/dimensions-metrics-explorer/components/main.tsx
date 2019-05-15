@@ -5,23 +5,34 @@ import SearchBox from './searchBox'
 // Same as `useState`, but also store the value in `localStorage` with a
 // `key` whenever it is updated, and propogate changes to `localStorage` back
 // to the state. Only supports string values.
-function useLocalStorage(key: string, defaultValue: string): [string, (newValue: string) => void] {
-	const storedValue = window.localStorage.getItem(key);
-	const initialValue = storedValue === null ? defaultValue : storedValue;
+function useLocalStorage(
+	key: string,
+	initialValue: string | (() => string),
+): [string, React.Dispatch<React.SetStateAction<string>>] {
+	const [currentValue, setValue] = React.useState(() => {
+		const storedValue = window.localStorage.getItem(key);
+		return (
+			storedValue !== null ? storedValue :
+			initialValue instanceof Function ? initialValue() :
+			initialValue
+		);
+	})
 
-	const [currentValue, setValue] = React.useState(initialValue);
-
-	const setValueAndStore = (value: string) => {
-		setValue(value);
-		window.localStorage.setItem(key, value);
-	}
+	const setValueAndStore = React.useCallback(
+		(value: React.SetStateAction<string>) => setValue((oldValue: string) => {
+			let newValue = value instanceof Function ? value(oldValue) : value;
+			window.localStorage.setItem(key, newValue);
+			return newValue;
+		}),
+		[setValue, key]
+	)
 
 	React.useEffect(() => {
 		const listener = (event: StorageEvent) => {
 			if(event.storageArea === window.localStorage) {
 				if(event.key === null) {
 					// null key means there was a clear event
-					setValue(defaultValue)
+					setValue(initialValue instanceof Function ? initialValue() : initialValue)
 				} else if(event.key === key) {
 					setValue(event.newValue);
 				}
@@ -31,7 +42,7 @@ function useLocalStorage(key: string, defaultValue: string): [string, (newValue:
 		window.addEventListener("storage", listener);
 
 		return () => window.removeEventListener("storage", listener);
-	}, [setValue, defaultValue]);
+	}, [key, setValue, initialValue]);
 
 	return [currentValue, setValueAndStore]
 }
@@ -40,12 +51,25 @@ function useLocalStorage(key: string, defaultValue: string): [string, (newValue:
 // strings, and requires a `fromString` function to convert them back to T.
 function useTypedLocalStorage<T>(
 	key: string,
-	defaultValue: T,
+	initialValue: T | (() => T),
 	fromString: (value: string) => T,
-): [T, (newValue: T) => void] {
-	const [value, setValue] = useLocalStorage(key, defaultValue.toString());
-	const setTypedValue = React.useCallback((value: T) => setValue(value.toString()), [setValue]);
-	return [fromString(value), setTypedValue]
+): [T, React.Dispatch<React.SetStateAction<T>>] {
+	const getInitialString = React.useCallback(
+		() => initialValue instanceof Function ? initialValue().toString() : initialValue.toString(),
+		[initialValue]
+	);
+
+	const [currentString, setString] = useLocalStorage(key, getInitialString);
+
+	const setValue = React.useCallback((value: React.SetStateAction<T>) => setString((oldString: string) => {
+		if(value instanceof Function) {
+			return value(fromString(oldString)).toString();
+		} else {
+			return value.toString();
+		}
+	}), [setString, fromString]);
+
+	return [fromString(currentString), setValue]
 }
 
 const Main: React.FC = () => {
