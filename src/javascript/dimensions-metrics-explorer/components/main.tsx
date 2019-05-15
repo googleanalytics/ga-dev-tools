@@ -3,12 +3,15 @@ import * as React from 'react';
 import SearchBox from './searchBox'
 
 // Same as `useState`, but also store the value in `localStorage` with a
-// `key` whenever it is updated, and propogate changes to `localStorage` back
-// to the state. Only supports string values.
+// `key` whenever it is updated, and initialize the state from `localStorage`,
+// if present. If `subscribe` is true, also propogate changes from localStorage
+// from other tabs into the state.
 function useLocalStorage(
 	key: string,
 	initialValue: string | (() => string),
+	subscribe: boolean = true,
 ): [string, React.Dispatch<React.SetStateAction<string>>] {
+	// Set up the state; initialize from localStorage if available.
 	const [currentValue, setValue] = React.useState(() => {
 		const storedValue = window.localStorage.getItem(key);
 		return (
@@ -18,6 +21,7 @@ function useLocalStorage(
 		);
 	})
 
+	// Create a wrapper around setValue that also stores to localStorage
 	const setValueAndStore = React.useCallback(
 		(value: React.SetStateAction<string>) => setValue((oldValue: string) => {
 			let newValue = value instanceof Function ? value(oldValue) : value;
@@ -27,55 +31,63 @@ function useLocalStorage(
 		[setValue, key]
 	)
 
+	// If subscribe is true, subscribe to localStorage events and call
+	// setValue when there are changes
 	React.useEffect(() => {
-		const listener = (event: StorageEvent) => {
-			if(event.storageArea === window.localStorage) {
-				if(event.key === null) {
-					// null key means there was a clear event
-					setValue(initialValue instanceof Function ? initialValue() : initialValue)
-				} else if(event.key === key) {
-					setValue(event.newValue);
+		if(subscribe) {
+			const listener = (event: StorageEvent) => {
+				if(event.storageArea === window.localStorage) {
+					if(event.key === null) {
+						// null key means there was a clear event
+						setValue(initialValue instanceof Function ? initialValue() : initialValue)
+					} else if(event.key === key) {
+						setValue(event.newValue);
+					}
 				}
 			}
+
+			window.addEventListener("storage", listener);
+
+			return () => window.removeEventListener("storage", listener);
 		}
+	}, [key, setValue, initialValue, subscribe]);
 
-		window.addEventListener("storage", listener);
-
-		return () => window.removeEventListener("storage", listener);
-	}, [key, setValue, initialValue]);
-
-	return [currentValue, setValueAndStore]
+	return [currentValue, setValueAndStore];
 }
 
-// Same as `useLocalStorage`, but typed. Uses `toString` to convert values to
-// strings, and requires a `fromString` function to convert them back to T.
+// Same as `useLocalStorage`, but typed. Uses `JSON.parse` and
+// `JSON.stringify`` to convert values back and forth between strings
+// in `localStorage`.
 function useTypedLocalStorage<T>(
 	key: string,
 	initialValue: T | (() => T),
-	fromString: (value: string) => T,
+	subscribe: boolean = true,
 ): [T, React.Dispatch<React.SetStateAction<T>>] {
 	const getInitialString = React.useCallback(
 		() => initialValue instanceof Function ? initialValue().toString() : initialValue.toString(),
 		[initialValue]
 	);
 
-	const [currentString, setString] = useLocalStorage(key, getInitialString);
+	const [currentString, setString] = useLocalStorage(key, getInitialString, subscribe);
 
 	const setValue = React.useCallback((value: React.SetStateAction<T>) => setString((oldString: string) => {
 		if(value instanceof Function) {
-			return value(fromString(oldString)).toString();
+			return JSON.stringify(value(JSON.parse(oldString)));
 		} else {
-			return value.toString();
+			return JSON.stringify(value);
 		}
-	}), [setString, fromString]);
+	}), [setString]);
 
-	return [fromString(currentString), setValue]
+	return [JSON.parse(currentString), setValue]
 }
+
+// Quick helper to convert a string value (via boolean.toString()) back to a boolean
+const isTrue = value => value === 'true'
 
 const Main: React.FC = () => {
 	const [searchText, setSearchText] = useLocalStorage("searchText", "");
-	const [allowDeprecated, setAllowDeprecated] = useTypedLocalStorage("allowDeprecated", false, value => value === 'true');
-	const [onlySegments, setOnlySegments] = useTypedLocalStorage("onlySegments", false, value => value === 'true');
+	const [allowDeprecated, setAllowDeprecated] = useTypedLocalStorage("allowDeprecated", false);
+	const [onlySegments, setOnlySegments] = useTypedLocalStorage("onlySegments", false);
 
 	return <div>
 		<SearchBox
