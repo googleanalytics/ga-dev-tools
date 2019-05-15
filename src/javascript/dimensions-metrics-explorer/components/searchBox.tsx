@@ -2,6 +2,19 @@ import * as React from 'react'
 
 import Icon from '../../components/icon';
 
+// Convert a callback taking a string into a callback taking event.target.value
+const useEventValue = (setValue: (value: string) => void) => React.useCallback(
+  (event: React.ChangeEvent<HTMLInputElement>) => setValue(event.target.value),
+  [setValue]
+)
+
+// Convert a callback taking a boolean into a callback taking event.target.checked
+const useEventChecked = (setChecked: (checked: boolean) => void) => React.useCallback(
+  (event: React.ChangeEvent<HTMLInputElement>) => setChecked(event.target.checked),
+  [setChecked]
+)
+
+
 const SearchBox: React.FC<{
   searchText: string,
   onlySegments: boolean,
@@ -14,11 +27,9 @@ const SearchBox: React.FC<{
   searchText, onlySegments, allowDeprecated,
   setSearchText, setOnlySegments, setAllowDeprecated,
 }) => {
-  const setText = React.useCallback(
-    (e: React.ChangeEvent<HTMLInputElement>) => setSearchText(e.target.value),
-    [setSearchText]
-  );
-
+  const setTextEvent = useEventValue(setSearchText);
+  const setOnlySegmentsEvent = useEventChecked(setOnlySegments);
+  const setAllowDeprecatedEvent = useEventChecked(setAllowDeprecated);
   const clearText = React.useCallback(
     () => setSearchText(""),
     [setSearchText]
@@ -32,7 +43,7 @@ const SearchBox: React.FC<{
           <input
             className="FormField FormFieldAddOn-field"
             value={searchText}
-            onChange={setText} />
+            onChange={setTextEvent} />
           <button
             type="button"
             className="FormFieldAddOn-item"
@@ -43,16 +54,26 @@ const SearchBox: React.FC<{
           </button>
         </div>
         <div className="FormControl-info">
-          <label>
-            <input
-              className="Checkbox"
-              type="checkbox"
-              onChange={set}
-              checked={!!settings.useDefinition} />
-            Show segment definitions instead of IDs.
-          </label>
+          <input
+            className="Checkbox"
+            type="checkbox"
+            onChange={setOnlySegmentsEvent}
+            checked={onlySegments}
+           />
+          <label>Only show fields that are allowed in segments</label>
+        </div>
+        <div className="FormControl-info">
+          <input
+            className="Checkbox"
+            type="checkbox"
+            onChange={setAllowDeprecatedEvent}
+            checked={allowDeprecated}
+           />
+          <label>Include deprecated fields</label>
         </div>
       </div>
     </div>
    </form>
 }
+
+export default SearchBox;
