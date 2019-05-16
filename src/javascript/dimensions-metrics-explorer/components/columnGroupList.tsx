@@ -76,8 +76,8 @@ const ColumnGroup: React.FC<{
 	open, toggleOpen, name
 }) => (
 	<div className="dme-group">
-		<div className="dme-group-header">
-			<span onClick={toggleOpen}><Icon type='add-circle' /></span>
+		<div className="dme-group-header" onClick={toggleOpen}>
+			<Icon type={open ? 'remove-circle' : 'add-circle'} />
 			<span>{name}</span>
 		</div>
 		<div className="dme-group-list" hidden={!open}>
@@ -95,28 +95,36 @@ const ColumnGroupList: React.FC<{}> = () => {
 		const controller = new AbortController();
 
 		const asyncFetch = async () => {
-			const response = await fetch(
-				"https://content.googleapis.com/analytics/v3/metadata/ga/columns",
-				{
-					headers: new Headers({
-						Authorization: `Bearer ${window.GAPI_ACCESS_TOKEN}`,
-						'If-None-Match': window.localStorage.getItem("columnsEtag") || "",
-					}),
-					signal: controller.signal,
-				});
-
 			var columns: any
 
-			if (response.status === 304) {
-				columns = JSON.parse(window.localStorage.getItem("cachedColumnsBlob") || "");
-			} else if (response.ok) {
-				columns = await response.json()
+			// This loop is just to retry cache misses
+			do {
+				const response = await fetch(
+					"https://content.googleapis.com/analytics/v3/metadata/ga/columns",
+					{
+						headers: new Headers({
+							'Authorization': `Bearer ${window.GAPI_ACCESS_TOKEN}`,
+							'If-None-Match': window.localStorage.getItem("columnsEtag") || "",
+						}),
+						signal: controller.signal,
+					});
 
-				window.localStorage.setItem("columnsEtag", response.headers.get("etag") || "")
-				window.localStorage.setItem("cachedColumnsBlob", JSON.stringify(columns))
-			} else {
-				throw new Error("Failed to get metadata columns!")
-			}
+				if(response.status === 304) {
+					if(response.headers.get("etag") === window.localStorage.getItem("columnsEtag")) {
+						columns = JSON.parse(window.localStorage.getItem("cachedColumnsBlob") || "");
+					} else {
+						// We got a 304 response, but our local etag changed. Retry.
+						continue
+					}
+				} else if (response.ok) {
+					columns = await response.json()
+
+					window.localStorage.setItem("columnsEtag", response.headers.get("etag") || "")
+					window.localStorage.setItem("cachedColumnsBlob", JSON.stringify(columns))
+				} else {
+					throw new Error("Failed to get metadata columns!")
+				}
+			} while(false);
 
 			setGroups(groupBy(
 				columns.items as Column[],
@@ -134,7 +142,7 @@ const ColumnGroupList: React.FC<{}> = () => {
 				name={groupName}
 				key={groupName}
 				open={open[groupName] || false}
-				toggleOpen={() => setOpen(oldState => ({...oldState, groupName: !oldState[groupName]}))}
+				toggleOpen={() => setOpen(oldState => ({...oldState, [groupName]: !oldState[groupName]}))}
 				columns={columns}
 			/>)
 		}</div>
