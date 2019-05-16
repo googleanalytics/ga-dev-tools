@@ -1,19 +1,10 @@
 import * as React from 'react'
 
 import Icon from '../../components/icon';
-
-// Convert a callback taking a string into a callback taking event.target.value
-const useEventValue = (setValue: (value: string) => void) => React.useCallback(
-  (event: React.ChangeEvent<HTMLInputElement>) => setValue(event.target.value),
-  [setValue]
-)
-
-// Convert a callback taking a boolean into a callback taking event.target.checked
-const useEventChecked = (setChecked: (checked: boolean) => void) => React.useCallback(
-  (event: React.ChangeEvent<HTMLInputElement>) => setChecked(event.target.checked),
-  [setChecked]
-)
-
+import {
+  useEventValue,
+  useEventChecked
+} from '../../hooks'
 
 const SearchBox: React.FC<{
   searchText: string,
