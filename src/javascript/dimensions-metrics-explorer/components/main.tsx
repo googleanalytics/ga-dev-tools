@@ -38,10 +38,14 @@ function useLocalStorage(
 			const listener = (event: StorageEvent) => {
 				if(event.storageArea === window.localStorage) {
 					if(event.key === null) {
-						// null key means there was a clear event
+						// null key key means that there was a global storage clear event
 						setValue(initialValue instanceof Function ? initialValue() : initialValue)
 					} else if(event.key === key) {
-						setValue(event.newValue);
+						if(event.newValue === null) {
+							setValue(initialValue instanceof Function ? initialValue() : initialValue)
+						} else {
+							setValue(event.newValue);
+						}
 					}
 				}
 			}
@@ -82,7 +86,7 @@ function useTypedLocalStorage<T>(
 }
 
 // Quick helper to convert a string value (via boolean.toString()) back to a boolean
-const isTrue = value => value === 'true'
+const isTrue = (value: string) => value === 'true'
 
 const Main: React.FC = () => {
 	const [searchText, setSearchText] = useLocalStorage("searchText", "");

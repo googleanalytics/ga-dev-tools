@@ -53,24 +53,24 @@ const SearchBox: React.FC<{
             <Icon type="close" />
           </button>
         </div>
-        <div className="FormControl-info">
+        <label className="FormControl-info">
           <input
             className="Checkbox"
             type="checkbox"
             onChange={setOnlySegmentsEvent}
             checked={onlySegments}
            />
-          <label>Only show fields that are allowed in segments</label>
-        </div>
-        <div className="FormControl-info">
+          Only show fields that are allowed in segments
+        </label>
+        <label className="FormControl-info">
           <input
             className="Checkbox"
             type="checkbox"
             onChange={setAllowDeprecatedEvent}
             checked={allowDeprecated}
            />
-          <label>Include deprecated fields</label>
-        </div>
+          Include deprecated fields
+        </label>
       </div>
     </div>
    </form>
