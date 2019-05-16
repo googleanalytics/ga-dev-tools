@@ -73,15 +73,30 @@ const ColumnGroup: React.FC<{
 	name: string,
 	columns: Column[]
 }> = ({
-	open, toggleOpen, name
+	open, toggleOpen, name, columns
 }) => (
 	<div className="dme-group">
 		<div className="dme-group-header" onClick={toggleOpen}>
 			<Icon type={open ? 'remove-circle' : 'add-circle'} />
-			<span>{name}</span>
+			<h3>{name}</h3>
 		</div>
 		<div className="dme-group-list" hidden={!open}>
-			COLUMNS
+			<div className="dme-group-list-subgroup">
+				<h4 className="dme-group-list-subgroup-header">Dimensions</h4>
+				<ul>{
+					columns
+						.filter(column => column.attributes.type === "DIMENSION")
+						.map(column => <li>{column.id}</li>)
+				}</ul>
+			</div>
+			<div className="dme-group-list-subgroup">
+				<h4 className="dme-group-list-subgroup-header">Metrics</h4>
+				<ul>{
+					columns
+						.filter(column => column.attributes.type === "METRIC")
+						.map(column => <li>{column.id}</li>)
+				}</ul>
+			</div>
 		</div>
 	</div>
 );
