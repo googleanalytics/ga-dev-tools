@@ -15,10 +15,16 @@
 
 import React from 'react';
 
-/**
- * A components that renders an <svg> icon from the iconset in:
- * src/images/icons.svg
- */
+// There is a known issue in React where for some reason a `use` element
+// is not compatible with the render cycle, because somehow the Shadow
+// DOM can't reconcile it. We therefore use this `key={current++}` hack
+// to force React to unmount and remount the SVG every time it is rendered.
+//
+// See https://stackoverflow.com/questions/50771280/react-svg-disappearing-when-component-rerenders
+// and http://sfdcinpractice.com/index.php/2016/12/29/svg-icon-disappears-rerendering/
+// for details
+
+//let counter = 0
 
 type IconType = "add-circle" |
     "arrow-back" |
@@ -41,11 +47,18 @@ type IconType = "add-circle" |
     "warning" |
     "bitly-logo";
 
-
+/**
+ * A components that renders an <svg> icon from the iconset in:
+ * src/images/icons.svg
+ */
 const Icon: React.FC<{type: IconType}> = ({type}) => (
-  <svg className="Icon" viewBox="0 0 24 24">
-    <use xlinkHref={`/public/images/icons.svg#icon-${type}`} />
-  </svg>
+    <svg className="Icon" viewBox="0 0 24 24">
+          <use key={0} href={`/public/images/icons.svg#icon-${type}`} />
+    </svg>
 );
+
+/*
+
+*/
 
 export default Icon

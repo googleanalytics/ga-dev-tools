@@ -21,7 +21,11 @@ const Main: React.FC = () => {
 			onlySegments={onlySegments}
 			setOnlySegments={setOnlySegments}
 		/>
-		<ColumnGroupList />
+		<ColumnGroupList
+			searchText={searchText}
+			allowDeprecated={allowDeprecated}
+			onlySegments={onlySegments}
+		/>
 	</div>
 };
 

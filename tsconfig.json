@@ -10,6 +10,7 @@
         "allowSyntheticDefaultImports": true,
         "skipLibCheck": true,
         "esModuleInterop": true,
+        "downlevelIteration": true,
 
         "lib": ["dom.iterable", "dom", "esnext"],
 

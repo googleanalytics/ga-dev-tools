@@ -1,0 +1,27 @@
+.dme-group {
+	margin-top: 10px;
+}
+
+.dme-group-header {
+	display: flex;
+	font-size: 1.25em;
+	font-weight: bold;
+}
+
+.dme-group-collapse {
+	height: 24px;
+	width: 24px;
+	margin-right: 10px;
+	display : flex;
+	justify-items: center;
+	align-items: center;
+
+}
+
+.dme-group-list-subgroup-header {
+	font-weight: bold;
+}
+
+.dme-group-list {
+	margin-left: 34px;
+}

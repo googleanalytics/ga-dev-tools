@@ -67,50 +67,80 @@ interface Column {
 
 type Groups = {[key: string]: Column[]};
 
+const ColumnSubgroup: React.FC<{
+	columns: Column[],
+	name: 'Dimensions' | 'Metrics',
+}> = ({
+	columns, name
+}) => (
+	<div className="dme-group-list-subgroup">
+		<span className="dme-group-list-subgroup-header">{name}</span>
+		<ul>{
+			columns.map(column => <li key={column.id}>{column.id}</li>)
+		}</ul>
+	</div>
+)
+
 const ColumnGroup: React.FC<{
 	open: boolean,
-	toggleOpen: () => void,
+	toggleOpen: (group: string) => void,
 	name: string,
 	columns: Column[]
 }> = ({
 	open, toggleOpen, name, columns
-}) => (
-	<div className="dme-group">
-		<div className="dme-group-header" onClick={toggleOpen}>
-			<Icon type={open ? 'remove-circle' : 'add-circle'} />
-			<h3>{name}</h3>
+}) => {
+	const onClick = React.useCallback(() => toggleOpen(name), [toggleOpen, name])
+
+	return <div className="dme-group">
+		<div className="dme-group-header" onClick={onClick}>
+			<span className="dme-group-collapse">
+				<Icon type={open ? 'remove-circle' : 'add-circle'} />
+			</span>
+			<span>{name}</span>
 		</div>
 		<div className="dme-group-list" hidden={!open}>
-			<div className="dme-group-list-subgroup">
-				<h4 className="dme-group-list-subgroup-header">Dimensions</h4>
-				<ul>{
-					columns
-						.filter(column => column.attributes.type === "DIMENSION")
-						.map(column => <li>{column.id}</li>)
-				}</ul>
-			</div>
-			<div className="dme-group-list-subgroup">
-				<h4 className="dme-group-list-subgroup-header">Metrics</h4>
-				<ul>{
-					columns
-						.filter(column => column.attributes.type === "METRIC")
-						.map(column => <li>{column.id}</li>)
-				}</ul>
-			</div>
+			<ColumnSubgroup
+				name="Dimensions"
+				columns={columns.filter(column => column.attributes.type === 'DIMENSION')}
+			/>
+			<ColumnSubgroup
+				name="Metrics"
+				columns={columns.filter(column => column.attributes.type === 'METRIC')}
+			/>
 		</div>
 	</div>
-);
+}
 
-const ColumnGroupList: React.FC<{}> = () => {
-	const [groupedColumns, setGroups] = React.useState<null | Groups>(null);
+const ColumnGroupList: React.FC<{
+	allowDeprecated: boolean,
+	searchText: string,
+	onlySegments: boolean,
+}> = ({
+	allowDeprecated,
+	searchText,
+	onlySegments,
+}) => {
+	const [columns, setColumns] = React.useState<null | Column[]>(null);
 	const [open, setOpen] = React.useState<{[ group: string ]: boolean}>({});
+
+	const toggleGroupOpen = React.useCallback(
+		(group: string) => setOpen(oldOpen => ({...oldOpen, [group]: !oldOpen[group]})),
+		[]
+	);
+
+	const closeAll = React.useCallback(() => setOpen({}), [setOpen]);
+
+	const searchTerms = React.useMemo<string[]>(
+		() => searchText.toLowerCase().split(/\s+/).filter(t => t),
+		[searchText]
+	)
+
 	// Fetch all of the columns from the metadata API
-	// TODO: convert this to a standard `fetch` so it can be cancelled.
 	React.useEffect(() => {
 		const controller = new AbortController();
 
 		const asyncFetch = async () => {
-			var columns: any
+			var fetchedColumns: any
 
 			// This loop is just to retry cache misses
 			do {
@@ -126,41 +156,70 @@ const ColumnGroupList: React.FC<{}> = () => {
 
 				if(response.status === 304) {
 					if(response.headers.get("etag") === window.localStorage.getItem("columnsEtag")) {
-						columns = JSON.parse(window.localStorage.getItem("cachedColumnsBlob") || "");
+						fetchedColumns = JSON.parse(window.localStorage.getItem("cachedColumnsBlob") || "");
 					} else {
 						// We got a 304 response, but our local etag changed. Retry.
 						continue
 					}
 				} else if (response.ok) {
-					columns = await response.json()
+					fetchedColumns = await response.json()
 
 					window.localStorage.setItem("columnsEtag", response.headers.get("etag") || "")
-					window.localStorage.setItem("cachedColumnsBlob", JSON.stringify(columns))
+					window.localStorage.setItem("cachedColumnsBlob", JSON.stringify(fetchedColumns))
 				} else {
 					throw new Error("Failed to get metadata columns!")
 				}
 			} while(false);
 
-			setGroups(groupBy(
-				columns.items as Column[],
-				column => column.attributes.group
-			));
+			setColumns(fetchedColumns.items)
 		}
 
 		asyncFetch();
 		return () => controller.abort()
 	}, [])
 
-	return groupedColumns === null ? <div>Loading...</div> :
-		<div id="dme-list-container">{
-			map(groupedColumns, (columns, groupName) => <ColumnGroup
-				name={groupName}
-				key={groupName}
-				open={open[groupName] || false}
-				toggleOpen={() => setOpen(oldState => ({...oldState, [groupName]: !oldState[groupName]}))}
-				columns={columns}
-			/>)
+	if(columns === null) {
+		return <div>Loading...</div>;
+	} else {
+		// TODO: make these filters processing lazy
+
+		// Groups, in order. We use a separate list to ensure consistent ordering
+		// between renders
+		console.log(columns)
+		let filteredColumns: Column[] = columns;
+
+		if(!allowDeprecated) {
+			filteredColumns = filteredColumns.filter(column => column.attributes.status != 'DEPRECATED')
+		}
+
+		if(onlySegments) {
+			filteredColumns = filteredColumns.filter(column => column.attributes.allowedInSegments)
+		}
+
+		if(searchText) {
+			// TODO: refactor this search logic to somewhere more sensible
+			filteredColumns = filteredColumns.filter(
+				column => searchTerms.every(
+					term => column.id.indexOf(term) != -1 && column.attributes.uiName.indexOf(term) != -1)
+			)
+		}
+
+		// JS Sets guarantee insertion order is preserved
+		const groupedColumns = groupBy(filteredColumns, column => column.attributes.group)
+
+		return <div>{
+			map(groupedColumns, (columns, groupName) =>
+				<div key={groupName}>
+					<ColumnGroup
+						open={open[groupName] || false}
+						columns={columns}
+						name={groupName}
+						toggleOpen={toggleGroupOpen}
+					/>
+				</div>
+			)
 		}</div>
+	}
 }
 
 export default ColumnGroupList

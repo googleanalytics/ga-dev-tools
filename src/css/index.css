@@ -45,6 +45,7 @@ limitations under the License.
 @import './components/dashboard';
 @import './components/data-table';
 @import './components/date-range-selector';
+@import './components/dimensions-metrics-explorer.css';
 @import './components/error';
 @import './components/flex-grid';
 @import './components/flex-line';
