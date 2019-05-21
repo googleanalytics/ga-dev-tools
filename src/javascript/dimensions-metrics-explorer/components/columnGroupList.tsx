@@ -12,228 +12,321 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import * as React from 'react'
-import { groupBy, memoize, map } from 'lodash'
+import * as React from "react";
+import { groupBy, memoize, map, mapValues, every, some, sortBy } from "lodash";
+import { Set } from "immutable";
+import classNames from "classnames";
 
 import {
-	useLocalStorage,
-	useTypedLocalStorage,
-} from '../../hooks'
+  useLocalStorage,
+  useTypedLocalStorage,
+  useEventChecked
+} from "../../hooks";
+import { CubesByColumn } from "../cubes";
+import { Column, Groups } from "../common_types";
 
-import Icon from '../../components/icon'
+import Icon from "../../components/icon";
+import IconButton from "../../components/icon-button";
 
 declare global {
-	interface Window {
-		readonly GAPI_ACCESS_TOKEN: string;
-	}
+  interface Window {
+    readonly GAPI_ACCESS_TOKEN: string;
+  }
 }
 
-interface CommonAttributes {
-	group: string,
-	uiName: string,
-	description: string,
-	allowedInSegments?: boolean,
-}
+const SelectableColumn: React.FC<{
+  column: Column;
+  selected: boolean;
+  disabled: boolean;
+  setSelected: (selected: boolean) => void;
+}> = ({ column, selected, disabled, setSelected }) => {
+  const [infoExpanded, setExpanded] = React.useState(false);
+  const toggleExpanded = React.useCallback(() => setExpanded(exp => !exp), [
+    setExpanded
+  ]);
 
-interface DimensionAttributes {
-	type: 'DIMENSION',
-	dataType: 'STRING'
-}
+  const replacedBy =
+    column.attributes.status === "DEPRECATED"
+      ? column.attributes.replacedBy
+      : null;
+  // Deprecated columns cannot be selected
+  const allowedInSegments = column.attributes.allowedInSegments === "true"
+  const visibility = replacedBy ? "hidden" : "visible";
+  const checkboxDisabled = disabled || replacedBy;
 
-interface MetricAttributes {
-	type: 'METRIC',
-	dataType: 'INTEGER' | 'PERCENT' | 'TIME' | 'CURRENCY' | 'FLOAT',
-	calculation?: string,
-}
+  const titleClass = classNames("dme-selectable-column-title", {
+    "dme-selectable-column-disabled": disabled || replacedBy,
+    "dme-selectable-column-deprecated": replacedBy
+  });
 
-interface DeprecatedAttributes {
-	replacedBy: string,
-	status: 'DEPRECATED',
-}
+  const inputClass = classNames("Checkbox", "dme-selectable-column-checkbox", {
+    "dme-selectable-column-deprecated": replacedBy
+  });
 
-interface PublicAttributes {
-	status: 'PUBLIC'
-}
-
-interface TemplateAttributes {
-	minTemplateIndex: number,
-	maxTemplateIndex: number,
-}
-
-interface PremiumTemplateAttributes extends TemplateAttributes {
-	premiumMinTemplateIndex: number,
-	premiumMaxTemplateIndex: number,
-}
-
-type Attributes = (
-	CommonAttributes &
-	(DimensionAttributes | MetricAttributes) &
-	(DeprecatedAttributes | PublicAttributes) &
-	({} | TemplateAttributes | PremiumTemplateAttributes)
-)
-
-// A single Dimension or Metric
-interface Column {
-	id: string,
-	kind: string,
-	attributes: Attributes,
-}
-
-type Groups = {[key: string]: Column[]};
+  return (
+    <div className="dme-selectable-column">
+      <input
+        type="checkbox"
+        value="Bike"
+        className={inputClass}
+        checked={selected}
+        disabled={disabled}
+        onChange={event => setSelected(event.target.checked)}
+      />
+      <div className="dme-selectable-column-info">
+        <a onClick={toggleExpanded} className={titleClass}>
+          <div>{column.attributes.uiName}</div>
+          <div>
+            <code>{column.id}</code>
+          </div>
+        </a>
+        {infoExpanded ? (
+          <div className="dme-selectable-column-detail">
+            <div className="dme-selectable-column-description">{column.attributes.description}</div>
+            <div><strong>Data Type:</strong> <code>{column.attributes.dataType}</code></div>
+            <div><strong>Added in API Version {column.attributes.addedInApiVersion}</strong></div>
+            {allowedInSegments ? <div><strong>Allowed in segments</strong></div> : null}
+            {replacedBy ? (
+              <div>
+                <strong>Deprecated:</strong> Use <code>{replacedBy}</code> instead.
+              </div>
+            ) : null}
+          </div>
+        ) : null}
+      </div>
+    </div>
+  );
+};
 
 const ColumnSubgroup: React.FC<{
-	columns: Column[],
-	name: 'Dimensions' | 'Metrics',
+  columns: Column[];
+  name: "Dimensions" | "Metrics";
+  allowableCubes: Set<string> | null;
+  cubes: CubesByColumn;
+  selectedColumns: Set<string>;
+  selectColumn: (column: string, selected: boolean) => void;
 }> = ({
-	columns, name
-}) => (
-	<div className="dme-group-list-subgroup">
-		<span className="dme-group-list-subgroup-header">{name}</span>
-		<ul>{
-			columns.map(column => <li key={column.id}>{column.id}</li>)
-		}</ul>
-	</div>
-)
+  columns,
+  name,
+  selectColumn,
+  selectedColumns,
+  allowableCubes,
+  cubes
+}) => {
+  // Move deprecated columns to the bottom
+  const sortedColumns = React.useMemo(
+    () =>
+      sortBy(columns, column =>
+        column.attributes.status === "PUBLIC" ? 0 : 1
+      ),
+    [columns]
+  );
+
+  return (
+    <div className="dme-group-list-subgroup">
+      <span className="dme-group-list-subgroup-header">{name}</span>
+      <div>
+        {sortedColumns.map(column => {
+          const disabled =
+            (allowableCubes &&
+              allowableCubes.intersect(cubes.get(column.id, Set())).size ===
+                0) ||
+            false;
+          return (
+            <SelectableColumn
+              column={column}
+              key={column.id}
+              setSelected={selected => selectColumn(column.id, selected)}
+              disabled={disabled}
+              selected={selectedColumns.contains(column.id)}
+            />
+          );
+        })}
+      </div>
+    </div>
+  );
+};
 
 const ColumnGroup: React.FC<{
-	open: boolean,
-	toggleOpen: (group: string) => void,
-	name: string,
-	columns: Column[]
+  open: boolean;
+  toggleOpen: () => void;
+  name: string;
+  columns: Column[];
+  allowableCubes: Set<string> | null;
+  cubes: CubesByColumn;
+  selectedColumns: Set<string>;
+  selectColumn: (column: string, selected: boolean) => void;
 }> = ({
-	open, toggleOpen, name, columns
-}) => {
-	const onClick = React.useCallback(() => toggleOpen(name), [toggleOpen, name])
-
-	return <div className="dme-group">
-		<div className="dme-group-header" onClick={onClick}>
-			<span className="dme-group-collapse">
-				<Icon type={open ? 'remove-circle' : 'add-circle'} />
-			</span>
-			<span>{name}</span>
-		</div>
-		<div className="dme-group-list" hidden={!open}>
-			<ColumnSubgroup
-				name="Dimensions"
-				columns={columns.filter(column => column.attributes.type === 'DIMENSION')}
-			/>
-			<ColumnSubgroup
-				name="Metrics"
-				columns={columns.filter(column => column.attributes.type === 'METRIC')}
-			/>
-		</div>
-	</div>
-}
+  open,
+  toggleOpen,
+  name,
+  columns,
+  allowableCubes,
+  cubes,
+  selectedColumns,
+  selectColumn
+}) => (
+  <div className="dme-group">
+    <div className="dme-group-header" onClick={toggleOpen}>
+      <span className="dme-group-collapse">
+        <Icon type={open ? "remove-circle" : "add-circle"} />
+      </span>
+      <span>{name}</span>
+    </div>
+    <div className="dme-group-list" hidden={!open}>
+      <ColumnSubgroup
+        name="Dimensions"
+        columns={columns.filter(
+          column => column.attributes.type === "DIMENSION"
+        )}
+        allowableCubes={allowableCubes}
+        cubes={cubes}
+        selectColumn={selectColumn}
+        selectedColumns={selectedColumns}
+      />
+      <ColumnSubgroup
+        name="Metrics"
+        columns={columns.filter(column => column.attributes.type === "METRIC")}
+        allowableCubes={allowableCubes}
+        cubes={cubes}
+        selectColumn={selectColumn}
+        selectedColumns={selectedColumns}
+      />
+    </div>
+  </div>
+);
 
 const ColumnGroupList: React.FC<{
-	allowDeprecated: boolean,
-	searchText: string,
-	onlySegments: boolean,
-}> = ({
-	allowDeprecated,
-	searchText,
-	onlySegments,
-}) => {
-	const [columns, setColumns] = React.useState<null | Column[]>(null);
-	const [open, setOpen] = React.useState<{[ group: string ]: boolean}>({});
+  allowDeprecated: boolean;
+  searchTerms: string[];
+  onlySegments: boolean;
+  cubes: CubesByColumn;
+  columns: Column[];
+}> = ({ allowDeprecated, searchTerms, onlySegments, columns, cubes }) => {
+  // Get the grouped columns
+  const groupedColumns = React.useMemo(() => {
+    let filteredColumns: Column[] = columns;
 
-	const toggleGroupOpen = React.useCallback(
-		(group: string) => setOpen(oldOpen => ({...oldOpen, [group]: !oldOpen[group]})),
-		[]
-	);
+    if (!allowDeprecated) {
+      filteredColumns = filteredColumns.filter(
+        column => column.attributes.status != "DEPRECATED"
+      );
+    }
 
-	const closeAll = React.useCallback(() => setOpen({}), [setOpen]);
+    if (onlySegments) {
+      filteredColumns = filteredColumns.filter(
+        column => column.attributes.allowedInSegments === "true"
+      );
+    }
 
-	const searchTerms = React.useMemo<string[]>(
-		() => searchText.toLowerCase().split(/\s+/).filter(t => t),
-		[searchText]
-	)
+    filteredColumns = filteredColumns.filter(column =>
+      searchTerms.every(
+        term =>
+          column.id.toLowerCase().indexOf(term) != -1 ||
+          column.attributes.uiName.toLowerCase().indexOf(term) != -1
+      )
+    );
 
-	// Fetch all of the columns from the metadata API
-	React.useEffect(() => {
-		const controller = new AbortController();
+    // JS Sets guarantee insertion order is preserved, which is important
+    // because the key order in this groupBy determines the order that
+    // they appear in the UI.
+    return groupBy(filteredColumns, column => column.attributes.group);
+  }, [columns, searchTerms, allowDeprecated, onlySegments]);
 
-		const asyncFetch = async () => {
-			var fetchedColumns: any
+  // Set of column groups that are currently expanded
+  const [open, setOpen] = React.useState<Set<string>>(() => Set());
 
-			// This loop is just to retry cache misses
-			do {
-				const response = await fetch(
-					"https://content.googleapis.com/analytics/v3/metadata/ga/columns",
-					{
-						headers: new Headers({
-							'Authorization': `Bearer ${window.GAPI_ACCESS_TOKEN}`,
-							'If-None-Match': window.localStorage.getItem("columnsEtag") || "",
-						}),
-						signal: controller.signal,
-					});
+  // Expand/Collapse callbacks
+  const toggleGroupOpen = React.useCallback(
+    (group: string) =>
+      setOpen(oldOpen =>
+        oldOpen.contains(group) ? oldOpen.remove(group) : oldOpen.add(group)
+      ),
+    [setOpen]
+  );
 
-				if(response.status === 304) {
-					if(response.headers.get("etag") === window.localStorage.getItem("columnsEtag")) {
-						fetchedColumns = JSON.parse(window.localStorage.getItem("cachedColumnsBlob") || "");
-					} else {
-						// We got a 304 response, but our local etag changed. Retry.
-						continue
-					}
-				} else if (response.ok) {
-					fetchedColumns = await response.json()
+  const collapseAll = React.useCallback(() => setOpen(Set()), [setOpen]);
 
-					window.localStorage.setItem("columnsEtag", response.headers.get("etag") || "")
-					window.localStorage.setItem("cachedColumnsBlob", JSON.stringify(fetchedColumns))
-				} else {
-					throw new Error("Failed to get metadata columns!")
-				}
-			} while(false);
+  const expandAll = React.useCallback(
+    () => setOpen(Set.fromKeys(groupedColumns)),
+    [setOpen, groupedColumns]
+  );
 
-			setColumns(fetchedColumns.items)
-		}
+  // When a search term is entered, auto-expand all groups. When the search
+  // term is empty, auto-collapse all groups.
+  // KNOWN BUG: this effect should only run when searchTerms changes,
+  // but currently it also runs when expandAll changes, which happens
+  // when a checkbox is checked. Not sure how to fix this. Maybe a ref?
+  /*
+  React.useEffect(() => {
+    if (searchTerms.length === 0) {
+      collapseAll();
+    } else {
+      expandAll();
+    }
+  }, [searchTerms.length === 0, collapseAll, expandAll]);
+  */
 
-		asyncFetch();
-		return () => controller.abort()
-	}, [])
+  // selectedColumns is a dictionary mapping each column to its selected
+  // state. Each column is associated with one or more "cubes", and a
+  // only columns that share cubes may be mutually selected.
+  const [selectedColumns, setSelectedColumns] = React.useState<Set<string>>(
+    Set
+  );
 
-	if(columns === null) {
-		return <div>Loading...</div>;
-	} else {
-		// TODO: make these filters processing lazy
+  const selectColumn = React.useCallback(
+    (column: string, selected: boolean) =>
+      setSelectedColumns(oldSelected =>
+        selected ? oldSelected.add(column) : oldSelected.remove(column)
+      ),
+    [setSelectedColumns]
+  );
 
-		// Groups, in order. We use a separate list to ensure consistent ordering
-		// between renders
-		console.log(columns)
-		let filteredColumns: Column[] = columns;
+  // The set of allowable cubes. When any columns are selected, the set of
+  // allowable cubes is the intersection of the cubes for those columns
+  const allowableCubes = React.useMemo<Set<string> | null>(
+    () =>
+      selectedColumns
+        .map(columnId => cubes.get(columnId) || (Set() as Set<string>))
+        .reduce<Set<string>>((cubes1, cubes2) => cubes1.intersect(cubes2)) ||
+      null,
+    [selectedColumns, cubes]
+  );
 
-		if(!allowDeprecated) {
-			filteredColumns = filteredColumns.filter(column => column.attributes.status != 'DEPRECATED')
-		}
+  const showExpandAll = open.size < Object.keys(groupedColumns).length;
+  const showCollapseAll = open.size > 0;
+  return (
+    <div>
+      <div className="ButtonSet">
+        {showExpandAll ? (
+          <IconButton type="add-circle" onClick={expandAll}>
+            Expand All
+          </IconButton>
+        ) : null}
+        {showCollapseAll ? (
+          <IconButton type="remove-circle" onClick={collapseAll}>
+            Hide All
+          </IconButton>
+        ) : null}
+      </div>
+      <div>
+        {map(groupedColumns, (columns, groupName) => (
+          <div key={groupName}>
+            <ColumnGroup
+              open={open.contains(groupName)}
+              columns={columns}
+              name={groupName}
+              toggleOpen={() => toggleGroupOpen(groupName)}
+              allowableCubes={allowableCubes}
+              cubes={cubes}
+              selectedColumns={selectedColumns}
+              selectColumn={selectColumn}
+            />
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+};
 
-		if(onlySegments) {
-			filteredColumns = filteredColumns.filter(column => column.attributes.allowedInSegments)
-		}
-
-		if(searchText) {
-			// TODO: refactor this search logic to somewhere more sensible
-			filteredColumns = filteredColumns.filter(
-				column => searchTerms.every(
-					term => column.id.indexOf(term) != -1 && column.attributes.uiName.indexOf(term) != -1)
-			)
-		}
-
-		// JS Sets guarantee insertion order is preserved
-		const groupedColumns = groupBy(filteredColumns, column => column.attributes.group)
-
-		return <div>{
-			map(groupedColumns, (columns, groupName) =>
-				<div key={groupName}>
-					<ColumnGroup
-						open={open[groupName] || false}
-						columns={columns}
-						name={groupName}
-						toggleOpen={toggleGroupOpen}
-					/>
-				</div>
-			)
-		}</div>
-	}
-}
-
-export default ColumnGroupList
+export default ColumnGroupList;

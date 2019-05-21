@@ -14,7 +14,7 @@
 
 import * as React from "react";
 
-type IconType =
+export type IconType =
   | "add-circle"
   | "arrow-back"
   | "arrow-forward"
