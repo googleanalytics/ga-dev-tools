@@ -147,9 +147,9 @@ export default class CampaignUrl extends React.Component {
             shortUrl: shortUrl,
             showShortUrl: true,
           });
-          // TODO(nathanwest): Only send the event if the API was hit. Don't send
-          // events for cache hits. Alternatively, attach cache information to
-          // label or value.
+          // TODO(nathanwest): Only send the event if the API was hit.
+          // Don't send events for cache hits. Alternatively, attach
+          // cache information to label or value.
           gaSendEvent({
             category: 'Campaign URL',
             action: 'shorten',

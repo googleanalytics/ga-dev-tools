@@ -218,7 +218,9 @@ function constructPivotTableCellFromReport(report) {
           cell.text = formatValue(value, type);
         } else if (c >= pivotStartCol && c <= pivotEndCol) {
           // Pivot metric totals.
-          const value = totals[0].pivotValueRegions[0].values[c - pivotStartCol];
+          const value = totals[0]
+              .pivotValueRegions[0]
+              .values[c - pivotStartCol];
           const type = pivotHeaderEntries[c - pivotStartCol].metric.type;
           cell.classes.push('PivotTable-total');
           cell.text = formatValue(value, type);

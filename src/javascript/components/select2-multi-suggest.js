@@ -152,7 +152,7 @@ export default class Select2MultiSuggest extends React.Component {
     const tag = this.getTagById(id);
     const search = text.toLowerCase();
     const selectedTags = this.props.name == 'sort' ?
-        map(this.state.value.split(','), (item) => item.replace(/\-/, '')) : [];
+        map(this.state.value.split(','), (item) => item.replace(/-/, '')) : [];
 
     const matches = tag.id.toLowerCase().includes(search) ||
         tag.name.toLowerCase().includes(search) ||
