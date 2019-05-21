@@ -15,7 +15,7 @@
 
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { CSSTransitionGroup } from 'react-transition-group';
+import {CSSTransitionGroup} from 'react-transition-group';
 import Alert from './alert';
 
 

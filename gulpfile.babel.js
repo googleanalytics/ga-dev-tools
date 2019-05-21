@@ -74,8 +74,8 @@ export const css = () => {
     './src/css/index.css',
     './src/css/chartjs-visualizations.css',
   ]).pipe(plumber({errorHandler: streamError}))
-    .pipe(postcss(processors))
-    .pipe(gulp.dest('public/css'));
+      .pipe(postcss(processors))
+      .pipe(gulp.dest('public/css'));
 };
 
 // eslint-disable-next-line camelcase
@@ -85,11 +85,11 @@ export const images = () => {
   const basePngs = gulp.src('src/images/**/*.png');
 
   const smallPngs = basePngs
-    .pipe(resize({width: '50%'}))
-    .pipe(rename(p => p.basename = p.basename.replace('-2x', '')));
+      .pipe(resize({width: '50%'}))
+      .pipe(rename(p => p.basename = p.basename.replace('-2x', '')));
 
   const pngs = merge2([basePngs, smallPngs])
-    .pipe(imagemin({use: [pngquant()]}));
+      .pipe(imagemin({use: [pngquant()]}));
 
   const svgs = gulp.src('src/images/**/*.svg');
 
@@ -102,12 +102,12 @@ export const watch_images = () => (
 );
 
 const webpackCompiler = once(() => {
-  let sourceFiles = glob.sync('./src/javascript/*/index.@(js|jsx|ts|tsx)');
-  let entry = {index: ['@babel/polyfill', './src/javascript/index.js']};
+  const sourceFiles = glob.sync('./src/javascript/*/index.@(js|jsx|ts|tsx)');
+  const entry = {index: ['@babel/polyfill', './src/javascript/index.js']};
 
-  for (let indexPath of sourceFiles) {
+  for (const indexPath of sourceFiles) {
     // The entry name is the name of the directory containing the index.js file
-    let name = path.basename(path.dirname(indexPath));
+    const name = path.basename(path.dirname(indexPath));
 
     // Only babel polyfill the js files
     if (/\.jsx?/.test(name)) {
@@ -134,7 +134,7 @@ const webpackCompiler = once(() => {
       },
     },
     resolve: {
-      extensions: ['.ts', '.js', '.tsx', '.jsx']
+      extensions: ['.ts', '.js', '.tsx', '.jsx'],
     },
     module: {
       rules: [{
@@ -194,10 +194,10 @@ export const js_webpack = () => new Promise((resolve, reject) => {
 
 const embedApiCompiler = once(() => {
   const COMPONENT_PATH = 'javascript/embed-api/components';
-  let components = ['active-users', 'date-range-selector', 'view-selector2'];
-  let entry = {};
+  const components = ['active-users', 'date-range-selector', 'view-selector2'];
+  const entry = {};
 
-  for (let component of components) {
+  for (const component of components) {
     entry[component] = './' + path.join('src', COMPONENT_PATH, component);
   }
 
@@ -241,13 +241,13 @@ export const js_webpack_embedComponents = () => (
 // eslint-disable-next-line camelcase
 export const build_embedComponents = () => (
   gulp.src('public/javascript/embed-api/components/*')
-    .pipe(gulp.dest('build/javascript/embed-api/components'))
+      .pipe(gulp.dest('build/javascript/embed-api/components'))
 );
 
 // eslint-disable-next-line camelcase
 export const js_embedComponents = gulp.series(
-  js_webpack_embedComponents,
-  build_embedComponents,
+    js_webpack_embedComponents,
+    build_embedComponents,
 );
 
 export const javascript = gulp.parallel(js_webpack, js_embedComponents);
@@ -263,18 +263,18 @@ export const json = () => {
     '/devguides/collection/protocol/v1/parameters.json';
 
   return request(PARAMETER_REFERENCE_URL)
-    .pipe(createOutputStream('public/json/parameter-reference.json'));
+      .pipe(createOutputStream('public/json/parameter-reference.json'));
 };
 
 export const keycheck = () => (
   fs
-    .access('./service-account-key.json')
-    .catch(err => {
-      throw new Error(err + '\nNeed a service account key. See ' +
+      .access('./service-account-key.json')
+      .catch(err => {
+        throw new Error(err + '\nNeed a service account key. See ' +
         'https://ga-dev-tools.appspot.com' +
         '/embed-api/server-side-authorization/ ' +
         'for details on how to get one.');
-    })
+      })
 );
 
 export const lint = () => (
@@ -283,9 +283,9 @@ export const lint = () => (
     'test/**/*.js',
     'gulpfile.babel.js',
   ])
-  .pipe(eslint())
-  .pipe(eslint.format())
-  .pipe(eslint.failAfterError())
+      .pipe(eslint())
+      .pipe(eslint.format())
+      .pipe(eslint.failAfterError())
 );
 
 export const mocha = () => (
@@ -304,11 +304,11 @@ export const serve = () => spawn('dev_appserver.py', [
 
 // eslint-disable-next-line camelcase
 export const build = gulp.parallel(
-  javascript,
-  css,
-  images,
-  json,
-  keycheck,
+    javascript,
+    css,
+    images,
+    json,
+    keycheck,
 );
 
 // eslint-disable-next-line camelcase
