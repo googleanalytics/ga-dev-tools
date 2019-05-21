@@ -50,7 +50,7 @@ const SelectableColumn: React.FC<{
       ? column.attributes.replacedBy
       : null;
   // Deprecated columns cannot be selected
-  const allowedInSegments = column.attributes.allowedInSegments === "true"
+  const allowedInSegments = column.attributes.allowedInSegments === "true";
   const visibility = replacedBy ? "hidden" : "visible";
   const checkboxDisabled = disabled || replacedBy;
 
@@ -82,13 +82,27 @@ const SelectableColumn: React.FC<{
         </a>
         {infoExpanded ? (
           <div className="dme-selectable-column-detail">
-            <div className="dme-selectable-column-description">{column.attributes.description}</div>
-            <div><strong>Data Type:</strong> <code>{column.attributes.dataType}</code></div>
-            <div><strong>Added in API Version {column.attributes.addedInApiVersion}</strong></div>
-            {allowedInSegments ? <div><strong>Allowed in segments</strong></div> : null}
+            <div className="dme-selectable-column-description">
+              {column.attributes.description}
+            </div>
+            <div>
+              <strong>Data Type:</strong>{" "}
+              <code>{column.attributes.dataType}</code>
+            </div>
+            <div>
+              <strong>
+                Added in API Version {column.attributes.addedInApiVersion}
+              </strong>
+            </div>
+            {allowedInSegments ? (
+              <div>
+                <strong>Allowed in segments</strong>
+              </div>
+            ) : null}
             {replacedBy ? (
               <div>
-                <strong>Deprecated:</strong> Use <code>{replacedBy}</code> instead.
+                <strong>Deprecated:</strong> Use <code>{replacedBy}</code>{" "}
+                instead.
               </div>
             ) : null}
           </div>

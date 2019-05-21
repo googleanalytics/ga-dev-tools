@@ -8,16 +8,6 @@ import { Set, Map } from "immutable";
 // Mapping of Column names to sets of cubes
 export type CubesByColumn = Map<string, Set<string>>;
 
-const getDefault = function<K, V>(map: Map<K, V>, key: K, def: () => V) {
-  if (map.has(key)) {
-    return map.get(key);
-  } else {
-    const value = def();
-    map.set(key, value);
-    return value;
-  }
-};
-
 const buildCubes = (): CubesByColumn => {
   return reduce(
     cubes,
@@ -32,7 +22,7 @@ const buildCubes = (): CubesByColumn => {
   );
 };
 
-// This is a promise because in the future it will be loaded via a fetch
+// This is a promise because in the future it will be loaded via a fetch.
 export const cubesByColumn: Promise<CubesByColumn> = Promise.resolve(
   buildCubes()
 );

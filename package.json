@@ -19,10 +19,13 @@
     "@babel/preset-env": "^7.4.4",
     "@babel/preset-react": "^7.0.0",
     "@babel/register": "^7.4.4",
+    "@types/classnames": "^2.2.7",
     "@types/lodash": "^4.14.129",
     "@types/node": "^12.0.1",
     "@types/react": "^16.8.17",
     "@types/react-dom": "^16.8.4",
+    "@typescript-eslint/eslint-plugin": "^1.9.0",
+    "@typescript-eslint/parser": "^1.9.0",
     "autoprefixer": "^7.2.6",
     "autotrack": "^2.3.3",
     "awesome-typescript-loader": "^5.2.1",
@@ -102,7 +105,6 @@
     "typescript": "^3.4.5",
     "url-parse": "^1.2.0",
     "uuid": "^2.0.3",
-    "@types/classnames": "^2.2.7",
     "webpack": "^4.31.0"
   }
 }
