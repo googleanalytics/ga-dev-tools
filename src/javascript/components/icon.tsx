@@ -14,15 +14,6 @@
 
 import * as React from "react";
 
-// There is a known issue in React where for some reason a `use` element
-// is not compatible with the render cycle, because somehow the Shadow
-// DOM can't reconcile it. We therefore use this `key={current++}` hack
-// to force React to unmount and remount the SVG every time it is rendered.
-//
-// See https://stackoverflow.com/questions/50771280/react-svg-disappearing-when-component-rerenders
-// and http://sfdcinpractice.com/index.php/2016/12/29/svg-icon-disappears-rerendering/
-// for details
-
 type IconType =
   | "add-circle"
   | "arrow-back"
