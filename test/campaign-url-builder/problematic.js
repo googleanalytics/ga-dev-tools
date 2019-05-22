@@ -36,14 +36,14 @@ describe('campaign-url-builder', () => {
   describe('renderProblematic', () => {
     it('does not flag ordinary URLs as problematic', () => {
       ['example.com', 'mail.google.com']
-      .forEach(domain => {
-        thoroughlyTestDomain(domain, url => {
-          const renderResult = renderProblematic(url);
-          expect(renderResult)
-            .to.be.an('object')
-            .that.deep.equals({element: null, eventLabel: null});
-        });
-      });
+          .forEach(domain => {
+            thoroughlyTestDomain(domain, url => {
+              const renderResult = renderProblematic(url);
+              expect(renderResult)
+                  .to.be.an('object')
+                  .that.deep.equals({element: null, eventLabel: null});
+            });
+          });
     });
 
     it('returns a React element and analytics alert for bad URLs', () => {
@@ -58,7 +58,7 @@ describe('campaign-url-builder', () => {
               .to.be.an('object')
               .that.includes({eventLabel: event})
               .and.has.property('element')
-                  .that.satisfies(ReactTestUtils.isElement);
+              .that.satisfies(ReactTestUtils.isElement);
           // TODO(Lucretiel): Test that the returned React element includes
           // a url to the correct url builder. This requires introspecting
           // React elements, which I don't know how to do yet.

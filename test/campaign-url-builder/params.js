@@ -21,8 +21,8 @@ describe('campaign-url-builder', () => {
   describe('params', () => {
     describe('.extractParamsFromWebsiteUrl', () => {
       it('extracts campaign params from a URL query', () => {
-        let url = 'https://example.com/?utm_source=foo&utm_medium=bar';
-        let ret = params.extractParamsFromWebsiteUrl(url);
+        const url = 'https://example.com/?utm_source=foo&utm_medium=bar';
+        const ret = params.extractParamsFromWebsiteUrl(url);
 
         assert.equal(ret.bareUrl, 'https://example.com/');
         assert.deepEqual(ret.params, {
@@ -32,8 +32,8 @@ describe('campaign-url-builder', () => {
       });
 
       it('extracts campaign params from a URL fragment', () => {
-        let url = 'https://example.com/#utm_source=foo&utm_medium=bar';
-        let ret = params.extractParamsFromWebsiteUrl(url);
+        const url = 'https://example.com/#utm_source=foo&utm_medium=bar';
+        const ret = params.extractParamsFromWebsiteUrl(url);
 
         assert.equal(ret.bareUrl, 'https://example.com/');
         assert.deepEqual(ret.params, {
@@ -43,8 +43,8 @@ describe('campaign-url-builder', () => {
       });
 
       it('preserves non-campaign params in a URL query', () => {
-        let url = 'https://example.com/?utm_source=foo&foo=bar';
-        let ret = params.extractParamsFromWebsiteUrl(url);
+        const url = 'https://example.com/?utm_source=foo&foo=bar';
+        const ret = params.extractParamsFromWebsiteUrl(url);
 
         assert.equal(ret.bareUrl, 'https://example.com/?foo=bar');
         assert.deepEqual(ret.params, {
@@ -53,8 +53,8 @@ describe('campaign-url-builder', () => {
       });
 
       it('preserves non-campaign params in a URL fragment', () => {
-        let url = 'https://example.com/#heading&utm_source=foo&foo=bar';
-        let ret = params.extractParamsFromWebsiteUrl(url);
+        const url = 'https://example.com/#heading&utm_source=foo&foo=bar';
+        const ret = params.extractParamsFromWebsiteUrl(url);
 
         assert.equal(ret.bareUrl, 'https://example.com/#heading&foo=bar');
         assert.deepEqual(ret.params, {
@@ -63,10 +63,10 @@ describe('campaign-url-builder', () => {
       });
 
       it('favors campaign params in the fragment over the query', () => {
-        let url = 'https://example.com/' +
+        const url = 'https://example.com/' +
             '?utm_source=foo&utm_medium=bar#utm_source=qux';
 
-        let ret = params.extractParamsFromWebsiteUrl(url);
+        const ret = params.extractParamsFromWebsiteUrl(url);
 
         assert.equal(ret.bareUrl, 'https://example.com/');
         assert.deepEqual(ret.params, {
@@ -79,18 +79,18 @@ describe('campaign-url-builder', () => {
 
     describe('.addParamsToUrl', () => {
       it('adds params to a URL query', () => {
-        let bareUrl = 'https://example.com/?foo=bar#hash';
-        let campaignParams = {utm_source: 'foo', utm_medium: 'bar'};
-        let paramUrl = params.addParamsToUrl(bareUrl, campaignParams);
+        const bareUrl = 'https://example.com/?foo=bar#hash';
+        const campaignParams = {utm_source: 'foo', utm_medium: 'bar'};
+        const paramUrl = params.addParamsToUrl(bareUrl, campaignParams);
 
         assert.equal(paramUrl,
             'https://example.com/?foo=bar&utm_source=foo&utm_medium=bar#hash');
       });
 
       it('optionally adds params to a URL fragment', () => {
-        let bareUrl = 'https://example.com/?foo=bar#hash';
-        let campaignParams = {utm_source: 'foo', utm_medium: 'bar'};
-        let paramUrl = params.addParamsToUrl(bareUrl, campaignParams, true);
+        const bareUrl = 'https://example.com/?foo=bar#hash';
+        const campaignParams = {utm_source: 'foo', utm_medium: 'bar'};
+        const paramUrl = params.addParamsToUrl(bareUrl, campaignParams, true);
 
         assert.equal(paramUrl,
             'https://example.com/?foo=bar#hash&utm_source=foo&utm_medium=bar');
@@ -100,12 +100,12 @@ describe('campaign-url-builder', () => {
 
     describe('.sanitizeParams', () => {
       it('removes non-campaign params from a query object', () => {
-        let allParams = {
+        const allParams = {
           utm_source: 'foo',
           utm_medium: 'bar',
           foo: 'bar',
         };
-        let sanitizedParams = params.sanitizeParams(allParams);
+        const sanitizedParams = params.sanitizeParams(allParams);
 
         assert.deepEqual(sanitizedParams, {
           utm_source: 'foo',
@@ -114,11 +114,11 @@ describe('campaign-url-builder', () => {
       });
 
       it('ignores non-string values', () => {
-        let allParams = {
+        const allParams = {
           utm_source: 'foo',
           utm_medium: 1,
         };
-        let sanitizedParams = params.sanitizeParams(allParams);
+        const sanitizedParams = params.sanitizeParams(allParams);
 
         assert.deepEqual(sanitizedParams, {
           utm_source: 'foo',
@@ -126,12 +126,12 @@ describe('campaign-url-builder', () => {
       });
 
       it('optionally strips leading/trailing whitespace from values', () => {
-        let allParams = {
+        const allParams = {
           utm_source: '  foo ',
           utm_medium: 'bar  ',
           utm_campaign: 'baz',
         };
-        let trimmedParams = params.sanitizeParams(allParams, {trim: true});
+        const trimmedParams = params.sanitizeParams(allParams, {trim: true});
 
         assert.deepEqual(trimmedParams, {
           utm_source: 'foo',
@@ -141,12 +141,12 @@ describe('campaign-url-builder', () => {
       });
 
       it('optionally ignores emptry string values', () => {
-        let allParams = {
+        const allParams = {
           utm_source: 'foo',
           utm_medium: '',
           utm_campaign: null,
         };
-        let nonEmptyParams = params.sanitizeParams(allParams, {
+        const nonEmptyParams = params.sanitizeParams(allParams, {
           removeBlanks: true,
         });
 
