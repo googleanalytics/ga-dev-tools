@@ -289,7 +289,9 @@ export const lint = () => (
 );
 
 export const mocha = () => (
-  gulp.src('test/**/*.js', {read: false}).pipe(gulpMocha())
+  gulp.src('test/**/*.js', {read: false}).pipe(gulpMocha({
+    require: '@babel/register',
+  }))
 );
 
 export const test = gulp.series(lint, mocha);

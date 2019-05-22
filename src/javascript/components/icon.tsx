@@ -61,7 +61,7 @@ const Icon: React.FC<{ type: IconType }> = React.memo(({ type }) => {
 
   const [svgNode, setSvgNode] = React.useState<SVGElement | null>(null);
 
-  React.useEffect(() => {
+  React.useLayoutEffect(() => {
     if (svgNode === null) {
       return;
     }
