@@ -46,6 +46,17 @@ function isProd() {
   return process.env.NODE_ENV == 'production';
 }
 
+/**
+ * Gulp task that fails if we're not in prod
+ *
+ * @return A Promise that rejects if we're not in production mode
+ */
+// eslint-disable-next-line camelcase
+export const require_prod = () => isProd() ?
+  Promise.resolve() :
+  Promise.reject(new Error(
+      `The task must be run in production mode (NODE_ENV=production)`
+  ));
 
 /**
  * An error handler that logs the error and beeps in the console.
@@ -324,21 +335,21 @@ export const watch = () => {
 
 export const run = gulp.series(build, gulp.parallel(serve, watch));
 
-export const stage = gulp.series(build_test, () => {
-  if (!isProd()) {
-    throw new Error('The stage task must be run in production mode.');
-  }
+export const stage = gulp.parallel(
+    require_prod,
+    gulp.series(
+        build_test,
+        () => spawn('gcloud',
+            ['app', 'deploy', '--project', 'google.com:ga-dev-tools'],
+            {stdio: 'inherit'}
+        )
+    )
+);
 
-  return spawn('gcloud',
-      ['app', 'deploy', '--project', 'google.com:ga-dev-tools'],
-      {stdio: 'inherit'}
-  );
-});
-
-export const deploy = gulp.series(build_test, () => {
-  if (!isProd()) {
-    throw new Error('The deploy task must be run in production mode.');
-  }
-
-  return spawn('gcloud', ['app', 'deploy'], {stdio: 'inherit'});
-});
+export const deploy = gulp.parallel(
+    require_prod,
+    gulp.series(
+        build_test,
+        () => spawn('gcloud', ['app', 'deploy'], {stdio: 'inherit'})
+    )
+);
