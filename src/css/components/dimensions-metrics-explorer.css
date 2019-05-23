@@ -19,35 +19,22 @@
 
 .dme-group-list {
 	margin-left: 34px;
-	display: flex;
-}
-
-@media (max-width: 1024px) {
-	.dme-group-list {
-		flex-direction: column;
-	}
-}
-
-@media (min-width: 1024px) {
-	.dme-group-list {
-		flex-direction: row;
-	}
 }
 
 .dme-group-list-subgroup {
 	margin-top:0.5em;
-	flex: 1;
-	margin-right: 1em;
 }
 
 .dme-group-list-subgroup-header {
 	font-weight: bold;
+	font-size: 1.1em;
 }
 
 .dme-selectable-column {
-	margin: .3em 0em .8em;
+	margin: .2em 0em;
 	display: flex;
 	flex-direction: row;
+
 }
 
 .dme-selectable-column-deprecated {
@@ -62,8 +49,12 @@ input.dme-selectable-column-deprecated {
 	color: #bdbdbd !important;
 }
 
+.dme-selectable-column-info {
+	}
+
 .dme-selectable-column-detail {
-	margin-left: 1em;
+	margin-bottom: .6em;
+
 }
 
 .dme-selectable-column-checkbox {
