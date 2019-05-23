@@ -52,6 +52,9 @@ input.dme-selectable-column-deprecated {
 .dme-selectable-column-info {
 	}
 
+.dme-selectable-column-id {
+	margin-left: 1em;
+}
 .dme-selectable-column-detail {
 	margin-bottom: .6em;
 

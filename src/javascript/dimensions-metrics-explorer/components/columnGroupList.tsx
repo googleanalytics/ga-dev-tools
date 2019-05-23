@@ -69,8 +69,8 @@ const SelectableColumn: React.FC<{
       />
       <div className="dme-selectable-column-info">
           <a onClick={toggleExpanded} className={titleClass}>
-            <span><strong>{column.attributes.uiName}</strong></span>{" "}
-            <span>
+            <span className="dme-selectable-column-uiname"><strong>{column.attributes.uiName}</strong></span>
+            <span className="dme-selectable-column-id">
               <code>{column.id}</code>
             </span>
           </a>
