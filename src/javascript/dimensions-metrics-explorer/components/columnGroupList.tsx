@@ -28,12 +28,6 @@ import { Column, Groups } from "../common_types";
 import Icon from "../../components/icon";
 import IconButton from "../../components/icon-button";
 
-declare global {
-  interface Window {
-    readonly GAPI_ACCESS_TOKEN: string;
-  }
-}
-
 const SelectableColumn: React.FC<{
   column: Column;
   selected: boolean;
@@ -80,7 +74,7 @@ const SelectableColumn: React.FC<{
             <code>{column.id}</code>
           </div>
         </a>
-        {infoExpanded ? (
+        {infoExpanded && (
           <div className="dme-selectable-column-detail">
             <div className="dme-selectable-column-description">
               {column.attributes.description}
@@ -94,19 +88,19 @@ const SelectableColumn: React.FC<{
                 Added in API Version {column.attributes.addedInApiVersion}
               </strong>
             </div>
-            {allowedInSegments ? (
+            {allowedInSegments && (
               <div>
                 <strong>Allowed in segments</strong>
               </div>
-            ) : null}
-            {replacedBy ? (
+            )}
+            {replacedBy && (
               <div>
                 <strong>Deprecated:</strong> Use <code>{replacedBy}</code>{" "}
                 instead.
               </div>
-            ) : null}
+            )}
           </div>
-        ) : null}
+        )}
       </div>
     </div>
   );
@@ -115,8 +109,8 @@ const SelectableColumn: React.FC<{
 const ColumnSubgroup: React.FC<{
   columns: Column[];
   name: "Dimensions" | "Metrics";
-  allowableCubes: Set<string> | null;
-  cubes: CubesByColumn;
+  allowableCubes: Set<string>;
+  cubesByColumn: CubesByColumn;
   selectedColumns: Set<string>;
   selectColumn: (column: string, selected: boolean) => void;
 }> = ({
@@ -125,7 +119,7 @@ const ColumnSubgroup: React.FC<{
   selectColumn,
   selectedColumns,
   allowableCubes,
-  cubes
+  cubesByColumn
 }) => {
   // Move deprecated columns to the bottom
   const sortedColumns = React.useMemo(
@@ -142,10 +136,8 @@ const ColumnSubgroup: React.FC<{
       <div>
         {sortedColumns.map(column => {
           const disabled =
-            (allowableCubes &&
-              allowableCubes.intersect(cubes.get(column.id, Set())).size ===
-                0) ||
-            false;
+            allowableCubes.intersect(cubesByColumn.get(column.id, Set()))
+              .size === 0;
           return (
             <SelectableColumn
               column={column}
@@ -166,8 +158,8 @@ const ColumnGroup: React.FC<{
   toggleOpen: () => void;
   name: string;
   columns: Column[];
-  allowableCubes: Set<string> | null;
-  cubes: CubesByColumn;
+  allowableCubes: Set<string>;
+  cubesByColumn: CubesByColumn;
   selectedColumns: Set<string>;
   selectColumn: (column: string, selected: boolean) => void;
 }> = ({
@@ -176,7 +168,7 @@ const ColumnGroup: React.FC<{
   name,
   columns,
   allowableCubes,
-  cubes,
+  cubesByColumn,
   selectedColumns,
   selectColumn
 }) => (
@@ -194,7 +186,7 @@ const ColumnGroup: React.FC<{
           column => column.attributes.type === "DIMENSION"
         )}
         allowableCubes={allowableCubes}
-        cubes={cubes}
+        cubesByColumn={cubesByColumn}
         selectColumn={selectColumn}
         selectedColumns={selectedColumns}
       />
@@ -202,7 +194,7 @@ const ColumnGroup: React.FC<{
         name="Metrics"
         columns={columns.filter(column => column.attributes.type === "METRIC")}
         allowableCubes={allowableCubes}
-        cubes={cubes}
+        cubesByColumn={cubesByColumn}
         selectColumn={selectColumn}
         selectedColumns={selectedColumns}
       />
@@ -214,9 +206,17 @@ const ColumnGroupList: React.FC<{
   allowDeprecated: boolean;
   searchTerms: string[];
   onlySegments: boolean;
-  cubes: CubesByColumn;
+  cubesByColumn: CubesByColumn;
+  allCubes: Set<string>;
   columns: Column[];
-}> = ({ allowDeprecated, searchTerms, onlySegments, columns, cubes }) => {
+}> = ({
+  allowDeprecated,
+  searchTerms,
+  onlySegments,
+  columns,
+  cubesByColumn,
+  allCubes
+}) => {
   // Get the grouped columns
   const groupedColumns = React.useMemo(() => {
     let filteredColumns: Column[] = columns;
@@ -267,25 +267,20 @@ const ColumnGroupList: React.FC<{
   );
 
   // When a search term is entered, auto-expand all groups. When the search
-  // term is empty, auto-collapse all groups.
-  // KNOWN BUG: this effect should only run when searchTerms changes,
-  // but currently it also runs when expandAll changes, which happens
-  // when a checkbox is checked. Not sure how to fix this. Maybe a ref?
-  /*
+  // terms are cleared, auto-collapse all groups.
   React.useEffect(() => {
     if (searchTerms.length === 0) {
       collapseAll();
     } else {
       expandAll();
     }
-  }, [searchTerms.length === 0, collapseAll, expandAll]);
-  */
+  }, [searchTerms.length === 0]);
 
-  // selectedColumns is a dictionary mapping each column to its selected
-  // state. Each column is associated with one or more "cubes", and a
-  // only columns that share cubes may be mutually selected.
+  // selectedColumns is the set of selected columns Each column is
+  // associated with one or more "cubes", and a only columns that share
+  // cubes may be mutually selected.
   const [selectedColumns, setSelectedColumns] = React.useState<Set<string>>(
-    Set
+    () => Set()
   );
 
   const selectColumn = React.useCallback(
@@ -298,13 +293,12 @@ const ColumnGroupList: React.FC<{
 
   // The set of allowable cubes. When any columns are selected, the set of
   // allowable cubes is the intersection of the cubes for those columns
-  const allowableCubes = React.useMemo<Set<string> | null>(
+  const allowableCubes = React.useMemo<Set<string>>(
     () =>
       selectedColumns
-        .map(columnId => cubes.get(columnId) || (Set() as Set<string>))
-        .reduce<Set<string>>((cubes1, cubes2) => cubes1.intersect(cubes2)) ||
-      null,
-    [selectedColumns, cubes]
+        .map(columnId => cubesByColumn.get(columnId) || (Set() as Set<string>))
+        .reduce((cubes1, cubes2) => cubes1.intersect(cubes2), allCubes),
+    [selectedColumns, cubesByColumn, allCubes]
   );
 
   const showExpandAll = open.size < Object.keys(groupedColumns).length;
@@ -332,7 +326,7 @@ const ColumnGroupList: React.FC<{
               name={groupName}
               toggleOpen={() => toggleGroupOpen(groupName)}
               allowableCubes={allowableCubes}
-              cubes={cubes}
+              cubesByColumn={cubesByColumn}
               selectedColumns={selectedColumns}
               selectColumn={selectColumn}
             />

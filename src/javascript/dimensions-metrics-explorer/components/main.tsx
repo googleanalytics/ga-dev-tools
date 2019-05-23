@@ -12,12 +12,15 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+/// <reference path = "../../global.d.ts" />
+
 import * as React from "react";
+import { Set } from "immutable";
 
 import { useLocalStorage, useTypedLocalStorage } from "../../hooks";
 
 import { Column } from "../common_types";
-import { CubesByColumn, cubesByColumn } from "../cubes";
+import { CubesByColumn, cubesByColumn, allCubes } from "../cubes";
 
 import SearchBox from "./searchBox";
 import ColumnGroupList from "./columnGroupList";
@@ -99,9 +102,17 @@ const Main: React.FC = () => {
   }, []);
 
   // Fetch the cubes
-  const [cubes, setCubes] = React.useState<null | CubesByColumn>(null);
+  const [
+    localCubesByColumn,
+    setCubesByColumn
+  ] = React.useState<null | CubesByColumn>(null);
   React.useEffect(() => {
-    cubesByColumn.then(cubes => setCubes(cubes));
+    cubesByColumn().then(cubes => setCubesByColumn(cubes));
+  }, []);
+
+  const [localAllCubes, setAllCubes] = React.useState<null | Set<string>>(null);
+  React.useEffect(() => {
+    allCubes().then(cubes => setAllCubes(cubes));
   }, []);
 
   return (
@@ -114,13 +125,16 @@ const Main: React.FC = () => {
         onlySegments={onlySegments}
         setOnlySegments={setOnlySegments}
       />
-      {cubes !== null && columns !== null ? (
+      {localCubesByColumn !== null &&
+      columns !== null &&
+      localAllCubes !== null ? (
         <ColumnGroupList
           searchTerms={searchTerms}
           allowDeprecated={allowDeprecated}
           onlySegments={onlySegments}
           columns={columns}
-          cubes={cubes}
+          cubesByColumn={localCubesByColumn}
+          allCubes={localAllCubes}
         />
       ) : (
         <div>Loading dimensions and metrics...</div>

@@ -23,6 +23,7 @@ const buildCubes = (): CubesByColumn => {
 };
 
 // This is a promise because in the future it will be loaded via a fetch.
-export const cubesByColumn: Promise<CubesByColumn> = Promise.resolve(
-  buildCubes()
-);
+export const cubesByColumn = (): Promise<CubesByColumn> =>
+  Promise.resolve(buildCubes());
+export const allCubes = (): Promise<Set<string>> =>
+  Promise.resolve(Set.fromKeys(cubes));
