@@ -17,20 +17,35 @@
 	align-items: center;
 }
 
+.dme-group-list {
+	margin-left: 34px;
+	display: flex;
+}
+
+@media (max-width: 1024px) {
+	.dme-group-list {
+		flex-direction: column;
+	}
+}
+
+@media (min-width: 1024px) {
+	.dme-group-list {
+		flex-direction: row;
+	}
+}
+
 .dme-group-list-subgroup {
 	margin-top:0.5em;
+	flex: 1;
+	margin-right: 1em;
 }
 
 .dme-group-list-subgroup-header {
 	font-weight: bold;
 }
 
-.dme-group-list {
-	margin-left: 34px;
-}
-
 .dme-selectable-column {
-	margin: .2em 0em;
+	margin: .3em 0em .8em;
 	display: flex;
 	flex-direction: row;
 }
