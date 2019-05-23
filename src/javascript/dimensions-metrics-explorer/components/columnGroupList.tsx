@@ -58,7 +58,7 @@ const SelectableColumn: React.FC<{
   });
 
   return (
-    <div className="dme-selectable-column">
+    <div className="dme-selectable-column" id={column.id}>
       <input
         type="checkbox"
         value="Bike"
