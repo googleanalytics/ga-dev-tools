@@ -22,13 +22,14 @@ import eslint from 'gulp-eslint';
 import fs from 'fs-extra';
 import resize from 'gulp-image-resize';
 import imagemin from 'gulp-imagemin';
-import mocha from 'gulp-mocha';
+import gulpMocha from 'gulp-mocha';
 import plumber from 'gulp-plumber';
 import postcss from 'gulp-postcss';
 import rename from 'gulp-rename';
 import gutil from 'gulp-util';
 import pngquant from 'imagemin-pngquant';
-import merge from 'merge-stream';
+import {once} from 'lodash';
+import merge2 from 'merge2';
 import path from 'path';
 import postcssCssnext from 'postcss-cssnext';
 import postcssImport from 'postcss-import';
@@ -55,8 +56,7 @@ function streamError(err) {
   gutil.log(err instanceof gutil.PluginError ? err.toString() : err.stack);
 }
 
-
-gulp.task('css', function() {
+export const css = () => {
   const processors = [
     postcssImport(),
     postcssUrl(),
@@ -70,270 +70,260 @@ gulp.task('css', function() {
     processors.push(cssnano({autoprefixer: false}));
   }
 
-  return merge(
-      gulp.src('./src/css/index.css')
-          .pipe(plumber({errorHandler: streamError}))
-          .pipe(postcss(processors))
-          .pipe(gulp.dest('public/css')),
-      gulp.src('./src/css/chartjs-visualizations.css')
-          .pipe(plumber({errorHandler: streamError}))
-          .pipe(postcss(processors))
-          .pipe(gulp.dest('public/css'))
-  );
-});
-
-
-gulp.task('images', function() {
-  return merge(
-      gulp.src('src/images/**/*.svg')
-          .pipe(gulp.dest('public/images')),
-      gulp.src('src/images/**/*.png')
-          .pipe(imagemin({use: [pngquant()]}))
-          .pipe(gulp.dest('public/images')),
-      gulp.src('src/images/**/*.png')
-          .pipe(resize({width: '50%'}))
-          .pipe(imagemin({use: [pngquant()]}))
-          .pipe(rename((p) => p.basename = p.basename.replace('-2x', '')))
-          .pipe(gulp.dest('public/images'))
-  );
-});
-
-
-gulp.task('javascript:webpack', (function() {
-  let compiler;
-
-  const createCompiler = () => {
-    const sourceFiles = glob.sync('./*/index.js', {cwd: './src/javascript/'});
-    const entry = {index: ['babel-polyfill', './src/javascript/index.js']};
-
-    for (const filename of sourceFiles) {
-      const name = path.join('.', path.dirname(filename));
-      const filepath = './' + path.join('./src/javascript', filename);
-      entry[name] = ['babel-polyfill', filepath];
-    }
-
-    const plugins = [new webpack.optimize.CommonsChunkPlugin({
-      name: 'common',
-      minChunks: 2,
-    })];
-
-    // Uglify and remove dev-only code in production.
-    if (isProd()) {
-      plugins.push(new webpack.optimize.UglifyJsPlugin());
-      plugins.push(new webpack.DefinePlugin({
-        'process.env': {NODE_ENV: '"production"'},
-      }));
-    }
-
-    return webpack({
-      entry: entry,
-      output: {
-        path: path.join(__dirname, 'public/javascript'),
-        publicPath: '/public/javascript/',
-        filename: '[name].js',
-      },
-      cache: {},
-      devtool: '#source-map',
-      plugins: plugins,
-      module: {
-        loaders: [
-          {
-            test: /\.js$/,
-            loader: 'babel-loader',
-            exclude: /node_modules\/(?!(autotrack|dom-utils|tti-polyfill))/,
-            query: {
-              babelrc: false,
-              presets: [
-                ['es2015', {'modules': false}],
-                'react',
-                'stage-0',
-              ],
-              plugins: ['dynamic-import-system-import'],
-            },
-          },
-          // "postcss" loader applies autoprefixer to our CSS.
-          // "css" loader resolves paths in CSS and adds assets as dependencies.
-          // "style" loader turns CSS into JS modules that inject <style> tags.
-          // In production, we use a plugin to extract that CSS to a file, but
-          // in development "style" loader enables hot editing of CSS.
-          {
-            test: /\.css$/,
-            loaders: [
-              'style-loader',
-              'css-loader?modules&importLoaders=1&localIdentName=' +
-                  `${isProd() ? '' : '[name]__[local]___'}[hash:base64:5]` +
-                  '!postcss-loader',
-              'postcss-loader',
-            ],
-          },
-        ],
-      },
-    });
-  };
-
-  const compile = (done) => {
-    (compiler || (compiler = createCompiler())).run(function(err, stats) {
-      if (err) throw new gutil.PluginError('webpack', err);
-      gutil.log('[webpack]', stats.toString('minimal'));
-      done();
-    });
-  };
-
-  return compile;
-}()));
-
-
-gulp.task('javascript:embed-api-components', (function() {
-  let compiler;
-
-  const createCompiler = () => {
-    const COMPONENT_PATH = './javascript/embed-api/components';
-    const components = ['active-users', 'date-range-selector', 'view-selector2'];
-    const entry = {};
-
-    for (const component of components) {
-      entry[component] = './' + path.join('./src', COMPONENT_PATH, component);
-    }
-
-    return webpack({
-      entry: entry,
-      output: {
-        path: path.join(__dirname, './public', COMPONENT_PATH),
-        filename: '[name].js',
-      },
-      cache: {},
-      devtool: '#source-map',
-      plugins: isProd() ? [new webpack.optimize.UglifyJsPlugin()] : [],
-      module: {
-        loaders: [
-          {
-            test: /\.js$/,
-            loader: 'babel-loader',
-            query: {
-              babelrc: false,
-              cacheDirectory: false,
-              presets: [['es2015', {'modules': false}]],
-            },
-          },
-        ],
-      },
-    });
-  };
-
-  const compile = (done) => {
-    (compiler || (compiler = createCompiler())).run(function(err, stats) {
-      if (err) throw new gutil.PluginError('webpack', err);
-      gutil.log('[webpack]', stats.toString('minimal'));
-      done();
-    });
-  };
-
-  return compile;
-}()));
-
-
-gulp.task('javascript', [
-  'javascript:webpack',
-  'javascript:embed-api-components',
-]);
-
-
-gulp.task('json', function() {
-  const PARAMETER_REFERENCE_URL =
-      'https://developers.google.com/analytics' +
-      '/devguides/collection/protocol/v1/parameters.json';
-
-  request(PARAMETER_REFERENCE_URL)
-      .pipe(createOutputStream('public/json/parameter-reference.json'));
-});
-
-
-gulp.task('keycheck', () => fs.access('./service-account-key.json').catch(
-    error => Promise.reject(error +
-        '\nNeed a service account key. See ' +
-        'https://ga-dev-tools.appspot.com/embed-api/server-side-authorization/ ' +
-        'for details on how to get one.'
-    )
-));
-
-
-gulp.task('lint', function() {
   return gulp.src([
-    'src/javascript/**/*.js',
-    'test/**/*.js',
-    'gulpfile.js',
-  ])
-      .pipe(eslint({fix: true}))
-      .pipe(eslint.format())
-      .pipe(eslint.failAfterError());
-});
+    './src/css/index.css',
+    './src/css/chartjs-visualizations.css',
+  ]).pipe(plumber({errorHandler: streamError}))
+    .pipe(postcss(processors))
+    .pipe(gulp.dest('public/css'));
+};
 
+// eslint-disable-next-line camelcase
+export const watch_css = () => gulp.watch('./src/css/**/*.css', css);
 
-gulp.task('test', ['lint'], function() {
-  return gulp.src('test/**/*.js', {read: false})
-      .pipe(mocha());
-});
+export const images = () => {
+  const basePngs = gulp.src('src/images/**/*.png');
 
-gulp.task('serve', [], done => {
-  const devServer = spawn('dev_appserver.py', [
-    '.',
-    '--host', process.env.GA_TOOLS_HOST || 'localhost',
-    '--port', process.env.GA_TOOLS_PORT || '8080',
-  ]);
-  devServer.stderr.on('data', data => {
-    if (data.includes('Starting module')) done();
-    process.stdout.write(data);
+  const smallPngs = basePngs
+    .pipe(resize({width: '50%'}))
+    .pipe(rename(p => p.basename = p.basename.replace('-2x', '')));
+
+  const pngs = merge2([basePngs, smallPngs])
+    .pipe(imagemin({use: [pngquant()]}));
+
+  const svgs = gulp.src('src/images/**/*.svg');
+
+  return merge2([svgs, pngs]).pipe(gulp.dest('public/images'));
+};
+
+// eslint-disable-next-line camelcase
+export const watch_images = () => (
+  gulp.watch('./src/images/**/*.(png|svg)', images)
+);
+
+const webpackCompiler = once(() => {
+  let sourceFiles = glob.sync('./src/javascript/*/index.js');
+  let entry = {index: ['@babel/polyfill', './src/javascript/index.js']};
+
+  for (let indexPath of sourceFiles) {
+    // The entry name is the name of the directory containing the index.js file
+    let name = path.basename(path.dirname(indexPath));
+    entry[name] = ['@babel/polyfill', indexPath];
+  }
+
+  return webpack({
+    mode: isProd() ? 'production' : 'development',
+    entry: entry,
+    output: {
+      path: path.join(__dirname, 'public/javascript'),
+      publicPath: '/public/javascript/',
+      filename: '[name].js',
+    },
+    cache: {},
+    devtool: '#source-map',
+    optimization: {
+      splitChunks: {
+        minChunks: 2,
+        name: 'common',
+      },
+    },
+    module: {
+      rules: [{
+        test: /\.js$/,
+        loader: 'babel-loader',
+        exclude: /node_modules\/(?!(autotrack|dom-utils|tti-polyfill))/,
+        options: {
+          babelrc: false,
+          presets: [
+            '@babel/preset-env',
+            '@babel/preset-react',
+          ],
+          plugins: [
+            '@babel/plugin-proposal-class-properties',
+            '@babel/plugin-syntax-dynamic-import',
+          ],
+        },
+      }, {
+        test: /\.css$/,
+        // "postcss" loader applies autoprefixer to our CSS.
+        // "css" loader resolves paths in CSS and adds assets as dependencies.
+        // "style" loader turns CSS into JS modules that inject <style> tags.
+        // In production, we use a plugin to extract that CSS to a file, but
+        // in development "style" loader enables hot editing of CSS.
+        use: [
+          'style-loader',
+          {
+            loader: 'css-loader',
+            options: {
+              importLoaders: true,
+              modules: true,
+              localIdentName: '[name]__[local]__[hash:base64]',
+            },
+          },
+          'postcss-loader',
+        ],
+      }],
+    },
   });
 });
 
-
-gulp.task('watch', ['build:core', 'serve'], function() {
-  gulp.watch('src/css/**/*.css', ['css']);
-  gulp.watch('src/images/**/*', ['images']);
-  gulp.watch('src/javascript/**/*', ['javascript']);
+// eslint-disable-next-line camelcase
+export const js_webpack = () => new Promise((resolve, reject) => {
+  webpackCompiler().run((err, stats) => {
+    if (err) {
+      reject(new gutil.PluginError('webpack', err));
+    } else {
+      gutil.log('[webpack]', stats.toString({colors: true}));
+      resolve();
+    }
+  });
 });
 
+const embedApiCompiler = once(() => {
+  const COMPONENT_PATH = 'javascript/embed-api/components';
+  let components = ['active-users', 'date-range-selector', 'view-selector2'];
+  let entry = {};
 
-gulp.task('build:embed-api-components', ['javascript'], function() {
+  for (let component of components) {
+    entry[component] = './' + path.join('src', COMPONENT_PATH, component);
+  }
+
+  return webpack({
+    mode: isProd() ? 'production' : 'development',
+    entry: entry,
+    output: {
+      path: path.join(__dirname, './public', COMPONENT_PATH),
+      filename: '[name].js',
+    },
+    cache: {},
+    devtool: '#source-map',
+    module: {
+      rules: [{
+        test: /\.js$/,
+        loader: 'babel-loader',
+        options: {
+          babelrc: false,
+          cacheDirectory: false,
+          presets: ['@babel/preset-env'],
+        },
+      }],
+    },
+  });
+});
+
+// eslint-disable-next-line camelcase
+export const js_webpack_embedComponents = () => (
+  new Promise((resolve, reject) => {
+    embedApiCompiler().run((err, stats) => {
+      if (err) {
+        reject(new gutil.PluginError('webpack', err));
+      } else {
+        gutil.log('[webpack]', stats.toString({colors: true}));
+        resolve();
+      }
+    });
+  })
+);
+
+// eslint-disable-next-line camelcase
+export const build_embedComponents = () => (
   gulp.src('public/javascript/embed-api/components/*')
-      .pipe(gulp.dest('build/javascript/embed-api/components'));
+    .pipe(gulp.dest('build/javascript/embed-api/components'))
+);
+
+// eslint-disable-next-line camelcase
+export const js_embedComponents = gulp.series(
+  js_webpack_embedComponents,
+  build_embedComponents,
+);
+
+export const javascript = gulp.parallel(js_webpack, js_embedComponents);
+
+// eslint-disable-next-line camelcase
+export const watch_js = () => (
+  gulp.watch('./src/javascript/**/*.(js|jsx)', javascript)
+);
+
+export const json = () => {
+  const PARAMETER_REFERENCE_URL =
+    'https://developers.google.com/analytics' +
+    '/devguides/collection/protocol/v1/parameters.json';
+
+  return request(PARAMETER_REFERENCE_URL)
+    .pipe(createOutputStream('public/json/parameter-reference.json'));
+};
+
+export const keycheck = () => (
+  fs
+    .access('./service-account-key.json')
+    .catch(err => {
+      throw new Error(err + '\nNeed a service account key. See ' +
+        'https://ga-dev-tools.appspot.com' +
+        '/embed-api/server-side-authorization/ ' +
+        'for details on how to get one.');
+    })
+);
+
+export const lint = () => (
+  gulp.src([
+    'src/javascript/**/*.js',
+    'test/**/*.js',
+    'gulpfile.babel.js',
+  ])
+  .pipe(eslint())
+  .pipe(eslint.format())
+  .pipe(eslint.failAfterError())
+);
+
+export const mocha = () => (
+  gulp.src('test/**/*.js', {read: false}).pipe(gulpMocha())
+);
+
+export const test = gulp.series(lint, mocha);
+
+export const serve = () => spawn('dev_appserver.py', [
+  '.',
+  '--host', process.env.GA_TOOLS_HOST || 'localhost',
+  '--port', process.env.GA_TOOLS_PORT || '8080',
+], {
+  stdio: 'inherit',
 });
 
+// eslint-disable-next-line camelcase
+export const build = gulp.parallel(
+  javascript,
+  css,
+  images,
+  json,
+  keycheck,
+);
 
-gulp.task('build:core', [
-  'javascript',
-  'css',
-  'images',
-  'json',
-  'build:embed-api-components',
-]);
+// eslint-disable-next-line camelcase
+export const build_test = gulp.parallel(build, test);
 
+export const watch = () => {
+  watch_css();
+  watch_js();
+  watch_images();
+};
 
-gulp.task('build:all', [
-  'test',
-  'keycheck',
-  'build:core',
-]);
+export const run = gulp.series(build, gulp.parallel(serve, watch));
 
-
-gulp.task('stage', ['build:all'], (done) => {
+export const stage = gulp.series(build_test, () => {
   if (!isProd()) {
     throw new Error('The stage task must be run in production mode.');
   }
 
-  spawn('gcloud',
+  return spawn('gcloud',
       ['app', 'deploy', '--project', 'google.com:ga-dev-tools'],
-      {stdio: 'inherit'})
-      .on('error', (err) => done(err))
-      .on('close', () => done());
+      {stdio: 'inherit'}
+  );
 });
 
-gulp.task('deploy', ['build:all'], (done) => {
+export const deploy = gulp.series(build_test, () => {
   if (!isProd()) {
     throw new Error('The deploy task must be run in production mode.');
   }
 
-  spawn('gcloud', ['app', 'deploy'], {stdio: 'inherit'})
-      .on('error', (err) => done(err))
-      .on('close', () => done());
+  return spawn('gcloud', ['app', 'deploy'], {stdio: 'inherit'});
 });
