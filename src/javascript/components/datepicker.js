@@ -17,7 +17,7 @@
 
 
 import React from 'react';
-import Icon from './icon.js';
+import Icon from './icon';
 
 
 const ANIMATION_DURATION = 200;

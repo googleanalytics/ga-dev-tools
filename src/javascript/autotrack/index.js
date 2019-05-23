@@ -64,7 +64,9 @@ const pieChartOptions = {
  */
 function renderDataChart(container, options) {
   return new Promise(function(resolve, reject) {
-    const chart = new gapi.analytics.googleCharts.DataChart({chart: {container}});
+    const chart = new gapi.analytics.googleCharts.DataChart({
+      chart: {container},
+    });
     for (const option of options) {
       chart.set(option);
     }
@@ -173,19 +175,22 @@ gapi.analytics.ready(function() {
   /**
    * Creates a new DataChart instance showing breakpoint change events.
    */
-  const breakpointChange = renderDataChart('breakpoint-change-chart-container', [
-    baseOptions,
-    {
-      query: {
-        'metrics': 'ga:totalEvents',
-        'dimensions': 'ga:eventLabel',
-        'sort': '-ga:totalEvents',
-        'filters': 'ga:eventCategory==Breakpoint;ga:eventAction==change',
-        'max-results': 8,
-      },
-      chart: {type: 'COLUMN'},
-    },
-  ]);
+  const breakpointChange = renderDataChart(
+      'breakpoint-change-chart-container',
+      [
+        baseOptions,
+        {
+          query: {
+            'metrics': 'ga:totalEvents',
+            'dimensions': 'ga:eventLabel',
+            'sort': '-ga:totalEvents',
+            'filters': 'ga:eventCategory==Breakpoint;ga:eventAction==change',
+            'max-results': 8,
+          },
+          chart: {type: 'COLUMN'},
+        },
+      ],
+  );
 
 
   // Adds error handling.

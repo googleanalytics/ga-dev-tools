@@ -27,9 +27,7 @@ projects:
 - title: Dimensions & Metrics Explorer
   type: tool
   slug: dimensions-metrics-explorer
-  external:
-    action: Launch Tool
-    url: https://developers.google.com/analytics/devguides/reporting/core/dimsmets
+  status: updated
   tech:
   - metadata_api
 - title: Embed API
@@ -130,7 +128,6 @@ projects:
 - title: Usage Trends
   type: tool
   slug: usage-trends
-  status: new
   tech:
   - analytics_reporting_api_v4
   - management_api

@@ -126,7 +126,7 @@ describe('utils', () => {
     // Needs test: it should cache in-progress promises
   });
 
-    describe('cleanupingPromise', () => {
+  describe('cleanupingPromise', () => {
     it('should run cleanup functions when resolved', () => {
       let value = 0;
 

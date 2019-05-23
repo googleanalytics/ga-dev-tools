@@ -1,0 +1,69 @@
+.dme-group {
+	margin-top: 10px;
+}
+
+.dme-group-header {
+	display: flex;
+	font-size: 1.25em;
+	font-weight: bold;
+}
+
+.dme-group-collapse {
+	height: 24px;
+	width: 24px;
+	margin-right: 10px;
+	display : flex;
+	justify-items: center;
+	align-items: center;
+}
+
+.dme-group-list {
+	margin-left: 34px;
+}
+
+.dme-group-list-subgroup {
+	margin-top:0.5em;
+}
+
+.dme-group-list-subgroup-header {
+	font-weight: bold;
+	font-size: 1.1em;
+}
+
+.dme-selectable-column {
+	margin: .2em 0em;
+	display: flex;
+	flex-direction: row;
+
+}
+
+.dme-selectable-column-deprecated {
+	text-decoration: line-through;
+}
+
+input.dme-selectable-column-deprecated {
+	visibility: hidden;
+}
+
+.dme-selectable-column-disabled {
+	color: #bdbdbd !important;
+}
+
+.dme-selectable-column-info {
+	}
+
+.dme-selectable-column-id {
+	margin-left: 1em;
+}
+.dme-selectable-column-detail {
+	margin-bottom: .6em;
+
+}
+
+.dme-selectable-column-checkbox {
+	margin-top: 3pt;
+}
+
+.dme-selectable-column-description {
+	margin-bottom: 0.3em;
+}

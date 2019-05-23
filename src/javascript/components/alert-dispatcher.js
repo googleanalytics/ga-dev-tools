@@ -15,7 +15,7 @@
 
 import React from 'react';
 import ReactDOM from 'react-dom';
-import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
+import {CSSTransitionGroup} from 'react-transition-group';
 import Alert from './alert';
 
 
@@ -81,7 +81,7 @@ export default class AlertDispatcher extends React.Component {
   /** @return {Object} The React component. */
   render() {
     return (
-      <ReactCSSTransitionGroup
+      <CSSTransitionGroup
         component="div"
         className="AlertDispatcher"
         transitionEnterTimeout={200}
@@ -95,7 +95,7 @@ export default class AlertDispatcher extends React.Component {
             message={alert.message}
             onRemove={this.handleRemove.bind(this, alert.id)} />
         ))}
-      </ReactCSSTransitionGroup>
+      </CSSTransitionGroup>
     );
   }
 }

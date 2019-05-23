@@ -89,7 +89,10 @@ export default class DataChart extends React.Component {
       // Nullify the existing props
       // TODO(philipwalton): .set() should ideally be able to handle
       // sending it new properties without merging.
-      const nulledOldParams = mapValues(this.dataChart_.get().query, () => null);
+      const nulledOldParams = mapValues(
+          this.dataChart_.get().query,
+          () => null
+      );
 
       const params = {...defaultParams, ...nulledOldParams, ...newParams};
 

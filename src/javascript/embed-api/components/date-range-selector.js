@@ -21,7 +21,7 @@
  */
 gapi.analytics.ready(function() {
   const nDaysAgo = /(\d+)daysAgo/;
-  const dateFormat = /\d{4}\-\d{2}\-\d{2}/;
+  const dateFormat = /\d{4}-\d{2}-\d{2}/;
 
   /**
    * Convert a date acceptable to the Core Reporting API (e.g. `today`,

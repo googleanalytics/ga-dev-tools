@@ -20,12 +20,12 @@ describe('query-explorer', function() {
   describe('queryParams', function() {
     describe('.sanitize', function() {
       it('removes unsupported params from the object.', function() {
-        let dirtyParams = {
+        const dirtyParams = {
           'ids': 'ga:1234',
           'start-date': '30daysAgo',
           'foo': 'bar',
         };
-        let sanitizedParams = queryParams.sanitize(dirtyParams);
+        const sanitizedParams = queryParams.sanitize(dirtyParams);
         assert.deepEqual(sanitizedParams, {
           'ids': 'ga:1234',
           'start-date': '30daysAgo',
@@ -33,14 +33,14 @@ describe('query-explorer', function() {
       });
 
       it('returns an object with the keys in order.', function() {
-        let dirtyParams = {
+        const dirtyParams = {
           'segment': 'gaid::-1',
           'start-date': '30daysAgo',
           'ids': 'ga:1234',
           'max-results': '10',
           'end-date': 'yesterday',
         };
-        let sanitizedParams = queryParams.sanitize(dirtyParams);
+        const sanitizedParams = queryParams.sanitize(dirtyParams);
         assert.deepEqual(Object.keys(sanitizedParams), [
           'ids',
           'start-date',
@@ -51,12 +51,12 @@ describe('query-explorer', function() {
       });
 
       it('strips out non-string and empty string values.', function() {
-        let dirtyParams = {
+        const dirtyParams = {
           'ids': 'ga:1234',
           'start-date': '',
           'end-date': null,
         };
-        let sanitizedParams = queryParams.sanitize(dirtyParams);
+        const sanitizedParams = queryParams.sanitize(dirtyParams);
         assert.deepEqual(sanitizedParams, {'ids': 'ga:1234'});
       });
     });

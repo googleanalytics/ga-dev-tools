@@ -66,7 +66,7 @@ export default class HitBuilder extends React.Component {
    * @return {?Object}
    */
   getValidationMessageForParam(param) {
-    const message = this.props.validationMessages.find((m) => m.param === param);
+    const message = this.props.validationMessages.find(m => m.param === param);
     return message && message.description;
   }
 

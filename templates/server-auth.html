@@ -9,6 +9,8 @@
 <script>
 {% include 'embed-api/code/_snippet.js' %}
 
+window.GAPI_ACCESS_TOKEN = '{{ site.get_access_token() }}'
+
 gapi.analytics.ready(function() {
 
   // Authorize this user with the access token from the service account.
