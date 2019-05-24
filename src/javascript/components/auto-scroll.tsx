@@ -14,19 +14,24 @@
 
 /**
  * This component and associated context are used to implement auto scroll
- * on components that may have delayed rendering. When a child component of
- * AutoScroll loads an element that it wants to scroll to, it uses
- * the AutoScrollContext value, which is a function taking an HTMLElement.
- * When called, the the function will cause the page to auto-scroll to that
- * element iff it hasn't been scrolled to yet, and its ID matches the URL
- * fragment.
+ * on components that may have delayed rendering. When an AutoScrollDiv
+ * is rendered (as a child or sub-child of AutoScrollProvider) it
+ * automatically scrolls itself into view iff:
+ *
+ * - its id matches the URL fragment
+ * - it hasn't already been scrolled into view
+ *
+ * Additionally, whenever the fragment changes, any existing AutoScrollDiv
+ * component with a matching ID will automatically scroll itself into view.
  */
 import * as React from "react";
 import { useHash } from "../hooks";
 
 const AutoScrollContext = React.createContext<(node: HTMLElement) => void>(
   () => {
-    throw new Error("Called context function without provider");
+    throw new Error(
+      "Rendered an AutoScrollDiv outside of an AutoScrollProvider's children"
+    );
   }
 );
 
