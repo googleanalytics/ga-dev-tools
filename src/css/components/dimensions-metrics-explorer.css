@@ -31,10 +31,15 @@
 }
 
 .dme-selectable-column {
-	margin: .2em 0em;
+	padding: .2em;
 	display: flex;
 	flex-direction: row;
+}
 
+.dme-selectable-column-highlight {
+	background: #fff3cd;
+	border: 1px solid #d4d2d0;
+	border-radius: 4px;
 }
 
 .dme-selectable-column-deprecated {
