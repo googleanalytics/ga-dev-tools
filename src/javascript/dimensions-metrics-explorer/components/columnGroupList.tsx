@@ -71,10 +71,6 @@ const SelectableColumn: React.FC<{
   const visibility = replacedBy ? "hidden" : "visible";
   const checkboxDisabled = disabled || replacedBy;
 
-  const columnClass = classNames("dme-selectable-column", {
-    "dme-selectable-column-highlight": columnFragment === column.id
-  });
-
   const titleClass = classNames("dme-selectable-column-title", {
     "dme-selectable-column-disabled": disabled || replacedBy,
     "dme-selectable-column-deprecated": replacedBy
@@ -85,7 +81,7 @@ const SelectableColumn: React.FC<{
   });
 
   return (
-    <AutoScrollDiv className={columnClass} id={column.id}>
+    <AutoScrollDiv className="dme-selectable-column" id={column.id}>
       <input
         type="checkbox"
         value="Bike"
