@@ -35,7 +35,11 @@ const AutoScrollContext = React.createContext<(node: HTMLElement) => void>(
   }
 );
 
-export const AutoScrollProvider: React.FC<{}> = ({ children }) => {
+export const AutoScrollProvider: React.FC<{
+  behavior?: ScrollBehavior;
+  block?: ScrollLogicalPosition;
+  inline?: ScrollLogicalPosition;
+}> = ({ children, behavior, block }) => {
   const navTarget = useHash();
   const [didNav, setDidNav] = React.useState(false);
 
@@ -44,12 +48,13 @@ export const AutoScrollProvider: React.FC<{}> = ({ children }) => {
     setDidNav(false);
   }, [navTarget]);
 
-  // Observe node is called with nodes that may potentially want to be
-  // scrolled to.
-  const observeNode = React.useCallback(
+  // observeScrollableNode is called with nodes that want to be scrolled
+  // to. It executes a scroll if that node hasn't already been scrolled to
+  // and
+  const observeScrollableNode = React.useCallback(
     (node: HTMLElement) => {
       if (!didNav && navTarget === node.id) {
-        node.scrollIntoView({ behavior: "auto", block: "start" });
+        node.scrollIntoView({ behavior, block });
         setDidNav(true);
       }
     },
@@ -57,7 +62,7 @@ export const AutoScrollProvider: React.FC<{}> = ({ children }) => {
   );
 
   return (
-    <AutoScrollContext.Provider value={observeNode}>
+    <AutoScrollContext.Provider value={observeScrollableNode}>
       {children}
     </AutoScrollContext.Provider>
   );
@@ -70,14 +75,14 @@ export const AutoScrollDiv: React.FC<{ id: string; className?: string }> = ({
 }) => {
   // Note to future developers: feel free to add additional div attributes
   // as props on this component as necessary
-  const observeNode = React.useContext(AutoScrollContext);
+  const observeScrollableNode = React.useContext(AutoScrollContext);
   const [node, setNode] = React.useState<null | HTMLDivElement>(null);
 
   React.useEffect(() => {
     if (node !== null) {
-      observeNode(node);
+      observeScrollableNode(node);
     }
-  }, [observeNode, node]);
+  }, [observeScrollableNode, node]);
 
   return (
     <div id={id} className={className} ref={setNode}>

@@ -127,7 +127,7 @@ const Main: React.FC = () => {
   }, []);
 
   return (
-    <AutoScrollProvider>
+    <AutoScrollProvider behavior="auto" block="start">
       <div>
         <SearchBox
           searchText={searchText}
