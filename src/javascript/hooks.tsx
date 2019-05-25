@@ -115,3 +115,21 @@ export function useTypedLocalStorage<T>(
 
   return [JSON.parse(currentString), setValue];
 }
+
+export const useHash = () => {
+  const [hash, setHash] = React.useState(
+    window.location.hash.replace(/^#/, "")
+  );
+
+  React.useEffect(() => {
+    const listener = (ev: HashChangeEvent) => {
+      setHash(new URL(ev.newURL).hash.replace(/^#/, ""));
+    };
+
+    window.addEventListener("hashchange", listener, { passive: true });
+
+    return () => window.removeEventListener("hashchange", listener);
+  }, []);
+
+  return hash;
+};

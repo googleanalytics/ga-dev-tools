@@ -24,6 +24,7 @@ import { CubesByColumn, cubesByColumn, allCubes } from "../cubes";
 
 import SearchBox from "./searchBox";
 import ColumnGroupList from "./columnGroupList";
+import { AutoScrollProvider } from "../../components/auto-scroll";
 
 const Main: React.FC = () => {
   const [searchText, setSearchText] = useLocalStorage("searchText", "");
@@ -35,6 +36,16 @@ const Main: React.FC = () => {
     "onlySegments",
     false
   );
+
+  // If there is a fragment, reset the search filters, to ensure that
+  // the column is definitely visible.
+  React.useEffect(() => {
+    if (window.location.hash) {
+      setSearchText("");
+      setAllowDeprecated(true);
+      setOnlySegments(false);
+    }
+  }, []);
 
   const searchTerms = React.useMemo(
     () =>
@@ -116,30 +127,32 @@ const Main: React.FC = () => {
   }, []);
 
   return (
-    <div>
-      <SearchBox
-        searchText={searchText}
-        setSearchText={setSearchText}
-        allowDeprecated={allowDeprecated}
-        setAllowDeprecated={setAllowDeprecated}
-        onlySegments={onlySegments}
-        setOnlySegments={setOnlySegments}
-      />
-      {localCubesByColumn !== null &&
-      columns !== null &&
-      localAllCubes !== null ? (
-        <ColumnGroupList
-          searchTerms={searchTerms}
+    <AutoScrollProvider behavior="auto" block="start">
+      <div>
+        <SearchBox
+          searchText={searchText}
+          setSearchText={setSearchText}
           allowDeprecated={allowDeprecated}
+          setAllowDeprecated={setAllowDeprecated}
           onlySegments={onlySegments}
-          columns={columns}
-          cubesByColumn={localCubesByColumn}
-          allCubes={localAllCubes}
+          setOnlySegments={setOnlySegments}
         />
-      ) : (
-        <div>Loading dimensions and metrics...</div>
-      )}
-    </div>
+        {localCubesByColumn !== null &&
+        columns !== null &&
+        localAllCubes !== null ? (
+          <ColumnGroupList
+            searchTerms={searchTerms}
+            allowDeprecated={allowDeprecated}
+            onlySegments={onlySegments}
+            columns={columns}
+            cubesByColumn={localCubesByColumn}
+            allCubes={localAllCubes}
+          />
+        ) : (
+          <div>Loading dimensions and metrics...</div>
+        )}
+      </div>
+    </AutoScrollProvider>
   );
 };
 

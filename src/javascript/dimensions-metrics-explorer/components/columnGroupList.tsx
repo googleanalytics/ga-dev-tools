@@ -13,20 +13,31 @@
 // limitations under the License.
 
 import * as React from "react";
-import { groupBy, memoize, map, mapValues, every, some, sortBy } from "lodash";
+import {
+  groupBy,
+  memoize,
+  map,
+  mapValues,
+  every,
+  some,
+  sortBy,
+  keyBy
+} from "lodash";
 import { Set } from "immutable";
 import classNames from "classnames";
 
 import {
   useLocalStorage,
   useTypedLocalStorage,
-  useEventChecked
+  useEventChecked,
+  useHash
 } from "../../hooks";
 import { CubesByColumn } from "../cubes";
 import { Column, Groups } from "../common_types";
 
 import Icon from "../../components/icon";
 import IconButton from "../../components/icon-button";
+import { AutoScrollDiv } from "../../components/auto-scroll";
 
 const SelectableColumn: React.FC<{
   column: Column;
@@ -34,7 +45,19 @@ const SelectableColumn: React.FC<{
   disabled: boolean;
   setSelected: (selected: boolean) => void;
 }> = ({ column, selected, disabled, setSelected }) => {
+  const [ref, setRef] = React.useState<HTMLDivElement | null>(null);
+
+  // The column ID in the URL fragment
+  const columnFragment = useHash();
   const [infoExpanded, setExpanded] = React.useState(false);
+
+  // If the fragment is this column, expand it
+  React.useEffect(() => {
+    if (columnFragment === column.id) {
+      setExpanded(true);
+    }
+  }, [setExpanded, columnFragment]);
+
   const toggleExpanded = React.useCallback(() => setExpanded(exp => !exp), [
     setExpanded
   ]);
@@ -48,6 +71,10 @@ const SelectableColumn: React.FC<{
   const visibility = replacedBy ? "hidden" : "visible";
   const checkboxDisabled = disabled || replacedBy;
 
+  const columnClass = classNames("dme-selectable-column", {
+    "dme-selectable-column-highlight": columnFragment === column.id
+  });
+
   const titleClass = classNames("dme-selectable-column-title", {
     "dme-selectable-column-disabled": disabled || replacedBy,
     "dme-selectable-column-deprecated": replacedBy
@@ -58,7 +85,7 @@ const SelectableColumn: React.FC<{
   });
 
   return (
-    <div className="dme-selectable-column" id={column.id}>
+    <AutoScrollDiv className={columnClass} id={column.id}>
       <input
         type="checkbox"
         value="Bike"
@@ -68,12 +95,14 @@ const SelectableColumn: React.FC<{
         onChange={event => setSelected(event.target.checked)}
       />
       <div className="dme-selectable-column-info">
-          <a onClick={toggleExpanded} className={titleClass}>
-            <span className="dme-selectable-column-uiname"><strong>{column.attributes.uiName}</strong></span>
-            <span className="dme-selectable-column-id">
-              <code>{column.id}</code>
-            </span>
-          </a>
+        <a onClick={toggleExpanded} className={titleClass}>
+          <span className="dme-selectable-column-uiname">
+            <strong>{column.attributes.uiName}</strong>
+          </span>
+          <span className="dme-selectable-column-id">
+            <code>{column.id}</code>
+          </span>
+        </a>
         {infoExpanded && (
           <div className="dme-selectable-column-detail">
             <div className="dme-selectable-column-description">
@@ -99,10 +128,11 @@ const SelectableColumn: React.FC<{
                 instead.
               </div>
             )}
+            <a href={`#${column.id}`}>Permalink</a>
           </div>
         )}
       </div>
-    </div>
+    </AutoScrollDiv>
   );
 };
 
@@ -217,23 +247,22 @@ const ColumnGroupList: React.FC<{
   cubesByColumn,
   allCubes
 }) => {
-  // Get the grouped columns
-  const groupedColumns = React.useMemo(() => {
-    let filteredColumns: Column[] = columns;
+  const filteredColumns = React.useMemo(() => {
+    let filtered: Column[] = columns;
 
     if (!allowDeprecated) {
-      filteredColumns = filteredColumns.filter(
+      filtered = filtered.filter(
         column => column.attributes.status != "DEPRECATED"
       );
     }
 
     if (onlySegments) {
-      filteredColumns = filteredColumns.filter(
+      filtered = filtered.filter(
         column => column.attributes.allowedInSegments === "true"
       );
     }
 
-    filteredColumns = filteredColumns.filter(column =>
+    filtered = filtered.filter(column =>
       searchTerms.every(
         term =>
           column.id.toLowerCase().indexOf(term) != -1 ||
@@ -241,13 +270,26 @@ const ColumnGroupList: React.FC<{
       )
     );
 
-    // JS Sets guarantee insertion order is preserved, which is important
-    // because the key order in this groupBy determines the order that
-    // they appear in the UI.
-    return groupBy(filteredColumns, column => column.attributes.group);
-  }, [columns, searchTerms, allowDeprecated, onlySegments]);
+    return filtered;
+  }, [columns, allowDeprecated, onlySegments, searchTerms]);
 
-  // Set of column groups that are currently expanded
+  // Group all columns by Id
+  const columnsById = React.useMemo(
+    () => keyBy(filteredColumns, column => column.id),
+    [filteredColumns]
+  );
+
+  // Group all the columns by group
+  const groupedColumns = React.useMemo(
+    () =>
+      // JS Sets guarantee insertion order is preserved, which is important
+      // because the key order in this groupBy determines the order that
+      // they appear in the UI.
+      groupBy(filteredColumns, column => column.attributes.group),
+    [filteredColumns]
+  );
+
+  // Set of column groups that are currently expanded.
   const [open, setOpen] = React.useState<Set<string>>(() => Set());
 
   // Expand/Collapse callbacks
@@ -275,6 +317,17 @@ const ColumnGroupList: React.FC<{
       expandAll();
     }
   }, [searchTerms.length === 0]);
+
+  // When the page loads, if there is a fragment, auto-expand the group
+  // containing that fragment. Make sure this effect happens after the
+  // auto-expand or auto-collapse hook, above.
+  React.useEffect(() => {
+    const fragment = window.location.hash.replace(/^#/, "");
+    const selectedColumn = columnsById[fragment];
+    if (selectedColumn !== undefined) {
+      setOpen(oldOpen => oldOpen.add(selectedColumn.attributes.group));
+    }
+  }, [setOpen, columnsById]);
 
   // selectedColumns is the set of selected columns Each column is
   // associated with one or more "cubes", and a only columns that share
