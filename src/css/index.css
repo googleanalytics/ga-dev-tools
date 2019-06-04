@@ -25,7 +25,7 @@ limitations under the License.
 
 /* Vendor styles (which don't necessarily follow conventions) */
 @import './vendor/highlight';
-@import './vendor/react-tabs';
+@import 'react-tabs/style/react-tabs.css';
 @import './vendor/select2-overrides';
 @import './vendor/table-chart';
 

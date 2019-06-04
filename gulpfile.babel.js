@@ -288,6 +288,18 @@ export const keycheck = () => (
       })
 );
 
+// eslint-disable-next-line camelcase
+export const bitly_keycheck = () => (
+  fs
+      .access('./bitly_api_key.cfg')
+      .catch(err => {
+        throw new Error(
+            err +
+        '\nYou need a bitly key in order to do URL ' +
+        'shortening. See go/ga-dev-tools-info for info.');
+      })
+);
+
 export const lint = () => (
   gulp.src([
     'src/javascript/**/*.js',
@@ -335,21 +347,23 @@ export const watch = () => {
 
 export const run = gulp.series(build, gulp.parallel(serve, watch));
 
-export const stage = gulp.parallel(
-    require_prod,
-    gulp.series(
+export const stage = gulp.series(
+    gulp.parallel(
+        require_prod,
+        bitly_keycheck,
         build_test,
-        () => spawn('gcloud',
-            ['app', 'deploy', '--project', 'google.com:ga-dev-tools'],
-            {stdio: 'inherit'}
-        )
-    )
+    ),
+    () => spawn('gcloud',
+        ['app', 'deploy', '--project', 'google.com:ga-dev-tools'],
+        {stdio: 'inherit'}
+    ),
 );
 
-export const deploy = gulp.parallel(
-    require_prod,
-    gulp.series(
+export const deploy = gulp.series(
+    gulp.parallel(
+        require_prod,
+        bitly_keycheck,
         build_test,
-        () => spawn('gcloud', ['app', 'deploy'], {stdio: 'inherit'})
-    )
+    ),
+    () => spawn('gcloud', ['app', 'deploy'], {stdio: 'inherit'})
 );

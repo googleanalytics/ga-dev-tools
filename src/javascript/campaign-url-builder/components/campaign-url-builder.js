@@ -141,7 +141,7 @@ export default class CampaignUrlBuilder extends React.Component {
             </div>
           </div>
 
-          <div className={formControlClass}>
+          <div className={requiredFormControlClass}>
             <label className="FormControl-label">Campaign Medium</label>
             <div className="FormControl-body">
               <input
@@ -159,7 +159,7 @@ export default class CampaignUrlBuilder extends React.Component {
             </div>
           </div>
 
-          <div className={formControlClass}>
+          <div className={requiredFormControlClass}>
             <label className="FormControl-label">Campaign Name</label>
             <div className="FormControl-body">
               <input

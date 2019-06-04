@@ -34,12 +34,14 @@
 	padding: .2em;
 	display: flex;
 	flex-direction: row;
+	align-items: start;
+	border: 1px solid transparent;
+	border-radius: 4px;
 }
 
 .dme-selectable-column-highlight {
 	background: #fff3cd;
-	border: 1px solid #d4d2d0;
-	border-radius: 4px;
+	border-color: #d4d2d0;
 }
 
 .dme-selectable-column-deprecated {
