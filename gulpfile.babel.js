@@ -295,7 +295,7 @@ export const bitly_keycheck = () => (
       .catch(err => {
         throw new Error(
             err +
-        '\nNeed a bitly key in order to do URL ' +
+        '\nYou need a bitly key in order to do URL ' +
         'shortening. See go/ga-dev-tools-info for info.');
       })
 );
