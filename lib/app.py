@@ -23,6 +23,7 @@ from lib.handlers.base import BaseHandler
 from lib.handlers.explorer_csv import ExplorerCsvHandler
 from lib.handlers.server_side_auth import ServerSideAuthHandler
 from lib.handlers.url_shorten_auth import UrlShortenAuthHandler
+from lib.handlers.ga_cubes import GACubesHandler
 
 
 router = webapp2.WSGIApplication([
@@ -35,6 +36,7 @@ router = webapp2.WSGIApplication([
   # Static routes
   (r'/query-explorer/csvhandler.*', ExplorerCsvHandler),
   (r'/bitly-api-token-handler/?', UrlShortenAuthHandler),
+  (r'/ga_cubes.json/?', GACubesHandler),
 
   # Dynamic routes
   RedirectRoute(r'/',
