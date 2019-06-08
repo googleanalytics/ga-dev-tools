@@ -53,7 +53,8 @@ export const AutoScrollProvider: React.FC<{
   // and
   const observeScrollableNode = React.useCallback(
     (node: HTMLElement) => {
-      if (!didNav && navTarget === node.id) {
+      // TODO: replace with localeCompare
+      if (!didNav && navTarget.toLowerCase() === node.id.toLowerCase()) {
         node.scrollIntoView({ behavior, block });
         setDidNav(true);
       }

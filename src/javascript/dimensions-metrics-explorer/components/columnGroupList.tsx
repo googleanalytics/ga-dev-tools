@@ -48,12 +48,12 @@ const SelectableColumn: React.FC<{
   const [ref, setRef] = React.useState<HTMLDivElement | null>(null);
 
   // The column ID in the URL fragment
-  const columnFragment = useHash();
+  const columnFragment = useHash().toLowerCase();
   const [infoExpanded, setExpanded] = React.useState(false);
 
   // If the fragment is this column, expand it
   React.useEffect(() => {
-    if (columnFragment === column.id) {
+    if (columnFragment === column.id.toLowerCase()) {
       setExpanded(true);
     }
   }, [setExpanded, columnFragment]);
@@ -72,7 +72,8 @@ const SelectableColumn: React.FC<{
   const checkboxDisabled = disabled || replacedBy;
 
   const columnClass = classNames("dme-selectable-column", {
-    "dme-selectable-column-highlight": columnFragment === column.id
+    "dme-selectable-column-highlight":
+      columnFragment === column.id.toLowerCase()
   });
 
   const titleClass = classNames("dme-selectable-column-title", {
@@ -274,8 +275,8 @@ const ColumnGroupList: React.FC<{
   }, [columns, allowDeprecated, onlySegments, searchTerms]);
 
   // Group all columns by Id
-  const columnsById = React.useMemo(
-    () => keyBy(filteredColumns, column => column.id),
+  const columnsByLowerId = React.useMemo(
+    () => keyBy(filteredColumns, column => column.id.toLowerCase()),
     [filteredColumns]
   );
 
@@ -322,12 +323,12 @@ const ColumnGroupList: React.FC<{
   // containing that fragment. Make sure this effect happens after the
   // auto-expand or auto-collapse hook, above.
   React.useEffect(() => {
-    const fragment = window.location.hash.replace(/^#/, "");
-    const selectedColumn = columnsById[fragment];
+    const fragment = window.location.hash.replace(/^#/, "").toLowerCase();
+    const selectedColumn = columnsByLowerId[fragment];
     if (selectedColumn !== undefined) {
       setOpen(oldOpen => oldOpen.add(selectedColumn.attributes.group));
     }
-  }, [setOpen, columnsById]);
+  }, [setOpen, columnsByLowerId]);
 
   // selectedColumns is the set of selected columns Each column is
   // associated with one or more "cubes", and a only columns that share
