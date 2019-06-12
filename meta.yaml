@@ -75,6 +75,7 @@ projects:
   external:
     action: View Demo
     url: https://enhancedecommerce.appspot.com
+  status: updated
 - title: Hit Builder
   type: tool
   slug: hit-builder
