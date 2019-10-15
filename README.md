@@ -62,10 +62,10 @@ If you wish to preview your changes prior to releasing them in production, run t
 NODE_ENV=production npm run stage
 ```
 
-When running the `deploy` or `stage` scripts, the App Engine version number is automatically generated for you. However, the version can be overridden by setting the `APP_ENGINE_VERSION` environment variable.
+When running the `deploy` scripts, the App Engine version number is automatically generated for you. However, the version can be overridden by setting the `APP_ENGINE_VERSION` environment variable.
 
 ```sh
 NODE_ENV=production APP_ENGINE_VERSION=feature-test npm run stage
 ```
 
-**Note:** running the `deploy` or `stage` script requires permissions for their respective App Engine projects.
+**Note:** running the `deploy` script requires permissions for their respective App Engine projects.
