@@ -53,10 +53,10 @@ function isProd() {
  */
 // eslint-disable-next-line camelcase
 export const require_prod = () => isProd() ?
-  Promise.resolve() :
-  Promise.reject(new Error(
-      `The task must be run in production mode (NODE_ENV=production)`
-  ));
+    Promise.resolve() :
+    Promise.reject(new Error(
+        `The task must be run in production mode (NODE_ENV=production)`
+    ));
 
 /**
  * An error handler that logs the error and beeps in the console.
@@ -365,5 +365,6 @@ export const deploy = gulp.series(
         bitly_keycheck,
         build_test,
     ),
-    () => spawn('gcloud', ['app', 'deploy'], {stdio: 'inherit'})
+    () => spawn('gcloud', ['app', 'deploy', '--project', 'ga-dev-tools'],
+        {stdio: 'inherit'})
 );
