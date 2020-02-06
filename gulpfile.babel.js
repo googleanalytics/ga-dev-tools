@@ -323,6 +323,7 @@ export const serve = () => spawn('dev_appserver.py', [
   '.',
   '--host', process.env.GA_TOOLS_HOST || 'localhost',
   '--port', process.env.GA_TOOLS_PORT || '8080',
+  '--enable_host_checking', process.env.GA_TOOLS_ENABLE_HOST_CHECKING || 'true',
 ], {
   stdio: 'inherit',
 });
