@@ -12,28 +12,22 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-
 /* global $ */
 
+import map from "lodash/map";
+import querystring from "querystring";
 
-import map from 'lodash/map';
-import querystring from 'querystring';
-
-
-const DEFAULT_HIT = 'v=1&t=pageview';
-const REQUIRED_PARAMS = ['v', 't', 'tid', 'cid'];
-
+const DEFAULT_HIT = "v=1&t=pageview";
 
 let id = 1;
-
 
 /**
  * Gets the initial hit from the URL if present. If a hit is found in the URL
  * it is captured and immediately stripped as to have two sources of state.
  * If no hit is found in the URL the default hit is used.
- * @return {string} The default hit.
+ * @return The default hit.
  */
-export function getInitialHitAndUpdateUrl() {
+export function getInitialHitAndUpdateUrl(): string {
   const query = location.search.slice(1);
 
   if (query) {
@@ -46,48 +40,63 @@ export function getInitialHitAndUpdateUrl() {
   }
 }
 
-
 /**
  * Accepts a hit payload or URL and converts it into an array of param objects
  * where the required params are always first and in the correct order.
- * @param {string} hit A query string or hit payload.
- * @return {Array<Object>} The param objects.
+ * @param hit A query string or hit payload.
  */
-export function convertHitToParams(hit = '') {
+export function convertHitToParams(hit: string = ""): object[] {
   // If the hit contains a "?", remove it and all characters before it.
-  const searchIndex = hit.indexOf('?');
+  const searchIndex = hit.indexOf("?");
   if (searchIndex > -1) hit = hit.slice(searchIndex + 1);
 
   const query = querystring.parse(hit);
 
   // Create required params first, regardless of order in the hit.
-  const requiredParams = [];
-  for (const name of REQUIRED_PARAMS) {
+  const requiredParams: Param[] = [];
+  for (const name of Object.values(RequiredParams)) {
     requiredParams.push({
       id: id++,
       name: name,
       value: query[name],
-      required: true,
+      required: true
     });
     delete query[name];
   }
 
   // Create optional params after required params.
-  const optionalParams = map(query, (value, name) =>
-    ({name, value, id: id++, isOptional: true}));
+  const optionalParams: Param[] = map(query, (value, name) => ({
+    name,
+    value,
+    id: id++,
+    isOptional: true
+  }));
 
   return requiredParams.concat(optionalParams);
 }
 
+enum RequiredParams {
+  V = "v",
+  T = "t",
+  T_Id = "tid",
+  C_Id = "cid"
+}
+
+interface Param {
+  name: RequiredParams | string;
+  value: any;
+  id: number;
+  required?: true;
+  isOptional?: true;
+}
 
 /**
  * Returns the hit model data as a query string.
- * @param {Array<Object>} params An array of param objects.
- * @return {string}
+ * @param params An array of param objects.
  */
-export function convertParamsToHit(params) {
-  const query = {};
-  for (const {name, value} of params) {
+export function convertParamsToHit(params: Param[]): string {
+  const query: { [name: string]: any } = {};
+  for (const { name, value } of params) {
     // `name` must be present, `value` can be an empty string.
     if (name && value != null) query[name] = value;
   }
@@ -95,22 +104,25 @@ export function convertParamsToHit(params) {
   return querystring.stringify(query);
 }
 
+interface ValidationResult {
+  response: any;
+  hit: string;
+}
 
 /**
  * Sends a validation request to the Measurement Protocol Validation Server
  * and returns a promise that will be fulfilled with the response.
- * @param {string} hit A Measurement Protocol hit payload.
- * @return {Promise}
+ * @param hit A Measurement Protocol hit payload.
  */
-export function getHitValidationResult(hit) {
+export function getHitValidationResult(hit: string): Promise<ValidationResult> {
   return new Promise((resolve, reject) => {
     $.ajax({
-      method: 'POST',
-      url: 'https://www.google-analytics.com/debug/collect',
+      method: "POST",
+      url: "https://www.google-analytics.com/debug/collect",
       data: hit,
-      dataType: 'json',
-      success: (response) => resolve({response, hit}),
-      error: reject,
+      dataType: "json",
+      success: response => resolve({ response, hit }),
+      error: reject
     });
   });
 }

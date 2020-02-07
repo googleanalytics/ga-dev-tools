@@ -20,6 +20,7 @@
     "@babel/preset-react": "^7.0.0",
     "@babel/register": "^7.4.4",
     "@types/classnames": "^2.2.7",
+    "@types/jquery": "^3.3.32",
     "@types/lodash": "^4.14.129",
     "@types/node": "^12.0.1",
     "@types/react": "^16.8.17",
