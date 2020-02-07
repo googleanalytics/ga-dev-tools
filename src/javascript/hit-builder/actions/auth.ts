@@ -12,45 +12,58 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+import accountSummaries from "javascript-api-utils/lib/account-summaries";
+import * as types from "./types";
 
-import accountSummaries from 'javascript-api-utils/lib/account-summaries';
-import * as types from './types';
+interface SetAuthorized {
+  type: typeof types.SET_AUTHORIZED;
+}
 
+interface SetUserProperties {
+  type: typeof types.SET_USER_PROPERTIES;
+  properties: Property[];
+}
+
+interface Property {
+  name: any;
+  id: any;
+  group: any;
+}
+
+type Action = SetAuthorized | SetUserProperties;
+
+type Dispatch = (action: Action) => void;
 
 /**
  * Returns the SET_AUTHORIZED action type.
- * @return {Object}
  */
-function setAuthorized() {
-  return {type: types.SET_AUTHORIZED};
+function setAuthorized(): SetAuthorized {
+  return { type: types.SET_AUTHORIZED };
 }
-
 
 /**
  * Returns the SET_USER_PROPERTIES action type and the new properties.
- * @param {Array} properties
- * @return {Object}
  */
-function setUserProperties(properties) {
-  return {type: types.SET_USER_PROPERTIES, properties};
+function setUserProperties(properties: Property[]): SetUserProperties {
+  return { type: types.SET_USER_PROPERTIES, properties };
 }
-
 
 /**
  * Invokes the setAuthorized action creator and the setUserProperties
  * action creator after retrieving the list of properties for the authorized
  * user.
- * @return {Function}
  */
-export function handleAuthorizationSuccess() {
-  return async (dispatch) => {
+export function handleAuthorizationSuccess(): (
+  dispatch: Dispatch
+) => Promise<void> {
+  return async (dispatch: Dispatch) => {
     dispatch(setAuthorized());
 
     const summaries = await accountSummaries.get();
-    const properties = summaries.allProperties().map((property) => ({
+    const properties = summaries.allProperties().map(property => ({
       name: property.name,
       id: property.id,
-      group: summaries.getAccountByPropertyId(property.id).name,
+      group: summaries.getAccountByPropertyId(property.id).name
     }));
 
     dispatch(setUserProperties(properties));

@@ -12,22 +12,22 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-
 // params
-export const ADD_PARAM = 'ADD_PARAM';
-export const REMOVE_PARAM = 'REMOVE_PARAM';
-export const EDIT_PARAM_NAME = 'EDIT_PARAM_NAME';
-export const EDIT_PARAM_VALUE = 'EDIT_PARAM_VALUE';
-export const REPLACE_PARAMS = 'REPLACE_PARAMS';
+export const ADD_PARAM: "ADD_PARAM" = "ADD_PARAM";
+export const REMOVE_PARAM: "REMOVE_PARAM" = "REMOVE_PARAM";
+export const EDIT_PARAM_NAME: "EDIT_PARAM_NAME" = "EDIT_PARAM_NAME";
+export const EDIT_PARAM_VALUE: "EDIT_PARAM_VALUE" = "EDIT_PARAM_VALUE";
+export const REPLACE_PARAMS: "REPLACE_PARAMS" = "REPLACE_PARAMS";
 
 // hitStatus
-export const SET_HIT_STATUS = 'SET_HIT_STATUS';
+export const SET_HIT_STATUS: "SET_HIT_STATUS" = "SET_HIT_STATUS";
 
 // isAuthorized
-export const SET_AUTHORIZED = 'SET_AUTHORIZED';
+export const SET_AUTHORIZED: "SET_AUTHORIZED" = "SET_AUTHORIZED";
 
 // properties
-export const SET_USER_PROPERTIES = 'SET_USER_PROPERTIES';
+export const SET_USER_PROPERTIES: "SET_USER_PROPERTIES" = "SET_USER_PROPERTIES";
 
 // validationMessages
-export const SET_VALIDATION_MESSAGES = 'SET_VALIDATION_MESSAGES';
+export const SET_VALIDATION_MESSAGES: "SET_VALIDATION_MESSAGES" =
+  "SET_VALIDATION_MESSAGES";
