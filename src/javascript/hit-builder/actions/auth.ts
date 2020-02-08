@@ -13,27 +13,6 @@
 // limitations under the License.
 
 import accountSummaries from "javascript-api-utils/lib/account-summaries";
-import * as types from "./types";
-
-interface SetAuthorized {
-  type: typeof types.SET_AUTHORIZED;
-}
-
-interface SetUserProperties {
-  type: typeof types.SET_USER_PROPERTIES;
-  properties: Property[];
-}
-
-interface Property {
-  name: any;
-  id: any;
-  group: any;
-}
-
-type Action = SetAuthorized | SetUserProperties;
-
-type Dispatch = (action: Action) => void;
-
 /**
  * Returns the SET_AUTHORIZED action type.
  */

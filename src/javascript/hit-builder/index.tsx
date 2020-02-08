@@ -12,21 +12,17 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-
 /* global gapi */
 
+import * as React from "react";
+import * as ReactDOM from "react-dom";
+import { connect, Provider } from "react-redux";
+import { bindActionCreators } from "redux";
 
-import React from 'react';
-import ReactDOM from 'react-dom';
-import {connect, Provider} from 'react-redux';
-import {bindActionCreators} from 'redux';
+import HitBuilder from "./components/hit-builder";
+import store from "./store";
 
-import actions from './actions';
-import HitBuilder from './components/hit-builder';
-import store from './store';
-
-import site from '../site';
-
+import site from "../site";
 
 /**
  * Maps Redux state to component props
@@ -37,7 +33,6 @@ function mapStateToProps(state) {
   return state;
 }
 
-
 /**
  * Maps Redux action dispatchers to component props.
  * @param {function} dispatch The redux dispatch function.
@@ -45,26 +40,26 @@ function mapStateToProps(state) {
  */
 function mapDispatchToProps(dispatch) {
   return {
-    actions: bindActionCreators(actions, dispatch),
+    actions: bindActionCreators(actions, dispatch)
   };
 }
 
-
-const HitBuilderApp = connect(mapStateToProps, mapDispatchToProps)(HitBuilder);
-
+const HitBuilderApp = connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(HitBuilder);
 
 /**
  * The base render function.
  */
 function render() {
   ReactDOM.render(
-      <Provider store={store}>
-        <HitBuilderApp />
-      </Provider>,
-      document.getElementById('hit-builder')
+    <Provider store={store}>
+      <HitBuilderApp />
+    </Provider>,
+    document.getElementById("hit-builder")
   );
 }
-
 
 /**
  * The callback invoked when the Embed API has authorized the user.
@@ -75,15 +70,13 @@ function onAuthorizationSuccess() {
   site.setReadyState();
 }
 
-
 gapi.analytics.ready(function() {
   if (gapi.analytics.auth.isAuthorized()) {
     onAuthorizationSuccess();
   } else {
-    gapi.analytics.auth.once('success', onAuthorizationSuccess);
+    gapi.analytics.auth.once("success", onAuthorizationSuccess);
   }
 });
-
 
 // Perform an initial render.
 store.subscribe(render);

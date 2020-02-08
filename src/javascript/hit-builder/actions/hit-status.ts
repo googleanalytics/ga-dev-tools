@@ -12,23 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import * as types from "./types";
-
-enum HitStatus {
-  VALID = "VALID",
-  INVALID = "INVALID",
-  UNVALIDATED = "UNVALIDATED"
-}
-
-interface HitStatusAction {
-  type: typeof types.SET_HIT_STATUS;
-  status: HitStatus;
-}
+import { HitStatus, SetHitStatus, ActionType } from "../types";
 
 /**
  * Returns the SET_HIT_STATUS action type with the new status.
- * @return {Object}
  */
-export function setHitStatus(status: HitStatus): HitStatusAction {
-  return { type: types.SET_HIT_STATUS, status };
+export function setHitStatus(status: HitStatus): SetHitStatus {
+  return { type: ActionType.SetHitStatus, status };
 }
