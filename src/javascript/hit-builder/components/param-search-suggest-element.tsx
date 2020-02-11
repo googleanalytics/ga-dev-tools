@@ -15,9 +15,10 @@
 import React from "react";
 import ParamElement from "./param-element";
 import SearchSuggest from "../../components/search-suggest";
+import { Property } from "../types";
 
 interface ParamSearchSuggestElementProps {
-  options: string[];
+  options: Property[];
 }
 /**
  * A ParamElement component whose value is a SearchSuggest component.

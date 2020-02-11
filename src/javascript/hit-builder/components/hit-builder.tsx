@@ -22,7 +22,7 @@ import ParamSelectElement from "./param-select-element";
 import { convertParamsToHit } from "../hit";
 import IconButton from "../../components/icon-button";
 import { actions } from "../store";
-import { Param, ValidationMessage, HitStatus } from "../types";
+import { Param, ValidationMessage, HitStatus, Property } from "../types";
 
 const HIT_TYPES = [
   "pageview",
@@ -35,12 +35,12 @@ const HIT_TYPES = [
   "timing"
 ];
 
-interface HitBuilderProps {
+export interface HitBuilderProps {
   actions: typeof actions;
   params: Param[];
   validationMessages: ValidationMessage[];
   hitStatus: HitStatus;
-  properties: string[];
+  properties: Property[];
 }
 
 /**

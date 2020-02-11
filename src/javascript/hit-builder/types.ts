@@ -87,7 +87,12 @@ export interface Param {
   required?: true;
   isOptional?: true;
 }
-export interface Property {}
+
+export interface Property {
+  name: string;
+  id: number;
+  group: string;
+}
 export interface ValidationMessage {
   param: string;
   description: string;

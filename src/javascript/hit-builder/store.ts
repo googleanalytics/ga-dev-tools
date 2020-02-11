@@ -19,6 +19,7 @@ import {
 import accountSummaries from "javascript-api-utils/lib/account-summaries";
 import * as hitUtils from "./hit";
 import { gaAll } from "../analytics";
+
 import AlertDispatcher from "../components/alert-dispatcher";
 
 export const actions = {

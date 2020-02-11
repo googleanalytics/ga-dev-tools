@@ -14,10 +14,15 @@
 
 import * as React from "react";
 import * as ReactDOM from "react-dom";
-import { connect, Provider } from "react-redux";
-import { bindActionCreators, Dispatch } from "redux";
+import {
+  connect,
+  Provider,
+  MapStateToProps,
+  MapDispatchToProps
+} from "react-redux";
+import { bindActionCreators, Dispatch, ActionCreatorsMapObject } from "redux";
 
-import HitBuilder from "./components/hit-builder";
+import HitBuilder, { HitBuilderProps } from "./components/hit-builder";
 import store from "./store";
 import { actions } from "./store";
 import { HitAction, State } from "./types";
@@ -27,18 +32,20 @@ import site from "../site";
 /**
  * Maps Redux state to component props
  */
-function mapStateToProps(state: State) {
+const mapStateToProps = (state: State) => {
   return state;
-}
+};
 
 /**
  * Maps Redux action dispatchers to component props.
  */
-function mapDispatchToProps(dispatch: Dispatch<HitAction>) {
+const mapDispatchToProps = (
+  dispatch: Dispatch<HitAction>
+): { actions: typeof actions } => {
   return {
     actions: bindActionCreators(actions, dispatch)
   };
-}
+};
 
 const HitBuilderApp = connect(
   mapStateToProps,
