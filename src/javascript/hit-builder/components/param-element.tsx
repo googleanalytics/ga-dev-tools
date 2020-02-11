@@ -25,11 +25,11 @@ const REFERENCE_URL =
 interface ParamElementProps {
   param: Param;
   actions: typeof actions;
-  required: boolean;
-  message: string;
-  placeholder: string;
-  onRemove: () => void;
-  needsFocus: boolean;
+  required?: boolean;
+  message?: string;
+  placeholder?: string;
+  onRemove?: () => void;
+  needsFocus?: boolean;
 }
 
 /**
@@ -90,7 +90,7 @@ export default class ParamElement<T = {}> extends React.Component<
    * single spaced string to fix a baseline alignment bug in Chrome.
    */
   getPlaceholder(): string {
-    return this.props.placeholder || " ";
+    return (this.props.placeholder as string | undefined) || " ";
   }
 
   /**

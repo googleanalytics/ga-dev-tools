@@ -40,12 +40,14 @@ interface HitBuilderProps {
   params: Param[];
   validationMessages: ValidationMessage[];
   hitStatus: HitStatus;
+  properties: string[];
 }
 
 /**
  * The primary Hit Builder app component.
  */
 export default class HitBuilder extends React.Component<HitBuilderProps> {
+  newParamNeedsFocus_?: boolean;
   /**
    * Adds a new param after a user clicks to the "Add parameter" button.
    * Also turns on a flag to indicate that this param needs focus after
@@ -122,7 +124,7 @@ export default class HitBuilder extends React.Component<HitBuilderProps> {
             actions={this.props.actions}
             param={params[0]}
             options={["1"]}
-            message={this.getValidationMessageForParam("v")}
+            message={this.getValidationMessageForParam("v")!}
           />
 
           <ParamSelectElement
@@ -130,7 +132,7 @@ export default class HitBuilder extends React.Component<HitBuilderProps> {
             actions={this.props.actions}
             param={params[1]}
             options={HIT_TYPES}
-            message={this.getValidationMessageForParam("t")}
+            message={this.getValidationMessageForParam("t")!}
           />
 
           <ParamSearchSuggestElement
@@ -139,7 +141,7 @@ export default class HitBuilder extends React.Component<HitBuilderProps> {
             param={params[2]}
             options={this.props.properties}
             placeholder="UA-XXXXX-Y"
-            message={this.getValidationMessageForParam("tid")}
+            message={this.getValidationMessageForParam("tid")!}
           />
 
           <ParamButtonElement
@@ -148,7 +150,7 @@ export default class HitBuilder extends React.Component<HitBuilderProps> {
             param={params[3]}
             type="refresh"
             title="Randomly generate UUID"
-            message={this.getValidationMessageForParam("cid")}
+            message={this.getValidationMessageForParam("cid")!}
             onClick={this.handleGenerateUuid}
           />
 
