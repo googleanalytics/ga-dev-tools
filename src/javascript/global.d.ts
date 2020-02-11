@@ -35,4 +35,6 @@ declare module "javascript-api-utils/lib/account-summaries" {
   }>;
 }
 
+declare const gapi: any;
+
 window.GA;

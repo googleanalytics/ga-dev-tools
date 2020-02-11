@@ -12,8 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-/* global gapi */
-
 import * as React from "react";
 import * as ReactDOM from "react-dom";
 import { connect, Provider } from "react-redux";
@@ -64,7 +62,10 @@ function render() {
  * Updates the CSS state classes and rerenders in the authorized state.
  */
 function onAuthorizationSuccess() {
-  store.dispatch(actions.handleAuthorizationSuccess());
+  // I'm pretty sure this works, but I'm not sure how to type it.
+  // I think it's doing redux thunk stuff, so the thunk middleware takes care of
+  // this.'
+  store.dispatch((actions as any).handleAuthorizationSuccess());
   site.setReadyState();
 }
 

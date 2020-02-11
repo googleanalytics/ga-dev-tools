@@ -18,8 +18,8 @@ import {
 } from "./types";
 import accountSummaries from "javascript-api-utils/lib/account-summaries";
 import * as hitUtils from "./hit";
-import { gaAll } from "../../analytics";
-import AlertDispatcher from "../../components/alert-dispatcher";
+import { gaAll } from "../analytics";
+import AlertDispatcher from "../components/alert-dispatcher";
 
 export const actions = {
   setAuthorized(): HitAction {
@@ -89,7 +89,12 @@ export const actions = {
     };
   },
   validateHit() {
-    const formatMessage = message => {
+    const formatMessage = (message: {
+      parameter: any;
+      description: string;
+      messageType: any;
+      messageCode: any;
+    }) => {
       const linkRegex = /Please see http:\/\/goo\.gl\/a8d4RP#\w+ for details\.$/;
       return {
         param: message.parameter,
