@@ -192,7 +192,9 @@ const isAuthorized: Reducer<boolean, HitAction> = (
 };
 
 const params: Reducer<Param[], HitAction> = (
-  state: Param[] = [],
+  state: Param[] = hitUtils.convertHitToParams(
+    hitUtils.getInitialHitAndUpdateUrl()
+  ),
   action: HitAction
 ) => {
   switch (action.type) {
@@ -261,4 +263,4 @@ const app: Reducer<State, HitAction> = combineReducers({
 
 const createStoreWithMiddleware = applyMiddleware(...middleware)(createStore);
 
-export default createStoreWithMiddleware<State, HitAction>(app);
+export default createStoreWithMiddleware<State, HitAction>(app, {});
