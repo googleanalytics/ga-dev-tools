@@ -17,6 +17,9 @@ import {
   ValidationMessage
 } from "./types";
 import accountSummaries from "javascript-api-utils/lib/account-summaries";
+import * as hitUtils from "./hit";
+import { gaAll } from "../../analytics";
+import AlertDispatcher from "../../components/alert-dispatcher";
 
 export const actions = {
   setAuthorized(): HitAction {
@@ -61,6 +64,90 @@ export const actions = {
     return (dispatch: Dispatch<HitAction>) => {
       dispatch({ type: ActionType.RemoveParam, id });
       actions.resetHitValidationStatus(dispatch);
+    };
+  },
+  editParamName(id: number, name: string) {
+    return (dispatch: Dispatch<HitAction>) => {
+      dispatch({ type: ActionType.EditParamName, id, name });
+      actions.resetHitValidationStatus(dispatch);
+    };
+  },
+  editParamValue(id: number, value: string) {
+    return (dispatch: Dispatch<HitAction>) => {
+      dispatch({ type: ActionType.EditParamValue, id, value });
+      actions.resetHitValidationStatus(dispatch);
+    };
+  },
+  updateHit(newHit: string) {
+    return (dispatch: Dispatch<HitAction>, getState: () => State) => {
+      const oldHit = hitUtils.convertParamsToHit(getState().params);
+      if (oldHit != newHit) {
+        const params = hitUtils.convertHitToParams(newHit);
+        dispatch({ type: ActionType.ReplaceParams, params });
+        actions.resetHitValidationStatus(dispatch);
+      }
+    };
+  },
+  validateHit() {
+    const formatMessage = message => {
+      const linkRegex = /Please see http:\/\/goo\.gl\/a8d4RP#\w+ for details\.$/;
+      return {
+        param: message.parameter,
+        description: message.description.replace(linkRegex, "").trim(),
+        type: message.messageType,
+        code: message.messageCode
+      };
+    };
+    return async (dispatch: Dispatch<HitAction>, getState: () => State) => {
+      const hit = hitUtils.convertParamsToHit(getState().params);
+      dispatch(actions.setHitStatus(HitStatus.Validiting));
+
+      try {
+        const data = await hitUtils.getHitValidationResult(hit);
+
+        // In some cases the query will have changed before the response gets
+        // back, so we need to check that the result is for the current query.
+        // If it's not, ignore it.
+        if (data.hit != hitUtils.convertParamsToHit(getState().params)) {
+          return;
+        }
+
+        const result = data.response.hitParsingResult[0];
+        const validationMessages = result.parserMessage;
+
+        if (result.valid) {
+          dispatch(actions.setHitStatus(HitStatus.Valid));
+          dispatch(actions.setValidationMessages([]));
+          gaAll("send", "event", {
+            eventCategory: "Hit Builder",
+            eventAction: "validate",
+            eventLabel: "valid"
+          });
+        } else {
+          dispatch(actions.setHitStatus(HitStatus.Invalid));
+          dispatch(
+            actions.setValidationMessages(validationMessages.map(formatMessage))
+          );
+          gaAll("send", "event", {
+            eventCategory: "Hit Builder",
+            eventAction: "validate",
+            eventLabel: "invalid"
+          });
+        }
+      } catch (err) {
+        // TODO(philipwalton): handle timeout errors and slow network connection.
+        actions.resetHitValidationStatus(dispatch);
+        AlertDispatcher.addOnce({
+          title: "Oops, an error occurred while validating the hit",
+          message: `Check your connection to make sure you're still online.
+If you're still having problems, try refreshing the page.`
+        });
+        gaAll("send", "event", {
+          eventCategory: "Hit Builder",
+          eventAction: "validate",
+          eventLabel: "error"
+        });
+      }
     };
   }
 };

@@ -16,6 +16,7 @@
 
 import map from "lodash/map";
 import querystring from "querystring";
+import { Param, RequiredParams } from "./types";
 
 const DEFAULT_HIT = "v=1&t=pageview";
 
@@ -45,7 +46,7 @@ export function getInitialHitAndUpdateUrl(): string {
  * where the required params are always first and in the correct order.
  * @param hit A query string or hit payload.
  */
-export function convertHitToParams(hit: string = ""): object[] {
+export function convertHitToParams(hit: string = ""): Param[] {
   // If the hit contains a "?", remove it and all characters before it.
   const searchIndex = hit.indexOf("?");
   if (searchIndex > -1) hit = hit.slice(searchIndex + 1);
@@ -73,21 +74,6 @@ export function convertHitToParams(hit: string = ""): object[] {
   }));
 
   return requiredParams.concat(optionalParams);
-}
-
-enum RequiredParams {
-  V = "v",
-  T = "t",
-  T_Id = "tid",
-  C_Id = "cid"
-}
-
-interface Param {
-  name: RequiredParams | string;
-  value: any;
-  id: number;
-  required?: true;
-  isOptional?: true;
 }
 
 /**

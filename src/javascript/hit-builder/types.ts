@@ -67,13 +67,25 @@ export type HitAction =
   | SetValidationMessages;
 
 export enum HitStatus {
-  Unvalidated = "UNVALIDATED"
+  Unvalidated = "UNVALIDATED",
+  Validiting = "VALIDATING",
+  Valid = "VALID",
+  Invalid = "INVALID"
+}
+
+export enum RequiredParams {
+  V = "v",
+  T = "t",
+  T_Id = "tid",
+  C_Id = "cid"
 }
 
 export interface Param {
   id: number;
   name: string;
-  value: string;
+  value: string | string[];
+  required?: true;
+  isOptional?: true;
 }
 export interface Property {}
 export interface ValidationMessage {}
