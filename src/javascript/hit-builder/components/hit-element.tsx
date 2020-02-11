@@ -23,19 +23,23 @@ import IconButton from "../../components/icon-button";
 import supports from "../../supports";
 import { copyElementText, sleep } from "../../utils";
 import { actions } from "../store";
+import { HitStatus, ValidationMessage } from "../types";
 
 const ACTION_TIMEOUT = 1500;
 
 interface HitElementProps {
   hitPayload: string;
   actions: typeof actions;
+  hitStatus: HitStatus;
+  validationMessages: ValidationMessage[];
 }
 
 interface HitElementState {
-  value: string;
   hitSent: boolean;
   hitPayloadCopied: boolean;
+  hitPayload: string;
   hitUriCopied: boolean;
+  value: string;
 }
 
 /**
@@ -45,9 +49,11 @@ export default class HitElement extends React.Component<
   HitElementProps,
   HitElementState
 > {
-  hitPayloadCopiedTimeout_: boolean;
+  hitPayloadCopiedTimeout_?: number;
+  hitUriCopiedTimeout_?: number;
   state = {
     value: this.props.hitPayload,
+    hitPayload: this.props.hitPayload,
     hitSent: false,
     hitPayloadCopied: false,
     hitUriCopied: false
@@ -55,9 +61,8 @@ export default class HitElement extends React.Component<
 
   /**
    * Updates the values state when the users changes the hit text.
-   * @param {string} value The input element's value property.
    */
-  handleChange = ({ target: { value } }) => {
+  handleChange = ({ target: { value } }: { target: { value: string } }) => {
     this.setState({ value });
   };
 
@@ -118,7 +123,7 @@ export default class HitElement extends React.Component<
 
       // After three second, remove the success checkbox.
       clearTimeout(this.hitPayloadCopiedTimeout_);
-      this.hitPayloadCopiedTimeout_ = setTimeout(
+      this.hitPayloadCopiedTimeout_ = window.setTimeout(
         () => this.setState({ hitPayloadCopied: false }),
         ACTION_TIMEOUT
       );
@@ -145,7 +150,7 @@ export default class HitElement extends React.Component<
 
       // After three second, remove the success checkbox.
       clearTimeout(this.hitUriCopiedTimeout_);
-      this.hitUriCopiedTimeout_ = setTimeout(
+      this.hitUriCopiedTimeout_ = window.setTimeout(
         () => this.setState({ hitUriCopied: false }),
         ACTION_TIMEOUT
       );
@@ -296,7 +301,7 @@ export default class HitElement extends React.Component<
    * Resets the hit if a new payload is entered by the user.
    * @param {Object} nextProps
    */
-  componentWillReceiveProps(nextProps) {
+  componentWillReceiveProps(nextProps: HitElementProps) {
     if (nextProps.hitPayload != this.state.hitPayload) {
       this.setState({
         value: nextProps.hitPayload,

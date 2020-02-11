@@ -89,7 +89,7 @@ export interface Param {
 }
 export interface Property {}
 export interface ValidationMessage {
-  param: Param;
+  param: string;
   description: string;
 }
 
