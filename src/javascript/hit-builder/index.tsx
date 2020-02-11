@@ -17,28 +17,26 @@
 import * as React from "react";
 import * as ReactDOM from "react-dom";
 import { connect, Provider } from "react-redux";
-import { bindActionCreators } from "redux";
+import { bindActionCreators, Dispatch } from "redux";
 
 import HitBuilder from "./components/hit-builder";
 import store from "./store";
+import { actions } from "./store";
+import { HitAction, State } from "./types";
 
 import site from "../site";
 
 /**
  * Maps Redux state to component props
- * @param {Object} state The redux state.
- * @return {Object} The props from the state.
  */
-function mapStateToProps(state) {
+function mapStateToProps(state: State) {
   return state;
 }
 
 /**
  * Maps Redux action dispatchers to component props.
- * @param {function} dispatch The redux dispatch function.
- * @return {Object} The props with dispatch actions.
  */
-function mapDispatchToProps(dispatch) {
+function mapDispatchToProps(dispatch: Dispatch<HitAction>) {
   return {
     actions: bindActionCreators(actions, dispatch)
   };

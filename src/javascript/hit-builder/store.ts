@@ -3,7 +3,8 @@ import {
   applyMiddleware,
   Reducer,
   Middleware,
-  combineReducers
+  combineReducers,
+  Dispatch
 } from "redux";
 import thunkMuddliware from "redux-thunk";
 import {
@@ -15,6 +16,54 @@ import {
   State,
   ValidationMessage
 } from "./types";
+import accountSummaries from "javascript-api-utils/lib/account-summaries";
+
+export const actions = {
+  setAuthorized(): HitAction {
+    return { type: ActionType.SetAuthorized };
+  },
+  setUserProperties(properties: Property[]): HitAction {
+    return { type: ActionType.SetUserProperties, properties };
+  },
+  setHitStatus(status: HitStatus): HitAction {
+    return { type: ActionType.SetHitStatus, status };
+  },
+  setValidationMessages(validationMessages: ValidationMessage[]): HitAction {
+    return { type: ActionType.SetValidationMessages, validationMessages };
+  },
+  handleAuthorizationSuccess(): (
+    dispatch: Dispatch<HitAction>
+  ) => Promise<void> {
+    return async (dispatch: Dispatch<HitAction>) => {
+      dispatch(actions.setAuthorized());
+
+      const summaries = await accountSummaries.get();
+      const properties = summaries.allProperties().map(property => ({
+        name: property.name,
+        id: property.id,
+        group: summaries.getAccountByPropertyId(property.id).name
+      }));
+
+      dispatch(actions.setUserProperties(properties));
+    };
+  },
+  resetHitValidationStatus(dispatch: Dispatch<HitAction>) {
+    dispatch(actions.setHitStatus(HitStatus.Unvalidated));
+    dispatch(actions.setValidationMessages([]));
+  },
+  addParam() {
+    return (dispatch: Dispatch<HitAction>) => {
+      dispatch({ type: ActionType.AddParam });
+      actions.resetHitValidationStatus(dispatch);
+    };
+  },
+  removeParam(id: number) {
+    return (dispatch: Dispatch<HitAction>) => {
+      dispatch({ type: ActionType.RemoveParam, id });
+      actions.resetHitValidationStatus(dispatch);
+    };
+  }
+};
 
 const middleware: Middleware[] = [thunkMuddliware];
 // Adds a logger in non-production mode.

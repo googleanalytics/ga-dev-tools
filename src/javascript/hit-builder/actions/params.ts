@@ -12,51 +12,16 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-
-import {setHitStatus} from './hit-status';
-import * as types from './types';
-import {setValidationMessages} from './validation-messages';
-import {convertParamsToHit, convertHitToParams,
-  getHitValidationResult} from '../hit';
-import {gaAll} from '../../analytics';
-import AlertDispatcher from '../../components/alert-dispatcher';
-
-
-/**
- * Resets the hit status and removes any validation messages.
- * @param {Function} dispatch
- */
-function resetHitValidationStatus(dispatch) {
-  dispatch(setHitStatus('UNVALIDATED'));
-  dispatch(setValidationMessages([]));
-}
-
-
-/**
- * Dispatches the ADD_PARAM action type and resets the hit validation status.
- * @return {Function}
- */
-export function addParam() {
-  return (dispatch) => {
-    dispatch({type: types.ADD_PARAM});
-    resetHitValidationStatus(dispatch);
-  };
-}
-
-
-/**
- * Dispatches the REMOVE_PARAM action type with the passed ID and resets the
- * hit validation status.
- * @param {number} id The param ID to remove.
- * @return {Function}
- */
-export function removeParam(id) {
-  return (dispatch) => {
-    dispatch({type: types.REMOVE_PARAM, id});
-    resetHitValidationStatus(dispatch);
-  };
-}
-
+import { setHitStatus } from "./hit-status";
+import * as types from "./types";
+import { setValidationMessages } from "./validation-messages";
+import {
+  convertParamsToHit,
+  convertHitToParams,
+  getHitValidationResult
+} from "../hit";
+import { gaAll } from "../../analytics";
+import AlertDispatcher from "../../components/alert-dispatcher";
 
 /**
  * Dispatches the EDIT_PARAM_NAME action type with the passed ID and name
@@ -66,12 +31,11 @@ export function removeParam(id) {
  * @return {Function}
  */
 export function editParamName(id, name) {
-  return (dispatch) => {
-    dispatch({type: types.EDIT_PARAM_NAME, id, name});
+  return dispatch => {
+    dispatch({ type: types.EDIT_PARAM_NAME, id, name });
     resetHitValidationStatus(dispatch);
   };
 }
-
 
 /**
  * Dispatches the EDIT_PARAM_VALUE action type with the passed ID and value
@@ -81,12 +45,11 @@ export function editParamName(id, name) {
  * @return {Function}
  */
 export function editParamValue(id, value) {
-  return (dispatch) => {
-    dispatch({type: types.EDIT_PARAM_VALUE, id, value});
+  return dispatch => {
+    dispatch({ type: types.EDIT_PARAM_VALUE, id, value });
     resetHitValidationStatus(dispatch);
   };
 }
-
 
 /**
  * Accepts a new hit string and updates the hit if it differs from the existing
@@ -99,12 +62,11 @@ export function updateHit(newHit) {
     const oldHit = convertParamsToHit(getState().params);
     if (oldHit != newHit) {
       const params = convertHitToParams(newHit);
-      dispatch({type: types.REPLACE_PARAMS, params});
+      dispatch({ type: types.REPLACE_PARAMS, params });
       resetHitValidationStatus(dispatch);
     }
   };
 }
-
 
 /**
  * Validates the hit and updates the validation status and messages with the
@@ -112,18 +74,18 @@ export function updateHit(newHit) {
  * @return {Function}
  */
 export function validateHit() {
-  const formatMessage = (message) => {
+  const formatMessage = message => {
     const linkRegex = /Please see http:\/\/goo\.gl\/a8d4RP#\w+ for details\.$/;
     return {
       param: message.parameter,
-      description: message.description.replace(linkRegex, '').trim(),
+      description: message.description.replace(linkRegex, "").trim(),
       type: message.messageType,
-      code: message.messageCode,
+      code: message.messageCode
     };
   };
   return async (dispatch, getState) => {
     const hit = convertParamsToHit(getState().params);
-    dispatch(setHitStatus('VALIDATING'));
+    dispatch(setHitStatus("VALIDATING"));
 
     try {
       const data = await getHitValidationResult(hit);
@@ -137,34 +99,34 @@ export function validateHit() {
       const validationMessages = result.parserMessage;
 
       if (result.valid) {
-        dispatch(setHitStatus('VALID'));
+        dispatch(setHitStatus("VALID"));
         dispatch(setValidationMessages([]));
-        gaAll('send', 'event', {
-          eventCategory: 'Hit Builder',
-          eventAction: 'validate',
-          eventLabel: 'valid',
+        gaAll("send", "event", {
+          eventCategory: "Hit Builder",
+          eventAction: "validate",
+          eventLabel: "valid"
         });
       } else {
-        dispatch(setHitStatus('INVALID'));
+        dispatch(setHitStatus("INVALID"));
         dispatch(setValidationMessages(validationMessages.map(formatMessage)));
-        gaAll('send', 'event', {
-          eventCategory: 'Hit Builder',
-          eventAction: 'validate',
-          eventLabel: 'invalid',
+        gaAll("send", "event", {
+          eventCategory: "Hit Builder",
+          eventAction: "validate",
+          eventLabel: "invalid"
         });
       }
     } catch (err) {
       // TODO(philipwalton): handle timeout errors and slow network connection.
       resetHitValidationStatus(dispatch);
       AlertDispatcher.addOnce({
-        title: 'Oops, an error occurred while validating the hit',
+        title: "Oops, an error occurred while validating the hit",
         message: `Check your connection to make sure you're still online.
-                  If you're still having problems, try refreshing the page.`,
+                  If you're still having problems, try refreshing the page.`
       });
-      gaAll('send', 'event', {
-        eventCategory: 'Hit Builder',
-        eventAction: 'validate',
-        eventLabel: 'error',
+      gaAll("send", "event", {
+        eventCategory: "Hit Builder",
+        eventAction: "validate",
+        eventLabel: "error"
       });
     }
   };
