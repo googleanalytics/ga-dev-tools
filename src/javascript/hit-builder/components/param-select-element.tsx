@@ -12,36 +12,42 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+import React from "react";
+import ParamElement from "./param-element";
 
-import React from 'react';
-import ParamElement from './param-element';
-
+interface ParamSelectElementProps {
+  options: string[];
+}
 
 /**
  * A ParamElement component whose value is a select dropdown.
  */
-export default class ParamSelectElement extends ParamElement {
+export default class ParamSelectElement extends ParamElement<
+  ParamSelectElementProps
+> {
   /**
    * React lifecycyle methods below:
    * http://facebook.github.io/react/docs/component-specs.html
    * ---------------------------------------------------------
    */
 
-
   /** @return {Object} The React component. */
   render() {
     // Only render a select if the value is one of the passed options.
-    if (this.props.options.includes(this.state.value)) {
+    if (this.props.options.includes(this.state.value as any)) {
       return (
         <div className={this.getClassName()}>
           {this.renderLabel()}
           <div className="HitBuilderParam-body">
             <select
               className={this.getFieldClassName()}
-              value={this.state.value || ''}
-              onChange={this.handleValueChange}>
-              {this.props.options.map((option) => (
-                <option value={option} key={option}>{option}</option>
+              value={this.state.value || ""}
+              onChange={this.handleValueChange}
+            >
+              {this.props.options.map(option => (
+                <option value={option} key={option}>
+                  {option}
+                </option>
               ))}
             </select>
             {this.renderHelpIcon()}

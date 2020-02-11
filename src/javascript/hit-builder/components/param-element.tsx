@@ -35,7 +35,9 @@ interface ParamElementProps {
 /**
  * A component that renders an individual hit param name and value pair.
  */
-export default class ParamElement extends React.Component<ParamElementProps> {
+export default class ParamElement<T = {}> extends React.Component<
+  ParamElementProps & T
+> {
   state = {
     name: this.props.param.name || "",
     value: this.props.param.value || ""
