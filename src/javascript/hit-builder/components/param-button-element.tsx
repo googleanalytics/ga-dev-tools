@@ -12,24 +12,28 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+import React from "react";
+import ParamElement from "./param-element";
+import Icon, { IconType } from "../../components/icon";
 
-import React from 'react';
-import ParamElement from './param-element';
-import Icon from '../../components/icon';
-
+interface ParamButtonElementProps {
+  onClick: () => void;
+  title: string;
+  type: IconType;
+}
 
 /**
  * A ParamElement component whose value has a Button component appended.
  */
-export default class ParamButtonElement extends ParamElement {
+export default class ParamButtonElement extends ParamElement<
+  ParamButtonElementProps
+> {
   /**
    * Returns the class name for the form field.
-   * @return {string}
    */
-  getFieldClassName() {
-    return super.getFieldClassName() + ' FormFieldAddOn-field';
+  getFieldClassName(): string {
+    return super.getFieldClassName() + " FormFieldAddOn-field";
   }
-
 
   /**
    * React lifecycyle methods below:
@@ -37,9 +41,7 @@ export default class ParamButtonElement extends ParamElement {
    * ---------------------------------------------------------
    */
 
-
-  /** @return {Object} The React component. */
-  render() {
+  render(): JSX.Element {
     return (
       <div className={this.getClassName()}>
         {this.renderLabel()}
@@ -47,15 +49,17 @@ export default class ParamButtonElement extends ParamElement {
           <div className="FormFieldAddOn">
             <input
               className={this.getFieldClassName()}
-              value={this.state.value || ''}
+              value={this.state.value || ""}
               placeholder={this.getPlaceholder()}
-              onChange={this.handleValueChange} />
+              onChange={this.handleValueChange}
+            />
             <button
               type="button"
               className="FormFieldAddOn-item"
               onClick={this.props.onClick}
               title={this.props.title}
-              tabIndex="-1">
+              tabIndex={-1}
+            >
               <Icon type={this.props.type} />
             </button>
           </div>
