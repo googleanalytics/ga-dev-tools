@@ -88,7 +88,10 @@ export interface Param {
   isOptional?: true;
 }
 export interface Property {}
-export interface ValidationMessage {}
+export interface ValidationMessage {
+  param: Param;
+  description: string;
+}
 
 export interface State {
   hitStatus: HitStatus;

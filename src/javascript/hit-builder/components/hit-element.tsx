@@ -12,63 +12,72 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-
 /* global $ */
 
-
-import React from 'react';
-import ReactDOM from 'react-dom';
-import Textarea from 'react-textarea-autosize';
-import {gaAll} from '../../analytics';
-import Icon from '../../components/icon';
-import IconButton from '../../components/icon-button';
-import supports from '../../supports';
-import {copyElementText, sleep} from '../../utils';
-
+import React from "react";
+import ReactDOM from "react-dom";
+import Textarea from "react-textarea-autosize";
+import { gaAll } from "../../analytics";
+import Icon from "../../components/icon";
+import IconButton from "../../components/icon-button";
+import supports from "../../supports";
+import { copyElementText, sleep } from "../../utils";
+import { actions } from "../store";
 
 const ACTION_TIMEOUT = 1500;
 
+interface HitElementProps {
+  hitPayload: string;
+  actions: typeof actions;
+}
+
+interface HitElementState {
+  value: string;
+  hitSent: boolean;
+  hitPayloadCopied: boolean;
+  hitUriCopied: boolean;
+}
 
 /**
  * A component that renders the generated hit element.
  */
-export default class HitElement extends React.Component {
+export default class HitElement extends React.Component<
+  HitElementProps,
+  HitElementState
+> {
+  hitPayloadCopiedTimeout_: boolean;
   state = {
     value: this.props.hitPayload,
     hitSent: false,
     hitPayloadCopied: false,
-    hitUriCopied: false,
-  }
-
+    hitUriCopied: false
+  };
 
   /**
    * Updates the values state when the users changes the hit text.
    * @param {string} value The input element's value property.
    */
-  handleChange = ({target: {value}}) => {
-    this.setState({value});
-  }
-
+  handleChange = ({ target: { value } }) => {
+    this.setState({ value });
+  };
 
   /**
    * Puts the UI in a mostly disabled state while the user is focused on
    * the hit textarea.
    */
   handleFocus = () => {
-    $('body').addClass('is-editing');
-  }
-
+    $("body").addClass("is-editing");
+  };
 
   /**
    * Removes the disabled state and calls the `onBlur` methods with the new
    * hit value.
    * @param {string} value The input element's value property.
    */
-  handleBlur = ({target: {value}}) => {
-    $('body').removeClass('is-editing');
+  handleBlur = ({ target: { value } }) => {
+    $("body").removeClass("is-editing");
     this.props.actions.updateHit(value);
-  }
-
+  };
 
   /**
    * Sends the hit payload to Google Analytics and updates the button state
@@ -77,20 +86,19 @@ export default class HitElement extends React.Component {
    */
   sendHit = async () => {
     await $.ajax({
-      method: 'POST',
-      url: 'https://www.google-analytics.com/collect',
-      data: this.state.value,
+      method: "POST",
+      url: "https://www.google-analytics.com/collect",
+      data: this.state.value
     });
-    this.setState({hitSent: true});
-    gaAll('send', 'event', {
-      eventCategory: 'Hit Builder',
-      eventAction: 'send',
-      eventLabel: 'payload',
+    this.setState({ hitSent: true });
+    gaAll("send", "event", {
+      eventCategory: "Hit Builder",
+      eventAction: "send",
+      eventLabel: "payload"
     });
     await sleep(ACTION_TIMEOUT);
-    this.setState({hitSent: false});
-  }
-
+    this.setState({ hitSent: false });
+  };
 
   /**
    * Copies the hit payload and updates the button state to indicate the hit
@@ -100,23 +108,24 @@ export default class HitElement extends React.Component {
   copyHitPayload = () => {
     const hitPayload = ReactDOM.findDOMNode(this.refs.hitPayload);
     if (copyElementText(hitPayload)) {
-      this.setState({hitPayloadCopied: true, hitUriCopied: false});
+      this.setState({ hitPayloadCopied: true, hitUriCopied: false });
 
-      gaAll('send', 'event', {
-        eventCategory: 'Hit Builder',
-        eventAction: 'copy-to-clipboard',
-        eventLabel: 'payload',
+      gaAll("send", "event", {
+        eventCategory: "Hit Builder",
+        eventAction: "copy-to-clipboard",
+        eventLabel: "payload"
       });
 
       // After three second, remove the success checkbox.
       clearTimeout(this.hitPayloadCopiedTimeout_);
-      this.hitPayloadCopiedTimeout_ = setTimeout(() =>
-        this.setState({hitPayloadCopied: false}), ACTION_TIMEOUT);
+      this.hitPayloadCopiedTimeout_ = setTimeout(
+        () => this.setState({ hitPayloadCopied: false }),
+        ACTION_TIMEOUT
+      );
     } else {
       // TODO(philipwalton): handle error case
     }
-  }
-
+  };
 
   /**
    * Copies the hit share URL and updates the button state to indicate the URL
@@ -126,23 +135,24 @@ export default class HitElement extends React.Component {
   copyShareUrl = () => {
     const shareUrl = ReactDOM.findDOMNode(this.refs.shareUrl);
     if (copyElementText(shareUrl)) {
-      this.setState({hitUriCopied: true, hitPayloadCopied: false});
+      this.setState({ hitUriCopied: true, hitPayloadCopied: false });
 
-      gaAll('send', 'event', {
-        eventCategory: 'Hit Builder',
-        eventAction: 'copy-to-clipboard',
-        eventLabel: 'share URL',
+      gaAll("send", "event", {
+        eventCategory: "Hit Builder",
+        eventAction: "copy-to-clipboard",
+        eventLabel: "share URL"
       });
 
       // After three second, remove the success checkbox.
       clearTimeout(this.hitUriCopiedTimeout_);
-      this.hitUriCopiedTimeout_ = setTimeout(() =>
-        this.setState({hitUriCopied: false}), ACTION_TIMEOUT);
+      this.hitUriCopiedTimeout_ = setTimeout(
+        () => this.setState({ hitUriCopied: false }),
+        ACTION_TIMEOUT
+      );
     } else {
       // TODO(philipwalton): handle error case
     }
-  }
-
+  };
 
   /**
    * Returns the rendered components that make up the validation status.
@@ -150,33 +160,34 @@ export default class HitElement extends React.Component {
    */
   renderValidationStatus() {
     switch (this.props.hitStatus) {
-      case 'VALID':
+      case "VALID":
         return (
           <header className="HitElement-status">
-            <span
-              className="HitElement-statusIcon">
+            <span className="HitElement-statusIcon">
               <Icon type="check" />
             </span>
             <div className="HitElement-statusBody">
               <h1 className="HitElement-statusHeading">Hit is valid!</h1>
-              <p className="HitElement-statusMessage">Use the controls below to
-              copy the hit or share it with coworkers.<br />
-              You can also send the hit to Google Analytics and watch
-              it in action in the Real Time view.</p>
+              <p className="HitElement-statusMessage">
+                Use the controls below to copy the hit or share it with
+                coworkers.
+                <br />
+                You can also send the hit to Google Analytics and watch it in
+                action in the Real Time view.
+              </p>
             </div>
           </header>
         );
-      case 'INVALID':
+      case "INVALID":
         return (
           <header className="HitElement-status">
-            <span
-              className="HitElement-statusIcon">
+            <span className="HitElement-statusIcon">
               <Icon type="error-outline" />
             </span>
             <div className="HitElement-statusBody">
               <h1 className="HitElement-statusHeading">Hit is invalid!</h1>
               <ul className="HitElement-statusMessage">
-                {this.props.validationMessages.map((message) => (
+                {this.props.validationMessages.map(message => (
                   <li key={message.param}>{message.description}</li>
                 ))}
               </ul>
@@ -186,44 +197,44 @@ export default class HitElement extends React.Component {
       default:
         return (
           <header className="HitElement-status">
-            <span
-              className="HitElement-statusIcon">
+            <span className="HitElement-statusIcon">
               <Icon type="warning" />
             </span>
             <div className="HitElement-statusBody">
               <h1 className="HitElement-statusHeading">
                 This hit has not yet been validated
               </h1>
-              <p className="HitElement-statusMessage">You can update the hit
-              using any of the controls below.<br />
-              When you're done, click the "Validate hit" button to make sure
-              everything's OK.</p>
+              <p className="HitElement-statusMessage">
+                You can update the hit using any of the controls below.
+                <br />
+                When you're done, click the "Validate hit" button to make sure
+                everything's OK.
+              </p>
             </div>
           </header>
         );
     }
   }
 
-
   /**
    * Returns the rendered components that make up the hit action buttons.
    * @return {Object}
    */
   renderHitActions() {
-    const {props, state} = this;
-    const {actions, hitStatus} = props;
+    const { props, state } = this;
+    const { actions, hitStatus } = props;
 
-    if (hitStatus != 'VALID') {
-      const buttonText = (hitStatus == 'INVALID' ? 'Rev' : 'V') +
-          'alidate hit';
+    if (hitStatus != "VALID") {
+      const buttonText = (hitStatus == "INVALID" ? "Rev" : "V") + "alidate hit";
 
       return (
         <div className="HitElement-action">
           <button
             className="Button Button--action"
-            disabled={hitStatus === 'VALIDATING'}
-            onClick={actions.validateHit}>
-            {hitStatus === 'VALIDATING' ? 'Validating...' : buttonText}
+            disabled={hitStatus === "VALIDATING"}
+            onClick={actions.validateHit}
+          >
+            {hitStatus === "VALIDATING" ? "Validating..." : buttonText}
           </button>
         </div>
       );
@@ -232,8 +243,9 @@ export default class HitElement extends React.Component {
     const sendHitButton = (
       <IconButton
         className="Button Button--success Button--withIcon"
-        type={state.hitSent ? 'check' : 'send'}
-        onClick={this.sendHit}>
+        type={state.hitSent ? "check" : "send"}
+        onClick={this.sendHit}
+      >
         Send hit to Google Analytics
       </IconButton>
     );
@@ -244,45 +256,41 @@ export default class HitElement extends React.Component {
           <div className="ButtonSet">
             {sendHitButton}
             <IconButton
-              type={state.hitPayloadCopied ? 'check' : 'content-paste'}
-              onClick={this.copyHitPayload}>
+              type={state.hitPayloadCopied ? "check" : "content-paste"}
+              onClick={this.copyHitPayload}
+            >
               Copy hit payload
             </IconButton>
             <IconButton
-              type={state.hitUriCopied ? 'check' : 'link'}
-              onClick={this.copyShareUrl}>
+              type={state.hitUriCopied ? "check" : "link"}
+              onClick={this.copyShareUrl}
+            >
               Copy sharable link to hit
             </IconButton>
           </div>
-          <div
-            ref="hitPayload"
-            className="u-visuallyHidden">
+          <div ref="hitPayload" className="u-visuallyHidden">
             {state.value}
           </div>
-          <div
-            ref="shareUrl"
-            className="u-visuallyHidden">
-            {location.protocol + '//' + location.host + location.pathname +
-            '?' + state.value}
+          <div ref="shareUrl" className="u-visuallyHidden">
+            {location.protocol +
+              "//" +
+              location.host +
+              location.pathname +
+              "?" +
+              state.value}
           </div>
         </div>
       );
     } else {
-      return (
-        <div className="HitElement-action">
-          {sendHitButton}
-        </div>
-      );
+      return <div className="HitElement-action">{sendHitButton}</div>;
     }
   }
-
 
   /**
    * React lifecycyle methods below:
    * http://facebook.github.io/react/docs/component-specs.html
    * ---------------------------------------------------------
    */
-
 
   /**
    * Resets the hit if a new payload is entered by the user.
@@ -294,23 +302,24 @@ export default class HitElement extends React.Component {
         value: nextProps.hitPayload,
         hitSent: false,
         hitPayloadCopied: false,
-        hitUriCopied: false,
+        hitUriCopied: false
       });
     }
   }
 
   /** @return {Object} The React component. */
   render() {
-    let className = 'HitElement';
-    if (this.props.hitStatus == 'VALID') className += ' HitElement--valid';
-    if (this.props.hitStatus == 'INVALID') className += ' HitElement--invalid';
+    let className = "HitElement";
+    if (this.props.hitStatus == "VALID") className += " HitElement--valid";
+    if (this.props.hitStatus == "INVALID") className += " HitElement--invalid";
 
     return (
       <section className={className}>
         {this.renderValidationStatus()}
         <div className="HitElement-body">
           <div className="HitElement-requestInfo">
-            POST /collect HTTP/1.1<br />
+            POST /collect HTTP/1.1
+            <br />
             Host: www.google-analytics.com
           </div>
           <div className="HitElement-requestBody">
@@ -322,7 +331,8 @@ export default class HitElement extends React.Component {
                   value={this.state.value}
                   onChange={this.handleChange}
                   onFocus={this.handleFocus}
-                  onBlur={this.handleBlur} />
+                  onBlur={this.handleBlur}
+                />
               </div>
             </div>
           </div>
