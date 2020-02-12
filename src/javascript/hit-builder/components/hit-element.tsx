@@ -331,8 +331,7 @@ export default class HitElement extends React.Component<
             <div className="FormControl FormControl--full">
               <label className="FormControl-label">Hit payload</label>
               <div className="FormControl-body">
-                <Textarea
-                  className="FormField"
+                <HitPayloadInput
                   value={this.state.value}
                   onChange={this.handleChange}
                   onFocus={this.handleFocus}
@@ -347,3 +346,28 @@ export default class HitElement extends React.Component<
     );
   }
 }
+
+interface HitPayloadProps {
+  value: string;
+  onChange: ({ target: { value: string } }) => void;
+  onFocus: () => void;
+  onBlur: ({ target: { value: string } }) => void;
+}
+
+const HitPayloadInput: React.FC<HitPayloadProps> = ({
+  value,
+  onChange,
+  onFocus,
+  onBlur
+}) => {
+  // TODO(mjhamrick) - switch this over to modern redux.
+  return (
+    <Textarea
+      className="FormField"
+      value={value}
+      onChange={onChange}
+      onFocus={onFocus}
+      onBlur={onBlur}
+    />
+  );
+};
