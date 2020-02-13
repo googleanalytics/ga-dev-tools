@@ -33,7 +33,8 @@ export function getInitialHitAndUpdateUrl(): string {
 
   if (query) {
     if (history && history.replaceState) {
-      history.replaceState(history.state, document.title, location.pathname);
+      // TODO(mjhamrick) - figure out if this needs to be added back in.
+      //history.replaceState(history.state, document.title, location.pathname);
     }
     return query;
   } else {

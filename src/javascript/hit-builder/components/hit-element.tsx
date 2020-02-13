@@ -77,32 +77,6 @@ export default class HitElement extends React.Component<
   };
 
   /**
-   * Copies the hit payload and updates the button state to indicate the hit
-   * was successfully copied. After 1 second the button gets restored to its
-   * original state.
-   */
-  copyHitPayload = () => {
-    if (copy(this.props.hitPayload)) {
-      this.setState({ hitPayloadCopied: true, hitUriCopied: false });
-
-      gaAll("send", "event", {
-        eventCategory: "Hit Builder",
-        eventAction: "copy-to-clipboard",
-        eventLabel: "payload"
-      });
-
-      // After three second, remove the success checkbox.
-      clearTimeout(this.hitPayloadCopiedTimeout_);
-      this.hitPayloadCopiedTimeout_ = window.setTimeout(
-        () => this.setState({ hitPayloadCopied: false }),
-        ACTION_TIMEOUT
-      );
-    } else {
-      // TODO(philipwalton): handle error case
-    }
-  };
-
-  /**
    * Copies the hit share URL and updates the button state to indicate the URL
    * was successfully copied. After 1 second the button gets restored to its
    * original state.
@@ -245,13 +219,13 @@ export default class HitElement extends React.Component<
             </div>
           </div>
           <HitActions
+            hitPayload={this.props.hitPayload}
             hitStatus={this.props.hitStatus}
             hitSent={this.state.hitSent}
             hitUriCopied={this.state.hitUriCopied}
             hitPayloadCopied={this.state.hitPayloadCopied}
             validateHit={this.props.actions.validateHit}
             sendHit={this.sendHit}
-            copyHitPayload={this.copyHitPayload}
             copyShareUrl={this.copyShareUrl}
           />
         </div>
@@ -262,25 +236,52 @@ export default class HitElement extends React.Component<
 
 interface HitActionsProps {
   hitStatus: HitStatus;
+  hitPayload: string;
   hitSent: boolean;
   hitUriCopied: boolean;
   hitPayloadCopied: boolean;
   validateHit: () => void;
   sendHit: () => void;
-  copyHitPayload: () => void;
   copyShareUrl: () => void;
 }
 
 const HitActions: React.FC<HitActionsProps> = ({
   hitStatus,
   hitSent,
+  hitPayload,
   sendHit,
   validateHit,
-  hitPayloadCopied,
-  copyHitPayload,
   hitUriCopied,
   copyShareUrl
 }) => {
+  const [hitPayloadCopied, setHitPayloadCopied] = React.useState(false);
+  const hitPayloadCopiedTimeout = React.useRef(0);
+  /**
+   * Copies the hit payload and updates the button state to indicate the hit
+   * was successfully copied. After 1 second the button gets restored to its
+   * original state.
+   */
+  const copyHitPayload = React.useCallback(() => {
+    if (copy(hitPayload)) {
+      setHitPayloadCopied(true);
+
+      gaAll("send", "event", {
+        eventCategory: "Hit Builder",
+        eventAction: "copy-to-clipboard",
+        eventLabel: "payload"
+      });
+    }
+  }, [hitPayload]);
+
+  React.useEffect(() => {
+    clearTimeout(hitPayloadCopiedTimeout.current);
+    if (hitPayloadCopied) {
+      hitPayloadCopiedTimeout.current = window.setTimeout(() => {
+        setHitPayloadCopied(false);
+      }, ACTION_TIMEOUT);
+    }
+  }, [hitPayloadCopied]);
+
   if (hitStatus != "VALID") {
     const buttonText = (hitStatus == "INVALID" ? "Rev" : "V") + "alidate hit";
 

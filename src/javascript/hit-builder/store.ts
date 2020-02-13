@@ -263,4 +263,4 @@ const app: Reducer<State, HitAction> = combineReducers({
 
 const createStoreWithMiddleware = applyMiddleware(...middleware)(createStore);
 
-export default createStoreWithMiddleware<State, HitAction>(app, {});
+export default createStoreWithMiddleware<State, HitAction>(app);
