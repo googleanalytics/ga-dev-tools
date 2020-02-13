@@ -19,11 +19,11 @@ import Textarea from "react-textarea-autosize";
 import { gaAll } from "../../analytics";
 import Icon, { IconType } from "../../components/icon";
 import IconButton from "../../components/icon-button";
+import CopyButton from "./copy-button";
 import supports from "../../supports";
 import { sleep } from "../../utils";
 import { actions } from "../store";
 import { HitStatus, ValidationMessage } from "../types";
-import copy from "copy-to-clipboard";
 
 const ACTION_TIMEOUT = 1500;
 
@@ -189,49 +189,6 @@ export default class HitElement extends React.Component<
     );
   }
 }
-
-interface CopyButtonProps {
-  type: IconType;
-  textToCopy: string;
-}
-
-const CopyButton: React.FC<CopyButtonProps> = ({
-  children,
-  type,
-  textToCopy
-}) => {
-  const [iconType, setIconType] = React.useState<IconType>(type);
-  const [copied, setCopied] = React.useState(false);
-  const copiedTimeout = React.useRef(0);
-  const copyText = React.useCallback(() => {
-    if (copy(textToCopy)) {
-      setCopied(true);
-
-      gaAll("send", "event", {
-        eventCategory: "Hit Builder",
-        eventAction: "copy-to-clipboard",
-        eventLabel: "payload"
-      });
-    }
-  }, [textToCopy]);
-
-  React.useEffect(() => {
-    clearTimeout(copiedTimeout.current);
-    if (copied) {
-      setIconType("check");
-      copiedTimeout.current = window.setTimeout(() => {
-        setCopied(false);
-        setIconType(type);
-      }, ACTION_TIMEOUT);
-    } else {
-    }
-  }, [copied]);
-  return (
-    <IconButton type={iconType} onClick={copyText}>
-      {children}
-    </IconButton>
-  );
-};
 
 interface HitActionsProps {
   hitStatus: HitStatus;
