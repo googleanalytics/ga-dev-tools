@@ -17,7 +17,7 @@
 import React from "react";
 import Textarea from "react-textarea-autosize";
 import { gaAll } from "../../analytics";
-import Icon from "../../components/icon";
+import Icon, { IconType } from "../../components/icon";
 import IconButton from "../../components/icon-button";
 import supports from "../../supports";
 import { sleep } from "../../utils";
@@ -36,8 +36,6 @@ interface HitElementProps {
 
 interface HitElementState {
   hitSent: boolean;
-  hitPayloadCopied: boolean;
-  hitUriCopied: boolean;
 }
 
 /**
@@ -50,9 +48,7 @@ export default class HitElement extends React.Component<
   hitPayloadCopiedTimeout_?: number;
   hitUriCopiedTimeout_?: number;
   state = {
-    hitSent: false,
-    hitPayloadCopied: false,
-    hitUriCopied: false
+    hitSent: false
   };
 
   /**
@@ -74,41 +70,6 @@ export default class HitElement extends React.Component<
     });
     await sleep(ACTION_TIMEOUT);
     this.setState({ hitSent: false });
-  };
-
-  /**
-   * Copies the hit share URL and updates the button state to indicate the URL
-   * was successfully copied. After 1 second the button gets restored to its
-   * original state.
-   */
-  copyShareUrl = () => {
-    if (
-      copy(
-        location.protocol +
-          "//" +
-          location.host +
-          location.pathname +
-          "?" +
-          this.props.hitPayload
-      )
-    ) {
-      this.setState({ hitUriCopied: true, hitPayloadCopied: false });
-
-      gaAll("send", "event", {
-        eventCategory: "Hit Builder",
-        eventAction: "copy-to-clipboard",
-        eventLabel: "share URL"
-      });
-
-      // After three second, remove the success checkbox.
-      clearTimeout(this.hitUriCopiedTimeout_);
-      this.hitUriCopiedTimeout_ = window.setTimeout(
-        () => this.setState({ hitUriCopied: false }),
-        ACTION_TIMEOUT
-      );
-    } else {
-      // TODO(philipwalton): handle error case
-    }
   };
 
   /**
@@ -186,9 +147,7 @@ export default class HitElement extends React.Component<
   componentWillReceiveProps(nextProps: HitElementProps) {
     if (nextProps.hitPayload != this.props.hitPayload) {
       this.setState({
-        hitSent: false,
-        hitPayloadCopied: false,
-        hitUriCopied: false
+        hitSent: false
       });
     }
   }
@@ -222,11 +181,8 @@ export default class HitElement extends React.Component<
             hitPayload={this.props.hitPayload}
             hitStatus={this.props.hitStatus}
             hitSent={this.state.hitSent}
-            hitUriCopied={this.state.hitUriCopied}
-            hitPayloadCopied={this.state.hitPayloadCopied}
             validateHit={this.props.actions.validateHit}
             sendHit={this.sendHit}
-            copyShareUrl={this.copyShareUrl}
           />
         </div>
       </section>
@@ -234,36 +190,22 @@ export default class HitElement extends React.Component<
   }
 }
 
-interface HitActionsProps {
-  hitStatus: HitStatus;
-  hitPayload: string;
-  hitSent: boolean;
-  hitUriCopied: boolean;
-  hitPayloadCopied: boolean;
-  validateHit: () => void;
-  sendHit: () => void;
-  copyShareUrl: () => void;
+interface CopyButtonProps {
+  type: IconType;
+  textToCopy: string;
 }
 
-const HitActions: React.FC<HitActionsProps> = ({
-  hitStatus,
-  hitSent,
-  hitPayload,
-  sendHit,
-  validateHit,
-  hitUriCopied,
-  copyShareUrl
+const CopyButton: React.FC<CopyButtonProps> = ({
+  children,
+  type,
+  textToCopy
 }) => {
-  const [hitPayloadCopied, setHitPayloadCopied] = React.useState(false);
-  const hitPayloadCopiedTimeout = React.useRef(0);
-  /**
-   * Copies the hit payload and updates the button state to indicate the hit
-   * was successfully copied. After 1 second the button gets restored to its
-   * original state.
-   */
-  const copyHitPayload = React.useCallback(() => {
-    if (copy(hitPayload)) {
-      setHitPayloadCopied(true);
+  const [iconType, setIconType] = React.useState<IconType>(type);
+  const [copied, setCopied] = React.useState(false);
+  const copiedTimeout = React.useRef(0);
+  const copyText = React.useCallback(() => {
+    if (copy(textToCopy)) {
+      setCopied(true);
 
       gaAll("send", "event", {
         eventCategory: "Hit Builder",
@@ -271,17 +213,41 @@ const HitActions: React.FC<HitActionsProps> = ({
         eventLabel: "payload"
       });
     }
-  }, [hitPayload]);
+  }, [textToCopy]);
 
   React.useEffect(() => {
-    clearTimeout(hitPayloadCopiedTimeout.current);
-    if (hitPayloadCopied) {
-      hitPayloadCopiedTimeout.current = window.setTimeout(() => {
-        setHitPayloadCopied(false);
+    clearTimeout(copiedTimeout.current);
+    if (copied) {
+      setIconType("check");
+      copiedTimeout.current = window.setTimeout(() => {
+        setCopied(false);
+        setIconType(type);
       }, ACTION_TIMEOUT);
+    } else {
     }
-  }, [hitPayloadCopied]);
+  }, [copied]);
+  return (
+    <IconButton type={iconType} onClick={copyText}>
+      {children}
+    </IconButton>
+  );
+};
 
+interface HitActionsProps {
+  hitStatus: HitStatus;
+  hitPayload: string;
+  hitSent: boolean;
+  validateHit: () => void;
+  sendHit: () => void;
+}
+
+const HitActions: React.FC<HitActionsProps> = ({
+  hitStatus,
+  hitSent,
+  hitPayload,
+  sendHit,
+  validateHit
+}) => {
   if (hitStatus != "VALID") {
     const buttonText = (hitStatus == "INVALID" ? "Rev" : "V") + "alidate hit";
 
@@ -309,22 +275,23 @@ const HitActions: React.FC<HitActionsProps> = ({
   );
 
   if (supports.copyToClipboard()) {
+    const sharableLinkToHit =
+      location.protocol +
+      "//" +
+      location.host +
+      location.pathname +
+      "?" +
+      hitPayload;
     return (
       <div className="HitElement-action">
         <div className="ButtonSet">
           {sendHitButton}
-          <IconButton
-            type={hitPayloadCopied ? "check" : "content-paste"}
-            onClick={copyHitPayload}
-          >
+          <CopyButton textToCopy={hitPayload} type="content-paste">
             Copy hit payload
-          </IconButton>
-          <IconButton
-            type={hitUriCopied ? "check" : "link"}
-            onClick={copyShareUrl}
-          >
+          </CopyButton>
+          <CopyButton type="link" textToCopy={sharableLinkToHit}>
             Copy sharable link to hit
-          </IconButton>
+          </CopyButton>
         </div>
       </div>
     );
