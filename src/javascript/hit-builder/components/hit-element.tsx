@@ -15,15 +15,15 @@
 /* global $ */
 
 import React from "react";
-import ReactDOM from "react-dom";
 import Textarea from "react-textarea-autosize";
 import { gaAll } from "../../analytics";
 import Icon from "../../components/icon";
 import IconButton from "../../components/icon-button";
 import supports from "../../supports";
-import { copyElementText, sleep } from "../../utils";
+import { sleep } from "../../utils";
 import { actions } from "../store";
 import { HitStatus, ValidationMessage } from "../types";
+import copy from "copy-to-clipboard";
 
 const ACTION_TIMEOUT = 1500;
 
@@ -82,8 +82,7 @@ export default class HitElement extends React.Component<
    * original state.
    */
   copyHitPayload = () => {
-    const hitPayload = ReactDOM.findDOMNode(this.refs.hitPayload);
-    if (copyElementText(hitPayload)) {
+    if (copy(this.props.hitPayload)) {
       this.setState({ hitPayloadCopied: true, hitUriCopied: false });
 
       gaAll("send", "event", {
@@ -109,8 +108,16 @@ export default class HitElement extends React.Component<
    * original state.
    */
   copyShareUrl = () => {
-    const shareUrl = ReactDOM.findDOMNode(this.refs.shareUrl);
-    if (copyElementText(shareUrl)) {
+    if (
+      copy(
+        location.protocol +
+          "//" +
+          location.host +
+          location.pathname +
+          "?" +
+          this.props.hitPayload
+      )
+    ) {
       this.setState({ hitUriCopied: true, hitPayloadCopied: false });
 
       gaAll("send", "event", {
@@ -236,17 +243,6 @@ export default class HitElement extends React.Component<
                 />
               </div>
             </div>
-          </div>
-          <div ref="hitPayload" className="u-visuallyHidden">
-            {this.props.hitPayload}
-          </div>
-          <div ref="shareUrl" className="u-visuallyHidden">
-            {location.protocol +
-              "//" +
-              location.host +
-              location.pathname +
-              "?" +
-              this.props.hitPayload}
           </div>
           <HitActions
             hitStatus={this.props.hitStatus}
