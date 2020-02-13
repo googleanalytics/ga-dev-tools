@@ -23,7 +23,8 @@ import CopyButton from "./copy-button";
 import supports from "../../supports";
 import { sleep } from "../../utils";
 import { actions } from "../store";
-import { HitStatus, ValidationMessage } from "../types";
+import { HitStatus, ValidationMessage, State } from "../types";
+import { useSelector } from "react-redux";
 
 const ACTION_TIMEOUT = 1500;
 
@@ -102,10 +103,7 @@ export default class HitElement extends React.Component<
 
     return (
       <section className={className}>
-        <ValidationStatus
-          hitStatus={this.props.hitStatus}
-          validationMessages={this.props.validationMessages}
-        />
+        <ValidationStatus />
         <div className="HitElement-body">
           <div className="HitElement-requestInfo">
             POST /collect HTTP/1.1
@@ -136,15 +134,9 @@ export default class HitElement extends React.Component<
   }
 }
 
-interface ValidationStatusProps {
-  hitStatus: HitStatus;
-  validationMessages: ValidationMessage[];
-}
-
-const ValidationStatus: React.FC<ValidationStatusProps> = ({
-  hitStatus,
-  validationMessages
-}) => {
+const ValidationStatus: React.FC = () => {
+  const validationMessages = useSelector<State>(a => a.validationMessages);
+  const hitStatus = useSelector<State>(a => a.hitStatus);
   switch (hitStatus) {
     case "VALID":
       return (
