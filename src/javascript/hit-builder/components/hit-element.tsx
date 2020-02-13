@@ -37,9 +37,7 @@ interface HitElementProps {
 interface HitElementState {
   hitSent: boolean;
   hitPayloadCopied: boolean;
-  hitPayload: string;
   hitUriCopied: boolean;
-  value: string;
 }
 
 /**
@@ -52,36 +50,9 @@ export default class HitElement extends React.Component<
   hitPayloadCopiedTimeout_?: number;
   hitUriCopiedTimeout_?: number;
   state = {
-    value: this.props.hitPayload,
-    hitPayload: this.props.hitPayload,
     hitSent: false,
     hitPayloadCopied: false,
     hitUriCopied: false
-  };
-
-  /**
-   * Updates the values state when the users changes the hit text.
-   */
-  handleChange = ({ target: { value } }: { target: { value: string } }) => {
-    this.setState({ value });
-  };
-
-  /**
-   * Puts the UI in a mostly disabled state while the user is focused on
-   * the hit textarea.
-   */
-  handleFocus = () => {
-    $("body").addClass("is-editing");
-  };
-
-  /**
-   * Removes the disabled state and calls the `onBlur` methods with the new
-   * hit value.
-   * @param {string} value The input element's value property.
-   */
-  handleBlur = ({ target: { value } }) => {
-    $("body").removeClass("is-editing");
-    this.props.actions.updateHit(value);
   };
 
   /**
@@ -93,7 +64,7 @@ export default class HitElement extends React.Component<
     await $.ajax({
       method: "POST",
       url: "https://www.google-analytics.com/collect",
-      data: this.state.value
+      data: this.props.hitPayload
     });
     this.setState({ hitSent: true });
     gaAll("send", "event", {
@@ -274,7 +245,7 @@ export default class HitElement extends React.Component<
             </IconButton>
           </div>
           <div ref="hitPayload" className="u-visuallyHidden">
-            {state.value}
+            {this.props.hitPayload}
           </div>
           <div ref="shareUrl" className="u-visuallyHidden">
             {location.protocol +
@@ -282,7 +253,7 @@ export default class HitElement extends React.Component<
               location.host +
               location.pathname +
               "?" +
-              state.value}
+              this.props.hitPayload}
           </div>
         </div>
       );
@@ -302,9 +273,8 @@ export default class HitElement extends React.Component<
    * @param {Object} nextProps
    */
   componentWillReceiveProps(nextProps: HitElementProps) {
-    if (nextProps.hitPayload != this.state.hitPayload) {
+    if (nextProps.hitPayload != this.props.hitPayload) {
       this.setState({
-        value: nextProps.hitPayload,
         hitSent: false,
         hitPayloadCopied: false,
         hitUriCopied: false
@@ -332,10 +302,8 @@ export default class HitElement extends React.Component<
               <label className="FormControl-label">Hit payload</label>
               <div className="FormControl-body">
                 <HitPayloadInput
-                  value={this.state.value}
-                  onChange={this.handleChange}
-                  onFocus={this.handleFocus}
-                  onBlur={this.handleBlur}
+                  hitPayload={this.props.hitPayload}
+                  updateHit={this.props.actions.updateHit}
                 />
               </div>
             </div>
@@ -348,19 +316,48 @@ export default class HitElement extends React.Component<
 }
 
 interface HitPayloadProps {
-  value: string;
-  onChange: ({ target: { value: string } }) => void;
-  onFocus: () => void;
-  onBlur: ({ target: { value: string } }) => void;
+  hitPayload: string;
+  // TODO: This should eventually just be done with redux, but right now it's
+  // hard to pull this apart.
+  updateHit: (newValue: string) => void;
 }
 
 const HitPayloadInput: React.FC<HitPayloadProps> = ({
-  value,
-  onChange,
-  onFocus,
-  onBlur
+  hitPayload,
+  updateHit
 }) => {
-  // TODO(mjhamrick) - switch this over to modern redux.
+  const [value, setValue] = React.useState(hitPayload);
+  const [editing, setIsEditing] = React.useState(false);
+
+  // Update the localState of then input when the hitPayload changes.
+  React.useEffect(() => {
+    setValue(hitPayload);
+  }, [hitPayload]);
+
+  React.useEffect(() => {
+    if (editing) {
+      $("body").addClass("is-editing");
+    } else {
+      $("body").removeClass("is-editing");
+    }
+  }, [editing]);
+
+  const onFocus = React.useCallback(() => {
+    setIsEditing(true);
+  }, []);
+
+  const onBlur = React.useCallback(() => {
+    setIsEditing(false);
+    updateHit(value);
+  }, [value]);
+
+  const onChange = React.useCallback(
+    (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+      setValue(e.target.value);
+    },
+    []
+  );
+
   return (
     <Textarea
       className="FormField"
