@@ -193,76 +193,6 @@ export default class HitElement extends React.Component<
   }
 
   /**
-   * Returns the rendered components that make up the hit action buttons.
-   * @return {Object}
-   */
-  renderHitActions() {
-    const { props, state } = this;
-    const { actions, hitStatus } = props;
-
-    if (hitStatus != "VALID") {
-      const buttonText = (hitStatus == "INVALID" ? "Rev" : "V") + "alidate hit";
-
-      return (
-        <div className="HitElement-action">
-          <button
-            className="Button Button--action"
-            disabled={hitStatus === "VALIDATING"}
-            onClick={actions.validateHit}
-          >
-            {hitStatus === "VALIDATING" ? "Validating..." : buttonText}
-          </button>
-        </div>
-      );
-    }
-
-    const sendHitButton = (
-      <IconButton
-        className="Button Button--success Button--withIcon"
-        type={state.hitSent ? "check" : "send"}
-        onClick={this.sendHit}
-      >
-        Send hit to Google Analytics
-      </IconButton>
-    );
-
-    if (supports.copyToClipboard()) {
-      return (
-        <div className="HitElement-action">
-          <div className="ButtonSet">
-            {sendHitButton}
-            <IconButton
-              type={state.hitPayloadCopied ? "check" : "content-paste"}
-              onClick={this.copyHitPayload}
-            >
-              Copy hit payload
-            </IconButton>
-            <IconButton
-              type={state.hitUriCopied ? "check" : "link"}
-              onClick={this.copyShareUrl}
-            >
-              Copy sharable link to hit
-            </IconButton>
-          </div>
-          <div ref="hitPayload" className="u-visuallyHidden">
-            {this.props.hitPayload}
-          </div>
-          <div ref="shareUrl" className="u-visuallyHidden">
-            {location.protocol +
-              "//" +
-              location.host +
-              location.pathname +
-              "?" +
-              this.props.hitPayload}
-          </div>
-        </div>
-      );
-    } else {
-      return <div className="HitElement-action">{sendHitButton}</div>;
-    }
-  }
-
-  /**
    * React lifecycyle methods below:
    * http://facebook.github.io/react/docs/component-specs.html
    * ---------------------------------------------------------
@@ -282,8 +212,7 @@ export default class HitElement extends React.Component<
     }
   }
 
-  /** @return {Object} The React component. */
-  render() {
+  render(): JSX.Element {
     let className = "HitElement";
     if (this.props.hitStatus == "VALID") className += " HitElement--valid";
     if (this.props.hitStatus == "INVALID") className += " HitElement--invalid";
@@ -308,12 +237,104 @@ export default class HitElement extends React.Component<
               </div>
             </div>
           </div>
-          {this.renderHitActions()}
+          <div ref="hitPayload" className="u-visuallyHidden">
+            {this.props.hitPayload}
+          </div>
+          <div ref="shareUrl" className="u-visuallyHidden">
+            {location.protocol +
+              "//" +
+              location.host +
+              location.pathname +
+              "?" +
+              this.props.hitPayload}
+          </div>
+          <HitActions
+            hitStatus={this.props.hitStatus}
+            hitSent={this.state.hitSent}
+            hitUriCopied={this.state.hitUriCopied}
+            hitPayloadCopied={this.state.hitPayloadCopied}
+            validateHit={this.props.actions.validateHit}
+            sendHit={this.sendHit}
+            copyHitPayload={this.copyHitPayload}
+            copyShareUrl={this.copyShareUrl}
+          />
         </div>
       </section>
     );
   }
 }
+
+interface HitActionsProps {
+  hitStatus: HitStatus;
+  hitSent: boolean;
+  hitUriCopied: boolean;
+  hitPayloadCopied: boolean;
+  validateHit: () => void;
+  sendHit: () => void;
+  copyHitPayload: () => void;
+  copyShareUrl: () => void;
+}
+
+const HitActions: React.FC<HitActionsProps> = ({
+  hitStatus,
+  hitSent,
+  sendHit,
+  validateHit,
+  hitPayloadCopied,
+  copyHitPayload,
+  hitUriCopied,
+  copyShareUrl
+}) => {
+  if (hitStatus != "VALID") {
+    const buttonText = (hitStatus == "INVALID" ? "Rev" : "V") + "alidate hit";
+
+    return (
+      <div className="HitElement-action">
+        <button
+          className="Button Button--action"
+          disabled={hitStatus === "VALIDATING"}
+          onClick={validateHit}
+        >
+          {hitStatus === "VALIDATING" ? "Validating..." : buttonText}
+        </button>
+      </div>
+    );
+  }
+
+  const sendHitButton = (
+    <IconButton
+      className="Button Button--success Button--withIcon"
+      type={hitSent ? "check" : "send"}
+      onClick={sendHit}
+    >
+      Send hit to Google Analytics
+    </IconButton>
+  );
+
+  if (supports.copyToClipboard()) {
+    return (
+      <div className="HitElement-action">
+        <div className="ButtonSet">
+          {sendHitButton}
+          <IconButton
+            type={hitPayloadCopied ? "check" : "content-paste"}
+            onClick={copyHitPayload}
+          >
+            Copy hit payload
+          </IconButton>
+          <IconButton
+            type={hitUriCopied ? "check" : "link"}
+            onClick={copyShareUrl}
+          >
+            Copy sharable link to hit
+          </IconButton>
+        </div>
+      </div>
+    );
+  } else {
+    return <div className="HitElement-action">{sendHitButton}</div>;
+  }
+};
 
 interface HitPayloadProps {
   hitPayload: string;
