@@ -17,7 +17,7 @@
 import React from "react";
 import Textarea from "react-textarea-autosize";
 import { gaAll } from "../../analytics";
-import Icon, { IconType } from "../../components/icon";
+import Icon from "../../components/icon";
 import IconButton from "../../components/icon-button";
 import CopyButton from "./copy-button";
 import supports from "../../supports";
@@ -76,63 +76,6 @@ export default class HitElement extends React.Component<
    * Returns the rendered components that make up the validation status.
    * @return {Object}
    */
-  renderValidationStatus() {
-    switch (this.props.hitStatus) {
-      case "VALID":
-        return (
-          <header className="HitElement-status">
-            <span className="HitElement-statusIcon">
-              <Icon type="check" />
-            </span>
-            <div className="HitElement-statusBody">
-              <h1 className="HitElement-statusHeading">Hit is valid!</h1>
-              <p className="HitElement-statusMessage">
-                Use the controls below to copy the hit or share it with
-                coworkers.
-                <br />
-                You can also send the hit to Google Analytics and watch it in
-                action in the Real Time view.
-              </p>
-            </div>
-          </header>
-        );
-      case "INVALID":
-        return (
-          <header className="HitElement-status">
-            <span className="HitElement-statusIcon">
-              <Icon type="error-outline" />
-            </span>
-            <div className="HitElement-statusBody">
-              <h1 className="HitElement-statusHeading">Hit is invalid!</h1>
-              <ul className="HitElement-statusMessage">
-                {this.props.validationMessages.map(message => (
-                  <li key={message.param}>{message.description}</li>
-                ))}
-              </ul>
-            </div>
-          </header>
-        );
-      default:
-        return (
-          <header className="HitElement-status">
-            <span className="HitElement-statusIcon">
-              <Icon type="warning" />
-            </span>
-            <div className="HitElement-statusBody">
-              <h1 className="HitElement-statusHeading">
-                This hit has not yet been validated
-              </h1>
-              <p className="HitElement-statusMessage">
-                You can update the hit using any of the controls below.
-                <br />
-                When you're done, click the "Validate hit" button to make sure
-                everything's OK.
-              </p>
-            </div>
-          </header>
-        );
-    }
-  }
 
   /**
    * React lifecycyle methods below:
@@ -159,7 +102,10 @@ export default class HitElement extends React.Component<
 
     return (
       <section className={className}>
-        {this.renderValidationStatus()}
+        <ValidationStatus
+          hitStatus={this.props.hitStatus}
+          validationMessages={this.props.validationMessages}
+        />
         <div className="HitElement-body">
           <div className="HitElement-requestInfo">
             POST /collect HTTP/1.1
@@ -189,6 +135,71 @@ export default class HitElement extends React.Component<
     );
   }
 }
+
+interface ValidationStatusProps {
+  hitStatus: HitStatus;
+  validationMessages: ValidationMessage[];
+}
+
+const ValidationStatus: React.FC<ValidationStatusProps> = ({
+  hitStatus,
+  validationMessages
+}) => {
+  switch (hitStatus) {
+    case "VALID":
+      return (
+        <header className="HitElement-status">
+          <span className="HitElement-statusIcon">
+            <Icon type="check" />
+          </span>
+          <div className="HitElement-statusBody">
+            <h1 className="HitElement-statusHeading">Hit is valid!</h1>
+            <p className="HitElement-statusMessage">
+              Use the controls below to copy the hit or share it with coworkers.
+              <br />
+              You can also send the hit to Google Analytics and watch it in
+              action in the Real Time view.
+            </p>
+          </div>
+        </header>
+      );
+    case "INVALID":
+      return (
+        <header className="HitElement-status">
+          <span className="HitElement-statusIcon">
+            <Icon type="error-outline" />
+          </span>
+          <div className="HitElement-statusBody">
+            <h1 className="HitElement-statusHeading">Hit is invalid!</h1>
+            <ul className="HitElement-statusMessage">
+              {validationMessages.map(message => (
+                <li key={message.param}>{message.description}</li>
+              ))}
+            </ul>
+          </div>
+        </header>
+      );
+    default:
+      return (
+        <header className="HitElement-status">
+          <span className="HitElement-statusIcon">
+            <Icon type="warning" />
+          </span>
+          <div className="HitElement-statusBody">
+            <h1 className="HitElement-statusHeading">
+              This hit has not yet been validated
+            </h1>
+            <p className="HitElement-statusMessage">
+              You can update the hit using any of the controls below.
+              <br />
+              When you're done, click the "Validate hit" button to make sure
+              everything's OK.
+            </p>
+          </div>
+        </header>
+      );
+  }
+};
 
 interface HitActionsProps {
   hitStatus: HitStatus;
