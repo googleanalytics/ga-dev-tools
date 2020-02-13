@@ -12,9 +12,11 @@ import {
   HitAction,
   ActionType,
   Param,
+  Params,
   Property,
   State,
-  ValidationMessage
+  ValidationMessage,
+  ParamOptional
 } from "./types";
 import accountSummaries from "javascript-api-utils/lib/account-summaries";
 import * as hitUtils from "./hit";
@@ -191,12 +193,13 @@ const isAuthorized: Reducer<boolean, HitAction> = (
   }
 };
 
-const params: Reducer<Param[], HitAction> = (
-  state: Param[] = hitUtils.convertHitToParams(
+const params: Reducer<Params, HitAction> = (
+  state: Params = hitUtils.convertHitToParams(
     hitUtils.getInitialHitAndUpdateUrl()
   ),
   action: HitAction
 ) => {
+  const [v, t, tid, cid, ...others] = state;
   switch (action.type) {
     case ActionType.AddParam: {
       const nextId =
@@ -204,23 +207,41 @@ const params: Reducer<Param[], HitAction> = (
           (max: number, param: Param) => Math.max(param.id, max),
           -1
         ) + 1;
-      const newParam: Param = {
+      const newParam: ParamOptional = {
         id: nextId,
         name: "",
         value: ""
       };
-      return [...state, newParam];
+      return [v, t, tid, cid, ...others.concat([newParam])];
     }
     case ActionType.RemoveParam:
-      return state.filter(param => param.id !== action.id);
+      return [
+        v,
+        t,
+        tid,
+        cid,
+        ...others.filter(param => param.id !== action.id)
+      ];
     case ActionType.EditParamName:
-      return state.map(param =>
-        param.id === action.id ? { ...param, name: action.name } : param
-      );
+      return [
+        v,
+        t,
+        tid,
+        cid,
+        ...others.map(param =>
+          param.id === action.id ? { ...param, name: action.name } : param
+        )
+      ];
     case ActionType.EditParamValue:
-      return state.map(param =>
-        param.id === action.id ? { ...param, value: action.value } : param
-      );
+      return [
+        v,
+        t,
+        tid,
+        cid,
+        ...others.map(param =>
+          param.id === action.id ? { ...param, value: action.value } : param
+        )
+      ];
     case ActionType.ReplaceParams:
       return action.params;
 

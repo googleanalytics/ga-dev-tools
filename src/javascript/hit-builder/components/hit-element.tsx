@@ -135,7 +135,9 @@ export default class HitElement extends React.Component<
 }
 
 const ValidationStatus: React.FC = () => {
-  const validationMessages = useSelector<State>(a => a.validationMessages);
+  const validationMessages = useSelector<State, ValidationMessage[]>(
+    a => a.validationMessages
+  );
   const hitStatus = useSelector<State>(a => a.hitStatus);
   switch (hitStatus) {
     case "VALID":

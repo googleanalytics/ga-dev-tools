@@ -22,7 +22,13 @@ import ParamSelectElement from "./param-select-element";
 import { convertParamsToHit } from "../hit";
 import IconButton from "../../components/icon-button";
 import { actions } from "../store";
-import { Param, ValidationMessage, HitStatus, Property } from "../types";
+import {
+  Param,
+  Params,
+  ValidationMessage,
+  HitStatus,
+  Property
+} from "../types";
 
 const HIT_TYPES = [
   "pageview",
@@ -37,7 +43,7 @@ const HIT_TYPES = [
 
 export interface HitBuilderProps {
   actions: typeof actions;
-  params: Param[];
+  params: Params;
   validationMessages: ValidationMessage[];
   hitStatus: HitStatus;
   properties: Property[];
@@ -73,6 +79,8 @@ const HitBuilder: React.FC<HitBuilderProps> = ({
     setNewParamNeedsFocus(true);
     actions.addParam();
   }, [actions]);
+
+  const [v, t, tid, cid, ...otherParams] = params;
   return (
     <div>
       <div className="HeadingGroup HeadingGroup--h3">
@@ -103,37 +111,37 @@ const HitBuilder: React.FC<HitBuilderProps> = ({
 
         <ParamSelectElement
           actions={actions}
-          param={params[0]}
+          param={v}
           options={["1"]}
-          message={getValidationMessageForParam("v")!}
+          message={getValidationMessageForParam(v.name)}
         />
 
         <ParamSelectElement
           actions={actions}
-          param={params[1]}
+          param={t}
           options={HIT_TYPES}
-          message={getValidationMessageForParam("t")!}
+          message={getValidationMessageForParam(t.name)}
         />
 
         <ParamSearchSuggestElement
           actions={actions}
-          param={params[2]}
+          param={tid}
           options={properties}
           placeholder="UA-XXXXX-Y"
-          message={getValidationMessageForParam("tid")!}
+          message={getValidationMessageForParam(tid.name)}
         />
 
         <ParamButtonElement
           actions={actions}
-          param={params[3]}
+          param={cid}
           type="refresh"
           title="Randomly generate UUID"
-          message={getValidationMessageForParam("cid")!}
+          message={getValidationMessageForParam(cid.name)}
           onClick={handleGenerateUuid}
         />
 
-        {params.slice(4).map(param => {
-          const isLast = param === params[params.length - 1];
+        {otherParams.map(param => {
+          const isLast = param === otherParams[otherParams.length - 1];
           return (
             <ParamElement
               key={param.id}

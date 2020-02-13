@@ -16,7 +16,16 @@
 
 import map from "lodash/map";
 import querystring from "querystring";
-import { Param, RequiredParams } from "./types";
+import {
+  Param,
+  Params,
+  RequiredParams,
+  ParamV,
+  ParamT,
+  ParamTId,
+  ParamCId,
+  ParamOptional
+} from "./types";
 
 const DEFAULT_HIT = "v=1&t=pageview";
 
@@ -47,7 +56,7 @@ export function getInitialHitAndUpdateUrl(): string {
  * where the required params are always first and in the correct order.
  * @param hit A query string or hit payload.
  */
-export function convertHitToParams(hit: string = ""): Param[] {
+export function convertHitToParams(hit: string = ""): Params {
   // If the hit contains a "?", remove it and all characters before it.
   const searchIndex = hit.indexOf("?");
   if (searchIndex > -1) hit = hit.slice(searchIndex + 1);
@@ -55,26 +64,44 @@ export function convertHitToParams(hit: string = ""): Param[] {
   const query = querystring.parse(hit);
 
   // Create required params first, regardless of order in the hit.
-  const requiredParams: Param[] = [];
-  for (const name of Object.values(RequiredParams)) {
-    requiredParams.push({
-      id: id++,
-      name: name,
-      value: query[name],
-      required: true
-    });
-    delete query[name];
-  }
+  const v: ParamV = {
+    id: id++,
+    name: RequiredParams.V,
+    value: query[RequiredParams.V],
+    required: true
+  };
+  const t: ParamT = {
+    id: id++,
+    name: RequiredParams.T,
+    value: query[RequiredParams.T],
+    required: true
+  };
+  const tid: ParamTId = {
+    id: id++,
+    name: RequiredParams.T_Id,
+    value: query[RequiredParams.T_Id],
+    required: true
+  };
+  const cid: ParamCId = {
+    id: id++,
+    name: RequiredParams.C_Id,
+    value: query[RequiredParams.C_Id],
+    required: true
+  };
+  delete query[RequiredParams.V];
+  delete query[RequiredParams.T];
+  delete query[RequiredParams.T_Id];
+  delete query[RequiredParams.C_Id];
 
   // Create optional params after required params.
-  const optionalParams: Param[] = map(query, (value, name) => ({
+  const others: ParamOptional[] = map(query, (value, name) => ({
     name,
     value,
     id: id++,
     isOptional: true
   }));
-
-  return requiredParams.concat(optionalParams);
+  const params: Params = [v, t, tid, cid, ...others];
+  return params;
 }
 
 /**

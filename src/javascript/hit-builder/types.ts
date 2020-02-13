@@ -42,7 +42,7 @@ export interface EditParamValue {
 
 export interface ReplaceParams {
   type: ActionType.ReplaceParams;
-  params: Param[];
+  params: Params;
 }
 
 export interface SetUserProperties {
@@ -80,9 +80,24 @@ export enum RequiredParams {
   C_Id = "cid"
 }
 
-export interface Param {
+export type ParamV = ParamType<RequiredParams.V>;
+export type ParamT = ParamType<RequiredParams.T>;
+export type ParamTId = ParamType<RequiredParams.T_Id>;
+export type ParamCId = ParamType<RequiredParams.C_Id>;
+export type ParamOptional = ParamType<string>;
+
+export type Params = [ParamV, ParamT, ParamTId, ParamCId, ...ParamOptional[]];
+
+export type Param =
+  | ParamType<RequiredParams.V>
+  | ParamType<RequiredParams.T>
+  | ParamType<RequiredParams.T_Id>
+  | ParamType<RequiredParams.C_Id>
+  | ParamType<string>;
+
+interface ParamType<T> {
   id: number;
-  name: string;
+  name: T;
   value: string | string[];
   required?: true;
   isOptional?: true;
@@ -101,7 +116,7 @@ export interface ValidationMessage {
 export interface State {
   hitStatus: HitStatus;
   isAuthorized: boolean;
-  params: Param[];
+  params: Params;
   properties: Property[];
   validationMessages: ValidationMessage[];
 }
