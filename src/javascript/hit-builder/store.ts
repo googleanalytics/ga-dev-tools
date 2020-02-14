@@ -6,7 +6,7 @@ import {
   combineReducers,
   Dispatch
 } from "redux";
-import thunkMuddliware from "redux-thunk";
+import thunkMuddliware, { ThunkAction, ThunkDispatch } from "redux-thunk";
 import {
   HitStatus,
   HitAction,
@@ -24,6 +24,23 @@ import { gaAll } from "../analytics";
 
 import AlertDispatcher from "../components/alert-dispatcher";
 
+type ThunkResult<T> = ThunkAction<T, State, undefined, HitAction>;
+
+const handleAuthorizationSuccess: ThunkResult<void> = async dispatch => {
+  dispatch(actions.setAuthorized());
+
+  const summaries = await accountSummaries.get();
+  const properties = summaries.allProperties().map(property => ({
+    name: property.name,
+    id: property.id,
+    group: summaries.getAccountByPropertyId(property.id).name
+  }));
+
+  dispatch(actions.setUserProperties(properties));
+};
+
+export const thunkActions = { handleAuthorizationSuccess };
+
 export const actions = {
   setAuthorized(): HitAction {
     return { type: ActionType.SetAuthorized };
@@ -36,22 +53,6 @@ export const actions = {
   },
   setValidationMessages(validationMessages: ValidationMessage[]): HitAction {
     return { type: ActionType.SetValidationMessages, validationMessages };
-  },
-  handleAuthorizationSuccess(): (
-    dispatch: Dispatch<HitAction>
-  ) => Promise<void> {
-    return async (dispatch: Dispatch<HitAction>) => {
-      dispatch(actions.setAuthorized());
-
-      const summaries = await accountSummaries.get();
-      const properties = summaries.allProperties().map(property => ({
-        name: property.name,
-        id: property.id,
-        group: summaries.getAccountByPropertyId(property.id).name
-      }));
-
-      dispatch(actions.setUserProperties(properties));
-    };
   },
   resetHitValidationStatus(dispatch: Dispatch<HitAction>) {
     dispatch(actions.setHitStatus(HitStatus.Unvalidated));
@@ -278,6 +279,9 @@ const app: Reducer<State, HitAction> = combineReducers({
   validationMessages
 });
 
-const createStoreWithMiddleware = applyMiddleware(...middleware)(createStore);
+const createStoreWithMiddleware = applyMiddleware<
+  ThunkDispatch<State, undefined, HitAction>,
+  State
+>(...middleware)(createStore);
 
 export default createStoreWithMiddleware<State, HitAction>(app);

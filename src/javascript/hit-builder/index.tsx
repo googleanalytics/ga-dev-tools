@@ -14,16 +14,11 @@
 
 import * as React from "react";
 import * as ReactDOM from "react-dom";
-import {
-  connect,
-  Provider,
-  MapStateToProps,
-  MapDispatchToProps
-} from "react-redux";
-import { bindActionCreators, Dispatch, ActionCreatorsMapObject } from "redux";
+import { connect, Provider } from "react-redux";
+import { bindActionCreators, Dispatch } from "redux";
 
-import HitBuilder, { HitBuilderProps } from "./components/hit-builder";
-import store from "./store";
+import HitBuilder from "./components/hit-builder";
+import store, { thunkActions } from "./store";
 import { actions } from "./store";
 import { HitAction, State } from "./types";
 
@@ -72,7 +67,7 @@ function onAuthorizationSuccess() {
   // I'm pretty sure this works, but I'm not sure how to type it.
   // I think it's doing redux thunk stuff, so the thunk middleware takes care of
   // this.'
-  store.dispatch((actions as any).handleAuthorizationSuccess());
+  store.dispatch(thunkActions.handleAuthorizationSuccess);
   site.setReadyState();
 }
 
