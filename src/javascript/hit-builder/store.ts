@@ -108,7 +108,7 @@ export const actions = {
     };
     return async (dispatch: Dispatch<HitAction>, getState: () => State) => {
       const hit = hitUtils.convertParamsToHit(getState().params);
-      dispatch(actions.setHitStatus(HitStatus.Validiting));
+      dispatch(actions.setHitStatus(HitStatus.Validating));
 
       try {
         const data = await hitUtils.getHitValidationResult(hit);
@@ -233,15 +233,11 @@ const params: Reducer<Params, HitAction> = (
         )
       ];
     case ActionType.EditParamValue:
-      return [
-        v,
-        t,
-        tid,
-        cid,
-        ...others.map(param =>
-          param.id === action.id ? { ...param, value: action.value } : param
-        )
-      ];
+      // TODO - I wish the typesystem was a bit smarter here, but alas.
+      const newParams: Params = state.map(param =>
+        action.id === param.id ? { ...param, value: action.value } : param
+      ) as Params;
+      return newParams;
     case ActionType.ReplaceParams:
       return action.params;
 

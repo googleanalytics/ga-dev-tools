@@ -68,7 +68,7 @@ export type HitAction =
 
 export enum HitStatus {
   Unvalidated = "UNVALIDATED",
-  Validiting = "VALIDATING",
+  Validating = "VALIDATING",
   Valid = "VALID",
   Invalid = "INVALID"
 }
