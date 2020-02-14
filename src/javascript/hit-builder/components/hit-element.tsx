@@ -22,9 +22,9 @@ import IconButton from "../../components/icon-button";
 import CopyButton from "./copy-button";
 import supports from "../../supports";
 import { sleep } from "../../utils";
-import { actions } from "../store";
+import { actions, thunkActions } from "../store";
 import { HitStatus, ValidationMessage, State } from "../types";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 
 const ACTION_TIMEOUT = 1500;
 
@@ -114,10 +114,7 @@ export default class HitElement extends React.Component<
             <div className="FormControl FormControl--full">
               <label className="FormControl-label">Hit payload</label>
               <div className="FormControl-body">
-                <HitPayloadInput
-                  hitPayload={this.props.hitPayload}
-                  updateHit={this.props.actions.updateHit}
-                />
+                <HitPayloadInput hitPayload={this.props.hitPayload} />
               </div>
             </div>
           </div>
@@ -125,7 +122,6 @@ export default class HitElement extends React.Component<
             hitPayload={this.props.hitPayload}
             hitStatus={this.props.hitStatus}
             hitSent={this.state.hitSent}
-            validateHit={this.props.actions.validateHit}
             sendHit={this.sendHit}
           />
         </div>
@@ -199,7 +195,6 @@ interface HitActionsProps {
   hitStatus: HitStatus;
   hitPayload: string;
   hitSent: boolean;
-  validateHit: () => void;
   sendHit: () => void;
 }
 
@@ -207,9 +202,13 @@ const HitActions: React.FC<HitActionsProps> = ({
   hitStatus,
   hitSent,
   hitPayload,
-  sendHit,
-  validateHit
+  sendHit
 }) => {
+  const dispatch = useDispatch();
+  const validateHit = React.useCallback(() => {
+    dispatch(thunkActions.validateHit);
+  }, [dispatch]);
+
   if (hitStatus != "VALID") {
     const buttonText = (hitStatus == "INVALID" ? "Rev" : "V") + "alidate hit";
 
@@ -264,17 +263,18 @@ const HitActions: React.FC<HitActionsProps> = ({
 
 interface HitPayloadProps {
   hitPayload: string;
-  // TODO: This should eventually just be done with redux, but right now it's
-  // hard to pull this apart.
-  updateHit: (newValue: string) => void;
 }
 
-const HitPayloadInput: React.FC<HitPayloadProps> = ({
-  hitPayload,
-  updateHit
-}) => {
+const HitPayloadInput: React.FC<HitPayloadProps> = ({ hitPayload }) => {
   const [value, setValue] = React.useState(hitPayload);
   const [editing, setIsEditing] = React.useState(false);
+  const dispatch = useDispatch();
+  const updateHit = React.useCallback(
+    (newHit: string) => {
+      dispatch(thunkActions.updateHit(newHit));
+    },
+    [dispatch]
+  );
 
   // Update the localState of then input when the hitPayload changes.
   React.useEffect(() => {

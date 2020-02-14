@@ -38,8 +38,128 @@ const handleAuthorizationSuccess: ThunkResult<void> = async dispatch => {
 
   dispatch(actions.setUserProperties(properties));
 };
+const resetHitValidationStatus: ThunkResult<void> = (
+  dispatch: Dispatch<HitAction>
+) => {
+  dispatch(actions.setHitStatus(HitStatus.Unvalidated));
+  dispatch(actions.setValidationMessages([]));
+};
 
-export const thunkActions = { handleAuthorizationSuccess };
+const addParam: ThunkResult<void> = (dispatch, getState, third) => {
+  dispatch({ type: ActionType.AddParam });
+  thunkActions.resetHitValidationStatus(dispatch, getState, third);
+};
+const removeParam: (id: number) => ThunkResult<void> = (id: number) => {
+  return (dispatch, getState, third) => {
+    dispatch({ type: ActionType.RemoveParam, id });
+    thunkActions.resetHitValidationStatus(dispatch, getState, third);
+  };
+};
+const editParamName: (id: number, name: string) => ThunkResult<void> = (
+  id,
+  name
+) => {
+  return (dispatch, getState, third) => {
+    dispatch({ type: ActionType.EditParamName, id, name });
+    thunkActions.resetHitValidationStatus(dispatch, getState, third);
+  };
+};
+const editParamValue: (id: number, value: string) => ThunkResult<void> = (
+  id,
+  value
+) => {
+  return (dispatch, getState, third) => {
+    dispatch({ type: ActionType.EditParamValue, id, value });
+    thunkActions.resetHitValidationStatus(dispatch, getState, third);
+  };
+};
+const updateHit: (newHit: string) => ThunkResult<void> = (newHit: string) => {
+  return (dispatch, getState, third) => {
+    const oldHit = hitUtils.convertParamsToHit(getState().params);
+    if (oldHit != newHit) {
+      const params = hitUtils.convertHitToParams(newHit);
+      dispatch({ type: ActionType.ReplaceParams, params });
+      thunkActions.resetHitValidationStatus(dispatch, getState, third);
+    }
+  };
+};
+
+const formatMessage = (message: {
+  parameter: any;
+  description: string;
+  messageType: any;
+  messageCode: any;
+}) => {
+  const linkRegex = /Please see http:\/\/goo\.gl\/a8d4RP#\w+ for details\.$/;
+  return {
+    param: message.parameter,
+    description: message.description.replace(linkRegex, "").trim(),
+    type: message.messageType,
+    code: message.messageCode
+  };
+};
+
+const validateHit: ThunkResult<void> = async (dispatch, getState, third) => {
+  const hit = hitUtils.convertParamsToHit(getState().params);
+  dispatch(actions.setHitStatus(HitStatus.Validating));
+
+  try {
+    const data = await hitUtils.getHitValidationResult(hit);
+
+    // In some cases the query will have changed before the response gets
+    // back, so we need to check that the result is for the current query.
+    // If it's not, ignore it.
+    if (data.hit != hitUtils.convertParamsToHit(getState().params)) {
+      return;
+    }
+
+    const result = data.response.hitParsingResult[0];
+    const validationMessages = result.parserMessage;
+
+    if (result.valid) {
+      dispatch(actions.setHitStatus(HitStatus.Valid));
+      dispatch(actions.setValidationMessages([]));
+      gaAll("send", "event", {
+        eventCategory: "Hit Builder",
+        eventAction: "validate",
+        eventLabel: "valid"
+      });
+    } else {
+      dispatch(actions.setHitStatus(HitStatus.Invalid));
+      dispatch(
+        actions.setValidationMessages(validationMessages.map(formatMessage))
+      );
+      gaAll("send", "event", {
+        eventCategory: "Hit Builder",
+        eventAction: "validate",
+        eventLabel: "invalid"
+      });
+    }
+  } catch (err) {
+    // TODO(philipwalton): handle timeout errors and slow network connection.
+    thunkActions.resetHitValidationStatus(dispatch, getState, third);
+    AlertDispatcher.addOnce({
+      title: "Oops, an error occurred while validating the hit",
+      message: `Check your connection to make sure you're still online.
+If you're still having problems, try refreshing the page.`
+    });
+    gaAll("send", "event", {
+      eventCategory: "Hit Builder",
+      eventAction: "validate",
+      eventLabel: "error"
+    });
+  }
+};
+export const thunkActions = {
+  handleAuthorizationSuccess,
+  resetHitValidationStatus,
+  updateHit,
+  editParamValue,
+  editParamName,
+  removeParam,
+  addParam,
+  validateHit
+};
 
 export const actions = {
   setAuthorized(): HitAction {
@@ -53,111 +173,6 @@ export const actions = {
   },
   setValidationMessages(validationMessages: ValidationMessage[]): HitAction {
     return { type: ActionType.SetValidationMessages, validationMessages };
-  },
-  resetHitValidationStatus(dispatch: Dispatch<HitAction>) {
-    dispatch(actions.setHitStatus(HitStatus.Unvalidated));
-    dispatch(actions.setValidationMessages([]));
-  },
-  addParam() {
-    return (dispatch: Dispatch<HitAction>) => {
-      dispatch({ type: ActionType.AddParam });
-      actions.resetHitValidationStatus(dispatch);
-    };
-  },
-  removeParam(id: number) {
-    return (dispatch: Dispatch<HitAction>) => {
-      dispatch({ type: ActionType.RemoveParam, id });
-      actions.resetHitValidationStatus(dispatch);
-    };
-  },
-  editParamName(id: number, name: string) {
-    return (dispatch: Dispatch<HitAction>) => {
-      dispatch({ type: ActionType.EditParamName, id, name });
-      actions.resetHitValidationStatus(dispatch);
-    };
-  },
-  editParamValue(id: number, value: string) {
-    return (dispatch: Dispatch<HitAction>) => {
-      dispatch({ type: ActionType.EditParamValue, id, value });
-      actions.resetHitValidationStatus(dispatch);
-    };
-  },
-  updateHit(newHit: string) {
-    return (dispatch: Dispatch<HitAction>, getState: () => State) => {
-      const oldHit = hitUtils.convertParamsToHit(getState().params);
-      if (oldHit != newHit) {
-        const params = hitUtils.convertHitToParams(newHit);
-        dispatch({ type: ActionType.ReplaceParams, params });
-        actions.resetHitValidationStatus(dispatch);
-      }
-    };
-  },
-  validateHit() {
-    const formatMessage = (message: {
-      parameter: any;
-      description: string;
-      messageType: any;
-      messageCode: any;
-    }) => {
-      const linkRegex = /Please see http:\/\/goo\.gl\/a8d4RP#\w+ for details\.$/;
-      return {
-        param: message.parameter,
-        description: message.description.replace(linkRegex, "").trim(),
-        type: message.messageType,
-        code: message.messageCode
-      };
-    };
-    return async (dispatch: Dispatch<HitAction>, getState: () => State) => {
-      const hit = hitUtils.convertParamsToHit(getState().params);
-      dispatch(actions.setHitStatus(HitStatus.Validating));
-
-      try {
-        const data = await hitUtils.getHitValidationResult(hit);
-
-        // In some cases the query will have changed before the response gets
-        // back, so we need to check that the result is for the current query.
-        // If it's not, ignore it.
-        if (data.hit != hitUtils.convertParamsToHit(getState().params)) {
-          return;
-        }
-
-        const result = data.response.hitParsingResult[0];
-        const validationMessages = result.parserMessage;
-
-        if (result.valid) {
-          dispatch(actions.setHitStatus(HitStatus.Valid));
-          dispatch(actions.setValidationMessages([]));
-          gaAll("send", "event", {
-            eventCategory: "Hit Builder",
-            eventAction: "validate",
-            eventLabel: "valid"
-          });
-        } else {
-          dispatch(actions.setHitStatus(HitStatus.Invalid));
-          dispatch(
-            actions.setValidationMessages(validationMessages.map(formatMessage))
-          );
-          gaAll("send", "event", {
-            eventCategory: "Hit Builder",
-            eventAction: "validate",
-            eventLabel: "invalid"
-          });
-        }
-      } catch (err) {
-        // TODO(philipwalton): handle timeout errors and slow network connection.
-        actions.resetHitValidationStatus(dispatch);
-        AlertDispatcher.addOnce({
-          title: "Oops, an error occurred while validating the hit",
-          message: `Check your connection to make sure you're still online.
-If you're still having problems, try refreshing the page.`
-        });
-        gaAll("send", "event", {
-          eventCategory: "Hit Builder",
-          eventAction: "validate",
-          eventLabel: "error"
-        });
-      }
-    };
   }
 };
 

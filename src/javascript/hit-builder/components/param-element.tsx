@@ -16,7 +16,7 @@ import * as React from "react";
 import * as ReactDOM from "react-dom";
 import Icon from "../../components/icon";
 import { Param } from "../types";
-import { actions } from "../store";
+import { actions, thunkActions } from "../store";
 
 const REFERENCE_URL =
   "https://developers.google.com/" +
@@ -24,12 +24,12 @@ const REFERENCE_URL =
 
 interface ParamElementProps {
   param: Param;
-  actions: typeof actions;
   required?: boolean;
   message?: string;
   placeholder?: string;
   onRemove?: () => void;
   needsFocus?: boolean;
+  dispatch: (a: any) => void;
 }
 
 /**
@@ -52,7 +52,7 @@ export default class ParamElement<T = {}> extends React.Component<
     target: { value: string };
   }) => {
     this.setState({ name });
-    this.props.actions.editParamName(this.props.param.id, name);
+    this.props.dispatch(thunkActions.editParamName(this.props.param.id, name));
   };
 
   /**
@@ -64,7 +64,9 @@ export default class ParamElement<T = {}> extends React.Component<
     target: { value: string };
   }) => {
     this.setState({ value });
-    this.props.actions.editParamValue(this.props.param.id, value);
+    this.props.dispatch(
+      thunkActions.editParamValue(this.props.param.id, value)
+    );
   };
 
   /**

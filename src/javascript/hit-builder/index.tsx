@@ -31,21 +31,7 @@ const mapStateToProps = (state: State) => {
   return state;
 };
 
-/**
- * Maps Redux action dispatchers to component props.
- */
-const mapDispatchToProps = (
-  dispatch: Dispatch<HitAction>
-): { actions: typeof actions } => {
-  return {
-    actions: bindActionCreators(actions, dispatch)
-  };
-};
-
-const HitBuilderApp = connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(HitBuilder);
+const HitBuilderApp = connect(mapStateToProps)(HitBuilder);
 
 /**
  * The base render function.

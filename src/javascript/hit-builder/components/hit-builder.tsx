@@ -21,14 +21,9 @@ import ParamSearchSuggestElement from "./param-search-suggest-element";
 import ParamSelectElement from "./param-select-element";
 import { convertParamsToHit } from "../hit";
 import IconButton from "../../components/icon-button";
-import { actions } from "../store";
-import {
-  Param,
-  Params,
-  ValidationMessage,
-  HitStatus,
-  Property
-} from "../types";
+import { actions, thunkActions } from "../store";
+import { Params, ValidationMessage, HitStatus, Property } from "../types";
+import { useDispatch } from "react-redux";
 
 const HIT_TYPES = [
   "pageview",
@@ -42,7 +37,6 @@ const HIT_TYPES = [
 ];
 
 export interface HitBuilderProps {
-  actions: typeof actions;
   params: Params;
   validationMessages: ValidationMessage[];
   hitStatus: HitStatus;
@@ -50,12 +44,12 @@ export interface HitBuilderProps {
 }
 
 const HitBuilder: React.FC<HitBuilderProps> = ({
-  actions,
   hitStatus,
   validationMessages,
   params,
   properties
 }) => {
+  const dispatch = useDispatch();
   const [newParamNeedsFocus, setNewParamNeedsFocus] = React.useState(false);
 
   // Not sure If we need this.
@@ -72,13 +66,13 @@ const HitBuilder: React.FC<HitBuilderProps> = ({
   );
 
   const handleGenerateUuid = React.useCallback(() => {
-    actions.editParamValue(params[3].id, uuid.v4());
-  }, [params]);
+    dispatch(thunkActions.editParamValue(params[3].id, uuid.v4()));
+  }, [params, dispatch]);
 
   const handleAddParam = React.useCallback(() => {
     setNewParamNeedsFocus(true);
-    actions.addParam();
-  }, [actions]);
+    dispatch(thunkActions.addParam);
+  }, [dispatch]);
 
   const [v, t, tid, cid, ...otherParams] = params;
   return (
@@ -110,21 +104,21 @@ const HitBuilder: React.FC<HitBuilderProps> = ({
         </div>
 
         <ParamSelectElement
-          actions={actions}
+          dispatch={dispatch}
           param={v}
           options={["1"]}
           message={getValidationMessageForParam(v.name)}
         />
 
         <ParamSelectElement
-          actions={actions}
+          dispatch={dispatch}
           param={t}
           options={HIT_TYPES}
           message={getValidationMessageForParam(t.name)}
         />
 
         <ParamSearchSuggestElement
-          actions={actions}
+          dispatch={dispatch}
           param={tid}
           options={properties}
           placeholder="UA-XXXXX-Y"
@@ -132,7 +126,7 @@ const HitBuilder: React.FC<HitBuilderProps> = ({
         />
 
         <ParamButtonElement
-          actions={actions}
+          dispatch={dispatch}
           param={cid}
           type="refresh"
           title="Randomly generate UUID"
@@ -144,12 +138,14 @@ const HitBuilder: React.FC<HitBuilderProps> = ({
           const isLast = param === otherParams[otherParams.length - 1];
           return (
             <ParamElement
+              dispatch={dispatch}
               key={param.id}
-              actions={actions}
               param={param}
               needsFocus={isLast && newParamNeedsFocus}
               message={getValidationMessageForParam(param.name)}
-              onRemove={() => actions.removeParam(param.id)}
+              onRemove={() => {
+                dispatch(thunkActions.removeParam(param.id));
+              }}
             />
           );
         })}
