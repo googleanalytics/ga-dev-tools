@@ -22,8 +22,8 @@ import ParamSelectElement from "./param-select-element";
 import { convertParamsToHit } from "../hit";
 import IconButton from "../../components/icon-button";
 import { actions, thunkActions } from "../store";
-import { Params, ValidationMessage, HitStatus, Property } from "../types";
-import { useDispatch } from "react-redux";
+import { State } from "../types";
+import { useDispatch, useSelector } from "react-redux";
 
 const HIT_TYPES = [
   "pageview",
@@ -36,19 +36,11 @@ const HIT_TYPES = [
   "timing"
 ];
 
-export interface HitBuilderProps {
-  params: Params;
-  validationMessages: ValidationMessage[];
-  hitStatus: HitStatus;
-  properties: Property[];
-}
-
-const HitBuilder: React.FC<HitBuilderProps> = ({
-  hitStatus,
-  validationMessages,
-  params,
-  properties
-}) => {
+const HitBuilder: React.FC = () => {
+  const { hitStatus, validationMessages, params, properties } = useSelector<
+    State,
+    State
+  >(a => a);
   const dispatch = useDispatch();
   const [newParamNeedsFocus, setNewParamNeedsFocus] = React.useState(false);
 

@@ -14,24 +14,12 @@
 
 import * as React from "react";
 import * as ReactDOM from "react-dom";
-import { connect, Provider } from "react-redux";
-import { bindActionCreators, Dispatch } from "redux";
+import { Provider } from "react-redux";
 
 import HitBuilder from "./components/hit-builder";
 import store, { thunkActions } from "./store";
-import { actions } from "./store";
-import { HitAction, State } from "./types";
 
 import site from "../site";
-
-/**
- * Maps Redux state to component props
- */
-const mapStateToProps = (state: State) => {
-  return state;
-};
-
-const HitBuilderApp = connect(mapStateToProps)(HitBuilder);
 
 /**
  * The base render function.
@@ -39,7 +27,7 @@ const HitBuilderApp = connect(mapStateToProps)(HitBuilder);
 function render() {
   ReactDOM.render(
     <Provider store={store}>
-      <HitBuilderApp />
+      <HitBuilder />
     </Provider>,
     document.getElementById("hit-builder")
   );
@@ -50,9 +38,6 @@ function render() {
  * Updates the CSS state classes and rerenders in the authorized state.
  */
 function onAuthorizationSuccess() {
-  // I'm pretty sure this works, but I'm not sure how to type it.
-  // I think it's doing redux thunk stuff, so the thunk middleware takes care of
-  // this.'
   store.dispatch(thunkActions.handleAuthorizationSuccess);
   site.setReadyState();
 }
@@ -65,6 +50,4 @@ gapi.analytics.ready(function() {
   }
 });
 
-// Perform an initial render.
-store.subscribe(render);
 render();
