@@ -22,7 +22,7 @@ import IconButton from "../../components/icon-button";
 import CopyButton from "./copy-button";
 import supports from "../../supports";
 import { sleep } from "../../utils";
-import { thunkActions } from "../store";
+import actions from "../actions";
 import { HitStatus, ValidationMessage, State } from "../types";
 import { useSelector, useDispatch } from "react-redux";
 
@@ -155,7 +155,7 @@ const HitActions: React.FC = () => {
 
   const dispatch = useDispatch();
   const validateHit = React.useCallback(() => {
-    dispatch(thunkActions.validateHit);
+    dispatch(actions.validateHit);
   }, [dispatch]);
 
   if (hitStatus != "VALID") {
@@ -217,7 +217,7 @@ const HitPayloadInput: React.FC = () => {
   const dispatch = useDispatch();
   const updateHit = React.useCallback(
     (newHit: string) => {
-      dispatch(thunkActions.updateHit(newHit));
+      dispatch(actions.updateHit(newHit));
     },
     [dispatch]
   );

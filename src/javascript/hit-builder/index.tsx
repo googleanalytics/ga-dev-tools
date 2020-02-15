@@ -17,7 +17,8 @@ import * as ReactDOM from "react-dom";
 import { Provider } from "react-redux";
 
 import HitBuilder from "./components/hit-builder";
-import store, { thunkActions } from "./store";
+import store from "./store";
+import actions from "./actions";
 
 import site from "../site";
 
@@ -38,7 +39,7 @@ function render() {
  * Updates the CSS state classes and rerenders in the authorized state.
  */
 function onAuthorizationSuccess() {
-  store.dispatch(thunkActions.handleAuthorizationSuccess);
+  store.dispatch(actions.handleAuthorizationSuccess);
   site.setReadyState();
 }
 

@@ -16,7 +16,7 @@ import * as React from "react";
 import * as ReactDOM from "react-dom";
 import Icon from "../../components/icon";
 import { Param } from "../types";
-import { actions, thunkActions } from "../store";
+import actions from "../actions";
 
 const REFERENCE_URL =
   "https://developers.google.com/" +
@@ -52,7 +52,7 @@ export default class ParamElement<T = {}> extends React.Component<
     target: { value: string };
   }) => {
     this.setState({ name });
-    this.props.dispatch(thunkActions.editParamName(this.props.param.id, name));
+    this.props.dispatch(actions.editParamName(this.props.param.id, name));
   };
 
   /**
@@ -64,9 +64,7 @@ export default class ParamElement<T = {}> extends React.Component<
     target: { value: string };
   }) => {
     this.setState({ value });
-    this.props.dispatch(
-      thunkActions.editParamValue(this.props.param.id, value)
-    );
+    this.props.dispatch(actions.editParamValue(this.props.param.id, value));
   };
 
   /**

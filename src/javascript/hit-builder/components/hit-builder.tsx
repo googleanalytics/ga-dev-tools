@@ -20,7 +20,7 @@ import ParamElement from "./param-element";
 import ParamSearchSuggestElement from "./param-search-suggest-element";
 import ParamSelectElement from "./param-select-element";
 import IconButton from "../../components/icon-button";
-import { thunkActions } from "../store";
+import actions from "../actions";
 import { State } from "../types";
 import { useDispatch, useSelector } from "react-redux";
 
@@ -56,12 +56,12 @@ const HitBuilder: React.FC = () => {
   );
 
   const handleGenerateUuid = React.useCallback(() => {
-    dispatch(thunkActions.editParamValue(params[3].id, uuid.v4()));
+    dispatch(actions.editParamValue(params[3].id, uuid.v4()));
   }, [params, dispatch]);
 
   const handleAddParam = React.useCallback(() => {
     setNewParamNeedsFocus(true);
-    dispatch(thunkActions.addParam);
+    dispatch(actions.addParam);
   }, [dispatch]);
 
   const [v, t, tid, cid, ...otherParams] = params;
@@ -129,7 +129,7 @@ const HitBuilder: React.FC = () => {
               needsFocus={isLast && newParamNeedsFocus}
               message={getValidationMessageForParam(param.name)}
               onRemove={() => {
-                dispatch(thunkActions.removeParam(param.id));
+                dispatch(actions.removeParam(param.id));
               }}
             />
           );
