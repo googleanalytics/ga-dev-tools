@@ -1,4 +1,5 @@
 export enum ActionType {
+  SetHitPayload = "SET_HIT_PAYLOAD",
   SetHitStatus = "SET_HIT_STATUS",
   SetAuthorized = "SET_AUTHORIZED",
   AddParam = "ADD_PARAM",
@@ -55,6 +56,11 @@ export interface SetValidationMessages {
   validationMessages: ValidationMessage[];
 }
 
+export interface SetHitPayload {
+  type: ActionType.SetHitPayload;
+  hitPayload: string;
+}
+
 export type HitAction =
   | SetHitStatus
   | SetAuthorized
@@ -64,7 +70,8 @@ export type HitAction =
   | EditParamValue
   | ReplaceParams
   | SetUserProperties
-  | SetValidationMessages;
+  | SetValidationMessages
+  | SetHitPayload;
 
 export enum HitStatus {
   Unvalidated = "UNVALIDATED",
@@ -114,6 +121,7 @@ export interface ValidationMessage {
 }
 
 export interface State {
+  hitPayload: string;
   hitStatus: HitStatus;
   isAuthorized: boolean;
   params: Params;

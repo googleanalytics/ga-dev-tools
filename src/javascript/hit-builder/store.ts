@@ -3,8 +3,7 @@ import {
   applyMiddleware,
   Reducer,
   Middleware,
-  combineReducers,
-  Dispatch
+  combineReducers
 } from "redux";
 import thunkMuddliware, { ThunkAction, ThunkDispatch } from "redux-thunk";
 import {
@@ -27,6 +26,7 @@ import AlertDispatcher from "../components/alert-dispatcher";
 type ThunkResult<T> = ThunkAction<T, State, undefined, HitAction>;
 
 const handleAuthorizationSuccess: ThunkResult<void> = async dispatch => {
+  dispatch(thunkActions.updateHitPayload);
   dispatch(actions.setAuthorized());
 
   const summaries = await accountSummaries.get();
@@ -38,48 +38,55 @@ const handleAuthorizationSuccess: ThunkResult<void> = async dispatch => {
 
   dispatch(actions.setUserProperties(properties));
 };
-const resetHitValidationStatus: ThunkResult<void> = (
-  dispatch: Dispatch<HitAction>
-) => {
+const resetHitValidationStatus: ThunkResult<void> = dispatch => {
   dispatch(actions.setHitStatus(HitStatus.Unvalidated));
   dispatch(actions.setValidationMessages([]));
 };
 
-const addParam: ThunkResult<void> = (dispatch, getState, third) => {
+const updateHitPayload: ThunkResult<void> = (dispatch, getState) => {
+  const params = getState().params;
+  dispatch(actions.setHitPayload(hitUtils.convertParamsToHit(params)));
+};
+
+const addParam: ThunkResult<void> = dispatch => {
   dispatch({ type: ActionType.AddParam });
-  thunkActions.resetHitValidationStatus(dispatch, getState, third);
+  dispatch(thunkActions.updateHitPayload);
+  dispatch(thunkActions.resetHitValidationStatus);
 };
 const removeParam: (id: number) => ThunkResult<void> = (id: number) => {
-  return (dispatch, getState, third) => {
+  return dispatch => {
     dispatch({ type: ActionType.RemoveParam, id });
-    thunkActions.resetHitValidationStatus(dispatch, getState, third);
+    dispatch(thunkActions.updateHitPayload);
+    dispatch(thunkActions.resetHitValidationStatus);
   };
 };
 const editParamName: (id: number, name: string) => ThunkResult<void> = (
   id,
   name
 ) => {
-  return (dispatch, getState, third) => {
+  return dispatch => {
     dispatch({ type: ActionType.EditParamName, id, name });
-    thunkActions.resetHitValidationStatus(dispatch, getState, third);
+    dispatch(thunkActions.updateHitPayload);
+    dispatch(thunkActions.resetHitValidationStatus);
   };
 };
 const editParamValue: (id: number, value: string) => ThunkResult<void> = (
   id,
   value
 ) => {
-  return (dispatch, getState, third) => {
+  return dispatch => {
     dispatch({ type: ActionType.EditParamValue, id, value });
-    thunkActions.resetHitValidationStatus(dispatch, getState, third);
+    dispatch(thunkActions.updateHitPayload);
+    dispatch(thunkActions.resetHitValidationStatus);
   };
 };
 const updateHit: (newHit: string) => ThunkResult<void> = (newHit: string) => {
-  return (dispatch, getState, third) => {
+  return (dispatch, getState) => {
     const oldHit = hitUtils.convertParamsToHit(getState().params);
     if (oldHit != newHit) {
       const params = hitUtils.convertHitToParams(newHit);
       dispatch({ type: ActionType.ReplaceParams, params });
-      thunkActions.resetHitValidationStatus(dispatch, getState, third);
+      dispatch(thunkActions.resetHitValidationStatus);
     }
   };
 };
@@ -158,10 +165,14 @@ export const thunkActions = {
   editParamName,
   removeParam,
   addParam,
-  validateHit
+  validateHit,
+  updateHitPayload
 };
 
 export const actions = {
+  setHitPayload(hitPayload: string): HitAction {
+    return { type: ActionType.SetHitPayload, hitPayload };
+  },
   setAuthorized(): HitAction {
     return { type: ActionType.SetAuthorized };
   },
@@ -186,8 +197,8 @@ if (process.env.NODE_ENV != "production") {
 }
 
 const hitStatus: Reducer<HitStatus, HitAction> = (
-  state: HitStatus = HitStatus.Unvalidated,
-  action: HitAction
+  state = HitStatus.Unvalidated,
+  action
 ) => {
   switch (action.type) {
     case ActionType.SetHitStatus:
@@ -197,10 +208,7 @@ const hitStatus: Reducer<HitStatus, HitAction> = (
   }
 };
 
-const isAuthorized: Reducer<boolean, HitAction> = (
-  state: boolean = false,
-  action: HitAction
-) => {
+const isAuthorized: Reducer<boolean, HitAction> = (state = false, action) => {
   switch (action.type) {
     case ActionType.SetAuthorized:
       return true;
@@ -210,10 +218,8 @@ const isAuthorized: Reducer<boolean, HitAction> = (
 };
 
 const params: Reducer<Params, HitAction> = (
-  state: Params = hitUtils.convertHitToParams(
-    hitUtils.getInitialHitAndUpdateUrl()
-  ),
-  action: HitAction
+  state = hitUtils.convertHitToParams(hitUtils.getInitialHitAndUpdateUrl()),
+  action
 ) => {
   const [v, t, tid, cid, ...others] = state;
   switch (action.type) {
@@ -262,10 +268,7 @@ const params: Reducer<Params, HitAction> = (
   }
 };
 
-const properties: Reducer<Property[], HitAction> = (
-  state: Property[] = [],
-  action: HitAction
-) => {
+const properties: Reducer<Property[], HitAction> = (state = [], action) => {
   switch (action.type) {
     case ActionType.SetUserProperties:
       return action.properties;
@@ -275,8 +278,8 @@ const properties: Reducer<Property[], HitAction> = (
 };
 
 const validationMessages: Reducer<ValidationMessage[], HitAction> = (
-  state: ValidationMessage[] = [],
-  action: HitAction
+  state = [],
+  action
 ) => {
   switch (action.type) {
     case ActionType.SetValidationMessages:
@@ -286,7 +289,17 @@ const validationMessages: Reducer<ValidationMessage[], HitAction> = (
   }
 };
 
+const hitPayload: Reducer<string, HitAction> = (state = "", action) => {
+  switch (action.type) {
+    case ActionType.SetHitPayload:
+      return action.hitPayload;
+    default:
+      return state;
+  }
+};
+
 const app: Reducer<State, HitAction> = combineReducers({
+  hitPayload,
   hitStatus,
   isAuthorized,
   params,

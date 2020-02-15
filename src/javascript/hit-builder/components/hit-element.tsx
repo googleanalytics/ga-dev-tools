@@ -22,55 +22,14 @@ import IconButton from "../../components/icon-button";
 import CopyButton from "./copy-button";
 import supports from "../../supports";
 import { sleep } from "../../utils";
-import { actions, thunkActions } from "../store";
+import { thunkActions } from "../store";
 import { HitStatus, ValidationMessage, State } from "../types";
 import { useSelector, useDispatch } from "react-redux";
-import { convertParamsToHit } from "../hit";
 
 const ACTION_TIMEOUT = 1500;
 
-interface HitElementProps {
-  hitPayload: string;
-  actions: typeof actions;
-  hitStatus: HitStatus;
-  validationMessages: ValidationMessage[];
-}
-
-interface HitElementState {
-  hitSent: boolean;
-}
-
 const HitElement: React.FC = () => {
-  const hitPayload = useSelector<State, string>(a =>
-    convertParamsToHit(a.params)
-  );
   const hitStatus = useSelector<State, HitStatus>(a => a.hitStatus);
-  const [hitSent, setHitSent] = React.useState<boolean>(false);
-  React.useEffect(() => {
-    setHitSent(false);
-  }, [hitPayload]);
-
-  /**
-   * Sends the hit payload to Google Analytics and updates the button state
-   * to indicate the hit was successfully sent. After 1 second the button
-   * gets restored to its original state.
-   */
-  const sendHit = React.useCallback(async () => {
-    await $.ajax({
-      method: "POST",
-      url: "https://www.google-analytics.com/collect",
-      data: hitPayload
-    });
-    setHitSent(true);
-    gaAll("send", "event", {
-      eventCategory: "Hit Builder",
-      eventAction: "send",
-      eventLabel: "payload"
-    });
-    await sleep(ACTION_TIMEOUT);
-    setHitSent(false);
-  }, [hitPayload]);
-
   let className = "HitElement";
   if (hitStatus === HitStatus.Valid) {
     className += " HitElement--valid";
@@ -92,16 +51,11 @@ const HitElement: React.FC = () => {
           <div className="FormControl FormControl--full">
             <label className="FormControl-label">Hit payload</label>
             <div className="FormControl-body">
-              <HitPayloadInput hitPayload={hitPayload} />
+              <HitPayloadInput />
             </div>
           </div>
         </div>
-        <HitActions
-          hitPayload={hitPayload}
-          hitStatus={hitStatus}
-          hitSent={hitSent}
-          sendHit={sendHit}
-        />
+        <HitActions />
       </div>
     </section>
   );
@@ -170,19 +124,35 @@ const ValidationStatus: React.FC = () => {
   }
 };
 
-interface HitActionsProps {
-  hitStatus: HitStatus;
-  hitPayload: string;
-  hitSent: boolean;
-  sendHit: () => void;
-}
+const HitActions: React.FC = () => {
+  const hitStatus = useSelector<State, HitStatus>(a => a.hitStatus);
+  const hitPayload = useSelector<State, string>(a => a.hitPayload);
+  const [hitSent, setHitSent] = React.useState<boolean>(false);
+  React.useEffect(() => {
+    setHitSent(false);
+  }, [hitPayload]);
 
-const HitActions: React.FC<HitActionsProps> = ({
-  hitStatus,
-  hitSent,
-  hitPayload,
-  sendHit
-}) => {
+  /**
+   * Sends the hit payload to Google Analytics and updates the button state
+   * to indicate the hit was successfully sent. After 1 second the button
+   * gets restored to its original state.
+   */
+  const sendHit = React.useCallback(async () => {
+    await $.ajax({
+      method: "POST",
+      url: "https://www.google-analytics.com/collect",
+      data: hitPayload
+    });
+    setHitSent(true);
+    gaAll("send", "event", {
+      eventCategory: "Hit Builder",
+      eventAction: "send",
+      eventLabel: "payload"
+    });
+    await sleep(ACTION_TIMEOUT);
+    setHitSent(false);
+  }, [hitPayload]);
+
   const dispatch = useDispatch();
   const validateHit = React.useCallback(() => {
     dispatch(thunkActions.validateHit);
@@ -240,11 +210,8 @@ const HitActions: React.FC<HitActionsProps> = ({
   }
 };
 
-interface HitPayloadProps {
-  hitPayload: string;
-}
-
-const HitPayloadInput: React.FC<HitPayloadProps> = ({ hitPayload }) => {
+const HitPayloadInput: React.FC = () => {
+  const hitPayload = useSelector<State, string>(a => a.hitPayload);
   const [value, setValue] = React.useState(hitPayload);
   const [editing, setIsEditing] = React.useState(false);
   const dispatch = useDispatch();

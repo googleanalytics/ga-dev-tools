@@ -19,9 +19,8 @@ import ParamButtonElement from "./param-button-element";
 import ParamElement from "./param-element";
 import ParamSearchSuggestElement from "./param-search-suggest-element";
 import ParamSelectElement from "./param-select-element";
-import { convertParamsToHit } from "../hit";
 import IconButton from "../../components/icon-button";
-import { actions, thunkActions } from "../store";
+import { thunkActions } from "../store";
 import { State } from "../types";
 import { useDispatch, useSelector } from "react-redux";
 
