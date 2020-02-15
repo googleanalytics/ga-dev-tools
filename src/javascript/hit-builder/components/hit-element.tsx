@@ -25,6 +25,7 @@ import { sleep } from "../../utils";
 import { actions, thunkActions } from "../store";
 import { HitStatus, ValidationMessage, State } from "../types";
 import { useSelector, useDispatch } from "react-redux";
+import { convertParamsToHit } from "../hit";
 
 const ACTION_TIMEOUT = 1500;
 
@@ -39,96 +40,74 @@ interface HitElementState {
   hitSent: boolean;
 }
 
-/**
- * A component that renders the generated hit element.
- */
-export default class HitElement extends React.Component<
-  HitElementProps,
-  HitElementState
-> {
-  hitPayloadCopiedTimeout_?: number;
-  hitUriCopiedTimeout_?: number;
-  state = {
-    hitSent: false
-  };
+const HitElement: React.FC = () => {
+  const hitPayload = useSelector<State, string>(a =>
+    convertParamsToHit(a.params)
+  );
+  const hitStatus = useSelector<State, HitStatus>(a => a.hitStatus);
+  const [hitSent, setHitSent] = React.useState<boolean>(false);
+  React.useEffect(() => {
+    setHitSent(false);
+  }, [hitPayload]);
 
   /**
    * Sends the hit payload to Google Analytics and updates the button state
    * to indicate the hit was successfully sent. After 1 second the button
    * gets restored to its original state.
    */
-  sendHit = async () => {
+  const sendHit = React.useCallback(async () => {
     await $.ajax({
       method: "POST",
       url: "https://www.google-analytics.com/collect",
-      data: this.props.hitPayload
+      data: hitPayload
     });
-    this.setState({ hitSent: true });
+    setHitSent(true);
     gaAll("send", "event", {
       eventCategory: "Hit Builder",
       eventAction: "send",
       eventLabel: "payload"
     });
     await sleep(ACTION_TIMEOUT);
-    this.setState({ hitSent: false });
-  };
+    setHitSent(false);
+  }, [hitPayload]);
 
-  /**
-   * Returns the rendered components that make up the validation status.
-   * @return {Object}
-   */
-
-  /**
-   * React lifecycyle methods below:
-   * http://facebook.github.io/react/docs/component-specs.html
-   * ---------------------------------------------------------
-   */
-
-  /**
-   * Resets the hit if a new payload is entered by the user.
-   * @param {Object} nextProps
-   */
-  componentWillReceiveProps(nextProps: HitElementProps) {
-    if (nextProps.hitPayload != this.props.hitPayload) {
-      this.setState({
-        hitSent: false
-      });
-    }
+  let className = "HitElement";
+  if (hitStatus === HitStatus.Valid) {
+    className += " HitElement--valid";
+  }
+  if (hitStatus === HitStatus.Invalid) {
+    className += " HitElement--invalid";
   }
 
-  render(): JSX.Element {
-    let className = "HitElement";
-    if (this.props.hitStatus == "VALID") className += " HitElement--valid";
-    if (this.props.hitStatus == "INVALID") className += " HitElement--invalid";
-
-    return (
-      <section className={className}>
-        <ValidationStatus />
-        <div className="HitElement-body">
-          <div className="HitElement-requestInfo">
-            POST /collect HTTP/1.1
-            <br />
-            Host: www.google-analytics.com
-          </div>
-          <div className="HitElement-requestBody">
-            <div className="FormControl FormControl--full">
-              <label className="FormControl-label">Hit payload</label>
-              <div className="FormControl-body">
-                <HitPayloadInput hitPayload={this.props.hitPayload} />
-              </div>
+  return (
+    <section className={className}>
+      <ValidationStatus />
+      <div className="HitElement-body">
+        <div className="HitElement-requestInfo">
+          POST /collect HTTP/1.1
+          <br />
+          Host: www.google-analytics.com
+        </div>
+        <div className="HitElement-requestBody">
+          <div className="FormControl FormControl--full">
+            <label className="FormControl-label">Hit payload</label>
+            <div className="FormControl-body">
+              <HitPayloadInput hitPayload={hitPayload} />
             </div>
           </div>
-          <HitActions
-            hitPayload={this.props.hitPayload}
-            hitStatus={this.props.hitStatus}
-            hitSent={this.state.hitSent}
-            sendHit={this.sendHit}
-          />
         </div>
-      </section>
-    );
-  }
-}
+        <HitActions
+          hitPayload={hitPayload}
+          hitStatus={hitStatus}
+          hitSent={hitSent}
+          sendHit={sendHit}
+        />
+      </div>
+    </section>
+  );
+};
+
+export default HitElement;
 
 const ValidationStatus: React.FC = () => {
   const validationMessages = useSelector<State, ValidationMessage[]>(

@@ -37,10 +37,9 @@ const HIT_TYPES = [
 ];
 
 const HitBuilder: React.FC = () => {
-  const { hitStatus, validationMessages, params, properties } = useSelector<
-    State,
-    State
-  >(a => a);
+  const { validationMessages, params, properties } = useSelector<State, State>(
+    a => a
+  );
   const dispatch = useDispatch();
   const [newParamNeedsFocus, setNewParamNeedsFocus] = React.useState(false);
 
@@ -78,12 +77,7 @@ const HitBuilder: React.FC = () => {
         </p>
       </div>
 
-      <HitElement
-        actions={actions}
-        hitStatus={hitStatus}
-        validationMessages={validationMessages}
-        hitPayload={convertParamsToHit(params)}
-      />
+      <HitElement />
 
       <div className="HitBuilderParams">
         <div className="HeadingGroup HeadingGroup--h3">
