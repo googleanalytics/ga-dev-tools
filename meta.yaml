@@ -76,6 +76,11 @@ projects:
     action: View Demo
     url: https://enhancedecommerce.appspot.com
   status: updated
+- title: App+Web Hit Builder
+  type: tool
+  slug: aw-hit-builder
+  tech:
+  - measurement_protocol_validation_server
 - title: Hit Builder
   type: tool
   slug: hit-builder
