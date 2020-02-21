@@ -14,14 +14,14 @@
 
 import React from "react";
 import uuid from "uuid";
-import HitElement from "./hit-element";
-import ParamButtonElement from "./param-button-element";
-import ParamElement from "./param-element";
-import ParamSearchSuggestElement from "./param-search-suggest-element";
-import ParamSelectElement from "./param-select-element";
+import HitElement from "../../hit-builder/components/hit-element";
+import ParamButtonElement from "../../hit-builder/components/param-button-element";
+import ParamElement from "../../hit-builder/components/param-element";
+import ParamSearchSuggestElement from "../../hit-builder/components/param-search-suggest-element";
+import ParamSelectElement from "../../hit-builder/components/param-select-element";
 import IconButton from "../../components/icon-button";
-import actions from "../actions";
-import { State } from "../types";
+import actions from "../../hit-builder/actions";
+import { State } from "../../hit-builder/types";
 import { useDispatch, useSelector } from "react-redux";
 
 const HIT_TYPES = [
