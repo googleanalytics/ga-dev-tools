@@ -1,4 +1,9 @@
+import { MPEvent } from "./MpEvent";
+
+export * from "./MpEvent";
+
 export enum ActionType {
+  SetEvent = "SetEvent",
   SetHitPayload = "SET_HIT_PAYLOAD",
   SetHitStatus = "SET_HIT_STATUS",
   SetAuthorized = "SET_AUTHORIZED",
@@ -61,7 +66,13 @@ export interface SetHitPayload {
   hitPayload: string;
 }
 
+export interface SetEvent {
+  type: ActionType.SetEvent;
+  event: MPEvent;
+}
+
 export type HitAction =
+  | SetEvent
   | SetHitStatus
   | SetAuthorized
   | AddParam
@@ -120,22 +131,10 @@ export interface ValidationMessage {
   description: string;
 }
 
-interface CampaignEvent {
-  source: string;
-  medium: string;
-  name: string;
-  term: string;
-  content: string;
-  id: string;
-}
-
-class MPEvent {}
-
 export interface State {
   event: MPEvent;
   mid: string;
   authKey: string;
-  hitPayload: string;
   hitStatus: HitStatus;
   isAuthorized: boolean;
   properties: Property[];

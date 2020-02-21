@@ -15,32 +15,15 @@
 import React from "react";
 import uuid from "uuid";
 import HitElement from "../../hit-builder/components/hit-element";
-import ParamButtonElement from "../../hit-builder/components/param-button-element";
-import ParamElement from "../../hit-builder/components/param-element";
-import ParamSearchSuggestElement from "../../hit-builder/components/param-search-suggest-element";
-import ParamSelectElement from "../../hit-builder/components/param-select-element";
 import IconButton from "../../components/icon-button";
-import actions from "../../hit-builder/actions";
-import { State } from "../../hit-builder/types";
+import actions from "../actions";
+import { State, MPEvent, MPEventType } from "../types";
 import { useDispatch, useSelector } from "react-redux";
 
-const HIT_TYPES = [
-  "pageview",
-  "screenview",
-  "event",
-  "transaction",
-  "item",
-  "social",
-  "exception",
-  "timing"
-];
-
 const HitBuilder: React.FC = () => {
-  const { validationMessages, params, properties } = useSelector<State, State>(
-    a => a
-  );
+  const { validationMessages, event } = useSelector<State, State>(a => a);
   const dispatch = useDispatch();
-  const [newParamNeedsFocus, setNewParamNeedsFocus] = React.useState(false);
+  const [, setNewParamNeedsFocus] = React.useState(false);
 
   // Not sure If we need this.
   React.useEffect(() => {
@@ -56,15 +39,15 @@ const HitBuilder: React.FC = () => {
   );
 
   const handleGenerateUuid = React.useCallback(() => {
-    dispatch(actions.editParamValue(params[3].id, uuid.v4()));
-  }, [params, dispatch]);
+    uuid.v4();
+    /* dispatch(actions.editParamValue(params[3].id, uuid.v4())); */
+  }, []);
 
   const handleAddParam = React.useCallback(() => {
     setNewParamNeedsFocus(true);
     dispatch(actions.addParam);
   }, [dispatch]);
 
-  const [v, t, tid, cid, ...otherParams] = params;
   return (
     <div>
       <div className="HeadingGroup HeadingGroup--h3">
@@ -80,6 +63,21 @@ const HitBuilder: React.FC = () => {
 
       <div className="HitBuilderParams">
         <div className="HeadingGroup HeadingGroup--h3">
+          <select
+            className="FormField"
+            value={event.getEventType()}
+            onChange={e => {
+              const newEventType: MPEventType = e.target.value as MPEventType;
+              const newEvent = MPEvent.empty(newEventType);
+              dispatch(actions.setEvent(newEvent));
+            }}
+          >
+            {MPEvent.options().map(option => (
+              <option value={option} key={option}>
+                {option}
+              </option>
+            ))}
+          </select>
           <h3>Hit parameter details</h3>
           <p>
             The fields below are a breakdown of the individual parameters and
@@ -87,53 +85,6 @@ const HitBuilder: React.FC = () => {
             values, the hit above will be automatically updated.
           </p>
         </div>
-
-        <ParamSelectElement
-          dispatch={dispatch}
-          param={v}
-          options={["1"]}
-          message={getValidationMessageForParam(v.name)}
-        />
-
-        <ParamSelectElement
-          dispatch={dispatch}
-          param={t}
-          options={HIT_TYPES}
-          message={getValidationMessageForParam(t.name)}
-        />
-
-        <ParamSearchSuggestElement
-          dispatch={dispatch}
-          param={tid}
-          options={properties}
-          placeholder="UA-XXXXX-Y"
-          message={getValidationMessageForParam(tid.name)}
-        />
-
-        <ParamButtonElement
-          dispatch={dispatch}
-          param={cid}
-          type="refresh"
-          title="Randomly generate UUID"
-          message={getValidationMessageForParam(cid.name)}
-          onClick={handleGenerateUuid}
-        />
-
-        {otherParams.map(param => {
-          const isLast = param === otherParams[otherParams.length - 1];
-          return (
-            <ParamElement
-              dispatch={dispatch}
-              key={param.id}
-              param={param}
-              needsFocus={isLast && newParamNeedsFocus}
-              message={getValidationMessageForParam(param.name)}
-              onRemove={() => {
-                dispatch(actions.removeParam(param.id));
-              }}
-            />
-          );
-        })}
 
         <div className="HitBuilderParam HitBuilderParam--action">
           <div className="HitBuilderParam-body">
