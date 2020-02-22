@@ -16,37 +16,17 @@ import React from "react";
 import uuid from "uuid";
 import HitElement from "../../hit-builder/components/hit-element";
 import IconButton from "../../components/icon-button";
+import EditEvent from "./EditEvent";
 import actions from "../actions";
 import { State, MPEvent, MPEventType } from "../types";
 import { useDispatch, useSelector } from "react-redux";
 
 const HitBuilder: React.FC = () => {
-  const { validationMessages, event } = useSelector<State, State>(a => a);
+  // TODO - The event picker should probably let you do a search to filter the dropdown.
+  // TODO - make sure to focus on any new params.
+  // TODO - handle validation messages
+  const { event } = useSelector<State, State>(a => a);
   const dispatch = useDispatch();
-  const [, setNewParamNeedsFocus] = React.useState(false);
-
-  // Not sure If we need this.
-  React.useEffect(() => {
-    setNewParamNeedsFocus(false);
-  }, []);
-
-  const getValidationMessageForParam = React.useCallback(
-    (paramName: string) => {
-      const message = validationMessages.find(m => m.param === paramName);
-      return message && message.description;
-    },
-    [validationMessages]
-  );
-
-  const handleGenerateUuid = React.useCallback(() => {
-    uuid.v4();
-    /* dispatch(actions.editParamValue(params[3].id, uuid.v4())); */
-  }, []);
-
-  const handleAddParam = React.useCallback(() => {
-    setNewParamNeedsFocus(true);
-    dispatch(actions.addParam);
-  }, [dispatch]);
 
   return (
     <div>
@@ -63,39 +43,31 @@ const HitBuilder: React.FC = () => {
 
       <div className="HitBuilderParams">
         <div className="HeadingGroup HeadingGroup--h3">
-          <select
-            className="FormField"
-            value={event.getEventType()}
-            onChange={e => {
-              const newEventType: MPEventType = e.target.value as MPEventType;
-              const newEvent = MPEvent.empty(newEventType);
-              dispatch(actions.setEvent(newEvent));
-            }}
-          >
-            {MPEvent.options().map(option => (
-              <option value={option} key={option}>
-                {option}
-              </option>
-            ))}
-          </select>
-          <h3>Hit parameter details</h3>
+          <div className="HitBuilderParam">
+            <label className="HitBuilderParam-label">Event Type</label>
+            <select
+              className="FormField"
+              value={event.getEventType()}
+              onChange={e => {
+                const newEventType: MPEventType = e.target.value as MPEventType;
+                const newEvent = MPEvent.empty(newEventType);
+                dispatch(actions.setEvent(newEvent));
+              }}
+            >
+              {MPEvent.options().map(option => (
+                <option value={option} key={option}>
+                  {option}
+                </option>
+              ))}
+            </select>
+          </div>
+          <h3>Event details</h3>
           <p>
             The fields below are a breakdown of the individual parameters and
-            values for the hit in the text box above. When you update these
+            values for the event in the text box above. When you update these
             values, the hit above will be automatically updated.
           </p>
-        </div>
-
-        <div className="HitBuilderParam HitBuilderParam--action">
-          <div className="HitBuilderParam-body">
-            <IconButton
-              type="add-circle"
-              iconStyle={{ color: "hsl(150,60%,40%)" }}
-              onClick={handleAddParam}
-            >
-              Add parameter
-            </IconButton>
-          </div>
+          <EditEvent event={event} />
         </div>
       </div>
     </div>
