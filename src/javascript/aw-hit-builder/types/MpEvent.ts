@@ -32,6 +32,8 @@ interface CampaignEvent {
 
 type MPEventData = CampaignEvent | PageViewEvent;
 
+// TODO - this type should be an A | B type where the options are based on OptionalString | RequiredString ...
+// Narrowing should be possible through 'type' & 'required'.
 export type EventParameter = {
   parameterType: "string" | "number";
   parameterName: string;
@@ -81,8 +83,20 @@ export class MPEvent {
     this.eventData = eventData;
   }
 
+  private clone(): MPEvent {
+    return { ...this };
+  }
+
   getEventType(): MPEventType {
     return this.eventType;
+  }
+
+  updateParameter(parameterName: string, newValue: any): MPEvent {
+    const nuData = { ...this.eventData };
+    // TODO - maybe there's a better way to typecheck this?
+    const parameter = nuData[parameterName];
+    parameter.value = newValue;
+    return new MPEvent(this.eventType, nuData);
   }
 
   getParameters(): EventParameter[] {

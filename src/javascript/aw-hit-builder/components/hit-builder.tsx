@@ -27,6 +27,12 @@ const HitBuilder: React.FC = () => {
   // TODO - handle validation messages
   const { event } = useSelector<State, State>(a => a);
   const dispatch = useDispatch();
+  const updateEvent = React.useCallback(
+    (event: MPEvent) => {
+      dispatch(actions.setEvent(event));
+    },
+    [dispatch]
+  );
 
   return (
     <div>
@@ -67,7 +73,7 @@ const HitBuilder: React.FC = () => {
             values for the event in the text box above. When you update these
             values, the hit above will be automatically updated.
           </p>
-          <EditEvent event={event} />
+          <EditEvent event={event} updateEvent={updateEvent} />
         </div>
       </div>
     </div>
