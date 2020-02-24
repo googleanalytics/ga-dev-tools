@@ -21,7 +21,7 @@ export class MPEvent {
   };
 
   static default = () => {
-    return MPEvent.empty(MPEventType.AddToCart);
+    return MPEvent.empty(MPEventType.SelectContent);
   };
 
   constructor(eventType: MPEventType, eventData: MPEventData) {
