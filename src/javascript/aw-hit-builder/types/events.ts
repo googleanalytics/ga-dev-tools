@@ -16,7 +16,7 @@ type OptionalString = {
   value?: string;
 };
 
-const defaultOptionalString = (): OptionalString => ({
+export const defaultOptionalString = (): OptionalString => ({
   type: "string",
   required: false,
   value: ""
@@ -45,10 +45,13 @@ export const emptyEvent = (eventType: MPEventType): MPEventData => {
     case MPEventType.AddToCart:
       return {
         type: eventType,
-        coupon: defaultOptionalString(),
-        currency: defaultOptionalString(),
-        items: defaultOptionalArray(),
-        value: defaultOptionalNumber()
+        parameters: {
+          coupon: defaultOptionalString(),
+          currency: defaultOptionalString(),
+          items: defaultOptionalArray(),
+          value: defaultOptionalNumber()
+        },
+        customParameters: {}
       };
     // case MPEventType.CampaignEvent:
     //   return {
@@ -61,11 +64,19 @@ export const emptyEvent = (eventType: MPEventType): MPEventData => {
     //     id: { type: "string", required: false, value: "" }
     //   };
     case MPEventType.AddPaymentInfo:
-      return { type: eventType };
+      return { type: eventType, parameters: {}, customParameters: {} };
     case MPEventType.PageView:
-      return { type: eventType };
+      return { type: eventType, parameters: {}, customParameters: {} };
   }
 };
+
+export type Parameter =
+  | OptionalString
+  | RequiredString
+  | OptionalNumber
+  | OptionalArray<any>;
+
+export type Parameters = { [paramName: string]: Parameter };
 
 // EVENTS start here
 export enum MPEventType {
@@ -83,15 +94,20 @@ export type MPEventData =
 
 interface AddToCardEvent {
   type: MPEventType.AddToCart;
-  coupon: OptionalString;
-  currency: OptionalString;
-  // TODO - figure out how the items type should be handled.
-  items: OptionalArray<any>;
-  value: OptionalNumber;
+  parameters: {
+    coupon: OptionalString;
+    currency: OptionalString;
+    // TODO - figure out how the items type should be handled.
+    items: OptionalArray<any>;
+    value: OptionalNumber;
+  };
+  customParameters: Parameters;
 }
 
 interface AddPaymentInfoEvent {
   type: MPEventType.AddPaymentInfo;
+  parameters: Parameters;
+  customParameters: Parameters;
 }
 
 // interface CampaignEvent {
@@ -107,4 +123,6 @@ interface AddPaymentInfoEvent {
 
 interface PageViewEvent {
   type: MPEventType.PageView;
+  parameters: {};
+  customParameters: Parameters;
 }

@@ -67,12 +67,6 @@ const HitBuilder: React.FC = () => {
               ))}
             </select>
           </div>
-          <h3>Event details</h3>
-          <p>
-            The fields below are a breakdown of the individual parameters and
-            values for the event in the text box above. When you update these
-            values, the hit above will be automatically updated.
-          </p>
           <EditEvent event={event} updateEvent={updateEvent} />
         </div>
       </div>

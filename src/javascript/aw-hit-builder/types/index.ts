@@ -1,6 +1,7 @@
 import { MPEvent } from "./MpEvent";
 
 export * from "./MpEvent";
+export * from "./events";
 
 export enum ActionType {
   SetEvent = "SetEvent",

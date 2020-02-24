@@ -1,19 +1,58 @@
 import React from "react";
-import { MPEvent, EventParameter } from "../types";
+import Icon from "../../components/icon";
+import { MPEvent, EventParameter, defaultOptionalString } from "../types";
 
 interface EditParameterProps {
+  customParam?: true;
   parameter: EventParameter;
   updateParameter: (nu: any) => void;
+  event: MPEvent;
+  updateEvent: (event: MPEvent) => void;
 }
 
 const EditParameter: React.FC<EditParameterProps> = ({
+  event,
+  updateEvent,
+  customParam,
   parameter,
   updateParameter
 }) => {
-  // TODO, there should be different edit options based on the type of the Parameter.
+  const [localName, setLocalName] = React.useState(parameter.parameterName);
+  const removeCustomParameter = React.useCallback(() => {
+    updateEvent(event.removeCustomParameter(parameter.parameterName));
+  }, [event, updateEvent]);
+  const updateCustomParameterName = React.useCallback(() => {
+    updateEvent(
+      event.updateCustomParameterName(parameter.parameterName, localName)
+    );
+  }, [event, updateEvent, localName]);
+  // TODO, there should be different edit options based on the type of the
+  // Parameter. For example, if the type is items, we should have a way to add
+  // individual items.
   return (
     <div className="HitBuilderParam">
-      <label className="HitBuilderParam-label">{parameter.parameterName}</label>
+      {customParam ? (
+        <div className="HitBuilderParam-label">
+          <span
+            className="HitBuilderParam-removeIcon"
+            tabIndex={1}
+            title="Remove this parameter"
+            onClick={removeCustomParameter}
+          >
+            <Icon type="remove-circle" />
+          </span>
+          <input
+            className="FormField HitBuilderParam-inputLabel"
+            value={localName}
+            onChange={e => setLocalName(e.target.value)}
+            onBlur={updateCustomParameterName}
+          />
+        </div>
+      ) : (
+        <label className="HitBuilderParam-label">
+          {parameter.parameterName}
+        </label>
+      )}
       <input
         className="FormField"
         value={parameter.parameterValue}
@@ -32,24 +71,66 @@ interface EditEventProps {
 
 const EditEvent: React.FC<EditEventProps> = ({ event, updateEvent }) => {
   const parameters = React.useMemo(() => event.getParameters(), [event]);
+  const customParameters = React.useMemo(() => event.getCustomParameters(), [
+    event
+  ]);
   const updateParameter = React.useCallback(
     (parameterName: string) => (value: any) => {
       updateEvent(event.updateParameter(parameterName, value));
     },
-    [parameters]
+    [event]
   );
+  const updateCustomParameter = React.useCallback(
+    (parameterName: string) => (value: any) => {
+      updateEvent(event.updateCustomParameter(parameterName, value));
+    },
+    [event]
+  );
+  const addCustomParameter = React.useCallback(() => {
+    updateEvent(event.addCustomParameter("", defaultOptionalString()));
+  }, [event]);
   return (
     <>
+      <h3>Event details</h3>
       {parameters.length === 0 ? (
-        <div>No parameters are needed for this event.</div>
+        <p>No parameters are needed for this event</p>
       ) : (
-        parameters.map(parameter => (
-          <EditParameter
-            parameter={parameter}
-            updateParameter={updateParameter(parameter.parameterName)}
-          />
-        ))
+        <>
+          <h4>Parameters</h4>
+          <p>
+            The fields below are a breakdown of the individual parameters and
+            values for the event in the text box above. When you update these
+            values, the hit above will be automatically updated.
+          </p>
+        </>
       )}
+      {parameters.map(parameter => (
+        <EditParameter
+          key={parameter.parameterName}
+          parameter={parameter}
+          updateParameter={updateParameter(parameter.parameterName)}
+          event={event}
+          updateEvent={updateEvent}
+        />
+      ))}
+      {customParameters.length > 0 && (
+        <>
+          <h4>Custom Parameters</h4>
+          {customParameters.map(parameter => (
+            <EditParameter
+              customParam
+              key={parameter.parameterName}
+              parameter={parameter}
+              updateParameter={updateCustomParameter(parameter.parameterName)}
+              event={event}
+              updateEvent={updateEvent}
+            />
+          ))}
+        </>
+      )}
+      <div>
+        <button onClick={addCustomParameter}>Add Custom Parameter</button>
+      </div>
     </>
   );
 };
