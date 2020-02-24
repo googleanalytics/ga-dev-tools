@@ -1,5 +1,6 @@
 import React from "react";
 import Icon from "../../components/icon";
+import IconButton from "../../components/icon-button";
 import { MPEvent, EventParameter, defaultOptionalString } from "../types";
 
 interface EditParameterProps {
@@ -128,8 +129,16 @@ const EditEvent: React.FC<EditEventProps> = ({ event, updateEvent }) => {
           ))}
         </>
       )}
-      <div>
-        <button onClick={addCustomParameter}>Add Custom Parameter</button>
+      <div className="HitBuilderParam HitBuilderParam--action">
+        <div className="HitBuilderParam-body">
+          <IconButton
+            type="add-circle"
+            iconStyle={{ color: "hsl(150,60%,40%)" }}
+            onClick={addCustomParameter}
+          >
+            Add Custom parameter
+          </IconButton>
+        </div>
       </div>
     </>
   );
