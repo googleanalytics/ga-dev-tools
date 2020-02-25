@@ -13,7 +13,7 @@
 // limitations under the License.
 
 import React from "react";
-import HitElement from "../../hit-builder/components/hit-element";
+import ValidateHit from "./ValidateHit";
 import EditEvent from "./EditEvent";
 import APISecret from "./APISecret";
 import actions from "../actions";
@@ -44,7 +44,7 @@ const HitBuilder: React.FC = () => {
         </p>
       </div>
 
-      <HitElement />
+      <ValidateHit />
 
       <div className="HitBuilderParams">
         <div className="HeadingGroup HeadingGroup--h3">
