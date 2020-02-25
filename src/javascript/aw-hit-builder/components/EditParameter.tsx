@@ -14,14 +14,17 @@ const CustomParamLabel: React.FC<CustomParamLabelProps> = ({
   parameter
 }) => {
   const [localName, setLocalName] = React.useState(parameter.parameterName);
+
   const removeCustomParameter = React.useCallback(() => {
     updateEvent(event.removeCustomParameter(parameter.parameterName));
   }, [event, updateEvent]);
 
   const updateCustomParameterName = React.useCallback(() => {
-    updateEvent(
-      event.updateCustomParameterName(parameter.parameterName, localName)
-    );
+    if (parameter.parameterName !== localName) {
+      updateEvent(
+        event.updateCustomParameterName(parameter.parameterName, localName)
+      );
+    }
   }, [event, updateEvent, localName]);
 
   return (
@@ -51,7 +54,9 @@ const EditStringParameter: React.FC<EditParameterValueProps> = ({
   const [localValue, setLocalValue] = React.useState(parameter.parameterValue);
 
   const updateWithLocalParameter = React.useCallback(() => {
-    updateParameter(localValue);
+    if (localValue !== parameter.parameterValue) {
+      updateParameter(localValue);
+    }
   }, [localValue]);
 
   return (
