@@ -4,6 +4,7 @@ export * from "./MpEvent";
 export * from "./events";
 
 export enum ActionType {
+  SetAPISecret = "SetAPISecret",
   SetEvent = "SetEvent",
   SetHitPayload = "SET_HIT_PAYLOAD",
   SetHitStatus = "SET_HIT_STATUS",
@@ -72,7 +73,13 @@ export interface SetEvent {
   event: MPEvent;
 }
 
+export interface SetAPISecret {
+  type: ActionType.SetAPISecret;
+  apiSecret: string;
+}
+
 export type HitAction =
+  | SetAPISecret
   | SetEvent
   | SetHitStatus
   | SetAuthorized
@@ -133,9 +140,9 @@ export interface ValidationMessage {
 }
 
 export interface State {
+  apiSecret: string;
   event: MPEvent;
   mid: string;
-  authKey: string;
   hitStatus: HitStatus;
   isAuthorized: boolean;
   properties: Property[];

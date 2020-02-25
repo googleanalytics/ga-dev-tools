@@ -13,10 +13,9 @@
 // limitations under the License.
 
 import React from "react";
-import uuid from "uuid";
 import HitElement from "../../hit-builder/components/hit-element";
-import IconButton from "../../components/icon-button";
 import EditEvent from "./EditEvent";
+import APISecret from "./APISecret";
 import actions from "../actions";
 import { State, MPEvent, MPEventType } from "../types";
 import { useDispatch, useSelector } from "react-redux";
@@ -49,6 +48,7 @@ const HitBuilder: React.FC = () => {
 
       <div className="HitBuilderParams">
         <div className="HeadingGroup HeadingGroup--h3">
+          <APISecret />
           <div className="HitBuilderParam">
             <label className="HitBuilderParam-label">Event Type</label>
             <select

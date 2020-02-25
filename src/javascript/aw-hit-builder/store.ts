@@ -79,8 +79,10 @@ const event: Reducer<MPEvent, HitAction> = (
   }
 };
 
-const authKey: Reducer<string, HitAction> = (state = "", action) => {
+const apiSecret: Reducer<string, HitAction> = (state = "", action) => {
   switch (action.type) {
+    case ActionType.SetAPISecret:
+      return action.apiSecret;
     default:
       return state;
   }
@@ -93,7 +95,7 @@ const mid: Reducer<string, HitAction> = (state = "", action) => {
 };
 
 const app: Reducer<State, HitAction> = combineReducers({
-  authKey,
+  apiSecret,
   mid,
   event,
   hitStatus,

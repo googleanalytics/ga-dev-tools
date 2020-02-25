@@ -59,6 +59,9 @@ const editParamValue: (id: number, value: string) => ThunkResult<void> = (
 };
 
 const actions = {
+  setAPISecret(apiSecret: string): HitAction {
+    return { type: ActionType.SetAPISecret, apiSecret };
+  },
   setEvent(event: MPEvent): HitAction {
     return { type: ActionType.SetEvent, event };
   },
