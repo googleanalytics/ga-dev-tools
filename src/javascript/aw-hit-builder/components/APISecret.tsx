@@ -4,11 +4,19 @@ import { useDispatch } from "react-redux";
 
 const APISecret: React.FC = () => {
   const [localSecret, setLocalSecret] = React.useState("");
+  // Initalize
   React.useEffect(() => {
-    const fromLocalStorage = localStorage.getItem("ga-dev-tools/api_secret");
-    if (fromLocalStorage !== null) {
-      setLocalSecret(fromLocalStorage);
-      dispatch(actions.setAPISecret(fromLocalStorage));
+    const search = window.location.search;
+    const fromSearch = new URLSearchParams(search);
+    if (fromSearch.has("api_secret")) {
+      setLocalSecret(fromSearch.get("api_secret")!);
+      dispatch(actions.setAPISecret(fromSearch.get("api_secret")!));
+    } else {
+      const fromLocalStorage = localStorage.getItem("ga-dev-tools/api_secret");
+      if (fromLocalStorage !== null) {
+        setLocalSecret(fromLocalStorage);
+        dispatch(actions.setAPISecret(fromLocalStorage));
+      }
     }
   }, []);
   const dispatch = useDispatch();
