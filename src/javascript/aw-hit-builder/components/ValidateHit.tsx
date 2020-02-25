@@ -123,11 +123,22 @@ const ValidationStatus: React.FC = () => {
 };
 
 const HitActions: React.FC = () => {
-  const hitStatus = useSelector<State, HitStatus>(a => a.hitStatus);
   const event = useSelector<State, MPEvent>(a => a.event);
   const client_id = useSelector<State, string>(a => a.client_id);
   const user_id = useSelector<State, string>(a => a.user_id);
   const [payload, setPayload] = React.useState<any>({});
+  const [urlParams, setUrlParams] = React.useState<string>("");
+
+  React.useEffect(() => {
+    const params = new URLSearchParams();
+    client_id !== "" && params.append("client_id", client_id);
+    user_id !== "" && params.append("user_id", user_id);
+    params.append(
+      "eventData",
+      encodeURIComponent(JSON.stringify(event.getEventData()))
+    );
+    setUrlParams(params.toString());
+  }, [event, client_id, user_id]);
 
   React.useEffect(() => {
     setPayload(payloadFor(event, client_id, user_id));
@@ -163,22 +174,22 @@ const HitActions: React.FC = () => {
     /* dispatch(actions.validateHit); */
   }, [dispatch]);
 
-  if (hitStatus != "VALID") {
-    const buttonText = (hitStatus == "INVALID" ? "Rev" : "V") + "alidate hit";
+  /* if (hitStatus != "VALID") {
+   *   const buttonText = (hitStatus == "INVALID" ? "Rev" : "V") + "alidate hit";
 
-    return (
-      <div className="HitElement-action">
-        <button
-          className="Button Button--action"
-          disabled={hitStatus === "VALIDATING"}
-          onClick={validateHit}
-        >
-          {hitStatus === "VALIDATING" ? "Validating..." : buttonText}
-        </button>
-      </div>
-    );
-  }
-
+   *   return (
+   *     <div className="HitElement-action">
+   *       <button
+   *         className="Button Button--action"
+   *         disabled={hitStatus === "VALIDATING"}
+   *         onClick={validateHit}
+   *       >
+   *         {hitStatus === "VALIDATING" ? "Validating..." : buttonText}
+   *       </button>
+   *     </div>
+   *   );
+   * }
+   */
   const sendHitButton = (
     <IconButton
       className="Button Button--success Button--withIcon"
@@ -191,7 +202,12 @@ const HitActions: React.FC = () => {
 
   if (supports.copyToClipboard()) {
     const sharableLinkToHit =
-      location.protocol + "//" + location.host + location.pathname + "?";
+      location.protocol +
+      "//" +
+      location.host +
+      location.pathname +
+      "?" +
+      urlParams;
     // TODO - figure out how to make state settable via url params.
     // TODO - update text-to-copy content.
     /* + hitPayload; */
@@ -199,7 +215,7 @@ const HitActions: React.FC = () => {
       <div className="HitElement-action">
         <div className="ButtonSet">
           {sendHitButton}
-          <CopyButton textToCopy={JSON.stringify("")} type="content-paste">
+          <CopyButton textToCopy={JSON.stringify(payload)} type="content-paste">
             Copy hit payload
           </CopyButton>
           <CopyButton type="link" textToCopy={sharableLinkToHit}>

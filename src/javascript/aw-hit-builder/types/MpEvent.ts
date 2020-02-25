@@ -50,6 +50,10 @@ export class MPEvent {
     this.eventData = eventData;
   }
 
+  getEventData(): MPEventData {
+    return this.eventData;
+  }
+
   getEventType(): MPEventType {
     return this.eventType;
   }
