@@ -1,69 +1,7 @@
 import React from "react";
-import Icon from "../../components/icon";
 import IconButton from "../../components/icon-button";
-import { MPEvent, EventParameter, defaultOptionalString } from "../types";
-
-interface EditParameterProps {
-  customParam?: true;
-  parameter: EventParameter;
-  updateParameter: (nu: any) => void;
-  event: MPEvent;
-  updateEvent: (event: MPEvent) => void;
-}
-
-const EditParameter: React.FC<EditParameterProps> = ({
-  event,
-  updateEvent,
-  customParam,
-  parameter,
-  updateParameter
-}) => {
-  const [localName, setLocalName] = React.useState(parameter.parameterName);
-  const removeCustomParameter = React.useCallback(() => {
-    updateEvent(event.removeCustomParameter(parameter.parameterName));
-  }, [event, updateEvent]);
-  const updateCustomParameterName = React.useCallback(() => {
-    updateEvent(
-      event.updateCustomParameterName(parameter.parameterName, localName)
-    );
-  }, [event, updateEvent, localName]);
-  // TODO, there should be different edit options based on the type of the
-  // Parameter. For example, if the type is items, we should have a way to add
-  // individual items.
-  return (
-    <div className="HitBuilderParam">
-      {customParam ? (
-        <div className="HitBuilderParam-label">
-          <span
-            className="HitBuilderParam-removeIcon"
-            tabIndex={1}
-            title="Remove this parameter"
-            onClick={removeCustomParameter}
-          >
-            <Icon type="remove-circle" />
-          </span>
-          <input
-            className="FormField HitBuilderParam-inputLabel"
-            value={localName}
-            onChange={e => setLocalName(e.target.value)}
-            onBlur={updateCustomParameterName}
-          />
-        </div>
-      ) : (
-        <label className="HitBuilderParam-label">
-          {parameter.parameterName}
-        </label>
-      )}
-      <input
-        className="FormField"
-        value={parameter.parameterValue}
-        onChange={e => {
-          updateParameter(e.target.value);
-        }}
-      />
-    </div>
-  );
-};
+import { MPEvent, defaultOptionalString } from "../types";
+import EditParameter from "./EditParameter";
 
 interface EditEventProps {
   event: MPEvent;
