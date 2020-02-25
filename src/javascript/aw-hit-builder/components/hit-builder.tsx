@@ -35,12 +35,6 @@ const HitBuilder: React.FC = () => {
     [dispatch]
   );
 
-  const updateAPISecret = React.useCallback(
-    (apiSecret: string) => {
-      dispatch(actions.setAPISecret(apiSecret));
-    },
-    [dispatch]
-  );
   const updateClientId = React.useCallback(
     (clientId: string) => {
       dispatch(actions.setClientId(clientId));
@@ -70,8 +64,16 @@ const HitBuilder: React.FC = () => {
       <div className="HitBuilderParams">
         <div className="HeadingGroup HeadingGroup--h3">
           <APISecret />
-          <ReduxManagedInput labelText="client_id" update={updateClientId} />
-          <ReduxManagedInput labelText="user_id" update={updateUserId} />
+          <ReduxManagedInput
+            labelText="client_id"
+            update={updateClientId}
+            urlParamName="client_id"
+          />
+          <ReduxManagedInput
+            labelText="user_id"
+            update={updateUserId}
+            urlParamName="user_id"
+          />
           <div className="HitBuilderParam">
             <label className="HitBuilderParam-label">Event Type</label>
             <select
