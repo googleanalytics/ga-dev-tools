@@ -1,6 +1,6 @@
 import React from "react";
 import Icon from "../../components/icon";
-import { MPEvent, EventParameter, defaultOptionalString } from "../types";
+import { MPEvent, EventParameter } from "../types";
 
 interface CustomParamLabelProps {
   updateEvent: (event: MPEvent) => void;
