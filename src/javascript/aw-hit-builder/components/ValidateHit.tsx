@@ -23,27 +23,25 @@ import CopyButton from "../../hit-builder/components/copy-button";
 import supports from "../../supports";
 import { sleep } from "../../utils";
 import actions from "../actions";
-import { HitStatus, ValidationMessage, State } from "../types";
+import { HitStatus, ValidationMessage, State, MPEvent } from "../types";
 import { useSelector, useDispatch } from "react-redux";
+import classnames from "classnames";
 
 const ACTION_TIMEOUT = 1500;
 
 const HitElement: React.FC = () => {
   const hitStatus = useSelector<State, HitStatus>(a => a.hitStatus);
-  let className = "HitElement";
-  if (hitStatus === HitStatus.Valid) {
-    className += " HitElement--valid";
-  }
-  if (hitStatus === HitStatus.Invalid) {
-    className += " HitElement--invalid";
-  }
+  const className = classnames("HitElement", {
+    "HitElement--valid": hitStatus === HitStatus.Valid,
+    "HitElement--invalid": hitStatus === HitStatus.Invalid
+  });
 
   return (
     <section className={className}>
       <ValidationStatus />
       <div className="HitElement-body">
         <div className="HitElement-requestInfo">
-          POST /collect HTTP/1.1
+          POST /mp/collect HTTP/1.1
           <br />
           Host: www.google-analytics.com
         </div>
@@ -126,11 +124,18 @@ const ValidationStatus: React.FC = () => {
 
 const HitActions: React.FC = () => {
   const hitStatus = useSelector<State, HitStatus>(a => a.hitStatus);
-  const hitPayload = useSelector<State, string>(a => a.hitPayload);
+  const event = useSelector<State, MPEvent>(a => a.event);
+  const client_id = useSelector<State, string>(a => a.client_id);
+  const user_id = useSelector<State, string>(a => a.user_id);
+  const [payload, setPayload] = React.useState<any>({});
+
+  React.useEffect(() => {
+    setPayload(payloadFor(event, client_id, user_id));
+  }, [event]);
   const [hitSent, setHitSent] = React.useState<boolean>(false);
   React.useEffect(() => {
     setHitSent(false);
-  }, [hitPayload]);
+  }, [payload]);
 
   /**
    * Sends the hit payload to Google Analytics and updates the button state
@@ -141,7 +146,7 @@ const HitActions: React.FC = () => {
     await $.ajax({
       method: "POST",
       url: "https://www.google-analytics.com/collect",
-      data: hitPayload
+      data: JSON.stringify(payload)
     });
     setHitSent(true);
     gaAll("send", "event", {
@@ -151,11 +156,11 @@ const HitActions: React.FC = () => {
     });
     await sleep(ACTION_TIMEOUT);
     setHitSent(false);
-  }, [hitPayload]);
+  }, [payload]);
 
   const dispatch = useDispatch();
   const validateHit = React.useCallback(() => {
-    dispatch(actions.validateHit);
+    /* dispatch(actions.validateHit); */
   }, [dispatch]);
 
   if (hitStatus != "VALID") {
@@ -186,17 +191,15 @@ const HitActions: React.FC = () => {
 
   if (supports.copyToClipboard()) {
     const sharableLinkToHit =
-      location.protocol +
-      "//" +
-      location.host +
-      location.pathname +
-      "?" +
-      hitPayload;
+      location.protocol + "//" + location.host + location.pathname + "?";
+    // TODO - figure out how to make state settable via url params.
+    // TODO - update text-to-copy content.
+    /* + hitPayload; */
     return (
       <div className="HitElement-action">
         <div className="ButtonSet">
           {sendHitButton}
-          <CopyButton textToCopy={hitPayload} type="content-paste">
+          <CopyButton textToCopy={JSON.stringify("")} type="content-paste">
             Copy hit payload
           </CopyButton>
           <CopyButton type="link" textToCopy={sharableLinkToHit}>
@@ -210,54 +213,29 @@ const HitActions: React.FC = () => {
   }
 };
 
+const payloadFor = (event: MPEvent, client_id: string, user_id: string): {} => {
+  return {
+    client_id,
+    user_id,
+    events: [event.asPayload()]
+  };
+};
+
 const HitPayloadInput: React.FC = () => {
-  const hitPayload = useSelector<State, string>(a => a.hitPayload);
-  const [value, setValue] = React.useState(hitPayload);
-  const [editing, setIsEditing] = React.useState(false);
-  const dispatch = useDispatch();
-  const updateHit = React.useCallback(
-    (newHit: string) => {
-      dispatch(actions.updateHit(newHit));
-    },
-    [dispatch]
-  );
-
-  // Update the localState of then input when the hitPayload changes.
-  React.useEffect(() => {
-    setValue(hitPayload);
-  }, [hitPayload]);
+  const event = useSelector<State, MPEvent>(a => a.event);
+  const client_id = useSelector<State, string>(a => a.client_id);
+  const user_id = useSelector<State, string>(a => a.user_id);
+  const [payload, setPayload] = React.useState<any>({});
 
   React.useEffect(() => {
-    if (editing) {
-      $("body").addClass("is-editing");
-    } else {
-      $("body").removeClass("is-editing");
-    }
-  }, [editing]);
-
-  const onFocus = React.useCallback(() => {
-    setIsEditing(true);
-  }, []);
-
-  const onBlur = React.useCallback(() => {
-    setIsEditing(false);
-    updateHit(value);
-  }, [value]);
-
-  const onChange = React.useCallback(
-    (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-      setValue(e.target.value);
-    },
-    []
-  );
+    setPayload(payloadFor(event, client_id, user_id));
+  }, [event, client_id, user_id]);
 
   return (
     <Textarea
       className="FormField"
-      value={value}
-      onChange={onChange}
-      onFocus={onFocus}
-      onBlur={onBlur}
+      value={JSON.stringify(payload, undefined, "  ")}
+      disabled
     />
   );
 };

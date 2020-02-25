@@ -33,6 +33,15 @@ export class MPEvent {
     return this.eventType;
   }
 
+  asPayload(): {} {
+    return this.getParameters()
+      .concat(this.getCustomParameters())
+      .reduce((payload, parameter) => {
+        payload[parameter.parameterName] = parameter.parameterValue;
+        return payload;
+      }, {});
+  }
+
   updateParameter(parameterName: string, newValue: any): MPEvent {
     const nuData = { ...this.eventData };
     // TODO - maybe there's a better way to typecheck this?

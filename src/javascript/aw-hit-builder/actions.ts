@@ -59,6 +59,12 @@ const editParamValue: (id: number, value: string) => ThunkResult<void> = (
 };
 
 const actions = {
+  setClientId(client_id: string): HitAction {
+    return { type: ActionType.SetClientId, client_id };
+  },
+  setUserId(user_id: string): HitAction {
+    return { type: ActionType.SetUserId, user_id };
+  },
   setAPISecret(apiSecret: string): HitAction {
     return { type: ActionType.SetAPISecret, apiSecret };
   },

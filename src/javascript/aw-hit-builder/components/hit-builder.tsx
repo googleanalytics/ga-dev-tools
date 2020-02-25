@@ -15,7 +15,7 @@
 import React from "react";
 import ValidateHit from "./ValidateHit";
 import EditEvent from "./EditEvent";
-import APISecret from "./APISecret";
+import ReduxManagedInput from "./ReduxManagedInput";
 import actions from "../actions";
 import { State, MPEvent, MPEventType } from "../types";
 import { useDispatch, useSelector } from "react-redux";
@@ -26,9 +26,29 @@ const HitBuilder: React.FC = () => {
   // TODO - handle validation messages
   const { event } = useSelector<State, State>(a => a);
   const dispatch = useDispatch();
+
   const updateEvent = React.useCallback(
     (event: MPEvent) => {
       dispatch(actions.setEvent(event));
+    },
+    [dispatch]
+  );
+
+  const updateAPISecret = React.useCallback(
+    (apiSecret: string) => {
+      dispatch(actions.setAPISecret(apiSecret));
+    },
+    [dispatch]
+  );
+  const updateClientId = React.useCallback(
+    (clientId: string) => {
+      dispatch(actions.setClientId(clientId));
+    },
+    [dispatch]
+  );
+  const updateUserId = React.useCallback(
+    (userId: string) => {
+      dispatch(actions.setUserId(userId));
     },
     [dispatch]
   );
@@ -48,7 +68,9 @@ const HitBuilder: React.FC = () => {
 
       <div className="HitBuilderParams">
         <div className="HeadingGroup HeadingGroup--h3">
-          <APISecret />
+          <ReduxManagedInput labelText="API Secret" update={updateAPISecret} />
+          <ReduxManagedInput labelText="client_id" update={updateClientId} />
+          <ReduxManagedInput labelText="user_id" update={updateUserId} />
           <div className="HitBuilderParam">
             <label className="HitBuilderParam-label">Event Type</label>
             <select

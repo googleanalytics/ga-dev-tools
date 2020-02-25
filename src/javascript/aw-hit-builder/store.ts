@@ -87,16 +87,29 @@ const apiSecret: Reducer<string, HitAction> = (state = "", action) => {
       return state;
   }
 };
-const mid: Reducer<string, HitAction> = (state = "", action) => {
+
+const client_id: Reducer<string, HitAction> = (state = "", action) => {
   switch (action.type) {
+    case ActionType.SetClientId:
+      return action.client_id;
+    default:
+      return state;
+  }
+};
+
+const user_id: Reducer<string, HitAction> = (state = "", action) => {
+  switch (action.type) {
+    case ActionType.SetUserId:
+      return action.user_id;
     default:
       return state;
   }
 };
 
 const app: Reducer<State, HitAction> = combineReducers({
+  user_id,
+  client_id,
   apiSecret,
-  mid,
   event,
   hitStatus,
   isAuthorized,
