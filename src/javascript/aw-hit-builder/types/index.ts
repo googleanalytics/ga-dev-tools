@@ -4,6 +4,7 @@ export * from "./MpEvent";
 export * from "./events";
 
 export enum ActionType {
+  SetMid = "SetMid",
   SetClientId = "SetClientId",
   SetUserId = "SetUserId",
   SetAPISecret = "SetAPISecret",
@@ -87,8 +88,13 @@ export interface SetUserId {
   type: ActionType.SetUserId;
   user_id: string;
 }
+export interface SetMid {
+  type: ActionType.SetMid;
+  mid: string;
+}
 
 export type HitAction =
+  | SetMid
   | SetClientId
   | SetUserId
   | SetAPISecret
@@ -152,6 +158,7 @@ export interface ValidationMessage {
 }
 
 export interface State {
+  mid: string;
   client_id: string;
   user_id: string;
   apiSecret: string;

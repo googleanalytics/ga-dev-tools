@@ -47,6 +47,12 @@ const HitBuilder: React.FC = () => {
     },
     [dispatch]
   );
+  const updateMid = React.useCallback(
+    (mid: string) => {
+      dispatch(actions.setMid(mid));
+    },
+    [dispatch]
+  );
 
   return (
     <div>
@@ -64,6 +70,11 @@ const HitBuilder: React.FC = () => {
       <div className="HitBuilderParams">
         <div className="HeadingGroup HeadingGroup--h3">
           <APISecret />
+          <ReduxManagedInput
+            labelText="mid"
+            update={updateMid}
+            urlParamName="mid"
+          />
           <ReduxManagedInput
             labelText="client_id"
             update={updateClientId}

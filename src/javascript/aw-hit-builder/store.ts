@@ -140,7 +140,17 @@ const user_id: Reducer<string, HitAction> = (state = "", action) => {
   }
 };
 
+const mid: Reducer<string, HitAction> = (state = "", action) => {
+  switch (action.type) {
+    case ActionType.SetMid:
+      return action.mid;
+    default:
+      return state;
+  }
+};
+
 const app: Reducer<State, HitAction> = combineReducers({
+  mid,
   user_id,
   client_id,
   apiSecret,

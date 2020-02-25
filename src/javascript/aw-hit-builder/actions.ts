@@ -59,6 +59,9 @@ const editParamValue: (id: number, value: string) => ThunkResult<void> = (
 };
 
 const actions = {
+  setMid(mid: string): HitAction {
+    return { type: ActionType.SetMid, mid };
+  },
   setClientId(client_id: string): HitAction {
     return { type: ActionType.SetClientId, client_id };
   },
