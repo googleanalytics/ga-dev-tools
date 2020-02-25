@@ -16,6 +16,27 @@ export class MPEvent {
     return Object.values(MPEventType);
   };
 
+  static eventTypeFromString = (eventType: string): MPEventType | undefined => {
+    const assumed: MPEventType = eventType as MPEventType;
+    switch (assumed) {
+      case MPEventType.EarnVirtualCurrency:
+      case MPEventType.JoinGroup:
+      case MPEventType.Login:
+      case MPEventType.PresentOffer:
+      case MPEventType.Purchase:
+      case MPEventType.Refund:
+      case MPEventType.Search:
+      case MPEventType.SelectContent:
+      case MPEventType.Share:
+      case MPEventType.SignUp:
+      case MPEventType.SpendVirtualCurrency:
+      case MPEventType.TutorialBegin:
+      case MPEventType.TutorialComplete:
+        return assumed;
+    }
+    return undefined;
+  };
+
   static empty = (eventType: MPEventType) => {
     return new MPEvent(eventType, emptyEvent(eventType));
   };

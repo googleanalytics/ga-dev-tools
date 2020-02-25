@@ -13,7 +13,8 @@ import {
   ActionType,
   Property,
   State,
-  ValidationMessage
+  ValidationMessage,
+  MPEventData
 } from "./types";
 
 const middleware: Middleware[] = [thunkMuddliware];
@@ -67,8 +68,41 @@ const validationMessages: Reducer<ValidationMessage[], HitAction> = (
   }
 };
 
+const getInitialEvent = () => {
+  const search = window.location.search;
+  const searchParams = new URLSearchParams(search);
+  if (searchParams.has("eventData")) {
+    const eventDataString = searchParams.get("eventData")!;
+    const decoded = decodeURIComponent(eventDataString);
+    try {
+      const eventData = JSON.parse(decoded) as MPEventData;
+      const eventType = MPEvent.eventTypeFromString(eventData.type as string);
+      if (eventType !== undefined) {
+        let emptyEvent = MPEvent.empty(eventType);
+        const parameters = eventData.parameters;
+        if (parameters !== undefined) {
+          Object.entries(parameters).forEach(([key, value]) => {
+            emptyEvent = emptyEvent.updateParameter(key, value.value);
+          });
+        }
+        const customParameters = eventData.customParameters;
+        if (customParameters !== undefined) {
+          Object.entries(customParameters).forEach(([key, value]) => {
+            emptyEvent = emptyEvent.addCustomParameter(key, value);
+          });
+        }
+        return emptyEvent;
+      }
+    } catch (e) {
+      console.log(e);
+      // ignore
+    }
+  }
+  return MPEvent.default();
+};
+
 const event: Reducer<MPEvent, HitAction> = (
-  state = MPEvent.default(),
+  state = getInitialEvent(),
   action
 ) => {
   switch (action.type) {
