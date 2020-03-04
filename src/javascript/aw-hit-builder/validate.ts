@@ -19,7 +19,8 @@ export const validateHit = async (
   const url = `https://www.google-analytics.com/debug/mpfg/collect?mid=${mid}&auth_key=${auth_key}`;
   const data = {
     ...requiredId,
-    events: events.map(event => event.asPayload())
+    events: events.map(event => event.asPayload()),
+    validationBehavior: "ENFORCE_RECOMMENDATIONS"
   };
   const result = await fetch(url, {
     method: "POST",
