@@ -1,12 +1,27 @@
-import { MPEventType, MPEventData, emptyEvent, Parameter } from "./events";
-// TODO - this type should be an A | B type where the options are based on OptionalString | RequiredString ...
-// Narrowing should be possible through 'type' & 'required'.
-export type EventParameter = {
-  parameterType: "string" | "number" | "array";
+import {
+  MPEventType,
+  MPEventData,
+  emptyEvent,
+  Parameter,
+  ParameterType,
+  Item
+} from "./events";
+
+export interface OptionalStringParameter {
+  parameterType: ParameterType.OptionalString;
   parameterName: string;
-  parameterValue?: string | number | any[];
-  required: boolean;
-};
+  parameterValue?: string;
+  required: false;
+}
+
+export interface ItemArrayParameter {
+  parameterType: ParameterType.RequiredArray;
+  parameterName: string;
+  parameterValue: Item[];
+  required: true;
+}
+
+export type EventParameter = OptionalStringParameter | ItemArrayParameter;
 
 export class MPEvent {
   private eventType: MPEventType;
@@ -42,7 +57,7 @@ export class MPEvent {
   };
 
   static default = () => {
-    return MPEvent.empty(MPEventType.SelectContent);
+    return MPEvent.empty(MPEventType.Purchase);
   };
 
   constructor(eventType: MPEventType, eventData: MPEventData) {
@@ -62,6 +77,7 @@ export class MPEvent {
     const params = this.getParameters()
       .concat(this.getCustomParameters())
       .reduce((payload, parameter) => {
+        // TODO - Account for array type.
         payload[parameter.parameterName] = parameter.parameterValue;
         return payload;
       }, {});
@@ -98,29 +114,39 @@ export class MPEvent {
     }
   }
 
-  getParameters(): EventParameter[] {
-    return Object.entries<Parameter>(this.eventData.parameters).map(
-      ([key, parameter]) => {
-        const eventParameter: EventParameter = {
-          parameterName: key,
+  static toEventParameter = (
+    name: string,
+    parameter: Parameter
+  ): EventParameter => {
+    switch (parameter.type) {
+      case ParameterType.OptionalString:
+        return {
+          parameterName: name,
           parameterValue: parameter.value,
           parameterType: parameter.type,
           required: parameter.required
         };
-        return eventParameter;
+      case ParameterType.RequiredArray:
+        return {
+          parameterName: name,
+          parameterValue: parameter.value,
+          parameterType: parameter.type,
+          required: parameter.required
+        };
+    }
+  };
+
+  getParameters(): EventParameter[] {
+    return Object.entries<Parameter>(this.eventData.parameters).map(
+      ([key, parameter]) => {
+        return MPEvent.toEventParameter(key, parameter);
       }
     );
   }
   getCustomParameters(): EventParameter[] {
     return Object.entries<Parameter>(this.eventData.customParameters).map(
       ([key, parameter]) => {
-        const eventParameter: EventParameter = {
-          parameterName: key,
-          parameterValue: parameter.value,
-          parameterType: parameter.type,
-          required: parameter.required
-        };
-        return eventParameter;
+        return MPEvent.toEventParameter(key, parameter);
       }
     );
   }

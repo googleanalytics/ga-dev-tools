@@ -6,3 +6,15 @@
   opacity: .4;
   pointer-events: none;
 }
+
+.HitBuilderParam--items {
+  width: 100%;
+}
+
+.HitBuilderParam--items > .Button {
+  margin-bottom: 1em;
+}
+
+.HitBuilderParam--item > .HitBuilderParam > .HitBuilderParam-label {
+  flex: 0 0 3em;
+}

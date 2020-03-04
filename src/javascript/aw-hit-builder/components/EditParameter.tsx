@@ -1,6 +1,14 @@
 import React from "react";
 import Icon from "../../components/icon";
-import { MPEvent, EventParameter } from "../types";
+import IconButton from "../../components/icon-button";
+import {
+  MPEvent,
+  EventParameter,
+  ParameterType,
+  ItemArrayParameter,
+  Item,
+  OptionalStringParameter
+} from "../types";
 
 interface CustomParamLabelProps {
   updateEvent: (event: MPEvent) => void;
@@ -47,7 +55,12 @@ const CustomParamLabel: React.FC<CustomParamLabelProps> = ({
   );
 };
 
-const EditStringParameter: React.FC<EditParameterValueProps> = ({
+interface EditStringParameterProps {
+  parameter: OptionalStringParameter;
+  updateParameter: (nu: any) => void;
+}
+
+const EditStringParameter: React.FC<EditStringParameterProps> = ({
   parameter,
   updateParameter
 }) => {
@@ -71,17 +84,96 @@ const EditStringParameter: React.FC<EditParameterValueProps> = ({
   );
 };
 
+interface EditItemArrayParameterProps {
+  items: ItemArrayParameter;
+  updateParameter: (nu: any) => void;
+}
+
+const EditArrayParameter: React.FC<EditItemArrayParameterProps> = ({
+  items,
+  updateParameter
+}) => {
+  const [localValues, setLocalValues] = React.useState<Array<Item>>(
+    items.parameterValue
+  );
+  const addItem = React.useCallback(() => {
+    setLocalValues(old => {
+      const nu = old.concat([{ name: "" }]);
+      updateParameter(nu);
+      return nu;
+    });
+  }, []);
+
+  const updateLocalValue = React.useCallback(
+    (idx: number) => (nu: Item) =>
+      setLocalValues(old => old.map((item, i) => (idx === i ? nu : item))),
+    []
+  );
+
+  const updateWithLocalParameter = React.useCallback(() => {
+    if (localValues !== items.parameterValue) {
+      updateParameter(localValues);
+    }
+  }, [localValues]);
+
+  return (
+    <div className="HitBuilderParam--items">
+      <IconButton
+        type="add-circle"
+        iconStyle={{ color: "hsl(150,60%,40%)" }}
+        onClick={addItem}
+      >
+        Add Item
+      </IconButton>
+      {localValues.map((localValue, idx) => (
+        <div className="HitBuilderParam--item">
+          <label>Item {idx + 1}</label>
+          {Object.entries(localValue).map(([key, value], idx2) => (
+            <div key={`${idx}-${idx2}-${key}`} className="HitBuilderParam">
+              <label className="HitBuilderParam-label">{key}</label>
+              <input
+                className="FormField"
+                value={value}
+                onChange={e => {
+                  updateLocalValue(idx)({
+                    ...localValue,
+                    [key]: e.target.value
+                  });
+                }}
+                onBlur={updateWithLocalParameter}
+              />
+            </div>
+          ))}
+        </div>
+      ))}
+    </div>
+  );
+};
+
 interface EditParameterValueProps {
   parameter: EventParameter;
   updateParameter: (nu: any) => void;
 }
 
-const EditParameterValue: React.FC<EditParameterValueProps> = props => {
-  switch (props.parameter.parameterType) {
-    case "string":
-      return <EditStringParameter {...props} />;
-    default:
-      return null;
+const EditParameterValue: React.FC<EditParameterValueProps> = ({
+  parameter,
+  updateParameter
+}) => {
+  switch (parameter.parameterType) {
+    case ParameterType.OptionalString:
+      return (
+        <EditStringParameter
+          parameter={parameter}
+          updateParameter={updateParameter}
+        />
+      );
+    case ParameterType.RequiredArray:
+      return (
+        <EditArrayParameter
+          items={parameter}
+          updateParameter={updateParameter}
+        />
+      );
   }
 };
 
@@ -100,10 +192,6 @@ const EditParameter: React.FC<EditParameterProps> = ({
   parameter,
   updateParameter
 }) => {
-  // TODO, there should be different edit options based on the type of the
-  // Parameter. For example, if the type is items, we should have a way to add
-  // individual items.
-
   return (
     <div className="HitBuilderParam">
       {customParam ? (

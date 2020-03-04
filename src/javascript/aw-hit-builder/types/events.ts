@@ -1,38 +1,37 @@
-type OptionalNumber = {
-  type: "number";
-  required: false;
-  value?: number;
-};
+export interface Item {
+  name: string;
+}
+
+export enum ParameterType {
+  OptionalString = "optional string",
+  RequiredArray = "required array"
+}
 
 type OptionalString = {
-  type: "string";
+  type: ParameterType.OptionalString;
   required: false;
   value?: string;
 };
 
 export const defaultOptionalString = (): OptionalString => ({
-  type: "string",
+  type: ParameterType.OptionalString,
   required: false,
   value: ""
 });
 
-type RequiredString = {
-  type: "string";
+type ItemArray = {
+  type: ParameterType.RequiredArray;
   required: true;
-  value: string;
+  value: Item[];
 };
 
-type OptionalArray<T> = {
-  type: "array";
-  required: false;
-  value?: T[];
-};
+export const defaultItemArray = (): ItemArray => ({
+  type: ParameterType.RequiredArray,
+  required: true,
+  value: []
+});
 
-export type Parameter =
-  | OptionalString
-  | RequiredString
-  | OptionalNumber
-  | OptionalArray<any>;
+export type Parameter = OptionalString | ItemArray;
 
 export type Parameters = { [paramName: string]: Parameter };
 
@@ -102,7 +101,7 @@ interface PurchaseEvent {
     currency: OptionalString;
     tax: OptionalString;
     shipping: OptionalString;
-    items: OptionalString;
+    items: ItemArray;
     coupon: OptionalString;
   };
   customParameters: Parameters;
@@ -115,7 +114,7 @@ interface RefundEvent {
     currency: OptionalString;
     tax: OptionalString;
     shipping: OptionalString;
-    items: OptionalString;
+    items: ItemArray;
   };
   customParameters: Parameters;
 }
@@ -202,7 +201,7 @@ export const emptyEvent = (eventType: MPEventType): MPEventData => {
           currency: defaultOptionalString(),
           tax: defaultOptionalString(),
           shipping: defaultOptionalString(),
-          items: defaultOptionalString(),
+          items: defaultItemArray(),
           coupon: defaultOptionalString()
         },
         customParameters: {}
@@ -216,7 +215,7 @@ export const emptyEvent = (eventType: MPEventType): MPEventData => {
           currency: defaultOptionalString(),
           tax: defaultOptionalString(),
           shipping: defaultOptionalString(),
-          items: defaultOptionalString()
+          items: defaultItemArray()
         },
         customParameters: {}
       };
