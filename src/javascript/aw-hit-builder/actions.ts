@@ -6,11 +6,38 @@ import {
   Property,
   State,
   ValidationMessage,
-  MPEvent
+  MPEvent,
+  ValidationStatus
 } from "./types";
+import * as validate from "./validate";
 import accountSummaries from "javascript-api-utils/lib/account-summaries";
 
 type ThunkResult<T> = ThunkAction<T, State, undefined, HitAction>;
+
+const validateHit: ThunkResult<void> = async (dispatch, getState) => {
+  dispatch(actions.setValidationStatus(ValidationStatus.Pending));
+
+  const { mid, apiSecret, event, user_id, client_id } = getState();
+
+  let userOrClientId: validate.UserOrClientId;
+  if (user_id !== "") {
+    userOrClientId = { user_id };
+  } else if (client_id !== "") {
+    userOrClientId = { client_id };
+  } else {
+    userOrClientId = {};
+  }
+
+  const messages = await validate.validateHit(mid, apiSecret, userOrClientId, [
+    event
+  ]);
+  if (messages.length === 0) {
+    dispatch(actions.setValidationStatus(ValidationStatus.Valid));
+  } else {
+    dispatch(actions.setValidationStatus(ValidationStatus.Invalid));
+    dispatch(actions.setValidationMessages(messages));
+  }
+};
 
 const handleAuthorizationSuccess: ThunkResult<void> = async dispatch => {
   dispatch(actions.setAuthorized());
@@ -24,19 +51,20 @@ const handleAuthorizationSuccess: ThunkResult<void> = async dispatch => {
 
   dispatch(actions.setUserProperties(properties));
 };
-const resetHitValidationStatus: ThunkResult<void> = dispatch => {
-  dispatch(actions.setHitStatus(HitStatus.Unvalidated));
+
+const resetValidation: ThunkResult<void> = dispatch => {
   dispatch(actions.setValidationMessages([]));
+  dispatch(actions.setValidationStatus(ValidationStatus.Unset));
 };
 
 const addParam: ThunkResult<void> = dispatch => {
+  dispatch(thunkActions.resetValidation);
   dispatch({ type: ActionType.AddParam });
-  dispatch(thunkActions.resetHitValidationStatus);
 };
 const removeParam: (id: number) => ThunkResult<void> = (id: number) => {
   return dispatch => {
+    dispatch(thunkActions.resetValidation);
     dispatch({ type: ActionType.RemoveParam, id });
-    dispatch(thunkActions.resetHitValidationStatus);
   };
 };
 const editParamName: (id: number, name: string) => ThunkResult<void> = (
@@ -44,8 +72,8 @@ const editParamName: (id: number, name: string) => ThunkResult<void> = (
   name
 ) => {
   return dispatch => {
+    dispatch(thunkActions.resetValidation);
     dispatch({ type: ActionType.EditParamName, id, name });
-    dispatch(thunkActions.resetHitValidationStatus);
   };
 };
 const editParamValue: (id: number, value: string) => ThunkResult<void> = (
@@ -53,26 +81,40 @@ const editParamValue: (id: number, value: string) => ThunkResult<void> = (
   value
 ) => {
   return dispatch => {
+    dispatch(thunkActions.resetValidation);
     dispatch({ type: ActionType.EditParamValue, id, value });
-    dispatch(thunkActions.resetHitValidationStatus);
   };
 };
 
+const setEvent: (event: MPEvent) => ThunkResult<void> = (
+  event: MPEvent
+) => dispatch => {
+  dispatch(thunkActions.resetValidation);
+  dispatch({ type: ActionType.SetEvent, event });
+};
+const setMid: (mid: string) => ThunkResult<void> = mid => dispatch => {
+  dispatch(thunkActions.resetValidation);
+  dispatch({ type: ActionType.SetMid, mid });
+};
+const setClientId: (
+  client_id: string
+) => ThunkResult<void> = client_id => dispatch => {
+  dispatch(thunkActions.resetValidation);
+  dispatch({ type: ActionType.SetClientId, client_id });
+};
+const setUserId: (
+  user_id: string
+) => ThunkResult<void> = user_id => dispatch => {
+  dispatch(thunkActions.resetValidation);
+  dispatch({ type: ActionType.SetUserId, user_id });
+};
+
 const actions = {
-  setMid(mid: string): HitAction {
-    return { type: ActionType.SetMid, mid };
-  },
-  setClientId(client_id: string): HitAction {
-    return { type: ActionType.SetClientId, client_id };
-  },
-  setUserId(user_id: string): HitAction {
-    return { type: ActionType.SetUserId, user_id };
+  setValidationStatus(validationStatus: ValidationStatus): HitAction {
+    return { type: ActionType.SetValidationStatus, validationStatus };
   },
   setAPISecret(apiSecret: string): HitAction {
     return { type: ActionType.SetAPISecret, apiSecret };
-  },
-  setEvent(event: MPEvent): HitAction {
-    return { type: ActionType.SetEvent, event };
   },
   setHitPayload(hitPayload: string): HitAction {
     return { type: ActionType.SetHitPayload, hitPayload };
@@ -92,12 +134,17 @@ const actions = {
 };
 
 const thunkActions = {
+  resetValidation,
+  setMid,
+  setClientId,
+  setUserId,
+  setEvent,
   handleAuthorizationSuccess,
-  resetHitValidationStatus,
   editParamValue,
   editParamName,
   removeParam,
-  addParam
+  addParam,
+  validateHit
 };
 
 export default { ...thunkActions, ...actions };

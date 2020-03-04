@@ -4,6 +4,7 @@ export * from "./MpEvent";
 export * from "./events";
 
 export enum ActionType {
+  SetValidationStatus = "SetValidationStatus",
   SetMid = "SetMid",
   SetClientId = "SetClientId",
   SetUserId = "SetUserId",
@@ -92,8 +93,13 @@ export interface SetMid {
   type: ActionType.SetMid;
   mid: string;
 }
+export interface SetValidationStatus {
+  type: ActionType.SetValidationStatus;
+  validationStatus: ValidationStatus;
+}
 
 export type HitAction =
+  | SetValidationStatus
   | SetMid
   | SetClientId
   | SetUserId
@@ -152,12 +158,22 @@ export interface Property {
   id: number;
   group: string;
 }
+
+export enum ValidationStatus {
+  Valid = "VALID",
+  Pending = "PENDING",
+  Invalid = "INVALID",
+  Unset = "UNSET"
+}
+
 export interface ValidationMessage {
-  param: string;
+  fieldPath: string;
   description: string;
+  validationCode: string;
 }
 
 export interface State {
+  validationStatus: ValidationStatus;
   mid: string;
   client_id: string;
   user_id: string;

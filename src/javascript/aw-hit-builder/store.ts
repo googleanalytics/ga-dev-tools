@@ -14,7 +14,8 @@ import {
   Property,
   State,
   ValidationMessage,
-  MPEventData
+  MPEventData,
+  ValidationStatus
 } from "./types";
 
 const middleware: Middleware[] = [thunkMuddliware];
@@ -149,7 +150,20 @@ const mid: Reducer<string, HitAction> = (state = "", action) => {
   }
 };
 
+const validationStatus: Reducer<ValidationStatus, HitAction> = (
+  state = ValidationStatus.Unset,
+  action
+) => {
+  switch (action.type) {
+    case ActionType.SetValidationStatus:
+      return action.validationStatus;
+    default:
+      return state;
+  }
+};
+
 const app: Reducer<State, HitAction> = combineReducers({
+  validationStatus,
   mid,
   user_id,
   client_id,

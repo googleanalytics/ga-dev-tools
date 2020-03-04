@@ -23,13 +23,21 @@ import CopyButton from "../../hit-builder/components/copy-button";
 import supports from "../../supports";
 import { sleep } from "../../utils";
 import actions from "../actions";
-import { HitStatus, ValidationMessage, State, MPEvent } from "../types";
+import {
+  HitStatus,
+  ValidationMessage,
+  State,
+  MPEvent,
+  ValidationStatus as ValidationStatusT
+} from "../types";
 import { useSelector, useDispatch } from "react-redux";
 import classnames from "classnames";
 
 const ACTION_TIMEOUT = 1500;
 
 const HitElement: React.FC = () => {
+  const mid = useSelector<State, string>(a => a.mid);
+  const auth_key = useSelector<State, string>(a => a.apiSecret);
   const hitStatus = useSelector<State, HitStatus>(a => a.hitStatus);
   const className = classnames("HitElement", {
     "HitElement--valid": hitStatus === HitStatus.Valid,
@@ -41,7 +49,7 @@ const HitElement: React.FC = () => {
       <ValidationStatus />
       <div className="HitElement-body">
         <div className="HitElement-requestInfo">
-          POST /mp/collect HTTP/1.1
+          POST /debug/mpfg/collect?mid={mid}&auth_key={auth_key} HTTP/1.1
           <br />
           Host: www.google-analytics.com
         </div>
@@ -65,9 +73,9 @@ const ValidationStatus: React.FC = () => {
   const validationMessages = useSelector<State, ValidationMessage[]>(
     a => a.validationMessages
   );
-  const hitStatus = useSelector<State>(a => a.hitStatus);
-  switch (hitStatus) {
-    case "VALID":
+  const validationStatus = useSelector<State>(a => a.validationStatus);
+  switch (validationStatus) {
+    case ValidationStatusT.Valid:
       return (
         <header className="HitElement-status">
           <span className="HitElement-statusIcon">
@@ -84,7 +92,7 @@ const ValidationStatus: React.FC = () => {
           </div>
         </header>
       );
-    case "INVALID":
+    case ValidationStatusT.Invalid:
       return (
         <header className="HitElement-status">
           <span className="HitElement-statusIcon">
@@ -94,7 +102,7 @@ const ValidationStatus: React.FC = () => {
             <h1 className="HitElement-statusHeading">Hit is invalid!</h1>
             <ul className="HitElement-statusMessage">
               {validationMessages.map(message => (
-                <li key={message.param}>{message.description}</li>
+                <li key={message.fieldPath}>{message.description}</li>
               ))}
             </ul>
           </div>
@@ -126,6 +134,10 @@ const HitActions: React.FC = () => {
   const event = useSelector<State, MPEvent>(a => a.event);
   const client_id = useSelector<State, string>(a => a.client_id);
   const user_id = useSelector<State, string>(a => a.user_id);
+  const mid = useSelector<State, string>(a => a.mid);
+  const validationStatus = useSelector<State, ValidationStatusT>(
+    a => a.validationStatus
+  );
   const [payload, setPayload] = React.useState<any>({});
   const [urlParams, setUrlParams] = React.useState<string>("");
 
@@ -133,6 +145,7 @@ const HitActions: React.FC = () => {
     const params = new URLSearchParams();
     client_id !== "" && params.append("client_id", client_id);
     user_id !== "" && params.append("user_id", user_id);
+    mid !== "" && params.append("mid", mid);
     params.append(
       "eventData",
       encodeURIComponent(JSON.stringify(event.getEventData()))
@@ -171,25 +184,18 @@ const HitActions: React.FC = () => {
 
   const dispatch = useDispatch();
   const validateHit = React.useCallback(() => {
-    /* dispatch(actions.validateHit); */
+    dispatch(actions.validateHit);
   }, [dispatch]);
 
-  /* if (hitStatus != "VALID") {
-   *   const buttonText = (hitStatus == "INVALID" ? "Rev" : "V") + "alidate hit";
+  if (validationStatus != "VALID") {
+    return (
+      <ValidateHitButton
+        validationStatus={validationStatus}
+        validateHit={validateHit}
+      />
+    );
+  }
 
-   *   return (
-   *     <div className="HitElement-action">
-   *       <button
-   *         className="Button Button--action"
-   *         disabled={hitStatus === "VALIDATING"}
-   *         onClick={validateHit}
-   *       >
-   *         {hitStatus === "VALIDATING" ? "Validating..." : buttonText}
-   *       </button>
-   *     </div>
-   *   );
-   * }
-   */
   const sendHitButton = (
     <IconButton
       className="Button Button--success Button--withIcon"
@@ -208,9 +214,6 @@ const HitActions: React.FC = () => {
       location.pathname +
       "?" +
       urlParams;
-    // TODO - figure out how to make state settable via url params.
-    // TODO - update text-to-copy content.
-    /* + hitPayload; */
     return (
       <div className="HitElement-action">
         <div className="ButtonSet">
@@ -227,6 +230,41 @@ const HitActions: React.FC = () => {
   } else {
     return <div className="HitElement-action">{sendHitButton}</div>;
   }
+};
+
+interface ValidateHitButtonProps {
+  validationStatus: ValidationStatusT;
+  validateHit: () => void;
+}
+
+const ValidateHitButton: React.FC<ValidateHitButtonProps> = ({
+  validationStatus,
+  validateHit
+}) => {
+  let buttonText: string;
+  switch (validationStatus) {
+    case ValidationStatusT.Invalid:
+      buttonText = "Revalidate hit";
+      break;
+    case ValidationStatusT.Pending:
+      buttonText = "Validating...";
+      break;
+    default:
+      buttonText = "Validate hit";
+      break;
+  }
+
+  return (
+    <div className="HitElement-action">
+      <button
+        className="Button Button--action"
+        disabled={validationStatus === ValidationStatusT.Pending}
+        onClick={validateHit}
+      >
+        {buttonText}
+      </button>
+    </div>
+  );
 };
 
 const payloadFor = (event: MPEvent, client_id: string, user_id: string): {} => {

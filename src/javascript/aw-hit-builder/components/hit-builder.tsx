@@ -18,7 +18,7 @@ import EditEvent from "./EditEvent";
 import ReduxManagedInput from "./ReduxManagedInput";
 import APISecret from "./APISecret";
 import actions from "../actions";
-import { State, MPEvent, MPEventType } from "../types";
+import { State, MPEvent, MPEventType, ValidationStatus } from "../types";
 import { useDispatch, useSelector } from "react-redux";
 
 const HitBuilder: React.FC = () => {

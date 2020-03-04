@@ -59,12 +59,16 @@ export class MPEvent {
   }
 
   asPayload(): {} {
-    return this.getParameters()
+    const params = this.getParameters()
       .concat(this.getCustomParameters())
       .reduce((payload, parameter) => {
         payload[parameter.parameterName] = parameter.parameterValue;
         return payload;
       }, {});
+    return {
+      name: this.getEventType(),
+      params
+    };
   }
 
   updateParameter(parameterName: string, newValue: any): MPEvent {
