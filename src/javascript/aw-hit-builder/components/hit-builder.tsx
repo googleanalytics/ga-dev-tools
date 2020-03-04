@@ -16,7 +16,7 @@ import React from "react";
 import ValidateHit from "./ValidateHit";
 import EditEvent from "./EditEvent";
 import ReduxManagedInput from "./ReduxManagedInput";
-import APISecret from "./APISecret";
+import AuthKey from "./APISecret";
 import actions from "../actions";
 import { State, MPEvent, MPEventType, ValidationStatus } from "../types";
 import { useDispatch, useSelector } from "react-redux";
@@ -69,7 +69,7 @@ const HitBuilder: React.FC = () => {
 
       <div className="HitBuilderParams">
         <div className="HeadingGroup HeadingGroup--h3">
-          <APISecret />
+          <AuthKey />
           <ReduxManagedInput
             labelText="mid"
             update={updateMid}

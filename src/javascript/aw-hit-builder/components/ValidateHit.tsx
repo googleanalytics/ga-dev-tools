@@ -37,7 +37,7 @@ const ACTION_TIMEOUT = 1500;
 
 const HitElement: React.FC = () => {
   const mid = useSelector<State, string>(a => a.mid);
-  const auth_key = useSelector<State, string>(a => a.apiSecret);
+  const auth_key = useSelector<State, string>(a => a.auth_key);
   const hitStatus = useSelector<State, HitStatus>(a => a.hitStatus);
   const className = classnames("HitElement", {
     "HitElement--valid": hitStatus === HitStatus.Valid,

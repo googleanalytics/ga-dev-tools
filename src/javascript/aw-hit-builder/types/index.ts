@@ -8,7 +8,7 @@ export enum ActionType {
   SetMid = "SetMid",
   SetClientId = "SetClientId",
   SetUserId = "SetUserId",
-  SetAPISecret = "SetAPISecret",
+  SetAuthKey = "SetAPISecret",
   SetEvent = "SetEvent",
   SetHitPayload = "SET_HIT_PAYLOAD",
   SetHitStatus = "SET_HIT_STATUS",
@@ -78,8 +78,8 @@ export interface SetEvent {
 }
 
 export interface SetAPISecret {
-  type: ActionType.SetAPISecret;
-  apiSecret: string;
+  type: ActionType.SetAuthKey;
+  auth_key: string;
 }
 export interface SetClientId {
   type: ActionType.SetClientId;
@@ -177,7 +177,7 @@ export interface State {
   mid: string;
   client_id: string;
   user_id: string;
-  apiSecret: string;
+  auth_key: string;
   event: MPEvent;
   hitStatus: HitStatus;
   isAuthorized: boolean;

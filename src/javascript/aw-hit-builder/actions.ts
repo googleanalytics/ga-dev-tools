@@ -17,7 +17,7 @@ type ThunkResult<T> = ThunkAction<T, State, undefined, HitAction>;
 const validateHit: ThunkResult<void> = async (dispatch, getState) => {
   dispatch(actions.setValidationStatus(ValidationStatus.Pending));
 
-  const { mid, apiSecret, event, user_id, client_id } = getState();
+  const { mid, auth_key, event, user_id, client_id } = getState();
 
   let userOrClientId: validate.UserOrClientId;
   if (user_id !== "") {
@@ -28,7 +28,7 @@ const validateHit: ThunkResult<void> = async (dispatch, getState) => {
     userOrClientId = {};
   }
 
-  const messages = await validate.validateHit(mid, apiSecret, userOrClientId, [
+  const messages = await validate.validateHit(mid, auth_key, userOrClientId, [
     event
   ]);
   if (messages.length === 0) {
@@ -113,8 +113,8 @@ const actions = {
   setValidationStatus(validationStatus: ValidationStatus): HitAction {
     return { type: ActionType.SetValidationStatus, validationStatus };
   },
-  setAPISecret(apiSecret: string): HitAction {
-    return { type: ActionType.SetAPISecret, apiSecret };
+  setAuthKey(auth_key: string): HitAction {
+    return { type: ActionType.SetAuthKey, auth_key };
   },
   setHitPayload(hitPayload: string): HitAction {
     return { type: ActionType.SetHitPayload, hitPayload };
