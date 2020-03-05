@@ -1,6 +1,6 @@
 import { ThunkAction } from "redux-thunk";
 import {
-  HitAction,
+  EventBuilderAction,
   ActionType,
   Property,
   State,
@@ -11,7 +11,7 @@ import {
 import * as validate from "./validate";
 import accountSummaries from "javascript-api-utils/lib/account-summaries";
 
-type ThunkResult<T> = ThunkAction<T, State, undefined, HitAction>;
+type ThunkResult<T> = ThunkAction<T, State, undefined, EventBuilderAction>;
 
 const validateHit: ThunkResult<void> = async (dispatch, getState) => {
   dispatch(actions.setValidationStatus(ValidationStatus.Pending));
@@ -109,19 +109,21 @@ const setUserId: (
 };
 
 const actions = {
-  setValidationStatus(validationStatus: ValidationStatus): HitAction {
+  setValidationStatus(validationStatus: ValidationStatus): EventBuilderAction {
     return { type: ActionType.SetValidationStatus, validationStatus };
   },
-  setAuthKey(auth_key: string): HitAction {
+  setAuthKey(auth_key: string): EventBuilderAction {
     return { type: ActionType.SetAuthKey, auth_key };
   },
-  setAuthorized(): HitAction {
+  setAuthorized(): EventBuilderAction {
     return { type: ActionType.SetAuthorized };
   },
-  setUserProperties(properties: Property[]): HitAction {
+  setUserProperties(properties: Property[]): EventBuilderAction {
     return { type: ActionType.SetUserProperties, properties };
   },
-  setValidationMessages(validationMessages: ValidationMessage[]): HitAction {
+  setValidationMessages(
+    validationMessages: ValidationMessage[]
+  ): EventBuilderAction {
     return { type: ActionType.SetValidationMessages, validationMessages };
   }
 };

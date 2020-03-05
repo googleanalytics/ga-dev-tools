@@ -86,7 +86,7 @@ export interface SetValidationStatus {
   validationStatus: ValidationStatus;
 }
 
-export type HitAction =
+export type EventBuilderAction =
   | SetValidationStatus
   | SetMid
   | SetClientId

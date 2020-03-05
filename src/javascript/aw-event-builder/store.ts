@@ -8,7 +8,7 @@ import {
 import thunkMuddliware, { ThunkDispatch } from "redux-thunk";
 import {
   MPEvent,
-  HitAction,
+  EventBuilderAction,
   ActionType,
   Property,
   State,
@@ -26,7 +26,10 @@ if (process.env.NODE_ENV != "production") {
   middleware.push(createLogger());
 }
 
-const isAuthorized: Reducer<boolean, HitAction> = (state = false, action) => {
+const isAuthorized: Reducer<boolean, EventBuilderAction> = (
+  state = false,
+  action
+) => {
   switch (action.type) {
     case ActionType.SetAuthorized:
       return true;
@@ -35,7 +38,10 @@ const isAuthorized: Reducer<boolean, HitAction> = (state = false, action) => {
   }
 };
 
-const properties: Reducer<Property[], HitAction> = (state = [], action) => {
+const properties: Reducer<Property[], EventBuilderAction> = (
+  state = [],
+  action
+) => {
   switch (action.type) {
     case ActionType.SetUserProperties:
       return action.properties;
@@ -44,7 +50,7 @@ const properties: Reducer<Property[], HitAction> = (state = [], action) => {
   }
 };
 
-const validationMessages: Reducer<ValidationMessage[], HitAction> = (
+const validationMessages: Reducer<ValidationMessage[], EventBuilderAction> = (
   state = [],
   action
 ) => {
@@ -89,7 +95,7 @@ const getInitialEvent = () => {
   return MPEvent.default();
 };
 
-const event: Reducer<MPEvent, HitAction> = (
+const event: Reducer<MPEvent, EventBuilderAction> = (
   state = getInitialEvent(),
   action
 ) => {
@@ -101,7 +107,7 @@ const event: Reducer<MPEvent, HitAction> = (
   }
 };
 
-const auth_key: Reducer<string, HitAction> = (state = "", action) => {
+const auth_key: Reducer<string, EventBuilderAction> = (state = "", action) => {
   switch (action.type) {
     case ActionType.SetAuthKey:
       return action.auth_key;
@@ -110,7 +116,7 @@ const auth_key: Reducer<string, HitAction> = (state = "", action) => {
   }
 };
 
-const client_id: Reducer<string, HitAction> = (state = "", action) => {
+const client_id: Reducer<string, EventBuilderAction> = (state = "", action) => {
   switch (action.type) {
     case ActionType.SetClientId:
       return action.client_id;
@@ -119,7 +125,7 @@ const client_id: Reducer<string, HitAction> = (state = "", action) => {
   }
 };
 
-const user_id: Reducer<string, HitAction> = (state = "", action) => {
+const user_id: Reducer<string, EventBuilderAction> = (state = "", action) => {
   switch (action.type) {
     case ActionType.SetUserId:
       return action.user_id;
@@ -128,7 +134,7 @@ const user_id: Reducer<string, HitAction> = (state = "", action) => {
   }
 };
 
-const mid: Reducer<string, HitAction> = (state = "", action) => {
+const mid: Reducer<string, EventBuilderAction> = (state = "", action) => {
   switch (action.type) {
     case ActionType.SetMid:
       return action.mid;
@@ -137,7 +143,7 @@ const mid: Reducer<string, HitAction> = (state = "", action) => {
   }
 };
 
-const validationStatus: Reducer<ValidationStatus, HitAction> = (
+const validationStatus: Reducer<ValidationStatus, EventBuilderAction> = (
   state = ValidationStatus.Unset,
   action
 ) => {
@@ -149,7 +155,7 @@ const validationStatus: Reducer<ValidationStatus, HitAction> = (
   }
 };
 
-const app: Reducer<State, HitAction> = combineReducers({
+const app: Reducer<State, EventBuilderAction> = combineReducers({
   validationStatus,
   mid,
   user_id,
@@ -162,8 +168,8 @@ const app: Reducer<State, HitAction> = combineReducers({
 });
 
 const createStoreWithMiddleware = applyMiddleware<
-  ThunkDispatch<State, undefined, HitAction>,
+  ThunkDispatch<State, undefined, EventBuilderAction>,
   State
 >(...middleware)(createStore);
 
-export default createStoreWithMiddleware<State, HitAction>(app);
+export default createStoreWithMiddleware<State, EventBuilderAction>(app);
