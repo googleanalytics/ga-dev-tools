@@ -58,11 +58,7 @@ const HitBuilder: React.FC = () => {
     <div>
       <div className="HeadingGroup HeadingGroup--h3">
         <h3>Hit summary</h3>
-        <p>
-          The box below displays the full hit and its validation status. You can
-          update the hit in the text box and the parameter details below will be
-          automatically updated.
-        </p>
+        <p>The box below displays the full event and its validation status.</p>
       </div>
 
       <ValidateEvent />

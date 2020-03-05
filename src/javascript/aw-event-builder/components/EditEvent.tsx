@@ -40,7 +40,7 @@ const EditEvent: React.FC<EditEventProps> = ({ event, updateEvent }) => {
           <p>
             The fields below are a breakdown of the individual parameters and
             values for the event in the text box above. When you update these
-            values, the hit above will be automatically updated.
+            values, the event above will be automatically updated.
           </p>
         </>
       )}

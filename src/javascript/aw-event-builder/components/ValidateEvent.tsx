@@ -34,15 +34,15 @@ import classnames from "classnames";
 
 const ACTION_TIMEOUT = 1500;
 
-const HitElement: React.FC = () => {
+const EventElement: React.FC = () => {
   const mid = useSelector<State, string>(a => a.mid);
   const auth_key = useSelector<State, string>(a => a.auth_key);
-  const hitStatus = useSelector<State, ValidationStatusT>(
+  const validationStatus = useSelector<State, ValidationStatusT>(
     a => a.validationStatus
   );
   const className = classnames("HitElement", {
-    "HitElement--valid": hitStatus === ValidationStatusT.Valid,
-    "HitElement--invalid": hitStatus === ValidationStatusT.Invalid
+    "HitElement--valid": validationStatus === ValidationStatusT.Valid,
+    "HitElement--invalid": validationStatus === ValidationStatusT.Invalid
   });
 
   return (
@@ -56,19 +56,19 @@ const HitElement: React.FC = () => {
         </div>
         <div className="HitElement-requestBody">
           <div className="FormControl FormControl--full">
-            <label className="FormControl-label">Hit payload</label>
+            <label className="FormControl-label">Event payload</label>
             <div className="FormControl-body">
-              <HitPayloadInput />
+              <EventPayloadInput />
             </div>
           </div>
         </div>
-        <HitActions />
+        <EventActions />
       </div>
     </section>
   );
 };
 
-export default HitElement;
+export default EventElement;
 
 const ValidationStatus: React.FC = () => {
   const validationMessages = useSelector<State, ValidationMessage[]>(
@@ -83,11 +83,12 @@ const ValidationStatus: React.FC = () => {
             <Icon type="check" />
           </span>
           <div className="HitElement-statusBody">
-            <h1 className="HitElement-statusHeading">Hit is valid!</h1>
+            <h1 className="HitElement-statusHeading">Event is valid!</h1>
             <p className="HitElement-statusMessage">
-              Use the controls below to copy the hit or share it with coworkers.
+              Use the controls below to copy the event payload or share it with
+              coworkers.
               <br />
-              You can also send the hit to Google Analytics and watch it in
+              You can also send the event to Google Analytics and watch it in
               action in the Real Time view.
             </p>
           </div>
@@ -100,7 +101,7 @@ const ValidationStatus: React.FC = () => {
             <Icon type="error-outline" />
           </span>
           <div className="HitElement-statusBody">
-            <h1 className="HitElement-statusHeading">Hit is invalid!</h1>
+            <h1 className="HitElement-statusHeading">Event is invalid!</h1>
             <ul className="HitElement-statusMessage">
               {validationMessages.map(message => (
                 <li key={message.fieldPath}>{message.description}</li>
@@ -117,12 +118,12 @@ const ValidationStatus: React.FC = () => {
           </span>
           <div className="HitElement-statusBody">
             <h1 className="HitElement-statusHeading">
-              This hit has not yet been validated
+              This event has not yet been validated
             </h1>
             <p className="HitElement-statusMessage">
-              You can update the hit using any of the controls below.
+              You can update the event using any of the controls below.
               <br />
-              When you're done, click the "Validate hit" button to make sure
+              When you're done, click the "Validate Event" button to make sure
               everything's OK.
             </p>
           </div>
@@ -131,7 +132,7 @@ const ValidationStatus: React.FC = () => {
   }
 };
 
-const HitActions: React.FC = () => {
+const EventActions: React.FC = () => {
   const event = useSelector<State, MPEvent>(a => a.event);
   const client_id = useSelector<State, string>(a => a.client_id);
   const user_id = useSelector<State, string>(a => a.user_id);
@@ -157,58 +158,59 @@ const HitActions: React.FC = () => {
   React.useEffect(() => {
     setPayload(payloadFor(event, client_id, user_id));
   }, [event]);
-  const [hitSent, setHitSent] = React.useState<boolean>(false);
+  const [eventSent, setEventSent] = React.useState<boolean>(false);
   React.useEffect(() => {
-    setHitSent(false);
+    setEventSent(false);
   }, [payload]);
 
   /**
-   * Sends the hit payload to Google Analytics and updates the button state
-   * to indicate the hit was successfully sent. After 1 second the button
+   * Sends the event payload to Google Analytics and updates the button state
+   * to indicate the event was successfully sent. After 1 second the button
    * gets restored to its original state.
    */
-  const sendHit = React.useCallback(async () => {
+  // TODO - update this to use the new MP endpoint. (this should be through an async action)
+  const sendEvent = React.useCallback(async () => {
     await $.ajax({
       method: "POST",
       url: "https://www.google-analytics.com/collect",
       data: JSON.stringify(payload)
     });
-    setHitSent(true);
+    setEventSent(true);
     gaAll("send", "event", {
-      eventCategory: "Hit Builder",
+      eventCategory: "Event Builder",
       eventAction: "send",
       eventLabel: "payload"
     });
     await sleep(ACTION_TIMEOUT);
-    setHitSent(false);
+    setEventSent(false);
   }, [payload]);
 
   const dispatch = useDispatch();
-  const validateHit = React.useCallback(() => {
-    dispatch(actions.validateHit);
+  const validateEvent = React.useCallback(() => {
+    dispatch(actions.validateEvent);
   }, [dispatch]);
 
   if (validationStatus != "VALID") {
     return (
-      <ValidateHitButton
+      <ValidateEventButton
         validationStatus={validationStatus}
-        validateHit={validateHit}
+        validateEvent={validateEvent}
       />
     );
   }
 
-  const sendHitButton = (
+  const sendEventButton = (
     <IconButton
       className="Button Button--success Button--withIcon"
-      type={hitSent ? "check" : "send"}
-      onClick={sendHit}
+      type={eventSent ? "check" : "send"}
+      onClick={sendEvent}
     >
-      Send hit to Google Analytics
+      Send event to Google Analytics
     </IconButton>
   );
 
   if (supports.copyToClipboard()) {
-    const sharableLinkToHit =
+    const sharableLinkToEvent =
       location.protocol +
       "//" +
       location.host +
@@ -218,40 +220,40 @@ const HitActions: React.FC = () => {
     return (
       <div className="HitElement-action">
         <div className="ButtonSet">
-          {sendHitButton}
+          {sendEventButton}
           <CopyButton textToCopy={JSON.stringify(payload)} type="content-paste">
-            Copy hit payload
+            Copy event payload
           </CopyButton>
-          <CopyButton type="link" textToCopy={sharableLinkToHit}>
-            Copy sharable link to hit
+          <CopyButton type="link" textToCopy={sharableLinkToEvent}>
+            Copy sharable link to event
           </CopyButton>
         </div>
       </div>
     );
   } else {
-    return <div className="HitElement-action">{sendHitButton}</div>;
+    return <div className="HitElement-action">{sendEventButton}</div>;
   }
 };
 
-interface ValidateHitButtonProps {
+interface ValidateEventButtonProps {
   validationStatus: ValidationStatusT;
-  validateHit: () => void;
+  validateEvent: () => void;
 }
 
-const ValidateHitButton: React.FC<ValidateHitButtonProps> = ({
+const ValidateEventButton: React.FC<ValidateEventButtonProps> = ({
   validationStatus,
-  validateHit
+  validateEvent
 }) => {
   let buttonText: string;
   switch (validationStatus) {
     case ValidationStatusT.Invalid:
-      buttonText = "Revalidate hit";
+      buttonText = "Revalidate event";
       break;
     case ValidationStatusT.Pending:
       buttonText = "Validating...";
       break;
     default:
-      buttonText = "Validate hit";
+      buttonText = "Validate event";
       break;
   }
 
@@ -260,7 +262,7 @@ const ValidateHitButton: React.FC<ValidateHitButtonProps> = ({
       <button
         className="Button Button--action"
         disabled={validationStatus === ValidationStatusT.Pending}
-        onClick={validateHit}
+        onClick={validateEvent}
       >
         {buttonText}
       </button>
@@ -276,7 +278,7 @@ const payloadFor = (event: MPEvent, client_id: string, user_id: string): {} => {
   };
 };
 
-const HitPayloadInput: React.FC = () => {
+const EventPayloadInput: React.FC = () => {
   const event = useSelector<State, MPEvent>(a => a.event);
   const client_id = useSelector<State, string>(a => a.client_id);
   const user_id = useSelector<State, string>(a => a.user_id);

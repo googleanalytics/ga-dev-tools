@@ -13,7 +13,7 @@ import accountSummaries from "javascript-api-utils/lib/account-summaries";
 
 type ThunkResult<T> = ThunkAction<T, State, undefined, EventBuilderAction>;
 
-const validateHit: ThunkResult<void> = async (dispatch, getState) => {
+const validateEvent: ThunkResult<void> = async (dispatch, getState) => {
   dispatch(actions.setValidationStatus(ValidationStatus.Pending));
 
   const { mid, auth_key, event, user_id, client_id } = getState();
@@ -139,7 +139,7 @@ const thunkActions = {
   editParamName,
   removeParam,
   addParam,
-  validateHit
+  validateEvent
 };
 
 export default { ...thunkActions, ...actions };
