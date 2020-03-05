@@ -30,7 +30,7 @@ function render() {
     <Provider store={store}>
       <HitBuilder />
     </Provider>,
-    document.getElementById("aw-hit-builder")
+    document.getElementById("aw-event-builder")
   );
 }
 

@@ -8,7 +8,6 @@ import {
 import thunkMuddliware, { ThunkDispatch } from "redux-thunk";
 import {
   MPEvent,
-  HitStatus,
   HitAction,
   ActionType,
   Property,
@@ -26,18 +25,6 @@ if (process.env.NODE_ENV != "production") {
   const { createLogger } = require("redux-logger");
   middleware.push(createLogger());
 }
-
-const hitStatus: Reducer<HitStatus, HitAction> = (
-  state = HitStatus.Unvalidated,
-  action
-) => {
-  switch (action.type) {
-    case ActionType.SetHitStatus:
-      return action.status;
-    default:
-      return state;
-  }
-};
 
 const isAuthorized: Reducer<boolean, HitAction> = (state = false, action) => {
   switch (action.type) {
@@ -169,7 +156,6 @@ const app: Reducer<State, HitAction> = combineReducers({
   client_id,
   auth_key,
   event,
-  hitStatus,
   isAuthorized,
   properties,
   validationMessages

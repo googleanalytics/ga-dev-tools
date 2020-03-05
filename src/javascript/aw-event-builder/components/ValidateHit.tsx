@@ -24,7 +24,6 @@ import supports from "../../supports";
 import { sleep } from "../../utils";
 import actions from "../actions";
 import {
-  HitStatus,
   ValidationMessage,
   State,
   MPEvent,
@@ -38,10 +37,12 @@ const ACTION_TIMEOUT = 1500;
 const HitElement: React.FC = () => {
   const mid = useSelector<State, string>(a => a.mid);
   const auth_key = useSelector<State, string>(a => a.auth_key);
-  const hitStatus = useSelector<State, HitStatus>(a => a.hitStatus);
+  const hitStatus = useSelector<State, ValidationStatusT>(
+    a => a.validationStatus
+  );
   const className = classnames("HitElement", {
-    "HitElement--valid": hitStatus === HitStatus.Valid,
-    "HitElement--invalid": hitStatus === HitStatus.Invalid
+    "HitElement--valid": hitStatus === ValidationStatusT.Valid,
+    "HitElement--invalid": hitStatus === ValidationStatusT.Invalid
   });
 
   return (

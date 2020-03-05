@@ -1,6 +1,5 @@
 import { ThunkAction } from "redux-thunk";
 import {
-  HitStatus,
   HitAction,
   ActionType,
   Property,
@@ -124,9 +123,6 @@ const actions = {
   },
   setUserProperties(properties: Property[]): HitAction {
     return { type: ActionType.SetUserProperties, properties };
-  },
-  setHitStatus(status: HitStatus): HitAction {
-    return { type: ActionType.SetHitStatus, status };
   },
   setValidationMessages(validationMessages: ValidationMessage[]): HitAction {
     return { type: ActionType.SetValidationMessages, validationMessages };

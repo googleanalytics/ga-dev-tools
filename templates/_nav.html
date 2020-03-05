@@ -4,7 +4,7 @@
     <h1 class="Nav-category">Demos &amp; Tools</h1>
     <ol>
       {% for pr in site.projects %}
-      {% if pr.slug != 'aw-hit-builder' %}
+      {% if pr.slug != 'aw-event-builder' %}
       <li>
         <a class="Nav-link{% if page.path == pr.path %} Nav-link--selected{% endif %}"
           href="{{ pr.path }}">{{ pr.title }}
