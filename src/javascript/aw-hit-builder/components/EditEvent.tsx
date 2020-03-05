@@ -28,6 +28,7 @@ const EditEvent: React.FC<EditEventProps> = ({ event, updateEvent }) => {
   const addCustomParameter = React.useCallback(() => {
     updateEvent(event.addCustomParameter("", defaultOptionalString()));
   }, [event]);
+  // TODO - add support for adding a custom parameter of any type.
   return (
     <>
       <h3>Event details</h3>
