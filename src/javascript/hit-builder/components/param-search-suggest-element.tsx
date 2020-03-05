@@ -12,25 +12,28 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+import React from "react";
+import ParamElement from "./param-element";
+import SearchSuggest from "../../components/search-suggest";
+import { Property } from "../types";
 
-import React from 'react';
-import ParamElement from './param-element';
-import SearchSuggest from '../../components/search-suggest';
-
-
+interface ParamSearchSuggestElementProps {
+  options: Property[];
+}
 /**
  * A ParamElement component whose value is a SearchSuggest component.
  */
-export default class ParamSearchSuggestElement extends ParamElement {
+export default class ParamSearchSuggestElement extends ParamElement<
+  ParamSearchSuggestElementProps
+> {
   /**
    * React lifecycyle methods below:
    * http://facebook.github.io/react/docs/component-specs.html
    * ---------------------------------------------------------
    */
 
-
   /** @return {Object} The React component. */
-  render() {
+  render(): JSX.Element {
     return (
       <div className={this.getClassName()}>
         {this.renderLabel()}
@@ -41,7 +44,8 @@ export default class ParamSearchSuggestElement extends ParamElement {
             placeholder={this.props.placeholder}
             options={this.props.options}
             invalid={this.props.message}
-            onChange={this.handleValueChange} />
+            onChange={this.handleValueChange}
+          />
           {this.renderHelpIcon()}
           {this.renderMessage()}
         </div>

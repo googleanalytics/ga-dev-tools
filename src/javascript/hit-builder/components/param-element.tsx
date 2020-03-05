@@ -12,80 +12,93 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+import * as React from "react";
+import * as ReactDOM from "react-dom";
+import Icon from "../../components/icon";
+import { Param } from "../types";
+import actions from "../actions";
 
-import React from 'react';
-import ReactDOM from 'react-dom';
-import Icon from '../../components/icon';
+const REFERENCE_URL =
+  "https://developers.google.com/" +
+  "analytics/devguides/collection/protocol/v1/parameters";
 
-
-const REFERENCE_URL = 'https://developers.google.com/' +
-                      'analytics/devguides/collection/protocol/v1/parameters';
-
+interface ParamElementProps {
+  param: Param;
+  required?: boolean;
+  message?: string;
+  placeholder?: string;
+  onRemove?: () => void;
+  needsFocus?: boolean;
+  dispatch: (a: any) => void;
+}
 
 /**
  * A component that renders an individual hit param name and value pair.
  */
-export default class ParamElement extends React.Component {
+export default class ParamElement<T = {}> extends React.Component<
+  ParamElementProps & T
+> {
   state = {
-    name: this.props.param.name || '',
-    value: this.props.param.value || '',
-  }
+    name: this.props.param.name || "",
+    value: this.props.param.value || ""
+  };
 
   /**
    * Updates the state with the new name.
-   * @param {string} name The input element's value property.
    */
-  handleNameChange = ({target: {value: name}}) => {
-    this.setState({name});
-    this.props.actions.editParamName(this.props.param.id, name);
-  }
-
+  handleNameChange = ({
+    target: { value: name }
+  }: {
+    target: { value: string };
+  }) => {
+    this.setState({ name });
+    this.props.dispatch(actions.editParamName(this.props.param.id, name));
+  };
 
   /**
    * Updates the state with the new value.
-   * @param {string} value The input element's value property.
    */
-  handleValueChange = ({target: {value}}) => {
-    this.setState({value});
-    this.props.actions.editParamValue(this.props.param.id, value);
-  }
-
+  handleValueChange = ({
+    target: { value }
+  }: {
+    target: { value: string };
+  }) => {
+    this.setState({ value });
+    this.props.dispatch(actions.editParamValue(this.props.param.id, value));
+  };
 
   /**
    * Returns the class name for the root component element.
    * @return {string}
    */
-  getClassName() {
-    return 'HitBuilderParam' + (this.props.required ?
-        ' HitBuilderParam--required' : '');
+  getClassName(): string {
+    return (
+      "HitBuilderParam" +
+      (this.props.required ? " HitBuilderParam--required" : "")
+    );
   }
-
 
   /**
    * Returns the class name for the parameter value field.
-   * @return {string}
    */
-  getFieldClassName() {
-    return 'FormField' + (this.props.message ? ' FormField--invalid' : '');
+  getFieldClassName(): string {
+    return "FormField" + (this.props.message ? " FormField--invalid" : "");
   }
-
 
   /**
    * Returns the field placeholder element from the passed properties or a
    * single spaced string to fix a baseline alignment bug in Chrome.
-   * @return {string}
    */
-  getPlaceholder() {
-    return this.props.placeholder || ' ';
+  getPlaceholder(): string {
+    return (this.props.placeholder as string | undefined) || " ";
   }
-
 
   /**
    * Returns the rendered components that make up the parameter label.
    * @return {Object}
    */
-  renderLabel() {
-    const {name} = this.state;
+  renderLabel(): JSX.Element {
+    const { name } = this.state;
     if (this.props.param.required) {
       return <label className="HitBuilderParam-label">{name}</label>;
     } else {
@@ -93,57 +106,56 @@ export default class ParamElement extends React.Component {
         <div className="HitBuilderParam-label">
           <span
             className="HitBuilderParam-removeIcon"
-            tabIndex="1"
+            tabIndex={1}
             title="Remove this parameter"
-            onClick={this.props.onRemove}>
+            onClick={this.props.onRemove}
+          >
             <Icon type="remove-circle" />
           </span>
           <input
             className="FormField HitBuilderParam-inputLabel"
             ref="labelField"
             value={name}
-            onChange={this.handleNameChange} />
+            onChange={this.handleNameChange}
+          />
         </div>
       );
     }
   }
 
-
   /**
    * Returns the rendered components that make up the parameter help icon.
-   * @return {Object}
    */
-  renderHelpIcon() {
+  renderHelpIcon(): JSX.Element {
     return (
       <a
         href={`${REFERENCE_URL}#${this.props.param.name}`}
-        tabIndex="1"
+        tabIndex={1}
         title={`Learn more about the "${this.props.param.name}" parameter.`}
-        className="HitBuilderParam-helpIcon">
+        className="HitBuilderParam-helpIcon"
+      >
         <Icon type="info-outline" />
       </a>
     );
   }
 
-
   /**
    * Returns the rendered components that make up the parameter error message.
-   * @return {Object}
    */
-  renderMessage() {
+  renderMessage(): JSX.Element | null {
     if (this.props.message) {
       return <div className="HitBuilderParam-info">{this.props.message}</div>;
     }
+    return null;
   }
-
 
   /** React lifecycyle method */
   componentDidMount() {
     if (this.props.needsFocus) {
-      ReactDOM.findDOMNode(this.refs.labelField).focus();
+      // Assumin this works as I migrate this to typescript.
+      (ReactDOM.findDOMNode(this.refs.labelField)! as any).focus();
     }
   }
-
 
   /**
    * React lifecycyle methods below:
@@ -151,20 +163,18 @@ export default class ParamElement extends React.Component {
    * ---------------------------------------------------------
    */
 
-
   /**
    * Updates the state if the component receives new props externally.
-   * @param {Object} nextProps
-  */
-  componentWillReceiveProps(nextProps) {
+   */
+  componentWillReceiveProps(nextProps: ParamElementProps) {
     if (nextProps.param != this.props.param) {
-      const {name, value} = nextProps.param;
-      this.setState({name, value});
+      const { name, value } = nextProps.param;
+      this.setState({ name, value });
     }
   }
 
   /** @return {Object} The React component. */
-  render() {
+  render(): JSX.Element {
     return (
       <div className={this.getClassName()}>
         {this.renderLabel()}
@@ -172,9 +182,10 @@ export default class ParamElement extends React.Component {
           <input
             className={this.getFieldClassName()}
             data-flex
-            value={this.state.value || ''}
+            value={this.state.value || ""}
             placeholder={this.getPlaceholder()}
-            onChange={this.handleValueChange} />
+            onChange={this.handleValueChange}
+          />
           {this.renderHelpIcon()}
           {this.renderMessage()}
         </div>

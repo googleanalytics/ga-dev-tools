@@ -21,4 +21,20 @@ interface Window {
   readonly GAPI_ACCESS_TOKEN: string;
 }
 
+declare module "javascript-api-utils/lib/account-summaries" {
+  interface Property {
+    name: any;
+    id: any;
+  }
+  interface Account {
+    name: any;
+  }
+  export const get: () => Promise<{
+    allProperties: () => Property[];
+    getAccountByPropertyId: (id: any) => Account;
+  }>;
+}
+
+declare const gapi: any;
+
 window.GA;
