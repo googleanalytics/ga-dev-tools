@@ -10,7 +10,6 @@ export enum ActionType {
   SetUserId = "SetUserId",
   SetAuthKey = "SetAPISecret",
   SetEvent = "SetEvent",
-  SetHitPayload = "SET_HIT_PAYLOAD",
   SetAuthorized = "SET_AUTHORIZED",
   AddParam = "ADD_PARAM",
   RemoveParam = "REMOVE_PARAM",
@@ -61,11 +60,6 @@ export interface SetValidationMessages {
   validationMessages: ValidationMessage[];
 }
 
-export interface SetHitPayload {
-  type: ActionType.SetHitPayload;
-  hitPayload: string;
-}
-
 export interface SetEvent {
   type: ActionType.SetEvent;
   event: MPEvent;
@@ -106,8 +100,7 @@ export type HitAction =
   | EditParamValue
   | ReplaceParams
   | SetUserProperties
-  | SetValidationMessages
-  | SetHitPayload;
+  | SetValidationMessages;
 
 export enum RequiredParams {
   V = "v",

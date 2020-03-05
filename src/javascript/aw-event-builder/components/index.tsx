@@ -13,7 +13,7 @@
 // limitations under the License.
 
 import React from "react";
-import ValidateHit from "./ValidateHit";
+import ValidateEvent from "./ValidateEvent";
 import EditEvent from "./EditEvent";
 import ReduxManagedInput from "./ReduxManagedInput";
 import AuthKey from "./APISecret";
@@ -65,7 +65,7 @@ const HitBuilder: React.FC = () => {
         </p>
       </div>
 
-      <ValidateHit />
+      <ValidateEvent />
 
       <div className="HitBuilderParams">
         <div className="HeadingGroup HeadingGroup--h3">

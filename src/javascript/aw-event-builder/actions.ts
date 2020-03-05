@@ -115,9 +115,6 @@ const actions = {
   setAuthKey(auth_key: string): HitAction {
     return { type: ActionType.SetAuthKey, auth_key };
   },
-  setHitPayload(hitPayload: string): HitAction {
-    return { type: ActionType.SetHitPayload, hitPayload };
-  },
   setAuthorized(): HitAction {
     return { type: ActionType.SetAuthorized };
   },

@@ -16,7 +16,7 @@ import * as React from "react";
 import * as ReactDOM from "react-dom";
 import { Provider } from "react-redux";
 
-import HitBuilder from "./components/hit-builder";
+import EventBuilder from "./components";
 import store from "./store";
 import actions from "./actions";
 
@@ -28,7 +28,7 @@ import site from "../site";
 function render() {
   ReactDOM.render(
     <Provider store={store}>
-      <HitBuilder />
+      <EventBuilder />
     </Provider>,
     document.getElementById("aw-event-builder")
   );
