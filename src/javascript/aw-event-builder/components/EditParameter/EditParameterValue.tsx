@@ -3,6 +3,7 @@ import { Parameter, ParameterType } from "../../types";
 
 import EditItemsParameter from "./EditItemsParameter";
 import EditOptionalStringParameter from "./EditOptionalStringParameter";
+import EditOptionalNumberParameter from "./EditOptionalNumberParameter";
 
 interface EditParameterValueProps {
   parameter: Parameter;
@@ -25,6 +26,13 @@ const EditParameterValue: React.FC<EditParameterValueProps> = ({
       return (
         <EditItemsParameter
           items={parameter}
+          updateParameter={updateParameter}
+        />
+      );
+    case ParameterType.OptionalNumber:
+      return (
+        <EditOptionalNumberParameter
+          parameter={parameter}
           updateParameter={updateParameter}
         />
       );

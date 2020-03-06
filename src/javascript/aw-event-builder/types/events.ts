@@ -7,6 +7,7 @@ export interface Item {
 
 export enum ParameterType {
   OptionalString = "optional string",
+  OptionalNumber = "optional number",
   RequiredArray = "required array"
 }
 
@@ -38,6 +39,20 @@ export const defaultItemArray = (name: string): ItemArray => ({
   name
 });
 
+export type OptionalNumber = {
+  type: ParameterType.OptionalNumber;
+  required: false;
+  value?: number;
+  name: string;
+};
+
+export const defaultOptionalNumber = (name: string): OptionalNumber => ({
+  type: ParameterType.OptionalNumber,
+  required: false,
+  value: undefined,
+  name
+});
+
 export const defaultParameterFor = (
   type: ParameterType,
   name: string
@@ -47,10 +62,12 @@ export const defaultParameterFor = (
       return defaultItemArray(name);
     case ParameterType.OptionalString:
       return defaultOptionalString(name);
+    case ParameterType.OptionalNumber:
+      return defaultOptionalNumber(name);
   }
 };
 
-export type Parameter = OptionalString | ItemArray;
+export type Parameter = OptionalString | ItemArray | OptionalNumber;
 
 export type Parameters = { [paramName: string]: Parameter };
 
