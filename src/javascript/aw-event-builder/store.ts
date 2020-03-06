@@ -75,15 +75,11 @@ const getInitialEvent = () => {
         let emptyEvent = MPEvent.empty(eventType);
         const parameters = eventData.parameters;
         if (parameters !== undefined) {
-          Object.entries(parameters).forEach(([key, value]) => {
-            emptyEvent = emptyEvent.updateParameter(key, value.value);
-          });
+          emptyEvent.updateParameters(() => parameters);
         }
         const customParameters = eventData.customParameters;
         if (customParameters !== undefined) {
-          Object.entries(customParameters).forEach(([key, value]) => {
-            emptyEvent = emptyEvent.addCustomParameter(key, value);
-          });
+          emptyEvent.updateCustomParameters(() => customParameters);
         }
         return emptyEvent;
       }
