@@ -3,7 +3,8 @@ import {
   MPEventData,
   emptyEvent,
   Parameter,
-  Parameters
+  Parameters,
+  ParameterType
 } from "./events";
 
 export class MPEvent {
@@ -61,7 +62,19 @@ export class MPEvent {
       .concat(this.getCustomParameters())
       .reduce((payload, parameter) => {
         // TODO - Account for array type.
-        payload[parameter.name] = parameter.value;
+        if (parameter.type === ParameterType.RequiredArray) {
+          // TODO - this is very hairy and should probably be pulled out into it's own function.
+          payload[parameter.name] = parameter.value.map(item =>
+            Object.entries(item.parameters)
+              .concat(Object.entries(item.customParameters))
+              .reduce((itemsPayload, [itemParamName, itemParam]) => {
+                itemsPayload[itemParamName] = itemParam.value;
+                return itemsPayload;
+              }, {})
+          );
+        } else {
+          payload[parameter.name] = parameter.value;
+        }
         return payload;
       }, {});
     return {
