@@ -57,25 +57,48 @@ export class MPEvent {
     return this.eventType;
   }
 
+  static parameterToPayload = (parameter: Parameter): {} | "unset" => {
+    switch (parameter.type) {
+      case ParameterType.OptionalString:
+        if (parameter.value === "") {
+          return "unset";
+        } else {
+          return { [parameter.name]: parameter.value };
+        }
+      case ParameterType.RequiredArray:
+        return {
+          [parameter.name]: parameter.value.map(item =>
+            Object.values(item.parameters)
+              .concat(Object.values(item.customParameters))
+              .map(MPEvent.parameterToPayload)
+              .reduce((itemsPayload: {}, itemParam) => {
+                if (itemParam === "unset") {
+                  return itemsPayload;
+                } else {
+                  return {
+                    ...itemsPayload,
+                    ...itemParam
+                  };
+                }
+              }, {})
+          )
+        };
+    }
+  };
+
   asPayload(): {} {
     const params = this.getParameters()
       .concat(this.getCustomParameters())
-      .reduce((payload, parameter) => {
-        // TODO - Account for array type.
-        if (parameter.type === ParameterType.RequiredArray) {
-          // TODO - this is very hairy and should probably be pulled out into it's own function.
-          payload[parameter.name] = parameter.value.map(item =>
-            Object.entries(item.parameters)
-              .concat(Object.entries(item.customParameters))
-              .reduce((itemsPayload, [itemParamName, itemParam]) => {
-                itemsPayload[itemParamName] = itemParam.value;
-                return itemsPayload;
-              }, {})
-          );
+      .map(MPEvent.parameterToPayload)
+      .reduce((payload: {}, parameter) => {
+        if (parameter === "unset") {
+          return payload;
         } else {
-          payload[parameter.name] = parameter.value;
+          return {
+            ...payload,
+            ...parameter
+          };
         }
-        return payload;
       }, {});
     return {
       name: this.getEventType(),

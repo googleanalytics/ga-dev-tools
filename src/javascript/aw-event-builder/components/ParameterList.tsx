@@ -4,21 +4,24 @@ import EditParameter from "./EditParameter";
 import { Parameter, Parameters } from "../types";
 
 interface ParameterListProps {
+  oneList?: true | undefined;
+  indentation?: number;
   parameters: Parameter[];
   customParameters: Parameter[];
   updateParameters: (update: (old: Parameters) => Parameters) => void;
   updateCustomParameters: (update: (old: Parameters) => Parameters) => void;
   addCustomParameter: () => void;
-  showAdd?: true | undefined;
 }
 
 const Parameters: React.FC<ParameterListProps> = ({
-  showAdd,
+  indentation,
+  oneList,
   parameters,
   customParameters,
   updateParameters,
   updateCustomParameters,
-  addCustomParameter
+  addCustomParameter,
+  children
 }) => {
   const updateParameter = React.useCallback(
     (parameter: Parameter) => (nu: Parameter) => {
@@ -57,7 +60,7 @@ const Parameters: React.FC<ParameterListProps> = ({
   );
 
   return (
-    <div className="ParameterList">
+    <div className={`ParameterList indent-${indentation}`}>
       {parameters.map(parameter => (
         <EditParameter
           key={parameter.name}
@@ -67,7 +70,7 @@ const Parameters: React.FC<ParameterListProps> = ({
       ))}
       {customParameters.length > 0 && (
         <>
-          <h4>Custom Parameters</h4>
+          {!oneList && <h4>Custom Parameters</h4>}
           {customParameters.map(parameter => (
             <EditParameter
               custom={custom(parameter)}
@@ -78,20 +81,16 @@ const Parameters: React.FC<ParameterListProps> = ({
           ))}
         </>
       )}
-
-      {showAdd && (
-        <div className="HitBuilderParam HitBuilderParam--action">
-          <div className="HitBuilderParam-body">
-            <IconButton
-              type="add-circle"
-              iconStyle={{ color: "hsl(150,60%,40%)" }}
-              onClick={addCustomParameter}
-            >
-              Add Custom parameter
-            </IconButton>
-          </div>
-        </div>
-      )}
+      <div className="HitBuilderParam buttons">
+        <IconButton
+          type="add-circle"
+          iconStyle={{ color: "hsl(150,60%,40%)" }}
+          onClick={addCustomParameter}
+        >
+          Parameter
+        </IconButton>
+        {children}
+      </div>
     </div>
   );
 };

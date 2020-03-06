@@ -73,3 +73,13 @@ limitations under the License.
 .Button--success:hover:enabled {
   background: var(--success-color-dark);
 }
+
+.buttons {
+  display: flex;
+  max-width: 36em;
+  justify-content: flex-end;
+}
+
+.buttons > button {
+  margin-right: 1em;
+}

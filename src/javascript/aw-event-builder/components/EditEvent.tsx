@@ -57,7 +57,6 @@ const EditEvent: React.FC<EditEventProps> = ({ event, updateEvent }) => {
         </>
       )}
       <ParameterList
-        showAdd
         addCustomParameter={addCustomParameter}
         parameters={parameters}
         customParameters={customParameters}

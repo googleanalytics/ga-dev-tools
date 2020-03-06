@@ -18,14 +18,16 @@ const EditOptionalStringParameter: React.FC<
   }, [localValue]);
 
   return (
-    <input
-      className="FormField"
-      value={localValue}
-      onChange={e => {
-        setLocalValue(e.target.value);
-      }}
-      onBlur={updateWithLocalParameter}
-    />
+    <>
+      <input
+        className="FormField"
+        value={localValue}
+        onChange={e => {
+          setLocalValue(e.target.value);
+        }}
+        onBlur={updateWithLocalParameter}
+      />
+    </>
   );
 };
 
