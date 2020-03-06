@@ -1,7 +1,11 @@
 import React from "react";
-import IconButton from "../../components/icon-button";
-import { MPEvent, defaultOptionalString } from "../types";
-import EditParameter from "./EditParameter";
+import {
+  MPEvent,
+  defaultOptionalString,
+  Parameters,
+  Parameter
+} from "../types";
+import ParameterList from "./ParameterList";
 
 interface EditEventProps {
   event: MPEvent;
@@ -9,25 +13,33 @@ interface EditEventProps {
 }
 
 const EditEvent: React.FC<EditEventProps> = ({ event, updateEvent }) => {
-  const parameters = React.useMemo(() => event.getParameters(), [event]);
-  const customParameters = React.useMemo(() => event.getCustomParameters(), [
+  const parameters = React.useMemo<Parameter[]>(() => event.getParameters(), [
     event
   ]);
-  const updateParameter = React.useCallback(
-    (parameterName: string) => (value: any) => {
-      updateEvent(event.updateParameter(parameterName, value));
-    },
+
+  const customParameters = React.useMemo<Parameter[]>(
+    () => event.getCustomParameters(),
     [event]
   );
-  const updateCustomParameter = React.useCallback(
-    (parameterName: string) => (value: any) => {
-      updateEvent(event.updateCustomParameter(parameterName, value));
+
+  const updateParameters = React.useCallback(
+    (update: (old: Parameters) => Parameters): void => {
+      updateEvent(event.updateParameters(update));
     },
-    [event]
+    [parameters, updateEvent, event]
   );
+
+  const updateCustomParameters = React.useCallback(
+    (update: (old: Parameters) => Parameters): void => {
+      updateEvent(event.updateCustomParameters(update));
+    },
+    [customParameters, updateEvent, event]
+  );
+
   const addCustomParameter = React.useCallback(() => {
-    updateEvent(event.addCustomParameter("", defaultOptionalString()));
-  }, [event]);
+    updateEvent(event.addCustomParameter("", defaultOptionalString("")));
+  }, [event, updateEvent]);
+
   // TODO - add support for adding a custom parameter of any type.
   return (
     <>
@@ -44,41 +56,13 @@ const EditEvent: React.FC<EditEventProps> = ({ event, updateEvent }) => {
           </p>
         </>
       )}
-      {parameters.map(parameter => (
-        <EditParameter
-          key={parameter.parameterName}
-          parameter={parameter}
-          updateParameter={updateParameter(parameter.parameterName)}
-          event={event}
-          updateEvent={updateEvent}
-        />
-      ))}
-      {customParameters.length > 0 && (
-        <>
-          <h4>Custom Parameters</h4>
-          {customParameters.map(parameter => (
-            <EditParameter
-              customParam
-              key={parameter.parameterName}
-              parameter={parameter}
-              updateParameter={updateCustomParameter(parameter.parameterName)}
-              event={event}
-              updateEvent={updateEvent}
-            />
-          ))}
-        </>
-      )}
-      <div className="HitBuilderParam HitBuilderParam--action">
-        <div className="HitBuilderParam-body">
-          <IconButton
-            type="add-circle"
-            iconStyle={{ color: "hsl(150,60%,40%)" }}
-            onClick={addCustomParameter}
-          >
-            Add Custom parameter
-          </IconButton>
-        </div>
-      </div>
+      <ParameterList
+        addCustomParameter={addCustomParameter}
+        parameters={parameters}
+        customParameters={customParameters}
+        updateParameters={updateParameters}
+        updateCustomParameters={updateCustomParameters}
+      />
     </>
   );
 };

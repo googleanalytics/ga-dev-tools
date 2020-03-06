@@ -7,28 +7,32 @@ export enum ParameterType {
   RequiredArray = "required array"
 }
 
-type OptionalString = {
+export type OptionalString = {
   type: ParameterType.OptionalString;
   required: false;
   value?: string;
+  name: string;
 };
 
-export const defaultOptionalString = (): OptionalString => ({
+export const defaultOptionalString = (name: string): OptionalString => ({
   type: ParameterType.OptionalString,
   required: false,
-  value: ""
+  value: "",
+  name
 });
 
-type ItemArray = {
+export type ItemArray = {
   type: ParameterType.RequiredArray;
   required: true;
   value: Item[];
+  name: string;
 };
 
-export const defaultItemArray = (): ItemArray => ({
+export const defaultItemArray = (name: string): ItemArray => ({
   type: ParameterType.RequiredArray,
   required: true,
-  value: []
+  value: [],
+  name
 });
 
 export type Parameter = OptionalString | ItemArray;
@@ -165,30 +169,30 @@ export const emptyEvent = (eventType: MPEventType): MPEventData => {
       return {
         type: eventType,
         parameters: {
-          virtual_currency_name: defaultOptionalString(),
-          value: defaultOptionalString()
+          virtual_currency_name: defaultOptionalString("virtual_currency_name"),
+          value: defaultOptionalString("value")
         },
         customParameters: {}
       };
     case MPEventType.JoinGroup:
       return {
         type: eventType,
-        parameters: { group_id: defaultOptionalString() },
+        parameters: { group_id: defaultOptionalString("group_id") },
         customParameters: {}
       };
     case MPEventType.Login:
       return {
         type: eventType,
-        parameters: { method: defaultOptionalString() },
+        parameters: { method: defaultOptionalString("method") },
         customParameters: {}
       };
     case MPEventType.PresentOffer:
       return {
         type: eventType,
         parameters: {
-          item_id: defaultOptionalString(),
-          item_name: defaultOptionalString(),
-          item_category: defaultOptionalString()
+          item_id: defaultOptionalString("item_id"),
+          item_name: defaultOptionalString("item_name"),
+          item_category: defaultOptionalString("item_category")
         },
         customParameters: {}
       };
@@ -196,13 +200,13 @@ export const emptyEvent = (eventType: MPEventType): MPEventData => {
       return {
         type: eventType,
         parameters: {
-          transactions_id: defaultOptionalString(),
-          value: defaultOptionalString(),
-          currency: defaultOptionalString(),
-          tax: defaultOptionalString(),
-          shipping: defaultOptionalString(),
-          items: defaultItemArray(),
-          coupon: defaultOptionalString()
+          transactions_id: defaultOptionalString("transactions_id"),
+          value: defaultOptionalString("value"),
+          currency: defaultOptionalString("currency"),
+          tax: defaultOptionalString("tax"),
+          shipping: defaultOptionalString("shipping"),
+          items: defaultItemArray("items"),
+          coupon: defaultOptionalString("coupon")
         },
         customParameters: {}
       };
@@ -210,27 +214,27 @@ export const emptyEvent = (eventType: MPEventType): MPEventData => {
       return {
         type: eventType,
         parameters: {
-          transactions_id: defaultOptionalString(),
-          value: defaultOptionalString(),
-          currency: defaultOptionalString(),
-          tax: defaultOptionalString(),
-          shipping: defaultOptionalString(),
-          items: defaultItemArray()
+          transactions_id: defaultOptionalString("transactions_id"),
+          value: defaultOptionalString("value"),
+          currency: defaultOptionalString("currency"),
+          tax: defaultOptionalString("tax"),
+          shipping: defaultOptionalString("shipping"),
+          items: defaultItemArray("items")
         },
         customParameters: {}
       };
     case MPEventType.Search:
       return {
         type: eventType,
-        parameters: { search_term: defaultOptionalString() },
+        parameters: { search_term: defaultOptionalString("search_term") },
         customParameters: {}
       };
     case MPEventType.SelectContent:
       return {
         type: eventType,
         parameters: {
-          content_type: defaultOptionalString(),
-          item_id: defaultOptionalString()
+          content_type: defaultOptionalString("content_type"),
+          item_id: defaultOptionalString("item_id")
         },
         customParameters: {}
       };
@@ -238,24 +242,24 @@ export const emptyEvent = (eventType: MPEventType): MPEventData => {
       return {
         type: eventType,
         parameters: {
-          content_type: defaultOptionalString(),
-          item_id: defaultOptionalString()
+          content_type: defaultOptionalString("content_type"),
+          item_id: defaultOptionalString("item_id")
         },
         customParameters: {}
       };
     case MPEventType.SignUp:
       return {
         type: eventType,
-        parameters: { method: defaultOptionalString() },
+        parameters: { method: defaultOptionalString("method") },
         customParameters: {}
       };
     case MPEventType.SpendVirtualCurrency:
       return {
         type: eventType,
         parameters: {
-          virtual_currency_name: defaultOptionalString(),
-          value: defaultOptionalString(),
-          item_name: defaultOptionalString()
+          virtual_currency_name: defaultOptionalString("virtual_currency_name"),
+          value: defaultOptionalString("value"),
+          item_name: defaultOptionalString("item_name")
         },
         customParameters: {}
       };
