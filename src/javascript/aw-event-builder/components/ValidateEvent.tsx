@@ -168,13 +168,8 @@ const EventActions: React.FC = () => {
    * to indicate the event was successfully sent. After 1 second the button
    * gets restored to its original state.
    */
-  // TODO - update this to use the new MP endpoint. (this should be through an async action)
   const sendEvent = React.useCallback(async () => {
-    await $.ajax({
-      method: "POST",
-      url: "https://www.google-analytics.com/collect",
-      data: JSON.stringify(payload)
-    });
+    dispatch(actions.sendEvent);
     setEventSent(true);
     gaAll("send", "event", {
       eventCategory: "Event Builder",

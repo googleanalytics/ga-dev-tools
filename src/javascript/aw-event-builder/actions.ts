@@ -8,17 +8,15 @@ import {
   MPEvent,
   ValidationStatus
 } from "./types";
-import * as validate from "./validate";
+import * as api from "./event";
 import accountSummaries from "javascript-api-utils/lib/account-summaries";
 
 type ThunkResult<T> = ThunkAction<T, State, undefined, EventBuilderAction>;
 
-const validateEvent: ThunkResult<void> = async (dispatch, getState) => {
-  dispatch(actions.setValidationStatus(ValidationStatus.Pending));
-
+const sendEvent: ThunkResult<void> = async (dispatch, getState) => {
   const { mid, auth_key, event, user_id, client_id } = getState();
 
-  let userOrClientId: validate.UserOrClientId;
+  let userOrClientId: api.UserOrClientId;
   if (user_id !== "") {
     userOrClientId = { user_id };
   } else if (client_id !== "") {
@@ -27,7 +25,24 @@ const validateEvent: ThunkResult<void> = async (dispatch, getState) => {
     userOrClientId = {};
   }
 
-  const messages = await validate.validateHit(mid, auth_key, userOrClientId, [
+  await api.sendEvent(mid, auth_key, userOrClientId, [event]);
+};
+
+const validateEvent: ThunkResult<void> = async (dispatch, getState) => {
+  dispatch(actions.setValidationStatus(ValidationStatus.Pending));
+
+  const { mid, auth_key, event, user_id, client_id } = getState();
+
+  let userOrClientId: api.UserOrClientId;
+  if (user_id !== "") {
+    userOrClientId = { user_id };
+  } else if (client_id !== "") {
+    userOrClientId = { client_id };
+  } else {
+    userOrClientId = {};
+  }
+
+  const messages = await api.validateHit(mid, auth_key, userOrClientId, [
     event
   ]);
   if (messages.length === 0) {
@@ -129,6 +144,7 @@ const actions = {
 };
 
 const thunkActions = {
+  sendEvent,
   resetValidation,
   setMid,
   setClientId,
