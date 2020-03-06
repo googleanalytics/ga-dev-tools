@@ -16,6 +16,10 @@ export class MPEvent {
     return Object.values(MPEventType);
   };
 
+  static parameterTypeOptions = (): ParameterType[] => {
+    return Object.values(ParameterType);
+  };
+
   static eventTypeFromString = (eventType: string): MPEventType | undefined => {
     const assumed: MPEventType = eventType as MPEventType;
     switch (assumed) {

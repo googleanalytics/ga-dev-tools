@@ -1,6 +1,11 @@
 import React from "react";
 import Icon from "../../../components/icon";
-import { Parameter } from "../../types";
+import {
+  Parameter,
+  ParameterType,
+  defaultParameterFor,
+  MPEvent
+} from "../../types";
 
 import EditParameterValue from "./EditParameterValue";
 
@@ -72,6 +77,27 @@ const EditParameter: React.FC<EditParameterProps> = ({
         parameter={parameter}
         updateParameter={updateParameter}
       />
+      {custom !== undefined && (
+        <select
+          className="FormField ParameterTypeDropdown"
+          value={parameter.type}
+          onChange={e => {
+            const newParameterType: ParameterType = e.target
+              .value as ParameterType;
+            updateParameter(
+              defaultParameterFor(newParameterType, parameter.name)
+            );
+          }}
+        >
+          {MPEvent.parameterTypeOptions()
+            .filter(a => a !== ParameterType.RequiredArray)
+            .map(option => (
+              <option value={option} key={option}>
+                {option}
+              </option>
+            ))}
+        </select>
+      )}
     </div>
   );
 };

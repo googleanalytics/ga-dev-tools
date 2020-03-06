@@ -38,6 +38,18 @@ export const defaultItemArray = (name: string): ItemArray => ({
   name
 });
 
+export const defaultParameterFor = (
+  type: ParameterType,
+  name: string
+): Parameter => {
+  switch (type) {
+    case ParameterType.RequiredArray:
+      return defaultItemArray(name);
+    case ParameterType.OptionalString:
+      return defaultOptionalString(name);
+  }
+};
+
 export type Parameter = OptionalString | ItemArray;
 
 export type Parameters = { [paramName: string]: Parameter };
