@@ -1,6 +1,38 @@
 import React from "react";
 import IconButton from "../../../components/icon-button";
-import { ItemArray, Item } from "../../types";
+import ParameterList from "../ParameterList";
+import { ItemArray, Item, defaultOptionalString, Parameter } from "../../types";
+
+interface EditItemProps {
+  item: Item;
+  isFirst: boolean;
+}
+
+const EditItem: React.FC<EditItemProps> = ({ item, isFirst }) => {
+  const parameters = React.useMemo<Parameter[]>(
+    () => Object.values(item.parameters),
+    [item]
+  );
+  const customParameters = React.useMemo<Parameter[]>(
+    () => Object.values(item.customParameters),
+    [item]
+  );
+  const updateParameters = React.useCallback(() => {}, []);
+  const updateCustomParameters = React.useCallback(() => {}, []);
+  const addCustomParameter = React.useCallback(() => {}, []);
+  return (
+    <div className="HitBuilderParam">
+      <ParameterList
+        showAdd={isFirst ? isFirst : undefined}
+        parameters={parameters}
+        customParameters={customParameters}
+        updateParameters={updateParameters}
+        updateCustomParameters={updateCustomParameters}
+        addCustomParameter={addCustomParameter}
+      />
+    </div>
+  );
+};
 
 interface EditItemArrayParameterProps {
   items: ItemArray;
@@ -16,7 +48,12 @@ const EditArrayParameter: React.FC<EditItemArrayParameterProps> = ({
   );
   const addItem = React.useCallback(() => {
     setLocalValues(old => {
-      const nu = old.concat([{ name: "" }]);
+      const nu = old.concat([
+        {
+          parameters: { name: defaultOptionalString("name") },
+          customParameters: {}
+        }
+      ]);
       updateParameter({ ...items, value: nu });
       return nu;
     });
@@ -43,25 +80,9 @@ const EditArrayParameter: React.FC<EditItemArrayParameterProps> = ({
       >
         Add Item
       </IconButton>
-      {localValues.map((localValue, idx) => (
-        <div className="HitBuilderParam--item">
-          <label>Item {idx + 1}</label>
-          {Object.entries(localValue).map(([key, value], idx2) => (
-            <div key={`${idx}-${idx2}-${key}`} className="HitBuilderParam">
-              <label className="HitBuilderParam-label">{key}</label>
-              <input
-                className="FormField"
-                value={value}
-                onChange={e => {
-                  updateLocalValue(idx)({
-                    ...localValue,
-                    [key]: e.target.value
-                  });
-                }}
-                onBlur={updateWithLocalParameter}
-              />
-            </div>
-          ))}
+      {localValues.map((item, idx) => (
+        <div key={`item-${idx}`} className="HitBuilderParam--item">
+          <EditItem item={item} isFirst={idx === 0} />
         </div>
       ))}
     </div>

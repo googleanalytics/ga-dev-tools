@@ -1,5 +1,8 @@
 export interface Item {
-  name: string;
+  parameters: {
+    name: OptionalString;
+  };
+  customParameters: {};
 }
 
 export enum ParameterType {

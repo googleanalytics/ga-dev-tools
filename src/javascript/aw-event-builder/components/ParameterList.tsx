@@ -9,9 +9,11 @@ interface ParameterListProps {
   updateParameters: (update: (old: Parameters) => Parameters) => void;
   updateCustomParameters: (update: (old: Parameters) => Parameters) => void;
   addCustomParameter: () => void;
+  showAdd?: true | undefined;
 }
 
 const Parameters: React.FC<ParameterListProps> = ({
+  showAdd,
   parameters,
   customParameters,
   updateParameters,
@@ -55,7 +57,7 @@ const Parameters: React.FC<ParameterListProps> = ({
   );
 
   return (
-    <>
+    <div className="ParameterList">
       {parameters.map(parameter => (
         <EditParameter
           key={parameter.name}
@@ -77,18 +79,20 @@ const Parameters: React.FC<ParameterListProps> = ({
         </>
       )}
 
-      <div className="HitBuilderParam HitBuilderParam--action">
-        <div className="HitBuilderParam-body">
-          <IconButton
-            type="add-circle"
-            iconStyle={{ color: "hsl(150,60%,40%)" }}
-            onClick={addCustomParameter}
-          >
-            Add Custom parameter
-          </IconButton>
+      {showAdd && (
+        <div className="HitBuilderParam HitBuilderParam--action">
+          <div className="HitBuilderParam-body">
+            <IconButton
+              type="add-circle"
+              iconStyle={{ color: "hsl(150,60%,40%)" }}
+              onClick={addCustomParameter}
+            >
+              Add Custom parameter
+            </IconButton>
+          </div>
         </div>
-      </div>
-    </>
+      )}
+    </div>
   );
 };
 
