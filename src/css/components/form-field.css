@@ -19,6 +19,11 @@ limitations under the License.
   width: 100%;
 }
 
+.ParameterTypeDropdown {
+  margin-left: 0.5em;
+  width: unset;
+}
+
 input.FormField,
 select.FormField,
 textarea.FormField {

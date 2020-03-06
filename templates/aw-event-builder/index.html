@@ -1,0 +1,28 @@
+{% extends 'user-auth.html' %}
+
+{% block content %}
+<section>
+  <p>This tools allows you to construct and validate <a
+  href="https://developers.google.com/analytics/devguides/collection/protocol/">
+    Measurement Protocol</a> events using the <a
+                                                href="{{ site.tech.measurement_protocol_validation_server.url }}">
+    {{ site.tech.measurement_protocol_validation_server.name }}</a>.</p>
+
+  <p>To get started, use the controls below to construct a new event.</p>
+
+  <div id="aw-event-builder"></div>
+
+</section>
+{% endblock %}
+
+{% block tech_content %}
+  The {{ project.title }} tools uses the <a
+  href="{{ site.tech.measurement_protocol_validation_server.url }}">
+  {{ site.tech.measurement_protocol_validation_server.name }}</a> to validate
+  Measurement Protocol hits.
+{% endblock %}
+
+{% block foot_scripts %}
+{{ super() }}
+<script src="/public/javascript/aw-event-builder.js"></script>
+{% endblock %}

@@ -17,7 +17,7 @@ limitations under the License.
 
 :root {
   --HitBuilderParam-gap: 1.25em;
-  --HitBuilderParam-labelWidth: 7em;
+  --HitBuilderParam-labelWidth: 9em;
   --HitBuilderParam-labelInputWidth: 4em;
 }
 
@@ -33,9 +33,14 @@ limitations under the License.
 .HitBuilderParam-label {
   flex: 0 0 var(--HitBuilderParam-labelWidth);
   font-weight: 600;
+  font-family: monospace;
   margin-right: var(--HitBuilderParam-gap);
   position: relative;
   text-align: right;
+}
+
+.indent-6 > .HitBuilderParam > .HitBuilderParam-label {
+  flex: 0 0 6;
 }
 
 .HitBuilderParam--required .HitBuilderParam-label::before {
