@@ -44,6 +44,7 @@ export type Parameters = { [paramName: string]: Parameter };
 
 // EVENTS start here
 export enum MPEventType {
+  CustomEvent = "custom_event",
   EarnVirtualCurrency = "earn_virtual_currency",
   JoinGroup = "join_group",
   Login = "login",
@@ -60,6 +61,7 @@ export enum MPEventType {
 }
 
 export type MPEventData =
+  | CustomEvent
   | EarnVirtualCurrencyEvent
   | JoinGroupEvent
   | LoginEvent
@@ -74,6 +76,13 @@ export type MPEventData =
   | TutorialBeginEvent
   | TutorialCompleteEvent
   | EarnVirtualCurrencyEvent;
+
+// Events: Custom
+interface CustomEvent {
+  type: MPEventType.CustomEvent;
+  parameters: {};
+  customParameters: Parameters;
+}
 
 // Events: All Properties
 interface EarnVirtualCurrencyEvent {
@@ -168,6 +177,12 @@ interface TutorialCompleteEvent {
 
 export const emptyEvent = (eventType: MPEventType): MPEventData => {
   switch (eventType) {
+    case MPEventType.CustomEvent:
+      return {
+        type: eventType,
+        parameters: {},
+        customParameters: {}
+      };
     case MPEventType.EarnVirtualCurrency:
       return {
         type: eventType,

@@ -54,6 +54,13 @@ const HitBuilder: React.FC = () => {
     [dispatch]
   );
 
+  const updateCustomEventName = React.useCallback(
+    name => {
+      updateEvent(event.updateName(name));
+    },
+    [event, updateEvent]
+  );
+
   return (
     <div>
       <div className="HeadingGroup HeadingGroup--h3">
@@ -98,6 +105,14 @@ const HitBuilder: React.FC = () => {
                 </option>
               ))}
             </select>
+            {event.getEventType() === MPEventType.CustomEvent && (
+              <ReduxManagedInput
+                flex="0 0 4em"
+                labelText="Name"
+                update={updateCustomEventName}
+                urlParamName="custom_event_name"
+              />
+            )}
           </div>
           <EditEvent event={event} updateEvent={updateEvent} />
         </div>

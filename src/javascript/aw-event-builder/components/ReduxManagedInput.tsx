@@ -3,6 +3,7 @@ import actions from "../actions";
 import { useDispatch } from "react-redux";
 
 interface ReduxManagedInputProps {
+  flex?: string;
   update: (localValue: string) => void;
   labelText: string;
   urlParamName?: string;
@@ -10,6 +11,7 @@ interface ReduxManagedInputProps {
 
 // TODO - not sure if it matters, but if the value changes in redux, this does not automatically update.
 const ReduxManagedInput: React.FC<ReduxManagedInputProps> = ({
+  flex,
   update,
   labelText,
   urlParamName
@@ -32,7 +34,9 @@ const ReduxManagedInput: React.FC<ReduxManagedInputProps> = ({
   }, [localValue, dispatch]);
   return (
     <div className="HitBuilderParam">
-      <label className="HitBuilderParam-label">{labelText}</label>
+      <label className="HitBuilderParam-label" style={{ flex: flex }}>
+        {labelText}
+      </label>
       <input
         className="FormField"
         value={localValue}

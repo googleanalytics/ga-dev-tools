@@ -10,6 +10,7 @@ import {
 export class MPEvent {
   private eventType: MPEventType;
   private eventData: MPEventData;
+  private name?: string;
 
   static options = (): MPEventType[] => {
     return Object.values(MPEventType);
@@ -49,12 +50,26 @@ export class MPEvent {
     this.eventData = eventData;
   }
 
+  clone(): MPEvent {
+    const clonedData = { ...this.eventData };
+    const nuEvent = new MPEvent(this.eventType, clonedData);
+    nuEvent.name = this.name;
+    return nuEvent;
+  }
+
   getEventData(): MPEventData {
     return this.eventData;
   }
 
   getEventType(): MPEventType {
     return this.eventType;
+  }
+  getEventName(): string {
+    if (this.eventType === MPEventType.CustomEvent) {
+      return this.name || this.eventData.type;
+    } else {
+      return this.eventData.type;
+    }
   }
 
   static parameterToPayload = (parameter: Parameter): {} | "unset" => {
@@ -101,52 +116,32 @@ export class MPEvent {
         }
       }, {});
     return {
-      name: this.getEventType(),
+      name: this.getEventName(),
       params
     };
   }
 
+  updateName(nuName: string): MPEvent {
+    if (this.eventType !== MPEventType.CustomEvent) {
+      throw new Error("Only custom events can update their name");
+    }
+    const nuEvent = this.clone();
+    nuEvent.name = nuName;
+    return nuEvent;
+  }
+
   updateParameters(update: (old: Parameters) => Parameters): MPEvent {
-    const nuData = { ...this.eventData };
-    const nuParameters = update(nuData.parameters);
-    nuData.parameters = nuParameters;
-    return new MPEvent(this.eventType, nuData);
+    const nuEvent = this.clone();
+    const nuParameters = update(nuEvent.eventData.parameters);
+    nuEvent.eventData.parameters = nuParameters;
+    return nuEvent;
   }
 
   updateCustomParameters(update: (old: Parameters) => Parameters): MPEvent {
-    const nuData = { ...this.eventData };
-    const nuCustomParameters = update(nuData.customParameters);
-    nuData.customParameters = nuCustomParameters;
-    console.log("in MPEvent", { nuData });
-    return new MPEvent(this.eventType, nuData);
-  }
-
-  // TODO - I can probably delete these update parameter functions now.
-  updateParameter(parameterName: string, newValue: any): MPEvent {
-    const nuData = { ...this.eventData };
-    // TODO - maybe there's a better way to typecheck this?
-    // probably if I required the parameter type to be passed in. Then I could do a switch and make sure that the parameter Name exists.
-    if (parameterName in nuData.parameters) {
-      const parameter = nuData.parameters[parameterName];
-      parameter.value = newValue;
-      return new MPEvent(this.eventType, nuData);
-    } else {
-      throw new Error(
-        `${parameterName} is not a parameter in ${this.eventType}`
-      );
-    }
-  }
-  updateCustomParameter(parameterName: string, newValue: any): MPEvent {
-    const nuData = { ...this.eventData };
-    if (parameterName in nuData.customParameters) {
-      const parameter = nuData.customParameters[parameterName];
-      parameter.value = newValue;
-      return new MPEvent(this.eventType, nuData);
-    } else {
-      throw new Error(
-        `${parameterName} is not a custom parameter in ${this.eventType}`
-      );
-    }
+    const nuEvent = this.clone();
+    const nuCustomParameters = update(nuEvent.eventData.customParameters);
+    nuEvent.eventData.customParameters = nuCustomParameters;
+    return nuEvent;
   }
 
   getParameters(): Parameter[] {
@@ -157,24 +152,22 @@ export class MPEvent {
   }
 
   addCustomParameter(parameterName: string, parameter: Parameter): MPEvent {
-    const nuData = { ...this.eventData };
-    nuData.customParameters[parameterName] = parameter;
-    return new MPEvent(this.eventType, nuData);
+    const nuEvent = this.clone();
+    nuEvent.eventData.customParameters[parameterName] = parameter;
+    return nuEvent;
   }
 
   removeCustomParameter(parameterName: string): MPEvent {
-    const nuData = { ...this.eventData };
-    delete nuData.customParameters[parameterName];
-    return new MPEvent(this.eventType, nuData);
+    const nuEvent = this.clone();
+    delete nuEvent.eventData.customParameters[parameterName];
+    return nuEvent;
   }
 
   updateCustomParameterName(parameterName: string, newName: string): MPEvent {
-    console.log({ parameterName, newName });
-    const nuData = { ...this.eventData };
+    const nuEvent = this.clone();
     // Copy the old parameter value into the new name.
-    nuData.customParameters[newName] = nuData.customParameters[parameterName];
-    const nu = new MPEvent(this.eventType, nuData);
-    console.log(nu);
-    return nu.removeCustomParameter(parameterName);
+    nuEvent.eventData.customParameters[newName] =
+      nuEvent.eventData.customParameters[parameterName];
+    return nuEvent.removeCustomParameter(parameterName);
   }
 }
