@@ -24,7 +24,6 @@ import { useDispatch, useSelector } from "react-redux";
 const HitBuilder: React.FC = () => {
   // TODO - The event picker should probably let you do a search to filter the dropdown.
   // TODO - make sure to focus on any new params.
-  // TODO - handle validation messages
   const { event } = useSelector<State, State>(a => a);
   const dispatch = useDispatch();
 
