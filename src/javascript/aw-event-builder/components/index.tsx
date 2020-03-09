@@ -24,7 +24,7 @@ import { useDispatch, useSelector } from "react-redux";
 const HitBuilder: React.FC = () => {
   // TODO - The event picker should probably let you do a search to filter the dropdown.
   // TODO - make sure to focus on any new params.
-  const { event } = useSelector<State, State>(a => a);
+  const { event, client_id, user_id } = useSelector<State, State>(a => a);
   const dispatch = useDispatch();
 
   const updateEvent = React.useCallback(
@@ -77,16 +77,20 @@ const HitBuilder: React.FC = () => {
             update={updateMid}
             urlParamName="mid"
           />
-          <ReduxManagedInput
-            labelText="client_id"
-            update={updateClientId}
-            urlParamName="client_id"
-          />
-          <ReduxManagedInput
-            labelText="user_id"
-            update={updateUserId}
-            urlParamName="user_id"
-          />
+          <div className="HitBuilderParam">
+            <ReduxManagedInput
+              disabled={user_id !== ""}
+              labelText="client_id"
+              update={updateClientId}
+              urlParamName="client_id"
+            />
+            <ReduxManagedInput
+              disabled={client_id !== ""}
+              labelText="user_id"
+              update={updateUserId}
+              urlParamName="user_id"
+            />
+          </div>
           <div className="HitBuilderParam">
             <label className="HitBuilderParam-label">Event Type</label>
             <select

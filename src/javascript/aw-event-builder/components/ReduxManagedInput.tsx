@@ -4,6 +4,7 @@ import { useDispatch } from "react-redux";
 
 interface ReduxManagedInputProps {
   flex?: string;
+  disabled?: boolean;
   update: (localValue: string) => void;
   labelText: string;
   urlParamName?: string;
@@ -14,6 +15,7 @@ const ReduxManagedInput: React.FC<ReduxManagedInputProps> = ({
   flex,
   update,
   labelText,
+  disabled,
   urlParamName
 }) => {
   const [localValue, setLocalValue] = React.useState<string>(() => {
@@ -38,6 +40,7 @@ const ReduxManagedInput: React.FC<ReduxManagedInputProps> = ({
         {labelText}
       </label>
       <input
+        disabled={disabled}
         className="FormField"
         value={localValue}
         onChange={e => setLocalValue(e.target.value)}

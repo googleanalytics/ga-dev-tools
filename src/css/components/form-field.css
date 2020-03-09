@@ -55,3 +55,7 @@ textarea.FormField:focus {
 .FormField--invalid {
   border-color: var(--error-color)!important;
 }
+
+.FormField:disabled {
+  opacity: .7;
+}
