@@ -51,6 +51,8 @@ interface PurchaseEvent {
     shipping: OptionalString;
     items: ItemArray;
     coupon: OptionalString;
+    // From Retail/Ecommerce page
+    affiliation: OptionalString;
   };
   customParameters: Parameters;
 }
