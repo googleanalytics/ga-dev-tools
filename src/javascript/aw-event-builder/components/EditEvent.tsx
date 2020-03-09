@@ -44,7 +44,7 @@ const EditEvent: React.FC<EditEventProps> = ({ event, updateEvent }) => {
     <>
       <h3>Event details</h3>
       {parameters.length === 0 ? (
-        <p>No parameters are needed for this event</p>
+        <p>No parameters are recommended for this event</p>
       ) : (
         <>
           <h4>Parameters</h4>
