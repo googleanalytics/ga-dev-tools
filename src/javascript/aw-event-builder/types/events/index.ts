@@ -9,12 +9,14 @@ export enum MPEventCategory {
   Custom = "Custom",
   AllApps = "All apps",
   RetailEcommerce = "Retail/Ecommerce",
-  Jobs_Edu_LocalDeails_RealEstate = "Jobs, Education, Local Deals, Real Estate"
+  Jobs_Edu_LocalDeails_RealEstate = "Jobs, Education, Local Deals, Real Estate",
+  Travel = "Travel (Hotel/Air)"
 }
 
 export enum MPEventType {
   // Custom Event
   CustomEvent = "custom_event",
+
   // All Apps
   EarnVirtualCurrency = "earn_virtual_currency",
   JoinGroup = "join_group",
@@ -30,11 +32,9 @@ export enum MPEventType {
   SpendVirtualCurrency = "spend_virtual_currency",
   TutorialBegin = "tutorial_begin",
   TutorialComplete = "tutorial_complete",
+
   // Retail/Ecommerce
   // https://support.google.com/firebase/answer/6317499?hl=en&ref_topic=6317484
-  // and (they are currently the same)
-  // Jobs, Education, Local Deals, Real Estate
-  // https://support.google.com/firebase/answer/6375140?hl=en&ref_topic=6317484
   AddPaymentInfo = "add_payment_info",
   AddToCart = "add_to_cart",
   AddToWishlist = "add_to_wishlist",
@@ -45,6 +45,12 @@ export enum MPEventType {
   ViewItem = "view_item",
   ViewItemList = "view_item_list",
   ViewSearchResults = "view_search_results"
+
+  // Jobs, Education, Local Deals, Real Estate (currently identical to Retail/Ecommerce)
+  // https://support.google.com/firebase/answer/6375140?hl=en&ref_topic=6317484
+
+  // Travel (Hotel/Air) - same as Retail/Ecommerce + Search
+  // https://support.google.com/firebase/answer/6317508?hl=en&ref_topic=6317484
 }
 
 // Events: Custom
@@ -100,6 +106,21 @@ export const eventTypesFor = (category: MPEventCategory): MPEventType[] => {
         MPEventType.GenerateLead,
         MPEventType.Purchase,
         MPEventType.PurchaseRefund,
+        MPEventType.ViewItem,
+        MPEventType.ViewItemList,
+        MPEventType.ViewSearchResults
+      ];
+    case MPEventCategory.Travel:
+      return [
+        MPEventType.AddPaymentInfo,
+        MPEventType.AddToCart,
+        MPEventType.AddToWishlist,
+        MPEventType.BeginCheckout,
+        MPEventType.EcommercePurchase,
+        MPEventType.GenerateLead,
+        MPEventType.Purchase,
+        MPEventType.PurchaseRefund,
+        MPEventType.Search,
         MPEventType.ViewItem,
         MPEventType.ViewItemList,
         MPEventType.ViewSearchResults
