@@ -26,8 +26,11 @@ limitations under the License.
   align-items: baseline;
   display: inline-flex;
   margin: 0 0 var(--HitBuilderParam-gap);
-  max-width: 36em;
   width: 100%;
+}
+
+.HitBuilderParam > .HitBuilderParam {
+  margin: 0;
 }
 
 .HitBuilderParam-label {
@@ -104,4 +107,8 @@ limitations under the License.
 .HitBuilderParam--action {
   margin-left: calc(var(--HitBuilderParam-labelWidth) +
                     var(--HitBuilderParam-gap));
+}
+
+.ParameterList {
+  width: 100%;
 }
