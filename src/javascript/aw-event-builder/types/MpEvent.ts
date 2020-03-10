@@ -123,7 +123,7 @@ export class MPEvent {
   }
   getEventName(): string {
     if (this.eventType === MPEventType.CustomEvent) {
-      return this.name || this.eventData.type;
+      return this.name || "";
     } else {
       return this.eventData.type;
     }
