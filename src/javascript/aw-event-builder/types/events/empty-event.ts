@@ -214,5 +214,32 @@ export const emptyEvent = (eventType: MPEventType): MPEventData => {
         },
         customParameters: {}
       };
+    case MPEventType.LevelUp:
+      return {
+        type: eventType,
+        parameters: {
+          character: defaultOptionalString("character"),
+          level: defaultOptionalString("level")
+        },
+        customParameters: {}
+      };
+    case MPEventType.PostScore:
+      return {
+        type: eventType,
+        parameters: {
+          level: defaultOptionalString("level"),
+          character: defaultOptionalString("character"),
+          score: defaultOptionalString("score")
+        },
+        customParameters: {}
+      };
+    case MPEventType.UnlockAchievement:
+      return {
+        type: eventType,
+        parameters: {
+          achievement_id: defaultOptionalString("achievement_id")
+        },
+        customParameters: {}
+      };
   }
 };

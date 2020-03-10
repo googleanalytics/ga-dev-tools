@@ -1,6 +1,7 @@
 import { Parameters } from "./parameters";
 import { AllAppsEvent } from "./all-apps";
 import { RetailEcommerceEvent } from "./retail-ecommerce";
+import { GamesEvent } from "./games";
 
 export * from "./parameters";
 export * from "./empty-event";
@@ -10,7 +11,8 @@ export enum MPEventCategory {
   AllApps = "All apps",
   RetailEcommerce = "Retail/Ecommerce",
   Jobs_Edu_LocalDeails_RealEstate = "Jobs, Education, Local Deals, Real Estate",
-  Travel = "Travel (Hotel/Air)"
+  Travel = "Travel (Hotel/Air)",
+  Games = "Games"
 }
 
 export enum MPEventType {
@@ -18,11 +20,9 @@ export enum MPEventType {
   CustomEvent = "custom_event",
 
   // All Apps
-  EarnVirtualCurrency = "earn_virtual_currency",
   JoinGroup = "join_group",
   Login = "login",
   PresentOffer = "present_offer",
-  // Also Retail/Ecommerce
   Purchase = "purchase",
   Refund = "refund",
   Search = "search",
@@ -30,6 +30,7 @@ export enum MPEventType {
   Share = "share",
   SignUp = "sign_up",
   SpendVirtualCurrency = "spend_virtual_currency",
+  EarnVirtualCurrency = "earn_virtual_currency",
   TutorialBegin = "tutorial_begin",
   TutorialComplete = "tutorial_complete",
 
@@ -44,13 +45,19 @@ export enum MPEventType {
   PurchaseRefund = "purchase_refund",
   ViewItem = "view_item",
   ViewItemList = "view_item_list",
-  ViewSearchResults = "view_search_results"
+  ViewSearchResults = "view_search_results",
 
   // Jobs, Education, Local Deals, Real Estate (currently identical to Retail/Ecommerce)
   // https://support.google.com/firebase/answer/6375140?hl=en&ref_topic=6317484
 
   // Travel (Hotel/Air) - same as Retail/Ecommerce + Search
   // https://support.google.com/firebase/answer/6317508?hl=en&ref_topic=6317484
+
+  // Games
+  // https://support.google.com/firebase/answer/6317494?hl=en&ref_topic=6317484
+  LevelUp = "level_up",
+  PostScore = "post_score",
+  UnlockAchievement = "unlock_achievement"
 }
 
 // Events: Custom
@@ -60,7 +67,11 @@ interface CustomEvent {
   customParameters: Parameters;
 }
 
-export type MPEventData = CustomEvent | AllAppsEvent | RetailEcommerceEvent;
+export type MPEventData =
+  | CustomEvent
+  | AllAppsEvent
+  | RetailEcommerceEvent
+  | GamesEvent;
 
 export const eventTypesFor = (category: MPEventCategory): MPEventType[] => {
   switch (category) {
@@ -124,6 +135,18 @@ export const eventTypesFor = (category: MPEventCategory): MPEventType[] => {
         MPEventType.ViewItem,
         MPEventType.ViewItemList,
         MPEventType.ViewSearchResults
+      ];
+    case MPEventCategory.Games:
+      return [
+        MPEventType.EarnVirtualCurrency,
+        MPEventType.JoinGroup,
+        MPEventType.LevelUp,
+        MPEventType.PostScore,
+        MPEventType.SelectContent,
+        MPEventType.SpendVirtualCurrency,
+        MPEventType.TutorialBegin,
+        MPEventType.TutorialComplete,
+        MPEventType.UnlockAchievement
       ];
   }
 };
