@@ -107,27 +107,27 @@ const HitBuilder: React.FC = () => {
             />
           </div>
           <div className="HitBuilderParam">
-            <label className="HitBuilderParam-label">Category</label>
-            <select
-              className="FormField"
-              value={category}
-              onChange={e => {
-                const newCategory: MPEventCategory = e.target
-                  .value as MPEventCategory;
-                setCategory(newCategory);
-              }}
-            >
-              {MPEvent.categories().map(option => (
-                <option value={option} key={option}>
-                  {option}
-                </option>
-              ))}
-            </select>
+            <div className="HitBuilderParam">
+              <label className="HitBuilderParam-label">Category</label>
+              <select
+                className="FormField"
+                value={category}
+                onChange={e => {
+                  const newCategory: MPEventCategory = e.target
+                    .value as MPEventCategory;
+                  setCategory(newCategory);
+                }}
+              >
+                {MPEvent.categories().map(option => (
+                  <option value={option} key={option}>
+                    {option}
+                  </option>
+                ))}
+              </select>
+            </div>
             {category !== MPEventCategory.Custom && (
-              <>
-                <label className="HitBuilderParam-label HitBuilderParam-label-not-first">
-                  Name
-                </label>
+              <div className="HitBuilderParam">
+                <label className="HitBuilderParam-label">Name</label>
                 <select
                   className="FormField"
                   value={event.getEventType()}
@@ -144,7 +144,7 @@ const HitBuilder: React.FC = () => {
                     </option>
                   ))}
                 </select>
-              </>
+              </div>
             )}
             {event.getEventType() === MPEventType.CustomEvent && (
               <ReduxManagedInput
