@@ -55,12 +55,14 @@ interface EditParameterProps {
   };
   parameter: Parameter;
   updateParameter: (nu: Parameter) => void;
+  isNested: boolean;
 }
 
 const EditParameter: React.FC<EditParameterProps> = ({
   custom,
   parameter,
-  updateParameter
+  updateParameter,
+  isNested
 }) => {
   return (
     <div className="HitBuilderParam">
@@ -90,7 +92,7 @@ const EditParameter: React.FC<EditParameterProps> = ({
           }}
         >
           {MPEvent.parameterTypeOptions()
-            .filter(a => a !== ParameterType.RequiredArray)
+            .filter(a => (isNested ? a !== ParameterType.RequiredArray : true))
             .map(option => (
               <option value={option} key={option}>
                 {option}

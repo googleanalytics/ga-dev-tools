@@ -11,6 +11,7 @@ interface ParameterListProps {
   updateParameters: (update: (old: Parameters) => Parameters) => void;
   updateCustomParameters: (update: (old: Parameters) => Parameters) => void;
   addCustomParameter: () => void;
+  isNested: boolean;
 }
 
 const Parameters: React.FC<ParameterListProps> = ({
@@ -21,7 +22,8 @@ const Parameters: React.FC<ParameterListProps> = ({
   updateParameters,
   updateCustomParameters,
   addCustomParameter,
-  children
+  children,
+  isNested
 }) => {
   const updateParameter = React.useCallback(
     (parameter: Parameter) => (nu: Parameter) => {
@@ -63,6 +65,7 @@ const Parameters: React.FC<ParameterListProps> = ({
     <div className={`ParameterList indent-${indentation}`}>
       {parameters.map(parameter => (
         <EditParameter
+          isNested={isNested}
           key={parameter.name}
           parameter={parameter}
           updateParameter={updateParameter(parameter)}
@@ -73,6 +76,7 @@ const Parameters: React.FC<ParameterListProps> = ({
           {!oneList && <h4>Custom Parameters</h4>}
           {customParameters.map(parameter => (
             <EditParameter
+              isNested={isNested}
               custom={custom(parameter)}
               key={parameter.name}
               parameter={parameter}

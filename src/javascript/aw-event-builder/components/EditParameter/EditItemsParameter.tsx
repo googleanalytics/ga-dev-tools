@@ -51,6 +51,7 @@ const EditItem: React.FC<EditItemProps> = ({
   return (
     <div className="HitBuilderParam">
       <ParameterList
+        isNested
         indentation={6}
         oneList
         parameters={parameters}

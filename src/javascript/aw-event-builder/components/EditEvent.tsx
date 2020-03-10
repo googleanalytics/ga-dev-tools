@@ -56,6 +56,7 @@ const EditEvent: React.FC<EditEventProps> = ({ event, updateEvent }) => {
         </>
       )}
       <ParameterList
+        isNested={false}
         addCustomParameter={addCustomParameter}
         parameters={parameters}
         customParameters={customParameters}
