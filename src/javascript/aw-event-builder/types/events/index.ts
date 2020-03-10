@@ -5,7 +5,48 @@ import { RetailEcommerceEvent } from "./retail-ecommerce";
 export * from "./parameters";
 export * from "./empty-event";
 
-// TODO - add enum for MPEventCategory.
+export enum MPEventCategory {
+  Custom = "Custom",
+  AllApps = "All apps",
+  RetailEcommerce = "Retail/Ecommerce"
+}
+
+export const eventTypesFor = (category: MPEventCategory): MPEventType[] => {
+  switch (category) {
+    case MPEventCategory.Custom:
+      return [MPEventType.CustomEvent];
+    case MPEventCategory.AllApps:
+      return [
+        MPEventType.EarnVirtualCurrency,
+        MPEventType.JoinGroup,
+        MPEventType.Login,
+        MPEventType.PresentOffer,
+        MPEventType.Purchase,
+        MPEventType.Refund,
+        MPEventType.Search,
+        MPEventType.SelectContent,
+        MPEventType.Share,
+        MPEventType.SignUp,
+        MPEventType.SpendVirtualCurrency,
+        MPEventType.TutorialBegin,
+        MPEventType.TutorialComplete
+      ];
+    case MPEventCategory.RetailEcommerce:
+      return [
+        MPEventType.AddPaymentInfo,
+        MPEventType.AddToCart,
+        MPEventType.AddToWishlist,
+        MPEventType.BeginCheckout,
+        MPEventType.EcommercePurchase,
+        MPEventType.GenerateLead,
+        MPEventType.Purchase,
+        MPEventType.PurchaseRefund,
+        MPEventType.ViewItem,
+        MPEventType.ViewItemList,
+        MPEventType.ViewSearchResults
+      ];
+  }
+};
 
 export enum MPEventType {
   // Custom Event

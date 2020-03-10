@@ -39,6 +39,10 @@ limitations under the License.
   text-align: right;
 }
 
+.HitBuilderParam-label-not-first {
+  flex: 0 0 4em;
+}
+
 .indent-6 > .HitBuilderParam > .HitBuilderParam-label {
   flex: 0 0 6;
 }

@@ -1,10 +1,12 @@
 import {
   MPEventType,
+  MPEventCategory,
   MPEventData,
   emptyEvent,
   Parameter,
   Parameters,
-  ParameterType
+  ParameterType,
+  eventTypesFor
 } from "./events";
 
 export class MPEvent {
@@ -12,8 +14,12 @@ export class MPEvent {
   private eventData: MPEventData;
   private name?: string;
 
-  static options = (): MPEventType[] => {
-    return Object.values(MPEventType);
+  static eventTypes = (category: MPEventCategory): MPEventType[] => {
+    return eventTypesFor(category);
+  };
+
+  static categories = (): MPEventCategory[] => {
+    return Object.values(MPEventCategory);
   };
 
   static parameterTypeOptions = (): ParameterType[] => {
@@ -59,6 +65,12 @@ export class MPEvent {
     const nuEvent = new MPEvent(this.eventType, clonedData);
     nuEvent.name = this.name;
     return nuEvent;
+  }
+
+  getCategories(): MPEventCategory[] {
+    return MPEvent.categories().filter(category =>
+      MPEvent.eventTypes(category).find(a => a === this.getEventType())
+    );
   }
 
   getEventData(): MPEventData {

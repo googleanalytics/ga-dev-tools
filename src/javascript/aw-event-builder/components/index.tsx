@@ -18,14 +18,18 @@ import EditEvent from "./EditEvent";
 import ReduxManagedInput from "./ReduxManagedInput";
 import AuthKey from "./APISecret";
 import actions from "../actions";
-import { State, MPEvent, MPEventType, ValidationStatus } from "../types";
+import { State, MPEvent, MPEventType } from "../types";
 import { useDispatch, useSelector } from "react-redux";
+import { MPEventCategory } from "../types/events";
 
 const HitBuilder: React.FC = () => {
   // TODO - The event picker should probably let you do a search to filter the dropdown.
   // TODO - make sure to focus on any new params.
   const { event, client_id, user_id } = useSelector<State, State>(a => a);
   const dispatch = useDispatch();
+  const [category, setCategory] = React.useState<MPEventCategory>(
+    event.getCategories()[0]
+  );
 
   const updateEvent = React.useCallback(
     (event: MPEvent) => {
@@ -33,6 +37,17 @@ const HitBuilder: React.FC = () => {
     },
     [dispatch]
   );
+
+  React.useEffect(() => {
+    // If the new category doesn't have the current eventType as an option,
+    // update it to an empty one.
+    const categoryHasEvent =
+      event.getCategories().find(c => c === category) !== undefined;
+    if (!categoryHasEvent) {
+      const firstEventFromNewCategory = MPEvent.eventTypes(category)[0];
+      updateEvent(MPEvent.empty(firstEventFromNewCategory));
+    }
+  }, [category, event]);
 
   const updateClientId = React.useCallback(
     (clientId: string) => {
@@ -92,22 +107,45 @@ const HitBuilder: React.FC = () => {
             />
           </div>
           <div className="HitBuilderParam">
-            <label className="HitBuilderParam-label">Event Type</label>
+            <label className="HitBuilderParam-label">Category</label>
             <select
               className="FormField"
-              value={event.getEventType()}
+              value={category}
               onChange={e => {
-                const newEventType: MPEventType = e.target.value as MPEventType;
-                const newEvent = MPEvent.empty(newEventType);
-                dispatch(actions.setEvent(newEvent));
+                const newCategory: MPEventCategory = e.target
+                  .value as MPEventCategory;
+                setCategory(newCategory);
               }}
             >
-              {MPEvent.options().map(option => (
+              {MPEvent.categories().map(option => (
                 <option value={option} key={option}>
                   {option}
                 </option>
               ))}
             </select>
+            {category !== MPEventCategory.Custom && (
+              <>
+                <label className="HitBuilderParam-label HitBuilderParam-label-not-first">
+                  Name
+                </label>
+                <select
+                  className="FormField"
+                  value={event.getEventType()}
+                  onChange={e => {
+                    const newEventType: MPEventType = e.target
+                      .value as MPEventType;
+                    const newEvent = MPEvent.empty(newEventType);
+                    dispatch(actions.setEvent(newEvent));
+                  }}
+                >
+                  {MPEvent.eventTypes(category).map(option => (
+                    <option value={option} key={option}>
+                      {option}
+                    </option>
+                  ))}
+                </select>
+              </>
+            )}
             {event.getEventType() === MPEventType.CustomEvent && (
               <ReduxManagedInput
                 flex="0 0 4em"
