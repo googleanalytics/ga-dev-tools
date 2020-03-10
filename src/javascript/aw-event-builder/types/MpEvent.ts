@@ -29,7 +29,7 @@ export class MPEvent {
   static eventTypeFromString = (eventType: string): MPEventType | undefined => {
     const assumed: MPEventType = eventType as MPEventType;
     switch (assumed) {
-      case MPEventType.EarnVirtualCurrency:
+      case MPEventType.CustomEvent:
       case MPEventType.JoinGroup:
       case MPEventType.Login:
       case MPEventType.PresentOffer:
@@ -40,8 +40,49 @@ export class MPEvent {
       case MPEventType.Share:
       case MPEventType.SignUp:
       case MPEventType.SpendVirtualCurrency:
+      case MPEventType.EarnVirtualCurrency:
       case MPEventType.TutorialBegin:
       case MPEventType.TutorialComplete:
+      case MPEventType.AddPaymentInfo:
+      case MPEventType.AddToCart:
+      case MPEventType.AddToWishlist:
+      case MPEventType.BeginCheckout:
+      case MPEventType.EcommercePurchase:
+      case MPEventType.GenerateLead:
+      case MPEventType.PurchaseRefund:
+      case MPEventType.ViewItem:
+      case MPEventType.ViewItemList:
+      case MPEventType.ViewSearchResults:
+      case MPEventType.LevelUp:
+      case MPEventType.PostScore:
+      case MPEventType.UnlockAchievement:
+      case MPEventType.AdClick:
+      case MPEventType.AdExposure:
+      case MPEventType.AdImpression:
+      case MPEventType.AdQuery:
+      case MPEventType.AdReward:
+      case MPEventType.AdunitExposure:
+      case MPEventType.AppClearData:
+      case MPEventType.AppException:
+      case MPEventType.AppRemove:
+      case MPEventType.AppStoreRefund:
+      case MPEventType.AppStoreSubscriptionCancel:
+      case MPEventType.AppStoreSubscriptionConvert:
+      case MPEventType.AppStoreSubscriptionRenew:
+      case MPEventType.AppUpdate:
+      case MPEventType.DynamicLinkAppOpen:
+      case MPEventType.DynamicLinkAppUpdate:
+      case MPEventType.DynamicLinkFirstOpen:
+      case MPEventType.FirstOpen:
+      case MPEventType.InAppPurchase:
+      case MPEventType.NotificationDismiss:
+      case MPEventType.NotificationForeground:
+      case MPEventType.NotificationOpen:
+      case MPEventType.NotificationReceive:
+      case MPEventType.OsUpdate:
+      case MPEventType.ScreenView:
+      case MPEventType.SessionStart:
+      case MPEventType.UserEngagement:
         return assumed;
     }
     return undefined;

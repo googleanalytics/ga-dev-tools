@@ -142,7 +142,7 @@ const EditArrayParameter: React.FC<EditItemArrayParameterProps> = ({
     <div className="HitBuilderParam--items">
       {localValues.map((item, idx) => (
         <div key={`item-${idx}`} className="HitBuilderParam--item">
-          <div>
+          <div className="HitBuilderParam--itemIndex">
             <span style={{}}>Item {idx + 1}</span>
           </div>
           <EditItem

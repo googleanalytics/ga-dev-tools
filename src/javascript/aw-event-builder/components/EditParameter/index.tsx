@@ -1,4 +1,5 @@
 import React from "react";
+import classnames from "classnames";
 import Icon from "../../../components/icon";
 import {
   Parameter,
@@ -64,9 +65,14 @@ const EditParameter: React.FC<EditParameterProps> = ({
   updateParameter,
   isNested
 }) => {
-  return (
-    <div className="HitBuilderParam">
-      {custom !== undefined ? (
+  const isItem = parameter.type === ParameterType.RequiredArray;
+  const className = classnames("HitBuilderParam", {
+    "HitBuilderParam--item": isItem
+  });
+
+  const label = React.useMemo(
+    () =>
+      custom !== undefined ? (
         <CustomLabel
           name={parameter.name}
           updateName={custom.updateName}
@@ -74,12 +80,13 @@ const EditParameter: React.FC<EditParameterProps> = ({
         />
       ) : (
         <label className="HitBuilderParam-label">{parameter.name}</label>
-      )}
-      <EditParameterValue
-        parameter={parameter}
-        updateParameter={updateParameter}
-      />
-      {custom !== undefined && (
+      ),
+    [parameter, custom]
+  );
+
+  const parameterDropdown = React.useMemo(
+    () =>
+      custom !== undefined ? (
         <select
           className="FormField ParameterTypeDropdown"
           value={parameter.type}
@@ -99,6 +106,34 @@ const EditParameter: React.FC<EditParameterProps> = ({
               </option>
             ))}
         </select>
+      ) : null,
+    [parameter.type]
+  );
+
+  return (
+    <div className={className}>
+      {isItem ? (
+        <>
+          <div className="HitBuilderParam">
+            {label}
+            {parameterDropdown}
+          </div>
+          <div className="HitBuilderParam--items">
+            <EditParameterValue
+              parameter={parameter}
+              updateParameter={updateParameter}
+            />
+          </div>
+        </>
+      ) : (
+        <>
+          {label}
+          <EditParameterValue
+            parameter={parameter}
+            updateParameter={updateParameter}
+          />
+          {parameterDropdown}
+        </>
       )}
     </div>
   );

@@ -16,7 +16,7 @@ limitations under the License.
 
 
 :root {
-  --HitBuilderParam-gap: 1.25em;
+  --HitBuilderParam-gap: 1.0em;
   --HitBuilderParam-labelWidth: 9em;
   --HitBuilderParam-labelInputWidth: 4em;
 }
@@ -27,6 +27,31 @@ limitations under the License.
   display: inline-flex;
   margin: 0 0 var(--HitBuilderParam-gap);
   width: 100%;
+}
+
+.HitBuilderParam.buttons {
+  width: 100%;
+  max-width: unset;
+  margin: unset;
+}
+
+.HitBuilderParam--item > .HitBuilderParam > .HitBuilderParam-label {
+  min-width: 9em;
+}
+
+.HitBuilderParam--item {
+  flex-direction: column;
+}
+
+.HitBuilderParam--itemIndex {
+  margin-left: 8em;
+  margin-top: 0.5em;
+  margin-bottom: 0.5em;
+}
+
+
+.HitBuilderParam > input.FormField {
+  margin-right: 0.5em;
 }
 
 .HitBuilderParam > .HitBuilderParam {

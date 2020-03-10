@@ -72,7 +72,6 @@ const getInitialEvent = () => {
       const eventData = JSON.parse(decoded) as MPEventData;
       const eventType = MPEvent.eventTypeFromString(eventData.type as string);
       if (eventType !== undefined) {
-        console.log("here", { eventData, eventType });
         let emptyEvent = MPEvent.empty(eventType);
         const parameters = eventData.parameters;
         if (parameters !== undefined) {
