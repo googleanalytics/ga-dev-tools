@@ -2,6 +2,7 @@ import { Parameters } from "./parameters";
 import { AllAppsEvent } from "./all-apps";
 import { RetailEcommerceEvent } from "./retail-ecommerce";
 import { GamesEvent } from "./games";
+import { AutomaticEvent } from "./automatic";
 
 export * from "./parameters";
 export * from "./empty-event";
@@ -12,7 +13,8 @@ export enum MPEventCategory {
   RetailEcommerce = "Retail/Ecommerce",
   Jobs_Edu_LocalDeails_RealEstate = "Jobs, Education, Local Deals, Real Estate",
   Travel = "Travel (Hotel/Air)",
-  Games = "Games"
+  Games = "Games",
+  Automatic = "Automatically collected events"
 }
 
 export enum MPEventType {
@@ -57,7 +59,37 @@ export enum MPEventType {
   // https://support.google.com/firebase/answer/6317494?hl=en&ref_topic=6317484
   LevelUp = "level_up",
   PostScore = "post_score",
-  UnlockAchievement = "unlock_achievement"
+  UnlockAchievement = "unlock_achievement",
+
+  // Automatically collected events
+  // https://support.google.com/firebase/answer/6317485?hl=en&ref_topic=6317484
+  AdClick = "ad_click",
+  AdExposure = "ad_exposure",
+  AdImpression = "ad_impression",
+  AdQuery = "ad_query",
+  AdReward = "ad_reward",
+  AdunitExposure = "adunit_exposure",
+  AppClearData = "app_clear_data",
+  AppException = "app_exception",
+  AppRemove = "app_remove",
+  AppStoreRefund = "app_store_refund",
+  AppStoreSubscriptionCancel = "app_store_subscription_cancel",
+  AppStoreSubscriptionConvert = "app_store_subscription_convert",
+  AppStoreSubscriptionRenew = "app_store_subscription_renew",
+  AppUpdate = "app_update",
+  DynamicLinkAppOpen = "dynamic_link_app_open",
+  DynamicLinkAppUpdate = "dynamic_link_app_update",
+  DynamicLinkFirstOpen = "dynamic_link_first_open",
+  FirstOpen = "first_open",
+  InAppPurchase = "in_app_purchase",
+  NotificationDismiss = "notification_dismiss",
+  NotificationForeground = "notification_foreground",
+  NotificationOpen = "notification_open",
+  NotificationReceive = "notification_receive",
+  OsUpdate = "os_update",
+  ScreenView = "screen_view",
+  SessionStart = "session_start",
+  UserEngagement = "user_engagement"
 }
 
 // Events: Custom
@@ -71,7 +103,8 @@ export type MPEventData =
   | CustomEvent
   | AllAppsEvent
   | RetailEcommerceEvent
-  | GamesEvent;
+  | GamesEvent
+  | AutomaticEvent;
 
 export const eventTypesFor = (category: MPEventCategory): MPEventType[] => {
   switch (category) {
@@ -147,6 +180,35 @@ export const eventTypesFor = (category: MPEventCategory): MPEventType[] => {
         MPEventType.TutorialBegin,
         MPEventType.TutorialComplete,
         MPEventType.UnlockAchievement
+      ];
+    case MPEventCategory.Automatic:
+      return [
+        MPEventType.AdClick,
+        MPEventType.AdExposure,
+        MPEventType.AdImpression,
+        MPEventType.AdQuery,
+        MPEventType.AdReward,
+        MPEventType.AdunitExposure,
+        MPEventType.AppClearData,
+        MPEventType.AppException,
+        MPEventType.AppRemove,
+        MPEventType.AppStoreRefund,
+        MPEventType.AppStoreSubscriptionCancel,
+        MPEventType.AppStoreSubscriptionConvert,
+        MPEventType.AppStoreSubscriptionRenew,
+        MPEventType.AppUpdate,
+        MPEventType.DynamicLinkAppOpen,
+        MPEventType.DynamicLinkAppUpdate,
+        MPEventType.DynamicLinkFirstOpen,
+        MPEventType.FirstOpen,
+        MPEventType.InAppPurchase,
+        MPEventType.NotificationDismiss,
+        MPEventType.NotificationForeground,
+        MPEventType.NotificationOpen,
+        MPEventType.NotificationReceive,
+        MPEventType.OsUpdate,
+        MPEventType.ScreenView,
+        MPEventType.SessionStart
       ];
   }
 };
