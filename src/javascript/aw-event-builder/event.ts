@@ -17,7 +17,7 @@ export const validateHit = async (
   events: MPEvent[]
 ): Promise<ValidationMessage[]> => {
   // TODO - update to /mp once it's supported.
-  const url = `https://www.google-analytics.com/debug/mpfg/collect?mid=${mid}&auth_key=${auth_key}`;
+  const url = `https://www.google-analytics.com/debug/mp/collect?mid=${mid}&auth_key=${auth_key}`;
   const data = {
     ...requiredId,
     events: events.map(event => event.asPayload()),
