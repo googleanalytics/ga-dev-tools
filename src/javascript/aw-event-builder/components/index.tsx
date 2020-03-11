@@ -88,7 +88,7 @@ const HitBuilder: React.FC = () => {
         <div className="HeadingGroup HeadingGroup--h3">
           <AuthKey />
           <ReduxManagedInput
-            labelText="mid"
+            labelText="Measurement ID"
             update={updateMid}
             urlParamName="mid"
           />
