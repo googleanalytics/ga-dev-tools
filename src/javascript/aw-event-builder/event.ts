@@ -16,7 +16,7 @@ export const validateHit = async (
   requiredId: UserOrClientId,
   events: MPEvent[]
 ): Promise<ValidationMessage[]> => {
-  const url = `https://www.google-analytics.com/debug/mpfg/collect?mid=${mid}&auth_key=${auth_key}`;
+  const url = `https://www.google-analytics.com/debug/mp/collect?mid=${mid}&auth_key=${auth_key}`;
   const data = {
     ...requiredId,
     events: events.map(event => event.asPayload()),
@@ -36,7 +36,7 @@ export const sendEvent = async (
   requiredId: UserOrClientId,
   events: MPEvent[]
 ): Promise<Response> => {
-  const url = `https://www.google-analytics.com/mpfg/collect?mid=${mid}&auth_key=${auth_key}`;
+  const url = `https://www.google-analytics.com/mp/collect?mid=${mid}&auth_key=${auth_key}`;
   const data = {
     ...requiredId,
     events: events.map(event => event.asPayload())

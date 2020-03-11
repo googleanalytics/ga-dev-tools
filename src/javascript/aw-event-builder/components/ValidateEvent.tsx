@@ -50,7 +50,7 @@ const EventElement: React.FC = () => {
       <ValidationStatus />
       <div className="HitElement-body">
         <div className="HitElement-requestInfo">
-          POST /mpfg/collect?mid={mid}&auth_key={auth_key} HTTP/1.1
+          POST /mp/collect?mid={mid}&auth_key={auth_key} HTTP/1.1
           <br />
           Host: www.google-analytics.com
         </div>
