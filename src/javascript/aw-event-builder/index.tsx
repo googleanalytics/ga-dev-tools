@@ -18,7 +18,6 @@ import { Provider } from "react-redux";
 
 import EventBuilder from "./components";
 import store from "./store";
-import actions from "./actions";
 
 import site from "../site";
 
@@ -34,21 +33,5 @@ function render() {
   );
 }
 
-/**
- * The callback invoked when the Embed API has authorized the user.
- * Updates the CSS state classes and rerenders in the authorized state.
- */
-function onAuthorizationSuccess() {
-  store.dispatch(actions.handleAuthorizationSuccess);
-  site.setReadyState();
-}
-
-gapi.analytics.ready(function() {
-  if (gapi.analytics.auth.isAuthorized()) {
-    onAuthorizationSuccess();
-  } else {
-    gapi.analytics.auth.once("success", onAuthorizationSuccess);
-  }
-});
-
 render();
+site.setReadyState();

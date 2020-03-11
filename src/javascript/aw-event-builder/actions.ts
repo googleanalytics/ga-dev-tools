@@ -2,14 +2,12 @@ import { ThunkAction } from "redux-thunk";
 import {
   EventBuilderAction,
   ActionType,
-  Property,
   State,
   ValidationMessage,
   MPEvent,
   ValidationStatus
 } from "./types";
 import * as api from "./event";
-import accountSummaries from "javascript-api-utils/lib/account-summaries";
 
 type ThunkResult<T> = ThunkAction<T, State, undefined, EventBuilderAction>;
 
@@ -51,19 +49,6 @@ const validateEvent: ThunkResult<void> = async (dispatch, getState) => {
     dispatch(actions.setValidationStatus(ValidationStatus.Invalid));
     dispatch(actions.setValidationMessages(messages));
   }
-};
-
-const handleAuthorizationSuccess: ThunkResult<void> = async dispatch => {
-  dispatch(actions.setAuthorized());
-
-  const summaries = await accountSummaries.get();
-  const properties = summaries.allProperties().map(property => ({
-    name: property.name,
-    id: property.id,
-    group: summaries.getAccountByPropertyId(property.id).name
-  }));
-
-  dispatch(actions.setUserProperties(properties));
 };
 
 const resetValidation: ThunkResult<void> = dispatch => {
@@ -133,9 +118,6 @@ const actions = {
   setAuthorized(): EventBuilderAction {
     return { type: ActionType.SetAuthorized };
   },
-  setUserProperties(properties: Property[]): EventBuilderAction {
-    return { type: ActionType.SetUserProperties, properties };
-  },
   setValidationMessages(
     validationMessages: ValidationMessage[]
   ): EventBuilderAction {
@@ -150,7 +132,6 @@ const thunkActions = {
   setClientId,
   setUserId,
   setEvent,
-  handleAuthorizationSuccess,
   editParamValue,
   editParamName,
   removeParam,

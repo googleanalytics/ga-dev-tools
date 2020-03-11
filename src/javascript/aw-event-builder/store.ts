@@ -10,7 +10,6 @@ import {
   MPEvent,
   EventBuilderAction,
   ActionType,
-  Property,
   State,
   ValidationMessage,
   MPEventData,
@@ -33,18 +32,6 @@ const isAuthorized: Reducer<boolean, EventBuilderAction> = (
   switch (action.type) {
     case ActionType.SetAuthorized:
       return true;
-    default:
-      return state;
-  }
-};
-
-const properties: Reducer<Property[], EventBuilderAction> = (
-  state = [],
-  action
-) => {
-  switch (action.type) {
-    case ActionType.SetUserProperties:
-      return action.properties;
     default:
       return state;
   }
@@ -161,7 +148,6 @@ const app: Reducer<State, EventBuilderAction> = combineReducers({
   auth_key,
   event,
   isAuthorized,
-  properties,
   validationMessages
 });
 

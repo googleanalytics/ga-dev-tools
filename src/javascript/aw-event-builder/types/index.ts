@@ -50,11 +50,6 @@ export interface ReplaceParams {
   params: Params;
 }
 
-export interface SetUserProperties {
-  type: ActionType.SetUserProperties;
-  properties: Property[];
-}
-
 export interface SetValidationMessages {
   type: ActionType.SetValidationMessages;
   validationMessages: ValidationMessage[];
@@ -99,7 +94,6 @@ export type EventBuilderAction =
   | EditParamName
   | EditParamValue
   | ReplaceParams
-  | SetUserProperties
   | SetValidationMessages;
 
 export enum RequiredParams {
@@ -132,12 +126,6 @@ interface ParamType<T> {
   isOptional?: true;
 }
 
-export interface Property {
-  name: string;
-  id: number;
-  group: string;
-}
-
 export enum ValidationStatus {
   Valid = "VALID",
   Pending = "PENDING",
@@ -159,6 +147,5 @@ export interface State {
   auth_key: string;
   event: MPEvent;
   isAuthorized: boolean;
-  properties: Property[];
   validationMessages: ValidationMessage[];
 }
