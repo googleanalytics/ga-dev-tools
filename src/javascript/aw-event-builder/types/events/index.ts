@@ -166,32 +166,16 @@ export const eventTypesFor = (category: MPEventCategory): MPEventType[] => {
       ];
     case MPEventCategory.Automatic:
       return [
-        MPEventType.AdClick,
         MPEventType.AdExposure,
-        MPEventType.AdImpression,
-        MPEventType.AdQuery,
         MPEventType.AdReward,
-        MPEventType.AdunitExposure,
-        MPEventType.AppClearData,
         MPEventType.AppException,
-        MPEventType.AppRemove,
         MPEventType.AppStoreRefund,
         MPEventType.AppStoreSubscriptionCancel,
         MPEventType.AppStoreSubscriptionConvert,
         MPEventType.AppStoreSubscriptionRenew,
-        MPEventType.AppUpdate,
         MPEventType.DynamicLinkAppOpen,
         MPEventType.DynamicLinkAppUpdate,
-        MPEventType.DynamicLinkFirstOpen,
-        MPEventType.FirstOpen,
-        MPEventType.InAppPurchase,
-        MPEventType.NotificationDismiss,
-        MPEventType.NotificationForeground,
-        MPEventType.NotificationOpen,
-        MPEventType.NotificationReceive,
-        MPEventType.OsUpdate,
-        MPEventType.ScreenView,
-        MPEventType.SessionStart
+        MPEventType.DynamicLinkFirstOpen
       ];
   }
 };

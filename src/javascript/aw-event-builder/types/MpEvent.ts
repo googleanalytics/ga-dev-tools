@@ -56,33 +56,16 @@ export class MPEvent {
       case MPEventType.LevelUp:
       case MPEventType.PostScore:
       case MPEventType.UnlockAchievement:
-      case MPEventType.AdClick:
       case MPEventType.AdExposure:
-      case MPEventType.AdImpression:
-      case MPEventType.AdQuery:
       case MPEventType.AdReward:
-      case MPEventType.AdunitExposure:
-      case MPEventType.AppClearData:
       case MPEventType.AppException:
-      case MPEventType.AppRemove:
       case MPEventType.AppStoreRefund:
       case MPEventType.AppStoreSubscriptionCancel:
       case MPEventType.AppStoreSubscriptionConvert:
       case MPEventType.AppStoreSubscriptionRenew:
-      case MPEventType.AppUpdate:
       case MPEventType.DynamicLinkAppOpen:
       case MPEventType.DynamicLinkAppUpdate:
       case MPEventType.DynamicLinkFirstOpen:
-      case MPEventType.FirstOpen:
-      case MPEventType.InAppPurchase:
-      case MPEventType.NotificationDismiss:
-      case MPEventType.NotificationForeground:
-      case MPEventType.NotificationOpen:
-      case MPEventType.NotificationReceive:
-      case MPEventType.OsUpdate:
-      case MPEventType.ScreenView:
-      case MPEventType.SessionStart:
-      case MPEventType.UserEngagement:
         return assumed;
     }
     return undefined;

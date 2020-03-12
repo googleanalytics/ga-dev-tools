@@ -241,14 +241,6 @@ export const emptyEvent = (eventType: MPEventType): MPEventData => {
         },
         customParameters: {}
       };
-    case MPEventType.AdClick:
-      return {
-        type: eventType,
-        parameters: {
-          ad_event_id: defaultOptionalString("ad_event_id")
-        },
-        customParameters: {}
-      };
     case MPEventType.AdExposure:
       return {
         type: eventType,
@@ -257,22 +249,6 @@ export const emptyEvent = (eventType: MPEventType): MPEventData => {
           firebase_screen_id: defaultOptionalString("firebase_screen_id"),
           firebase_screen_class: defaultOptionalString("firebase_screen_class"),
           exposure_time: defaultOptionalString("exposure_time")
-        },
-        customParameters: {}
-      };
-    case MPEventType.AdImpression:
-      return {
-        type: eventType,
-        parameters: {
-          ad_event_id: defaultOptionalString("ad_event_id")
-        },
-        customParameters: {}
-      };
-    case MPEventType.AdQuery:
-      return {
-        type: eventType,
-        parameters: {
-          ad_event_id: defaultOptionalString("ad_event_id")
         },
         customParameters: {}
       };
@@ -286,19 +262,6 @@ export const emptyEvent = (eventType: MPEventType): MPEventData => {
         },
         customParameters: {}
       };
-    case MPEventType.AdunitExposure:
-      return {
-        type: eventType,
-        parameters: {
-          firebase_screen: defaultOptionalString("firebase_screen"),
-          firebase_screen_id: defaultOptionalString("firebase_screen_id"),
-          firebase_screen_class: defaultOptionalString("firebase_screen_class"),
-          exposure_time: defaultOptionalString("exposure_time")
-        },
-        customParameters: {}
-      };
-    case MPEventType.AppClearData:
-      return { type: eventType, parameters: {}, customParameters: {} };
     case MPEventType.AppException:
       return {
         type: eventType,
@@ -308,8 +271,6 @@ export const emptyEvent = (eventType: MPEventType): MPEventData => {
         },
         customParameters: {}
       };
-    case MPEventType.AppRemove:
-      return { type: eventType, parameters: {}, customParameters: {} };
     case MPEventType.AppStoreRefund:
       return {
         type: eventType,
@@ -358,14 +319,6 @@ export const emptyEvent = (eventType: MPEventType): MPEventData => {
         },
         customParameters: {}
       };
-    case MPEventType.AppUpdate:
-      return {
-        type: eventType,
-        parameters: {
-          previous_app_version: defaultOptionalString("previous_app_version")
-        },
-        customParameters: {}
-      };
     case MPEventType.DynamicLinkAppOpen:
       return {
         type: eventType,
@@ -399,134 +352,6 @@ export const emptyEvent = (eventType: MPEventType): MPEventData => {
           campaign: defaultOptionalString("campaign"),
           link_id: defaultOptionalString("link_id"),
           accept_time: defaultOptionalString("accept_time")
-        },
-        customParameters: {}
-      };
-    case MPEventType.FirstOpen:
-      return {
-        type: eventType,
-        parameters: {
-          previoius_gmp_app_id: defaultOptionalString("previoius_gmp_app_id"),
-          updated_with_analytics: defaultOptionalString(
-            "updated_with_analytics"
-          ),
-          previous_first_open_count: defaultOptionalString(
-            "previous_first_open_count"
-          ),
-          system_app: defaultOptionalString("system_app"),
-          system_app_update: defaultOptionalString("system_app_update"),
-          deferred_analytics_collection: defaultOptionalString(
-            "deferred_analytics_collection"
-          ),
-          reset_analytics_cause: defaultOptionalString("reset_analytics_cause")
-        },
-        customParameters: {}
-      };
-    case MPEventType.InAppPurchase:
-      return {
-        type: eventType,
-        parameters: {
-          product_id: defaultOptionalString("product_id"),
-          price: defaultOptionalString("price"),
-          value: defaultOptionalString("value"),
-          currency: defaultOptionalString("currency"),
-          quantity: defaultOptionalString("quantity"),
-          subscription: defaultOptionalString("subscription"),
-          free_trial: defaultOptionalString("free_trial"),
-          introductory_price: defaultOptionalString("introductory_price")
-        },
-        customParameters: {}
-      };
-    case MPEventType.NotificationDismiss:
-      return {
-        type: eventType,
-        parameters: {
-          message_name: defaultOptionalString("message_name"),
-          message_time: defaultOptionalString("message_time"),
-          message_device_time: defaultOptionalString("message_device_time"),
-          message_id: defaultOptionalString("message_id"),
-          topic: defaultOptionalString("topic"),
-          label: defaultOptionalString("label"),
-          message_channel: defaultOptionalString("message_channel")
-        },
-        customParameters: {}
-      };
-    case MPEventType.NotificationForeground:
-      return {
-        type: eventType,
-        parameters: {
-          message_name: defaultOptionalString("message_name"),
-          message_time: defaultOptionalString("message_time"),
-          message_device_time: defaultOptionalString("message_device_time"),
-          message_id: defaultOptionalString("message_id"),
-          topic: defaultOptionalString("topic"),
-          label: defaultOptionalString("label"),
-          message_channel: defaultOptionalString("message_channel"),
-          message_type: defaultOptionalString("message_type")
-        },
-        customParameters: {}
-      };
-    case MPEventType.NotificationOpen:
-      return {
-        type: eventType,
-        parameters: {
-          message_name: defaultOptionalString("message_name"),
-          message_time: defaultOptionalString("message_time"),
-          message_device_time: defaultOptionalString("message_device_time"),
-          message_id: defaultOptionalString("message_id"),
-          topic: defaultOptionalString("topic"),
-          label: defaultOptionalString("label"),
-          message_channel: defaultOptionalString("message_channel")
-        },
-        customParameters: {}
-      };
-    case MPEventType.NotificationReceive:
-      return {
-        type: eventType,
-        parameters: {
-          message_name: defaultOptionalString("message_name"),
-          message_time: defaultOptionalString("message_time"),
-          message_device_time: defaultOptionalString("message_device_time"),
-          message_id: defaultOptionalString("message_id"),
-          topic: defaultOptionalString("topic"),
-          label: defaultOptionalString("label"),
-          message_channel: defaultOptionalString("message_channel"),
-          message_type: defaultOptionalString("message_type")
-        },
-        customParameters: {}
-      };
-    case MPEventType.OsUpdate:
-      return {
-        type: eventType,
-        parameters: {
-          previous_os_version: defaultOptionalString("previous_os_version")
-        },
-        customParameters: {}
-      };
-    case MPEventType.ScreenView:
-      return {
-        type: eventType,
-        parameters: {
-          firebase_screen: defaultOptionalString("firebase_screen"),
-          firebase_screen_class: defaultOptionalString("firebase_screen_class"),
-          firebase_screen_id: defaultOptionalString("firebase_screen_id"),
-          firebase_previous_screen: defaultOptionalString(
-            "firebase_previous_screen"
-          ),
-          firebase_previous_class: defaultOptionalString(
-            "firebase_previous_class"
-          ),
-          firebase_previous_id: defaultOptionalString("firebase_previous_id")
-        },
-        customParameters: {}
-      };
-    case MPEventType.SessionStart:
-      return { type: eventType, parameters: {}, customParameters: {} };
-    case MPEventType.UserEngagement:
-      return {
-        type: eventType,
-        parameters: {
-          engagement_time_msec: defaultOptionalString("engagement_time_msec")
         },
         customParameters: {}
       };
