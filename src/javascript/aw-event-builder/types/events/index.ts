@@ -63,33 +63,16 @@ export enum MPEventType {
 
   // Automatically collected events
   // https://support.google.com/firebase/answer/6317485?hl=en&ref_topic=6317484
-  AdClick = "ad_click",
   AdExposure = "ad_exposure",
-  AdImpression = "ad_impression",
-  AdQuery = "ad_query",
   AdReward = "ad_reward",
-  AdunitExposure = "adunit_exposure",
-  AppClearData = "app_clear_data",
   AppException = "app_exception",
-  AppRemove = "app_remove",
   AppStoreRefund = "app_store_refund",
   AppStoreSubscriptionCancel = "app_store_subscription_cancel",
   AppStoreSubscriptionConvert = "app_store_subscription_convert",
   AppStoreSubscriptionRenew = "app_store_subscription_renew",
-  AppUpdate = "app_update",
   DynamicLinkAppOpen = "dynamic_link_app_open",
   DynamicLinkAppUpdate = "dynamic_link_app_update",
-  DynamicLinkFirstOpen = "dynamic_link_first_open",
-  FirstOpen = "first_open",
-  InAppPurchase = "in_app_purchase",
-  NotificationDismiss = "notification_dismiss",
-  NotificationForeground = "notification_foreground",
-  NotificationOpen = "notification_open",
-  NotificationReceive = "notification_receive",
-  OsUpdate = "os_update",
-  ScreenView = "screen_view",
-  SessionStart = "session_start",
-  UserEngagement = "user_engagement"
+  DynamicLinkFirstOpen = "dynamic_link_first_open"
 }
 
 // Events: Custom
