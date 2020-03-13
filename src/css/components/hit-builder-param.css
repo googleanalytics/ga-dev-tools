@@ -72,7 +72,7 @@ limitations under the License.
 }
 
 .indent-6 > .HitBuilderParam > .HitBuilderParam-label {
-  flex: 0 0 6;
+  margin-left: 6em;
 }
 
 .HitBuilderParam--required .HitBuilderParam-label::before {
