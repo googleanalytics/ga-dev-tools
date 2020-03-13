@@ -6,354 +6,314 @@ export const emptyEvent = (eventType: MPEventType): MPEventData => {
     case MPEventType.CustomEvent:
       return {
         type: eventType,
-        parameters: {},
-        customParameters: {}
+        parameters: []
       };
     case MPEventType.EarnVirtualCurrency:
       return {
         type: eventType,
-        parameters: {
-          virtual_currency_name: defaultOptionalString("virtual_currency_name"),
-          value: defaultOptionalString("value")
-        },
-        customParameters: {}
+        parameters: [
+          defaultOptionalString("virtual_currency_name"),
+          defaultOptionalString("value")
+        ]
       };
     case MPEventType.JoinGroup:
       return {
         type: eventType,
-        parameters: { group_id: defaultOptionalString("group_id") },
-        customParameters: {}
+        parameters: [defaultOptionalString("group_id")]
       };
     case MPEventType.Login:
       return {
         type: eventType,
-        parameters: { method: defaultOptionalString("method") },
-        customParameters: {}
+        parameters: [defaultOptionalString("method")]
       };
     case MPEventType.PresentOffer:
       return {
         type: eventType,
-        parameters: {
-          item_id: defaultOptionalString("item_id"),
-          item_name: defaultOptionalString("item_name"),
-          item_category: defaultOptionalString("item_category")
-        },
-        customParameters: {}
+        parameters: [
+          defaultOptionalString("item_id"),
+          defaultOptionalString("item_name"),
+          defaultOptionalString("item_category")
+        ]
       };
     case MPEventType.Purchase:
       return {
         type: eventType,
-        parameters: {
-          transactions_id: defaultOptionalString("transactions_id"),
-          value: defaultOptionalString("value"),
-          currency: defaultOptionalString("currency"),
-          tax: defaultOptionalString("tax"),
-          shipping: defaultOptionalString("shipping"),
-          items: defaultItemArray("items"),
-          coupon: defaultOptionalString("coupon"),
-          affiliation: defaultOptionalString("appiliation")
-        },
-        customParameters: {}
+        parameters: [
+          defaultOptionalString("transactions_id"),
+          defaultOptionalString("value"),
+          defaultOptionalString("currency"),
+          defaultOptionalString("tax"),
+          defaultOptionalString("shipping"),
+          defaultItemArray(),
+          defaultOptionalString("coupon"),
+          defaultOptionalString("appiliation")
+        ]
       };
     case MPEventType.Refund:
       return {
         type: eventType,
-        parameters: {
-          transactions_id: defaultOptionalString("transactions_id"),
-          value: defaultOptionalString("value"),
-          currency: defaultOptionalString("currency"),
-          tax: defaultOptionalString("tax"),
-          shipping: defaultOptionalString("shipping"),
-          items: defaultItemArray("items")
-        },
-        customParameters: {}
+        parameters: [
+          defaultOptionalString("transactions_id"),
+          defaultOptionalString("value"),
+          defaultOptionalString("currency"),
+          defaultOptionalString("tax"),
+          defaultOptionalString("shipping"),
+          defaultItemArray()
+        ]
       };
     case MPEventType.Search:
       return {
         type: eventType,
-        parameters: { search_term: defaultOptionalString("search_term") },
-        customParameters: {}
+        parameters: [defaultOptionalString("search_term")]
       };
     case MPEventType.SelectContent:
       return {
         type: eventType,
-        parameters: {
-          content_type: defaultOptionalString("content_type"),
-          item_id: defaultOptionalString("item_id")
-        },
-        customParameters: {}
+        parameters: [
+          defaultOptionalString("content_type"),
+          defaultOptionalString("item_id")
+        ]
       };
     case MPEventType.Share:
       return {
         type: eventType,
-        parameters: {
-          content_type: defaultOptionalString("content_type"),
-          item_id: defaultOptionalString("item_id")
-        },
-        customParameters: {}
+        parameters: [
+          defaultOptionalString("content_type"),
+          defaultOptionalString("item_id")
+        ]
       };
     case MPEventType.SignUp:
       return {
         type: eventType,
-        parameters: { method: defaultOptionalString("method") },
-        customParameters: {}
+        parameters: [defaultOptionalString("method")]
       };
     case MPEventType.SpendVirtualCurrency:
       return {
         type: eventType,
-        parameters: {
-          virtual_currency_name: defaultOptionalString("virtual_currency_name"),
-          value: defaultOptionalString("value"),
-          item_name: defaultOptionalString("item_name")
-        },
-        customParameters: {}
+        parameters: [
+          defaultOptionalString("virtual_currency_name"),
+          defaultOptionalString("value"),
+          defaultOptionalString("item_name")
+        ]
       };
     case MPEventType.TutorialBegin:
-      return { type: eventType, parameters: {}, customParameters: {} };
+      return { type: eventType, parameters: [] };
     case MPEventType.TutorialComplete:
-      return { type: eventType, parameters: {}, customParameters: {} };
+      return { type: eventType, parameters: [] };
 
     // Retail Ecommerce
     case MPEventType.AddPaymentInfo:
-      return { type: eventType, parameters: {}, customParameters: {} };
+      return { type: eventType, parameters: [] };
     case MPEventType.AddToCart:
       return {
         type: eventType,
-        parameters: {
-          quantity: defaultOptionalString("quantity"),
-          item_category: defaultOptionalString("item_category"),
-          item_name: defaultOptionalString("item_name"),
-          item_id: defaultOptionalString("item_id"),
-          item_location_id: defaultOptionalString("item_location_id"),
-          value: defaultOptionalString("value"),
-          price: defaultOptionalString("price"),
-          currency: defaultOptionalString("currency")
-        },
-        customParameters: {}
+        parameters: [
+          defaultOptionalString("quantity"),
+          defaultOptionalString("item_category"),
+          defaultOptionalString("item_name"),
+          defaultOptionalString("item_id"),
+          defaultOptionalString("item_location_id"),
+          defaultOptionalString("value"),
+          defaultOptionalString("price"),
+          defaultOptionalString("currency")
+        ]
       };
     case MPEventType.AddToWishlist:
       return {
         type: eventType,
-        parameters: {
-          quantity: defaultOptionalString("quantity"),
-          item_category: defaultOptionalString("item_category"),
-          item_name: defaultOptionalString("item_name"),
-          item_id: defaultOptionalString("item_id"),
-          item_location_id: defaultOptionalString("item_location_id"),
-          value: defaultOptionalString("value"),
-          price: defaultOptionalString("price"),
-          currency: defaultOptionalString("currency")
-        },
-        customParameters: {}
+        parameters: [
+          defaultOptionalString("quantity"),
+          defaultOptionalString("item_category"),
+          defaultOptionalString("item_name"),
+          defaultOptionalString("item_id"),
+          defaultOptionalString("item_location_id"),
+          defaultOptionalString("value"),
+          defaultOptionalString("price"),
+          defaultOptionalString("currency")
+        ]
       };
     case MPEventType.BeginCheckout:
       return {
         type: eventType,
-        parameters: {
-          coupon: defaultOptionalString("coupon"),
-          currency: defaultOptionalString("currency"),
-          value: defaultOptionalString("value")
-        },
-        customParameters: {}
+        parameters: [
+          defaultOptionalString("coupon"),
+          defaultOptionalString("currency"),
+          defaultOptionalString("value")
+        ]
       };
     case MPEventType.EcommercePurchase:
       return {
         type: eventType,
-        parameters: {
-          coupon: defaultOptionalString("coupon"),
-          currency: defaultOptionalString("currency"),
-          value: defaultOptionalString("value"),
-          tax: defaultOptionalString("tax"),
-          shipping: defaultOptionalString("shipping"),
-          transation_id: defaultOptionalString("transation_id")
-        },
-        customParameters: {}
+        parameters: [
+          defaultOptionalString("coupon"),
+          defaultOptionalString("currency"),
+          defaultOptionalString("value"),
+          defaultOptionalString("tax"),
+          defaultOptionalString("shipping"),
+          defaultOptionalString("transation_id")
+        ]
       };
     case MPEventType.GenerateLead:
       return {
         type: eventType,
-        parameters: {
-          value: defaultOptionalString("value"),
-          currency: defaultOptionalString("currency")
-        },
-        customParameters: {}
+        parameters: [
+          defaultOptionalString("value"),
+          defaultOptionalString("currency")
+        ]
       };
     case MPEventType.PurchaseRefund:
       return {
         type: eventType,
-        parameters: {
-          quantity: defaultOptionalString("quantity"),
-          value: defaultOptionalString("value"),
-          currency: defaultOptionalString("currency"),
-          transaction_id: defaultOptionalString("transaction_id")
-        },
-        customParameters: {}
+        parameters: [
+          defaultOptionalString("quantity"),
+          defaultOptionalString("value"),
+          defaultOptionalString("currency"),
+          defaultOptionalString("transaction_id")
+        ]
       };
     case MPEventType.ViewItem:
       return {
         type: eventType,
-        parameters: {
-          item_id: defaultOptionalString("item_id"),
-          item_location_id: defaultOptionalString("item_location_id")
-        },
-        customParameters: {}
+        parameters: [
+          defaultOptionalString("item_id"),
+          defaultOptionalString("item_location_id")
+        ]
       };
     case MPEventType.ViewItemList:
       return {
         type: eventType,
-        parameters: {
-          item_category: defaultOptionalString("item_category")
-        },
-        customParameters: {}
+        parameters: [defaultOptionalString("item_category")]
       };
     case MPEventType.ViewSearchResults:
       return {
         type: eventType,
-        parameters: {
-          search_term: defaultOptionalString("search_term")
-        },
-        customParameters: {}
+        parameters: [defaultOptionalString("search_term")]
       };
     case MPEventType.LevelUp:
       return {
         type: eventType,
-        parameters: {
-          character: defaultOptionalString("character"),
-          level: defaultOptionalString("level")
-        },
-        customParameters: {}
+        parameters: [
+          defaultOptionalString("character"),
+          defaultOptionalString("level")
+        ]
       };
     case MPEventType.PostScore:
       return {
         type: eventType,
-        parameters: {
-          level: defaultOptionalString("level"),
-          character: defaultOptionalString("character"),
-          score: defaultOptionalString("score")
-        },
-        customParameters: {}
+        parameters: [
+          defaultOptionalString("level"),
+          defaultOptionalString("character"),
+          defaultOptionalString("score")
+        ]
       };
     case MPEventType.UnlockAchievement:
       return {
         type: eventType,
-        parameters: {
-          achievement_id: defaultOptionalString("achievement_id")
-        },
-        customParameters: {}
+        parameters: [defaultOptionalString("achievement_id")]
       };
     case MPEventType.AdExposure:
       return {
         type: eventType,
-        parameters: {
-          firebase_screen: defaultOptionalString("firebase_screen"),
-          firebase_screen_id: defaultOptionalString("firebase_screen_id"),
-          firebase_screen_class: defaultOptionalString("firebase_screen_class"),
-          exposure_time: defaultOptionalString("exposure_time")
-        },
-        customParameters: {}
+        parameters: [
+          defaultOptionalString("firebase_screen"),
+          defaultOptionalString("firebase_screen_id"),
+          defaultOptionalString("firebase_screen_class"),
+          defaultOptionalString("exposure_time")
+        ]
       };
     case MPEventType.AdReward:
       return {
         type: eventType,
-        parameters: {
-          ad_unit_id: defaultOptionalString("ad_unit_id"),
-          reward_type: defaultOptionalString("reward_type"),
-          reward_value: defaultOptionalString("reward_value")
-        },
-        customParameters: {}
+        parameters: [
+          defaultOptionalString("ad_unit_id"),
+          defaultOptionalString("reward_type"),
+          defaultOptionalString("reward_value")
+        ]
       };
     case MPEventType.AppException:
       return {
         type: eventType,
-        parameters: {
-          fatal: defaultOptionalString("fatal"),
-          timestamp: defaultOptionalString("timestamp")
-        },
-        customParameters: {}
+        parameters: [
+          defaultOptionalString("fatal"),
+          defaultOptionalString("timestamp")
+        ]
       };
     case MPEventType.AppStoreRefund:
       return {
         type: eventType,
-        parameters: {
-          product_id: defaultOptionalString("product_id"),
-          value: defaultOptionalString("value"),
-          currency: defaultOptionalString("currency"),
-          quantity: defaultOptionalString("quantity")
-        },
-        customParameters: {}
+        parameters: [
+          defaultOptionalString("product_id"),
+          defaultOptionalString("value"),
+          defaultOptionalString("currency"),
+          defaultOptionalString("quantity")
+        ]
       };
     case MPEventType.AppStoreSubscriptionCancel:
       return {
         type: eventType,
-        parameters: {
-          product_id: defaultOptionalString("product_id"),
-          price: defaultOptionalString("price"),
-          value: defaultOptionalString("value"),
-          currency: defaultOptionalString("currency"),
-          cancellation_reason: defaultOptionalString("cancellation_reason")
-        },
-        customParameters: {}
+        parameters: [
+          defaultOptionalString("product_id"),
+          defaultOptionalString("price"),
+          defaultOptionalString("value"),
+          defaultOptionalString("currency"),
+          defaultOptionalString("cancellation_reason")
+        ]
       };
     case MPEventType.AppStoreSubscriptionConvert:
       return {
         type: eventType,
-        parameters: {
-          product_id: defaultOptionalString("product_id"),
-          price: defaultOptionalString("price"),
-          value: defaultOptionalString("value"),
-          currency: defaultOptionalString("currency"),
-          quantity: defaultOptionalString("quantity")
-        },
-        customParameters: {}
+        parameters: [
+          defaultOptionalString("product_id"),
+          defaultOptionalString("price"),
+          defaultOptionalString("value"),
+          defaultOptionalString("currency"),
+          defaultOptionalString("quantity")
+        ]
       };
     case MPEventType.AppStoreSubscriptionRenew:
       return {
         type: eventType,
-        parameters: {
-          product_id: defaultOptionalString("product_id"),
-          price: defaultOptionalString("price"),
-          value: defaultOptionalString("value"),
-          currency: defaultOptionalString("currency"),
-          quantity: defaultOptionalString("quantity"),
-          renewal_count: defaultOptionalString("renewal_count")
-        },
-        customParameters: {}
+        parameters: [
+          defaultOptionalString("product_id"),
+          defaultOptionalString("price"),
+          defaultOptionalString("value"),
+          defaultOptionalString("currency"),
+          defaultOptionalString("quantity"),
+          defaultOptionalString("renewal_count")
+        ]
       };
     case MPEventType.DynamicLinkAppOpen:
       return {
         type: eventType,
-        parameters: {
-          source: defaultOptionalString("source"),
-          medium: defaultOptionalString("medium"),
-          campaign: defaultOptionalString("campaign"),
-          link_id: defaultOptionalString("link_id"),
-          accept_time: defaultOptionalString("accept_time")
-        },
-        customParameters: {}
+        parameters: [
+          defaultOptionalString("source"),
+          defaultOptionalString("medium"),
+          defaultOptionalString("campaign"),
+          defaultOptionalString("link_id"),
+          defaultOptionalString("accept_time")
+        ]
       };
     case MPEventType.DynamicLinkAppUpdate:
       return {
         type: eventType,
-        parameters: {
-          source: defaultOptionalString("source"),
-          medium: defaultOptionalString("medium"),
-          campaign: defaultOptionalString("campaign"),
-          link_id: defaultOptionalString("link_id"),
-          accept_time: defaultOptionalString("accept_time")
-        },
-        customParameters: {}
+        parameters: [
+          defaultOptionalString("source"),
+          defaultOptionalString("medium"),
+          defaultOptionalString("campaign"),
+          defaultOptionalString("link_id"),
+          defaultOptionalString("accept_time")
+        ]
       };
     case MPEventType.DynamicLinkFirstOpen:
       return {
         type: eventType,
-        parameters: {
-          source: defaultOptionalString("source"),
-          medium: defaultOptionalString("medium"),
-          campaign: defaultOptionalString("campaign"),
-          link_id: defaultOptionalString("link_id"),
-          accept_time: defaultOptionalString("accept_time")
-        },
-        customParameters: {}
+        parameters: [
+          defaultOptionalString("source"),
+          defaultOptionalString("medium"),
+          defaultOptionalString("campaign"),
+          defaultOptionalString("link_id"),
+          defaultOptionalString("accept_time")
+        ]
       };
   }
 };
