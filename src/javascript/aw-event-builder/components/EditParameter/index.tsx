@@ -22,11 +22,18 @@ const CustomLabel: React.FC<CustomParamLabelProps> = ({
   remove
 }) => {
   const [localName, setLocalName] = React.useState(name);
+  // TODO - This shouldn't be necessary, but something funky is going on effect
+  // wise. This will probably be easy to fix once I have the hooks linter turned
+  // on.
+  const [refresh, setForceRefresh] = React.useState(0);
+
+  React.useEffect(() => {
+    setLocalName(name);
+  }, [name, refresh]);
 
   const updateCustomParameterName = React.useCallback(() => {
-    if (name !== localName) {
-      updateName(name, localName);
-    }
+    updateName(name, localName);
+    setForceRefresh(a => a + 1);
   }, [localName, name, updateName]);
 
   return (
@@ -69,49 +76,38 @@ const EditParameter: React.FC<EditParameterProps> = ({
     "HitBuilderParam--item": isItem
   });
 
-  const label = React.useMemo(
-    () => (
-      <CustomLabel
-        name={parameter.name}
-        updateName={updateName}
-        remove={remove}
-      />
-    ),
-    [parameter, updateName, remove]
-  );
-
-  const parameterDropdown = React.useMemo(
-    () => (
-      <select
-        className="FormField ParameterTypeDropdown"
-        value={parameter.type}
-        onChange={e => {
-          const newParameterType: ParameterType = e.target
-            .value as ParameterType;
-          updateParameter(
-            defaultParameterFor(newParameterType, parameter.name)
-          );
-        }}
-      >
-        {MPEvent.parameterTypeOptions()
-          .filter(a => (isNested ? a !== ParameterType.RequiredArray : true))
-          .map(option => (
-            <option value={option} key={option}>
-              {option}
-            </option>
-          ))}
-      </select>
-    ),
-    [parameter.type]
-  );
-
   return (
     <div className={className}>
       {isItem ? (
         <>
           <div className="HitBuilderParam">
-            {label}
-            {parameterDropdown}
+            <CustomLabel
+              name={parameter.name}
+              updateName={updateName}
+              remove={remove}
+            />
+
+            <select
+              className="FormField ParameterTypeDropdown"
+              value={parameter.type}
+              onChange={e => {
+                const newParameterType: ParameterType = e.target
+                  .value as ParameterType;
+                updateParameter(
+                  defaultParameterFor(newParameterType, parameter.name)
+                );
+              }}
+            >
+              {MPEvent.parameterTypeOptions()
+                .filter(a =>
+                  isNested ? a !== ParameterType.RequiredArray : true
+                )
+                .map(option => (
+                  <option value={option} key={option}>
+                    {option}
+                  </option>
+                ))}
+            </select>
           </div>
           <div className="HitBuilderParam--items">
             <EditParameterValue
@@ -122,12 +118,36 @@ const EditParameter: React.FC<EditParameterProps> = ({
         </>
       ) : (
         <>
-          {label}
+          <CustomLabel
+            name={parameter.name}
+            updateName={updateName}
+            remove={remove}
+          />
           <EditParameterValue
             parameter={parameter}
             updateParameter={updateParameter}
           />
-          {parameterDropdown}
+          <select
+            className="FormField ParameterTypeDropdown"
+            value={parameter.type}
+            onChange={e => {
+              const newParameterType: ParameterType = e.target
+                .value as ParameterType;
+              updateParameter(
+                defaultParameterFor(newParameterType, parameter.name)
+              );
+            }}
+          >
+            {MPEvent.parameterTypeOptions()
+              .filter(a =>
+                isNested ? a !== ParameterType.RequiredArray : true
+              )
+              .map(option => (
+                <option value={option} key={option}>
+                  {option}
+                </option>
+              ))}
+          </select>
         </>
       )}
     </div>

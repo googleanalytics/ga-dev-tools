@@ -172,9 +172,19 @@ export class MPEvent {
     return nuEvent;
   }
 
+  private static hasDuplicateNames = (parameters: Parameters): boolean => {
+    const nameSet = new Set(parameters.map(p => p.name));
+    return nameSet.size !== parameters.length;
+  };
+
+  // This method might be making other stuff too difficult, but it works for
+  // now...
   updateParameters(update: (old: Parameters) => Parameters): MPEvent {
     const nuEvent = this.clone();
     const nuParameters = update(nuEvent.eventData.parameters);
+    if (MPEvent.hasDuplicateNames(nuParameters)) {
+      return nuEvent;
+    }
     nuEvent.eventData.parameters = nuParameters;
     return nuEvent;
   }
@@ -185,6 +195,12 @@ export class MPEvent {
 
   // TODO - remove parameterName argument.
   addParameter(parameterName: string, parameter: Parameter): MPEvent {
+    const alreadyHasParameter =
+      this.eventData.parameters.find(p => p.name === parameter.name) !==
+      undefined;
+    if (alreadyHasParameter) {
+      return this;
+    }
     const nuEvent = this.clone();
     nuEvent.eventData.parameters.push(parameter);
     return nuEvent;
@@ -201,11 +217,13 @@ export class MPEvent {
 
   updateParameterName(parameterName: string, newName: string): MPEvent {
     const nuEvent = this.clone();
-    // TODO - Decide if I want to do special handling when name is `items`
     const nuParameters: Parameters = (nuEvent.eventData
       .parameters as Parameters).map((a: Parameter) =>
       a.name === parameterName ? { ...a, name: newName } : a
-    ) as Parameters;
+    );
+    if (MPEvent.hasDuplicateNames(nuParameters)) {
+      return this;
+    }
     nuEvent.eventData.parameters = nuParameters;
     return nuEvent;
   }

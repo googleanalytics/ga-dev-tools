@@ -21,7 +21,9 @@ const Parameters: React.FC<ParameterListProps> = ({
 }) => {
   const updateParameter = React.useCallback(
     (parameter: Parameter) => (nu: Parameter) => {
-      updateParameters(old => ({ ...old, [parameter.name]: nu }));
+      updateParameters(old =>
+        old.map(p => (p.name === parameter.name ? nu : p))
+      );
     },
     [updateParameters]
   );
