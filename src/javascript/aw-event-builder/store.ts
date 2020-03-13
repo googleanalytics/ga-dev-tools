@@ -1,3 +1,4 @@
+import { gaAll } from "../analytics";
 import {
   createStore,
   applyMiddleware,
@@ -65,6 +66,11 @@ const getInitialEvent = () => {
         if (parameters !== undefined) {
           emptyEvent = emptyEvent.updateParameters(() => parameters);
         }
+        gaAll("send", "event", {
+          eventCategory: "App+Web Event Builder",
+          eventAction: "hydrate",
+          eventLabel: "event-from-url"
+        });
         return emptyEvent;
       }
     } catch (e) {

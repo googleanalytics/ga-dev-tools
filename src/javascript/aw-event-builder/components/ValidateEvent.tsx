@@ -169,7 +169,7 @@ const EventActions: React.FC = () => {
     dispatch(actions.sendEvent);
     setEventSent(true);
     gaAll("send", "event", {
-      eventCategory: "Event Builder",
+      eventCategory: "App+Web Event Builder",
       eventAction: "send",
       eventLabel: "payload"
     });
@@ -213,10 +213,19 @@ const EventActions: React.FC = () => {
       <div className="HitElement-action">
         <div className="ButtonSet">
           {sendEventButton}
-          <CopyButton textToCopy={JSON.stringify(payload)} type="content-paste">
+          <CopyButton
+            textToCopy={JSON.stringify(payload)}
+            type="content-paste"
+            appPlusWeb
+          >
             Copy event payload
           </CopyButton>
-          <CopyButton type="link" textToCopy={sharableLinkToEvent}>
+          <CopyButton
+            type="link"
+            textToCopy={sharableLinkToEvent}
+            appPlusWeb
+            link
+          >
             Copy sharable link to event
           </CopyButton>
         </div>
