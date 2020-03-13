@@ -157,7 +157,7 @@ const EventActions: React.FC = () => {
 
   React.useEffect(() => {
     setPayload(payloadFor(event, client_id, user_id));
-  }, [event]);
+  }, [event, client_id, user_id]);
   const [eventSent, setEventSent] = React.useState<boolean>(false);
   React.useEffect(() => {
     setEventSent(false);
@@ -267,8 +267,9 @@ const ValidateEventButton: React.FC<ValidateEventButtonProps> = ({
 
 const payloadFor = (event: MPEvent, client_id: string, user_id: string): {} => {
   return {
-    client_id,
-    user_id,
+    // Intentially taking advantage of the fact that '' is falsy.
+    client_id: client_id || undefined,
+    user_id: user_id || undefined,
     events: [event.asPayload()]
   };
 };
