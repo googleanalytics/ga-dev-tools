@@ -49,6 +49,7 @@ const CustomLabel: React.FC<CustomParamLabelProps> = ({
       <input
         className="FormField HitBuilderParam-inputLabel"
         value={localName}
+        title={localName}
         onChange={e => setLocalName(e.target.value)}
         onBlur={updateCustomParameterName}
       />
