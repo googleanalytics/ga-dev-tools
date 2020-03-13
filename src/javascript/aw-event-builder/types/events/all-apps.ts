@@ -1,4 +1,4 @@
-import { OptionalString } from "./parameters";
+import { OptionalString, ItemArray } from "./parameters";
 import { MPEventType, EventData } from "./index";
 
 export type AllAppsEvent =
@@ -43,7 +43,7 @@ type PurchaseEvent = EventData<
   | OptionalString<"currency">
   | OptionalString<"tax">
   | OptionalString<"shipping">
-  | OptionalString<"items">
+  | ItemArray
   | OptionalString<"coupon">
   | OptionalString<"affiliation">
 >;
@@ -55,7 +55,7 @@ type RefundEvent = EventData<
   | OptionalString<"currency">
   | OptionalString<"tax">
   | OptionalString<"shipping">
-  | OptionalString<"items">
+  | ItemArray
 >;
 
 type SearchEvent = EventData<MPEventType.Search, OptionalString<"search_term">>;
