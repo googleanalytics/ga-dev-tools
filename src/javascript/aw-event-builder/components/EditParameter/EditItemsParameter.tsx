@@ -1,7 +1,13 @@
 import React from "react";
 import IconButton from "../../../components/icon-button";
 import ParameterList from "../ParameterList";
-import { ItemArray, Item, defaultOptionalString, Parameter } from "../../types";
+import {
+  ItemArray,
+  Item,
+  defaultOptionalString,
+  Parameter,
+  MPEvent
+} from "../../types";
 
 interface EditItemProps {
   item: Item;
@@ -24,10 +30,16 @@ const EditItem: React.FC<EditItemProps> = ({
     [updateItem]
   );
   const addParameter = React.useCallback(() => {
-    updateItem(old => ({
-      ...old,
-      parameters: old.parameters.concat([defaultOptionalString("")])
-    }));
+    updateItem(old => {
+      const nu = old.parameters.concat([defaultOptionalString("")]);
+      if (MPEvent.hasDuplicateNames(nu)) {
+        return old;
+      }
+      return {
+        ...old,
+        parameters: nu
+      };
+    });
   }, [updateItem]);
   return (
     <div className="HitBuilderParam">
@@ -104,6 +116,9 @@ const EditArrayParameter: React.FC<EditItemArrayParameterProps> = ({
           const nuParameters = item.parameters.map(p =>
             p.name === oldName ? { ...p, name: nuName } : p
           );
+          if (MPEvent.hasDuplicateNames(nuParameters)) {
+            return item;
+          }
           return {
             ...item,
             parameters: nuParameters

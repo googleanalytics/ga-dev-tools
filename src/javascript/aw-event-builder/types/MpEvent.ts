@@ -172,7 +172,7 @@ export class MPEvent {
     return nuEvent;
   }
 
-  private static hasDuplicateNames = (parameters: Parameters): boolean => {
+  static hasDuplicateNames = (parameters: Parameters): boolean => {
     const nameSet = new Set(parameters.map(p => p.name));
     return nameSet.size !== parameters.length;
   };
