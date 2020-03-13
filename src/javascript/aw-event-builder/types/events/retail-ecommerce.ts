@@ -1,4 +1,4 @@
-import { OptionalString } from "./parameters";
+import { StringParam } from "./parameters";
 import { MPEventType, EventData } from "./index";
 
 export type RetailEcommerceEvent =
@@ -16,61 +16,59 @@ export type RetailEcommerceEvent =
 type AddPaymentInfoEvent = EventData<MPEventType.AddPaymentInfo, never>;
 type AddToCartEvent = EventData<
   MPEventType.AddToCart,
-  | OptionalString<"quantity">
-  | OptionalString<"item_category">
-  | OptionalString<"item_name">
-  | OptionalString<"item_id">
-  | OptionalString<"item_location_id">
-  | OptionalString<"value">
-  | OptionalString<"price">
-  | OptionalString<"currency">
+  | StringParam<"quantity">
+  | StringParam<"item_category">
+  | StringParam<"item_name">
+  | StringParam<"item_id">
+  | StringParam<"item_location_id">
+  | StringParam<"value">
+  | StringParam<"price">
+  | StringParam<"currency">
 >;
 type AddToWishlistEvent = EventData<
   MPEventType.AddToWishlist,
-  | OptionalString<"quantity">
-  | OptionalString<"item_category">
-  | OptionalString<"item_name">
-  | OptionalString<"item_id">
-  | OptionalString<"item_location_id">
-  | OptionalString<"value">
-  | OptionalString<"price">
-  | OptionalString<"currency">
+  | StringParam<"quantity">
+  | StringParam<"item_category">
+  | StringParam<"item_name">
+  | StringParam<"item_id">
+  | StringParam<"item_location_id">
+  | StringParam<"value">
+  | StringParam<"price">
+  | StringParam<"currency">
 >;
 type BeginCheckoutEvent = EventData<
   MPEventType.BeginCheckout,
-  | OptionalString<"coupon">
-  | OptionalString<"currency">
-  | OptionalString<"value">
+  StringParam<"coupon"> | StringParam<"currency"> | StringParam<"value">
 >;
 type EcommercePurchaseEvent = EventData<
   MPEventType.EcommercePurchase,
-  | OptionalString<"coupon">
-  | OptionalString<"currency">
-  | OptionalString<"value">
-  | OptionalString<"tax">
-  | OptionalString<"shipping">
-  | OptionalString<"transation_id">
+  | StringParam<"coupon">
+  | StringParam<"currency">
+  | StringParam<"value">
+  | StringParam<"tax">
+  | StringParam<"shipping">
+  | StringParam<"transation_id">
 >;
 type GenerateLeadEvent = EventData<
   MPEventType.GenerateLead,
-  OptionalString<"value"> | OptionalString<"currency">
+  StringParam<"value"> | StringParam<"currency">
 >;
 type PurchaseRefundEvent = EventData<
   MPEventType.PurchaseRefund,
-  | OptionalString<"quantity">
-  | OptionalString<"value">
-  | OptionalString<"currency">
-  | OptionalString<"transaction_id">
+  | StringParam<"quantity">
+  | StringParam<"value">
+  | StringParam<"currency">
+  | StringParam<"transaction_id">
 >;
 type ViewItemEvent = EventData<
   MPEventType.ViewItem,
-  OptionalString<"item_id"> | OptionalString<"item_location_id">
+  StringParam<"item_id"> | StringParam<"item_location_id">
 >;
 type ViewItemListEvent = EventData<
   MPEventType.ViewItemList,
-  OptionalString<"item_category">
+  StringParam<"item_category">
 >;
 type ViewSearchResultsEvent = EventData<
   MPEventType.ViewSearchResults,
-  OptionalString<"search_term">
+  StringParam<"search_term">
 >;

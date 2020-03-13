@@ -1,4 +1,4 @@
-import { OptionalString, ItemArray } from "./parameters";
+import { StringParam, ItemArrayParam } from "./parameters";
 import { MPEventType, EventData } from "./index";
 
 export type AllAppsEvent =
@@ -19,64 +19,61 @@ export type AllAppsEvent =
 
 type EarnVirtualCurrencyEvent = EventData<
   MPEventType.EarnVirtualCurrency,
-  OptionalString<"virtual_currency_name"> | OptionalString<"value">
+  StringParam<"virtual_currency_name"> | StringParam<"value">
 >;
 
-type JoinGroupEvent = EventData<
-  MPEventType.JoinGroup,
-  OptionalString<"group_id">
->;
+type JoinGroupEvent = EventData<MPEventType.JoinGroup, StringParam<"group_id">>;
 
-type LoginEvent = EventData<MPEventType.Login, OptionalString<"method">>;
+type LoginEvent = EventData<MPEventType.Login, StringParam<"method">>;
 
 type PresentOfferEvent = EventData<
   MPEventType.PresentOffer,
-  | OptionalString<"item_id">
-  | OptionalString<"item_name">
-  | OptionalString<"item_category">
+  | StringParam<"item_id">
+  | StringParam<"item_name">
+  | StringParam<"item_category">
 >;
 
 type PurchaseEvent = EventData<
   MPEventType.Purchase,
-  | OptionalString<"transactions_id">
-  | OptionalString<"value">
-  | OptionalString<"currency">
-  | OptionalString<"tax">
-  | OptionalString<"shipping">
-  | ItemArray
-  | OptionalString<"coupon">
-  | OptionalString<"affiliation">
+  | StringParam<"transactions_id">
+  | StringParam<"value">
+  | StringParam<"currency">
+  | StringParam<"tax">
+  | StringParam<"shipping">
+  | ItemArrayParam
+  | StringParam<"coupon">
+  | StringParam<"affiliation">
 >;
 
 type RefundEvent = EventData<
   MPEventType.Refund,
-  | OptionalString<"transactions_id">
-  | OptionalString<"value">
-  | OptionalString<"currency">
-  | OptionalString<"tax">
-  | OptionalString<"shipping">
-  | ItemArray
+  | StringParam<"transactions_id">
+  | StringParam<"value">
+  | StringParam<"currency">
+  | StringParam<"tax">
+  | StringParam<"shipping">
+  | ItemArrayParam
 >;
 
-type SearchEvent = EventData<MPEventType.Search, OptionalString<"search_term">>;
+type SearchEvent = EventData<MPEventType.Search, StringParam<"search_term">>;
 
 type SelectContentEvent = EventData<
   MPEventType.SelectContent,
-  OptionalString<"content_type"> | OptionalString<"item_id">
+  StringParam<"content_type"> | StringParam<"item_id">
 >;
 
 type ShareEvent = EventData<
   MPEventType.Share,
-  OptionalString<"content_type"> | OptionalString<"item_id">
+  StringParam<"content_type"> | StringParam<"item_id">
 >;
 
-type SignUpEvent = EventData<MPEventType.SignUp, OptionalString<"method">>;
+type SignUpEvent = EventData<MPEventType.SignUp, StringParam<"method">>;
 
 type SpendVirtualCurrencyEvent = EventData<
   MPEventType.SpendVirtualCurrency,
-  | OptionalString<"item_name">
-  | OptionalString<"virtual_currency_name">
-  | OptionalString<"value">
+  | StringParam<"item_name">
+  | StringParam<"virtual_currency_name">
+  | StringParam<"value">
 >;
 
 type TutorialBeginEvent = EventData<MPEventType.TutorialBegin, never>;

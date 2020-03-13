@@ -8,21 +8,19 @@ export enum ParameterType {
   Items = "items"
 }
 
-export type OptionalString<T = string> = {
+export type StringParam<T = string> = {
   type: ParameterType.String;
   value?: string;
   name: T;
 };
 
-export const defaultOptionalString = <T = string>(
-  name: T
-): OptionalString<T> => ({
+export const defaultStringParam = <T = string>(name: T): StringParam<T> => ({
   type: ParameterType.String,
   value: "",
   name
 });
 
-export type ItemArray = {
+export type ItemArrayParam = {
   type: ParameterType.Items;
   // TODO - this can just be Parameters instead of Item[].
   value: Item[];
@@ -31,20 +29,20 @@ export type ItemArray = {
   name: string;
 };
 
-export const defaultItemArray = (): ItemArray => ({
+export const defaultItemArrayParam = (): ItemArrayParam => ({
   type: ParameterType.Items,
   value: [],
   name: "items"
 });
 
-export type OptionalNumber<T = string> = {
+export type NumberParam<T = string> = {
   type: ParameterType.Number;
   required: false;
   value?: number;
   name: T;
 };
 
-export const defaultOptionalNumber = (name: string): OptionalNumber => ({
+export const defaultNumberParam = (name: string): NumberParam => ({
   type: ParameterType.Number,
   required: false,
   value: undefined,
@@ -57,18 +55,18 @@ export const defaultParameterFor = (
 ): Parameter => {
   switch (type) {
     case ParameterType.Items:
-      return defaultItemArray();
+      return defaultItemArrayParam();
     case ParameterType.String:
-      return defaultOptionalString(name);
+      return defaultStringParam(name);
     case ParameterType.Number:
-      return defaultOptionalNumber(name);
+      return defaultNumberParam(name);
   }
 };
 
 export type Parameter =
-  | OptionalString<string>
-  | ItemArray
-  | OptionalNumber<string>;
+  | StringParam<string>
+  | ItemArrayParam
+  | NumberParam<string>;
 
 export type Parameters = Parameter[];
 

@@ -1,10 +1,5 @@
 import React from "react";
-import {
-  MPEvent,
-  defaultOptionalString,
-  Parameters,
-  Parameter
-} from "../types";
+import { MPEvent, defaultStringParam, Parameters, Parameter } from "../types";
 import ParameterList from "./ParameterList";
 
 interface EditEventProps {
@@ -25,7 +20,7 @@ const EditEvent: React.FC<EditEventProps> = ({ event, updateEvent }) => {
   );
 
   const addParameter = React.useCallback(() => {
-    updateEvent(event.addParameter("", defaultOptionalString("")));
+    updateEvent(event.addParameter("", defaultStringParam("")));
   }, [event, updateEvent]);
 
   return (

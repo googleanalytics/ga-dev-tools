@@ -2,9 +2,9 @@ import React from "react";
 import IconButton from "../../../components/icon-button";
 import ParameterList from "../ParameterList";
 import {
-  ItemArray,
+  ItemArrayParam,
   Item,
-  defaultOptionalString,
+  defaultStringParam,
   Parameter,
   MPEvent
 } from "../../types";
@@ -31,7 +31,7 @@ const EditItem: React.FC<EditItemProps> = ({
   );
   const addParameter = React.useCallback(() => {
     updateItem(old => {
-      const nu = old.parameters.concat([defaultOptionalString("")]);
+      const nu = old.parameters.concat([defaultStringParam("")]);
       if (MPEvent.hasDuplicateNames(nu)) {
         return old;
       }
@@ -63,8 +63,8 @@ const EditItem: React.FC<EditItemProps> = ({
 };
 
 interface EditItemArrayParameterProps {
-  items: ItemArray;
-  updateParameter: (nu: ItemArray) => void;
+  items: ItemArrayParam;
+  updateParameter: (nu: ItemArrayParam) => void;
 }
 
 const EditArrayParameter: React.FC<EditItemArrayParameterProps> = ({
