@@ -1,4 +1,4 @@
-import { Parameters } from "./parameters";
+import { Parameters, SuggestedParameters, Parameter } from "./parameters";
 import { AllAppsEvent } from "./all-apps";
 import { RetailEcommerceEvent } from "./retail-ecommerce";
 import { GamesEvent } from "./games";
@@ -75,12 +75,15 @@ export enum MPEventType {
   DynamicLinkFirstOpen = "dynamic_link_first_open"
 }
 
+// This just saves on some typing. EventType & Suggested are generic variables
+// with names to try to make this more intention revealing.
+export type EventData<EventType, Suggested extends Parameter> = {
+  type: EventType;
+  parameters: SuggestedParameters<Suggested>;
+};
+
 // Events: Custom
-interface CustomEvent {
-  type: MPEventType.CustomEvent;
-  parameters: {};
-  customParameters: Parameters;
-}
+type CustomEvent = EventData<MPEventType.CustomEvent, never>;
 
 export type MPEventData =
   | CustomEvent

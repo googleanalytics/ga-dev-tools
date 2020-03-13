@@ -11,39 +11,37 @@ export enum ParameterType {
   RequiredArray = "required array"
 }
 
-export type OptionalString = {
+export type OptionalString<T = string> = {
   type: ParameterType.OptionalString;
-  required: false;
   value?: string;
-  name: string;
+  name: T;
 };
 
-export const defaultOptionalString = (name: string): OptionalString => ({
+export const defaultOptionalString = <T = string>(
+  name: T
+): OptionalString<T> => ({
   type: ParameterType.OptionalString,
-  required: false,
   value: "",
   name
 });
 
 export type ItemArray = {
   type: ParameterType.RequiredArray;
-  required: true;
   value: Item[];
-  name: string;
+  name: "items";
 };
 
-export const defaultItemArray = (name: string): ItemArray => ({
+export const defaultItemArray = (): ItemArray => ({
   type: ParameterType.RequiredArray,
-  required: true,
   value: [],
-  name
+  name: "items"
 });
 
-export type OptionalNumber = {
+export type OptionalNumber<T = string> = {
   type: ParameterType.OptionalNumber;
   required: false;
   value?: number;
-  name: string;
+  name: T;
 };
 
 export const defaultOptionalNumber = (name: string): OptionalNumber => ({
@@ -59,7 +57,7 @@ export const defaultParameterFor = (
 ): Parameter => {
   switch (type) {
     case ParameterType.RequiredArray:
-      return defaultItemArray(name);
+      return defaultItemArray();
     case ParameterType.OptionalString:
       return defaultOptionalString(name);
     case ParameterType.OptionalNumber:
@@ -67,6 +65,12 @@ export const defaultParameterFor = (
   }
 };
 
-export type Parameter = OptionalString | ItemArray | OptionalNumber;
+export type Parameter =
+  | OptionalString<string>
+  | ItemArray
+  | OptionalNumber<string>;
 
 export type Parameters = { [paramName: string]: Parameter };
+export type Parameters2 = Parameter[];
+
+export type SuggestedParameters<T extends Parameter> = (T | Parameter)[];

@@ -1,5 +1,5 @@
-import { OptionalString, Parameters, ItemArray } from "./parameters";
-import { MPEventType } from "./index";
+import { OptionalString } from "./parameters";
+import { MPEventType, EventData } from "./index";
 
 export type AllAppsEvent =
   | EarnVirtualCurrencyEvent
@@ -17,94 +17,68 @@ export type AllAppsEvent =
   | TutorialCompleteEvent
   | EarnVirtualCurrencyEvent;
 
-interface EarnVirtualCurrencyEvent {
-  type: MPEventType.EarnVirtualCurrency;
-  parameters: { virtual_currency_name: OptionalString; value: OptionalString };
-  customParameters: Parameters;
-}
-interface JoinGroupEvent {
-  type: MPEventType.JoinGroup;
-  parameters: { group_id: OptionalString };
-  customParameters: Parameters;
-}
-interface LoginEvent {
-  type: MPEventType.Login;
-  parameters: { method: OptionalString };
-  customParameters: Parameters;
-}
-interface PresentOfferEvent {
-  type: MPEventType.PresentOffer;
-  parameters: {
-    item_id: OptionalString;
-    item_name: OptionalString;
-    item_category: OptionalString;
-  };
-  customParameters: Parameters;
-}
-interface PurchaseEvent {
-  type: MPEventType.Purchase;
-  parameters: {
-    transactions_id: OptionalString;
-    value: OptionalString;
-    currency: OptionalString;
-    tax: OptionalString;
-    shipping: OptionalString;
-    items: ItemArray;
-    coupon: OptionalString;
-    // From Retail/Ecommerce page
-    affiliation: OptionalString;
-  };
-  customParameters: Parameters;
-}
-interface RefundEvent {
-  type: MPEventType.Refund;
-  parameters: {
-    transactions_id: OptionalString;
-    value: OptionalString;
-    currency: OptionalString;
-    tax: OptionalString;
-    shipping: OptionalString;
-    items: ItemArray;
-  };
-  customParameters: Parameters;
-}
+type EarnVirtualCurrencyEvent = EventData<
+  MPEventType.EarnVirtualCurrency,
+  OptionalString<"virtual_currency_name"> | OptionalString<"value">
+>;
 
-interface SearchEvent {
-  type: MPEventType.Search;
-  parameters: { search_term: OptionalString };
-  customParameters: Parameters;
-}
-interface SelectContentEvent {
-  type: MPEventType.SelectContent;
-  parameters: { content_type: OptionalString; item_id: OptionalString };
-  customParameters: Parameters;
-}
-interface ShareEvent {
-  type: MPEventType.Share;
-  parameters: { content_type: OptionalString; item_id: OptionalString };
-  customParameters: Parameters;
-}
-interface SignUpEvent {
-  type: MPEventType.SignUp;
-  parameters: { method: OptionalString };
-  customParameters: Parameters;
-}
-interface SpendVirtualCurrencyEvent {
-  type: MPEventType.SpendVirtualCurrency;
-  parameters: {
-    item_name: OptionalString;
-    virtual_currency_name: OptionalString;
-    value: OptionalString;
-  };
-  customParameters: Parameters;
-}
-interface TutorialBeginEvent {
-  type: MPEventType.TutorialBegin;
-  parameters: {};
-  customParameters: Parameters;
-}
-interface TutorialCompleteEvent {
-  type: MPEventType.TutorialComplete;
-  parameters: {};
-  customParameters: Parameters;
-}
+type JoinGroupEvent = EventData<
+  MPEventType.JoinGroup,
+  OptionalString<"group_id">
+>;
+
+type LoginEvent = EventData<MPEventType.Login, OptionalString<"method">>;
+
+type PresentOfferEvent = EventData<
+  MPEventType.PresentOffer,
+  | OptionalString<"item_id">
+  | OptionalString<"item_name">
+  | OptionalString<"item_category">
+>;
+
+type PurchaseEvent = EventData<
+  MPEventType.Purchase,
+  | OptionalString<"transactions_id">
+  | OptionalString<"value">
+  | OptionalString<"currency">
+  | OptionalString<"tax">
+  | OptionalString<"shipping">
+  | OptionalString<"items">
+  | OptionalString<"coupon">
+  | OptionalString<"affiliation">
+>;
+
+type RefundEvent = EventData<
+  MPEventType.Refund,
+  | OptionalString<"transactions_id">
+  | OptionalString<"value">
+  | OptionalString<"currency">
+  | OptionalString<"tax">
+  | OptionalString<"shipping">
+  | OptionalString<"items">
+>;
+
+type SearchEvent = EventData<MPEventType.Search, OptionalString<"search_term">>;
+
+type SelectContentEvent = EventData<
+  MPEventType.SelectContent,
+  OptionalString<"content_type"> | OptionalString<"item_id">
+>;
+
+type ShareEvent = EventData<
+  MPEventType.Share,
+  OptionalString<"content_type"> | OptionalString<"item_id">
+>;
+
+type SignUpEvent = EventData<MPEventType.SignUp, OptionalString<"method">>;
+
+type SpendVirtualCurrencyEvent = EventData<
+  MPEventType.SpendVirtualCurrency,
+  | OptionalString<"item_name">
+  | OptionalString<"virtual_currency_name">
+  | OptionalString<"value">
+>;
+
+type TutorialBeginEvent = EventData<MPEventType.TutorialBegin, never>;
+
+type TutorialCompleteEvent = EventData<MPEventType.TutorialComplete, never>;
