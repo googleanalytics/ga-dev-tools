@@ -1,26 +1,20 @@
 import { OptionalString } from "./parameters";
-import { MPEventType } from "./index";
+import { MPEventType, EventData } from "./index";
 
 export type GamesEvent = LevelUpEvent | PostScoreEvent | UnlockAchievementEvent;
 
-interface LevelUpEvent {
-  type: MPEventType.LevelUp;
-  parameters: { character: OptionalString; level: OptionalString };
-  customParameters: {};
-}
+type LevelUpEvent = EventData<
+  MPEventType.LevelUp,
+  OptionalString<"character"> | OptionalString<"level">
+>;
+type PostScoreEvent = EventData<
+  MPEventType.PostScore,
+  | OptionalString<"level">
+  | OptionalString<"character">
+  | OptionalString<"score">
+>;
 
-interface PostScoreEvent {
-  type: MPEventType.PostScore;
-  parameters: {
-    level: OptionalString;
-    character: OptionalString;
-    score: OptionalString;
-  };
-  customParameters: {};
-}
-
-interface UnlockAchievementEvent {
-  type: MPEventType.UnlockAchievement;
-  parameters: { achievement_id: OptionalString };
-  customParameters: {};
-}
+type UnlockAchievementEvent = EventData<
+  MPEventType.UnlockAchievement,
+  OptionalString<"achievement_id">
+>;
