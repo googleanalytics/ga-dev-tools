@@ -54,8 +54,9 @@ const getInitialEvent = () => {
   const searchParams = new URLSearchParams(search);
   if (searchParams.has("eventData")) {
     const eventDataString = searchParams.get("eventData")!;
-    const decoded = decodeURIComponent(eventDataString);
     try {
+      const decoded = atob(eventDataString);
+      console.log(decoded);
       const eventData = JSON.parse(decoded) as MPEventData;
       const eventType = MPEvent.eventTypeFromString(eventData.type as string);
       if (eventType !== undefined) {

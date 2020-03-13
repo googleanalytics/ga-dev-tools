@@ -148,10 +148,7 @@ const EventActions: React.FC = () => {
     client_id !== "" && params.append("client_id", client_id);
     user_id !== "" && params.append("user_id", user_id);
     mid !== "" && params.append("mid", mid);
-    params.append(
-      "eventData",
-      encodeURIComponent(JSON.stringify(event.getEventData()))
-    );
+    params.append("eventData", btoa(JSON.stringify(event.getEventData())));
     setUrlParams(params.toString());
   }, [event, client_id, user_id]);
 
