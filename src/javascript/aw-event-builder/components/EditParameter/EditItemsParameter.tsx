@@ -16,36 +16,17 @@ const EditItem: React.FC<EditItemProps> = ({
   updateItem,
   removeItem
 }) => {
-  const parameters = React.useMemo<Parameter[]>(
-    () => Object.values(item.parameters),
-    [item]
-  );
-  const customParameters = React.useMemo<Parameter[]>(
-    () => Object.values(item.customParameters),
-    [item]
-  );
+  const parameters = React.useMemo<Parameter[]>(() => item.parameters, [item]);
   const updateParameters = React.useCallback(
     update => {
       updateItem(old => ({ ...old, parameters: update(old.parameters) }));
     },
     [updateItem]
   );
-  const updateCustomParameters = React.useCallback(
-    update => {
-      updateItem(old => ({
-        ...old,
-        customParameters: update(old.customParameters)
-      }));
-    },
-    [updateItem]
-  );
-  const addCustomParameter = React.useCallback(() => {
+  const addParameter = React.useCallback(() => {
     updateItem(old => ({
       ...old,
-      customParameters: {
-        ...old.customParameters,
-        "": defaultOptionalString("")
-      }
+      parameters: old.parameters.concat([defaultOptionalString("")])
     }));
   }, [updateItem]);
   return (
@@ -53,12 +34,9 @@ const EditItem: React.FC<EditItemProps> = ({
       <ParameterList
         isNested
         indentation={6}
-        oneList
         parameters={parameters}
-        customParameters={customParameters}
         updateParameters={updateParameters}
-        updateCustomParameters={updateCustomParameters}
-        addCustomParameter={addCustomParameter}
+        addParameter={addParameter}
       >
         <IconButton
           onClick={removeItem}
@@ -93,14 +71,7 @@ const EditArrayParameter: React.FC<EditItemArrayParameterProps> = ({
 
   const addItem = React.useCallback(() => {
     setLocalValues(old => {
-      /* const first = old.length > 0 && old[0]; */
-      /* const customParameters = first ? first.customParameters : {}; */
-      const nu = old.concat([
-        {
-          parameters: { name: defaultOptionalString("name") },
-          customParameters: {}
-        }
-      ]);
+      const nu = old.concat([{ parameters: [] }]);
       updateParameter({ ...items, value: nu });
       return nu;
     });
@@ -124,14 +95,19 @@ const EditArrayParameter: React.FC<EditItemArrayParameterProps> = ({
   );
 
   const updateParameterName = React.useCallback(
-    (oldName: string, nuName: string) => {
+    (idx: number) => (oldName: string, nuName: string) => {
       setLocalValues(old =>
-        old.map(item => {
-          const nuItem = { ...item };
-          const oldParameterValue = nuItem.customParameters[oldName];
-          delete nuItem.customParameters[oldName];
-          nuItem.customParameters[nuName] = oldParameterValue;
-          return nuItem;
+        old.map((item, i) => {
+          if (idx !== i) {
+            return item;
+          }
+          const nuParameters = item.parameters.map(p =>
+            p.name === oldName ? { ...p, name: nuName } : p
+          );
+          return {
+            ...item,
+            parameters: nuParameters
+          };
         })
       );
     },
@@ -147,7 +123,7 @@ const EditArrayParameter: React.FC<EditItemArrayParameterProps> = ({
           </div>
           <EditItem
             removeItem={removeItem(idx)}
-            updateParameterName={updateParameterName}
+            updateParameterName={updateParameterName(idx)}
             item={item}
             isFirst={idx === 0}
             updateItem={updateItem(idx)}

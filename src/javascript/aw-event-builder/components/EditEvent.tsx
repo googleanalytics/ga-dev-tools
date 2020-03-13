@@ -17,11 +17,6 @@ const EditEvent: React.FC<EditEventProps> = ({ event, updateEvent }) => {
     event
   ]);
 
-  const customParameters = React.useMemo<Parameter[]>(
-    () => event.getCustomParameters(),
-    [event]
-  );
-
   const updateParameters = React.useCallback(
     (update: (old: Parameters) => Parameters): void => {
       updateEvent(event.updateParameters(update));
@@ -29,14 +24,7 @@ const EditEvent: React.FC<EditEventProps> = ({ event, updateEvent }) => {
     [parameters, updateEvent, event]
   );
 
-  const updateCustomParameters = React.useCallback(
-    (update: (old: Parameters) => Parameters): void => {
-      updateEvent(event.updateCustomParameters(update));
-    },
-    [customParameters, updateEvent, event]
-  );
-
-  const addCustomParameter = React.useCallback(() => {
+  const addParameter = React.useCallback(() => {
     updateEvent(event.addParameter("", defaultOptionalString("")));
   }, [event, updateEvent]);
 
@@ -57,11 +45,9 @@ const EditEvent: React.FC<EditEventProps> = ({ event, updateEvent }) => {
       )}
       <ParameterList
         isNested={false}
-        addCustomParameter={addCustomParameter}
+        addParameter={addParameter}
         parameters={parameters}
-        customParameters={customParameters}
         updateParameters={updateParameters}
-        updateCustomParameters={updateCustomParameters}
       />
     </>
   );

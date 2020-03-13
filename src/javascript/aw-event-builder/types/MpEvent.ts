@@ -128,7 +128,6 @@ export class MPEvent {
         return {
           [parameter.name]: parameter.value.map(item =>
             Object.values(item.parameters)
-              .concat(Object.values(item.customParameters))
               .map(MPEvent.parameterToPayload)
               .reduce((itemsPayload: {}, itemParam) => {
                 if (itemParam === "unset") {

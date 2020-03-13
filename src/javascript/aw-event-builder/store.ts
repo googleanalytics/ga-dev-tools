@@ -64,12 +64,6 @@ const getInitialEvent = () => {
         if (parameters !== undefined) {
           emptyEvent = emptyEvent.updateParameters(() => parameters);
         }
-        const customParameters = eventData.customParameters;
-        if (customParameters !== undefined) {
-          emptyEvent = emptyEvent.updateCustomParameters(
-            () => customParameters
-          );
-        }
         return emptyEvent;
       }
     } catch (e) {

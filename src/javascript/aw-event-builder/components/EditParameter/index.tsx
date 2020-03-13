@@ -50,17 +50,16 @@ const CustomLabel: React.FC<CustomParamLabelProps> = ({
 };
 
 interface EditParameterProps {
-  custom?: {
-    updateName: (oldName: string, newName: string) => void;
-    remove: () => void;
-  };
+  updateName: (oldName: string, newName: string) => void;
+  remove: () => void;
   parameter: Parameter;
   updateParameter: (nu: Parameter) => void;
   isNested: boolean;
 }
 
 const EditParameter: React.FC<EditParameterProps> = ({
-  custom,
+  updateName,
+  remove,
   parameter,
   updateParameter,
   isNested
@@ -71,42 +70,38 @@ const EditParameter: React.FC<EditParameterProps> = ({
   });
 
   const label = React.useMemo(
-    () =>
-      custom !== undefined ? (
-        <CustomLabel
-          name={parameter.name}
-          updateName={custom.updateName}
-          remove={custom.remove}
-        />
-      ) : (
-        <label className="HitBuilderParam-label">{parameter.name}</label>
-      ),
-    [parameter, custom]
+    () => (
+      <CustomLabel
+        name={parameter.name}
+        updateName={updateName}
+        remove={remove}
+      />
+    ),
+    [parameter, updateName, remove]
   );
 
   const parameterDropdown = React.useMemo(
-    () =>
-      custom !== undefined ? (
-        <select
-          className="FormField ParameterTypeDropdown"
-          value={parameter.type}
-          onChange={e => {
-            const newParameterType: ParameterType = e.target
-              .value as ParameterType;
-            updateParameter(
-              defaultParameterFor(newParameterType, parameter.name)
-            );
-          }}
-        >
-          {MPEvent.parameterTypeOptions()
-            .filter(a => (isNested ? a !== ParameterType.RequiredArray : true))
-            .map(option => (
-              <option value={option} key={option}>
-                {option}
-              </option>
-            ))}
-        </select>
-      ) : null,
+    () => (
+      <select
+        className="FormField ParameterTypeDropdown"
+        value={parameter.type}
+        onChange={e => {
+          const newParameterType: ParameterType = e.target
+            .value as ParameterType;
+          updateParameter(
+            defaultParameterFor(newParameterType, parameter.name)
+          );
+        }}
+      >
+        {MPEvent.parameterTypeOptions()
+          .filter(a => (isNested ? a !== ParameterType.RequiredArray : true))
+          .map(option => (
+            <option value={option} key={option}>
+              {option}
+            </option>
+          ))}
+      </select>
+    ),
     [parameter.type]
   );
 

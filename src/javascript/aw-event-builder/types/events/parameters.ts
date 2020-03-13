@@ -1,8 +1,5 @@
 export interface Item {
-  parameters: {
-    name: OptionalString;
-  };
-  customParameters: {};
+  parameters: Parameters;
 }
 
 export enum ParameterType {
@@ -27,8 +24,11 @@ export const defaultOptionalString = <T = string>(
 
 export type ItemArray = {
   type: ParameterType.RequiredArray;
+  // TODO - this can just be Parameters instead of Item[].
   value: Item[];
-  name: "items";
+  // This name should always be 'items', but it makes typechcking things really
+  // tricky.
+  name: string;
 };
 
 export const defaultItemArray = (): ItemArray => ({
