@@ -71,7 +71,7 @@ const EditParameter: React.FC<EditParameterProps> = ({
   updateParameter,
   isNested
 }) => {
-  const isItem = parameter.type === ParameterType.RequiredArray;
+  const isItem = parameter.type === ParameterType.Items;
   const className = classnames("HitBuilderParam", {
     "HitBuilderParam--item": isItem
   });
@@ -99,9 +99,7 @@ const EditParameter: React.FC<EditParameterProps> = ({
               }}
             >
               {MPEvent.parameterTypeOptions()
-                .filter(a =>
-                  isNested ? a !== ParameterType.RequiredArray : true
-                )
+                .filter(a => (isNested ? a !== ParameterType.Items : true))
                 .map(option => (
                   <option value={option} key={option}>
                     {option}
@@ -139,9 +137,7 @@ const EditParameter: React.FC<EditParameterProps> = ({
             }}
           >
             {MPEvent.parameterTypeOptions()
-              .filter(a =>
-                isNested ? a !== ParameterType.RequiredArray : true
-              )
+              .filter(a => (isNested ? a !== ParameterType.Items : true))
               .map(option => (
                 <option value={option} key={option}>
                   {option}

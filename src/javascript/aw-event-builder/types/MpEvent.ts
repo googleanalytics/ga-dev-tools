@@ -114,17 +114,17 @@ export class MPEvent {
 
   static parameterToPayload = (parameter: Parameter): {} | "unset" => {
     switch (parameter.type) {
-      case ParameterType.OptionalNumber:
+      case ParameterType.Number:
         if (parameter.value === undefined) {
           return "unset";
         }
         return { [parameter.name]: parameter.value };
-      case ParameterType.OptionalString:
+      case ParameterType.String:
         if (parameter.value === "" || parameter.value === undefined) {
           return "unset";
         }
         return { [parameter.name]: parameter.value };
-      case ParameterType.RequiredArray:
+      case ParameterType.Items:
         return {
           [parameter.name]: parameter.value.map(item =>
             Object.values(item.parameters)

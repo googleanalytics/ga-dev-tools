@@ -3,13 +3,13 @@ export interface Item {
 }
 
 export enum ParameterType {
-  OptionalString = "optional string",
-  OptionalNumber = "optional number",
-  RequiredArray = "required array"
+  String = "string",
+  Number = "number",
+  Items = "items"
 }
 
 export type OptionalString<T = string> = {
-  type: ParameterType.OptionalString;
+  type: ParameterType.String;
   value?: string;
   name: T;
 };
@@ -17,13 +17,13 @@ export type OptionalString<T = string> = {
 export const defaultOptionalString = <T = string>(
   name: T
 ): OptionalString<T> => ({
-  type: ParameterType.OptionalString,
+  type: ParameterType.String,
   value: "",
   name
 });
 
 export type ItemArray = {
-  type: ParameterType.RequiredArray;
+  type: ParameterType.Items;
   // TODO - this can just be Parameters instead of Item[].
   value: Item[];
   // This name should always be 'items', but it makes typechcking things really
@@ -32,20 +32,20 @@ export type ItemArray = {
 };
 
 export const defaultItemArray = (): ItemArray => ({
-  type: ParameterType.RequiredArray,
+  type: ParameterType.Items,
   value: [],
   name: "items"
 });
 
 export type OptionalNumber<T = string> = {
-  type: ParameterType.OptionalNumber;
+  type: ParameterType.Number;
   required: false;
   value?: number;
   name: T;
 };
 
 export const defaultOptionalNumber = (name: string): OptionalNumber => ({
-  type: ParameterType.OptionalNumber,
+  type: ParameterType.Number,
   required: false,
   value: undefined,
   name
@@ -56,11 +56,11 @@ export const defaultParameterFor = (
   name: string
 ): Parameter => {
   switch (type) {
-    case ParameterType.RequiredArray:
+    case ParameterType.Items:
       return defaultItemArray();
-    case ParameterType.OptionalString:
+    case ParameterType.String:
       return defaultOptionalString(name);
-    case ParameterType.OptionalNumber:
+    case ParameterType.Number:
       return defaultOptionalNumber(name);
   }
 };
