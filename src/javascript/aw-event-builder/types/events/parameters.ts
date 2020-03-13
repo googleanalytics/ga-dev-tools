@@ -70,7 +70,6 @@ export type Parameter =
   | ItemArray
   | OptionalNumber<string>;
 
-export type Parameters = { [paramName: string]: Parameter };
-export type Parameters2 = Parameter[];
+export type Parameters = Parameter[];
 
 export type SuggestedParameters<T extends Parameter> = (T | Parameter)[];

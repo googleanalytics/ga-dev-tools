@@ -37,7 +37,7 @@ const EditEvent: React.FC<EditEventProps> = ({ event, updateEvent }) => {
   );
 
   const addCustomParameter = React.useCallback(() => {
-    updateEvent(event.addCustomParameter("", defaultOptionalString("")));
+    updateEvent(event.addParameter("", defaultOptionalString("")));
   }, [event, updateEvent]);
 
   return (

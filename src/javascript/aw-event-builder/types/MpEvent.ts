@@ -147,7 +147,6 @@ export class MPEvent {
 
   asPayload(): {} {
     const params = this.getParameters()
-      .concat(this.getCustomParameters())
       .map(MPEvent.parameterToPayload)
       .reduce((payload: {}, parameter) => {
         if (parameter === "unset") {
@@ -181,37 +180,34 @@ export class MPEvent {
     return nuEvent;
   }
 
-  updateCustomParameters(update: (old: Parameters) => Parameters): MPEvent {
-    const nuEvent = this.clone();
-    const nuCustomParameters = update(nuEvent.eventData.customParameters);
-    nuEvent.eventData.customParameters = nuCustomParameters;
-    return nuEvent;
-  }
-
   getParameters(): Parameter[] {
     return Object.values<Parameter>(this.eventData.parameters);
   }
-  getCustomParameters(): Parameter[] {
-    return Object.values<Parameter>(this.eventData.customParameters);
-  }
 
-  addCustomParameter(parameterName: string, parameter: Parameter): MPEvent {
+  // TODO - remove parameterName argument.
+  addParameter(parameterName: string, parameter: Parameter): MPEvent {
     const nuEvent = this.clone();
-    nuEvent.eventData.customParameters[parameterName] = parameter;
+    nuEvent.eventData.parameters.push(parameter);
     return nuEvent;
   }
 
-  removeCustomParameter(parameterName: string): MPEvent {
+  removeParameter(parameterName: string): MPEvent {
     const nuEvent = this.clone();
-    delete nuEvent.eventData.customParameters[parameterName];
+    const nuParameters = nuEvent.eventData.parameters.filter(
+      a => a.name !== parameterName
+    );
+    nuEvent.eventData.parameters = nuParameters;
     return nuEvent;
   }
 
-  updateCustomParameterName(parameterName: string, newName: string): MPEvent {
+  updateParameterName(parameterName: string, newName: string): MPEvent {
     const nuEvent = this.clone();
-    // Copy the old parameter value into the new name.
-    nuEvent.eventData.customParameters[newName] =
-      nuEvent.eventData.customParameters[parameterName];
-    return nuEvent.removeCustomParameter(parameterName);
+    // TODO - Decide if I want to do special handling when name is `items`
+    const nuParameters: Parameters = (nuEvent.eventData
+      .parameters as Parameters).map((a: Parameter) =>
+      a.name === parameterName ? { ...a, name: newName } : a
+    ) as Parameters;
+    nuEvent.eventData.parameters = nuParameters;
+    return nuEvent;
   }
 }
