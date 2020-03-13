@@ -12,6 +12,10 @@ const EditEvent: React.FC<EditEventProps> = ({ event, updateEvent }) => {
     event
   ]);
 
+  const defaultEventParameters = React.useMemo(() => {
+    return MPEvent.empty(event.getEventType()).getParameters();
+  }, [event.getEventType()]);
+
   const updateParameters = React.useCallback(
     (update: (old: Parameters) => Parameters): void => {
       updateEvent(event.updateParameters(update));
@@ -26,7 +30,7 @@ const EditEvent: React.FC<EditEventProps> = ({ event, updateEvent }) => {
   return (
     <>
       <h3>Event details</h3>
-      {parameters.length === 0 ? (
+      {parameters.length === 0 && defaultEventParameters.length === 0 ? (
         <p>No parameters are recommended for this event</p>
       ) : (
         <>
