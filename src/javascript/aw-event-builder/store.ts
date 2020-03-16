@@ -77,6 +77,13 @@ const getInitialEvent = () => {
       console.log(e);
       // ignore
     }
+  } else if (searchParams.has("eventType")) {
+    const eventType = MPEvent.eventTypeFromString(
+      searchParams.get("eventType")!
+    );
+    if (eventType !== undefined) {
+      return MPEvent.empty(eventType);
+    }
   }
   return MPEvent.default();
 };
