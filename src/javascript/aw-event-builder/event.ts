@@ -1,22 +1,28 @@
 import { ValidationMessage, MPEvent } from "./types";
 
-interface ClientId {
+export interface UserOrClientId {
+  user_id?: string;
   client_id?: string;
 }
 
-interface UserId {
-  user_id?: string;
+export interface InstanceId {
+  measurement_id?: string;
+  firebase_app_id?: string;
 }
 
-export type UserOrClientId = ClientId | UserId;
-
 export const validateHit = async (
-  mid: string,
+  instanceId: InstanceId,
   auth_key: string,
   requiredId: UserOrClientId,
   events: MPEvent[]
 ): Promise<ValidationMessage[]> => {
-  const url = `https://www.google-analytics.com/debug/mp/collect?mid=${mid}&auth_key=${auth_key}`;
+  const instanceQueryParam =
+    instanceId.firebase_app_id !== undefined
+      ? `&firebase_app_id=${instanceId.firebase_app_id}`
+      : instanceId !== undefined
+      ? `&measurement_id=${instanceId.measurement_id}`
+      : "";
+  const url = `https://www.google-analytics.com/debug/mp/collect?auth_key=${auth_key}${instanceQueryParam}`;
   const data = {
     ...requiredId,
     events: events.map(event => event.asPayload()),
@@ -31,12 +37,18 @@ export const validateHit = async (
 };
 
 export const sendEvent = async (
-  mid: string,
+  instanceId: InstanceId,
   auth_key: string,
   requiredId: UserOrClientId,
   events: MPEvent[]
 ): Promise<Response> => {
-  const url = `https://www.google-analytics.com/mp/collect?mid=${mid}&auth_key=${auth_key}`;
+  const instanceQueryParam =
+    instanceId.firebase_app_id !== undefined
+      ? `&firebase_app_id=${instanceId.firebase_app_id}`
+      : instanceId !== undefined
+      ? `&measurement_id=${instanceId.measurement_id}`
+      : "";
+  const url = `https://www.google-analytics.com/mp/collect?auth_key=${auth_key}${instanceQueryParam}`;
   const data = {
     ...requiredId,
     events: events.map(event => event.asPayload())

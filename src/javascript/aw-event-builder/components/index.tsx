@@ -25,7 +25,13 @@ import { MPEventCategory } from "../types/events";
 const HitBuilder: React.FC = () => {
   // TODO - The event picker should probably let you do a search to filter the dropdown.
   // TODO - make sure to focus on any new params.
-  const { event, client_id, user_id } = useSelector<State, State>(a => a);
+  const {
+    event,
+    client_id,
+    user_id,
+    measurement_id,
+    firebase_app_id
+  } = useSelector<State, State>(a => a);
   const dispatch = useDispatch();
   const [category, setCategory] = React.useState<MPEventCategory>(
     event.getCategories()[0]
@@ -61,9 +67,15 @@ const HitBuilder: React.FC = () => {
     },
     [dispatch]
   );
-  const updateMid = React.useCallback(
-    (mid: string) => {
-      dispatch(actions.setMid(mid));
+  const updateMeasurementId = React.useCallback(
+    (measurement_id: string) => {
+      dispatch(actions.setMeasurementId(measurement_id));
+    },
+    [dispatch]
+  );
+  const updateFirebaseAppId = React.useCallback(
+    (firebase_app_id: string) => {
+      dispatch(actions.setFirebaseAppId(firebase_app_id));
     },
     [dispatch]
   );
@@ -87,25 +99,36 @@ const HitBuilder: React.FC = () => {
       <div className="HitBuilderParams">
         <div className="HeadingGroup HeadingGroup--h3">
           <AuthKey />
-          <ReduxManagedInput
-            labelText="Measurement ID"
-            update={updateMid}
-            urlParamName="mid"
-          />
           <div className="HitBuilderParam">
             <ReduxManagedInput
-              disabled={user_id !== ""}
-              labelText="client_id"
-              update={updateClientId}
-              urlParamName="client_id"
+              disabled={firebase_app_id !== ""}
+              labelText="Measurement ID"
+              update={updateMeasurementId}
+              urlParamName="measurement_id"
             />
             <ReduxManagedInput
-              disabled={client_id !== ""}
-              labelText="user_id"
-              update={updateUserId}
-              urlParamName="user_id"
+              disabled={measurement_id !== ""}
+              labelText="Firebase App Id"
+              update={updateFirebaseAppId}
+              urlParamName="firebase_app_id"
             />
           </div>
+          <ReduxManagedInput
+            labelText={
+              <div>
+                client_id/
+                <br />
+                app_instance_id
+              </div>
+            }
+            update={updateClientId}
+            urlParamName="client_id"
+          />
+          <ReduxManagedInput
+            labelText="user_id"
+            update={updateUserId}
+            urlParamName="user_id"
+          />
           <div className="HitBuilderParam">
             <div className="HitBuilderParam">
               <label className="HitBuilderParam-label">Category</label>

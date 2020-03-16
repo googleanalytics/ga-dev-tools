@@ -35,7 +35,8 @@ import classnames from "classnames";
 const ACTION_TIMEOUT = 1500;
 
 const EventElement: React.FC = () => {
-  const mid = useSelector<State, string>(a => a.mid);
+  const measurement_id = useSelector<State, string>(a => a.measurement_id);
+  const firebase_app_id = useSelector<State, string>(a => a.firebase_app_id);
   const auth_key = useSelector<State, string>(a => a.auth_key);
   const validationStatus = useSelector<State, ValidationStatusT>(
     a => a.validationStatus
@@ -50,7 +51,13 @@ const EventElement: React.FC = () => {
       <ValidationStatus />
       <div className="HitElement-body">
         <div className="HitElement-requestInfo">
-          POST /mp/collect?mid={mid}&auth_key={auth_key} HTTP/1.1
+          POST /mp/collect?
+          {measurement_id !== ""
+            ? `measurement_id=${measurement_id}`
+            : firebase_app_id !== ""
+            ? `firebase_app_id=${firebase_app_id}`
+            : "measurement_id="}
+          &auth_key={auth_key} HTTP/1.1
           <br />
           Host: www.google-analytics.com
         </div>
@@ -136,7 +143,7 @@ const EventActions: React.FC = () => {
   const event = useSelector<State, MPEvent>(a => a.event);
   const client_id = useSelector<State, string>(a => a.client_id);
   const user_id = useSelector<State, string>(a => a.user_id);
-  const mid = useSelector<State, string>(a => a.mid);
+  const mid = useSelector<State, string>(a => a.measurement_id);
   const validationStatus = useSelector<State, ValidationStatusT>(
     a => a.validationStatus
   );

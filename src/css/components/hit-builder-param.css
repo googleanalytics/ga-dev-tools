@@ -23,7 +23,7 @@ limitations under the License.
 
 
 .HitBuilderParam {
-  align-items: baseline;
+  align-items: center;
   display: inline-flex;
   margin: 0 0 var(--HitBuilderParam-gap);
   width: 100%;

@@ -120,10 +120,25 @@ const user_id: Reducer<string, EventBuilderAction> = (state = "", action) => {
   }
 };
 
-const mid: Reducer<string, EventBuilderAction> = (state = "", action) => {
+const measurement_id: Reducer<string, EventBuilderAction> = (
+  state = "",
+  action
+) => {
   switch (action.type) {
-    case ActionType.SetMid:
-      return action.mid;
+    case ActionType.SetMeasurementId:
+      return action.measurement_id;
+    default:
+      return state;
+  }
+};
+
+const firebase_app_id: Reducer<string, EventBuilderAction> = (
+  state = "",
+  action
+) => {
+  switch (action.type) {
+    case ActionType.SetFirebaseAppId:
+      return action.firebase_app_id;
     default:
       return state;
   }
@@ -143,7 +158,8 @@ const validationStatus: Reducer<ValidationStatus, EventBuilderAction> = (
 
 const app: Reducer<State, EventBuilderAction> = combineReducers({
   validationStatus,
-  mid,
+  measurement_id,
+  firebase_app_id,
   user_id,
   client_id,
   auth_key,

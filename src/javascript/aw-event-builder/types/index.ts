@@ -5,7 +5,8 @@ export * from "./events";
 
 export enum ActionType {
   SetValidationStatus = "SetValidationStatus",
-  SetMid = "SetMid",
+  SetMeasurementId = "SetMeasurementId",
+  SetFirebaseAppId = "SetFirebaseAppId",
   SetClientId = "SetClientId",
   SetUserId = "SetUserId",
   SetAuthKey = "SetAPISecret",
@@ -73,15 +74,20 @@ export interface SetUserId {
   user_id: string;
 }
 export interface SetMid {
-  type: ActionType.SetMid;
-  mid: string;
+  type: ActionType.SetMeasurementId;
+  measurement_id: string;
 }
 export interface SetValidationStatus {
   type: ActionType.SetValidationStatus;
   validationStatus: ValidationStatus;
 }
+export interface SetFirebaseAppId {
+  type: ActionType.SetFirebaseAppId;
+  firebase_app_id: string;
+}
 
 export type EventBuilderAction =
+  | SetFirebaseAppId
   | SetValidationStatus
   | SetMid
   | SetClientId
@@ -141,7 +147,8 @@ export interface ValidationMessage {
 
 export interface State {
   validationStatus: ValidationStatus;
-  mid: string;
+  measurement_id: string;
+  firebase_app_id: string;
   client_id: string;
   user_id: string;
   auth_key: string;

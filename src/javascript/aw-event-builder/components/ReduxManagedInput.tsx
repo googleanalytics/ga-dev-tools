@@ -6,7 +6,7 @@ interface ReduxManagedInputProps {
   flex?: string;
   disabled?: boolean;
   update: (localValue: string) => void;
-  labelText: string;
+  labelText: string | JSX.Element;
   urlParamName?: string;
 }
 

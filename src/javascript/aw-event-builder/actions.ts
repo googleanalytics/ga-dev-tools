@@ -11,36 +11,38 @@ import * as api from "./event";
 
 type ThunkResult<T> = ThunkAction<T, State, undefined, EventBuilderAction>;
 
-const sendEvent: ThunkResult<void> = async (dispatch, getState) => {
-  const { mid, auth_key, event, user_id, client_id } = getState();
+const sendEvent: ThunkResult<void> = async (_, getState) => {
+  const {
+    measurement_id,
+    firebase_app_id,
+    auth_key,
+    event,
+    user_id,
+    client_id
+  } = getState();
 
-  let userOrClientId: api.UserOrClientId;
-  if (user_id !== "") {
-    userOrClientId = { user_id };
-  } else if (client_id !== "") {
-    userOrClientId = { client_id };
-  } else {
-    userOrClientId = {};
-  }
+  const userOrClientId: api.UserOrClientId = { user_id, client_id };
+  const instanceId = { measurement_id, firebase_app_id };
 
-  await api.sendEvent(mid, auth_key, userOrClientId, [event]);
+  await api.sendEvent(instanceId, auth_key, userOrClientId, [event]);
 };
 
 const validateEvent: ThunkResult<void> = async (dispatch, getState) => {
   dispatch(actions.setValidationStatus(ValidationStatus.Pending));
 
-  const { mid, auth_key, event, user_id, client_id } = getState();
+  const {
+    measurement_id,
+    firebase_app_id,
+    auth_key,
+    event,
+    user_id,
+    client_id
+  } = getState();
 
-  let userOrClientId: api.UserOrClientId;
-  if (user_id !== "") {
-    userOrClientId = { user_id };
-  } else if (client_id !== "") {
-    userOrClientId = { client_id };
-  } else {
-    userOrClientId = {};
-  }
+  const userOrClientId: api.UserOrClientId = { user_id, client_id };
+  const instanceId = { measurement_id, firebase_app_id };
 
-  const messages = await api.validateHit(mid, auth_key, userOrClientId, [
+  const messages = await api.validateHit(instanceId, auth_key, userOrClientId, [
     event
   ]);
   if (messages.length === 0) {
@@ -91,9 +93,17 @@ const setEvent: (event: MPEvent) => ThunkResult<void> = (
   dispatch(thunkActions.resetValidation);
   dispatch({ type: ActionType.SetEvent, event });
 };
-const setMid: (mid: string) => ThunkResult<void> = mid => dispatch => {
+const setMeasurementId: (
+  measurement_id: string
+) => ThunkResult<void> = measurement_id => dispatch => {
   dispatch(thunkActions.resetValidation);
-  dispatch({ type: ActionType.SetMid, mid });
+  dispatch({ type: ActionType.SetMeasurementId, measurement_id });
+};
+const setFirebaseAppId: (
+  firebase_app_id: string
+) => ThunkResult<void> = firebase_app_id => dispatch => {
+  dispatch(thunkActions.resetValidation);
+  dispatch({ type: ActionType.SetFirebaseAppId, firebase_app_id });
 };
 const setClientId: (
   client_id: string
@@ -128,7 +138,8 @@ const actions = {
 const thunkActions = {
   sendEvent,
   resetValidation,
-  setMid,
+  setMeasurementId,
+  setFirebaseAppId,
   setClientId,
   setUserId,
   setEvent,
