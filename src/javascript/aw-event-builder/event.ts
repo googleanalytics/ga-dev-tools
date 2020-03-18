@@ -2,7 +2,7 @@ import { ValidationMessage, MPEvent } from "./types";
 
 export interface UserOrClientId {
   user_id?: string;
-  client_id?: string;
+  clientId?: string;
 }
 
 export interface InstanceId {

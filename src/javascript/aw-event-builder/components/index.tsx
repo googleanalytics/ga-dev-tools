@@ -27,7 +27,7 @@ const HitBuilder: React.FC = () => {
   // TODO - make sure to focus on any new params.
   const {
     event,
-    client_id,
+    clientId,
     user_id,
     measurement_id,
     firebase_app_id
@@ -116,13 +116,13 @@ const HitBuilder: React.FC = () => {
           <ReduxManagedInput
             labelText={
               <div>
-                client_id/
+                clientId/
                 <br />
                 app_instance_id
               </div>
             }
             update={updateClientId}
-            urlParamName="client_id"
+            urlParamName="clientId"
           />
           <ReduxManagedInput
             labelText="user_id"

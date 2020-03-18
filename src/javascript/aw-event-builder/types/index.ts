@@ -67,7 +67,7 @@ export interface SetAPISecret {
 }
 export interface SetClientId {
   type: ActionType.SetClientId;
-  client_id: string;
+  clientId: string;
 }
 export interface SetUserId {
   type: ActionType.SetUserId;
@@ -149,7 +149,7 @@ export interface State {
   validationStatus: ValidationStatus;
   measurement_id: string;
   firebase_app_id: string;
-  client_id: string;
+  clientId: string;
   user_id: string;
   api_secret: string;
   event: MPEvent;
