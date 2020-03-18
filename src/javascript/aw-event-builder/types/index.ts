@@ -63,7 +63,7 @@ export interface SetEvent {
 
 export interface SetAPISecret {
   type: ActionType.SetAuthKey;
-  auth_key: string;
+  api_secret: string;
 }
 export interface SetClientId {
   type: ActionType.SetClientId;
@@ -151,7 +151,7 @@ export interface State {
   firebase_app_id: string;
   client_id: string;
   user_id: string;
-  auth_key: string;
+  api_secret: string;
   event: MPEvent;
   isAuthorized: boolean;
   validationMessages: ValidationMessage[];

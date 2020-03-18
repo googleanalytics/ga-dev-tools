@@ -37,7 +37,7 @@ const ACTION_TIMEOUT = 1500;
 const EventElement: React.FC = () => {
   const measurement_id = useSelector<State, string>(a => a.measurement_id);
   const firebase_app_id = useSelector<State, string>(a => a.firebase_app_id);
-  const auth_key = useSelector<State, string>(a => a.auth_key);
+  const api_secret = useSelector<State, string>(a => a.api_secret);
   const validationStatus = useSelector<State, ValidationStatusT>(
     a => a.validationStatus
   );
@@ -57,7 +57,7 @@ const EventElement: React.FC = () => {
             : firebase_app_id !== ""
             ? `firebase_app_id=${firebase_app_id}`
             : "measurement_id="}
-          &auth_key={auth_key} HTTP/1.1
+          &api_secret={api_secret} HTTP/1.1
           <br />
           Host: www.google-analytics.com
         </div>

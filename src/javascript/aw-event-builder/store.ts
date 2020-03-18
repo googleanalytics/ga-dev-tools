@@ -100,10 +100,13 @@ const event: Reducer<MPEvent, EventBuilderAction> = (
   }
 };
 
-const auth_key: Reducer<string, EventBuilderAction> = (state = "", action) => {
+const api_secret: Reducer<string, EventBuilderAction> = (
+  state = "",
+  action
+) => {
   switch (action.type) {
     case ActionType.SetAuthKey:
-      return action.auth_key;
+      return action.api_secret;
     default:
       return state;
   }
@@ -169,7 +172,7 @@ const app: Reducer<State, EventBuilderAction> = combineReducers({
   firebase_app_id,
   user_id,
   client_id,
-  auth_key,
+  api_secret,
   event,
   isAuthorized,
   validationMessages

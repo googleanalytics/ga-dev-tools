@@ -12,7 +12,7 @@ export interface InstanceId {
 
 export const validateHit = async (
   instanceId: InstanceId,
-  auth_key: string,
+  api_secret: string,
   requiredId: UserOrClientId,
   events: MPEvent[]
 ): Promise<ValidationMessage[]> => {
@@ -22,7 +22,7 @@ export const validateHit = async (
       : instanceId !== undefined
       ? `&measurement_id=${instanceId.measurement_id}`
       : "";
-  const url = `https://www.google-analytics.com/debug/mp/collect?auth_key=${auth_key}${instanceQueryParam}`;
+  const url = `https://www.google-analytics.com/debug/mp/collect?api_secret=${api_secret}${instanceQueryParam}`;
   const data = {
     ...requiredId,
     events: events.map(event => event.asPayload()),
@@ -38,7 +38,7 @@ export const validateHit = async (
 
 export const sendEvent = async (
   instanceId: InstanceId,
-  auth_key: string,
+  api_secret: string,
   requiredId: UserOrClientId,
   events: MPEvent[]
 ): Promise<Response> => {
@@ -48,7 +48,7 @@ export const sendEvent = async (
       : instanceId !== undefined
       ? `&measurement_id=${instanceId.measurement_id}`
       : "";
-  const url = `https://www.google-analytics.com/mp/collect?auth_key=${auth_key}${instanceQueryParam}`;
+  const url = `https://www.google-analytics.com/mp/collect?api_secret=${api_secret}${instanceQueryParam}`;
   const data = {
     ...requiredId,
     events: events.map(event => event.asPayload())

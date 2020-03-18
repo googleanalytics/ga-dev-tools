@@ -16,7 +16,7 @@ import React from "react";
 import ValidateEvent from "./ValidateEvent";
 import EditEvent from "./EditEvent";
 import ReduxManagedInput from "./ReduxManagedInput";
-import AuthKey from "./APISecret";
+import APISecret from "./APISecret";
 import actions from "../actions";
 import { State, MPEvent, MPEventType } from "../types";
 import { useDispatch, useSelector } from "react-redux";
@@ -98,7 +98,7 @@ const HitBuilder: React.FC = () => {
 
       <div className="HitBuilderParams">
         <div className="HeadingGroup HeadingGroup--h3">
-          <AuthKey />
+          <APISecret />
           <div className="HitBuilderParam">
             <ReduxManagedInput
               disabled={firebase_app_id !== ""}
