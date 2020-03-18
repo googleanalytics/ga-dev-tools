@@ -10,19 +10,27 @@ export interface InstanceId {
   firebase_app_id?: string;
 }
 
+// Build the query param for the instance that should be used for the event.
+// Defaults to an empty measurement_id if neither one is set.
+const instanceQueryParamFor = (instanceId: InstanceId) => {
+  if (instanceId.firebase_app_id !== "") {
+    return `firebase_app_id=${instanceId.firebase_app_id}`;
+  }
+  if (instanceId.measurement_id !== "") {
+    return `measurement_id=${instanceId.measurement_id}`;
+  }
+  return `measurement_id=`;
+};
+
 export const validateHit = async (
   instanceId: InstanceId,
   api_secret: string,
   requiredId: UserOrClientId,
   events: MPEvent[]
 ): Promise<ValidationMessage[]> => {
-  const instanceQueryParam =
-    instanceId.firebase_app_id !== undefined
-      ? `&firebase_app_id=${instanceId.firebase_app_id}`
-      : instanceId !== undefined
-      ? `&measurement_id=${instanceId.measurement_id}`
-      : "";
-  const url = `https://www.google-analytics.com/debug/mp/collect?api_secret=${api_secret}${instanceQueryParam}`;
+  const url = `https://www.google-analytics.com/debug/mp/collect?${instanceQueryParamFor(
+    instanceId
+  )}&api_secret=${api_secret}`;
   const data = {
     ...requiredId,
     events: events.map(event => event.asPayload()),
@@ -42,13 +50,9 @@ export const sendEvent = async (
   requiredId: UserOrClientId,
   events: MPEvent[]
 ): Promise<Response> => {
-  const instanceQueryParam =
-    instanceId.firebase_app_id !== undefined
-      ? `&firebase_app_id=${instanceId.firebase_app_id}`
-      : instanceId !== undefined
-      ? `&measurement_id=${instanceId.measurement_id}`
-      : "";
-  const url = `https://www.google-analytics.com/mp/collect?api_secret=${api_secret}${instanceQueryParam}`;
+  const url = `https://www.google-analytics.com/mp/collect?${instanceQueryParamFor(
+    instanceId
+  )}&api_secret=${api_secret}`;
   const data = {
     ...requiredId,
     events: events.map(event => event.asPayload())
