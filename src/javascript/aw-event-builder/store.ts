@@ -121,10 +121,10 @@ const clientId: Reducer<string, EventBuilderAction> = (state = "", action) => {
   }
 };
 
-const user_id: Reducer<string, EventBuilderAction> = (state = "", action) => {
+const userId: Reducer<string, EventBuilderAction> = (state = "", action) => {
   switch (action.type) {
     case ActionType.SetUserId:
-      return action.user_id;
+      return action.userId;
     default:
       return state;
   }
@@ -170,7 +170,7 @@ const app: Reducer<State, EventBuilderAction> = combineReducers({
   validationStatus,
   measurement_id,
   firebase_app_id,
-  user_id,
+  userId,
   clientId,
   api_secret,
   event,

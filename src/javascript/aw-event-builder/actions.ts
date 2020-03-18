@@ -17,11 +17,11 @@ const sendEvent: ThunkResult<void> = async (_, getState) => {
     firebase_app_id,
     api_secret,
     event,
-    user_id,
+    userId,
     clientId
   } = getState();
 
-  const userOrClientId: api.UserOrClientId = { user_id, clientId };
+  const userOrClientId: api.UserOrClientId = { userId, clientId };
   const instanceId = { measurement_id, firebase_app_id };
 
   await api.sendEvent(instanceId, api_secret, userOrClientId, [event]);
@@ -35,11 +35,11 @@ const validateEvent: ThunkResult<void> = async (dispatch, getState) => {
     firebase_app_id,
     api_secret,
     event,
-    user_id,
+    userId,
     clientId
   } = getState();
 
-  const userOrClientId: api.UserOrClientId = { user_id, clientId };
+  const userOrClientId: api.UserOrClientId = { userId, clientId };
   const instanceId = { measurement_id, firebase_app_id };
 
   const messages = await api.validateHit(
@@ -115,10 +115,10 @@ const setClientId: (
   dispatch({ type: ActionType.SetClientId, clientId });
 };
 const setUserId: (
-  user_id: string
-) => ThunkResult<void> = user_id => dispatch => {
+  userId: string
+) => ThunkResult<void> = userId => dispatch => {
   dispatch(thunkActions.resetValidation);
-  dispatch({ type: ActionType.SetUserId, user_id });
+  dispatch({ type: ActionType.SetUserId, userId });
 };
 
 const actions = {

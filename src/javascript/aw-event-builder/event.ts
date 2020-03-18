@@ -1,7 +1,7 @@
 import { ValidationMessage, MPEvent } from "./types";
 
 export interface UserOrClientId {
-  user_id?: string;
+  userId?: string;
   clientId?: string;
 }
 

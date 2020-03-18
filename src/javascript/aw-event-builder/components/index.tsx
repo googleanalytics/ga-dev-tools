@@ -28,7 +28,7 @@ const HitBuilder: React.FC = () => {
   const {
     event,
     clientId,
-    user_id,
+    userId,
     measurement_id,
     firebase_app_id
   } = useSelector<State, State>(a => a);
@@ -125,9 +125,9 @@ const HitBuilder: React.FC = () => {
             urlParamName="clientId"
           />
           <ReduxManagedInput
-            labelText="user_id"
+            labelText="userId"
             update={updateUserId}
-            urlParamName="user_id"
+            urlParamName="userId"
           />
           <div className="HitBuilderParam">
             <div className="HitBuilderParam">

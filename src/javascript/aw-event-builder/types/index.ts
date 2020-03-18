@@ -71,7 +71,7 @@ export interface SetClientId {
 }
 export interface SetUserId {
   type: ActionType.SetUserId;
-  user_id: string;
+  userId: string;
 }
 export interface SetMid {
   type: ActionType.SetMeasurementId;
@@ -150,7 +150,7 @@ export interface State {
   measurement_id: string;
   firebase_app_id: string;
   clientId: string;
-  user_id: string;
+  userId: string;
   api_secret: string;
   event: MPEvent;
   isAuthorized: boolean;

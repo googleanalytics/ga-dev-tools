@@ -142,7 +142,7 @@ const ValidationStatus: React.FC = () => {
 const EventActions: React.FC = () => {
   const event = useSelector<State, MPEvent>(a => a.event);
   const clientId = useSelector<State, string>(a => a.clientId);
-  const user_id = useSelector<State, string>(a => a.user_id);
+  const userId = useSelector<State, string>(a => a.userId);
   const mid = useSelector<State, string>(a => a.measurement_id);
   const validationStatus = useSelector<State, ValidationStatusT>(
     a => a.validationStatus
@@ -153,15 +153,15 @@ const EventActions: React.FC = () => {
   React.useEffect(() => {
     const params = new URLSearchParams();
     clientId !== "" && params.append("clientId", clientId);
-    user_id !== "" && params.append("user_id", user_id);
+    userId !== "" && params.append("userId", userId);
     mid !== "" && params.append("mid", mid);
     params.append("eventData", btoa(JSON.stringify(event.getEventData())));
     setUrlParams(params.toString());
-  }, [event, clientId, user_id]);
+  }, [event, clientId, userId]);
 
   React.useEffect(() => {
-    setPayload(payloadFor(event, clientId, user_id));
-  }, [event, clientId, user_id]);
+    setPayload(payloadFor(event, clientId, userId));
+  }, [event, clientId, userId]);
   const [eventSent, setEventSent] = React.useState<boolean>(false);
   React.useEffect(() => {
     setEventSent(false);
@@ -278,11 +278,11 @@ const ValidateEventButton: React.FC<ValidateEventButtonProps> = ({
   );
 };
 
-const payloadFor = (event: MPEvent, clientId: string, user_id: string): {} => {
+const payloadFor = (event: MPEvent, clientId: string, userId: string): {} => {
   return {
     // Intentially taking advantage of the fact that '' is falsy.
     clientId: clientId || undefined,
-    user_id: user_id || undefined,
+    userId: userId || undefined,
     events: [event.asPayload()]
   };
 };
@@ -290,12 +290,12 @@ const payloadFor = (event: MPEvent, clientId: string, user_id: string): {} => {
 const EventPayloadInput: React.FC = () => {
   const event = useSelector<State, MPEvent>(a => a.event);
   const clientId = useSelector<State, string>(a => a.clientId);
-  const user_id = useSelector<State, string>(a => a.user_id);
+  const userId = useSelector<State, string>(a => a.userId);
   const [payload, setPayload] = React.useState<any>({});
 
   React.useEffect(() => {
-    setPayload(payloadFor(event, clientId, user_id));
-  }, [event, clientId, user_id]);
+    setPayload(payloadFor(event, clientId, userId));
+  }, [event, clientId, userId]);
 
   return (
     <Textarea
