@@ -47,7 +47,7 @@ type EcommercePurchaseEvent = EventData<
   | StringParam<"value">
   | StringParam<"tax">
   | StringParam<"shipping">
-  | StringParam<"transation_id">
+  | StringParam<"transaction_id">
 >;
 type GenerateLeadEvent = EventData<
   MPEventType.GenerateLead,

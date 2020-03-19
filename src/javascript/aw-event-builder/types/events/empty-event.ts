@@ -150,7 +150,7 @@ export const emptyEvent = (eventType: MPEventType): MPEventData => {
           defaultStringParam("value"),
           defaultStringParam("tax"),
           defaultStringParam("shipping"),
-          defaultStringParam("transation_id")
+          defaultStringParam("transaction_id")
         ]
       };
     case MPEventType.GenerateLead:
