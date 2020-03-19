@@ -165,7 +165,6 @@ export const emptyEvent = (eventType: MPEventType): MPEventData => {
       return {
         type: eventType,
         parameters: [
-          defaultStringParam("quantity"),
           defaultStringParam("value"),
           defaultStringParam("currency"),
           defaultStringParam("transaction_id")

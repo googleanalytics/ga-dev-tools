@@ -55,10 +55,7 @@ type GenerateLeadEvent = EventData<
 >;
 type PurchaseRefundEvent = EventData<
   MPEventType.PurchaseRefund,
-  | StringParam<"quantity">
-  | StringParam<"value">
-  | StringParam<"currency">
-  | StringParam<"transaction_id">
+  StringParam<"value"> | StringParam<"currency"> | StringParam<"transaction_id">
 >;
 type ViewItemEvent = EventData<
   MPEventType.ViewItem,
