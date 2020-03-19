@@ -211,16 +211,6 @@ export const emptyEvent = (eventType: MPEventType): MPEventData => {
         type: eventType,
         parameters: [defaultStringParam("achievement_id")]
       };
-    case MPEventType.AdExposure:
-      return {
-        type: eventType,
-        parameters: [
-          defaultStringParam("firebase_screen"),
-          defaultStringParam("firebase_screen_id"),
-          defaultStringParam("firebase_screen_class"),
-          defaultStringParam("exposure_time")
-        ]
-      };
     case MPEventType.AdReward:
       return {
         type: eventType,

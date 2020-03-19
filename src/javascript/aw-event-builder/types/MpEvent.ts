@@ -56,7 +56,6 @@ export class MPEvent {
       case MPEventType.LevelUp:
       case MPEventType.PostScore:
       case MPEventType.UnlockAchievement:
-      case MPEventType.AdExposure:
       case MPEventType.AdReward:
       case MPEventType.AppException:
       case MPEventType.AppStoreRefund:

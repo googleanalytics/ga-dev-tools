@@ -2,7 +2,6 @@ import { StringParam } from "./parameters";
 import { MPEventType, EventData } from "./index";
 
 export type AutomaticEvent =
-  | AdExposureEvent
   | AdRewardEvent
   | AppExceptionEvent
   | AppStoreRedundEvent
@@ -13,13 +12,6 @@ export type AutomaticEvent =
   | DynamicLinkAppUpdateEvent
   | DynamicLinkFirstOpenEvent;
 
-type AdExposureEvent = EventData<
-  MPEventType.AdExposure,
-  | StringParam<"firebase_screen">
-  | StringParam<"firebase_screen_id">
-  | StringParam<"firebase_screen_class">
-  | StringParam<"exposure_time">
->;
 type AdRewardEvent = EventData<
   MPEventType.AdReward,
   | StringParam<"ad_unit_id">

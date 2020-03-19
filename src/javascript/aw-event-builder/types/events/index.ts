@@ -63,7 +63,6 @@ export enum MPEventType {
 
   // Automatically collected events
   // https://support.google.com/firebase/answer/6317485?hl=en&ref_topic=6317484
-  AdExposure = "ad_exposure",
   AdReward = "ad_reward",
   AppException = "app_exception",
   AppStoreRefund = "app_store_refund",
@@ -169,7 +168,6 @@ export const eventTypesFor = (category: MPEventCategory): MPEventType[] => {
       ];
     case MPEventCategory.Automatic:
       return [
-        MPEventType.AdExposure,
         MPEventType.AdReward,
         MPEventType.AppException,
         MPEventType.AppStoreRefund,
