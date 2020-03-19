@@ -46,7 +46,7 @@ export const emptyEvent = (eventType: MPEventType): MPEventData => {
           defaultStringParam("shipping"),
           defaultItemArrayParam(),
           defaultStringParam("coupon"),
-          defaultStringParam("appiliation")
+          defaultStringParam("affiliation")
         ]
       };
     case MPEventType.Refund:
