@@ -41,7 +41,7 @@ export const validateHit = async (
     body: JSON.stringify(data)
   });
   const asJson = await result.json();
-  return asJson.validationMessage as ValidationMessage[];
+  return asJson.validationMessages as ValidationMessage[];
 };
 
 export const sendEvent = async (
