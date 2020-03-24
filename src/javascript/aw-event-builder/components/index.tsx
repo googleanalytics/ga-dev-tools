@@ -21,6 +21,7 @@ import actions from "../actions";
 import { State, MPEvent, MPEventType } from "../types";
 import { useDispatch, useSelector } from "react-redux";
 import { MPEventCategory } from "../types/events";
+import Icon from "../../components/icon";
 
 const HitBuilder: React.FC = () => {
   // TODO - The event picker should probably let you do a search to filter the dropdown.
@@ -86,6 +87,8 @@ const HitBuilder: React.FC = () => {
     },
     [event, updateEvent]
   );
+
+  const eventReferenceUrl = `https://developers.google.com/analytics/devguides/collection/protocol/app-web/reference/events?tech=aw_measurement_protocol#${event.getEventName()}`;
 
   return (
     <div>
@@ -167,6 +170,13 @@ const HitBuilder: React.FC = () => {
                     </option>
                   ))}
                 </select>
+                <a
+                  href={eventReferenceUrl}
+                  title={`Learn more about this event`}
+                  className="HitBuilderParam-helpIcon-aw"
+                >
+                  <Icon type="info-outline" />
+                </a>
               </div>
             )}
             {event.getEventType() === MPEventType.CustomEvent && (

@@ -121,6 +121,13 @@ limitations under the License.
   position: absolute;
   top: 0;
 }
+
+.HitBuilderParam-helpIcon-aw {
+  color: #ccc;
+  cursor: pointer;
+  padding: .667em;
+}
+
 .HitBuilderParam-helpIcon:active,
 .HitBuilderParam-helpIcon:focus,
 .HitBuilderParam-helpIcon:hover {
