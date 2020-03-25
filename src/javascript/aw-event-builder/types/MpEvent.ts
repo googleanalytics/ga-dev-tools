@@ -104,11 +104,15 @@ export class MPEvent {
     return this.eventType;
   }
   getEventName(): string {
-    if (this.eventType === MPEventType.CustomEvent) {
+    if (this.isCustomEvent()) {
       return this.name || "";
     } else {
       return this.eventData.type;
     }
+  }
+
+  isCustomEvent(): boolean {
+    return this.eventType === MPEventType.CustomEvent;
   }
 
   static parameterToPayload = (parameter: Parameter): {} | "unset" => {
@@ -163,7 +167,7 @@ export class MPEvent {
   }
 
   updateName(nuName: string): MPEvent {
-    if (this.eventType !== MPEventType.CustomEvent) {
+    if (!this.isCustomEvent()) {
       throw new Error("Only custom events can update their name");
     }
     const nuEvent = this.clone();

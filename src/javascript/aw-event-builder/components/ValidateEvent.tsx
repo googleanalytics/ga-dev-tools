@@ -31,13 +31,14 @@ import {
 } from "../types";
 import { useSelector, useDispatch } from "react-redux";
 import classnames from "classnames";
+import { parameterizedUrl } from "../event";
 
 const ACTION_TIMEOUT = 1500;
 
 const EventElement: React.FC = () => {
-  const measurement_id = useSelector<State, string>(a => a.measurement_id);
-  const firebase_app_id = useSelector<State, string>(a => a.firebase_app_id);
-  const api_secret = useSelector<State, string>(a => a.api_secret);
+  const measurement_id = useSelector<State, string>(a => a.measurementId);
+  const firebase_app_id = useSelector<State, string>(a => a.firebaseAppId);
+  const api_secret = useSelector<State, string>(a => a.apiSecret);
   const validationStatus = useSelector<State, ValidationStatusT>(
     a => a.validationStatus
   );
@@ -143,20 +144,25 @@ const EventActions: React.FC = () => {
   const event = useSelector<State, MPEvent>(a => a.event);
   const clientId = useSelector<State, string>(a => a.clientId);
   const userId = useSelector<State, string>(a => a.userId);
-  const mid = useSelector<State, string>(a => a.measurement_id);
+  const measurementId = useSelector<State, string>(a => a.measurementId);
+  const apiSecret = useSelector<State, string>(a => a.apiSecret);
+  const firebaseAppId = useSelector<State, string>(a => a.firebaseAppId);
   const validationStatus = useSelector<State, ValidationStatusT>(
     a => a.validationStatus
   );
   const [payload, setPayload] = React.useState<any>({});
-  const [urlParams, setUrlParams] = React.useState<string>("");
+  const [linkToEvent, setLinkToEvent] = React.useState<string>("");
 
   React.useEffect(() => {
-    const params = new URLSearchParams();
-    clientId !== "" && params.append("clientId", clientId);
-    userId !== "" && params.append("userId", userId);
-    mid !== "" && params.append("mid", mid);
-    params.append("eventData", btoa(JSON.stringify(event.getEventData())));
-    setUrlParams(params.toString());
+    const url = parameterizedUrl({
+      clientId,
+      userId,
+      event,
+      measurementId,
+      firebaseAppId,
+      apiSecret
+    });
+    setLinkToEvent(url);
   }, [event, clientId, userId]);
 
   React.useEffect(() => {
@@ -209,13 +215,6 @@ const EventActions: React.FC = () => {
   );
 
   if (supports.copyToClipboard()) {
-    const sharableLinkToEvent =
-      location.protocol +
-      "//" +
-      location.host +
-      location.pathname +
-      "?" +
-      urlParams;
     return (
       <div className="HitElement-action">
         <div className="ButtonSet">
@@ -227,12 +226,7 @@ const EventActions: React.FC = () => {
           >
             Copy event payload
           </CopyButton>
-          <CopyButton
-            type="link"
-            textToCopy={sharableLinkToEvent}
-            appPlusWeb
-            link
-          >
+          <CopyButton type="link" textToCopy={linkToEvent} appPlusWeb link>
             Copy sharable link to event
           </CopyButton>
         </div>

@@ -1,4 +1,3 @@
-import { gaAll } from "../analytics";
 import {
   createStore,
   applyMiddleware,
@@ -16,6 +15,7 @@ import {
   MPEventData,
   ValidationStatus
 } from "./types";
+import { unParameterizeUrl } from "./event";
 
 const middleware: Middleware[] = [thunkMuddliware];
 // Adds a logger in non-production mode.
@@ -38,6 +38,9 @@ const isAuthorized: Reducer<boolean, EventBuilderAction> = (
   }
 };
 
+const valuesFromUrlParameters = unParameterizeUrl();
+console.log({ valuesFromUrlParameters });
+
 const validationMessages: Reducer<ValidationMessage[], EventBuilderAction> = (
   state = [],
   action
@@ -50,46 +53,8 @@ const validationMessages: Reducer<ValidationMessage[], EventBuilderAction> = (
   }
 };
 
-const getInitialEvent = () => {
-  const search = window.location.search;
-  const searchParams = new URLSearchParams(search);
-  if (searchParams.has("eventData")) {
-    const eventDataString = searchParams.get("eventData")!;
-    try {
-      const decoded = atob(eventDataString);
-      console.log(decoded);
-      const eventData = JSON.parse(decoded) as MPEventData;
-      const eventType = MPEvent.eventTypeFromString(eventData.type as string);
-      if (eventType !== undefined) {
-        let emptyEvent = MPEvent.empty(eventType);
-        const parameters = eventData.parameters;
-        if (parameters !== undefined) {
-          emptyEvent = emptyEvent.updateParameters(() => parameters);
-        }
-        gaAll("send", "event", {
-          eventCategory: "App+Web Event Builder",
-          eventAction: "hydrate",
-          eventLabel: "event-from-url"
-        });
-        return emptyEvent;
-      }
-    } catch (e) {
-      console.log(e);
-      // ignore
-    }
-  } else if (searchParams.has("eventType")) {
-    const eventType = MPEvent.eventTypeFromString(
-      searchParams.get("eventType")!
-    );
-    if (eventType !== undefined) {
-      return MPEvent.empty(eventType);
-    }
-  }
-  return MPEvent.default();
-};
-
 const event: Reducer<MPEvent, EventBuilderAction> = (
-  state = getInitialEvent(),
+  state = valuesFromUrlParameters.event || MPEvent.default(),
   action
 ) => {
   switch (action.type) {
@@ -100,8 +65,8 @@ const event: Reducer<MPEvent, EventBuilderAction> = (
   }
 };
 
-const api_secret: Reducer<string, EventBuilderAction> = (
-  state = "",
+const apiSecret: Reducer<string, EventBuilderAction> = (
+  state = valuesFromUrlParameters.apiSecret || "",
   action
 ) => {
   switch (action.type) {
@@ -112,7 +77,10 @@ const api_secret: Reducer<string, EventBuilderAction> = (
   }
 };
 
-const clientId: Reducer<string, EventBuilderAction> = (state = "", action) => {
+const clientId: Reducer<string, EventBuilderAction> = (
+  state = valuesFromUrlParameters.clientId || "",
+  action
+) => {
   switch (action.type) {
     case ActionType.SetClientId:
       return action.clientId;
@@ -121,7 +89,10 @@ const clientId: Reducer<string, EventBuilderAction> = (state = "", action) => {
   }
 };
 
-const userId: Reducer<string, EventBuilderAction> = (state = "", action) => {
+const userId: Reducer<string, EventBuilderAction> = (
+  state = valuesFromUrlParameters.userId || "",
+  action
+) => {
   switch (action.type) {
     case ActionType.SetUserId:
       return action.userId;
@@ -130,8 +101,8 @@ const userId: Reducer<string, EventBuilderAction> = (state = "", action) => {
   }
 };
 
-const measurement_id: Reducer<string, EventBuilderAction> = (
-  state = "",
+const measurementId: Reducer<string, EventBuilderAction> = (
+  state = valuesFromUrlParameters.measurementId || "",
   action
 ) => {
   switch (action.type) {
@@ -142,8 +113,8 @@ const measurement_id: Reducer<string, EventBuilderAction> = (
   }
 };
 
-const firebase_app_id: Reducer<string, EventBuilderAction> = (
-  state = "",
+const firebaseAppId: Reducer<string, EventBuilderAction> = (
+  state = valuesFromUrlParameters.firebaseAppId || "",
   action
 ) => {
   switch (action.type) {
@@ -168,11 +139,11 @@ const validationStatus: Reducer<ValidationStatus, EventBuilderAction> = (
 
 const app: Reducer<State, EventBuilderAction> = combineReducers({
   validationStatus,
-  measurement_id,
-  firebase_app_id,
+  measurementId,
+  firebaseAppId,
   userId,
   clientId,
-  api_secret,
+  apiSecret,
   event,
   isAuthorized,
   validationMessages

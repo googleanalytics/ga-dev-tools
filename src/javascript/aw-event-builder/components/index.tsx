@@ -30,8 +30,9 @@ const HitBuilder: React.FC = () => {
     event,
     clientId,
     userId,
-    measurement_id,
-    firebase_app_id
+    measurementId,
+    apiSecret,
+    firebaseAppId
   } = useSelector<State, State>(a => a);
   const dispatch = useDispatch();
   const [category, setCategory] = React.useState<MPEventCategory>(
@@ -104,16 +105,16 @@ const HitBuilder: React.FC = () => {
           <APISecret />
           <div className="HitBuilderParam">
             <ReduxManagedInput
-              disabled={firebase_app_id !== ""}
+              disabled={firebaseAppId !== ""}
               labelText="Measurement ID"
               update={updateMeasurementId}
-              urlParamName="measurement_id"
+              initialValue={measurementId}
             />
             <ReduxManagedInput
-              disabled={measurement_id !== ""}
+              disabled={measurementId !== ""}
               labelText="Firebase App Id"
               update={updateFirebaseAppId}
-              urlParamName="firebase_app_id"
+              initialValue={firebaseAppId}
             />
           </div>
           <ReduxManagedInput
@@ -125,12 +126,12 @@ const HitBuilder: React.FC = () => {
               </div>
             }
             update={updateClientId}
-            urlParamName="clientId"
+            initialValue={clientId}
           />
           <ReduxManagedInput
             labelText="userId"
             update={updateUserId}
-            urlParamName="userId"
+            initialValue={userId}
           />
           <div className="HitBuilderParam">
             <div className="HitBuilderParam">
@@ -179,12 +180,12 @@ const HitBuilder: React.FC = () => {
                 </a>
               </div>
             )}
-            {event.getEventType() === MPEventType.CustomEvent && (
+            {event.isCustomEvent() && (
               <ReduxManagedInput
                 flex="0 0 4em"
                 labelText="Name"
                 update={updateCustomEventName}
-                urlParamName="custom_event_name"
+                initialValue={event.getEventName()}
               />
             )}
           </div>

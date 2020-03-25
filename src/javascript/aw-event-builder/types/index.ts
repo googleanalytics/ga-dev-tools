@@ -147,11 +147,11 @@ export interface ValidationMessage {
 
 export interface State {
   validationStatus: ValidationStatus;
-  measurement_id: string;
-  firebase_app_id: string;
+  measurementId: string;
+  firebaseAppId: string;
   clientId: string;
   userId: string;
-  api_secret: string;
+  apiSecret: string;
   event: MPEvent;
   isAuthorized: boolean;
   validationMessages: ValidationMessage[];
