@@ -26,14 +26,10 @@ import Icon from "../../components/icon";
 const HitBuilder: React.FC = () => {
   // TODO - The event picker should probably let you do a search to filter the dropdown.
   // TODO - make sure to focus on any new params.
-  const {
-    event,
-    clientId,
-    userId,
-    measurementId,
-    apiSecret,
-    firebaseAppId
-  } = useSelector<State, State>(a => a);
+  const { event, clientId, userId, measurementId, firebaseAppId } = useSelector<
+    State,
+    State
+  >(a => a);
   const dispatch = useDispatch();
   const [category, setCategory] = React.useState<MPEventCategory>(
     event.getCategories()[0]
