@@ -31,12 +31,14 @@ import {
 } from "../types";
 import { useSelector, useDispatch } from "react-redux";
 import classnames from "classnames";
+import { parameterizedUrl } from "../event";
 
 const ACTION_TIMEOUT = 1500;
 
 const EventElement: React.FC = () => {
-  const mid = useSelector<State, string>(a => a.mid);
-  const auth_key = useSelector<State, string>(a => a.auth_key);
+  const measurement_id = useSelector<State, string>(a => a.measurementId);
+  const firebase_app_id = useSelector<State, string>(a => a.firebaseAppId);
+  const api_secret = useSelector<State, string>(a => a.apiSecret);
   const validationStatus = useSelector<State, ValidationStatusT>(
     a => a.validationStatus
   );
@@ -50,7 +52,13 @@ const EventElement: React.FC = () => {
       <ValidationStatus />
       <div className="HitElement-body">
         <div className="HitElement-requestInfo">
-          POST /debug/mpfg/collect?mid={mid}&auth_key={auth_key} HTTP/1.1
+          POST /mp/collect?
+          {measurement_id !== ""
+            ? `measurement_id=${measurement_id}`
+            : firebase_app_id !== ""
+            ? `firebase_app_id=${firebase_app_id}`
+            : "measurement_id="}
+          &api_secret={api_secret} HTTP/1.1
           <br />
           Host: www.google-analytics.com
         </div>
@@ -134,30 +142,32 @@ const ValidationStatus: React.FC = () => {
 
 const EventActions: React.FC = () => {
   const event = useSelector<State, MPEvent>(a => a.event);
-  const client_id = useSelector<State, string>(a => a.client_id);
-  const user_id = useSelector<State, string>(a => a.user_id);
-  const mid = useSelector<State, string>(a => a.mid);
+  const clientId = useSelector<State, string>(a => a.clientId);
+  const userId = useSelector<State, string>(a => a.userId);
+  const measurementId = useSelector<State, string>(a => a.measurementId);
+  const apiSecret = useSelector<State, string>(a => a.apiSecret);
+  const firebaseAppId = useSelector<State, string>(a => a.firebaseAppId);
   const validationStatus = useSelector<State, ValidationStatusT>(
     a => a.validationStatus
   );
   const [payload, setPayload] = React.useState<any>({});
-  const [urlParams, setUrlParams] = React.useState<string>("");
+  const [linkToEvent, setLinkToEvent] = React.useState<string>("");
 
   React.useEffect(() => {
-    const params = new URLSearchParams();
-    client_id !== "" && params.append("client_id", client_id);
-    user_id !== "" && params.append("user_id", user_id);
-    mid !== "" && params.append("mid", mid);
-    params.append(
-      "eventData",
-      encodeURIComponent(JSON.stringify(event.getEventData()))
-    );
-    setUrlParams(params.toString());
-  }, [event, client_id, user_id]);
+    const url = parameterizedUrl({
+      clientId,
+      userId,
+      event,
+      measurementId,
+      firebaseAppId,
+      apiSecret
+    });
+    setLinkToEvent(url);
+  }, [event, clientId, userId]);
 
   React.useEffect(() => {
-    setPayload(payloadFor(event, client_id, user_id));
-  }, [event]);
+    setPayload(payloadFor(event, clientId, userId));
+  }, [event, clientId, userId]);
   const [eventSent, setEventSent] = React.useState<boolean>(false);
   React.useEffect(() => {
     setEventSent(false);
@@ -172,7 +182,7 @@ const EventActions: React.FC = () => {
     dispatch(actions.sendEvent);
     setEventSent(true);
     gaAll("send", "event", {
-      eventCategory: "Event Builder",
+      eventCategory: "App+Web Event Builder",
       eventAction: "send",
       eventLabel: "payload"
     });
@@ -205,21 +215,18 @@ const EventActions: React.FC = () => {
   );
 
   if (supports.copyToClipboard()) {
-    const sharableLinkToEvent =
-      location.protocol +
-      "//" +
-      location.host +
-      location.pathname +
-      "?" +
-      urlParams;
     return (
       <div className="HitElement-action">
         <div className="ButtonSet">
           {sendEventButton}
-          <CopyButton textToCopy={JSON.stringify(payload)} type="content-paste">
+          <CopyButton
+            textToCopy={JSON.stringify(payload)}
+            type="content-paste"
+            appPlusWeb
+          >
             Copy event payload
           </CopyButton>
-          <CopyButton type="link" textToCopy={sharableLinkToEvent}>
+          <CopyButton type="link" textToCopy={linkToEvent} appPlusWeb link>
             Copy sharable link to event
           </CopyButton>
         </div>
@@ -265,23 +272,24 @@ const ValidateEventButton: React.FC<ValidateEventButtonProps> = ({
   );
 };
 
-const payloadFor = (event: MPEvent, client_id: string, user_id: string): {} => {
+const payloadFor = (event: MPEvent, clientId: string, userId: string): {} => {
   return {
-    client_id,
-    user_id,
+    // Intentially taking advantage of the fact that '' is falsy.
+    clientId: clientId || undefined,
+    userId: userId || undefined,
     events: [event.asPayload()]
   };
 };
 
 const EventPayloadInput: React.FC = () => {
   const event = useSelector<State, MPEvent>(a => a.event);
-  const client_id = useSelector<State, string>(a => a.client_id);
-  const user_id = useSelector<State, string>(a => a.user_id);
+  const clientId = useSelector<State, string>(a => a.clientId);
+  const userId = useSelector<State, string>(a => a.userId);
   const [payload, setPayload] = React.useState<any>({});
 
   React.useEffect(() => {
-    setPayload(payloadFor(event, client_id, user_id));
-  }, [event, client_id, user_id]);
+    setPayload(payloadFor(event, clientId, userId));
+  }, [event, clientId, userId]);
 
   return (
     <Textarea

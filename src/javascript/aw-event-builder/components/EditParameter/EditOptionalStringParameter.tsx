@@ -1,9 +1,9 @@
 import React from "react";
-import { OptionalString } from "../../types";
+import { StringParam } from "../../types";
 
 interface EditOptionalStringParameterProps {
-  parameter: OptionalString;
-  updateParameter: (nu: OptionalString) => void;
+  parameter: StringParam;
+  updateParameter: (nu: StringParam) => void;
 }
 
 const EditOptionalStringParameter: React.FC<

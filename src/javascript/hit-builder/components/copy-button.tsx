@@ -9,12 +9,16 @@ const ACTION_TIMEOUT = 1500;
 interface CopyButtonProps {
   type: IconType;
   textToCopy: string;
+  appPlusWeb?: true | undefined;
+  link?: true | undefined;
 }
 
 const CopyButton: React.FC<CopyButtonProps> = ({
   children,
   type,
-  textToCopy
+  textToCopy,
+  appPlusWeb,
+  link
 }) => {
   const [iconType, setIconType] = React.useState<IconType>(type);
   const [copied, setCopied] = React.useState(false);
@@ -22,11 +26,14 @@ const CopyButton: React.FC<CopyButtonProps> = ({
   const copyText = React.useCallback(() => {
     if (copy(textToCopy)) {
       setCopied(true);
-
+      const eventCategory = appPlusWeb
+        ? "App+Web Event Builder"
+        : "Hit Builder";
+      const eventLabel = link ? "link-to-event" : "payload";
       gaAll("send", "event", {
-        eventCategory: "Hit Builder",
+        eventCategory,
         eventAction: "copy-to-clipboard",
-        eventLabel: "payload"
+        eventLabel
       });
     }
   }, [textToCopy]);

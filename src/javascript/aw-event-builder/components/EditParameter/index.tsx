@@ -1,4 +1,5 @@
 import React from "react";
+import classnames from "classnames";
 import Icon from "../../../components/icon";
 import {
   Parameter,
@@ -21,11 +22,18 @@ const CustomLabel: React.FC<CustomParamLabelProps> = ({
   remove
 }) => {
   const [localName, setLocalName] = React.useState(name);
+  // TODO - This shouldn't be necessary, but something funky is going on effect
+  // wise. This will probably be easy to fix once I have the hooks linter turned
+  // on.
+  const [refresh, setForceRefresh] = React.useState(0);
+
+  React.useEffect(() => {
+    setLocalName(name);
+  }, [name, refresh]);
 
   const updateCustomParameterName = React.useCallback(() => {
-    if (name !== localName) {
-      updateName(name, localName);
-    }
+    updateName(name, localName);
+    setForceRefresh(a => a + 1);
   }, [localName, name, updateName]);
 
   return (
@@ -41,6 +49,7 @@ const CustomLabel: React.FC<CustomParamLabelProps> = ({
       <input
         className="FormField HitBuilderParam-inputLabel"
         value={localName}
+        title={localName}
         onChange={e => setLocalName(e.target.value)}
         onBlur={updateCustomParameterName}
       />
@@ -49,54 +58,94 @@ const CustomLabel: React.FC<CustomParamLabelProps> = ({
 };
 
 interface EditParameterProps {
-  custom?: {
-    updateName: (oldName: string, newName: string) => void;
-    remove: () => void;
-  };
+  updateName: (oldName: string, newName: string) => void;
+  remove: () => void;
   parameter: Parameter;
   updateParameter: (nu: Parameter) => void;
+  isNested: boolean;
 }
 
 const EditParameter: React.FC<EditParameterProps> = ({
-  custom,
+  updateName,
+  remove,
   parameter,
-  updateParameter
+  updateParameter,
+  isNested
 }) => {
+  const isItem = parameter.type === ParameterType.Items;
+  const className = classnames("HitBuilderParam", {
+    "HitBuilderParam--item": isItem
+  });
+
   return (
-    <div className="HitBuilderParam">
-      {custom !== undefined ? (
-        <CustomLabel
-          name={parameter.name}
-          updateName={custom.updateName}
-          remove={custom.remove}
-        />
+    <div className={className}>
+      {isItem ? (
+        <>
+          <div className="HitBuilderParam">
+            <CustomLabel
+              name={parameter.name}
+              updateName={updateName}
+              remove={remove}
+            />
+
+            <select
+              className="FormField ParameterTypeDropdown"
+              value={parameter.type}
+              onChange={e => {
+                const newParameterType: ParameterType = e.target
+                  .value as ParameterType;
+                updateParameter(
+                  defaultParameterFor(newParameterType, parameter.name)
+                );
+              }}
+            >
+              {MPEvent.parameterTypeOptions()
+                .filter(a => (isNested ? a !== ParameterType.Items : true))
+                .map(option => (
+                  <option value={option} key={option}>
+                    {option}
+                  </option>
+                ))}
+            </select>
+          </div>
+          <div className="HitBuilderParam--items">
+            <EditParameterValue
+              parameter={parameter}
+              updateParameter={updateParameter}
+            />
+          </div>
+        </>
       ) : (
-        <label className="HitBuilderParam-label">{parameter.name}</label>
-      )}
-      <EditParameterValue
-        parameter={parameter}
-        updateParameter={updateParameter}
-      />
-      {custom !== undefined && (
-        <select
-          className="FormField ParameterTypeDropdown"
-          value={parameter.type}
-          onChange={e => {
-            const newParameterType: ParameterType = e.target
-              .value as ParameterType;
-            updateParameter(
-              defaultParameterFor(newParameterType, parameter.name)
-            );
-          }}
-        >
-          {MPEvent.parameterTypeOptions()
-            .filter(a => a !== ParameterType.RequiredArray)
-            .map(option => (
-              <option value={option} key={option}>
-                {option}
-              </option>
-            ))}
-        </select>
+        <>
+          <CustomLabel
+            name={parameter.name}
+            updateName={updateName}
+            remove={remove}
+          />
+          <EditParameterValue
+            parameter={parameter}
+            updateParameter={updateParameter}
+          />
+          <select
+            className="FormField ParameterTypeDropdown"
+            value={parameter.type}
+            onChange={e => {
+              const newParameterType: ParameterType = e.target
+                .value as ParameterType;
+              updateParameter(
+                defaultParameterFor(newParameterType, parameter.name)
+              );
+            }}
+          >
+            {MPEvent.parameterTypeOptions()
+              .filter(a => (isNested ? a !== ParameterType.Items : true))
+              .map(option => (
+                <option value={option} key={option}>
+                  {option}
+                </option>
+              ))}
+          </select>
+        </>
       )}
     </div>
   );

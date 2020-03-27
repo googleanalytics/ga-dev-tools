@@ -16,16 +16,24 @@ import React from "react";
 import ValidateEvent from "./ValidateEvent";
 import EditEvent from "./EditEvent";
 import ReduxManagedInput from "./ReduxManagedInput";
-import AuthKey from "./APISecret";
+import APISecret from "./APISecret";
 import actions from "../actions";
-import { State, MPEvent, MPEventType, ValidationStatus } from "../types";
+import { State, MPEvent, MPEventType } from "../types";
 import { useDispatch, useSelector } from "react-redux";
+import { MPEventCategory } from "../types/events";
+import Icon from "../../components/icon";
 
 const HitBuilder: React.FC = () => {
   // TODO - The event picker should probably let you do a search to filter the dropdown.
   // TODO - make sure to focus on any new params.
-  const { event } = useSelector<State, State>(a => a);
+  const { event, clientId, userId, measurementId, firebaseAppId } = useSelector<
+    State,
+    State
+  >(a => a);
   const dispatch = useDispatch();
+  const [category, setCategory] = React.useState<MPEventCategory>(
+    event.getCategories()[0]
+  );
 
   const updateEvent = React.useCallback(
     (event: MPEvent) => {
@@ -33,6 +41,17 @@ const HitBuilder: React.FC = () => {
     },
     [dispatch]
   );
+
+  React.useEffect(() => {
+    // If the new category doesn't have the current eventType as an option,
+    // update it to an empty one.
+    const categoryHasEvent =
+      event.getCategories().find(c => c === category) !== undefined;
+    if (!categoryHasEvent) {
+      const firstEventFromNewCategory = MPEvent.eventTypes(category)[0];
+      updateEvent(MPEvent.empty(firstEventFromNewCategory));
+    }
+  }, [category, event]);
 
   const updateClientId = React.useCallback(
     (clientId: string) => {
@@ -46,9 +65,15 @@ const HitBuilder: React.FC = () => {
     },
     [dispatch]
   );
-  const updateMid = React.useCallback(
-    (mid: string) => {
-      dispatch(actions.setMid(mid));
+  const updateMeasurementId = React.useCallback(
+    (measurement_id: string) => {
+      dispatch(actions.setMeasurementId(measurement_id));
+    },
+    [dispatch]
+  );
+  const updateFirebaseAppId = React.useCallback(
+    (firebase_app_id: string) => {
+      dispatch(actions.setFirebaseAppId(firebase_app_id));
     },
     [dispatch]
   );
@@ -59,6 +84,8 @@ const HitBuilder: React.FC = () => {
     },
     [event, updateEvent]
   );
+
+  const eventReferenceUrl = `https://developers.google.com/analytics/devguides/collection/protocol/app-web/reference/events?tech=aw_measurement_protocol#${event.getEventName()}`;
 
   return (
     <div>
@@ -71,45 +98,90 @@ const HitBuilder: React.FC = () => {
 
       <div className="HitBuilderParams">
         <div className="HeadingGroup HeadingGroup--h3">
-          <AuthKey />
+          <APISecret />
+          <div className="HitBuilderParam">
+            <ReduxManagedInput
+              disabled={firebaseAppId !== ""}
+              labelText="Measurement ID"
+              update={updateMeasurementId}
+              initialValue={measurementId}
+            />
+            <ReduxManagedInput
+              disabled={measurementId !== ""}
+              labelText="Firebase App Id"
+              update={updateFirebaseAppId}
+              initialValue={firebaseAppId}
+            />
+          </div>
           <ReduxManagedInput
-            labelText="mid"
-            update={updateMid}
-            urlParamName="mid"
-          />
-          <ReduxManagedInput
-            labelText="client_id"
+            labelText={
+              <div>
+                clientId/
+                <br />
+                app_instance_id
+              </div>
+            }
             update={updateClientId}
-            urlParamName="client_id"
+            initialValue={clientId}
           />
           <ReduxManagedInput
-            labelText="user_id"
+            labelText="userId"
             update={updateUserId}
-            urlParamName="user_id"
+            initialValue={userId}
           />
           <div className="HitBuilderParam">
-            <label className="HitBuilderParam-label">Event Type</label>
-            <select
-              className="FormField"
-              value={event.getEventType()}
-              onChange={e => {
-                const newEventType: MPEventType = e.target.value as MPEventType;
-                const newEvent = MPEvent.empty(newEventType);
-                dispatch(actions.setEvent(newEvent));
-              }}
-            >
-              {MPEvent.options().map(option => (
-                <option value={option} key={option}>
-                  {option}
-                </option>
-              ))}
-            </select>
-            {event.getEventType() === MPEventType.CustomEvent && (
+            <div className="HitBuilderParam">
+              <label className="HitBuilderParam-label">Category</label>
+              <select
+                className="FormField"
+                value={category}
+                onChange={e => {
+                  const newCategory: MPEventCategory = e.target
+                    .value as MPEventCategory;
+                  setCategory(newCategory);
+                }}
+              >
+                {MPEvent.categories().map(option => (
+                  <option value={option} key={option}>
+                    {option}
+                  </option>
+                ))}
+              </select>
+            </div>
+            {category !== MPEventCategory.Custom && (
+              <div className="HitBuilderParam">
+                <label className="HitBuilderParam-label">Name</label>
+                <select
+                  className="FormField"
+                  value={event.getEventType()}
+                  onChange={e => {
+                    const newEventType: MPEventType = e.target
+                      .value as MPEventType;
+                    const newEvent = MPEvent.empty(newEventType);
+                    dispatch(actions.setEvent(newEvent));
+                  }}
+                >
+                  {MPEvent.eventTypes(category).map(option => (
+                    <option value={option} key={option}>
+                      {option}
+                    </option>
+                  ))}
+                </select>
+                <a
+                  href={eventReferenceUrl}
+                  title={`Learn more about this event`}
+                  className="HitBuilderParam-helpIcon-aw"
+                >
+                  <Icon type="info-outline" />
+                </a>
+              </div>
+            )}
+            {event.isCustomEvent() && (
               <ReduxManagedInput
                 flex="0 0 4em"
                 labelText="Name"
                 update={updateCustomEventName}
-                urlParamName="custom_event_name"
+                initialValue={event.getEventName()}
               />
             )}
           </div>

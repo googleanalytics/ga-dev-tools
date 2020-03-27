@@ -5,7 +5,8 @@ export * from "./events";
 
 export enum ActionType {
   SetValidationStatus = "SetValidationStatus",
-  SetMid = "SetMid",
+  SetMeasurementId = "SetMeasurementId",
+  SetFirebaseAppId = "SetFirebaseAppId",
   SetClientId = "SetClientId",
   SetUserId = "SetUserId",
   SetAuthKey = "SetAPISecret",
@@ -50,11 +51,6 @@ export interface ReplaceParams {
   params: Params;
 }
 
-export interface SetUserProperties {
-  type: ActionType.SetUserProperties;
-  properties: Property[];
-}
-
 export interface SetValidationMessages {
   type: ActionType.SetValidationMessages;
   validationMessages: ValidationMessage[];
@@ -67,26 +63,31 @@ export interface SetEvent {
 
 export interface SetAPISecret {
   type: ActionType.SetAuthKey;
-  auth_key: string;
+  api_secret: string;
 }
 export interface SetClientId {
   type: ActionType.SetClientId;
-  client_id: string;
+  clientId: string;
 }
 export interface SetUserId {
   type: ActionType.SetUserId;
-  user_id: string;
+  userId: string;
 }
 export interface SetMid {
-  type: ActionType.SetMid;
-  mid: string;
+  type: ActionType.SetMeasurementId;
+  measurement_id: string;
 }
 export interface SetValidationStatus {
   type: ActionType.SetValidationStatus;
   validationStatus: ValidationStatus;
 }
+export interface SetFirebaseAppId {
+  type: ActionType.SetFirebaseAppId;
+  firebase_app_id: string;
+}
 
 export type EventBuilderAction =
+  | SetFirebaseAppId
   | SetValidationStatus
   | SetMid
   | SetClientId
@@ -99,7 +100,6 @@ export type EventBuilderAction =
   | EditParamName
   | EditParamValue
   | ReplaceParams
-  | SetUserProperties
   | SetValidationMessages;
 
 export enum RequiredParams {
@@ -132,12 +132,6 @@ interface ParamType<T> {
   isOptional?: true;
 }
 
-export interface Property {
-  name: string;
-  id: number;
-  group: string;
-}
-
 export enum ValidationStatus {
   Valid = "VALID",
   Pending = "PENDING",
@@ -153,12 +147,12 @@ export interface ValidationMessage {
 
 export interface State {
   validationStatus: ValidationStatus;
-  mid: string;
-  client_id: string;
-  user_id: string;
-  auth_key: string;
+  measurementId: string;
+  firebaseAppId: string;
+  clientId: string;
+  userId: string;
+  apiSecret: string;
   event: MPEvent;
   isAuthorized: boolean;
-  properties: Property[];
   validationMessages: ValidationMessage[];
 }

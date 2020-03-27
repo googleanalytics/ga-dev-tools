@@ -16,18 +16,46 @@ limitations under the License.
 
 
 :root {
-  --HitBuilderParam-gap: 1.25em;
+  --HitBuilderParam-gap: 1.0em;
   --HitBuilderParam-labelWidth: 9em;
-  --HitBuilderParam-labelInputWidth: 4em;
+  --HitBuilderParam-labelInputWidth: 9em;
 }
 
 
 .HitBuilderParam {
-  align-items: baseline;
+  align-items: center;
   display: inline-flex;
   margin: 0 0 var(--HitBuilderParam-gap);
-  max-width: 36em;
   width: 100%;
+}
+
+.HitBuilderParam.buttons {
+  width: 100%;
+  max-width: unset;
+  margin: unset;
+}
+
+.HitBuilderParam--item > .HitBuilderParam > .HitBuilderParam-label {
+  min-width: 9em;
+}
+
+.HitBuilderParam--item {
+  flex-direction: column;
+}
+
+.HitBuilderParam--itemIndex {
+  margin-left: 8em;
+  margin-top: 0.5em;
+  margin-bottom: 0.5em;
+}
+
+
+.HitBuilderParam > input.FormField {
+  margin-right: 0.5em;
+}
+
+.HitBuilderParam > .HitBuilderParam {
+  margin: 0;
 }
 
 .HitBuilderParam-label {
@@ -39,8 +67,12 @@ limitations under the License.
   text-align: right;
 }
 
+.HitBuilderParam-label-not-first {
+  flex: 0 0 4em;
+}
+
 .indent-6 > .HitBuilderParam > .HitBuilderParam-label {
-  flex: 0 0 6;
+  margin-left: 6em;
 }
 
 .HitBuilderParam--required .HitBuilderParam-label::before {
@@ -89,6 +121,13 @@ limitations under the License.
   position: absolute;
   top: 0;
 }
+
+.HitBuilderParam-helpIcon-aw {
+  color: #ccc;
+  cursor: pointer;
+  padding: .667em;
+}
+
 .HitBuilderParam-helpIcon:active,
 .HitBuilderParam-helpIcon:focus,
 .HitBuilderParam-helpIcon:hover {
@@ -100,4 +139,8 @@ limitations under the License.
 .HitBuilderParam--action {
   margin-left: calc(var(--HitBuilderParam-labelWidth) +
                     var(--HitBuilderParam-gap));
+}
+
+.ParameterList {
+  width: 100%;
 }

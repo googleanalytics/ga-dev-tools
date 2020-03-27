@@ -13,6 +13,7 @@
 
 .HitBuilderParam--items > .Button {
   margin-bottom: 1em;
+  float: right;
 }
 
 .HitBuilderParam--item > .HitBuilderParam > .HitBuilderParam-label {

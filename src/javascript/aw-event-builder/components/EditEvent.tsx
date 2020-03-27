@@ -1,10 +1,5 @@
 import React from "react";
-import {
-  MPEvent,
-  defaultOptionalString,
-  Parameters,
-  Parameter
-} from "../types";
+import { MPEvent, defaultStringParam, Parameters, Parameter } from "../types";
 import ParameterList from "./ParameterList";
 
 interface EditEventProps {
@@ -17,10 +12,9 @@ const EditEvent: React.FC<EditEventProps> = ({ event, updateEvent }) => {
     event
   ]);
 
-  const customParameters = React.useMemo<Parameter[]>(
-    () => event.getCustomParameters(),
-    [event]
-  );
+  const defaultEventParameters = React.useMemo(() => {
+    return MPEvent.empty(event.getEventType()).getParameters();
+  }, [event.getEventType()]);
 
   const updateParameters = React.useCallback(
     (update: (old: Parameters) => Parameters): void => {
@@ -29,21 +23,14 @@ const EditEvent: React.FC<EditEventProps> = ({ event, updateEvent }) => {
     [parameters, updateEvent, event]
   );
 
-  const updateCustomParameters = React.useCallback(
-    (update: (old: Parameters) => Parameters): void => {
-      updateEvent(event.updateCustomParameters(update));
-    },
-    [customParameters, updateEvent, event]
-  );
-
-  const addCustomParameter = React.useCallback(() => {
-    updateEvent(event.addCustomParameter("", defaultOptionalString("")));
+  const addParameter = React.useCallback(() => {
+    updateEvent(event.addParameter("", defaultStringParam("")));
   }, [event, updateEvent]);
 
   return (
     <>
       <h3>Event details</h3>
-      {parameters.length === 0 ? (
+      {parameters.length === 0 && defaultEventParameters.length === 0 ? (
         <p>No parameters are recommended for this event</p>
       ) : (
         <>
@@ -56,11 +43,10 @@ const EditEvent: React.FC<EditEventProps> = ({ event, updateEvent }) => {
         </>
       )}
       <ParameterList
-        addCustomParameter={addCustomParameter}
+        isNested={false}
+        addParameter={addParameter}
         parameters={parameters}
-        customParameters={customParameters}
         updateParameters={updateParameters}
-        updateCustomParameters={updateCustomParameters}
       />
     </>
   );

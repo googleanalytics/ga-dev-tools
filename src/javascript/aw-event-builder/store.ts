@@ -10,12 +10,12 @@ import {
   MPEvent,
   EventBuilderAction,
   ActionType,
-  Property,
   State,
   ValidationMessage,
   MPEventData,
   ValidationStatus
 } from "./types";
+import { unParameterizeUrl } from "./event";
 
 const middleware: Middleware[] = [thunkMuddliware];
 // Adds a logger in non-production mode.
@@ -38,17 +38,8 @@ const isAuthorized: Reducer<boolean, EventBuilderAction> = (
   }
 };
 
-const properties: Reducer<Property[], EventBuilderAction> = (
-  state = [],
-  action
-) => {
-  switch (action.type) {
-    case ActionType.SetUserProperties:
-      return action.properties;
-    default:
-      return state;
-  }
-};
+const valuesFromUrlParameters = unParameterizeUrl();
+console.log({ valuesFromUrlParameters });
 
 const validationMessages: Reducer<ValidationMessage[], EventBuilderAction> = (
   state = [],
@@ -62,40 +53,8 @@ const validationMessages: Reducer<ValidationMessage[], EventBuilderAction> = (
   }
 };
 
-const getInitialEvent = () => {
-  const search = window.location.search;
-  const searchParams = new URLSearchParams(search);
-  if (searchParams.has("eventData")) {
-    const eventDataString = searchParams.get("eventData")!;
-    const decoded = decodeURIComponent(eventDataString);
-    try {
-      const eventData = JSON.parse(decoded) as MPEventData;
-      const eventType = MPEvent.eventTypeFromString(eventData.type as string);
-      if (eventType !== undefined) {
-        console.log("here", { eventData, eventType });
-        let emptyEvent = MPEvent.empty(eventType);
-        const parameters = eventData.parameters;
-        if (parameters !== undefined) {
-          emptyEvent = emptyEvent.updateParameters(() => parameters);
-        }
-        const customParameters = eventData.customParameters;
-        if (customParameters !== undefined) {
-          emptyEvent = emptyEvent.updateCustomParameters(
-            () => customParameters
-          );
-        }
-        return emptyEvent;
-      }
-    } catch (e) {
-      console.log(e);
-      // ignore
-    }
-  }
-  return MPEvent.default();
-};
-
 const event: Reducer<MPEvent, EventBuilderAction> = (
-  state = getInitialEvent(),
+  state = valuesFromUrlParameters.event || MPEvent.default(),
   action
 ) => {
   switch (action.type) {
@@ -106,37 +65,61 @@ const event: Reducer<MPEvent, EventBuilderAction> = (
   }
 };
 
-const auth_key: Reducer<string, EventBuilderAction> = (state = "", action) => {
+const apiSecret: Reducer<string, EventBuilderAction> = (
+  state = valuesFromUrlParameters.apiSecret || "",
+  action
+) => {
   switch (action.type) {
     case ActionType.SetAuthKey:
-      return action.auth_key;
+      return action.api_secret;
     default:
       return state;
   }
 };
 
-const client_id: Reducer<string, EventBuilderAction> = (state = "", action) => {
+const clientId: Reducer<string, EventBuilderAction> = (
+  state = valuesFromUrlParameters.clientId || "",
+  action
+) => {
   switch (action.type) {
     case ActionType.SetClientId:
-      return action.client_id;
+      return action.clientId;
     default:
       return state;
   }
 };
 
-const user_id: Reducer<string, EventBuilderAction> = (state = "", action) => {
+const userId: Reducer<string, EventBuilderAction> = (
+  state = valuesFromUrlParameters.userId || "",
+  action
+) => {
   switch (action.type) {
     case ActionType.SetUserId:
-      return action.user_id;
+      return action.userId;
     default:
       return state;
   }
 };
 
-const mid: Reducer<string, EventBuilderAction> = (state = "", action) => {
+const measurementId: Reducer<string, EventBuilderAction> = (
+  state = valuesFromUrlParameters.measurementId || "",
+  action
+) => {
   switch (action.type) {
-    case ActionType.SetMid:
-      return action.mid;
+    case ActionType.SetMeasurementId:
+      return action.measurement_id;
+    default:
+      return state;
+  }
+};
+
+const firebaseAppId: Reducer<string, EventBuilderAction> = (
+  state = valuesFromUrlParameters.firebaseAppId || "",
+  action
+) => {
+  switch (action.type) {
+    case ActionType.SetFirebaseAppId:
+      return action.firebase_app_id;
     default:
       return state;
   }
@@ -156,13 +139,13 @@ const validationStatus: Reducer<ValidationStatus, EventBuilderAction> = (
 
 const app: Reducer<State, EventBuilderAction> = combineReducers({
   validationStatus,
-  mid,
-  user_id,
-  client_id,
-  auth_key,
+  measurementId,
+  firebaseAppId,
+  userId,
+  clientId,
+  apiSecret,
   event,
   isAuthorized,
-  properties,
   validationMessages
 });
 

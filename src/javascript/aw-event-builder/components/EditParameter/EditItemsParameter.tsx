@@ -1,7 +1,13 @@
 import React from "react";
 import IconButton from "../../../components/icon-button";
 import ParameterList from "../ParameterList";
-import { ItemArray, Item, defaultOptionalString, Parameter } from "../../types";
+import {
+  ItemArrayParam,
+  Item,
+  defaultStringParam,
+  Parameter,
+  MPEvent
+} from "../../types";
 
 interface EditItemProps {
   item: Item;
@@ -16,48 +22,33 @@ const EditItem: React.FC<EditItemProps> = ({
   updateItem,
   removeItem
 }) => {
-  const parameters = React.useMemo<Parameter[]>(
-    () => Object.values(item.parameters),
-    [item]
-  );
-  const customParameters = React.useMemo<Parameter[]>(
-    () => Object.values(item.customParameters),
-    [item]
-  );
+  const parameters = React.useMemo<Parameter[]>(() => item.parameters, [item]);
   const updateParameters = React.useCallback(
     update => {
       updateItem(old => ({ ...old, parameters: update(old.parameters) }));
     },
     [updateItem]
   );
-  const updateCustomParameters = React.useCallback(
-    update => {
-      updateItem(old => ({
-        ...old,
-        customParameters: update(old.customParameters)
-      }));
-    },
-    [updateItem]
-  );
-  const addCustomParameter = React.useCallback(() => {
-    updateItem(old => ({
-      ...old,
-      customParameters: {
-        ...old.customParameters,
-        "": defaultOptionalString("")
+  const addParameter = React.useCallback(() => {
+    updateItem(old => {
+      const nu = old.parameters.concat([defaultStringParam("")]);
+      if (MPEvent.hasDuplicateNames(nu)) {
+        return old;
       }
-    }));
+      return {
+        ...old,
+        parameters: nu
+      };
+    });
   }, [updateItem]);
   return (
     <div className="HitBuilderParam">
       <ParameterList
+        isNested
         indentation={6}
-        oneList
         parameters={parameters}
-        customParameters={customParameters}
         updateParameters={updateParameters}
-        updateCustomParameters={updateCustomParameters}
-        addCustomParameter={addCustomParameter}
+        addParameter={addParameter}
       >
         <IconButton
           onClick={removeItem}
@@ -72,8 +63,8 @@ const EditItem: React.FC<EditItemProps> = ({
 };
 
 interface EditItemArrayParameterProps {
-  items: ItemArray;
-  updateParameter: (nu: ItemArray) => void;
+  items: ItemArrayParam;
+  updateParameter: (nu: ItemArrayParam) => void;
 }
 
 const EditArrayParameter: React.FC<EditItemArrayParameterProps> = ({
@@ -92,14 +83,7 @@ const EditArrayParameter: React.FC<EditItemArrayParameterProps> = ({
 
   const addItem = React.useCallback(() => {
     setLocalValues(old => {
-      /* const first = old.length > 0 && old[0]; */
-      /* const customParameters = first ? first.customParameters : {}; */
-      const nu = old.concat([
-        {
-          parameters: { name: defaultOptionalString("name") },
-          customParameters: {}
-        }
-      ]);
+      const nu = old.concat([{ parameters: [] }]);
       updateParameter({ ...items, value: nu });
       return nu;
     });
@@ -123,14 +107,22 @@ const EditArrayParameter: React.FC<EditItemArrayParameterProps> = ({
   );
 
   const updateParameterName = React.useCallback(
-    (oldName: string, nuName: string) => {
+    (idx: number) => (oldName: string, nuName: string) => {
       setLocalValues(old =>
-        old.map(item => {
-          const nuItem = { ...item };
-          const oldParameterValue = nuItem.customParameters[oldName];
-          delete nuItem.customParameters[oldName];
-          nuItem.customParameters[nuName] = oldParameterValue;
-          return nuItem;
+        old.map((item, i) => {
+          if (idx !== i) {
+            return item;
+          }
+          const nuParameters = item.parameters.map(p =>
+            p.name === oldName ? { ...p, name: nuName } : p
+          );
+          if (MPEvent.hasDuplicateNames(nuParameters)) {
+            return item;
+          }
+          return {
+            ...item,
+            parameters: nuParameters
+          };
         })
       );
     },
@@ -141,12 +133,12 @@ const EditArrayParameter: React.FC<EditItemArrayParameterProps> = ({
     <div className="HitBuilderParam--items">
       {localValues.map((item, idx) => (
         <div key={`item-${idx}`} className="HitBuilderParam--item">
-          <div>
+          <div className="HitBuilderParam--itemIndex">
             <span style={{}}>Item {idx + 1}</span>
           </div>
           <EditItem
             removeItem={removeItem(idx)}
-            updateParameterName={updateParameterName}
+            updateParameterName={updateParameterName(idx)}
             item={item}
             isFirst={idx === 0}
             updateItem={updateItem(idx)}

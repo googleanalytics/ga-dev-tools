@@ -1,10 +1,12 @@
 import {
   MPEventType,
+  MPEventCategory,
   MPEventData,
   emptyEvent,
   Parameter,
   Parameters,
-  ParameterType
+  ParameterType,
+  eventTypesFor
 } from "./events";
 
 export class MPEvent {
@@ -12,8 +14,12 @@ export class MPEvent {
   private eventData: MPEventData;
   private name?: string;
 
-  static options = (): MPEventType[] => {
-    return Object.values(MPEventType);
+  static eventTypes = (category: MPEventCategory): MPEventType[] => {
+    return eventTypesFor(category);
+  };
+
+  static categories = (): MPEventCategory[] => {
+    return Object.values(MPEventCategory);
   };
 
   static parameterTypeOptions = (): ParameterType[] => {
@@ -23,7 +29,7 @@ export class MPEvent {
   static eventTypeFromString = (eventType: string): MPEventType | undefined => {
     const assumed: MPEventType = eventType as MPEventType;
     switch (assumed) {
-      case MPEventType.EarnVirtualCurrency:
+      case MPEventType.CustomEvent:
       case MPEventType.JoinGroup:
       case MPEventType.Login:
       case MPEventType.PresentOffer:
@@ -34,8 +40,31 @@ export class MPEvent {
       case MPEventType.Share:
       case MPEventType.SignUp:
       case MPEventType.SpendVirtualCurrency:
+      case MPEventType.EarnVirtualCurrency:
       case MPEventType.TutorialBegin:
       case MPEventType.TutorialComplete:
+      case MPEventType.AddPaymentInfo:
+      case MPEventType.AddToCart:
+      case MPEventType.AddToWishlist:
+      case MPEventType.BeginCheckout:
+      case MPEventType.EcommercePurchase:
+      case MPEventType.GenerateLead:
+      case MPEventType.PurchaseRefund:
+      case MPEventType.ViewItem:
+      case MPEventType.ViewItemList:
+      case MPEventType.ViewSearchResults:
+      case MPEventType.LevelUp:
+      case MPEventType.PostScore:
+      case MPEventType.UnlockAchievement:
+      case MPEventType.AdReward:
+      case MPEventType.AppException:
+      case MPEventType.AppStoreRefund:
+      case MPEventType.AppStoreSubscriptionCancel:
+      case MPEventType.AppStoreSubscriptionConvert:
+      case MPEventType.AppStoreSubscriptionRenew:
+      case MPEventType.DynamicLinkAppOpen:
+      case MPEventType.DynamicLinkAppUpdate:
+      case MPEventType.DynamicLinkFirstOpen:
         return assumed;
     }
     return undefined;
@@ -46,7 +75,7 @@ export class MPEvent {
   };
 
   static default = () => {
-    return MPEvent.empty(MPEventType.Purchase);
+    return MPEvent.empty(MPEventType.SelectContent);
   };
 
   constructor(eventType: MPEventType, eventData: MPEventData) {
@@ -61,6 +90,12 @@ export class MPEvent {
     return nuEvent;
   }
 
+  getCategories(): MPEventCategory[] {
+    return MPEvent.categories().filter(category =>
+      MPEvent.eventTypes(category).find(a => a === this.getEventType())
+    );
+  }
+
   getEventData(): MPEventData {
     return this.eventData;
   }
@@ -69,30 +104,33 @@ export class MPEvent {
     return this.eventType;
   }
   getEventName(): string {
-    if (this.eventType === MPEventType.CustomEvent) {
-      return this.name || this.eventData.type;
+    if (this.isCustomEvent()) {
+      return this.name || "";
     } else {
       return this.eventData.type;
     }
   }
 
+  isCustomEvent(): boolean {
+    return this.eventType === MPEventType.CustomEvent;
+  }
+
   static parameterToPayload = (parameter: Parameter): {} | "unset" => {
     switch (parameter.type) {
-      case ParameterType.OptionalNumber:
+      case ParameterType.Number:
         if (parameter.value === undefined) {
           return "unset";
         }
         return { [parameter.name]: parameter.value };
-      case ParameterType.OptionalString:
+      case ParameterType.String:
         if (parameter.value === "" || parameter.value === undefined) {
           return "unset";
         }
         return { [parameter.name]: parameter.value };
-      case ParameterType.RequiredArray:
+      case ParameterType.Items:
         return {
           [parameter.name]: parameter.value.map(item =>
             Object.values(item.parameters)
-              .concat(Object.values(item.customParameters))
               .map(MPEvent.parameterToPayload)
               .reduce((itemsPayload: {}, itemParam) => {
                 if (itemParam === "unset") {
@@ -111,7 +149,6 @@ export class MPEvent {
 
   asPayload(): {} {
     const params = this.getParameters()
-      .concat(this.getCustomParameters())
       .map(MPEvent.parameterToPayload)
       .reduce((payload: {}, parameter) => {
         if (parameter === "unset") {
@@ -130,7 +167,7 @@ export class MPEvent {
   }
 
   updateName(nuName: string): MPEvent {
-    if (this.eventType !== MPEventType.CustomEvent) {
+    if (!this.isCustomEvent()) {
       throw new Error("Only custom events can update their name");
     }
     const nuEvent = this.clone();
@@ -138,44 +175,59 @@ export class MPEvent {
     return nuEvent;
   }
 
+  static hasDuplicateNames = (parameters: Parameters): boolean => {
+    const nameSet = new Set(parameters.map(p => p.name));
+    return nameSet.size !== parameters.length;
+  };
+
+  // This method might be making other stuff too difficult, but it works for
+  // now...
   updateParameters(update: (old: Parameters) => Parameters): MPEvent {
     const nuEvent = this.clone();
     const nuParameters = update(nuEvent.eventData.parameters);
+    if (MPEvent.hasDuplicateNames(nuParameters)) {
+      return nuEvent;
+    }
     nuEvent.eventData.parameters = nuParameters;
-    return nuEvent;
-  }
-
-  updateCustomParameters(update: (old: Parameters) => Parameters): MPEvent {
-    const nuEvent = this.clone();
-    const nuCustomParameters = update(nuEvent.eventData.customParameters);
-    nuEvent.eventData.customParameters = nuCustomParameters;
     return nuEvent;
   }
 
   getParameters(): Parameter[] {
     return Object.values<Parameter>(this.eventData.parameters);
   }
-  getCustomParameters(): Parameter[] {
-    return Object.values<Parameter>(this.eventData.customParameters);
-  }
 
-  addCustomParameter(parameterName: string, parameter: Parameter): MPEvent {
+  // TODO - remove parameterName argument.
+  addParameter(parameterName: string, parameter: Parameter): MPEvent {
+    const alreadyHasParameter =
+      this.eventData.parameters.find(p => p.name === parameter.name) !==
+      undefined;
+    if (alreadyHasParameter) {
+      return this;
+    }
     const nuEvent = this.clone();
-    nuEvent.eventData.customParameters[parameterName] = parameter;
+    nuEvent.eventData.parameters.push(parameter);
     return nuEvent;
   }
 
-  removeCustomParameter(parameterName: string): MPEvent {
+  removeParameter(parameterName: string): MPEvent {
     const nuEvent = this.clone();
-    delete nuEvent.eventData.customParameters[parameterName];
+    const nuParameters = nuEvent.eventData.parameters.filter(
+      a => a.name !== parameterName
+    );
+    nuEvent.eventData.parameters = nuParameters;
     return nuEvent;
   }
 
-  updateCustomParameterName(parameterName: string, newName: string): MPEvent {
+  updateParameterName(parameterName: string, newName: string): MPEvent {
     const nuEvent = this.clone();
-    // Copy the old parameter value into the new name.
-    nuEvent.eventData.customParameters[newName] =
-      nuEvent.eventData.customParameters[parameterName];
-    return nuEvent.removeCustomParameter(parameterName);
+    const nuParameters: Parameters = (nuEvent.eventData
+      .parameters as Parameters).map((a: Parameter) =>
+      a.name === parameterName ? { ...a, name: newName } : a
+    );
+    if (MPEvent.hasDuplicateNames(nuParameters)) {
+      return this;
+    }
+    nuEvent.eventData.parameters = nuParameters;
+    return nuEvent;
   }
 }

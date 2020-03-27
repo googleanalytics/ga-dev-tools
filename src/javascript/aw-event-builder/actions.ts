@@ -2,68 +2,58 @@ import { ThunkAction } from "redux-thunk";
 import {
   EventBuilderAction,
   ActionType,
-  Property,
   State,
   ValidationMessage,
   MPEvent,
   ValidationStatus
 } from "./types";
 import * as api from "./event";
-import accountSummaries from "javascript-api-utils/lib/account-summaries";
 
 type ThunkResult<T> = ThunkAction<T, State, undefined, EventBuilderAction>;
 
-const sendEvent: ThunkResult<void> = async (dispatch, getState) => {
-  const { mid, auth_key, event, user_id, client_id } = getState();
+const sendEvent: ThunkResult<void> = async (_, getState) => {
+  const {
+    measurementId,
+    firebaseAppId,
+    apiSecret,
+    event,
+    userId,
+    clientId
+  } = getState();
 
-  let userOrClientId: api.UserOrClientId;
-  if (user_id !== "") {
-    userOrClientId = { user_id };
-  } else if (client_id !== "") {
-    userOrClientId = { client_id };
-  } else {
-    userOrClientId = {};
-  }
+  const userOrClientId: api.UserOrClientId = { userId, clientId };
+  const instanceId = { measurementId, firebaseAppId };
 
-  await api.sendEvent(mid, auth_key, userOrClientId, [event]);
+  await api.sendEvent(instanceId, apiSecret, userOrClientId, [event]);
 };
 
 const validateEvent: ThunkResult<void> = async (dispatch, getState) => {
   dispatch(actions.setValidationStatus(ValidationStatus.Pending));
 
-  const { mid, auth_key, event, user_id, client_id } = getState();
+  const {
+    measurementId,
+    firebaseAppId,
+    apiSecret,
+    event,
+    userId,
+    clientId
+  } = getState();
 
-  let userOrClientId: api.UserOrClientId;
-  if (user_id !== "") {
-    userOrClientId = { user_id };
-  } else if (client_id !== "") {
-    userOrClientId = { client_id };
-  } else {
-    userOrClientId = {};
-  }
+  const userOrClientId: api.UserOrClientId = { userId, clientId };
+  const instanceId = { measurementId, firebaseAppId };
 
-  const messages = await api.validateHit(mid, auth_key, userOrClientId, [
-    event
-  ]);
+  const messages = await api.validateHit(
+    instanceId,
+    apiSecret,
+    userOrClientId,
+    [event]
+  );
   if (messages.length === 0) {
     dispatch(actions.setValidationStatus(ValidationStatus.Valid));
   } else {
     dispatch(actions.setValidationStatus(ValidationStatus.Invalid));
     dispatch(actions.setValidationMessages(messages));
   }
-};
-
-const handleAuthorizationSuccess: ThunkResult<void> = async dispatch => {
-  dispatch(actions.setAuthorized());
-
-  const summaries = await accountSummaries.get();
-  const properties = summaries.allProperties().map(property => ({
-    name: property.name,
-    id: property.id,
-    group: summaries.getAccountByPropertyId(property.id).name
-  }));
-
-  dispatch(actions.setUserProperties(properties));
 };
 
 const resetValidation: ThunkResult<void> = dispatch => {
@@ -106,35 +96,38 @@ const setEvent: (event: MPEvent) => ThunkResult<void> = (
   dispatch(thunkActions.resetValidation);
   dispatch({ type: ActionType.SetEvent, event });
 };
-const setMid: (mid: string) => ThunkResult<void> = mid => dispatch => {
+const setMeasurementId: (
+  measurement_id: string
+) => ThunkResult<void> = measurement_id => dispatch => {
   dispatch(thunkActions.resetValidation);
-  dispatch({ type: ActionType.SetMid, mid });
+  dispatch({ type: ActionType.SetMeasurementId, measurement_id });
+};
+const setFirebaseAppId: (
+  firebase_app_id: string
+) => ThunkResult<void> = firebase_app_id => dispatch => {
+  dispatch(thunkActions.resetValidation);
+  dispatch({ type: ActionType.SetFirebaseAppId, firebase_app_id });
 };
 const setClientId: (
-  client_id: string
-) => ThunkResult<void> = client_id => dispatch => {
+  clientId: string
+) => ThunkResult<void> = clientId => dispatch => {
   dispatch(thunkActions.resetValidation);
-  dispatch({ type: ActionType.SetClientId, client_id });
+  dispatch({ type: ActionType.SetClientId, clientId });
 };
-const setUserId: (
-  user_id: string
-) => ThunkResult<void> = user_id => dispatch => {
+const setUserId: (userId: string) => ThunkResult<void> = userId => dispatch => {
   dispatch(thunkActions.resetValidation);
-  dispatch({ type: ActionType.SetUserId, user_id });
+  dispatch({ type: ActionType.SetUserId, userId });
 };
 
 const actions = {
   setValidationStatus(validationStatus: ValidationStatus): EventBuilderAction {
     return { type: ActionType.SetValidationStatus, validationStatus };
   },
-  setAuthKey(auth_key: string): EventBuilderAction {
-    return { type: ActionType.SetAuthKey, auth_key };
+  setAPISecret(api_secret: string): EventBuilderAction {
+    return { type: ActionType.SetAuthKey, api_secret };
   },
   setAuthorized(): EventBuilderAction {
     return { type: ActionType.SetAuthorized };
-  },
-  setUserProperties(properties: Property[]): EventBuilderAction {
-    return { type: ActionType.SetUserProperties, properties };
   },
   setValidationMessages(
     validationMessages: ValidationMessage[]
@@ -146,11 +139,11 @@ const actions = {
 const thunkActions = {
   sendEvent,
   resetValidation,
-  setMid,
+  setMeasurementId,
+  setFirebaseAppId,
   setClientId,
   setUserId,
   setEvent,
-  handleAuthorizationSuccess,
   editParamValue,
   editParamName,
   removeParam,

@@ -1,9 +1,9 @@
 import React from "react";
-import { OptionalNumber } from "../../types";
+import { NumberParam } from "../../types";
 
 interface EditOptionalNumberParameterProps {
-  parameter: OptionalNumber;
-  updateParameter: (nu: OptionalNumber) => void;
+  parameter: NumberParam;
+  updateParameter: (nu: NumberParam) => void;
 }
 
 const EditOptionalNumberParameter: React.FC<

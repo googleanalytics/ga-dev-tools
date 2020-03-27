@@ -15,21 +15,21 @@ const EditParameterValue: React.FC<EditParameterValueProps> = ({
   updateParameter
 }) => {
   switch (parameter.type) {
-    case ParameterType.OptionalString:
+    case ParameterType.String:
       return (
         <EditOptionalStringParameter
           parameter={parameter}
           updateParameter={updateParameter}
         />
       );
-    case ParameterType.RequiredArray:
+    case ParameterType.Items:
       return (
         <EditItemsParameter
           items={parameter}
           updateParameter={updateParameter}
         />
       );
-    case ParameterType.OptionalNumber:
+    case ParameterType.Number:
       return (
         <EditOptionalNumberParameter
           parameter={parameter}

@@ -80,6 +80,6 @@ limitations under the License.
   justify-content: flex-end;
 }
 
-.buttons > button {
+.buttons > button:not(:last-child) {
   margin-right: 1em;
 }

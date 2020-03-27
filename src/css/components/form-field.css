@@ -20,7 +20,6 @@ limitations under the License.
 }
 
 .ParameterTypeDropdown {
-  margin-left: 0.5em;
   width: unset;
 }
 
@@ -54,4 +53,8 @@ textarea.FormField:focus {
 
 .FormField--invalid {
   border-color: var(--error-color)!important;
+}
+
+.FormField:disabled {
+  opacity: .7;
 }
