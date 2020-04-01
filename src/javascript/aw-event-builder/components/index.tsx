@@ -15,6 +15,7 @@
 import React from "react";
 import ValidateEvent from "./ValidateEvent";
 import EditEvent from "./EditEvent";
+import EditUserProperties from "./EditUserProperties";
 import ReduxManagedInput from "./ReduxManagedInput";
 import APISecret from "./APISecret";
 import actions from "../actions";
@@ -186,6 +187,7 @@ const HitBuilder: React.FC = () => {
             )}
           </div>
           <EditEvent event={event} updateEvent={updateEvent} />
+          <EditUserProperties />
         </div>
       </div>
     </div>
