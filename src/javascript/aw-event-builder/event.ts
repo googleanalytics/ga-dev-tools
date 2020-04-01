@@ -1,5 +1,11 @@
 import { gaAll } from "../analytics";
-import { ValidationMessage, MPEvent, MPEventData, MPEventType } from "./types";
+import {
+  ValidationMessage,
+  MPEvent,
+  MPEventData,
+  MPEventType,
+  Parameters
+} from "./types";
 
 export interface UserOrClientId {
   userId?: string;
@@ -130,23 +136,40 @@ const instanceQueryParamFor = (instanceId: InstanceId) => {
   return `measurement_id=`;
 };
 
+// TODO add in type for MPPayload
+export const payloadFor = (
+  events: MPEvent[],
+  requiredId: UserOrClientId,
+  userProperties: Parameters
+): {} => {
+  return {
+    userId: requiredId.userId || undefined,
+    clientId: requiredId.clientId || undefined,
+    events: events.map(event => event.asPayload()),
+    userProperties:
+      userProperties.length === 0
+        ? undefined
+        : MPEvent.parametersToPayload(userProperties)
+  };
+};
+
 export const validateHit = async (
   instanceId: InstanceId,
   api_secret: string,
   requiredId: UserOrClientId,
-  events: MPEvent[]
+  events: MPEvent[],
+  userProperties: Parameters
 ): Promise<ValidationMessage[]> => {
   const url = `https://www.google-analytics.com/debug/mp/collect?${instanceQueryParamFor(
     instanceId
   )}&api_secret=${api_secret}`;
-  const data = {
-    ...requiredId,
-    events: events.map(event => event.asPayload()),
+  const payload = payloadFor(events, requiredId, userProperties);
+  Object.assign(payload, {
     validationBehavior: "ENFORCE_RECOMMENDATIONS"
-  };
+  });
   const result = await fetch(url, {
     method: "POST",
-    body: JSON.stringify(data)
+    body: JSON.stringify(payload)
   });
   const asJson = await result.json();
   return asJson.validationMessages as ValidationMessage[];
@@ -156,18 +179,15 @@ export const sendEvent = async (
   instanceId: InstanceId,
   api_secret: string,
   requiredId: UserOrClientId,
-  events: MPEvent[]
+  events: MPEvent[],
+  userProperties: Parameters
 ): Promise<Response> => {
   const url = `https://www.google-analytics.com/mp/collect?${instanceQueryParamFor(
     instanceId
   )}&api_secret=${api_secret}`;
-  const data = {
-    ...requiredId,
-    events: events.map(event => event.asPayload())
-  };
   const result = await fetch(url, {
     method: "POST",
-    body: JSON.stringify(data)
+    body: JSON.stringify(payloadFor(events, requiredId, userProperties))
   });
   return result;
 };

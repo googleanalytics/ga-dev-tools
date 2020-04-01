@@ -17,7 +17,6 @@ const useStyles = makeStyles({
 interface EditUserPropertiesProps {}
 
 const EditUserProperties: React.FC<EditUserPropertiesProps> = () => {
-  // TODO - update payload to include userProperties.
   // TODO - make sure user properties can also be set via URL parameter.
   const classes = useStyles();
   const userProperties = useSelector<State, Parameters>(a => a.userProperties);
@@ -30,7 +29,7 @@ const EditUserProperties: React.FC<EditUserPropertiesProps> = () => {
   );
 
   const addProperty = React.useCallback(() => {
-    setUserProperties(old => old.concat([defaultStringParam("")]));
+    setUserProperties(old => old.concat([defaultStringParam("", true)]));
   }, [setUserProperties]);
 
   const updatePropertyName = React.useCallback(

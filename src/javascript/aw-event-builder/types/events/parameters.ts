@@ -12,12 +12,18 @@ export type StringParam<T = string> = {
   type: ParameterType.String;
   value?: string;
   name: T;
+  isUserProperty: boolean;
+  timestampMicros?: number;
 };
 
-export const defaultStringParam = <T = string>(name: T): StringParam<T> => ({
+export const defaultStringParam = <T = string>(
+  name: T,
+  isUserProperty = false
+): StringParam<T> => ({
   type: ParameterType.String,
   value: "",
-  name
+  name,
+  isUserProperty
 });
 
 export type ItemArrayParam = {
@@ -27,12 +33,17 @@ export type ItemArrayParam = {
   // This name should always be 'items', but it makes typechcking things really
   // tricky.
   name: string;
+  isUserProperty: boolean;
+  timestampMicros?: number;
 };
 
-export const defaultItemArrayParam = (): ItemArrayParam => ({
+export const defaultItemArrayParam = (
+  isUserProperty = false
+): ItemArrayParam => ({
   type: ParameterType.Items,
   value: [],
-  name: "items"
+  name: "items",
+  isUserProperty
 });
 
 export type NumberParam<T = string> = {
@@ -40,13 +51,19 @@ export type NumberParam<T = string> = {
   required: false;
   value?: number;
   name: T;
+  isUserProperty: boolean;
+  timestampMicros?: number;
 };
 
-export const defaultNumberParam = (name: string): NumberParam => ({
+export const defaultNumberParam = (
+  name: string,
+  isUserProperty = false
+): NumberParam => ({
   type: ParameterType.Number,
   required: false,
   value: undefined,
-  name
+  name,
+  isUserProperty
 });
 
 export const defaultParameterFor = (

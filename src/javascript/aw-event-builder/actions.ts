@@ -19,13 +19,20 @@ const sendEvent: ThunkResult<void> = async (_, getState) => {
     apiSecret,
     event,
     userId,
-    clientId
+    clientId,
+    userProperties
   } = getState();
 
   const userOrClientId: api.UserOrClientId = { userId, clientId };
   const instanceId = { measurementId, firebaseAppId };
 
-  await api.sendEvent(instanceId, apiSecret, userOrClientId, [event]);
+  await api.sendEvent(
+    instanceId,
+    apiSecret,
+    userOrClientId,
+    [event],
+    userProperties
+  );
 };
 
 const validateEvent: ThunkResult<void> = async (dispatch, getState) => {
@@ -37,7 +44,8 @@ const validateEvent: ThunkResult<void> = async (dispatch, getState) => {
     apiSecret,
     event,
     userId,
-    clientId
+    clientId,
+    userProperties
   } = getState();
 
   const userOrClientId: api.UserOrClientId = { userId, clientId };
@@ -47,7 +55,8 @@ const validateEvent: ThunkResult<void> = async (dispatch, getState) => {
     instanceId,
     apiSecret,
     userOrClientId,
-    [event]
+    [event],
+    userProperties
   );
   if (messages.length === 0) {
     dispatch(actions.setValidationStatus(ValidationStatus.Valid));
