@@ -5,7 +5,8 @@ import {
   State,
   ValidationMessage,
   MPEvent,
-  ValidationStatus
+  ValidationStatus,
+  Parameters
 } from "./types";
 import * as api from "./event";
 
@@ -119,10 +120,18 @@ const setUserId: (userId: string) => ThunkResult<void> = userId => dispatch => {
   dispatch({ type: ActionType.SetUserId, userId });
 };
 
+const setUserProperties: (
+  userProperties: Parameters
+) => ThunkResult<void> = userProperties => dispatch => {
+  dispatch(thunkActions.resetValidation);
+  dispatch({ type: ActionType.SetUserProperties, userProperties });
+};
+
 const actions = {
   setValidationStatus(validationStatus: ValidationStatus): EventBuilderAction {
     return { type: ActionType.SetValidationStatus, validationStatus };
   },
+  // TODO - this should be a thunk action that resets validation status.
   setAPISecret(api_secret: string): EventBuilderAction {
     return { type: ActionType.SetAuthKey, api_secret };
   },
@@ -137,6 +146,7 @@ const actions = {
 };
 
 const thunkActions = {
+  setUserProperties,
   sendEvent,
   resetValidation,
   setMeasurementId,

@@ -3,7 +3,9 @@ import IconButton from "../../components/icon-button";
 import EditParameter from "./EditParameter";
 
 import { makeStyles } from "@material-ui/core/styles";
-import { Parameters, defaultStringParam, Parameter } from "../types";
+import { Parameters, defaultStringParam, Parameter, State } from "../types";
+import { useSelector, useDispatch } from "react-redux";
+import actions from "../actions";
 
 const useStyles = makeStyles({
   addUserProperty: {
@@ -15,15 +17,21 @@ const useStyles = makeStyles({
 interface EditUserPropertiesProps {}
 
 const EditUserProperties: React.FC<EditUserPropertiesProps> = () => {
+  // TODO - update payload to include userProperties.
   // TODO - make sure user properties can also be set via URL parameter.
-  // TODO - make userProperties be in redux store.
   const classes = useStyles();
-  const [userProperties, setUserProperties] = React.useState<Parameters>([]);
-  console.log({ userProperties });
+  const userProperties = useSelector<State, Parameters>(a => a.userProperties);
+  const dispatch = useDispatch();
+  const setUserProperties = React.useCallback(
+    (cb: (old: Parameters) => Parameters) => {
+      dispatch(actions.setUserProperties(cb(userProperties)));
+    },
+    [userProperties, dispatch]
+  );
 
   const addProperty = React.useCallback(() => {
     setUserProperties(old => old.concat([defaultStringParam("")]));
-  }, []);
+  }, [setUserProperties]);
 
   const updatePropertyName = React.useCallback(
     (idx: number) => (_oldName: string, nuName: string) => {
@@ -33,13 +41,13 @@ const EditUserProperties: React.FC<EditUserPropertiesProps> = () => {
         )
       );
     },
-    []
+    [setUserProperties]
   );
   const removeProperty = React.useCallback(
     (idx: number) => () => {
       setUserProperties(old => old.filter((_, i) => i !== idx));
     },
-    []
+    [setUserProperties]
   );
   const updateProperty = React.useCallback(
     (idx: number) => (nu: Parameter) => {
@@ -47,7 +55,7 @@ const EditUserProperties: React.FC<EditUserPropertiesProps> = () => {
         old.map((current, i) => (i === idx ? nu : current))
       );
     },
-    []
+    [setUserProperties]
   );
   return (
     <>
@@ -70,6 +78,7 @@ const EditUserProperties: React.FC<EditUserPropertiesProps> = () => {
           <div>
             {userProperties.map((property, idx) => (
               <EditParameter
+                key={`userProperty-${idx}`}
                 updateParameter={updateProperty(idx)}
                 isNested={false}
                 parameter={property}
