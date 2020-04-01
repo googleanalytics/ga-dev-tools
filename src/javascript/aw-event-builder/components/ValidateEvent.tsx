@@ -162,10 +162,19 @@ const EventActions: React.FC = () => {
       event,
       measurementId,
       firebaseAppId,
-      apiSecret
+      apiSecret,
+      userProperties
     });
     setLinkToEvent(url);
-  }, [event, clientId, userId]);
+  }, [
+    clientId,
+    userId,
+    event,
+    measurementId,
+    firebaseAppId,
+    apiSecret,
+    userProperties
+  ]);
 
   React.useEffect(() => {
     setPayload(payloadFor([event], { clientId, userId }, userProperties));

@@ -4,7 +4,8 @@ import {
   MPEvent,
   MPEventData,
   MPEventType,
-  Parameters
+  Parameters,
+  UrlParam
 } from "./types";
 
 export interface UserOrClientId {
@@ -25,6 +26,7 @@ export interface URLParts {
   measurementId?: string;
   firebaseAppId?: string;
   apiSecret?: string;
+  userProperties?: Parameters;
 }
 
 const getEventFromParams = (searchParams: URLSearchParams) => {
@@ -32,7 +34,6 @@ const getEventFromParams = (searchParams: URLSearchParams) => {
     const eventDataString = searchParams.get("eventData")!;
     try {
       const decoded = atob(eventDataString);
-      console.log(decoded);
       const eventData = JSON.parse(decoded) as MPEventData;
       const eventType = MPEvent.eventTypeFromString(eventData.type as string);
       if (eventType !== undefined) {
@@ -55,7 +56,7 @@ const getEventFromParams = (searchParams: URLSearchParams) => {
         return emptyEvent;
       }
     } catch (e) {
-      console.log(e);
+      console.error(e);
       // ignore
     }
   } else if (searchParams.has("eventType")) {
@@ -68,6 +69,28 @@ const getEventFromParams = (searchParams: URLSearchParams) => {
   }
   return MPEvent.default();
 };
+const getUserPropertiesFromParams = (
+  searchParams: URLSearchParams
+): Parameters | undefined => {
+  const userPropertiesString = searchParams.get(UrlParam.UserProperties);
+  if (userPropertiesString !== null) {
+    try {
+      const decoded = atob(userPropertiesString);
+      const userProperties = JSON.parse(decoded) as Parameters;
+      if (Array.isArray(userProperties)) {
+        // TODO - could add better asserts here in the future to make sure that
+        // each value is actually a good Parameter.
+        return userProperties;
+      } else {
+        throw new Error(`Invalid userPropertiesString: ${userProperties}`);
+      }
+    } catch (e) {
+      console.error(e);
+      // ignore
+    }
+  }
+  return undefined;
+};
 
 export const unParameterizeUrl = (): URLParts => {
   const search = window.location.search;
@@ -75,6 +98,7 @@ export const unParameterizeUrl = (): URLParts => {
   const clientId = searchParams.get("clientId") || undefined;
   const userId = searchParams.get("userId") || undefined;
   const event = getEventFromParams(searchParams);
+  const userProperties = getUserPropertiesFromParams(searchParams);
   const measurementId = searchParams.get("measurementId") || undefined;
   const firebaseAppId = searchParams.get("firebaseAppId") || undefined;
   const apiSecret = searchParams.get("apiSecret") || undefined;
@@ -82,6 +106,7 @@ export const unParameterizeUrl = (): URLParts => {
     clientId,
     userId,
     event,
+    userProperties,
     measurementId,
     firebaseAppId,
     apiSecret,
@@ -95,7 +120,8 @@ export const parameterizedUrl = ({
   event,
   measurementId,
   firebaseAppId,
-  apiSecret
+  apiSecret,
+  userProperties
 }: URLParts) => {
   const params = new URLSearchParams();
 
@@ -117,6 +143,13 @@ export const parameterizedUrl = ({
   // We base64 encode the JSON string to make the url a bit smaller.
   event &&
     params.append("eventData", btoa(JSON.stringify(event.getEventData())));
+
+  if (userProperties !== undefined) {
+    const filtered = userProperties.filter(
+      property => property.value !== undefined
+    );
+    params.append(UrlParam.UserProperties, btoa(JSON.stringify(filtered)));
+  }
 
   const urlParams = params.toString();
   const { protocol, host, pathname } = location;

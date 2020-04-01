@@ -17,7 +17,6 @@ const useStyles = makeStyles({
 interface EditUserPropertiesProps {}
 
 const EditUserProperties: React.FC<EditUserPropertiesProps> = () => {
-  // TODO - make sure user properties can also be set via URL parameter.
   const classes = useStyles();
   const userProperties = useSelector<State, Parameters>(a => a.userProperties);
   const dispatch = useDispatch();

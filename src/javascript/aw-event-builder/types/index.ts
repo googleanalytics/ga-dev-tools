@@ -116,6 +116,10 @@ export enum RequiredParams {
   C_Id = "cid"
 }
 
+export enum UrlParam {
+  UserProperties = "userProperties"
+}
+
 export type ParamV = ParamType<RequiredParams.V>;
 export type ParamT = ParamType<RequiredParams.T>;
 export type ParamTId = ParamType<RequiredParams.T_Id>;

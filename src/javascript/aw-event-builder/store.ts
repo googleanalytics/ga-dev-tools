@@ -40,7 +40,6 @@ const isAuthorized: Reducer<boolean, EventBuilderAction> = (
 };
 
 const valuesFromUrlParameters = unParameterizeUrl();
-console.log({ valuesFromUrlParameters });
 
 const validationMessages: Reducer<ValidationMessage[], EventBuilderAction> = (
   state = [],
@@ -139,7 +138,7 @@ const validationStatus: Reducer<ValidationStatus, EventBuilderAction> = (
 };
 
 const userProperties: Reducer<Parameters, EventBuilderAction> = (
-  state = [],
+  state = valuesFromUrlParameters.userProperties || [],
   action
 ) => {
   switch (action.type) {
