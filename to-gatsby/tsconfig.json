@@ -1,0 +1,20 @@
+{
+  "compilerOptions": {
+    "strict": true,
+    "module": "esnext",
+    "moduleResolution": "node",
+    "jsx": "react",
+    "target": "es5",
+    "allowSyntheticDefaultImports": true,
+    "skipLibCheck": true,
+    "esModuleInterop": true,
+    "resolveJsonModule": true,
+    "downlevelIteration": true,
+    "noImplicitAny": false,
+    "lib": ["dom.iterable", "dom", "esnext"],
+    "noEmit": true,
+  },
+  "include": [
+    "./src/"
+  ]
+}

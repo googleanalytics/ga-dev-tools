@@ -1,0 +1,88 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Layout renders correctly 1`] = `
+<div
+  className="makeStyles-root-1"
+>
+  <nav
+    className="makeStyles-nav-6"
+  >
+    <ol>
+      <li>
+        <a
+          href="/"
+        >
+          <h2
+            className="MuiTypography-root makeStyles-innerNav-7 makeStyles-home-9 MuiTypography-h2"
+          >
+            <svg
+              aria-hidden="true"
+              className="MuiSvgIcon-root makeStyles-homeIcon-10"
+              focusable="false"
+              viewBox="0 0 24 24"
+            >
+              <path
+                d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"
+              />
+            </svg>
+             Home
+          </h2>
+        </a>
+      </li>
+      <li>
+        <h6
+          className="MuiTypography-root makeStyles-innerNav-7 MuiTypography-h6"
+        >
+          Demos & Tools
+        </h6>
+      </li>
+      <li>
+        <a
+          className="makeStyles-innerNav-7 makeStyles-navLinkBackgroundHover-8"
+          href="/autotrack/"
+        >
+          Autotrack
+        </a>
+      </li>
+      <li>
+        <a
+          className="makeStyles-innerNav-7 makeStyles-navLinkBackgroundHover-8"
+          href="/account-explorer/"
+        >
+          Account Explorer
+        </a>
+      </li>
+    </ol>
+  </nav>
+  <main
+    className="makeStyles-main-2"
+  >
+    <header
+      className="makeStyles-header-5"
+    >
+      <test-file-stub
+        style={
+          Object {
+            "height": "50px",
+            "width": "100%",
+          }
+        }
+      />
+      <h1
+        className="MuiTypography-root MuiTypography-h1"
+      >
+        Page Title
+      </h1>
+    </header>
+    <div
+      className="makeStyles-contentWrapper-3"
+    >
+      <section
+        className="makeStyles-content-4"
+      >
+        Content
+      </section>
+    </div>
+  </main>
+</div>
+`;
