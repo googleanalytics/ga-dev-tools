@@ -109,5 +109,8 @@
     "url-parse": "^1.2.0",
     "uuid": "^2.0.3",
     "webpack": "^4.31.0"
+  },
+  "dependencies": {
+    "@material-ui/core": "^4.9.8"
   }
 }

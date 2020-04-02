@@ -5,7 +5,8 @@ import {
   State,
   ValidationMessage,
   MPEvent,
-  ValidationStatus
+  ValidationStatus,
+  Parameters
 } from "./types";
 import * as api from "./event";
 
@@ -18,13 +19,20 @@ const sendEvent: ThunkResult<void> = async (_, getState) => {
     apiSecret,
     event,
     userId,
-    clientId
+    clientId,
+    userProperties
   } = getState();
 
   const userOrClientId: api.UserOrClientId = { userId, clientId };
   const instanceId = { measurementId, firebaseAppId };
 
-  await api.sendEvent(instanceId, apiSecret, userOrClientId, [event]);
+  await api.sendEvent(
+    instanceId,
+    apiSecret,
+    userOrClientId,
+    [event],
+    userProperties
+  );
 };
 
 const validateEvent: ThunkResult<void> = async (dispatch, getState) => {
@@ -36,7 +44,8 @@ const validateEvent: ThunkResult<void> = async (dispatch, getState) => {
     apiSecret,
     event,
     userId,
-    clientId
+    clientId,
+    userProperties
   } = getState();
 
   const userOrClientId: api.UserOrClientId = { userId, clientId };
@@ -46,7 +55,8 @@ const validateEvent: ThunkResult<void> = async (dispatch, getState) => {
     instanceId,
     apiSecret,
     userOrClientId,
-    [event]
+    [event],
+    userProperties
   );
   if (messages.length === 0) {
     dispatch(actions.setValidationStatus(ValidationStatus.Valid));
@@ -119,10 +129,18 @@ const setUserId: (userId: string) => ThunkResult<void> = userId => dispatch => {
   dispatch({ type: ActionType.SetUserId, userId });
 };
 
+const setUserProperties: (
+  userProperties: Parameters
+) => ThunkResult<void> = userProperties => dispatch => {
+  dispatch(thunkActions.resetValidation);
+  dispatch({ type: ActionType.SetUserProperties, userProperties });
+};
+
 const actions = {
   setValidationStatus(validationStatus: ValidationStatus): EventBuilderAction {
     return { type: ActionType.SetValidationStatus, validationStatus };
   },
+  // TODO - this should be a thunk action that resets validation status.
   setAPISecret(api_secret: string): EventBuilderAction {
     return { type: ActionType.SetAuthKey, api_secret };
   },
@@ -137,6 +155,7 @@ const actions = {
 };
 
 const thunkActions = {
+  setUserProperties,
   sendEvent,
   resetValidation,
   setMeasurementId,

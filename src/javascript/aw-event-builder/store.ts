@@ -13,7 +13,8 @@ import {
   State,
   ValidationMessage,
   MPEventData,
-  ValidationStatus
+  ValidationStatus,
+  Parameters
 } from "./types";
 import { unParameterizeUrl } from "./event";
 
@@ -39,7 +40,6 @@ const isAuthorized: Reducer<boolean, EventBuilderAction> = (
 };
 
 const valuesFromUrlParameters = unParameterizeUrl();
-console.log({ valuesFromUrlParameters });
 
 const validationMessages: Reducer<ValidationMessage[], EventBuilderAction> = (
   state = [],
@@ -137,7 +137,20 @@ const validationStatus: Reducer<ValidationStatus, EventBuilderAction> = (
   }
 };
 
+const userProperties: Reducer<Parameters, EventBuilderAction> = (
+  state = valuesFromUrlParameters.userProperties || [],
+  action
+) => {
+  switch (action.type) {
+    case ActionType.SetUserProperties:
+      return action.userProperties;
+    default:
+      return state;
+  }
+};
+
 const app: Reducer<State, EventBuilderAction> = combineReducers({
+  userProperties,
   validationStatus,
   measurementId,
   firebaseAppId,

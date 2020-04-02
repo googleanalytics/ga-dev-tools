@@ -1,4 +1,5 @@
 import { MPEvent } from "./MpEvent";
+import { Parameters } from "./events";
 
 export * from "./MpEvent";
 export * from "./events";
@@ -19,6 +20,11 @@ export enum ActionType {
   ReplaceParams = "REPLACE_PARAMS",
   SetUserProperties = "SET_USER_PROPERTIES",
   SetValidationMessages = "SET_VALIDATION_MESSAGES"
+}
+
+export interface SetUserProperties {
+  type: ActionType.SetUserProperties;
+  userProperties: Parameters;
 }
 
 export interface SetAuthorized {
@@ -87,6 +93,7 @@ export interface SetFirebaseAppId {
 }
 
 export type EventBuilderAction =
+  | SetUserProperties
   | SetFirebaseAppId
   | SetValidationStatus
   | SetMid
@@ -107,6 +114,10 @@ export enum RequiredParams {
   T = "t",
   T_Id = "tid",
   C_Id = "cid"
+}
+
+export enum UrlParam {
+  UserProperties = "userProperties"
 }
 
 export type ParamV = ParamType<RequiredParams.V>;
@@ -153,6 +164,7 @@ export interface State {
   userId: string;
   apiSecret: string;
   event: MPEvent;
+  userProperties: Parameters;
   isAuthorized: boolean;
   validationMessages: ValidationMessage[];
 }

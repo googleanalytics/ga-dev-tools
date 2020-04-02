@@ -1,5 +1,12 @@
 import { gaAll } from "../analytics";
-import { ValidationMessage, MPEvent, MPEventData, MPEventType } from "./types";
+import {
+  ValidationMessage,
+  MPEvent,
+  MPEventData,
+  MPEventType,
+  Parameters,
+  UrlParam
+} from "./types";
 
 export interface UserOrClientId {
   userId?: string;
@@ -19,6 +26,7 @@ export interface URLParts {
   measurementId?: string;
   firebaseAppId?: string;
   apiSecret?: string;
+  userProperties?: Parameters;
 }
 
 const getEventFromParams = (searchParams: URLSearchParams) => {
@@ -26,7 +34,6 @@ const getEventFromParams = (searchParams: URLSearchParams) => {
     const eventDataString = searchParams.get("eventData")!;
     try {
       const decoded = atob(eventDataString);
-      console.log(decoded);
       const eventData = JSON.parse(decoded) as MPEventData;
       const eventType = MPEvent.eventTypeFromString(eventData.type as string);
       if (eventType !== undefined) {
@@ -49,7 +56,7 @@ const getEventFromParams = (searchParams: URLSearchParams) => {
         return emptyEvent;
       }
     } catch (e) {
-      console.log(e);
+      console.error(e);
       // ignore
     }
   } else if (searchParams.has("eventType")) {
@@ -62,6 +69,28 @@ const getEventFromParams = (searchParams: URLSearchParams) => {
   }
   return MPEvent.default();
 };
+const getUserPropertiesFromParams = (
+  searchParams: URLSearchParams
+): Parameters | undefined => {
+  const userPropertiesString = searchParams.get(UrlParam.UserProperties);
+  if (userPropertiesString !== null) {
+    try {
+      const decoded = atob(userPropertiesString);
+      const userProperties = JSON.parse(decoded) as Parameters;
+      if (Array.isArray(userProperties)) {
+        // TODO - could add better asserts here in the future to make sure that
+        // each value is actually a good Parameter.
+        return userProperties;
+      } else {
+        throw new Error(`Invalid userPropertiesString: ${userProperties}`);
+      }
+    } catch (e) {
+      console.error(e);
+      // ignore
+    }
+  }
+  return undefined;
+};
 
 export const unParameterizeUrl = (): URLParts => {
   const search = window.location.search;
@@ -69,6 +98,7 @@ export const unParameterizeUrl = (): URLParts => {
   const clientId = searchParams.get("clientId") || undefined;
   const userId = searchParams.get("userId") || undefined;
   const event = getEventFromParams(searchParams);
+  const userProperties = getUserPropertiesFromParams(searchParams);
   const measurementId = searchParams.get("measurementId") || undefined;
   const firebaseAppId = searchParams.get("firebaseAppId") || undefined;
   const apiSecret = searchParams.get("apiSecret") || undefined;
@@ -76,6 +106,7 @@ export const unParameterizeUrl = (): URLParts => {
     clientId,
     userId,
     event,
+    userProperties,
     measurementId,
     firebaseAppId,
     apiSecret,
@@ -89,7 +120,8 @@ export const parameterizedUrl = ({
   event,
   measurementId,
   firebaseAppId,
-  apiSecret
+  apiSecret,
+  userProperties
 }: URLParts) => {
   const params = new URLSearchParams();
 
@@ -112,6 +144,13 @@ export const parameterizedUrl = ({
   event &&
     params.append("eventData", btoa(JSON.stringify(event.getEventData())));
 
+  if (userProperties !== undefined) {
+    const filtered = userProperties.filter(
+      property => property.value !== undefined
+    );
+    params.append(UrlParam.UserProperties, btoa(JSON.stringify(filtered)));
+  }
+
   const urlParams = params.toString();
   const { protocol, host, pathname } = location;
 
@@ -130,23 +169,40 @@ const instanceQueryParamFor = (instanceId: InstanceId) => {
   return `measurement_id=`;
 };
 
+// TODO add in type for MPPayload
+export const payloadFor = (
+  events: MPEvent[],
+  requiredId: UserOrClientId,
+  userProperties: Parameters
+): {} => {
+  return {
+    userId: requiredId.userId || undefined,
+    clientId: requiredId.clientId || undefined,
+    events: events.map(event => event.asPayload()),
+    userProperties:
+      userProperties.length === 0
+        ? undefined
+        : MPEvent.parametersToPayload(userProperties)
+  };
+};
+
 export const validateHit = async (
   instanceId: InstanceId,
   api_secret: string,
   requiredId: UserOrClientId,
-  events: MPEvent[]
+  events: MPEvent[],
+  userProperties: Parameters
 ): Promise<ValidationMessage[]> => {
   const url = `https://www.google-analytics.com/debug/mp/collect?${instanceQueryParamFor(
     instanceId
   )}&api_secret=${api_secret}`;
-  const data = {
-    ...requiredId,
-    events: events.map(event => event.asPayload()),
+  const payload = payloadFor(events, requiredId, userProperties);
+  Object.assign(payload, {
     validationBehavior: "ENFORCE_RECOMMENDATIONS"
-  };
+  });
   const result = await fetch(url, {
     method: "POST",
-    body: JSON.stringify(data)
+    body: JSON.stringify(payload)
   });
   const asJson = await result.json();
   return asJson.validationMessages as ValidationMessage[];
@@ -156,18 +212,15 @@ export const sendEvent = async (
   instanceId: InstanceId,
   api_secret: string,
   requiredId: UserOrClientId,
-  events: MPEvent[]
+  events: MPEvent[],
+  userProperties: Parameters
 ): Promise<Response> => {
   const url = `https://www.google-analytics.com/mp/collect?${instanceQueryParamFor(
     instanceId
   )}&api_secret=${api_secret}`;
-  const data = {
-    ...requiredId,
-    events: events.map(event => event.asPayload())
-  };
   const result = await fetch(url, {
     method: "POST",
-    body: JSON.stringify(data)
+    body: JSON.stringify(payloadFor(events, requiredId, userProperties))
   });
   return result;
 };

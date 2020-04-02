@@ -115,20 +115,27 @@ export class MPEvent {
     return this.eventType === MPEventType.CustomEvent;
   }
 
-  static parameterToPayload = (parameter: Parameter): {} | "unset" => {
+  // TODO - this really shouldn't be shared code for userPropertises and
+  // Parameters. There is enough of a difference between a parameter and a
+  // userParameter that this should be refactored. Unfortunately, I don't have
+  // time to do this right now.
+  private static parameterToPayload = (parameter: Parameter): {} | "unset" => {
+    let payload: {} = {};
     switch (parameter.type) {
       case ParameterType.Number:
         if (parameter.value === undefined) {
           return "unset";
         }
-        return { [parameter.name]: parameter.value };
+        payload = { [parameter.name]: parameter.value };
+        break;
       case ParameterType.String:
         if (parameter.value === "" || parameter.value === undefined) {
           return "unset";
         }
-        return { [parameter.name]: parameter.value };
+        payload = { [parameter.name]: parameter.value };
+        break;
       case ParameterType.Items:
-        return {
+        payload = {
           [parameter.name]: parameter.value.map(item =>
             Object.values(item.parameters)
               .map(MPEvent.parameterToPayload)
@@ -144,11 +151,22 @@ export class MPEvent {
               }, {})
           )
         };
+        break;
+    }
+    if (parameter.isUserProperty) {
+      return {
+        [parameter.name]: {
+          value: payload[parameter.name],
+          timestampMicros: parameter.timestampMicros
+        }
+      };
+    } else {
+      return payload;
     }
   };
 
-  asPayload(): {} {
-    const params = this.getParameters()
+  static parametersToPayload = (parameters: Parameters): {} => {
+    return parameters
       .map(MPEvent.parameterToPayload)
       .reduce((payload: {}, parameter) => {
         if (parameter === "unset") {
@@ -160,6 +178,10 @@ export class MPEvent {
           };
         }
       }, {});
+  };
+
+  asPayload(): {} {
+    const params = MPEvent.parametersToPayload(this.getParameters());
     return {
       name: this.getEventName(),
       params
