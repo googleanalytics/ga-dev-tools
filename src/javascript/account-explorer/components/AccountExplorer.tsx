@@ -12,6 +12,29 @@ const AccountExplorer: React.FC = () => {
           with Google Analytics.
         </p>
       </section>
+
+      <div className="Box">
+        <header className="Box-header">
+          <div className="AccountExplorerSearch">
+            <h3 className="AccountExplorerSearch-title">
+              Search for your account information&hellip;
+            </h3>
+            <input
+              className="AccountExplorerSearch-field FormField"
+              id="search-box"
+              placeholder="Start typing to search..."
+            />
+            <h3 className="AccountExplorerSearch-title">
+              &hellip;or browse through all your accounts
+            </h3>
+            <div id="view-selector-container" />
+          </div>
+        </header>
+        <main className="AccountExplorerResults">
+          <h3 className="AccountExplorerResults-title" id="results-title" />
+          <div id="results-container" />
+        </main>
+      </div>
     </>
   );
 };
