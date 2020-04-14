@@ -14,6 +14,26 @@ const useStyles = makeStyles(theme => ({
     "border-bottom": `1px solid ${theme.palette.grey[500]}`,
     margin: theme.spacing(1, 1, 1),
     padding: theme.spacing(1)
+  },
+  accountExplorerSearch: {
+    display: "flex",
+    "flex-direction": "column",
+    "align-items": "center",
+    padding: theme.spacing(1),
+    // Search title Title
+    "& h3": {
+      "font-size": theme.typography.h3.fontSize,
+      "font-weight": theme.typography.h3.fontWeight,
+      margin: theme.spacing(3),
+      "text-align": "center"
+    },
+    "& input": {
+      margin: theme.spacing(1),
+      height: "auto",
+      padding: theme.spacing(1, 1),
+      // Keeps the input from being enormous on larger screens.
+      "max-width": theme.breakpoints.width("sm")
+    }
   }
 }));
 
@@ -33,18 +53,14 @@ const AccountExplorer: React.FC = () => {
 
       <div className={`${classes.box}`}>
         <header className={`${classes.boxHeader}`}>
-          <div className="AccountExplorerSearch">
-            <h3 className="AccountExplorerSearch-title">
-              Search for your account information&hellip;
-            </h3>
+          <div className={`${classes.accountExplorerSearch}`}>
+            <h3>Search for your account information&hellip;</h3>
             <input
-              className="AccountExplorerSearch-field FormField"
+              className="FormField"
               id="search-box"
               placeholder="Start typing to search..."
             />
-            <h3 className="AccountExplorerSearch-title">
-              &hellip;or browse through all your accounts
-            </h3>
+            <h3>&hellip;or browse through all your accounts</h3>
             <div id="view-selector-container" />
           </div>
         </header>

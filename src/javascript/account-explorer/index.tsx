@@ -20,7 +20,11 @@ import escapeHtml from "lodash/escape";
 import accountSummaries from "javascript-api-utils/lib/account-summaries";
 import site from "../site";
 import AccountExplorer from "./components/AccountExplorer";
-import { ThemeProvider, createMuiTheme } from "@material-ui/core/styles";
+import {
+  ThemeProvider,
+  createMuiTheme,
+  responsiveFontSizes
+} from "@material-ui/core/styles";
 
 /**
  * Adds event handlers and fetches the user's account information to
@@ -289,7 +293,9 @@ gapi.analytics.ready(function() {
   }
 });
 
-const theme = createMuiTheme();
+// I guessed at the factor, but this seems to be about right. We don't need huge
+// headings which is what you get with a factor of 2 (the default).
+const theme = responsiveFontSizes(createMuiTheme(), { factor: 5 });
 
 function render() {
   ReactDOM.render(
