@@ -1,6 +1,24 @@
 import * as React from "react";
+import { makeStyles } from "@material-ui/core/styles";
+
+const useStyles = makeStyles(theme => ({
+  box: {
+    background: "#fff",
+    // TODO - figure out which grey is closest to existing.
+    border: `1px solid ${theme.palette.grey[500]}`,
+    "border-radius": theme.spacing(0.5),
+    "margin-bottom": theme.spacing(1),
+    padding: theme.spacing(1)
+  },
+  boxHeader: {
+    "border-bottom": `1px solid ${theme.palette.grey[500]}`,
+    margin: theme.spacing(1, 1, 1),
+    padding: theme.spacing(1)
+  }
+}));
 
 const AccountExplorer: React.FC = () => {
+  const classes = useStyles();
   return (
     <>
       <section>
@@ -13,8 +31,8 @@ const AccountExplorer: React.FC = () => {
         </p>
       </section>
 
-      <div className="Box">
-        <header className="Box-header">
+      <div className={`${classes.box}`}>
+        <header className={`${classes.boxHeader}`}>
           <div className="AccountExplorerSearch">
             <h3 className="AccountExplorerSearch-title">
               Search for your account information&hellip;

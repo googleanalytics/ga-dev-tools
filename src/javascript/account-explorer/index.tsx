@@ -20,6 +20,7 @@ import escapeHtml from "lodash/escape";
 import accountSummaries from "javascript-api-utils/lib/account-summaries";
 import site from "../site";
 import AccountExplorer from "./components/AccountExplorer";
+import { ThemeProvider, createMuiTheme } from "@material-ui/core/styles";
 
 /**
  * Adds event handlers and fetches the user's account information to
@@ -288,9 +289,13 @@ gapi.analytics.ready(function() {
   }
 });
 
+const theme = createMuiTheme();
+
 function render() {
   ReactDOM.render(
-    <AccountExplorer />,
+    <ThemeProvider theme={theme}>
+      <AccountExplorer />
+    </ThemeProvider>,
     document.getElementById("account-explorer-react")
   );
 }
