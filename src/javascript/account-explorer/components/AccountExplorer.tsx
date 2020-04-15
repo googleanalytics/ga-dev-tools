@@ -1,6 +1,5 @@
 import * as React from "react";
 import ViewSelector3, { PopulatedView } from "../../components/ViewSelector3";
-import { ViewData } from "../../components/ViewSelector3";
 import ViewTable from "./ViewTable";
 import { makeStyles } from "@material-ui/core/styles";
 import TextField from "@material-ui/core/TextField";
@@ -76,6 +75,9 @@ const viewsForSearch = (
 
 const AccountExplorer: React.FC = () => {
   // TODO - Add in a component to highlight where the search matches.
+  // TODO - Clean up the code that actually interacts with the API so this example is easier to follow.
+  // TODO - See about using the gapi.analytics types instead of my manually defined ones
+  // TODO - Clean up the variable naming. "populatedViews" doesn't really mean anything.
   const classes = useStyles();
   const [searchQuery, setSearchQuery] = React.useState("");
   const [selectedView, setSelectedView] = React.useState<PopulatedView>();
