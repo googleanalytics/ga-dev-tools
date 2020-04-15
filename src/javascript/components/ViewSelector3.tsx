@@ -7,6 +7,8 @@ import FormControl from "@material-ui/core/FormControl";
 import InputLabel from "@material-ui/core/InputLabel";
 import Select from "@material-ui/core/Select";
 import MenuItem from "@material-ui/core/MenuItem";
+import TextField from "@material-ui/core/TextField";
+import Autocomplete from "@material-ui/lab/Autocomplete";
 
 const whenReady = (cb: () => void) => {
   gapi.analytics.ready(function () {
@@ -19,7 +21,9 @@ const whenReady = (cb: () => void) => {
 };
 
 const useStyles = makeStyles((theme) => ({
-  root: {},
+  root: {
+    display: "flex",
+  },
   formControl: {
     // TODO - min-width might be too big here. Check this again after I do flex on root.
     "min-width": theme.spacing(25),
@@ -29,7 +33,9 @@ const useStyles = makeStyles((theme) => ({
 
 interface ViewSelector3Props {
   // A callback that will be called when the view changes.
-  onViewChanged?: (viewData: ViewData) => void;
+  onViewChanged?: (populatedView: PopulatedView) => void;
+  // A callback that will be called when the available views change.
+  onPopulatedViewsChanged?: (populatedViews: PopulatedView[]) => void;
 }
 
 export interface View {
@@ -59,23 +65,24 @@ export interface ViewData {
   populatedViews: PopulatedView[];
 }
 
-const ViewSelector3: React.FC<ViewSelector3Props> = ({ onViewChanged }) => {
+const ViewSelector3: React.FC<ViewSelector3Props> = ({
+  onViewChanged,
+  onPopulatedViewsChanged,
+}) => {
   const classes = useStyles();
 
   const [accounts, setAccounts] = React.useState<Account[]>([]);
 
-  const [account, setAccount] = React.useState<Account>();
-  const [property, setProperty] = React.useState<Property>();
-  const [view, setView] = React.useState<View>();
-
-  const [accountIdx, setAccountIdx] = React.useState<number | undefined>();
-  const [propertyIdx, setPropertyIdx] = React.useState<number | undefined>();
-  const [viewIdx, setViewIdx] = React.useState<number | undefined>();
+  const [account, setAccount] = React.useState<Account | null>(null);
+  const [property, setProperty] = React.useState<Property | null>(null);
+  const [view, setView] = React.useState<View | null>(null);
 
   const [propertyOptions, setPropertyOptions] = React.useState<Property[]>([]);
   const [viewOptions, setViewOptions] = React.useState<View[]>([]);
 
-  const [populatedViews, setPopulatedViews] = React.useState<ViewData[]>([]);
+  const [populatedViews, setPopulatedViews] = React.useState<PopulatedView[]>(
+    []
+  );
   React.useEffect(() => {
     whenReady(() => {
       // Load the Google Analytics client library.
@@ -87,19 +94,20 @@ const ViewSelector3: React.FC<ViewSelector3Props> = ({ onViewChanged }) => {
             const accounts: Account[] = result.items;
             setAccounts(accounts);
             if (accounts.length > 0) {
-              setAccountIdx(0);
               const account = accounts[0];
+              setAccount(account);
               if (account.webProperties.length > 0) {
-                setPropertyIdx(0);
                 const property = account.webProperties[0];
+                setProperty(property);
                 const profiles = property.profiles;
                 if (profiles.length > 0) {
-                  setViewIdx(0);
+                  const view = profiles[0];
+                  setView(view);
                 }
               }
             }
             // Set
-            const populatedViews: ViewData[] = [];
+            const populatedViews: PopulatedView[] = [];
             accounts.forEach((account) => {
               account.webProperties.forEach((property) => {
                 property.profiles.forEach((view) => {
@@ -113,140 +121,121 @@ const ViewSelector3: React.FC<ViewSelector3Props> = ({ onViewChanged }) => {
     });
   }, []);
 
-  // When accounts or accountIdx change, we should update the selected account,
-  // and choose the first property & view (if there is a property or view for
-  // the account).
+  // When account changes, update the property options.
   React.useEffect(() => {
-    if (accountIdx !== undefined) {
-      const account = accounts[accountIdx];
-      setAccount(account);
+    if (account !== null) {
       const properties = account.webProperties;
       setPropertyOptions(properties);
-      console.log(properties);
-      if (properties.length > 0) {
-        setPropertyIdx(0);
-      } else {
-        setPropertyIdx(undefined);
-      }
     } else {
-      setAccount(undefined);
-      setProperty(undefined);
       setPropertyOptions([]);
-      setView(undefined);
+    }
+  }, [account]);
+
+  // When property changes, update the view options.
+  React.useEffect(() => {
+    if (property !== null) {
+      setViewOptions(property.profiles);
+    } else {
       setViewOptions([]);
     }
-  }, [accounts, accountIdx]);
+  }, [property]);
 
-  // When the account or propertyIdx change, we should update the selected
-  // property, and choose the first view ( if there is a view for the property.)
+  // If accounts changes and there is at least one in the list, default to the first.
   React.useEffect(() => {
-    if (account !== undefined && propertyIdx !== undefined) {
-      const property = account.webProperties[propertyIdx];
-      setProperty(property);
-      const views = property.profiles;
-      setViewOptions(views);
-      if (views.length > 0) {
-        setViewIdx(0);
-      } else {
-        setViewIdx(undefined);
-      }
+    if (accounts.length > 0) {
+      setAccount(accounts[0]);
     } else {
-      setProperty(undefined);
-      setView(undefined);
-      setViewOptions([]);
+      setAccount(null);
     }
-  }, [account, propertyIdx]);
+  }, [accounts]);
 
-  // When the property or viewIdx change, we should update the selected view.
+  // If the property options change and there is at least one in the list, default to the first.
   React.useEffect(() => {
-    if (property !== undefined && viewIdx !== undefined) {
-      const view = property.profiles[viewIdx];
-      setView(view);
+    if (propertyOptions.length > 0) {
+      setProperty(propertyOptions[0]);
     } else {
-      setView(undefined);
+      setProperty(null);
     }
-  }, [property, viewIdx]);
+  }, [propertyOptions]);
+
+  // If the view options change and there is at least on in the list, default to the first.
+  React.useEffect(() => {
+    if (viewOptions.length > 0) {
+      setView(viewOptions[0]);
+    } else {
+      setView(null);
+    }
+  }, [viewOptions]);
 
   // Call onViewChanged callback whenever the selected account, property, or
-  // view changes.
+  // view changes via user interaction.
   React.useEffect(() => {
-    if (onViewChanged !== undefined) {
-      onViewChanged({ account, property, view, populatedViews });
+    if (
+      onViewChanged !== undefined &&
+      account !== null &&
+      property !== null &&
+      view !== null
+    ) {
+      onViewChanged({ account, property, view });
     }
-  }, [account, property, view, populatedViews]);
+  }, [account, property, view]);
 
-  const accountOnChange = React.useCallback(
-    (e: React.ChangeEvent<{ value?: unknown }>) => {
-      if (e.target.value !== "") {
-        setAccountIdx(e.target.value as number);
-      } else {
-        setAccountIdx(undefined);
-      }
-    },
-    []
-  );
-  const propertyOnChange = React.useCallback(
-    (e: React.ChangeEvent<{ value?: unknown }>) => {
-      if (e.target.value !== "") {
-        setPropertyIdx(e.target.value as number);
-      } else {
-        setPropertyIdx(undefined);
-      }
-    },
-    []
-  );
-  const viewOnChange = React.useCallback(
-    (e: React.ChangeEvent<{ value?: unknown }>) => {
-      if (e.target.value !== "") {
-        setViewIdx(e.target.value as number);
-      } else {
-        setViewIdx(undefined);
-      }
-    },
-    []
-  );
+  React.useEffect(() => {
+    if (onPopulatedViewsChanged !== undefined) {
+      onPopulatedViewsChanged(populatedViews);
+    }
+  }, [populatedViews]);
+
+  const accountOnChange = React.useCallback((_, a: Account | null) => {
+    setAccount(a);
+  }, []);
+
+  const propertyOnChange = React.useCallback((_, a: Property | null) => {
+    setProperty(a);
+  }, []);
+
+  const viewOnChange = React.useCallback((_, a: View | null) => {
+    setView(a);
+  }, []);
 
   return (
     <div className={classes.root}>
-      <FormControl className={classes.formControl}>
-        <InputLabel>Account</InputLabel>
-        <Select
-          value={accountIdx === undefined ? "" : accountIdx}
-          onChange={accountOnChange}
-        >
-          {accounts.map((account, idx) => (
-            <MenuItem key={account.name} value={idx}>
-              {account.name}
-            </MenuItem>
-          ))}
-        </Select>
-      </FormControl>
-      <FormControl className={classes.formControl}>
-        <InputLabel>Property</InputLabel>
-        <Select
-          value={propertyIdx === undefined ? "" : propertyIdx}
-          onChange={propertyOnChange}
-        >
-          {propertyOptions.map((property, idx) => (
-            <MenuItem key={property.name} value={idx}>
-              {property.name}
-            </MenuItem>
-          ))}
-        </Select>
-      </FormControl>
-      <FormControl className={classes.formControl}>
-        <InputLabel>View</InputLabel>
-        <Select
-          value={viewIdx === undefined ? "" : viewIdx}
-          onChange={viewOnChange}
-        >
-          {viewOptions.map((view, idx) => (
-            <MenuItem key={view.name} value={idx}>
-              {view.name}
-            </MenuItem>
-          ))}
-        </Select>
-      </FormControl>
+      <Autocomplete<Account>
+        blurOnSelect
+        openOnFocus
+        autoSelect
+        autoHighlight
+        className={classes.formControl}
+        options={accounts}
+        value={account}
+        onChange={accountOnChange}
+        getOptionLabel={(account) => account.name}
+        renderInput={(params) => <TextField {...params} label="Account" />}
+      />
+      <Autocomplete<Property>
+        blurOnSelect
+        openOnFocus
+        autoSelect
+        autoHighlight
+        className={classes.formControl}
+        options={propertyOptions}
+        value={property}
+        onChange={propertyOnChange}
+        getOptionLabel={(property) => property.name}
+        renderInput={(params) => <TextField {...params} label="Property" />}
+      />
+      <Autocomplete<View>
+        blurOnSelect
+        openOnFocus
+        autoSelect
+        autoHighlight
+        className={classes.formControl}
+        options={viewOptions}
+        value={view}
+        onChange={viewOnChange}
+        getOptionLabel={(view) => view.name}
+        renderInput={(params) => <TextField {...params} label="View" />}
+      />
     </div>
   );
 };

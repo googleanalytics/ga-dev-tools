@@ -13,17 +13,17 @@ const useStyles = makeStyles((theme) => ({
     border: `1px solid ${theme.palette.grey[500]}`,
     "border-radius": theme.spacing(0.5),
     "margin-bottom": theme.spacing(1),
-    padding: theme.spacing(1),
+    padding: theme.spacing(0, 1, 1),
   },
   boxHeader: {
-    margin: theme.spacing(1, 1, 1),
-    padding: theme.spacing(1),
+    margin: theme.spacing(0, 1, 0),
+    padding: theme.spacing(0, 1, 0),
   },
   accountExplorerSearch: {
     display: "flex",
     "flex-direction": "column",
     "align-items": "center",
-    padding: theme.spacing(1),
+    padding: theme.spacing(0, 1, 0),
     // Search title Title
     "& h3": {
       "font-size": theme.typography.h3.fontSize,
@@ -50,7 +50,6 @@ const containsQuery = (
   populatedView: PopulatedView
 ): boolean => {
   const lower = searchQuery.toLowerCase();
-  // TODO - add in IDs.
   const propertiesToCheck = [
     populatedView.account?.name.toLowerCase(),
     populatedView.account?.id.toLowerCase(),
@@ -70,50 +69,51 @@ const viewsForSearch = (
   searchQuery: string,
   populatedViews: PopulatedView[]
 ): PopulatedView[] => {
-  console.log({ populatedViews });
   return populatedViews.filter((populated) =>
     containsQuery(searchQuery, populated)
   );
 };
 
+const getSearchParam = (): string | undefined => {
+  const params = new URLSearchParams(window.location.search);
+  const query = params.get("q");
+  if (query !== null) {
+    return query;
+  }
+  return undefined;
+};
+
 const AccountExplorer: React.FC = () => {
   const classes = useStyles();
-  // TODO - make search a controlled component.
-  const [searchQuery, setSearchQuery] = React.useState("");
-  const [viewData, setViewData] = React.useState<ViewData>();
+  const [searchQuery, setSearchQuery] = React.useState(() => {
+    return getSearchParam() || "";
+  });
+  const [selectedView, setSelectedView] = React.useState<PopulatedView>();
+  const [populatedViews, setPopulatedViews] = React.useState<PopulatedView[]>(
+    []
+  );
   const [tableViews, setTableViews] = React.useState<PopulatedView[]>([]);
 
-  //
   React.useEffect(() => {
-    if (viewData !== undefined && viewData.populatedViews.length > 0) {
+    if (populatedViews.length > 0) {
       site.setReadyState();
     }
-  }, [viewData]);
+  }, [populatedViews]);
 
-  // Update the selected table(s) based on either a search query (has priorty) or a selected view.
+  // Whenever the selected view changes, if it is defined, the search should be
+  // cleared & the table views set to the newly selected view.
   React.useEffect(() => {
-    if (searchQuery !== "" && viewData !== undefined) {
-      setTableViews(viewsForSearch(searchQuery, viewData.populatedViews));
-      return;
-    }
-    if (
-      viewData != undefined &&
-      viewData.property !== undefined &&
-      viewData.account !== undefined &&
-      viewData.view !== undefined
-    ) {
-      return setTableViews([
+    if (selectedView != undefined) {
+      setSearchQuery("");
+      setTableViews([
         {
-          view: viewData.view,
-          property: viewData.property,
-          account: viewData.account,
+          view: selectedView.view,
+          property: selectedView.property,
+          account: selectedView.account,
         },
       ]);
     }
-    setTableViews([]);
-  }, [searchQuery, viewData]);
-
-  // TODO add in effect for when the selector is used to clear the current search query.
+  }, [searchQuery, selectedView]);
 
   return (
     <>
@@ -139,7 +139,20 @@ const AccountExplorer: React.FC = () => {
             />
             <h3>&hellip;or browse through all your accounts</h3>
             <ViewSelector3
-              onViewChanged={(viewData) => setViewData(viewData)}
+              onPopulatedViewsChanged={(populatedViews) => {
+                setPopulatedViews(populatedViews);
+              }}
+              onViewChanged={(viewData) => {
+                setSelectedView(viewData);
+                // If the selected view changes, regardless of the search,
+                const q = getSearchParam();
+                console.log({ q });
+                if (q !== undefined && viewData.view !== undefined) {
+                  // clear the param
+                  console.log("should clear");
+                } else {
+                }
+              }}
             />
             <ViewTable className={classes.table} views={tableViews} />
           </div>
