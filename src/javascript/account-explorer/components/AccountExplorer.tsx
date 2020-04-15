@@ -74,20 +74,10 @@ const viewsForSearch = (
   );
 };
 
-const getSearchParam = (): string | undefined => {
-  const params = new URLSearchParams(window.location.search);
-  const query = params.get("q");
-  if (query !== null) {
-    return query;
-  }
-  return undefined;
-};
-
 const AccountExplorer: React.FC = () => {
+  // TODO - Add in a component to highlight where the search matches.
   const classes = useStyles();
-  const [searchQuery, setSearchQuery] = React.useState(() => {
-    return getSearchParam() || "";
-  });
+  const [searchQuery, setSearchQuery] = React.useState("");
   const [selectedView, setSelectedView] = React.useState<PopulatedView>();
   const [populatedViews, setPopulatedViews] = React.useState<PopulatedView[]>(
     []
@@ -104,7 +94,6 @@ const AccountExplorer: React.FC = () => {
   // cleared & the table views set to the newly selected view.
   React.useEffect(() => {
     if (selectedView != undefined) {
-      setSearchQuery("");
       setTableViews([
         {
           view: selectedView.view,
@@ -112,8 +101,15 @@ const AccountExplorer: React.FC = () => {
           account: selectedView.account,
         },
       ]);
+      setSearchQuery("");
     }
-  }, [searchQuery, selectedView]);
+  }, [selectedView]);
+
+  React.useEffect(() => {
+    if (searchQuery !== "") {
+      setTableViews(viewsForSearch(searchQuery, populatedViews));
+    }
+  }, [searchQuery, populatedViews]);
 
   return (
     <>
@@ -144,14 +140,6 @@ const AccountExplorer: React.FC = () => {
               }}
               onViewChanged={(viewData) => {
                 setSelectedView(viewData);
-                // If the selected view changes, regardless of the search,
-                const q = getSearchParam();
-                console.log({ q });
-                if (q !== undefined && viewData.view !== undefined) {
-                  // clear the param
-                  console.log("should clear");
-                } else {
-                }
               }}
             />
             <ViewTable className={classes.table} views={tableViews} />
