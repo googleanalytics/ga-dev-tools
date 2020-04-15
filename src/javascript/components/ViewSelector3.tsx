@@ -9,7 +9,7 @@ import Select from "@material-ui/core/Select";
 import MenuItem from "@material-ui/core/MenuItem";
 
 const whenReady = (cb: () => void) => {
-  gapi.analytics.ready(function() {
+  gapi.analytics.ready(function () {
     if (gapi.analytics.auth.isAuthorized()) {
       cb();
     } else {
@@ -18,36 +18,45 @@ const whenReady = (cb: () => void) => {
   });
 };
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles((theme) => ({
   root: {},
   formControl: {
     // TODO - min-width might be too big here. Check this again after I do flex on root.
     "min-width": theme.spacing(25),
-    margin: theme.spacing(1)
-  }
+    margin: theme.spacing(1),
+  },
 }));
 
 interface ViewSelector3Props {
   // A callback that will be called when the view changes.
-  onViewChanged?: (
-    account: Account | undefined,
-    property: WebProperty | undefined,
-    view: Profile | undefined
-  ) => void;
+  onViewChanged?: (viewData: ViewData) => void;
 }
 
-interface Profile {
+export interface View {
   name: string;
+  id: string;
 }
 
-interface WebProperty {
+export interface Property {
   name: string;
-  profiles: Profile[];
+  id: string;
+  internalWebPropertyId: string;
+  profiles: View[];
 }
 
-interface Account {
+export interface Account {
   name: string;
-  webProperties: WebProperty[];
+  id: string;
+  webProperties: Property[];
+}
+
+export type PopulatedView = Required<Omit<ViewData, "populatedViews">>;
+
+export interface ViewData {
+  account?: Account;
+  view?: View;
+  property?: Property;
+  populatedViews: PopulatedView[];
 }
 
 const ViewSelector3: React.FC<ViewSelector3Props> = ({ onViewChanged }) => {
@@ -56,22 +65,21 @@ const ViewSelector3: React.FC<ViewSelector3Props> = ({ onViewChanged }) => {
   const [accounts, setAccounts] = React.useState<Account[]>([]);
 
   const [account, setAccount] = React.useState<Account>();
-  const [property, setProperty] = React.useState<WebProperty>();
-  const [view, setView] = React.useState<Profile>();
+  const [property, setProperty] = React.useState<Property>();
+  const [view, setView] = React.useState<View>();
 
   const [accountIdx, setAccountIdx] = React.useState<number | undefined>();
   const [propertyIdx, setPropertyIdx] = React.useState<number | undefined>();
   const [viewIdx, setViewIdx] = React.useState<number | undefined>();
 
-  const [propertyOptions, setPropertyOptions] = React.useState<WebProperty[]>(
-    []
-  );
-  const [viewOptions, setViewOptions] = React.useState<Profile[]>([]);
+  const [propertyOptions, setPropertyOptions] = React.useState<Property[]>([]);
+  const [viewOptions, setViewOptions] = React.useState<View[]>([]);
 
+  const [populatedViews, setPopulatedViews] = React.useState<ViewData[]>([]);
   React.useEffect(() => {
     whenReady(() => {
       // Load the Google Analytics client library.
-      gapi.client.load("analytics", "v3").then(function() {
+      gapi.client.load("analytics", "v3").then(function () {
         // Get a list of all Google Analytics accounts for this user
         gapi.client.analytics.management.accountSummaries
           .list()
@@ -90,6 +98,16 @@ const ViewSelector3: React.FC<ViewSelector3Props> = ({ onViewChanged }) => {
                 }
               }
             }
+            // Set
+            const populatedViews: ViewData[] = [];
+            accounts.forEach((account) => {
+              account.webProperties.forEach((property) => {
+                property.profiles.forEach((view) => {
+                  populatedViews.push({ account, property, view });
+                });
+              });
+            });
+            setPopulatedViews(populatedViews);
           });
       });
     });
@@ -153,9 +171,9 @@ const ViewSelector3: React.FC<ViewSelector3Props> = ({ onViewChanged }) => {
   // view changes.
   React.useEffect(() => {
     if (onViewChanged !== undefined) {
-      onViewChanged(account, property, view);
+      onViewChanged({ account, property, view, populatedViews });
     }
-  }, [account, property, view]);
+  }, [account, property, view, populatedViews]);
 
   const accountOnChange = React.useCallback(
     (e: React.ChangeEvent<{ value?: unknown }>) => {

@@ -23,7 +23,7 @@ import AccountExplorer from "./components/AccountExplorer";
 import {
   ThemeProvider,
   createMuiTheme,
-  responsiveFontSizes
+  responsiveFontSizes,
 } from "@material-ui/core/styles";
 
 /**
@@ -34,7 +34,7 @@ function setup() {
   $("#search-box").on("input", handleSearch);
   $("#search-box").trigger("focus");
 
-  accountSummaries.get().then(function(summaries) {
+  accountSummaries.get().then(function (summaries) {
     const urlHash = getMapFromHash();
     const validIds = returnValidIds(summaries, urlHash);
     const allIds = getAllIds(summaries, validIds);
@@ -49,11 +49,9 @@ function setup() {
  * view names and ids. Not case sensitive. Displays the results in the DOM.
  */
 function handleSearch() {
-  const searchTerm = $("#search-box")
-    .val()
-    .toLowerCase();
+  const searchTerm = $("#search-box").val().toLowerCase();
 
-  accountSummaries.get().then(function(summaries) {
+  accountSummaries.get().then(function (summaries) {
     const results = [];
     if (searchTerm) {
       for (let i = 0; i < summaries.all().length; i++) {
@@ -81,7 +79,7 @@ function handleSearch() {
               results.push({
                 account: account,
                 property: property,
-                view: view
+                view: view,
               });
             }
           }
@@ -116,8 +114,8 @@ function updateResults(results, query = undefined) {
   //     htmlTag (from utils.js)
   const regex = query ? new RegExp("(" + query + ")", "ig") : undefined;
   const highlightSafe = regex
-    ? text => escapeHtml(text).replace(regex, "<mark>$1</mark>")
-    : text => escapeHtml(text);
+    ? (text) => escapeHtml(text).replace(regex, "<mark>$1</mark>")
+    : (text) => escapeHtml(text);
 
   const searchResults = $("#results-body");
   if (results.length === 0) {
@@ -167,7 +165,7 @@ function updateResults(results, query = undefined) {
  */
 function setViewSelector(viewId) {
   const viewSelector = new gapi.analytics.ext.ViewSelector2({
-    container: "view-selector-container"
+    container: "view-selector-container",
   }).execute();
 
   viewSelector.set({ viewId: viewId });
@@ -178,7 +176,7 @@ function setViewSelector(viewId) {
       const allObjects = {
         view: viewSelector.view,
         property: viewSelector.property,
-        account: viewSelector.account
+        account: viewSelector.account,
       };
       updateResults([allObjects]);
       $("#search-box").val("");
@@ -262,7 +260,7 @@ function getAllIds(summaries, ids, returnObject) {
     : {
         viewId: accountObject.view.id,
         propertyId: accountObject.property.id,
-        accountId: accountObject.account.id
+        accountId: accountObject.account.id,
       };
 }
 
@@ -285,13 +283,13 @@ function getMapFromHash() {
 }
 
 // Run setup when the Embed API is ready and the user is authorized.
-gapi.analytics.ready(function() {
-  if (gapi.analytics.auth.isAuthorized()) {
-    setup();
-  } else {
-    gapi.analytics.auth.once("success", setup);
-  }
-});
+/* gapi.analytics.ready(function () {
+ *   if (gapi.analytics.auth.isAuthorized()) {
+ *     setup();
+ *   } else {
+ *     gapi.analytics.auth.once("success", setup);
+ *   }
+ * }); */
 
 // I guessed at the factor, but this seems to be about right. We don't need huge
 // headings which is what you get with a factor of 2 (the default).
