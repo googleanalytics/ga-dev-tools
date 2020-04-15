@@ -1,4 +1,5 @@
 import * as React from "react";
+import ViewSelector3 from "../../components/ViewSelector3";
 import { makeStyles } from "@material-ui/core/styles";
 
 const useStyles = makeStyles(theme => ({
@@ -61,6 +62,7 @@ const AccountExplorer: React.FC = () => {
               placeholder="Start typing to search..."
             />
             <h3>&hellip;or browse through all your accounts</h3>
+            <ViewSelector3 />
             <div id="view-selector-container" />
           </div>
         </header>
