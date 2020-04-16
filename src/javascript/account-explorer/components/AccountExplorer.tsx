@@ -1,6 +1,6 @@
 import * as React from "react";
 import ViewSelector3, { HasView } from "../../components/ViewSelector3";
-import ViewTable from "./ViewTable";
+import ViewsTable from "./ViewTable";
 import { makeStyles } from "@material-ui/core/styles";
 import TextField from "@material-ui/core/TextField";
 import site from "../../site";
@@ -73,40 +73,39 @@ const viewsForSearch = (
 };
 
 const AccountExplorer: React.FC = () => {
-  // TODO - Clean up the code that actually interacts with the API so this example is easier to follow.
-  // TODO - Clean up the variable naming. "populatedViews" doesn't really mean anything.
   const classes = useStyles();
+
   const [searchQuery, setSearchQuery] = React.useState("");
   const [selectedView, setSelectedView] = React.useState<HasView>();
-  const [populatedViews, setPopulatedViews] = React.useState<HasView[]>([]);
-  const [tableViews, setTableViews] = React.useState<HasView[]>([]);
+  const [allViews, setAllViews] = React.useState<HasView[]>([]);
+  const [filteredViews, setFilteredViews] = React.useState<HasView[]>([]);
 
+  // Once there are views, the site is ready.
   React.useEffect(() => {
-    if (populatedViews.length > 0) {
+    if (allViews.length > 0) {
       site.setReadyState();
     }
-  }, [populatedViews]);
+  }, [allViews]);
 
   // Whenever the selected view changes, if it is defined, the search should be
   // cleared & the table views set to the newly selected view.
   React.useEffect(() => {
     if (selectedView != undefined) {
-      setTableViews([
-        {
-          view: selectedView.view,
-          property: selectedView.property,
-          account: selectedView.account,
-        },
-      ]);
+      setFilteredViews([selectedView]);
       setSearchQuery("");
     }
   }, [selectedView]);
 
+  // When there is a search query, the views for the table should be the
+  // filtered list. When there is no query, the value should be reset to the value
+  // selected in the ViewSelector (if present)
   React.useEffect(() => {
     if (searchQuery !== "") {
-      setTableViews(viewsForSearch(searchQuery, populatedViews));
+      setFilteredViews(viewsForSearch(searchQuery, allViews));
+    } else if (selectedView !== undefined) {
+      setFilteredViews([selectedView]);
     }
-  }, [searchQuery, populatedViews]);
+  }, [searchQuery, allViews]);
 
   return (
     <>
@@ -133,15 +132,15 @@ const AccountExplorer: React.FC = () => {
             <h3>&hellip;or browse through all your accounts</h3>
             <ViewSelector3
               onViewsChanged={(populatedViews) => {
-                setPopulatedViews(populatedViews);
+                setAllViews(populatedViews);
               }}
               onViewChanged={(viewData) => {
                 setSelectedView(viewData);
               }}
             />
-            <ViewTable
+            <ViewsTable
               className={classes.table}
-              views={tableViews}
+              views={filteredViews}
               search={searchQuery === "" ? undefined : searchQuery}
             />
           </div>

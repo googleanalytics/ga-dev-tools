@@ -49,8 +49,9 @@ interface ViewTableProps {
   search?: string;
 }
 
-// This table is used to show the IDs needed for various API calls.
-const ViewTable: React.FC<ViewTableProps> = ({ views, className, search }) => {
+// This table shows a list of populated views. A populated view is a combination
+// of account, property, and view, & table ID.
+const ViewsTable: React.FC<ViewTableProps> = ({ views, className, search }) => {
   const throttledSearch = useThrottle(search, 100);
   const classes = useStyles();
   return (
@@ -149,4 +150,4 @@ const ViewTable: React.FC<ViewTableProps> = ({ views, className, search }) => {
   );
 };
 
-export default ViewTable;
+export default ViewsTable;
