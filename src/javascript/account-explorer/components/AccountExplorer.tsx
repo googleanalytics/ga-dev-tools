@@ -8,7 +8,10 @@ import Paper from "@material-ui/core/Paper";
 import site from "../../site";
 
 const useStyles = makeStyles((theme) => ({
-  root: {
+  section: {
+    padding: theme.spacing(1),
+  },
+  paper: {
     "margin-bottom": theme.spacing(1),
     padding: theme.spacing(0, 1, 1),
   },
@@ -104,19 +107,19 @@ const AccountExplorer: React.FC = () => {
 
   return (
     <>
-      <section>
-        <h2>Overview</h2>
-        <p>
+      <section className={classes.section}>
+        <Typography variant="h4">Overview</Typography>
+        <Typography variant="body1">
           Use this tool to search or browse through your accounts, properties,
           and views, See what accounts you have access to, and find the IDs that
           you need for the API or for another tool or service that integrates
           with Google Analytics.
-        </p>
+        </Typography>
       </section>
 
-      <Paper className={`${classes.root}`}>
-        <header className={`${classes.header}`}>
-          <div className={`${classes.search}`}>
+      <Paper className={classes.paper}>
+        <header className={classes.header}>
+          <div className={classes.search}>
             <Typography variant="h5" className={classes.heading}>
               Search for your account information&hellip;
             </Typography>
