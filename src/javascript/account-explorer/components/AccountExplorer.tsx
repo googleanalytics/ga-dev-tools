@@ -8,7 +8,6 @@ import site from "../../site";
 const useStyles = makeStyles((theme) => ({
   box: {
     background: "#fff",
-    // TODO - figure out which grey is closest to existing.
     border: `1px solid ${theme.palette.grey[500]}`,
     "border-radius": theme.spacing(0.5),
     "margin-bottom": theme.spacing(1),
@@ -74,7 +73,6 @@ const viewsForSearch = (
 };
 
 const AccountExplorer: React.FC = () => {
-  // TODO - Add in a component to highlight where the search matches.
   // TODO - Clean up the code that actually interacts with the API so this example is easier to follow.
   // TODO - See about using the gapi.analytics types instead of my manually defined ones
   // TODO - Clean up the variable naming. "populatedViews" doesn't really mean anything.
@@ -144,7 +142,11 @@ const AccountExplorer: React.FC = () => {
                 setSelectedView(viewData);
               }}
             />
-            <ViewTable className={classes.table} views={tableViews} />
+            <ViewTable
+              className={classes.table}
+              views={tableViews}
+              search={searchQuery === "" ? undefined : searchQuery}
+            />
           </div>
         </header>
       </div>

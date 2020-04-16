@@ -3,6 +3,8 @@ import { makeStyles } from "@material-ui/core/styles";
 import { PopulatedView } from "../../components/ViewSelector3";
 import Icon from "../../components/icon";
 import classnames from "classnames";
+import HighlightText from "./HighlightText";
+import { useThrottle } from "../../hooks";
 
 const useStyles = makeStyles((theme) => ({
   table: {
@@ -33,15 +35,23 @@ const useStyles = makeStyles((theme) => ({
   id: {
     color: theme.palette.grey[500],
   },
+  mark: {
+    backgroundColor: theme.palette.success.light,
+  },
+  link: {
+    color: theme.palette.info.main,
+  },
 }));
 
 interface ViewTableProps {
   views: PopulatedView[];
   className?: string;
+  search?: string;
 }
 
 // This table is used to show the IDs needed for various API calls.
-const ViewTable: React.FC<ViewTableProps> = ({ views, className }) => {
+const ViewTable: React.FC<ViewTableProps> = ({ views, className, search }) => {
+  const throttledSearch = useThrottle(search, 100);
   const classes = useStyles();
   return (
     <table className={classnames(classes.table, className)}>
@@ -67,28 +77,69 @@ const ViewTable: React.FC<ViewTableProps> = ({ views, className }) => {
               key={`${populated.account.name}-${populated.property.name}-${populated.view.name}`}
             >
               <td>
-                <div>{populated.account.name}</div>
-                <div className={classes.id}>{populated.account.id}</div>
+                <div>
+                  <HighlightText
+                    className={classes.mark}
+                    search={throttledSearch}
+                    text={populated.account.name}
+                  />
+                </div>
+                <div className={classes.id}>
+                  <HighlightText
+                    className={classes.mark}
+                    search={throttledSearch}
+                    text={populated.account.id}
+                  ></HighlightText>
+                </div>
               </td>
               <td>
-                <div>{populated.property.name}</div>
-                <div className={classes.id}>{populated.property.id}</div>
+                <div>
+                  <HighlightText
+                    className={classes.mark}
+                    search={throttledSearch}
+                    text={property.name}
+                  />
+                </div>
+                <div className={classes.id}>
+                  <HighlightText
+                    className={classes.mark}
+                    search={throttledSearch}
+                    text={populated.property.id}
+                  />
+                </div>
               </td>
               <td>
                 <div>
                   <a
+                    className={classes.link}
                     href={viewUrl}
                     title="Open this view in Google Analytics"
                     target="_blank"
                   >
-                    {populated.view.name}
+                    <HighlightText
+                      className={classes.mark}
+                      search={throttledSearch}
+                      text={view.name}
+                    />
                     <Icon type="call-made" />
                   </a>
                 </div>
-                <div className={classes.id}>{populated.view.id}</div>
+                <div className={classes.id}>
+                  <HighlightText
+                    className={classes.mark}
+                    search={throttledSearch}
+                    text={view.id}
+                  />
+                </div>
               </td>
               <td>
-                <div className={classes.id}>ga:{populated.view.id}</div>
+                <div className={classes.id}>
+                  <HighlightText
+                    className={classes.mark}
+                    search={throttledSearch}
+                    text={`ga:${view.id}`}
+                  />
+                </div>
               </td>
             </tr>
           );
@@ -99,16 +150,3 @@ const ViewTable: React.FC<ViewTableProps> = ({ views, className }) => {
 };
 
 export default ViewTable;
-
-/* '<a href="//www.google.com/analytics/web/#report/visitors-overview/a' +
- * results[i].account.id +
- * "w" +
- * results[i].property.internalWebPropertyId +
- * "p" +
- * results[i].view.id +
- * '" title="Open this view in Google Analytics">' +
- * highlightSafe(results[i].view.name) +
- * " " +
- * '<svg class="Icon" viewBox="0 0 24 24">' +
- * '<use xlink:href="/public/images/icons.svg#icon-call-made"></use>' +
- * "</svg></a> " + */
