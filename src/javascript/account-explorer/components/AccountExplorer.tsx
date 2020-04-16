@@ -1,5 +1,5 @@
 import * as React from "react";
-import ViewSelector3, { PopulatedView } from "../../components/ViewSelector3";
+import ViewSelector3, { HasView } from "../../components/ViewSelector3";
 import ViewTable from "./ViewTable";
 import { makeStyles } from "@material-ui/core/styles";
 import TextField from "@material-ui/core/TextField";
@@ -45,16 +45,16 @@ const useStyles = makeStyles((theme) => ({
 
 const containsQuery = (
   searchQuery: string,
-  populatedView: PopulatedView
+  populatedView: HasView
 ): boolean => {
   const lower = searchQuery.toLowerCase();
   const propertiesToCheck = [
-    populatedView.account?.name.toLowerCase(),
-    populatedView.account?.id.toLowerCase(),
-    populatedView.property?.name.toLowerCase(),
-    populatedView.property?.id.toLowerCase(),
-    populatedView.view?.name.toLowerCase(),
-    populatedView.view?.id.toLowerCase(),
+    populatedView.account?.name?.toLowerCase(),
+    populatedView.account?.id?.toLowerCase(),
+    populatedView.property?.name?.toLowerCase(),
+    populatedView.property?.id?.toLowerCase(),
+    populatedView.view?.name?.toLowerCase(),
+    populatedView.view?.id?.toLowerCase(),
   ];
   return (
     propertiesToCheck.find(
@@ -65,8 +65,8 @@ const containsQuery = (
 
 const viewsForSearch = (
   searchQuery: string,
-  populatedViews: PopulatedView[]
-): PopulatedView[] => {
+  populatedViews: HasView[]
+): HasView[] => {
   return populatedViews.filter((populated) =>
     containsQuery(searchQuery, populated)
   );
@@ -74,15 +74,12 @@ const viewsForSearch = (
 
 const AccountExplorer: React.FC = () => {
   // TODO - Clean up the code that actually interacts with the API so this example is easier to follow.
-  // TODO - See about using the gapi.analytics types instead of my manually defined ones
   // TODO - Clean up the variable naming. "populatedViews" doesn't really mean anything.
   const classes = useStyles();
   const [searchQuery, setSearchQuery] = React.useState("");
-  const [selectedView, setSelectedView] = React.useState<PopulatedView>();
-  const [populatedViews, setPopulatedViews] = React.useState<PopulatedView[]>(
-    []
-  );
-  const [tableViews, setTableViews] = React.useState<PopulatedView[]>([]);
+  const [selectedView, setSelectedView] = React.useState<HasView>();
+  const [populatedViews, setPopulatedViews] = React.useState<HasView[]>([]);
+  const [tableViews, setTableViews] = React.useState<HasView[]>([]);
 
   React.useEffect(() => {
     if (populatedViews.length > 0) {
@@ -135,7 +132,7 @@ const AccountExplorer: React.FC = () => {
             />
             <h3>&hellip;or browse through all your accounts</h3>
             <ViewSelector3
-              onPopulatedViewsChanged={(populatedViews) => {
+              onViewsChanged={(populatedViews) => {
                 setPopulatedViews(populatedViews);
               }}
               onViewChanged={(viewData) => {

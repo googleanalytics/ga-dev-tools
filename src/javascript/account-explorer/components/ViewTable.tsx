@@ -1,6 +1,6 @@
 import * as React from "react";
 import { makeStyles } from "@material-ui/core/styles";
-import { PopulatedView } from "../../components/ViewSelector3";
+import { HasView } from "../../components/ViewSelector3";
 import Icon from "../../components/icon";
 import classnames from "classnames";
 import HighlightText from "./HighlightText";
@@ -44,7 +44,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 interface ViewTableProps {
-  views: PopulatedView[];
+  views: HasView[];
   className?: string;
   search?: string;
 }
@@ -81,14 +81,14 @@ const ViewTable: React.FC<ViewTableProps> = ({ views, className, search }) => {
                   <HighlightText
                     className={classes.mark}
                     search={throttledSearch}
-                    text={populated.account.name}
+                    text={account.name || ""}
                   />
                 </div>
                 <div className={classes.id}>
                   <HighlightText
                     className={classes.mark}
                     search={throttledSearch}
-                    text={populated.account.id}
+                    text={account.id || ""}
                   ></HighlightText>
                 </div>
               </td>
@@ -97,14 +97,14 @@ const ViewTable: React.FC<ViewTableProps> = ({ views, className, search }) => {
                   <HighlightText
                     className={classes.mark}
                     search={throttledSearch}
-                    text={property.name}
+                    text={property.name || ""}
                   />
                 </div>
                 <div className={classes.id}>
                   <HighlightText
                     className={classes.mark}
                     search={throttledSearch}
-                    text={populated.property.id}
+                    text={property.id || ""}
                   />
                 </div>
               </td>
@@ -119,7 +119,7 @@ const ViewTable: React.FC<ViewTableProps> = ({ views, className, search }) => {
                     <HighlightText
                       className={classes.mark}
                       search={throttledSearch}
-                      text={view.name}
+                      text={view.name || ""}
                     />
                     <Icon type="call-made" />
                   </a>
@@ -128,7 +128,7 @@ const ViewTable: React.FC<ViewTableProps> = ({ views, className, search }) => {
                   <HighlightText
                     className={classes.mark}
                     search={throttledSearch}
-                    text={view.id}
+                    text={view.id || ""}
                   />
                 </div>
               </td>

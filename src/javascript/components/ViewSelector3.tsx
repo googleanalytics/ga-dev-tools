@@ -2,16 +2,12 @@ import React from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import TextField from "@material-ui/core/TextField";
 import Autocomplete from "@material-ui/lab/Autocomplete";
-
-const whenReady = (cb: () => void) => {
-  gapi.analytics.ready(function () {
-    if (gapi.analytics.auth.isAuthorized()) {
-      cb();
-    } else {
-      gapi.analytics.auth.once("success", cb);
-    }
-  });
-};
+import {
+  getAnalyticsApi,
+  AccountSummary,
+  ProfileSummary,
+  WebPropertySummary,
+} from "../wrappedTypes";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -24,114 +20,102 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
+export type HasView = Required<Omit<SelectedView, "views">>;
+export interface SelectedView {
+  account?: AccountSummary;
+  view?: ProfileSummary;
+  property?: WebPropertySummary;
+  // This is a filtered down list that has an account, view & property.
+  views: HasView[];
+}
+
 interface ViewSelector3Props {
   // A callback that will be called when the view changes.
-  onViewChanged?: (populatedView: PopulatedView) => void;
+  onViewChanged?: (hasView: HasView) => void;
   // A callback that will be called when the available views change.
-  onPopulatedViewsChanged?: (populatedViews: PopulatedView[]) => void;
-}
-
-export interface View {
-  name: string;
-  id: string;
-}
-
-export interface Property {
-  name: string;
-  id: string;
-  internalWebPropertyId: string;
-  profiles: View[];
-}
-
-export interface Account {
-  name: string;
-  id: string;
-  webProperties: Property[];
-}
-
-export type PopulatedView = Required<Omit<ViewData, "populatedViews">>;
-
-export interface ViewData {
-  account?: Account;
-  view?: View;
-  property?: Property;
-  populatedViews: PopulatedView[];
+  onViewsChanged?: (views: HasView[]) => void;
 }
 
 // This is called ViewSelector3 now because I want to join in on the fun of
 // adding numbers to the end of components.
 const ViewSelector3: React.FC<ViewSelector3Props> = ({
   onViewChanged,
-  onPopulatedViewsChanged,
+  onViewsChanged,
 }) => {
   const classes = useStyles();
 
-  const [accounts, setAccounts] = React.useState<Account[]>([]);
+  // Options for selects
+  const [accounts, setAccounts] = React.useState<AccountSummary[]>([]);
+  const [properties, setProperties] = React.useState<WebPropertySummary[]>([]);
+  const [views, setViews] = React.useState<ProfileSummary[]>([]);
 
-  const [account, setAccount] = React.useState<Account | null>(null);
-  const [property, setProperty] = React.useState<Property | null>(null);
-  const [view, setView] = React.useState<View | null>(null);
+  // Selected values
+  const [account, setAccount] = React.useState<AccountSummary>();
+  const [property, setProperty] = React.useState<WebPropertySummary>();
+  const [view, setView] = React.useState<ProfileSummary>();
 
-  const [propertyOptions, setPropertyOptions] = React.useState<Property[]>([]);
-  const [viewOptions, setViewOptions] = React.useState<View[]>([]);
+  // Filtered list of account, property, view that has all values populated.
+  const [hasViews, setHasViews] = React.useState<HasView[]>([]);
 
-  const [populatedViews, setPopulatedViews] = React.useState<PopulatedView[]>(
-    []
-  );
   React.useEffect(() => {
-    whenReady(() => {
-      // Load the Google Analytics client library.
-      gapi.client.load("analytics", "v3").then(function () {
-        // Get a list of all Google Analytics accounts for this user
-        gapi.client.analytics.management.accountSummaries
-          .list()
-          .then(({ result }) => {
-            const accounts: Account[] = result.items;
-            setAccounts(accounts);
-            if (accounts.length > 0) {
-              const account = accounts[0];
-              setAccount(account);
-              if (account.webProperties.length > 0) {
-                const property = account.webProperties[0];
-                setProperty(property);
-                const profiles = property.profiles;
-                if (profiles.length > 0) {
-                  const view = profiles[0];
-                  setView(view);
-                }
-              }
-            }
-            // Set
-            const populatedViews: PopulatedView[] = [];
-            accounts.forEach((account) => {
-              account.webProperties.forEach((property) => {
-                property.profiles.forEach((view) => {
-                  populatedViews.push({ account, property, view });
-                });
-              });
-            });
-            setPopulatedViews(populatedViews);
+    getAnalyticsApi().then(async (api) => {
+      const response = await api.management.accountSummaries.list({});
+      const accounts = response.result.items;
+      if (accounts === undefined) {
+        return;
+      }
+      setAccounts(accounts);
+
+      if (accounts.length === 0) {
+        return;
+      }
+      const account = accounts[0];
+      setAccount(account);
+
+      if (
+        account.webProperties === undefined ||
+        account.webProperties.length === 0
+      ) {
+        return;
+      }
+
+      const property = account.webProperties[0];
+      setProperty(property);
+
+      if (property.profiles === undefined || property.profiles.length === 0) {
+        return;
+      }
+      const view = property.profiles[0];
+      setView(view);
+
+      const hasViews: HasView[] = [];
+      accounts.forEach((account) => {
+        account.webProperties?.forEach((property) => {
+          property.profiles?.forEach((view) => {
+            hasViews.push({ account, property, view });
           });
+        });
       });
+      setHasViews(hasViews);
     });
   }, []);
 
   // When account changes, update the property options.
   React.useEffect(() => {
-    if (account !== null) {
+    if (account !== undefined) {
       const properties = account.webProperties;
-      setPropertyOptions(properties);
+      setProperties(properties || []);
     } else {
-      setPropertyOptions([]);
+      setProperties([]);
     }
   }, [account]);
 
   // When property changes, update the view options.
   React.useEffect(() => {
-    if (property !== null) {
-      setViewOptions(property.profiles);
+    if (property !== undefined) {
+      setViews(property.profiles || []);
     } else {
-      setViewOptions([]);
+      setViews([]);
     }
   }, [property]);
 
@@ -140,95 +124,98 @@ const ViewSelector3: React.FC<ViewSelector3Props> = ({
     if (accounts.length > 0) {
       setAccount(accounts[0]);
     } else {
-      setAccount(null);
+      setAccount(undefined);
     }
   }, [accounts]);
 
   // If the property options change and there is at least one in the list, default to the first.
   React.useEffect(() => {
-    if (propertyOptions.length > 0) {
-      setProperty(propertyOptions[0]);
+    if (properties.length > 0) {
+      setProperty(properties[0]);
     } else {
-      setProperty(null);
+      setProperty(undefined);
     }
-  }, [propertyOptions]);
+  }, [properties]);
 
   // If the view options change and there is at least on in the list, default to the first.
   React.useEffect(() => {
-    if (viewOptions.length > 0) {
-      setView(viewOptions[0]);
+    if (views.length > 0) {
+      setView(views[0]);
     } else {
-      setView(null);
+      setView(undefined);
     }
-  }, [viewOptions]);
+  }, [views]);
 
   // Call onViewChanged callback whenever the selected account, property, or
   // view changes via user interaction.
   React.useEffect(() => {
     if (
       onViewChanged !== undefined &&
-      account !== null &&
-      property !== null &&
-      view !== null
+      account !== undefined &&
+      property !== undefined &&
+      view !== undefined
     ) {
       onViewChanged({ account, property, view });
     }
   }, [account, property, view]);
 
   React.useEffect(() => {
-    if (onPopulatedViewsChanged !== undefined) {
-      onPopulatedViewsChanged(populatedViews);
+    if (onViewsChanged !== undefined) {
+      onViewsChanged(hasViews);
     }
-  }, [populatedViews]);
+  }, [hasViews]);
 
-  const accountOnChange = React.useCallback((_, a: Account | null) => {
-    setAccount(a);
+  const accountOnChange = React.useCallback((_, a: AccountSummary | null) => {
+    setAccount(a || undefined);
   }, []);
 
-  const propertyOnChange = React.useCallback((_, a: Property | null) => {
-    setProperty(a);
-  }, []);
+  const propertyOnChange = React.useCallback(
+    (_, a: WebPropertySummary | null) => {
+      setProperty(a || undefined);
+    },
+    []
+  );
 
-  const viewOnChange = React.useCallback((_, a: View | null) => {
-    setView(a);
+  const viewOnChange = React.useCallback((_, a: ProfileSummary | null) => {
+    setView(a || undefined);
   }, []);
 
   return (
     <div className={classes.root}>
-      <Autocomplete<Account>
+      <Autocomplete<AccountSummary>
         blurOnSelect
         openOnFocus
         autoSelect
         autoHighlight
         className={classes.formControl}
         options={accounts}
-        value={account}
+        value={account || null}
         onChange={accountOnChange}
-        getOptionLabel={(account) => account.name}
+        getOptionLabel={(account) => account.name || ""}
         renderInput={(params) => <TextField {...params} label="Account" />}
       />
-      <Autocomplete<Property>
+      <Autocomplete<WebPropertySummary>
         blurOnSelect
         openOnFocus
         autoSelect
         autoHighlight
         className={classes.formControl}
-        options={propertyOptions}
-        value={property}
+        options={properties}
+        value={property || null}
         onChange={propertyOnChange}
-        getOptionLabel={(property) => property.name}
+        getOptionLabel={(property) => property.name || ""}
         renderInput={(params) => <TextField {...params} label="Property" />}
       />
-      <Autocomplete<View>
+      <Autocomplete<ProfileSummary>
         blurOnSelect
         openOnFocus
         autoSelect
         autoHighlight
         className={classes.formControl}
-        options={viewOptions}
-        value={view}
+        options={views}
+        value={view || null}
         onChange={viewOnChange}
-        getOptionLabel={(view) => view.name}
+        getOptionLabel={(view) => view.name || ""}
         renderInput={(params) => <TextField {...params} label="View" />}
       />
     </div>
