@@ -22,6 +22,8 @@
     "@material-ui/core": "^4.9.10",
     "@material-ui/lab": "^4.0.0-alpha.49",
     "@types/classnames": "^2.2.7",
+    "@types/gapi": "0.0.39",
+    "@types/gapi.client.analytics": "^3.0.1",
     "@types/jquery": "^3.3.32",
     "@types/lodash": "^4.14.129",
     "@types/node": "^12.0.1",
@@ -112,6 +114,5 @@
     "url-parse": "^1.2.0",
     "uuid": "^2.0.3",
     "webpack": "^4.31.0"
-  },
-  "dependencies": {}
+  }
 }
