@@ -11,7 +11,7 @@ const useStyles = makeStyles((theme) => ({
     "table-layout": "fixed",
     width: "100%",
     "& thead": {
-      "border-bottom": `1px solid ${theme.palette.grey[300]}`,
+      "border-bottom": `1px solid ${theme.palette.text.secondary}`,
       "& tr": {
         "& th": {
           "text-align": "left",
@@ -21,7 +21,7 @@ const useStyles = makeStyles((theme) => ({
     },
     "& tbody": {
       "& tr:not(:last-child)": {
-        "border-bottom": `1px solid ${theme.palette.grey[300]}`,
+        "border-bottom": `1px solid ${theme.palette.text.secondary}`,
       },
       "& tr": {
         "& td": {
@@ -33,7 +33,7 @@ const useStyles = makeStyles((theme) => ({
     },
   },
   id: {
-    color: theme.palette.grey[500],
+    color: theme.palette.text.secondary,
   },
   mark: {
     backgroundColor: theme.palette.success.light,
