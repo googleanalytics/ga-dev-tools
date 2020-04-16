@@ -1,6 +1,3 @@
-// This is called ViewSelector3 now because I want to join in on the fun of
-// adding numbers to the end of components.
-
 import React from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import TextField from "@material-ui/core/TextField";
@@ -19,10 +16,10 @@ const whenReady = (cb: () => void) => {
 const useStyles = makeStyles((theme) => ({
   root: {
     display: "flex",
+    width: "100%",
   },
   formControl: {
-    // TODO - min-width might be too big here. Check this again after I do flex on root.
-    "min-width": theme.spacing(25),
+    width: "100%",
     margin: theme.spacing(1),
   },
 }));
@@ -61,6 +58,8 @@ export interface ViewData {
   populatedViews: PopulatedView[];
 }
 
+// This is called ViewSelector3 now because I want to join in on the fun of
+// adding numbers to the end of components.
 const ViewSelector3: React.FC<ViewSelector3Props> = ({
   onViewChanged,
   onPopulatedViewsChanged,
