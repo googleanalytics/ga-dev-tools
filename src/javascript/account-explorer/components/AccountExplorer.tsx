@@ -3,21 +3,19 @@ import ViewSelector3, { HasView } from "../../components/ViewSelector3";
 import ViewsTable from "./ViewTable";
 import { makeStyles } from "@material-ui/core/styles";
 import TextField from "@material-ui/core/TextField";
+import Paper from "@material-ui/core/Paper";
 import site from "../../site";
 
 const useStyles = makeStyles((theme) => ({
-  box: {
-    background: "#fff",
-    border: `1px solid ${theme.palette.grey[500]}`,
-    "border-radius": theme.spacing(0.5),
+  root: {
     "margin-bottom": theme.spacing(1),
     padding: theme.spacing(0, 1, 1),
   },
-  boxHeader: {
+  header: {
     margin: theme.spacing(0, 1, 0),
     padding: theme.spacing(0, 1, 0),
   },
-  accountExplorerSearch: {
+  search: {
     display: "flex",
     "flex-direction": "column",
     "align-items": "center",
@@ -119,9 +117,9 @@ const AccountExplorer: React.FC = () => {
         </p>
       </section>
 
-      <div className={`${classes.box}`}>
-        <header className={`${classes.boxHeader}`}>
-          <div className={`${classes.accountExplorerSearch}`}>
+      <Paper className={`${classes.root}`}>
+        <header className={`${classes.header}`}>
+          <div className={`${classes.search}`}>
             <h3>Search for your account information&hellip;</h3>
             <TextField
               className={classes.searchInput}
@@ -145,7 +143,7 @@ const AccountExplorer: React.FC = () => {
             />
           </div>
         </header>
-      </div>
+      </Paper>
     </>
   );
 };
