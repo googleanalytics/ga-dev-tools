@@ -3,6 +3,7 @@ import ViewSelector3, { HasView } from "../../components/ViewSelector3";
 import ViewsTable from "./ViewTable";
 import { makeStyles } from "@material-ui/core/styles";
 import TextField from "@material-ui/core/TextField";
+import Typography from "@material-ui/core/Typography";
 import Paper from "@material-ui/core/Paper";
 import site from "../../site";
 
@@ -15,24 +16,20 @@ const useStyles = makeStyles((theme) => ({
     margin: theme.spacing(0, 1, 0),
     padding: theme.spacing(0, 1, 0),
   },
+  heading: {
+    margin: theme.spacing(3),
+    textAlign: "center",
+  },
   search: {
     display: "flex",
     "flex-direction": "column",
     "align-items": "center",
     padding: theme.spacing(0, 1, 0),
     // Search title Title
-    "& h3": {
-      "font-size": theme.typography.h3.fontSize,
-      "font-weight": theme.typography.h3.fontWeight,
-      margin: theme.spacing(3),
-      "text-align": "center",
-    },
   },
   searchInput: {
     margin: theme.spacing(1),
-    height: "auto",
     padding: theme.spacing(1, 1),
-    // Keeps the input from being enormous on larger screens.
     width: "100%",
     "max-width": theme.breakpoints.width("sm"),
   },
@@ -120,14 +117,18 @@ const AccountExplorer: React.FC = () => {
       <Paper className={`${classes.root}`}>
         <header className={`${classes.header}`}>
           <div className={`${classes.search}`}>
-            <h3>Search for your account information&hellip;</h3>
+            <Typography variant="h5" className={classes.heading}>
+              Search for your account information&hellip;
+            </Typography>
             <TextField
               className={classes.searchInput}
               placeholder="Start typing to search..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
             />
-            <h3>&hellip;or browse through all your accounts</h3>
+            <Typography variant="h5" className={classes.heading}>
+              &hellip;or browse through all your accounts
+            </Typography>
             <ViewSelector3
               onViewsChanged={(populatedViews) => {
                 setAllViews(populatedViews);
