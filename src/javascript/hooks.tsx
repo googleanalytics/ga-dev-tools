@@ -141,11 +141,8 @@ export const useThrottle = <T,>(
   const [local, setLocal] = React.useState<T | undefined>(toThrottle);
   const id = React.useRef<number>();
 
-  console.log("id", id.current);
-
   React.useEffect(() => {
     const cb = () => {
-      console.log("updating local to", { toThrottle });
       setLocal(toThrottle);
     };
     // If there isn't a timeout ID, run the cb so this gets a value right away.
