@@ -47,7 +47,9 @@ const PartnersImage = () => {
 const IndexPage: React.FC = () => (
   <Layout title="Discover the Gooogle Analytics platform">
     <PartnersImage />
-    <Typography variant="h2">About This Site</Typography>
+    <Typography variant="h2" id="about">
+      About This Site
+    </Typography>
     <Typography variant="body1">
       <b>Google Analytics Demos & Tools</b> is a resource for users and
       developers to discover what's possible with the Google Analytics Platform.
@@ -82,7 +84,9 @@ const IndexPage: React.FC = () => (
         All publicly available technologies are used. Nothing proprietary.
       </li>
     </Typography>
-    <Typography variant="h2">Help &amp; Feedback</Typography>
+    <Typography variant="h2" id="help">
+      Help &amp; Feedback
+    </Typography>
     <Typography variant="h3">For this site</Typography>
     <Typography variant="body1" component="ul">
       <li>

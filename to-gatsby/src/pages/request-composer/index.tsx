@@ -14,9 +14,9 @@
 
 import * as React from "react"
 
-import Layout from "../components/layout"
+import Layout from "../../components/layout"
 
-const AccountExplorer = () => {
-  return <Layout title="Account Explorer">TODO - add in content.</Layout>
+const RequestComposer = () => {
+  return <Layout title="Request Composer">TODO - add in content.</Layout>
 }
-export default AccountExplorer
+export default RequestComposer
