@@ -78,14 +78,21 @@ const useStyles = makeStyles(theme => ({
     },
   },
   home: {
-    marginTop: theme.spacing(2),
-    marginBottom: theme.spacing(2),
+    margin: "unset",
+    marginTop: theme.spacing(1),
     display: "flex",
     alignItems: "center",
-    borderBottom: `1px solid ${theme.palette.grey[600]}`,
     "&:hover": {
       color: theme.palette.primary.main,
     },
+  },
+  subHeading: {
+    width: "100%",
+    borderTop: `1px solid ${theme.palette.grey[600]}`,
+    marginTop: theme.spacing(2),
+    paddingTop: theme.spacing(2),
+    marginBottom: theme.spacing(1),
+    paddingLeft: theme.spacing(4),
   },
   homeIcon: {
     marginLeft: theme.spacing(-0.5),
@@ -93,24 +100,6 @@ const useStyles = makeStyles(theme => ({
     fontSize: "1.5em",
   },
 }))
-
-interface NavLinkProps {
-  classes: ReturnType<typeof useStyles>
-  to: string
-}
-
-const NavLink: React.FC<NavLinkProps> = ({ classes, to, children }) => {
-  return (
-    <li>
-      <Link
-        className={classnames(classes.innerNav, classes.navLinkBackgroundHover)}
-        to={to}
-      >
-        {children}
-      </Link>
-    </li>
-  )
-}
 
 export const usePageView = (
   measurementId: string | undefined = process.env.GA_MEASUREMENT_ID
@@ -153,6 +142,38 @@ const Layout: React.FC<LayoutProps> = ({ children, title }) => {
   usePageView()
   const classes = useStyles()
 
+  const SubHeading: React.FC = React.useCallback(
+    ({ children }) => {
+      return (
+        <li>
+          <Typography className={classnames(classes.subHeading)} variant="h6">
+            {children}
+          </Typography>
+        </li>
+      )
+    },
+    [classes.innerNav, classes.subHeading]
+  )
+
+  const NavLink: React.FC<{ to: string }> = React.useCallback(
+    ({ to, children }) => {
+      return (
+        <li>
+          <Link
+            className={classnames(
+              classes.innerNav,
+              classes.navLinkBackgroundHover
+            )}
+            to={to}
+          >
+            {children}
+          </Link>
+        </li>
+      )
+    },
+    [classes.innerNav, classes.navLinkBackgroundHover]
+  )
+
   return (
     <div className={classes.root}>
       <nav className={classes.nav}>
@@ -167,17 +188,27 @@ const Layout: React.FC<LayoutProps> = ({ children, title }) => {
               </Typography>
             </Link>
           </li>
-          <li>
-            <Typography className={classes.innerNav} variant="h6">
-              Demos & Tools
-            </Typography>
-          </li>
-          <NavLink to={"/autotrack/"} classes={classes}>
-            Autotrack
+
+          <SubHeading>Demos &amp; Tools</SubHeading>
+          <NavLink to="/autotrack/">Autotrack</NavLink>
+          <NavLink to="/account-explorer/">Account Explorer</NavLink>
+          <NavLink to="/campaign-url-builder">Campaign URL Builder</NavLink>
+          <NavLink to="/dimensions-metrics-explorer">
+            Dimensions &amp; Metrics Explorer
           </NavLink>
-          <NavLink to={"/account-explorer/"} classes={classes}>
-            Account Explorer
-          </NavLink>
+          <NavLink to="/embed-api">Embed API</NavLink>
+          <NavLink to="/enhanced-ecommerce">Enhanced Ecommerce</NavLink>
+          <NavLink to="/hit-builder">Hit Builder</NavLink>
+          <NavLink to="/polymer-elements">Polymer Elements</NavLink>
+          <NavLink to="/query-explorer">Query Explorer</NavLink>
+          <NavLink to="/request-composer">Request Composer</NavLink>
+          <NavLink to="/spreadsheet-add-on">Spreadsheet Add-on</NavLink>
+          <NavLink to="/tag-assistant">Tag Assistant</NavLink>
+          <NavLink to="/usage-trends">Usage Trends</NavLink>
+
+          <SubHeading>Resources</SubHeading>
+          <NavLink to="/#about">About this Site</NavLink>
+          <NavLink to="/#help">Help &amp; feedback</NavLink>
         </ol>
       </nav>
       <main className={classes.main}>

@@ -14,9 +14,9 @@
 
 import * as React from "react"
 
-import Layout from "../components/layout"
+import Layout from "../../components/layout"
 
-const AccountExplorer = () => {
+const DimensionsMetricsExploror = () => {
   return <Layout title="Account Explorer">TODO - add in content.</Layout>
 }
-export default AccountExplorer
+export default DimensionsMetricsExploror
