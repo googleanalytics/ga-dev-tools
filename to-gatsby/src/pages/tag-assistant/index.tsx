@@ -17,6 +17,6 @@ import * as React from "react"
 import Layout from "../../components/layout"
 
 const TagAssistant = () => {
-  return <Layout title="Account Explorer">TODO - add in content.</Layout>
+  return <Layout title="Tag Assistant">TODO - add in content.</Layout>
 }
 export default TagAssistant

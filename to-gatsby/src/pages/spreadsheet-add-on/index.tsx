@@ -17,6 +17,6 @@ import * as React from "react"
 import Layout from "../../components/layout"
 
 const SpreadsheetAddOn = () => {
-  return <Layout title="Account Explorer">TODO - add in content.</Layout>
+  return <Layout title="Spreadsheet Add-on">TODO - add in content.</Layout>
 }
 export default SpreadsheetAddOn

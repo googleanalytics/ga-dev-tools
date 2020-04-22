@@ -17,6 +17,6 @@ import * as React from "react"
 import Layout from "../../components/layout"
 
 const HitBuilder = () => {
-  return <Layout title="Account Explorer">TODO - add in content.</Layout>
+  return <Layout title="Hit Builder">TODO - add in content.</Layout>
 }
 export default HitBuilder

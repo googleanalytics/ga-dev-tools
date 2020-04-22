@@ -17,6 +17,6 @@ import * as React from "react"
 import Layout from "../../components/layout"
 
 const QueryExplorer = () => {
-  return <Layout title="Account Explorer">TODO - add in content.</Layout>
+  return <Layout title="Query Explorer">TODO - add in content.</Layout>
 }
 export default QueryExplorer

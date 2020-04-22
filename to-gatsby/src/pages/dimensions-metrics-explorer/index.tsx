@@ -17,6 +17,10 @@ import * as React from "react"
 import Layout from "../../components/layout"
 
 const DimensionsMetricsExploror = () => {
-  return <Layout title="Account Explorer">TODO - add in content.</Layout>
+  return (
+    <Layout title="Dimensions & Metrics Explorer">
+      TODO - add in content.
+    </Layout>
+  )
 }
 export default DimensionsMetricsExploror

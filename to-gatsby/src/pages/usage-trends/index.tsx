@@ -17,6 +17,6 @@ import * as React from "react"
 import Layout from "../../components/layout"
 
 const UsageTrends = () => {
-  return <Layout title="Account Explorer">TODO - add in content.</Layout>
+  return <Layout title="Usage Trends">TODO - add in content.</Layout>
 }
 export default UsageTrends
