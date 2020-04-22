@@ -199,7 +199,6 @@ const Layout: React.FC<LayoutProps> = ({ children, title }) => {
           <NavLink to="/embed-api">Embed API</NavLink>
           <NavLink to="/enhanced-ecommerce">Enhanced Ecommerce</NavLink>
           <NavLink to="/hit-builder">Hit Builder</NavLink>
-          <NavLink to="/polymer-elements">Polymer Elements</NavLink>
           <NavLink to="/query-explorer">Query Explorer</NavLink>
           <NavLink to="/request-composer">Request Composer</NavLink>
           <NavLink to="/spreadsheet-add-on">Spreadsheet Add-on</NavLink>

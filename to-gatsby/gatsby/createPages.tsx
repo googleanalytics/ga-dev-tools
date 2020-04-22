@@ -12,6 +12,30 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-export const createPages = async ({ graphql, boundActionCreators }) => {
-  console.log("typescript createPages, and updated")
+interface Actions {
+  createRedirect: (options: {
+    fromPath: string
+    toPath: string
+    isPermanent: boolean
+    redirectInBrowser: boolean
+  }) => void
+}
+
+type From = string
+type To = string
+type RedirectMap = [From, To]
+const redirects: RedirectMap[] = [[`/polymer-elements`, `/`]]
+
+export const createPages = async ({ actions }) => {
+  const { createRedirect }: Actions = actions
+
+  redirects.forEach(([from, to]) => {
+    console.info(`Creating redirect from: ${from} to: ${to}`)
+    createRedirect({
+      fromPath: `/polymer-elements`,
+      toPath: `/`,
+      isPermanent: true,
+      redirectInBrowser: true,
+    })
+  })
 }

@@ -17,7 +17,7 @@ exports[`Layout renders correctly 1`] = `
           >
             <svg
               aria-hidden="true"
-              className="MuiSvgIcon-root makeStyles-homeIcon-10"
+              className="MuiSvgIcon-root makeStyles-homeIcon-11"
               focusable="false"
               viewBox="0 0 24 24"
             >
@@ -31,7 +31,7 @@ exports[`Layout renders correctly 1`] = `
       </li>
       <li>
         <h6
-          className="MuiTypography-root makeStyles-innerNav-7 MuiTypography-h6"
+          className="MuiTypography-root makeStyles-subHeading-10 MuiTypography-h6"
         >
           Demos & Tools
         </h6>
@@ -50,6 +50,109 @@ exports[`Layout renders correctly 1`] = `
           href="/account-explorer/"
         >
           Account Explorer
+        </a>
+      </li>
+      <li>
+        <a
+          className="makeStyles-innerNav-7 makeStyles-navLinkBackgroundHover-8"
+          href="/campaign-url-builder"
+        >
+          Campaign URL Builder
+        </a>
+      </li>
+      <li>
+        <a
+          className="makeStyles-innerNav-7 makeStyles-navLinkBackgroundHover-8"
+          href="/dimensions-metrics-explorer"
+        >
+          Dimensions & Metrics Explorer
+        </a>
+      </li>
+      <li>
+        <a
+          className="makeStyles-innerNav-7 makeStyles-navLinkBackgroundHover-8"
+          href="/embed-api"
+        >
+          Embed API
+        </a>
+      </li>
+      <li>
+        <a
+          className="makeStyles-innerNav-7 makeStyles-navLinkBackgroundHover-8"
+          href="/enhanced-ecommerce"
+        >
+          Enhanced Ecommerce
+        </a>
+      </li>
+      <li>
+        <a
+          className="makeStyles-innerNav-7 makeStyles-navLinkBackgroundHover-8"
+          href="/hit-builder"
+        >
+          Hit Builder
+        </a>
+      </li>
+      <li>
+        <a
+          className="makeStyles-innerNav-7 makeStyles-navLinkBackgroundHover-8"
+          href="/query-explorer"
+        >
+          Query Explorer
+        </a>
+      </li>
+      <li>
+        <a
+          className="makeStyles-innerNav-7 makeStyles-navLinkBackgroundHover-8"
+          href="/request-composer"
+        >
+          Request Composer
+        </a>
+      </li>
+      <li>
+        <a
+          className="makeStyles-innerNav-7 makeStyles-navLinkBackgroundHover-8"
+          href="/spreadsheet-add-on"
+        >
+          Spreadsheet Add-on
+        </a>
+      </li>
+      <li>
+        <a
+          className="makeStyles-innerNav-7 makeStyles-navLinkBackgroundHover-8"
+          href="/tag-assistant"
+        >
+          Tag Assistant
+        </a>
+      </li>
+      <li>
+        <a
+          className="makeStyles-innerNav-7 makeStyles-navLinkBackgroundHover-8"
+          href="/usage-trends"
+        >
+          Usage Trends
+        </a>
+      </li>
+      <li>
+        <h6
+          className="MuiTypography-root makeStyles-subHeading-10 MuiTypography-h6"
+        >
+          Resources
+        </h6>
+      </li>
+      <li>
+        <a
+          className="makeStyles-innerNav-7 makeStyles-navLinkBackgroundHover-8"
+          href="/#about"
+        >
+          About this Site
+        </a>
+      </li>
+      <li>
+        <a
+          className="makeStyles-innerNav-7 makeStyles-navLinkBackgroundHover-8"
+          href="/#help"
+        >
+          Help & feedback
         </a>
       </li>
     </ol>
