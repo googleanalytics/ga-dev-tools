@@ -16,7 +16,7 @@ require("dotenv").config({
   path: `.env.${process.env.NODE_ENV}`,
 })
 
-if (process.env.GA_MEASUREMENT_ID === undefined) {
+if (process.env.GA_MEASUREMENT_ID === undefined && process.env.gatsby_executing_command !== 'serve') {
   throw new Error("GA_MEASUREMENT_ID environment variable must be set.")
 }
 
