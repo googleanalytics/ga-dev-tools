@@ -27,6 +27,7 @@ module.exports = {
     author: `Google Analytics Developer Relations`,
   },
   plugins: [
+    `gatsby-plugin-material-ui`,
     {
       resolve: `gatsby-plugin-prefetch-google-fonts`,
       options: {
