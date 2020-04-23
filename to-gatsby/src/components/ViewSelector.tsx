@@ -38,10 +38,6 @@ interface ViewSelector3Props {
   onViewsChanged?: (views: HasView[]) => void
 }
 
-interface State {
-  gapi: typeof gapi
-}
-
 const ViewSelector: React.FC<ViewSelector3Props> = ({
   onViewChanged,
   onViewsChanged,
@@ -58,12 +54,20 @@ const ViewSelector: React.FC<ViewSelector3Props> = ({
   const [property, setProperty] = React.useState<WebPropertySummary>()
   const [view, setView] = React.useState<ProfileSummary>()
 
-  const gapi = useSelector((state: State) => state.gapi)
+  const gapi = useSelector((state: AppState) => state.gapi)
+  const user = useSelector((state: AppState) => state.user)
 
   // Filtered list of account, property, view that has all values populated.
   const [hasViews, setHasViews] = React.useState<HasView[]>([])
 
   React.useEffect(() => {
+    if (user === undefined) {
+      setHasViews([])
+      setAccount(undefined)
+      setProperty(undefined)
+      setView(undefined)
+      return
+    }
     if (gapi !== undefined) {
       getAnalyticsApi().then(async api => {
         console.log("api", api)
@@ -108,7 +112,7 @@ const ViewSelector: React.FC<ViewSelector3Props> = ({
         setHasViews(hasViews)
       })
     }
-  }, [gapi])
+  }, [gapi, user])
 
   // When account changes, update the property options.
   React.useEffect(() => {
