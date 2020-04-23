@@ -19,3 +19,8 @@ declare module "*.svg" {
   >
   export default value
 }
+
+declare interface AppState {
+  user?: gapi.auth2.GoogleUser
+  gapi?: typeof gapi
+}

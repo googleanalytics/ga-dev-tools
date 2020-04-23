@@ -21,6 +21,8 @@ import classnames from "classnames"
 import Logo from "-!svg-react-loader!../images/ga-developer-logo.svg"
 import { useLocation } from "@reach/router"
 
+import Login from "./Login"
+
 const useStyles = makeStyles(theme => ({
   root: {
     display: "flex",
@@ -46,6 +48,19 @@ const useStyles = makeStyles(theme => ({
   },
   header: {
     padding: theme.spacing(4),
+    position: "relative",
+    [theme.breakpoints.up("md")]: {
+      maxWidth: theme.breakpoints.width("md"),
+    },
+  },
+  logoRow: {
+    display: "flex",
+    flexWrap: "wrap",
+    alignItems: "center",
+  },
+  logo: {
+    flexGrow: 1,
+    height: "50px",
   },
   nav: {
     minWidth: "260px",
@@ -215,7 +230,10 @@ const Layout: React.FC<LayoutProps> = ({ children, title }) => {
       <main className={classes.main}>
         <header className={classes.header}>
           {/* TODO - Figure out how to size the logo correctly. I probably want to use media queries with useStyles() */}
-          <Logo style={{ width: "100%", height: "50px" }} />
+          <div className={classes.logoRow}>
+            <Logo className={classes.logo} />
+            <Login />
+          </div>
           <Typography variant="h1">{title}</Typography>
         </header>
         <div className={classes.contentWrapper}>

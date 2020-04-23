@@ -7,9 +7,11 @@ import {Provider as ReduxProvider} from 'react-redux'
 import {createStore} from 'redux'
 
 const reducer = (state = {}, action) => {
+  console.log('reducer called', state, action)
   switch (action.type) {
-    case 'setGapi': return {...state, gapi: action.gapi};
-    default: return state;
+  case 'setUser': return {...state, user: action.user};
+  case 'setGapi': return {...state, gapi: action.gapi};
+  default: return state;
   }
 }
 
