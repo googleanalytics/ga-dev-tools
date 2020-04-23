@@ -40,7 +40,9 @@ const useStyles = makeStyles(theme => ({
   content: {
     flexGrow: 1,
     padding: theme.spacing(4),
-    maxWidth: "52em",
+    [theme.breakpoints.up("md")]: {
+      maxWidth: theme.breakpoints.width("md"),
+    },
   },
   header: {
     padding: theme.spacing(4),

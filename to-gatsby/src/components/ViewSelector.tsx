@@ -2,6 +2,7 @@ import * as React from "react"
 import { makeStyles } from "@material-ui/core/styles"
 import TextField from "@material-ui/core/TextField"
 import Autocomplete from "@material-ui/lab/Autocomplete"
+import { useSelector } from "react-redux"
 
 import {
   getAnalyticsApi,
@@ -37,6 +38,10 @@ interface ViewSelector3Props {
   onViewsChanged?: (views: HasView[]) => void
 }
 
+interface State {
+  gapi: typeof gapi
+}
+
 const ViewSelector: React.FC<ViewSelector3Props> = ({
   onViewChanged,
   onViewsChanged,
@@ -53,51 +58,57 @@ const ViewSelector: React.FC<ViewSelector3Props> = ({
   const [property, setProperty] = React.useState<WebPropertySummary>()
   const [view, setView] = React.useState<ProfileSummary>()
 
+  const gapi = useSelector((state: State) => state.gapi)
+
   // Filtered list of account, property, view that has all values populated.
   const [hasViews, setHasViews] = React.useState<HasView[]>([])
 
   React.useEffect(() => {
-    getAnalyticsApi().then(async api => {
-      const response = await api.management.accountSummaries.list({})
-      const accounts = response.result.items
-      if (accounts === undefined) {
-        return
-      }
-      setAccounts(accounts)
+    if (gapi !== undefined) {
+      getAnalyticsApi().then(async api => {
+        console.log("api", api)
+        const response = await api.management.accountSummaries.list({})
+        console.log({ response })
+        const accounts = response.result.items
+        if (accounts === undefined) {
+          return
+        }
+        setAccounts(accounts)
 
-      if (accounts.length === 0) {
-        return
-      }
-      const account = accounts[0]
-      setAccount(account)
+        if (accounts.length === 0) {
+          return
+        }
+        const account = accounts[0]
+        setAccount(account)
 
-      if (
-        account.webProperties === undefined ||
-        account.webProperties.length === 0
-      ) {
-        return
-      }
+        if (
+          account.webProperties === undefined ||
+          account.webProperties.length === 0
+        ) {
+          return
+        }
 
-      const property = account.webProperties[0]
-      setProperty(property)
+        const property = account.webProperties[0]
+        setProperty(property)
 
-      if (property.profiles === undefined || property.profiles.length === 0) {
-        return
-      }
-      const view = property.profiles[0]
-      setView(view)
+        if (property.profiles === undefined || property.profiles.length === 0) {
+          return
+        }
+        const view = property.profiles[0]
+        setView(view)
 
-      const hasViews: HasView[] = []
-      accounts.forEach(account => {
-        account.webProperties?.forEach(property => {
-          property.profiles?.forEach(view => {
-            hasViews.push({ account, property, view })
+        const hasViews: HasView[] = []
+        accounts.forEach(account => {
+          account.webProperties?.forEach(property => {
+            property.profiles?.forEach(view => {
+              hasViews.push({ account, property, view })
+            })
           })
         })
+        setHasViews(hasViews)
       })
-      setHasViews(hasViews)
-    })
-  }, [])
+    }
+  }, [gapi])
 
   // When account changes, update the property options.
   React.useEffect(() => {

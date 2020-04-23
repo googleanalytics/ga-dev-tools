@@ -17,6 +17,7 @@ import { makeStyles } from "@material-ui/core/styles"
 import TextField from "@material-ui/core/TextField"
 import Typography from "@material-ui/core/Typography"
 import Paper from "@material-ui/core/Paper"
+import { useSelector } from "react-redux"
 
 import Layout from "../../components/layout"
 import ViewSelector, { HasView } from "../../components/ViewSelector"
@@ -116,7 +117,7 @@ const AccountExplorer = () => {
 
   return (
     <Layout title="Account Explorer">
-      <Typography variant="h4">Overview</Typography>
+      <Typography variant="h2">Overview</Typography>
       <Typography variant="body1">
         Use this tool to search or browse through your accounts, properties, and
         views, See what accounts you have access to, and find the IDs that you
@@ -127,7 +128,7 @@ const AccountExplorer = () => {
       <Paper className={classes.paper}>
         <header className={classes.header}>
           <div className={classes.search}>
-            <Typography variant="h5" className={classes.heading}>
+            <Typography variant="h3" className={classes.heading}>
               Search for your account information&hellip;
             </Typography>
             <TextField
@@ -136,7 +137,7 @@ const AccountExplorer = () => {
               value={searchQuery}
               onChange={e => setSearchQuery(e.target.value)}
             />
-            <Typography variant="h5" className={classes.heading}>
+            <Typography variant="h3" className={classes.heading}>
               &hellip;or browse through all your accounts
             </Typography>
             <ViewSelector

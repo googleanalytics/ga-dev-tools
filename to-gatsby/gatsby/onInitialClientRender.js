@@ -1,4 +1,5 @@
 import loadScript from "load-script"
+import { store } from "./wrapRootElement"
 
 export const onInitialClientRender = () => {
   /**
@@ -11,19 +12,19 @@ export const onInitialClientRender = () => {
      demos. See usePageview in ./src/components/layout.tsx for an example.
   */
   loadScript(
-      `https://www.googletagmanager.com/gtag/js?id=${process.env.GA_MEASUREMENT_ID}`,
-      err => {
-        if (err) {
-          console.error("Could not load gtag.js")
-          return
-        }
-        window.dataLayer = window.dataLayer || []
-        function gtag() {
-          window.dataLayer.push(arguments)
-        }
-        gtag("js", new Date())
-        window.gtag = gtag
+    `https://www.googletagmanager.com/gtag/js?id=${process.env.GA_MEASUREMENT_ID}`,
+    err => {
+      if (err) {
+        console.error("Could not load gtag.js")
+        return
       }
+      window.dataLayer = window.dataLayer || []
+      function gtag() {
+        window.dataLayer.push(arguments)
+      }
+      gtag("js", new Date())
+      window.gtag = gtag
+    }
   )
 
   loadScript(`https://apis.google.com/js/api.js`, err => {
@@ -40,27 +41,25 @@ export const onInitialClientRender = () => {
     var SCOPES = ["https://www.googleapis.com/auth/analytics.readonly"]
     const clientId = `793177639245-olst43lspv93vkoql0b9l26hmpf9kfmv.apps.googleusercontent.com`
 
-    window.gapi.load("client:auth2", () => {
+    window.gapi.load("client:auth2:analytics", () => {
       window.gapi.client
-          .init({
-            apiKey: "AIzaSyBs1iJjA7sf2ChWhnMziP3t2VOmNhP9nus",
-            scope: SCOPES.join(" "),
-            clientId,
+        .init({
+          apiKey: "AIzaSyBs1iJjA7sf2ChWhnMziP3t2VOmNhP9nus",
+          scope: SCOPES.join(" "),
+          clientId,
+        })
+        .then(() => {
+          store.dispatch({ type: "setGapi", gapi: window.gapi })
+          window.gapi.auth2.getAuthInstance().isSignedIn.listen(isSignedIn => {
+            if (isSignedIn) {
+              console.log("isSignedIn", isSignedIn)
+            } else {
+              console.log("not signed in!")
+            }
           })
-          .then(() => {
-            // Listen
-            console.log(window.gapi.auth2)
-            console.log(window.gapi.auth2.getAuthInstance())
-            window.gapi.auth2.getAuthInstance().isSignedIn.listen(isSignedIn => {
-              if (isSignedIn) {
-                console.log("isSignedIn", isSignedIn)
-              } else {
-                console.log("not signed in!")
-              }
-            })
-            //
-            // window.gapi.auth2.getAuthInstance().signIn()
-          })
+          //
+          // window.gapi.auth2.getAuthInstance().signIn()
+        })
     })
 
     // const loadResponse = gapi.load("analytics");
