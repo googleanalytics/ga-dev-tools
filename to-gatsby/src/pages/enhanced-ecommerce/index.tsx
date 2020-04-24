@@ -25,8 +25,7 @@ import CodeBlock from "../../components/CodeBlock"
 const useStyles = makeStyles(theme => ({
   demoScreenshot: {
     marginBottom: theme.spacing(2),
-    border: `1px solid ${theme.palette.primary.main}`,
-    borderRadius: theme.spacing(1),
+    border: `1px solid ${theme.palette.grey[500]}`,
   },
   codeBlock: {
     marginBottom: theme.spacing(2),

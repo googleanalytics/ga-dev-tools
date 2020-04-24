@@ -3,9 +3,7 @@ import { makeStyles } from "@material-ui/core/styles"
 import SyntaxHighlighter from "react-syntax-highlighter"
 import { SyntaxHighlighterProps } from "react-syntax-highlighter"
 import Paper from "@material-ui/core/Paper"
-import AppBar from "@material-ui/core/AppBar"
 import Tabs from "@material-ui/core/Tabs"
-import Box from "@material-ui/core/Box"
 import Tab from "@material-ui/core/Tab"
 import IconButton from "@material-ui/core/IconButton"
 import Tooltip from "@material-ui/core/Tooltip"
@@ -63,17 +61,17 @@ const CodeBlock: React.FC<CodeBlockProps> = ({
   }, [codeBlocks, selectedTab])
 
   return (
-    <Box className={className}>
-      <AppBar position="static">
-        <Tabs
-          value={selectedTab}
-          onChange={(_, newIndex) => setSelectedTab(newIndex)}
-        >
-          {codeBlocks.map(({ title }) => (
-            <Tab key={title} label={title} />
-          ))}
-        </Tabs>
-      </AppBar>
+    <Paper className={className}>
+      <Tabs
+        value={selectedTab}
+        indicatorColor="primary"
+        textColor="primary"
+        onChange={(_, newIndex) => setSelectedTab(newIndex)}
+      >
+        {codeBlocks.map(({ title }) => (
+          <Tab key={title} label={title} />
+        ))}
+      </Tabs>
       {codeBlocks.map(({ code, title }, idx) =>
         idx !== selectedTab ? null : (
           <Paper square key={title} className={classes.codeBlock}>
@@ -104,7 +102,7 @@ const CodeBlock: React.FC<CodeBlockProps> = ({
       >
         <MuiAlert>Code copied to clipboard.</MuiAlert>
       </Snackbar>
-    </Box>
+    </Paper>
   )
 }
 
