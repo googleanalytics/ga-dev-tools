@@ -13,20 +13,37 @@
 // limitations under the License.
 
 import React from "react"
-import { makeStyles } from "@material-ui/core/styles"
+import { makeStyles, Theme } from "@material-ui/core/styles"
 import Typography from "@material-ui/core/Typography"
 import { Link } from "gatsby"
 import { Home } from "@material-ui/icons"
 import classnames from "classnames"
 import Logo from "-!svg-react-loader!../images/ga-developer-logo.svg"
 import { useLocation } from "@reach/router"
+import AppBar from "@material-ui/core/AppBar"
+import IconButton from "@material-ui/core/IconButton"
+import Drawer from "@material-ui/core/Drawer"
+import List from "@material-ui/core/List"
+import ListItem from "@material-ui/core/ListItem"
+import ListItemText from "@material-ui/core/ListItemText"
+import { navigate } from "@reach/router"
+import MenuIcon from "@material-ui/icons/Menu"
 
 import Login from "./Login"
+
+const mobile = (theme: Theme) => theme.breakpoints.between(0, "sm")
+const notMobile = (theme: Theme) => theme.breakpoints.up("md")
 
 const useStyles = makeStyles(theme => ({
   root: {
     display: "flex",
     minHeight: "100%",
+    [notMobile(theme)]: {
+      flexDirection: "row",
+    },
+    [mobile(theme)]: {
+      flexDirection: "column",
+    },
   },
   main: {
     display: "flex",
@@ -42,27 +59,52 @@ const useStyles = makeStyles(theme => ({
   content: {
     flexGrow: 1,
     padding: theme.spacing(4),
-    [theme.breakpoints.up("md")]: {
-      maxWidth: theme.breakpoints.width("md"),
+    maxWidth: theme.breakpoints.width("md"),
+    [mobile(theme)]: {
+      maxWidth: "unset",
+      width: "100%",
+      padding: theme.spacing(2),
     },
   },
   header: {
     padding: theme.spacing(4),
     position: "relative",
-    [theme.breakpoints.up("md")]: {
-      maxWidth: theme.breakpoints.width("md"),
+    maxWidth: theme.breakpoints.width("md"),
+    [mobile(theme)]: {
+      maxWidth: "unset",
+      width: "100%",
+      padding: theme.spacing(2),
     },
   },
   logoRow: {
     display: "flex",
     flexWrap: "wrap",
     alignItems: "center",
+    [mobile(theme)]: {
+      display: "none",
+    },
   },
   logo: {
     flexGrow: 1,
     height: "50px",
   },
+  appBarNav: {
+    [notMobile(theme)]: {
+      display: "none",
+    },
+    flexDirection: "row",
+    alignItems: "center",
+    paddingLeft: theme.spacing(1),
+  },
+  mobileNav: {
+    color: theme.palette.getContrastText(theme.palette.grey[800]),
+    backgroundColor: theme.palette.grey[800],
+    minHeight: "100%",
+  },
   nav: {
+    [mobile(theme)]: {
+      display: "none",
+    },
     minWidth: "260px",
     borderRight: `1px solid ${theme.palette.grey[200]}`,
     color: theme.palette.getContrastText(theme.palette.grey[800]),
@@ -84,9 +126,16 @@ const useStyles = makeStyles(theme => ({
       },
     },
   },
+  noColor: {
+    color: "unset",
+  },
   innerNav: {
     padding: theme.spacing(1),
     paddingLeft: theme.spacing(4),
+    [mobile(theme)]: {
+      paddingLeft: theme.spacing(2),
+      paddingRight: theme.spacing(2),
+    },
   },
   navLinkBackgroundHover: {
     "&:hover": {
@@ -96,11 +145,14 @@ const useStyles = makeStyles(theme => ({
   },
   home: {
     margin: "unset",
+    color: "unset",
     marginTop: theme.spacing(1),
     display: "flex",
     alignItems: "center",
-    "&:hover": {
-      color: theme.palette.primary.main,
+    [notMobile(theme)]: {
+      "&:hover": {
+        color: theme.palette.primary.main,
+      },
     },
   },
   subHeading: {
@@ -110,11 +162,23 @@ const useStyles = makeStyles(theme => ({
     paddingTop: theme.spacing(2),
     marginBottom: theme.spacing(1),
     paddingLeft: theme.spacing(4),
+    [mobile(theme)]: {
+      paddingLeft: theme.spacing(2),
+    },
   },
   homeIcon: {
     marginLeft: theme.spacing(-0.5),
     paddingRight: theme.spacing(1),
     fontSize: "1.5em",
+  },
+  mobileHeading: {
+    color: theme.palette.getContrastText(theme.palette.primary.main),
+    marginLeft: theme.spacing(1),
+  },
+  mobileMenu: {
+    display: "flex",
+    justifyContent: "flex-start",
+    flexGrow: 1,
   },
 }))
 
@@ -156,44 +220,99 @@ interface LayoutProps {
   title: string
 }
 
+interface Heading {
+  type: "heading"
+  text: string
+}
+
+interface LinkT {
+  type: "link"
+  text: string
+  href: string
+}
+
+type LinkData = LinkT | Heading
+
+const linkData: LinkData[] = [
+  { text: "Demos & Tools", type: "heading" },
+  { text: "Autotrack", href: "/autotrack/", type: "link" },
+  { text: "Account Explorer", href: "/account-explorer/", type: "link" },
+  { text: "Campaign URL Builder", href: "/campaign-url-builder", type: "link" },
+  {
+    text: "Dimensions & Metrics Explorer",
+    href: "/dimensions-metrics-explorer",
+    type: "link",
+  },
+  { text: "Embed API", href: "/embed-api", type: "link" },
+  { text: "Enhanced Ecommerce", href: "/enhanced-ecommerce", type: "link" },
+  { text: "Hit Builder", href: "/hit-builder", type: "link" },
+  { text: "Query Explorer", href: "/query-explorer", type: "link" },
+  { text: "Request Composer", href: "/request-composer", type: "link" },
+  { text: "Spreadsheet Add-on", href: "/spreadsheet-add-on", type: "link" },
+  { text: "Tag Assistant", href: "/tag-assistant", type: "link" },
+  { text: "Usage Trends", href: "/usage-trends", type: "link" },
+  { text: "Resources", type: "heading" },
+  { text: "About this Site", href: "/#about", type: "link" },
+  { text: "Help & feedback", href: "/#help", type: "link" },
+]
+
 const Layout: React.FC<LayoutProps> = ({ children, title }) => {
   usePageView()
   const classes = useStyles()
-
-  const SubHeading: React.FC = React.useCallback(
-    ({ children }) => {
-      return (
-        <li>
-          <Typography className={classnames(classes.subHeading)} variant="h6">
-            {children}
-          </Typography>
-        </li>
-      )
-    },
-    [classes.innerNav, classes.subHeading]
-  )
-
-  const NavLink: React.FC<{ to: string }> = React.useCallback(
-    ({ to, children }) => {
-      return (
-        <li>
-          <Link
-            className={classnames(
-              classes.innerNav,
-              classes.navLinkBackgroundHover
-            )}
-            to={to}
-          >
-            {children}
-          </Link>
-        </li>
-      )
-    },
-    [classes.innerNav, classes.navLinkBackgroundHover]
-  )
+  const [open, setOpen] = React.useState(false)
 
   return (
     <div className={classes.root}>
+      <AppBar position="static" className={classes.appBarNav}>
+        <IconButton
+          edge="start"
+          onClick={() => setOpen(true)}
+          className={classes.mobileMenu}
+        >
+          <MenuIcon />
+          <Typography variant="h6" className={classes.mobileHeading}>
+            GA Demos & Tools
+          </Typography>
+        </IconButton>
+        <Login />
+        <Drawer open={open} onClose={() => setOpen(false)}>
+          <List className={classes.mobileNav}>
+            <Link to="/" className={classes.noColor}>
+              <Typography
+                className={classnames(classes.innerNav, classes.home)}
+                variant="h2"
+              >
+                <Home className={classes.homeIcon} /> Home
+              </Typography>
+            </Link>
+            {linkData.map(linkData => {
+              if (linkData.type === "heading") {
+                return (
+                  <Typography
+                    className={classnames(classes.subHeading, classes.innerNav)}
+                    variant="h6"
+                  >
+                    {linkData.text}
+                  </Typography>
+                )
+              }
+              return (
+                <ListItem
+                  button
+                  key={linkData.text}
+                  className={classes.innerNav}
+                  onClick={() => {
+                    setOpen(false)
+                    navigate(linkData.href)
+                  }}
+                >
+                  {linkData.text}
+                </ListItem>
+              )
+            })}
+          </List>
+        </Drawer>
+      </AppBar>
       <nav className={classes.nav}>
         <ol>
           <li>
@@ -206,26 +325,33 @@ const Layout: React.FC<LayoutProps> = ({ children, title }) => {
               </Typography>
             </Link>
           </li>
-
-          <SubHeading>Demos &amp; Tools</SubHeading>
-          <NavLink to="/autotrack/">Autotrack</NavLink>
-          <NavLink to="/account-explorer/">Account Explorer</NavLink>
-          <NavLink to="/campaign-url-builder">Campaign URL Builder</NavLink>
-          <NavLink to="/dimensions-metrics-explorer">
-            Dimensions &amp; Metrics Explorer
-          </NavLink>
-          <NavLink to="/embed-api">Embed API</NavLink>
-          <NavLink to="/enhanced-ecommerce">Enhanced Ecommerce</NavLink>
-          <NavLink to="/hit-builder">Hit Builder</NavLink>
-          <NavLink to="/query-explorer">Query Explorer</NavLink>
-          <NavLink to="/request-composer">Request Composer</NavLink>
-          <NavLink to="/spreadsheet-add-on">Spreadsheet Add-on</NavLink>
-          <NavLink to="/tag-assistant">Tag Assistant</NavLink>
-          <NavLink to="/usage-trends">Usage Trends</NavLink>
-
-          <SubHeading>Resources</SubHeading>
-          <NavLink to="/#about">About this Site</NavLink>
-          <NavLink to="/#help">Help &amp; feedback</NavLink>
+          {linkData.map(linkData => {
+            if (linkData.type === "heading") {
+              return (
+                <li key={linkData.text}>
+                  <Typography
+                    className={classnames(classes.subHeading)}
+                    variant="h6"
+                  >
+                    {linkData.text}
+                  </Typography>
+                </li>
+              )
+            }
+            return (
+              <li key={linkData.text}>
+                <Link
+                  className={classnames(
+                    classes.innerNav,
+                    classes.navLinkBackgroundHover
+                  )}
+                  to={linkData.href}
+                >
+                  {linkData.text}
+                </Link>
+              </li>
+            )
+          })}
         </ol>
       </nav>
       <main className={classes.main}>

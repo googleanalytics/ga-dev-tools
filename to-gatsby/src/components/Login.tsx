@@ -5,7 +5,11 @@ import { useSelector } from "react-redux"
 import Tooltip from "@material-ui/core/Tooltip"
 import IconButton from "@material-ui/core/IconButton"
 
-const Login: React.FC = () => {
+interface LoginProps {
+  className?: string
+}
+
+const Login: React.FC<LoginProps> = ({ className }) => {
   const user = useSelector((state: AppState) => state.user)
   const gapi = useSelector((state: AppState) => state.gapi)
 
@@ -22,7 +26,7 @@ const Login: React.FC = () => {
 
   return (
     <Tooltip title={user === undefined ? "Login" : "Logout"}>
-      <IconButton onClick={loginLogout}>
+      <IconButton className={className} onClick={loginLogout}>
         {user === undefined ? <PersonOutlineIcon /> : <PersonIcon />}
       </IconButton>
     </Tooltip>
