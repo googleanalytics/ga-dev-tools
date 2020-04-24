@@ -3,7 +3,8 @@ import { makeStyles } from "@material-ui/core/styles"
 import SyntaxHighlighter from "react-syntax-highlighter"
 import { SyntaxHighlighterProps } from "react-syntax-highlighter"
 import Paper from "@material-ui/core/Paper"
-import Button from "@material-ui/core/Button"
+import IconButton from "@material-ui/core/IconButton"
+import Tooltip from "@material-ui/core/Tooltip"
 import FileCopyIcon from "@material-ui/icons/FileCopyOutlined"
 import Snackbar from "@material-ui/core/Snackbar"
 import MuiAlert from "@material-ui/lab/Alert"
@@ -49,12 +50,11 @@ const CodeBlock: React.FC<CodeBlockProps> = ({ code, ...props }) => {
   return (
     <Paper className={classes.codeBlock}>
       <div className={classes.copyButton}>
-        <div onClick={copyCode} className={classes.svgContainer}>
-          <Button onClick={copyCode}>
+        <Tooltip title="Copy">
+          <IconButton onClick={copyCode}>
             <FileCopyIcon />
-          </Button>
-          <div>Copy</div>
-        </div>
+          </IconButton>
+        </Tooltip>
       </div>
       <SyntaxHighlighter
         {...props}
