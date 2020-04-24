@@ -125,6 +125,7 @@ export const usePageView = (
   const [retries, setRetries] = React.useState(0)
   const [couldMeasure, setCouldMeasure] = React.useState(false)
   React.useEffect(() => {
+    // TODO - Add gtag to redux and then this hook can be a bit more straightforward.
     if (measurementId === undefined) {
       throw new Error("No measurementId is set.")
     }
