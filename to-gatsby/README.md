@@ -29,7 +29,7 @@ npm install
 Then simply run the following:
 
 ```shell
-npm run start
+env GA_MEASUREMENT_ID=YOUR_ID npm run start
 ```
 
 This will set up a local hot-reloading instance of the app that you'll be able
@@ -41,17 +41,6 @@ to navigate to by going to `http://locahost:8000`
 
 This is where all (technically most, see [gatsby-broweser.js]) of the
 client-side code lives. All of our demo code can be found here.
-
-### .env.*
-
-`.env.production` & `.env.developement` are used to set environment variables
-that are needed as a part of the build process.
-
-+   `GA_MEASUREMENT_ID`
-
-    This variable is used to set the measurementID for gtag. In order to make
-    measurement more useful, we use a different property for development than
-    production.
 
 ### gatsby-browser.js
 
@@ -65,7 +54,8 @@ Of note, we use:
 
     Lets us wrap the root element in any necessary context/providers. We use it
     for injecting a material-ui
-    [Theme provider](https://material-ui.com/customization/theming/#theme-provider)
+    [Theme provider](https://material-ui.com/customization/theming/#theme-provider),
+    and a Redux store.
 
 +   [`onInitialClientRender`](https://www.gatsbyjs.org/docs/browser-apis/#onInitialClientRender)
 
@@ -76,6 +66,9 @@ Of note, we use:
 
     The reason we use `onInitialClientRender` is so we can demonstrate how to
     use GA technologies in our demos.
+
+    This code additionally pulls in gapi, a Google library that makes calling
+    Google APIs much easier.
 
 Also see [Gatsby browser APIs](https://www.gatsbyjs.org/docs/browser-apis/).
 
