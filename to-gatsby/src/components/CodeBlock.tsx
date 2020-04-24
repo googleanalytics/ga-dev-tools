@@ -3,6 +3,10 @@ import { makeStyles } from "@material-ui/core/styles"
 import SyntaxHighlighter from "react-syntax-highlighter"
 import { SyntaxHighlighterProps } from "react-syntax-highlighter"
 import Paper from "@material-ui/core/Paper"
+import AppBar from "@material-ui/core/AppBar"
+import Tabs from "@material-ui/core/Tabs"
+import Box from "@material-ui/core/Box"
+import Tab from "@material-ui/core/Tab"
 import IconButton from "@material-ui/core/IconButton"
 import Tooltip from "@material-ui/core/Tooltip"
 import FileCopyIcon from "@material-ui/icons/FileCopyOutlined"
@@ -34,34 +38,65 @@ const useStyles = makeStyles(theme => ({
   },
 }))
 
-interface CodeBlockProps extends SyntaxHighlighterProps {
+interface BlockData {
   code: string
+  title: string
 }
 
-const CodeBlock: React.FC<CodeBlockProps> = ({ code, ...props }) => {
+interface CodeBlockProps extends SyntaxHighlighterProps {
+  codeBlocks: BlockData[]
+  className?: string
+}
+
+const CodeBlock: React.FC<CodeBlockProps> = ({
+  codeBlocks,
+  className,
+  ...props
+}) => {
   const classes = useStyles()
   const [showAlert, setShowAlert] = React.useState(false)
+  const [selectedTab, setSelectedTab] = React.useState(0)
 
   const copyCode = React.useCallback(() => {
-    copyToClipboard(code)
+    copyToClipboard(codeBlocks[selectedTab].code)
     setShowAlert(true)
-  }, [code])
+  }, [codeBlocks, selectedTab])
 
   return (
-    <Paper className={classes.codeBlock}>
-      <div className={classes.copyButton}>
-        <Tooltip title="Copy">
-          <IconButton onClick={copyCode}>
-            <FileCopyIcon />
-          </IconButton>
-        </Tooltip>
-      </div>
-      <SyntaxHighlighter
-        {...props}
-        customStyle={{ background: "unset", padding: "unset", margin: "unset" }}
-      >
-        {code}
-      </SyntaxHighlighter>
+    <Box className={className}>
+      <AppBar position="static">
+        <Tabs
+          value={selectedTab}
+          onChange={(_, newIndex) => setSelectedTab(newIndex)}
+        >
+          {codeBlocks.map(({ title }) => (
+            <Tab key={title} label={title} />
+          ))}
+        </Tabs>
+      </AppBar>
+      {codeBlocks.map(({ code, title }, idx) =>
+        idx !== selectedTab ? null : (
+          <Paper square key={title} className={classes.codeBlock}>
+            <div className={classes.copyButton}>
+              <Tooltip title="Copy">
+                <IconButton onClick={copyCode}>
+                  <FileCopyIcon />
+                </IconButton>
+              </Tooltip>
+            </div>
+            <SyntaxHighlighter
+              {...props}
+              customStyle={{
+                background: "unset",
+                padding: "unset",
+                margin: "unset",
+              }}
+            >
+              {code}
+            </SyntaxHighlighter>
+          </Paper>
+        )
+      )}
       <Snackbar
         open={showAlert}
         autoHideDuration={2000}
@@ -69,7 +104,7 @@ const CodeBlock: React.FC<CodeBlockProps> = ({ code, ...props }) => {
       >
         <MuiAlert>Code copied to clipboard.</MuiAlert>
       </Snackbar>
-    </Paper>
+    </Box>
   )
 }
 

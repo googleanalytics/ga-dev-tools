@@ -28,6 +28,9 @@ const useStyles = makeStyles(theme => ({
     border: `1px solid ${theme.palette.primary.main}`,
     borderRadius: theme.spacing(1),
   },
+  codeBlock: {
+    marginBottom: theme.spacing(2),
+  },
 }))
 
 const DemoScreenshot = () => {
@@ -71,10 +74,11 @@ const enhancedEcommerceAnalyticsJs = (
   <a href={Url.analyticsJSEnhancedEcommerce}>Enhanced Ecommerce (ec.js)</a>
 )
 
+const gaDebugger = <a href={Url.gaDebugger}>Google Analytics Debugger</a>
+
 const analyticsJs = <a href={Url.analyticsJSDevsite}>analytics.js</a>
 
 const gtmExampleCode = `
-// The GTM code.
 dataLayer.push({
   "event": "addToCart",
     "ecommerce": {
@@ -95,7 +99,30 @@ dataLayer.push({
 });
 `.trim()
 
+const ecJsExampleCode = `
+ga("create", "UA-XXXXX-Y");
+ga("require", "ec");
+ga("ec:addProduct", {
+  "id": "57b9d",
+  "name": "Kiosk T-Shirt",
+  "price": "55.00",
+  "brand": "Kiosk",
+  "category": "T-Shirts",
+  "variant": "red",
+  "dimension1": "M",
+  "quantity": 1
+});
+ga("ec:setAction", "add");
+ga("send", "event", "detail view", "click", "addToCart");
+`.trim()
+
+const codeBlocks = [
+  { code: gtmExampleCode, title: "Google Tag Manager" },
+  { code: ecJsExampleCode, title: "ec.js" },
+]
+
 const EnhancedEcommerce = () => {
+  const classes = useStyles()
   return (
     <Layout title="Enhanced Ecommerce">
       <Typography variant="h3">Overview</Typography>
@@ -117,10 +144,20 @@ const EnhancedEcommerce = () => {
       </Typography>
 
       <Typography variant="body1">
-        Here's an example "Add to cart" code snippet for GTM:
+        The following is an example "Add to cart" event:
       </Typography>
 
-      <CodeBlock language="javascript" code={gtmExampleCode} />
+      <CodeBlock
+        language="javascript"
+        codeBlocks={codeBlocks}
+        className={classes.codeBlock}
+      />
+
+      <Typography variant="body1">
+        The demo doesn't just show samples, it's actually sending real data to
+        Google Analytics. If you'd like to inspect the hits, just open up the
+        developer tools or use the {gaDebugger} to see what's going on.
+      </Typography>
     </Layout>
   )
 }
