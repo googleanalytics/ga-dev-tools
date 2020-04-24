@@ -5,7 +5,7 @@ import { useThrottle } from "react-use"
 import CallMadeIcon from "@material-ui/icons/CallMade"
 
 import { HasView } from "../../components/ViewSelector"
-import HighlightText from "./HighlightText"
+import HighlightText from "./_HighlightText"
 
 const useStyles = makeStyles(theme => ({
   table: {

@@ -22,7 +22,7 @@ import { useSelector } from "react-redux"
 import Layout from "../../components/layout"
 import ViewSelector, { HasView } from "../../components/ViewSelector"
 
-import ViewsTable from "./ViewTable"
+import ViewsTable from "./_ViewTable"
 
 const useStyles = makeStyles(theme => ({
   section: {
