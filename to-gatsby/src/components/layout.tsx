@@ -119,7 +119,7 @@ const useStyles = makeStyles(theme => ({
 }))
 
 export const usePageView = (
-  measurementId: string | undefined = process.env.GA_MEASUREMENT_ID
+  measurementId: string | undefined = process.env.GATSBY_GA_MEASUREMENT_ID
 ): { couldMeasure: boolean; retries: number } => {
   const location = useLocation()
   const [retries, setRetries] = React.useState(0)
