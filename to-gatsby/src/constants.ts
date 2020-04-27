@@ -15,6 +15,17 @@
 // All static links on the site should be put into this constant. This makes it
 // easier to update all instances of a link on the site.
 export const Url = {
+  gaDebugger:
+    "https://chrome.google.com/webstore/detail/google-analytics-debugger/jnkmfdileelhofjcijamephohjechhna",
+  analyticsJSDevsite:
+    "https://developers.google.com/analytics/devguides/collection/analyticsjs/",
+  analyticsJSEnhancedEcommerce:
+    "https://developers.google.com/analytics/devguides/collection/analyticsjs/enhanced-ecommerce",
+  googleTagManagerEnhancedEcommerce:
+    "https://developers.google.com/tag-manager/enhanced-ecommerce",
+  enhancedEcommerceHelpCenter:
+    "https://support.google.com/analytics/answer/6014841",
+  enhancedEcommerceDemo: "https://enhancedecommerce.appspot.com/",
   gaDevToolsGitHub: "https://github.com/googleanalytics/ga-dev-tools",
   gaDevToolsGitHubNewIssue:
     "https://github.com/googleanalytics/ga-dev-tools/issues/new",

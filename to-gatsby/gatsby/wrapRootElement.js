@@ -52,6 +52,9 @@ const styles = theme => ({
         textDecoration: "underline",
       },
     },
+    code: {
+      fontSize: theme.typography.body1.fontSize
+    }
   },
 })
 
