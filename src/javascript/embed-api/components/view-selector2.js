@@ -17,7 +17,7 @@
 
 
 import accountSummaries from 'javascript-api-utils/lib/account-summaries';
-import {tagHtml as html} from '../../utils.js';
+import {tagHtml as html} from '../../utils';
 
 
 /**

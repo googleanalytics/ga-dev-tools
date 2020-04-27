@@ -18,6 +18,9 @@
 
 import webapp2
 
+class HomePageRedirect(webapp2.RequestHandler):
+  def get(self):
+    return webapp2.redirect('/', True)
 
 class EmbedApiRedirect(webapp2.RequestHandler):
   def get(self):

@@ -12,73 +12,58 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import escapeHtml from 'lodash/escape';
-import map from 'lodash/map';
+import escapeHtml from "lodash/escape";
+import map from "lodash/map";
 
 /**
  * Awaits for a specified amount of time.
- * @param {number} amount The amount of time to sleep in milliseconds.
- * @return {Promise} A promise that is resolved after the specified amount of
- *    time has passed.
  */
-export function sleep(amount) {
-  return new Promise(function(resolve) {
-    setTimeout(resolve, amount);
+export async function sleep(ms: number): Promise<void> {
+  return new Promise(function (resolve) {
+    setTimeout(() => resolve(), ms);
   });
 }
 
-
 /**
  * Copies the text content from the passed HTML element.
- * @param {HTMLElement} element The element to copy text from.
- * @return {boolean} true if the copy action was successful.
  */
-export function copyElementText(element) {
+export function copyElementText(element: HTMLElement): boolean {
   let success = false;
   const range = document.createRange();
   range.selectNode(element);
 
-  window.getSelection().removeAllRanges();
-  window.getSelection().addRange(range);
+  window.getSelection()?.removeAllRanges();
+  window.getSelection()?.addRange(range);
 
   try {
-    success = document.execCommand('copy');
+    success = document.execCommand("copy");
   } catch (e) {
     // No action.
   }
 
-  window.getSelection().removeAllRanges();
+  window.getSelection()?.removeAllRanges();
   return success;
 }
 
-
 /**
- * Takes a script URL.
- * @param {string} url
- * @return {Promise} A promise that resolves once the script has been loaded
- *     on the page or rejects if the load fails.
+ * Loads the script at the given url.
  */
-export function loadScript(url) {
+export async function loadScript(url: string): Promise<void> {
   return new Promise((resolve, reject) => {
-    const js = document.createElement('script');
-    const fs = document.getElementsByTagName('script')[0];
+    const js = document.createElement("script");
+    const fs = document.getElementsByTagName("script")[0];
     js.src = url;
-    fs.parentNode.insertBefore(js, fs);
-    js.onload = resolve;
-    js.onerror = reject;
+    fs.parentNode?.insertBefore(js, fs);
+    js.onload = () => resolve();
+    js.onerror = () => reject();
   });
 }
 
 /**
  * Returns true if a string is null, undefined, or an empty string.
  * Returns false for non strings.
- *
- * @param {object} value to check.
- * @return {boolean} true if the argument is null, undefined, or an empty
- *     string.
  */
-const strIsEmpty = value => value == null || value === '';
-
+const strIsEmpty = (value: any): boolean => value === null || value === "";
 
 /**
  * Template interface for creating HTML snippets safely. Uses the tagged
@@ -98,36 +83,31 @@ const strIsEmpty = value => value == null || value === '';
  * function should never be used to insert template content into javascript.
  * Additionally, do not use unquted attributes (such as
  * tagHtml`<div class=${cls}></div>`).
- *
- * @param  {string[]} rawParts The literal text between each substitution
- *     of the template string.
- * @param  {...object} substitutions The value of each substituton, after
- *     evaluation, but not coerced to a string. These are interleaved with
- *     the rawParts to produce the final string.
- * @return {string} An HTML snippet, where all the substitutions have been
- *     safely HTML escaped.
  */
-export const tagHtml = (rawParts, ...substitutions) => {
-  const result = [];
+// TODO - this should just be removed as we migrate stuff over to react.
+export const tagHtml = (
+  rawParts: string[],
+  ...substitutions: any[]
+): string => {
+  const result: any[] = [];
 
-  rawParts.forEach((raw, index) => {
+  rawParts.forEach((raw: any, index: number) => {
     const substitution = substitutions[index];
     if (!strIsEmpty(raw)) result.push(raw);
     if (!strIsEmpty(substitution)) result.push(escapeHtml(substitution));
   });
 
-  return result.join('');
+  return result.join("");
 };
 
-
+// TODO - this should be handled through a global redux store eventually.
 /**
- * A class for thowing errors that can be easily turned into UI alerts.
+ * A class for throwing errors that can be easily turned into UI alerts.
  */
 export class UserError extends Error {
-  /**
-   * @param {{title: (string), message: (string)}} arg1
-   */
-  constructor({title, message}) {
+  public title: string;
+
+  constructor({ title, message }: { title: string; message: string }) {
     super(message);
     this.title = title;
   }
@@ -144,14 +124,16 @@ export class UserError extends Error {
  * @return {string} The encoded query. Includes a prepended ? if the query is
  *   not empty.
  */
-export const encodeQuery = query => {
+// TODO - This should be migrated to using URLSearchParams.
+export const encodeQuery = (query: { [queryKey: string]: string }): string => {
   if (query) {
-    const encoded = map(query, (value, key) =>
-      `${encodeURIComponent(key)}=${encodeURIComponent(value)}`
-    ).join('&');
-    return encoded ? `?${encoded}` : '';
+    const encoded = map(
+      query,
+      (value, key) => `${encodeURIComponent(key)}=${encodeURIComponent(value)}`
+    ).join("&");
+    return encoded ? `?${encoded}` : "";
   } else {
-    return '';
+    return "";
   }
 };
 
@@ -160,22 +142,25 @@ export const encodeQuery = query => {
 // (currently only single-argument functions are supported). The memoize fails
 // if the promise rejects, and multiple concurrent calls to an ongoing promise
 // will all return the same promise.
-export const promiseMemoize = func => {
+export const promiseMemoize = <T, R>(
+  func: (arg: T) => R
+): ((arg: T) => Promise<R>) => {
   // This is a mapping of key => Promise. storing the promise directly
   // simplifies our implementation, since we just return it on a cache hit.
   const cache = new Map();
 
-  return argument => {
+  return async (argument: T): Promise<R> => {
     const result = cache.get(argument);
     if (result != undefined) {
       return result;
     }
 
-    const promise = new Promise(res => res(func(argument)))
-        .catch(error => {
-          cache.delete(argument);
-          throw error;
-        });
+    const promise = new Promise<R>((res) => res(func(argument))).catch(
+      (error) => {
+        cache.delete(argument);
+        throw error;
+      }
+    );
     cache.set(argument, promise);
     return promise;
   };
@@ -202,23 +187,29 @@ export const promiseMemoize = func => {
  * @return {Promise} A new Promise. Will run to completion, and additionally
  *   run (and resolve) all cleanup handlers before resolving itself.
  */
-export const cleanupingPromise = executor => {
-  const cleanups = [];
-  let addCleanup = cleaner => {
+export const cleanupingPromise = async <T, E>(
+  executor: (
+    resolve: (t: T) => void,
+    reject: (e: E) => void,
+    cleanup: (cleaner: () => void) => void
+  ) => void
+): Promise<T> => {
+  const cleanups: (() => void)[] = [];
+  let addCleanup = (cleaner: () => void) => {
     cleanups.push(cleaner);
   };
 
-  const innerPromise = new Promise((resolve, reject) =>
-    executor(resolve, reject, cleaner => {
+  const innerPromise = new Promise<T>((resolve, reject) =>
+    executor(resolve, reject, (cleaner) => {
       addCleanup(cleaner);
     })
   );
 
   addCleanup = () => {
-    throw new Error('Can\'t add new cleanup handlers asynchronously');
+    throw new Error("Can't add new cleanup handlers asynchronously");
   };
 
-  return Promise.all(cleanups.map(
-      cleanup => innerPromise.finally(() => cleanup())
-  )).then(() => innerPromise);
+  return Promise.all(
+    cleanups.map((cleanup) => innerPromise.finally(() => cleanup()))
+  ).then(() => innerPromise);
 };

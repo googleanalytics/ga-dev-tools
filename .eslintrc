@@ -13,10 +13,12 @@
   },
   "plugins": [
     "react",
+    "react-hooks",
     "babel"
   ],
   "extends": [
     "eslint:recommended",
+    "plugin:react-hooks/recommended",
     "google"
   ],
   "settings" : {
