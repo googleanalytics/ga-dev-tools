@@ -21,7 +21,7 @@ export const useEventChecked = (setChecked: (checked: boolean) => void) =>
 // `key` whenever it is updated, and initialize the state from `localStorage`,
 // if present. If `subscribe` is true, also propogate changes from localStorage
 // from other tabs into the state.
-export const useLocalStorage = function(
+export const useLocalStorage = function (
   key: string,
   initialValue: string | (() => string),
   subscribe: boolean = true
@@ -132,4 +132,35 @@ export const useHash = () => {
   }, []);
 
   return hash;
+};
+
+export const useThrottle = <T,>(
+  toThrottle: T | undefined,
+  ms: number
+): T | undefined => {
+  const [local, setLocal] = React.useState<T | undefined>(toThrottle);
+  const id = React.useRef<number>();
+
+  React.useEffect(() => {
+    const cb = () => {
+      setLocal(toThrottle);
+    };
+    // If there isn't a timeout ID, run the cb so this gets a value right away.
+    if (id.current === undefined) {
+      cb();
+    } else {
+      // Otherwise, clear the current timout, since the value to be updated in
+      // the cb is no longer up-to-date.
+      window.clearTimeout(id.current);
+    }
+
+    const newId = window.setTimeout(cb, ms);
+    id.current = newId;
+
+    return () => {
+      window.clearTimeout(id.current);
+    };
+  }, [toThrottle, ms]);
+
+  return local;
 };
