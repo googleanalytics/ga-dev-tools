@@ -21,7 +21,7 @@ import map from 'lodash/map';
 import some from 'lodash/some';
 import React from 'react';
 import ReactDOM from 'react-dom';
-import {tagHtml as html} from '../utils.js';
+import {tagHtml as html} from '../utils';
 
 /**
  * A components that renders a multi-suggest dropdown using select2.
