@@ -13,6 +13,8 @@
 // limitations under the License.
 
 import * as React from "react"
+import { Provider } from "react-redux"
+import { store } from "../gatsby/wrapRootElement"
 import {
   createHistory,
   createMemorySource,
@@ -20,16 +22,18 @@ import {
   History,
 } from "@reach/router"
 
-export const withTestRouter = (
+export const withProviders = (
   component: JSX.Element,
   path: string = "/"
 ): {
-  withRouter: JSX.Element
+  wrapped: JSX.Element
   history: History
 } => {
   const history = createHistory(createMemorySource(path))
-  const withRouter = (
-    <LocationProvider history={history}>{component}</LocationProvider>
+  const wrapped = (
+    <Provider store={store}>
+      <LocationProvider history={history}>{component}</LocationProvider>
+    </Provider>
   )
-  return { withRouter, history }
+  return { wrapped, history }
 }

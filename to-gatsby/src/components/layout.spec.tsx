@@ -14,7 +14,7 @@
 
 import * as React from "react"
 import * as renderer from "react-test-renderer"
-import { withTestRouter } from "../test-utils"
+import { withProviders } from "../test-utils"
 
 import Layout from "./layout"
 import { usePageView } from "./layout"
@@ -22,7 +22,7 @@ import { usePageView } from "./layout"
 const TestMeasurementId = "abc"
 
 beforeEach(() => {
-  process.env.GA_MEASUREMENT_ID = TestMeasurementId
+  process.env.GATSBY_GA_MEASUREMENT_ID = TestMeasurementId
   window.gtag = jest.fn()
 })
 
@@ -30,7 +30,7 @@ describe("Layout", () => {
   it("renders correctly", () => {
     const tree = renderer
       .create(
-        withTestRouter(<Layout title="Page Title">Content</Layout>).withRouter
+        withProviders(<Layout title="Page Title">Content</Layout>).wrapped
       )
       .toJSON()
     expect(tree).toMatchSnapshot()
@@ -48,7 +48,7 @@ describe("usePageView hook", () => {
         hookValues.push(runData)
         return null
       }
-      const component = withTestRouter(<TestComponent />).withRouter
+      const component = withProviders(<TestComponent />).wrapped
       renderer.create(component)
       // advance the timer more times than necessary so we can make sure this runs
       // enough times.
@@ -74,8 +74,7 @@ describe("usePageView hook", () => {
         capturedValues.push(runData)
         return null
       }
-      const component = withTestRouter(<TestComponent />, pathOverride)
-        .withRouter
+      const component = withProviders(<TestComponent />, pathOverride).wrapped
 
       renderer.create(component)
       renderer.act(() => {
@@ -107,7 +106,7 @@ describe("usePageView hook", () => {
         usePageView()
         return null
       }
-      const { withRouter: component, history } = withTestRouter(
+      const { wrapped: component, history } = withProviders(
         <TestComponent />,
         path1
       )

@@ -4,8 +4,92 @@ exports[`Layout renders correctly 1`] = `
 <div
   className="makeStyles-root-1"
 >
+  <header
+    className="MuiPaper-root MuiAppBar-root MuiAppBar-positionStatic MuiAppBar-colorPrimary makeStyles-appBarNav-8 MuiPaper-elevation4"
+  >
+    <button
+      className="MuiButtonBase-root MuiIconButton-root makeStyles-mobileMenu-18 MuiIconButton-edgeStart"
+      disabled={false}
+      onBlur={[Function]}
+      onClick={[Function]}
+      onDragLeave={[Function]}
+      onFocus={[Function]}
+      onKeyDown={[Function]}
+      onKeyUp={[Function]}
+      onMouseDown={[Function]}
+      onMouseLeave={[Function]}
+      onMouseUp={[Function]}
+      onTouchEnd={[Function]}
+      onTouchMove={[Function]}
+      onTouchStart={[Function]}
+      tabIndex={0}
+      type="button"
+    >
+      <span
+        className="MuiIconButton-label"
+      >
+        <svg
+          aria-hidden="true"
+          className="MuiSvgIcon-root"
+          focusable="false"
+          viewBox="0 0 24 24"
+        >
+          <path
+            d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"
+          />
+        </svg>
+        <h6
+          className="MuiTypography-root makeStyles-mobileHeading-17 MuiTypography-h6"
+        >
+          GA Demos & Tools
+        </h6>
+      </span>
+      <span
+        className="MuiTouchRipple-root"
+      />
+    </button>
+    <button
+      aria-describedby={null}
+      className="MuiButtonBase-root MuiIconButton-root"
+      disabled={false}
+      onBlur={[Function]}
+      onClick={[Function]}
+      onDragLeave={[Function]}
+      onFocus={[Function]}
+      onKeyDown={[Function]}
+      onKeyUp={[Function]}
+      onMouseDown={[Function]}
+      onMouseLeave={[Function]}
+      onMouseOver={[Function]}
+      onMouseUp={[Function]}
+      onTouchEnd={[Function]}
+      onTouchMove={[Function]}
+      onTouchStart={[Function]}
+      tabIndex={0}
+      title="Login"
+      type="button"
+    >
+      <span
+        className="MuiIconButton-label"
+      >
+        <svg
+          aria-hidden="true"
+          className="MuiSvgIcon-root"
+          focusable="false"
+          viewBox="0 0 24 24"
+        >
+          <path
+            d="M12 5.9c1.16 0 2.1.94 2.1 2.1s-.94 2.1-2.1 2.1S9.9 9.16 9.9 8s.94-2.1 2.1-2.1m0 9c2.97 0 6.1 1.46 6.1 2.1v1.1H5.9V17c0-.64 3.13-2.1 6.1-2.1M12 4C9.79 4 8 5.79 8 8s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4zm0 9c-2.67 0-8 1.34-8 4v3h16v-3c0-2.66-5.33-4-8-4z"
+          />
+        </svg>
+      </span>
+      <span
+        className="MuiTouchRipple-root"
+      />
+    </button>
+  </header>
   <nav
-    className="makeStyles-nav-6"
+    className="makeStyles-nav-10"
   >
     <ol>
       <li>
@@ -13,11 +97,11 @@ exports[`Layout renders correctly 1`] = `
           href="/"
         >
           <h2
-            className="MuiTypography-root makeStyles-innerNav-7 makeStyles-home-9 MuiTypography-h2"
+            className="MuiTypography-root makeStyles-innerNav-12 makeStyles-home-14 MuiTypography-h2"
           >
             <svg
               aria-hidden="true"
-              className="MuiSvgIcon-root makeStyles-homeIcon-11"
+              className="MuiSvgIcon-root makeStyles-homeIcon-16"
               focusable="false"
               viewBox="0 0 24 24"
             >
@@ -31,14 +115,14 @@ exports[`Layout renders correctly 1`] = `
       </li>
       <li>
         <h6
-          className="MuiTypography-root makeStyles-subHeading-10 MuiTypography-h6"
+          className="MuiTypography-root makeStyles-subHeading-15 MuiTypography-h6"
         >
           Demos & Tools
         </h6>
       </li>
       <li>
         <a
-          className="makeStyles-innerNav-7 makeStyles-navLinkBackgroundHover-8"
+          className="makeStyles-innerNav-12 makeStyles-navLinkBackgroundHover-13"
           href="/autotrack/"
         >
           Autotrack
@@ -46,7 +130,7 @@ exports[`Layout renders correctly 1`] = `
       </li>
       <li>
         <a
-          className="makeStyles-innerNav-7 makeStyles-navLinkBackgroundHover-8"
+          className="makeStyles-innerNav-12 makeStyles-navLinkBackgroundHover-13"
           href="/account-explorer/"
         >
           Account Explorer
@@ -54,7 +138,7 @@ exports[`Layout renders correctly 1`] = `
       </li>
       <li>
         <a
-          className="makeStyles-innerNav-7 makeStyles-navLinkBackgroundHover-8"
+          className="makeStyles-innerNav-12 makeStyles-navLinkBackgroundHover-13"
           href="/campaign-url-builder"
         >
           Campaign URL Builder
@@ -62,7 +146,7 @@ exports[`Layout renders correctly 1`] = `
       </li>
       <li>
         <a
-          className="makeStyles-innerNav-7 makeStyles-navLinkBackgroundHover-8"
+          className="makeStyles-innerNav-12 makeStyles-navLinkBackgroundHover-13"
           href="/dimensions-metrics-explorer"
         >
           Dimensions & Metrics Explorer
@@ -70,7 +154,7 @@ exports[`Layout renders correctly 1`] = `
       </li>
       <li>
         <a
-          className="makeStyles-innerNav-7 makeStyles-navLinkBackgroundHover-8"
+          className="makeStyles-innerNav-12 makeStyles-navLinkBackgroundHover-13"
           href="/embed-api"
         >
           Embed API
@@ -78,7 +162,7 @@ exports[`Layout renders correctly 1`] = `
       </li>
       <li>
         <a
-          className="makeStyles-innerNav-7 makeStyles-navLinkBackgroundHover-8"
+          className="makeStyles-innerNav-12 makeStyles-navLinkBackgroundHover-13"
           href="/enhanced-ecommerce"
         >
           Enhanced Ecommerce
@@ -86,7 +170,7 @@ exports[`Layout renders correctly 1`] = `
       </li>
       <li>
         <a
-          className="makeStyles-innerNav-7 makeStyles-navLinkBackgroundHover-8"
+          className="makeStyles-innerNav-12 makeStyles-navLinkBackgroundHover-13"
           href="/hit-builder"
         >
           Hit Builder
@@ -94,7 +178,7 @@ exports[`Layout renders correctly 1`] = `
       </li>
       <li>
         <a
-          className="makeStyles-innerNav-7 makeStyles-navLinkBackgroundHover-8"
+          className="makeStyles-innerNav-12 makeStyles-navLinkBackgroundHover-13"
           href="/query-explorer"
         >
           Query Explorer
@@ -102,7 +186,7 @@ exports[`Layout renders correctly 1`] = `
       </li>
       <li>
         <a
-          className="makeStyles-innerNav-7 makeStyles-navLinkBackgroundHover-8"
+          className="makeStyles-innerNav-12 makeStyles-navLinkBackgroundHover-13"
           href="/request-composer"
         >
           Request Composer
@@ -110,7 +194,7 @@ exports[`Layout renders correctly 1`] = `
       </li>
       <li>
         <a
-          className="makeStyles-innerNav-7 makeStyles-navLinkBackgroundHover-8"
+          className="makeStyles-innerNav-12 makeStyles-navLinkBackgroundHover-13"
           href="/spreadsheet-add-on"
         >
           Spreadsheet Add-on
@@ -118,7 +202,7 @@ exports[`Layout renders correctly 1`] = `
       </li>
       <li>
         <a
-          className="makeStyles-innerNav-7 makeStyles-navLinkBackgroundHover-8"
+          className="makeStyles-innerNav-12 makeStyles-navLinkBackgroundHover-13"
           href="/tag-assistant"
         >
           Tag Assistant
@@ -126,7 +210,7 @@ exports[`Layout renders correctly 1`] = `
       </li>
       <li>
         <a
-          className="makeStyles-innerNav-7 makeStyles-navLinkBackgroundHover-8"
+          className="makeStyles-innerNav-12 makeStyles-navLinkBackgroundHover-13"
           href="/usage-trends"
         >
           Usage Trends
@@ -134,14 +218,14 @@ exports[`Layout renders correctly 1`] = `
       </li>
       <li>
         <h6
-          className="MuiTypography-root makeStyles-subHeading-10 MuiTypography-h6"
+          className="MuiTypography-root makeStyles-subHeading-15 MuiTypography-h6"
         >
           Resources
         </h6>
       </li>
       <li>
         <a
-          className="makeStyles-innerNav-7 makeStyles-navLinkBackgroundHover-8"
+          className="makeStyles-innerNav-12 makeStyles-navLinkBackgroundHover-13"
           href="/#about"
         >
           About this Site
@@ -149,7 +233,7 @@ exports[`Layout renders correctly 1`] = `
       </li>
       <li>
         <a
-          className="makeStyles-innerNav-7 makeStyles-navLinkBackgroundHover-8"
+          className="makeStyles-innerNav-12 makeStyles-navLinkBackgroundHover-13"
           href="/#help"
         >
           Help & feedback
@@ -163,14 +247,52 @@ exports[`Layout renders correctly 1`] = `
     <header
       className="makeStyles-header-5"
     >
-      <test-file-stub
-        style={
-          Object {
-            "height": "50px",
-            "width": "100%",
-          }
-        }
-      />
+      <div
+        className="makeStyles-logoRow-6"
+      >
+        <test-file-stub
+          className="makeStyles-logo-7"
+        />
+        <button
+          aria-describedby={null}
+          className="MuiButtonBase-root MuiIconButton-root"
+          disabled={false}
+          onBlur={[Function]}
+          onClick={[Function]}
+          onDragLeave={[Function]}
+          onFocus={[Function]}
+          onKeyDown={[Function]}
+          onKeyUp={[Function]}
+          onMouseDown={[Function]}
+          onMouseLeave={[Function]}
+          onMouseOver={[Function]}
+          onMouseUp={[Function]}
+          onTouchEnd={[Function]}
+          onTouchMove={[Function]}
+          onTouchStart={[Function]}
+          tabIndex={0}
+          title="Login"
+          type="button"
+        >
+          <span
+            className="MuiIconButton-label"
+          >
+            <svg
+              aria-hidden="true"
+              className="MuiSvgIcon-root"
+              focusable="false"
+              viewBox="0 0 24 24"
+            >
+              <path
+                d="M12 5.9c1.16 0 2.1.94 2.1 2.1s-.94 2.1-2.1 2.1S9.9 9.16 9.9 8s.94-2.1 2.1-2.1m0 9c2.97 0 6.1 1.46 6.1 2.1v1.1H5.9V17c0-.64 3.13-2.1 6.1-2.1M12 4C9.79 4 8 5.79 8 8s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4zm0 9c-2.67 0-8 1.34-8 4v3h16v-3c0-2.66-5.33-4-8-4z"
+              />
+            </svg>
+          </span>
+          <span
+            className="MuiTouchRipple-root"
+          />
+        </button>
+      </div>
       <h1
         className="MuiTypography-root MuiTypography-h1"
       >

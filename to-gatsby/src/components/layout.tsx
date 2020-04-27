@@ -289,6 +289,7 @@ const Layout: React.FC<LayoutProps> = ({ children, title }) => {
               if (linkData.type === "heading") {
                 return (
                   <Typography
+                    key={linkData.text}
                     className={classnames(classes.subHeading, classes.innerNav)}
                     variant="h6"
                   >
