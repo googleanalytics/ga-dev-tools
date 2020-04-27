@@ -3,15 +3,15 @@ import CssBaseline from "@material-ui/core/CssBaseline"
 import { ThemeProvider } from "@material-ui/core"
 import { createMuiTheme, withStyles } from "@material-ui/core/styles"
 import orange from "@material-ui/core/colors/orange"
-import {Provider as ReduxProvider} from 'react-redux'
-import {createStore} from 'redux'
+import { Provider as ReduxProvider } from "react-redux"
+import { createStore } from "redux"
 
 const reducer = (state = {}, action) => {
-  console.log('reducer called', state, action)
   switch (action.type) {
-  case 'setUser': return {...state, user: action.user};
-  case 'setGapi': return {...state, gapi: action.gapi};
-  default: return state;
+    case "setUser": return { ...state, user: action.user }
+    case "setGapi": return { ...state, gapi: action.gapi }
+    case "setGtag": return { ...state, gtag: action.gtag }
+    default: return state
   }
 }
 
@@ -53,8 +53,8 @@ const styles = theme => ({
       },
     },
     code: {
-      fontSize: theme.typography.body1.fontSize
-    }
+      fontSize: theme.typography.body1.fontSize,
+    },
   },
 })
 
@@ -64,22 +64,20 @@ const MyBaseline = withStyles(styles)(() => {
   return null
 })
 
-export const store = createStore(reducer);
+export const makeStore = () => createStore(reducer)
+export const store = makeStore()
 store.subscribe(() => {
-  console.log('state change', store.getState())
+  console.log("state change", store.getState())
 })
 
 export default ({ element }) => {
-
   return (
     <React.Fragment>
       <CssBaseline />
       <ThemeProvider theme={globalTheme}>
         <MyBaseline />
-        <ReduxProvider store={store}>
-          {element}
-        </ReduxProvider>
+        <ReduxProvider store={store}>{element}</ReduxProvider>
       </ThemeProvider>
-    </React.Fragment>
+      </React.Fragment>
   )
 }

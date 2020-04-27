@@ -14,7 +14,7 @@
 
 import * as React from "react"
 import { Provider } from "react-redux"
-import { store } from "../gatsby/wrapRootElement"
+import { makeStore } from "../gatsby/wrapRootElement"
 import {
   createHistory,
   createMemorySource,
@@ -22,18 +22,28 @@ import {
   History,
 } from "@reach/router"
 
+interface WithProvidersConfig {
+  path: string
+  measurementID?: string
+}
+
 export const withProviders = (
-  component: JSX.Element,
-  path: string = "/"
+  component: JSX.Element | null,
+  { measurementID, path }: WithProvidersConfig = { path: "/" }
 ): {
   wrapped: JSX.Element
   history: History
+  store: any
 } => {
   const history = createHistory(createMemorySource(path))
+  if (measurementID) {
+    process.env.GATSBY_GA_MEASUREMENT_ID = measurementID
+  }
+  const store = makeStore()
   const wrapped = (
     <Provider store={store}>
       <LocationProvider history={history}>{component}</LocationProvider>
     </Provider>
   )
-  return { wrapped, history }
+  return { wrapped, history, store }
 }

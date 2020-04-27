@@ -311,3 +311,5 @@ exports[`Layout renders correctly 1`] = `
   </main>
 </div>
 `;
+
+exports[`usePageView hook when gtag is undefined and stays that does nothing 1`] = `"Hi"`;
