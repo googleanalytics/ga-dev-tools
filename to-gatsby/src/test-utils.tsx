@@ -49,7 +49,7 @@ export const withProviders = (
   return { wrapped, history, store }
 }
 
-export const testAccounts: AccountSummary[] = [
+const testAccounts: AccountSummary[] = [
   {
     id: "account-id-1",
     name: "Account Name 1",
@@ -81,3 +81,12 @@ export const testAccounts: AccountSummary[] = [
     ],
   },
 ]
+
+const listPromise = Promise.resolve({ result: { items: testAccounts } })
+export const testGapi = () => ({
+  client: {
+    analytics: {
+      management: { accountSummaries: { list: () => listPromise } },
+    },
+  },
+})

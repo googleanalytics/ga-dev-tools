@@ -14,11 +14,22 @@
 
 import * as React from "react"
 import * as renderer from "@testing-library/react"
-import { withProviders, testAccounts } from "../../test-utils"
+import { withProviders, testGapi } from "../../test-utils"
 // TODO - move this into a test set-up file.
 import "@testing-library/jest-dom"
 
 import { AccountExplorer } from "./index"
+
+// Needed because the createRange isn't currently supported in jest because
+// they're not using jsdom 16+gq. Should be able to remove once that's done.
+;(global as any).document.createRange = () => ({
+  setStart: () => {},
+  setEnd: () => {},
+  commonAncestorContainer: {
+    nodeName: "BODY",
+    ownerDocument: document,
+  },
+})
 
 describe("AccountExplorer", () => {
   it("renders without error for an unauthorized user", async () => {
@@ -31,25 +42,59 @@ describe("AccountExplorer", () => {
   describe("with an authorized user", () => {
     describe("with accounts", () => {
       it("selects the first account & shows it in the tree", async () => {
-        const listPromise = Promise.resolve({ result: { items: testAccounts } })
-        const gapi = {
-          client: {
-            analytics: {
-              management: { accountSummaries: { list: () => listPromise } },
-            },
-          },
-        }
-
+        const gapi = testGapi()
         const { wrapped, store } = withProviders(<AccountExplorer />)
         store.dispatch({ type: "setUser", user: {} })
         store.dispatch({ type: "setGapi", gapi })
         const { findByText } = renderer.render(wrapped)
         await renderer.act(async () => {
-          // Act like the user waiting on the data to be returned.
-          await listPromise
+          await gapi.client.analytics.management.accountSummaries.list()
         })
         const viewColumn = await findByText("View Name 1 1 1")
         expect(viewColumn).toBeVisible()
+      })
+      it("picking a view updates the table", async () => {
+        const gapi = testGapi()
+        const { wrapped, store } = withProviders(<AccountExplorer />)
+        store.dispatch({ type: "setUser", user: {} })
+        store.dispatch({ type: "setGapi", gapi })
+
+        const { findByText, findByLabelText } = renderer.render(wrapped)
+        await renderer.act(async () => {
+          await gapi.client.analytics.management.accountSummaries.list()
+        })
+        await renderer.act(async () => {
+          // Choose the second view in the list
+          const viewSelect = await findByLabelText("View")
+          renderer.fireEvent.keyDown(viewSelect, { key: "ArrowDown" })
+          renderer.fireEvent.keyDown(viewSelect, { key: "Return" })
+        })
+
+        const viewColumn = await findByText("View Name 1 1 2")
+        expect(viewColumn).toBeVisible()
+      })
+      it("searching for a view updates the table", async () => {
+        const gapi = testGapi()
+        const { wrapped, store } = withProviders(<AccountExplorer />)
+        store.dispatch({ type: "setUser", user: {} })
+        store.dispatch({ type: "setGapi", gapi })
+
+        const { findByText, findByPlaceholderText } = renderer.render(wrapped)
+        await renderer.act(async () => {
+          await gapi.client.analytics.management.accountSummaries.list()
+        })
+        await renderer.act(async () => {
+          // Choose the second view in the list
+          const searchForView = await findByPlaceholderText(
+            "Start typing to search..."
+          )
+          renderer.fireEvent.change(searchForView, {
+            target: { value: "View Name 2 1 1" },
+          })
+        })
+
+        const idColumn = await findByText("ga:view-id-2-1-1")
+        expect(idColumn).toBeVisible()
       })
     })
   })
