@@ -24,7 +24,6 @@ const TestMeasurementId = "abc"
 
 beforeEach(() => {
   process.env.GATSBY_GA_MEASUREMENT_ID = TestMeasurementId
-  window.gtag = jest.fn()
 })
 
 describe("Layout", () => {
