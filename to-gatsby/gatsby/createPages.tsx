@@ -24,7 +24,12 @@ interface Actions {
 type From = string
 type To = string
 type RedirectMap = [From, To]
-const redirects: RedirectMap[] = [[`/polymer-elements`, `/`]]
+const redirects: RedirectMap[] = [
+  [`/polymer-elements/`, `/`],
+  [`/polymer-elements`, `/`],
+  [`/autotrack/`, `/`],
+  [`/autotrack`, `/`],
+]
 
 export const createPages = async ({ actions }) => {
   const { createRedirect }: Actions = actions
@@ -32,8 +37,8 @@ export const createPages = async ({ actions }) => {
   redirects.forEach(([from, to]) => {
     console.info(`Creating redirect from: ${from} to: ${to}`)
     createRedirect({
-      fromPath: `/polymer-elements`,
-      toPath: `/`,
+      fromPath: from,
+      toPath: to,
       isPermanent: true,
       redirectInBrowser: true,
     })
