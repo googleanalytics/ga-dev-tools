@@ -15,6 +15,7 @@
 // All static links on the site should be put into this constant. This makes it
 // easier to update all instances of a link on the site.
 export const Url = {
+  customCampaigns: "https://support.google.com/analytics/answer/1033863",
   gaDebugger:
     "https://chrome.google.com/webstore/detail/google-analytics-debugger/jnkmfdileelhofjcijamephohjechhna",
   analyticsJSDevsite:
