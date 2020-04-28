@@ -15,21 +15,9 @@
 import * as React from "react"
 import * as renderer from "@testing-library/react"
 import { withProviders, testGapi } from "../../test-utils"
-// TODO - move this into a test set-up file.
 import "@testing-library/jest-dom"
 
 import { AccountExplorer } from "./index"
-
-// Needed because the createRange isn't currently supported in jest because
-// they're not using jsdom 16+gq. Should be able to remove once that's done.
-;(global as any).document.createRange = () => ({
-  setStart: () => {},
-  setEnd: () => {},
-  commonAncestorContainer: {
-    nodeName: "BODY",
-    ownerDocument: document,
-  },
-})
 
 describe("AccountExplorer", () => {
   it("renders without error for an unauthorized user", async () => {

@@ -20,12 +20,6 @@ import { withProviders } from "../test-utils"
 import Layout from "./layout"
 import { usePageView } from "./layout"
 
-const TestMeasurementId = "abc"
-
-beforeEach(() => {
-  process.env.GATSBY_GA_MEASUREMENT_ID = TestMeasurementId
-})
-
 describe("Layout", () => {
   it("renders correctly", async () => {
     const { findByText } = renderer.render(
@@ -53,6 +47,7 @@ describe("usePageView hook", () => {
       const pathOverride = "/hello"
       const { wrapped, store } = withProviders(<TestComponent />, {
         path: pathOverride,
+        measurementID: "abc",
       })
 
       renderer.render(wrapped)
@@ -64,7 +59,7 @@ describe("usePageView hook", () => {
       expect(gtagCalls).toHaveLength(1)
       expect(gtagCalls[0]).toEqual([
         "config",
-        TestMeasurementId,
+        "abc",
         { page_path: pathOverride },
       ])
     })
@@ -76,6 +71,7 @@ describe("usePageView hook", () => {
       const gtag = jest.fn()
       const { wrapped, store, history } = withProviders(<TestComponent />, {
         path: path1,
+        measurementID: "abc",
       })
       store.dispatch({ type: "setGtag", gtag: gtag })
       renderer.render(wrapped)
@@ -85,16 +81,8 @@ describe("usePageView hook", () => {
       })
       const gtagCalls = gtag.mock.calls
       expect(gtagCalls).toHaveLength(2)
-      expect(gtagCalls[0]).toEqual([
-        "config",
-        TestMeasurementId,
-        { page_path: path1 },
-      ])
-      expect(gtagCalls[1]).toEqual([
-        "config",
-        TestMeasurementId,
-        { page_path: path2 },
-      ])
+      expect(gtagCalls[0]).toEqual(["config", "abc", { page_path: path1 }])
+      expect(gtagCalls[1]).toEqual(["config", "abc", { page_path: path2 }])
     })
   })
 })
