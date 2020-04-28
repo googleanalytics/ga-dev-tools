@@ -11,7 +11,19 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-
 global.___loader = {
   enqueue: jest.fn(),
 }
+
+// Needed because the createRange isn't currently supported in jest because
+// they're not using jsdom 16+. Should be able to remove once that's done.
+global.document.createRange = () => ({
+  setStart: () => {},
+  setEnd: () => {},
+  commonAncestorContainer: {
+    nodeName: "BODY",
+    ownerDocument: document,
+  },
+})
+
+process.env.GATSBY_GA_MEASUREMENT_ID = 'test-ga-id'
