@@ -24,6 +24,7 @@ export const onInitialClientRender = () => {
       }
       gtag("js", new Date())
       window.gtag = gtag
+      store.dispatch({ type: "setGtag", gtag })
     }
   )
 

@@ -13,23 +13,80 @@
 // limitations under the License.
 
 import * as React from "react"
+import { Provider } from "react-redux"
+import { makeStore } from "../gatsby/wrapRootElement"
 import {
   createHistory,
   createMemorySource,
   LocationProvider,
   History,
 } from "@reach/router"
+import { AccountSummary } from "./api"
 
-export const withTestRouter = (
-  component: JSX.Element,
-  path: string = "/"
+interface WithProvidersConfig {
+  path: string
+  measurementID?: string
+}
+
+export const withProviders = (
+  component: JSX.Element | null,
+  { measurementID, path }: WithProvidersConfig = { path: "/" }
 ): {
-  withRouter: JSX.Element
+  wrapped: JSX.Element
   history: History
+  store: any
 } => {
   const history = createHistory(createMemorySource(path))
-  const withRouter = (
-    <LocationProvider history={history}>{component}</LocationProvider>
+  if (measurementID) {
+    process.env.GATSBY_GA_MEASUREMENT_ID = measurementID
+  }
+  const store = makeStore()
+  const wrapped = (
+    <Provider store={store}>
+      <LocationProvider history={history}>{component}</LocationProvider>
+    </Provider>
   )
-  return { withRouter, history }
+  return { wrapped, history, store }
 }
+
+const testAccounts: AccountSummary[] = [
+  {
+    id: "account-id-1",
+    name: "Account Name 1",
+    webProperties: [
+      {
+        id: "property-id-1-1",
+        name: "Property Name 1 1",
+        profiles: [
+          { id: "view-id-1-1-1", name: "View Name 1 1 1" },
+          { id: "view-id-1-1-2", name: "View Name 1 1 2" },
+        ],
+      },
+      {
+        id: "property-id-1-2",
+        name: "Property Name 1 2",
+        profiles: [{ id: "view-id-1-2-1", name: "View Name 1 2 1" }],
+      },
+    ],
+  },
+  {
+    id: "account-id-2",
+    name: "Account Name 2",
+    webProperties: [
+      {
+        id: "property-id-2-1",
+        name: "Property Name 2 1",
+        profiles: [{ id: "view-id-2-1-1", name: "View Name 2 1 1" }],
+      },
+    ],
+  },
+]
+
+const listPromise = Promise.resolve({ result: { items: testAccounts } })
+export const testGapi = () => ({
+  client: {
+    analytics: {
+      management: { accountSummaries: { list: () => listPromise } },
+    },
+  },
+})

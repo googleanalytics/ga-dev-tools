@@ -28,6 +28,7 @@ import ListItem from "@material-ui/core/ListItem"
 import ListItemText from "@material-ui/core/ListItemText"
 import { navigate } from "@reach/router"
 import MenuIcon from "@material-ui/icons/Menu"
+import { useSelector } from "react-redux"
 
 import Login from "./Login"
 
@@ -184,36 +185,20 @@ const useStyles = makeStyles(theme => ({
 
 export const usePageView = (
   measurementId: string | undefined = process.env.GATSBY_GA_MEASUREMENT_ID
-): { couldMeasure: boolean; retries: number } => {
+) => {
   const location = useLocation()
-  const [retries, setRetries] = React.useState(0)
-  const [couldMeasure, setCouldMeasure] = React.useState(false)
+  const gtag = useSelector((a: AppState) => a.gtag)
   React.useEffect(() => {
-    // TODO - Add gtag to redux and then this hook can be a bit more straightforward.
     if (measurementId === undefined) {
       throw new Error("No measurementId is set.")
     }
-    /**
-       Since gtag loads asynchronously, it will sometimes be undefined the first
-       time this hook loads. In order to make sure landings are still measured
-       (and not double measured), we use `forceRetry` to make this hook run
-       again in 50ms. If this doesn't work after 10 tries, we assume gtag is
-       unavailable and stop trying to reload it.
-     */
-    if (window.gtag === undefined && retries < 10) {
-      setTimeout(() => {
-        setRetries(a => a + 1)
-      }, 50)
+    if (gtag === undefined) {
       return
     }
-    if (window.gtag !== undefined) {
-      setCouldMeasure(true)
-      window.gtag("config", measurementId, {
-        page_path: location.pathname,
-      })
-    }
-  }, [location.pathname, measurementId, retries])
-  return { couldMeasure, retries }
+    gtag("config", measurementId, {
+      page_path: location.pathname,
+    })
+  }, [location.pathname, measurementId, gtag])
 }
 
 interface LayoutProps {
@@ -289,6 +274,7 @@ const Layout: React.FC<LayoutProps> = ({ children, title }) => {
               if (linkData.type === "heading") {
                 return (
                   <Typography
+                    key={linkData.text}
                     className={classnames(classes.subHeading, classes.innerNav)}
                     variant="h6"
                   >
