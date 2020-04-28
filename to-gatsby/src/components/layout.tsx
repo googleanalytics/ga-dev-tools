@@ -220,7 +220,6 @@ type LinkData = LinkT | Heading
 
 const linkData: LinkData[] = [
   { text: "Demos & Tools", type: "heading" },
-  { text: "Autotrack", href: "/autotrack/", type: "link" },
   { text: "Account Explorer", href: "/account-explorer/", type: "link" },
   { text: "Campaign URL Builder", href: "/campaign-url-builder", type: "link" },
   {
