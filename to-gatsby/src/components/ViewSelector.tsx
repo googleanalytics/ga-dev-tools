@@ -69,10 +69,10 @@ const ViewSelector: React.FC<ViewSelector3Props> = ({
       return
     }
     if (gapi !== undefined) {
-      getAnalyticsApi().then(async api => {
-        console.log("api", api)
+      const api = getAnalyticsApi(gapi)
+      const getData = async () => {
+        // TODO - handle rejected promise from .list
         const response = await api.management.accountSummaries.list({})
-        console.log({ response })
         const accounts = response.result.items
         if (accounts === undefined) {
           return
@@ -110,7 +110,8 @@ const ViewSelector: React.FC<ViewSelector3Props> = ({
           })
         })
         setHasViews(hasViews)
-      })
+      }
+      getData()
     }
   }, [gapi, user])
 

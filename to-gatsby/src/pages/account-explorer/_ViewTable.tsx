@@ -56,7 +56,10 @@ const ViewsTable: React.FC<ViewTableProps> = ({ views, className, search }) => {
   const throttledSearch = useThrottle(search, 100)
   const classes = useStyles()
   return (
-    <table className={classnames(classes.table, className)}>
+    <table
+      className={classnames(classes.table, className)}
+      data-testid="components/ViewTable"
+    >
       <thead>
         <tr>
           <th>Account</th>
@@ -67,7 +70,7 @@ const ViewsTable: React.FC<ViewTableProps> = ({ views, className, search }) => {
       </thead>
       <tbody>
         {views.length === 0 && (
-          <tr>
+          <tr data-testid="components/ViewTable/no-results">
             <td colSpan={4}></td>
           </tr>
         )}

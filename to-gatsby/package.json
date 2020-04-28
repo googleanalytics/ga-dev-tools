@@ -37,6 +37,8 @@
     "uuid": "^7.0.3"
   },
   "devDependencies": {
+    "@testing-library/jest-dom": "^5.5.0",
+    "@testing-library/react": "^10.0.3",
     "@types/classnames": "^2.2.10",
     "@types/gapi": "^0.0.39",
     "@types/gapi.auth2": "^0.0.51",
