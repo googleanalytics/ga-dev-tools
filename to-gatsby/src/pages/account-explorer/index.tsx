@@ -87,7 +87,7 @@ const viewsForSearch = (
   )
 }
 
-const AccountExplorer = () => {
+export const AccountExplorer = () => {
   const classes = useStyles()
 
   const [searchQuery, setSearchQuery] = React.useState("")
@@ -116,7 +116,7 @@ const AccountExplorer = () => {
   }, [searchQuery, allViews])
 
   return (
-    <Layout title="Account Explorer">
+    <>
       <Typography variant="h2">Overview</Typography>
       <Typography variant="body1">
         Use this tool to search or browse through your accounts, properties, and
@@ -124,7 +124,6 @@ const AccountExplorer = () => {
         need for the API or for another tool or service that integrates with
         Google Analytics.
       </Typography>
-
       <Paper className={classes.paper}>
         <header className={classes.header}>
           <div className={classes.search}>
@@ -156,7 +155,14 @@ const AccountExplorer = () => {
           </div>
         </header>
       </Paper>
+    </>
+  )
+}
+
+export default () => {
+  return (
+    <Layout title="Account Explorer">
+      <AccountExplorer />
     </Layout>
   )
 }
-export default AccountExplorer

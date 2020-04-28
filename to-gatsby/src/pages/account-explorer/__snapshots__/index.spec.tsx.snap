@@ -1,0 +1,452 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`AccountExplorer renders without error for an unauthorized user 1`] = `
+Array [
+  <h2
+    className="MuiTypography-root MuiTypography-h2"
+  >
+    Overview
+  </h2>,
+  <p
+    className="MuiTypography-root MuiTypography-body1"
+  >
+    Use this tool to search or browse through your accounts, properties, and views, See what accounts you have access to, and find the IDs that you need for the API or for another tool or service that integrates with Google Analytics.
+  </p>,
+  <div
+    className="MuiPaper-root makeStyles-paper-2 MuiPaper-elevation1 MuiPaper-rounded"
+  >
+    <header
+      className="makeStyles-header-3"
+    >
+      <div
+        className="makeStyles-search-5"
+      >
+        <h3
+          className="MuiTypography-root makeStyles-heading-4 MuiTypography-h3"
+        >
+          Search for your account information…
+        </h3>
+        <div
+          className="MuiFormControl-root MuiTextField-root makeStyles-searchInput-6"
+        >
+          <div
+            className="MuiInputBase-root MuiInput-root MuiInput-underline MuiInputBase-formControl MuiInput-formControl"
+            onClick={[Function]}
+          >
+            <input
+              aria-invalid={false}
+              autoFocus={false}
+              className="MuiInputBase-input MuiInput-input"
+              disabled={false}
+              onAnimationStart={[Function]}
+              onBlur={[Function]}
+              onChange={[Function]}
+              onFocus={[Function]}
+              placeholder="Start typing to search..."
+              required={false}
+              type="text"
+              value=""
+            />
+          </div>
+        </div>
+        <h3
+          className="MuiTypography-root makeStyles-heading-4 MuiTypography-h3"
+        >
+          …or browse through all your accounts
+        </h3>
+        <div
+          className="makeStyles-root-103"
+        >
+          <div
+            aria-expanded={false}
+            aria-owns={null}
+            className="MuiAutocomplete-root makeStyles-formControl-104 MuiAutocomplete-hasClearIcon MuiAutocomplete-hasPopupIcon"
+            onClick={[Function]}
+            onKeyDown={[Function]}
+            onMouseDown={[Function]}
+            role="combobox"
+          >
+            <div
+              className="MuiFormControl-root MuiTextField-root MuiFormControl-fullWidth"
+            >
+              <label
+                className="MuiFormLabel-root MuiInputLabel-root MuiInputLabel-formControl MuiInputLabel-animated"
+                data-shrink={false}
+                id="undefined-label"
+              >
+                Account
+              </label>
+              <div
+                className="MuiInputBase-root MuiInput-root MuiInput-underline MuiAutocomplete-inputRoot MuiInputBase-fullWidth MuiInput-fullWidth MuiInputBase-formControl MuiInput-formControl MuiInputBase-adornedEnd"
+                onClick={[Function]}
+              >
+                <input
+                  aria-activedescendant={null}
+                  aria-autocomplete="list"
+                  aria-controls={null}
+                  aria-invalid={false}
+                  autoCapitalize="none"
+                  autoComplete="off"
+                  autoFocus={false}
+                  className="MuiInputBase-input MuiInput-input MuiAutocomplete-input MuiAutocomplete-inputFocused MuiInputBase-inputAdornedEnd"
+                  disabled={false}
+                  onAnimationStart={[Function]}
+                  onBlur={[Function]}
+                  onChange={[Function]}
+                  onFocus={[Function]}
+                  onMouseDown={[Function]}
+                  required={false}
+                  spellCheck="false"
+                  type="text"
+                  value=""
+                />
+                <div
+                  className="MuiAutocomplete-endAdornment"
+                >
+                  <button
+                    aria-label="Clear"
+                    className="MuiButtonBase-root MuiIconButton-root MuiAutocomplete-clearIndicator"
+                    disabled={false}
+                    onBlur={[Function]}
+                    onClick={[Function]}
+                    onDragLeave={[Function]}
+                    onFocus={[Function]}
+                    onKeyDown={[Function]}
+                    onKeyUp={[Function]}
+                    onMouseDown={[Function]}
+                    onMouseLeave={[Function]}
+                    onMouseUp={[Function]}
+                    onTouchEnd={[Function]}
+                    onTouchMove={[Function]}
+                    onTouchStart={[Function]}
+                    tabIndex={-1}
+                    title="Clear"
+                    type="button"
+                  >
+                    <span
+                      className="MuiIconButton-label"
+                    >
+                      <svg
+                        aria-hidden="true"
+                        className="MuiSvgIcon-root MuiSvgIcon-fontSizeSmall"
+                        focusable="false"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"
+                        />
+                      </svg>
+                    </span>
+                  </button>
+                  <button
+                    aria-label="Open"
+                    className="MuiButtonBase-root MuiIconButton-root MuiAutocomplete-popupIndicator"
+                    disabled={false}
+                    onBlur={[Function]}
+                    onClick={[Function]}
+                    onDragLeave={[Function]}
+                    onFocus={[Function]}
+                    onKeyDown={[Function]}
+                    onKeyUp={[Function]}
+                    onMouseDown={[Function]}
+                    onMouseLeave={[Function]}
+                    onMouseUp={[Function]}
+                    onTouchEnd={[Function]}
+                    onTouchMove={[Function]}
+                    onTouchStart={[Function]}
+                    tabIndex={-1}
+                    title="Open"
+                    type="button"
+                  >
+                    <span
+                      className="MuiIconButton-label"
+                    >
+                      <svg
+                        aria-hidden="true"
+                        className="MuiSvgIcon-root"
+                        focusable="false"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          d="M7 10l5 5 5-5z"
+                        />
+                      </svg>
+                    </span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div
+            aria-expanded={false}
+            aria-owns={null}
+            className="MuiAutocomplete-root makeStyles-formControl-104 MuiAutocomplete-hasClearIcon MuiAutocomplete-hasPopupIcon"
+            onClick={[Function]}
+            onKeyDown={[Function]}
+            onMouseDown={[Function]}
+            role="combobox"
+          >
+            <div
+              className="MuiFormControl-root MuiTextField-root MuiFormControl-fullWidth"
+            >
+              <label
+                className="MuiFormLabel-root MuiInputLabel-root MuiInputLabel-formControl MuiInputLabel-animated"
+                data-shrink={false}
+                id="undefined-label"
+              >
+                Property
+              </label>
+              <div
+                className="MuiInputBase-root MuiInput-root MuiInput-underline MuiAutocomplete-inputRoot MuiInputBase-fullWidth MuiInput-fullWidth MuiInputBase-formControl MuiInput-formControl MuiInputBase-adornedEnd"
+                onClick={[Function]}
+              >
+                <input
+                  aria-activedescendant={null}
+                  aria-autocomplete="list"
+                  aria-controls={null}
+                  aria-invalid={false}
+                  autoCapitalize="none"
+                  autoComplete="off"
+                  autoFocus={false}
+                  className="MuiInputBase-input MuiInput-input MuiAutocomplete-input MuiAutocomplete-inputFocused MuiInputBase-inputAdornedEnd"
+                  disabled={false}
+                  onAnimationStart={[Function]}
+                  onBlur={[Function]}
+                  onChange={[Function]}
+                  onFocus={[Function]}
+                  onMouseDown={[Function]}
+                  required={false}
+                  spellCheck="false"
+                  type="text"
+                  value=""
+                />
+                <div
+                  className="MuiAutocomplete-endAdornment"
+                >
+                  <button
+                    aria-label="Clear"
+                    className="MuiButtonBase-root MuiIconButton-root MuiAutocomplete-clearIndicator"
+                    disabled={false}
+                    onBlur={[Function]}
+                    onClick={[Function]}
+                    onDragLeave={[Function]}
+                    onFocus={[Function]}
+                    onKeyDown={[Function]}
+                    onKeyUp={[Function]}
+                    onMouseDown={[Function]}
+                    onMouseLeave={[Function]}
+                    onMouseUp={[Function]}
+                    onTouchEnd={[Function]}
+                    onTouchMove={[Function]}
+                    onTouchStart={[Function]}
+                    tabIndex={-1}
+                    title="Clear"
+                    type="button"
+                  >
+                    <span
+                      className="MuiIconButton-label"
+                    >
+                      <svg
+                        aria-hidden="true"
+                        className="MuiSvgIcon-root MuiSvgIcon-fontSizeSmall"
+                        focusable="false"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"
+                        />
+                      </svg>
+                    </span>
+                  </button>
+                  <button
+                    aria-label="Open"
+                    className="MuiButtonBase-root MuiIconButton-root MuiAutocomplete-popupIndicator"
+                    disabled={false}
+                    onBlur={[Function]}
+                    onClick={[Function]}
+                    onDragLeave={[Function]}
+                    onFocus={[Function]}
+                    onKeyDown={[Function]}
+                    onKeyUp={[Function]}
+                    onMouseDown={[Function]}
+                    onMouseLeave={[Function]}
+                    onMouseUp={[Function]}
+                    onTouchEnd={[Function]}
+                    onTouchMove={[Function]}
+                    onTouchStart={[Function]}
+                    tabIndex={-1}
+                    title="Open"
+                    type="button"
+                  >
+                    <span
+                      className="MuiIconButton-label"
+                    >
+                      <svg
+                        aria-hidden="true"
+                        className="MuiSvgIcon-root"
+                        focusable="false"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          d="M7 10l5 5 5-5z"
+                        />
+                      </svg>
+                    </span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div
+            aria-expanded={false}
+            aria-owns={null}
+            className="MuiAutocomplete-root makeStyles-formControl-104 MuiAutocomplete-hasClearIcon MuiAutocomplete-hasPopupIcon"
+            onClick={[Function]}
+            onKeyDown={[Function]}
+            onMouseDown={[Function]}
+            role="combobox"
+          >
+            <div
+              className="MuiFormControl-root MuiTextField-root MuiFormControl-fullWidth"
+            >
+              <label
+                className="MuiFormLabel-root MuiInputLabel-root MuiInputLabel-formControl MuiInputLabel-animated"
+                data-shrink={false}
+                id="undefined-label"
+              >
+                View
+              </label>
+              <div
+                className="MuiInputBase-root MuiInput-root MuiInput-underline MuiAutocomplete-inputRoot MuiInputBase-fullWidth MuiInput-fullWidth MuiInputBase-formControl MuiInput-formControl MuiInputBase-adornedEnd"
+                onClick={[Function]}
+              >
+                <input
+                  aria-activedescendant={null}
+                  aria-autocomplete="list"
+                  aria-controls={null}
+                  aria-invalid={false}
+                  autoCapitalize="none"
+                  autoComplete="off"
+                  autoFocus={false}
+                  className="MuiInputBase-input MuiInput-input MuiAutocomplete-input MuiAutocomplete-inputFocused MuiInputBase-inputAdornedEnd"
+                  disabled={false}
+                  onAnimationStart={[Function]}
+                  onBlur={[Function]}
+                  onChange={[Function]}
+                  onFocus={[Function]}
+                  onMouseDown={[Function]}
+                  required={false}
+                  spellCheck="false"
+                  type="text"
+                  value=""
+                />
+                <div
+                  className="MuiAutocomplete-endAdornment"
+                >
+                  <button
+                    aria-label="Clear"
+                    className="MuiButtonBase-root MuiIconButton-root MuiAutocomplete-clearIndicator"
+                    disabled={false}
+                    onBlur={[Function]}
+                    onClick={[Function]}
+                    onDragLeave={[Function]}
+                    onFocus={[Function]}
+                    onKeyDown={[Function]}
+                    onKeyUp={[Function]}
+                    onMouseDown={[Function]}
+                    onMouseLeave={[Function]}
+                    onMouseUp={[Function]}
+                    onTouchEnd={[Function]}
+                    onTouchMove={[Function]}
+                    onTouchStart={[Function]}
+                    tabIndex={-1}
+                    title="Clear"
+                    type="button"
+                  >
+                    <span
+                      className="MuiIconButton-label"
+                    >
+                      <svg
+                        aria-hidden="true"
+                        className="MuiSvgIcon-root MuiSvgIcon-fontSizeSmall"
+                        focusable="false"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"
+                        />
+                      </svg>
+                    </span>
+                  </button>
+                  <button
+                    aria-label="Open"
+                    className="MuiButtonBase-root MuiIconButton-root MuiAutocomplete-popupIndicator"
+                    disabled={false}
+                    onBlur={[Function]}
+                    onClick={[Function]}
+                    onDragLeave={[Function]}
+                    onFocus={[Function]}
+                    onKeyDown={[Function]}
+                    onKeyUp={[Function]}
+                    onMouseDown={[Function]}
+                    onMouseLeave={[Function]}
+                    onMouseUp={[Function]}
+                    onTouchEnd={[Function]}
+                    onTouchMove={[Function]}
+                    onTouchStart={[Function]}
+                    tabIndex={-1}
+                    title="Open"
+                    type="button"
+                  >
+                    <span
+                      className="MuiIconButton-label"
+                    >
+                      <svg
+                        aria-hidden="true"
+                        className="MuiSvgIcon-root"
+                        focusable="false"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          d="M7 10l5 5 5-5z"
+                        />
+                      </svg>
+                    </span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <table
+          className="makeStyles-table-170 makeStyles-table-7"
+        >
+          <thead>
+            <tr>
+              <th>
+                Account
+              </th>
+              <th>
+                Property
+              </th>
+              <th>
+                View
+              </th>
+              <th>
+                Table ID
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td
+                colSpan={4}
+              />
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </header>
+  </div>,
+]
+`;
