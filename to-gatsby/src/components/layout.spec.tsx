@@ -13,7 +13,8 @@
 // limitations under the License.
 
 import * as React from "react"
-import * as renderer from "react-test-renderer"
+import * as renderer from "@testing-library/react"
+import "@testing-library/jest-dom"
 import { withProviders } from "../test-utils"
 
 import Layout from "./layout"
@@ -27,13 +28,12 @@ beforeEach(() => {
 })
 
 describe("Layout", () => {
-  it("renders correctly", () => {
-    const tree = renderer
-      .create(
-        withProviders(<Layout title="Page Title">Content</Layout>).wrapped
-      )
-      .toJSON()
-    expect(tree).toMatchSnapshot()
+  it("renders correctly", async () => {
+    const { findByText } = renderer.render(
+      withProviders(<Layout title="Page Title">Content</Layout>).wrapped
+    )
+    const content = await findByText("Content")
+    expect(content).toBeVisible()
   })
 })
 
@@ -47,8 +47,7 @@ describe("usePageView hook", () => {
     test("and stays that does nothing", () => {
       const { wrapped, store } = withProviders(<TestComponent />)
       store.dispatch({ type: "setGtag", gtag: undefined })
-      const tree = renderer.create(wrapped).toJSON()
-      expect(tree).toMatchSnapshot()
+      renderer.render(wrapped)
     })
     test("but is defined later makes a pageView", () => {
       const gtag = jest.fn()
@@ -57,7 +56,7 @@ describe("usePageView hook", () => {
         path: pathOverride,
       })
 
-      renderer.create(wrapped)
+      renderer.render(wrapped)
       renderer.act(() => {
         store.dispatch({ type: "setGtag", gtag: gtag })
       })
@@ -80,7 +79,7 @@ describe("usePageView hook", () => {
         path: path1,
       })
       store.dispatch({ type: "setGtag", gtag: gtag })
-      renderer.create(wrapped)
+      renderer.render(wrapped)
       await renderer.act(async () => {
         // Navigate to another page
         await history.navigate(path2)
