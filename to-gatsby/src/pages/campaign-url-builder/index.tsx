@@ -21,6 +21,12 @@ import FormControlLabel from "@material-ui/core/FormControlLabel"
 import { makeStyles } from "@material-ui/core/styles"
 import Button from "@material-ui/core/Button"
 import { FileCopy } from "@material-ui/icons"
+import Table from "@material-ui/core/Table"
+import TableBody from "@material-ui/core/TableBody"
+import TableCell from "@material-ui/core/TableCell"
+import TableContainer from "@material-ui/core/TableContainer"
+import TableHead from "@material-ui/core/TableHead"
+import TableRow from "@material-ui/core/TableRow"
 
 import { Url } from "../../constants"
 import Layout from "../../components/layout"
@@ -42,15 +48,10 @@ const useStyles = makeStyles(theme => ({
     borderRadius: theme.spacing(0.25),
     fontFamily: "'Source Code Pro', monospace",
   },
-  infoTable: {
-    "& tbody": {
-      "& tr": {
-        "& td": {
-          "& p": {
-            paddingBottom: "unset",
-          },
-        },
-      },
+  denseTableCell: {
+    whiteSpace: "nowrap",
+    "& p": {
+      paddingBottom: theme.spacing(0.5),
     },
   },
   buttons: {
@@ -170,36 +171,119 @@ export const CampaignUrlBuilder = () => {
         the campaign parameters.
       </Typography>
 
-      <table className={classes.infoTable}>
-        <thead>
-          <tr>
-            <th>Parameter</th>
-            <th>Required</th>
-            <th>Description</th>
-            <th>Example</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td>
+      <Table>
+        <TableHead>
+          <TableRow>
+            <TableCell>Parameter</TableCell>
+            <TableCell>Required</TableCell>
+            <TableCell>Example</TableCell>
+            <TableCell>Description</TableCell>
+          </TableRow>
+        </TableHead>
+        <TableBody>
+          <TableRow>
+            <TableCell className={classes.denseTableCell}>
               <Typography variant="body1">Campaign Source</Typography>
               <Code>utm_source</Code>
-            </td>
-            <td>
+            </TableCell>
+            <TableCell>
               <Typography variant="body1">Yes</Typography>
-            </td>
-            <td>
+            </TableCell>
+            <TableCell>
+              <Typography variant="body1">
+                <Code>google</Code>
+              </Typography>
+            </TableCell>
+            <TableCell>
               <Typography variant="body1">
                 Use <Code>utm_source</Code> to identify a search engine,
                 newsletter name, or other source.
               </Typography>
-            </td>
-            <td>
-              <Code>google</Code>
-            </td>
-          </tr>
-        </tbody>
-      </table>
+            </TableCell>
+          </TableRow>
+          <TableRow>
+            <TableCell className={classes.denseTableCell}>
+              <Typography variant="body1">Campaign Medium</Typography>
+              <Code>utm_medium</Code>
+            </TableCell>
+            <TableCell>
+              <Typography variant="body1">Yes</Typography>
+            </TableCell>
+            <TableCell>
+              <Typography variant="body1">
+                <Code>cpc</Code>
+              </Typography>
+            </TableCell>
+            <TableCell>
+              <Typography variant="body1">
+                Use <Code>utm_medium</Code> to identify a medium such as email
+                or cost-per-click.
+              </Typography>
+            </TableCell>
+          </TableRow>
+          <TableRow>
+            <TableCell className={classes.denseTableCell}>
+              <Typography variant="body1">Campaign Name</Typography>
+              <Code>utm_campaign</Code>
+            </TableCell>
+            <TableCell>
+              <Typography variant="body1">Yes</Typography>
+            </TableCell>
+            <TableCell>
+              <Typography variant="body1">
+                <Code>utm_campaign=spring_sale</Code>
+              </Typography>
+            </TableCell>
+            <TableCell>
+              <Typography variant="body1">
+                Used for keyword analysis. Use <Code>utm_campaign</Code> to
+                identify a specific product promotion or strategic campaign.
+              </Typography>
+            </TableCell>
+          </TableRow>
+          <TableRow>
+            <TableCell className={classes.denseTableCell}>
+              <Typography variant="body1">Campaign Term</Typography>
+              <Code>utm_term</Code>
+            </TableCell>
+            <TableCell>
+              <Typography variant="body1">No</Typography>
+            </TableCell>
+            <TableCell>
+              <Typography variant="body1">
+                <Code>running+shoes</Code>
+              </Typography>
+            </TableCell>
+            <TableCell>
+              <Typography variant="body1">
+                Used for paid search. Use <Code>utm_term</Code> to note the
+                keywords for this ad.
+              </Typography>
+            </TableCell>
+          </TableRow>
+          <TableRow>
+            <TableCell className={classes.denseTableCell}>
+              <Typography variant="body1">Campaign Content</Typography>
+              <Code>utm_content</Code>
+            </TableCell>
+            <TableCell>
+              <Typography variant="body1">No</Typography>
+            </TableCell>
+            <TableCell>
+              <Typography variant="body1">
+                <Code>logolink</Code>
+              </Typography>
+            </TableCell>
+            <TableCell>
+              <Typography variant="body1">
+                Used for A/B testing and content-targeted ads. Use{" "}
+                <Code>utm_content</Code> to differentiate ads or links that
+                point to the same URL.
+              </Typography>
+            </TableCell>
+          </TableRow>
+        </TableBody>
+      </Table>
     </>
   )
 }
