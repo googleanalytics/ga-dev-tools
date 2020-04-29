@@ -20,8 +20,8 @@ import Checkbox from "@material-ui/core/Checkbox"
 import FormControlLabel from "@material-ui/core/FormControlLabel"
 import { makeStyles } from "@material-ui/core/styles"
 import Button from "@material-ui/core/Button"
-import FileCopy from "@material-ui/icons/FileCopy"
 import Error from "@material-ui/icons/ErrorOutline"
+import FileCopy from "@material-ui/icons/FileCopy"
 import Table from "@material-ui/core/Table"
 import TableBody from "@material-ui/core/TableBody"
 import TableCell from "@material-ui/core/TableCell"
@@ -32,6 +32,7 @@ import classnames from "classnames"
 
 import { Url, StorageKey } from "../../constants"
 import Layout from "../../components/layout"
+import CopyButton from "../../components/CopyButton"
 
 const Code: React.FC = ({ children }) => {
   const classes = useStyles()
@@ -176,9 +177,12 @@ const GeneratedUrl: React.FC<GeneratedUrlProps> = ({
             }
           />
           <section className={classes.buttons}>
-            <Button variant="outlined" color="primary" startIcon={<FileCopy />}>
-              Copy URL
-            </Button>
+            <CopyButton
+              variant="contained"
+              color="primary"
+              toCopy={generatedUrl}
+              text="Copy URL"
+            />
             <Button variant="outlined" startIcon={<FileCopy />}>
               Convert URL to Short Link
             </Button>
