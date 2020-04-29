@@ -33,6 +33,7 @@ import classnames from "classnames"
 import { Url, StorageKey } from "../../constants"
 import Layout from "../../components/layout"
 import CopyButton from "../../components/CopyButton"
+import BitlyLogo from "-!svg-react-loader!../../images/bitly-logo.svg"
 
 const Code: React.FC = ({ children }) => {
   const classes = useStyles()
@@ -44,6 +45,10 @@ const Code: React.FC = ({ children }) => {
 }
 
 const useStyles = makeStyles(theme => ({
+  bitlyIcon: {
+    height: theme.spacing(3),
+    width: theme.spacing(3),
+  },
   generatedInput: {
     wordBreak: "break-all",
   },
@@ -217,7 +222,12 @@ const GeneratedUrl: React.FC<GeneratedUrlProps> = ({
               toCopy={generatedUrl}
               text="Copy URL"
             />
-            <Button variant="outlined" startIcon={<FileCopy />}>
+            <Button
+              variant="outlined"
+              startIcon={
+                <BitlyLogo className={classes.bitlyIcon} viewBox="0 0 24 21" />
+              }
+            >
               Convert URL to Short Link
             </Button>
           </section>
