@@ -20,14 +20,17 @@ import Checkbox from "@material-ui/core/Checkbox"
 import FormControlLabel from "@material-ui/core/FormControlLabel"
 import { makeStyles } from "@material-ui/core/styles"
 import Button from "@material-ui/core/Button"
-import { FileCopy } from "@material-ui/icons"
+import FileCopy from "@material-ui/icons/FileCopy"
+import Error from "@material-ui/icons/ErrorOutline"
 import Table from "@material-ui/core/Table"
 import TableBody from "@material-ui/core/TableBody"
 import TableCell from "@material-ui/core/TableCell"
 import TableHead from "@material-ui/core/TableHead"
 import TableRow from "@material-ui/core/TableRow"
+import { useLocalStorage } from "react-use"
+import classnames from "classnames"
 
-import { Url } from "../../constants"
+import { Url, StorageKey } from "../../constants"
 import Layout from "../../components/layout"
 
 const Code: React.FC = ({ children }) => {
@@ -73,12 +76,151 @@ const useStyles = makeStyles(theme => ({
     display: "flex",
     flexDirection: "column",
   },
+  shareInvalid: {
+    display: "flex",
+    flexDirection: "row",
+    padding: theme.spacing(3),
+    alignItems: "center",
+    "& svg": {
+      marginRight: theme.spacing(1),
+    },
+    "& p": {
+      paddingBottom: "unset",
+    },
+  },
 }))
 
 const customCampaigns = <a href={Url.customCampaigns}>Custom Campaigns</a>
 
+interface GeneratedUrlProps {
+  websiteUrl: string
+  source: string
+  medium: string
+  campaign: string
+  term: string
+  content: string
+}
+
+const GeneratedUrl: React.FC<GeneratedUrlProps> = ({
+  websiteUrl,
+  source,
+  medium,
+  campaign,
+  term,
+  content,
+}) => {
+  const classes = useStyles()
+
+  const [generatedUrl, setGeneratedUrl] = React.useState("")
+  const [hasAllRequired, setHasAllRequired] = React.useState(false)
+
+  React.useEffect(() => {
+    if (websiteUrl === "") {
+      setHasAllRequired(false)
+      return
+    }
+    if (source === "") {
+      setHasAllRequired(false)
+      return
+    }
+    if (medium === "") {
+      setHasAllRequired(false)
+      return
+    }
+    if (campaign === "") {
+      setHasAllRequired(false)
+      return
+    }
+    setHasAllRequired(true)
+  }, [websiteUrl, source, medium, campaign])
+
+  React.useEffect(() => {
+    if (!hasAllRequired) {
+      setGeneratedUrl("")
+      return
+    }
+    const params = new URLSearchParams()
+    source !== "" && params.set("utm_source", source)
+    medium !== "" && params.set("utm_medium", medium)
+    campaign !== "" && params.set("utm_campaign", campaign)
+    term !== "" && params.set("utm_term", term)
+    content !== "" && params.set("utm_content", content)
+
+    const asString = `?${params.toString()}`
+    const newUrl = `${websiteUrl}${asString}`
+    setGeneratedUrl(newUrl)
+  }, [hasAllRequired, websiteUrl, source, medium, campaign, term, content])
+
+  return (
+    <Paper
+      className={classnames(classes.share, {
+        [classes.shareInvalid]: !hasAllRequired,
+      })}
+    >
+      {hasAllRequired ? (
+        <>
+          <Typography variant="h2">Share the generated campaign URL</Typography>
+
+          <Typography variant="body1">
+            Use this URL in any promotional channels you want to be associated
+            with this custom campaign.
+          </Typography>
+          <TextField multiline value={generatedUrl} variant="outlined" />
+          <FormControlLabel
+            control={<Checkbox />}
+            label={
+              <Typography variant="body2" component="span">
+                Set campaign parameters in the fragment protion of the URL (not
+                recommended)
+              </Typography>
+            }
+          />
+          <section className={classes.buttons}>
+            <Button variant="outlined" color="primary" startIcon={<FileCopy />}>
+              Copy URL
+            </Button>
+            <Button variant="outlined" startIcon={<FileCopy />}>
+              Convert URL to Short Link
+            </Button>
+          </section>
+        </>
+      ) : (
+        <>
+          <Error />
+          <Typography variant="body1">
+            Fill out all the required fields above and a URL will be
+            automatically generated for you here.
+          </Typography>
+        </>
+      )}
+    </Paper>
+  )
+}
+
 export const CampaignUrlBuilder = () => {
   const classes = useStyles()
+  const [websiteUrl, setWebsiteUrl] = useLocalStorage(
+    StorageKey.campaignBuilderWebsiteUrl,
+    ""
+  )
+  const [source, setSource] = useLocalStorage(
+    StorageKey.campaignBuilderSource,
+    ""
+  )
+  const [medium, setMedium] = useLocalStorage(
+    StorageKey.campaignBuilderMedium,
+    ""
+  )
+  const [campaign, setCampaign] = useLocalStorage(
+    StorageKey.campaignBuilderName,
+    ""
+  )
+  const [term, setTerm] = useLocalStorage(StorageKey.campaignBuilderTerm, "")
+  const [content, setContent] = useLocalStorage(
+    StorageKey.campaignBuilderContent,
+    ""
+  )
+
   return (
     <>
       <Typography variant="body1">
@@ -90,6 +232,9 @@ export const CampaignUrlBuilder = () => {
       </Typography>
       <section className={classes.inputs}>
         <TextField
+          required
+          value={websiteUrl}
+          onChange={e => setWebsiteUrl(e.target.value)}
           label="Website URL"
           helperText={
             <span>
@@ -99,6 +244,9 @@ export const CampaignUrlBuilder = () => {
           }
         />
         <TextField
+          required
+          value={source}
+          onChange={e => setSource(e.target.value)}
           label="Campaign Source"
           helperText={
             <span>
@@ -108,6 +256,9 @@ export const CampaignUrlBuilder = () => {
           }
         />
         <TextField
+          required
+          value={medium}
+          onChange={e => setMedium(e.target.value)}
           label="Campaign Medium"
           helperText={
             <span>
@@ -118,6 +269,9 @@ export const CampaignUrlBuilder = () => {
           }
         />
         <TextField
+          required
+          value={campaign}
+          onChange={e => setCampaign(e.target.value)}
           label="Campaign Name"
           helperText={
             <span>
@@ -127,40 +281,25 @@ export const CampaignUrlBuilder = () => {
           }
         />
         <TextField
+          value={term}
+          onChange={e => setTerm(e.target.value)}
           label="Campaign Term"
           helperText="Identify the paid keywords"
         />
         <TextField
+          value={content}
+          onChange={e => setContent(e.target.value)}
           label="Campaign Content"
           helperText="Use to differentiate ads"
         />
-      </section>
-      <Paper className={classes.share}>
-        <Typography variant="h2">Share the generated campaign URL</Typography>
-
-        <Typography variant="body1">
-          Use this URL in any promotional channels you want to be associated
-          with this custom campaign.
+        <Typography variant="body2" color="error">
+          All fields marked with an asterisk (*) are required.
         </Typography>
-        <TextField value={"placeholdervalue.com/hello"} variant="outlined" />
-        <FormControlLabel
-          control={<Checkbox />}
-          label={
-            <Typography variant="body2" component="span">
-              Set campaign parameters in the fragment protion of the URL (not
-              recommended)
-            </Typography>
-          }
-        />
-        <section className={classes.buttons}>
-          <Button variant="outlined" color="primary" startIcon={<FileCopy />}>
-            Copy URL
-          </Button>
-          <Button variant="outlined" startIcon={<FileCopy />}>
-            Convert URL to Short Link
-          </Button>
-        </section>
-      </Paper>
+      </section>
+
+      <GeneratedUrl
+        {...{ source, websiteUrl, medium, campaign, term, content }}
+      />
 
       <Typography variant="h2">
         More information and examples for each parameter
