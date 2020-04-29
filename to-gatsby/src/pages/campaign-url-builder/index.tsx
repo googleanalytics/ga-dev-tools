@@ -44,6 +44,9 @@ const Code: React.FC = ({ children }) => {
 }
 
 const useStyles = makeStyles(theme => ({
+  generatedInput: {
+    wordBreak: "break-all",
+  },
   code: {
     backgroundColor: theme.palette.grey[300],
     color: theme.palette.getContrastText(theme.palette.grey[300]),
@@ -184,7 +187,12 @@ const GeneratedUrl: React.FC<GeneratedUrlProps> = ({
             Use this URL in any promotional channels you want to be associated
             with this custom campaign.
           </Typography>
-          <TextField multiline value={generatedUrl} variant="outlined" />
+          <TextField
+            multiline
+            value={generatedUrl}
+            variant="outlined"
+            className={classes.generatedInput}
+          />
           <FormControlLabel
             control={
               <Checkbox
