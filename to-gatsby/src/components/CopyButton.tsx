@@ -2,23 +2,40 @@ import * as React from "react"
 import Button from "@material-ui/core/Button"
 import IconButton from "@material-ui/core/IconButton"
 import Tooltip from "@material-ui/core/Tooltip"
-import FileCopyIcon from "@material-ui/icons/FileCopyOutlined"
+import FileCopyIcon from "@material-ui/icons/FileCopy"
 import Snackbar from "@material-ui/core/Snackbar"
 import MuiAlert from "@material-ui/lab/Alert"
 import copyToClipboard from "copy-to-clipboard"
+import { makeStyles } from "@material-ui/core/styles"
 
-interface CopyButtonProps {
-  useIconButton: true | undefined
+const useStyles = makeStyles(theme => ({
+  copyIcon: {
+    marginRight: theme.spacing(1),
+  },
+}))
+
+interface BaseCopyButtonProps {
   toCopy: string
-  text?: string
 }
 
-const CopyButton: React.FC<CopyButtonProps> = ({
-  useIconButton,
-  toCopy,
-  text = "Copy",
-}) => {
+interface CopyButtonPropsIconButton extends BaseCopyButtonProps {
+  useIconButton: true
+}
+
+interface CopyButtonPropsButton extends BaseCopyButtonProps {
+  variant?: "outlined" | "contained"
+  color?: "primary"
+  useIconButton?: undefined
+  text: string
+}
+
+type CopyButtonProps = CopyButtonPropsIconButton | CopyButtonPropsButton
+
+const CopyButton: React.FC<CopyButtonProps> = props => {
+  const classes = useStyles()
   const [showAlert, setShowAlert] = React.useState(false)
+
+  const { toCopy } = props
 
   const copyCode = React.useCallback(() => {
     copyToClipboard(toCopy)
@@ -27,16 +44,15 @@ const CopyButton: React.FC<CopyButtonProps> = ({
 
   return (
     <>
-      {useIconButton ? (
+      {props.useIconButton === true ? (
         <Tooltip title="Copy">
           <IconButton onClick={copyCode}>
             <FileCopyIcon />
           </IconButton>
         </Tooltip>
       ) : (
-        <Button>
-          {" "}
-          <FileCopyIcon /> {text}{" "}
+        <Button {...props} onClick={copyCode}>
+          <FileCopyIcon className={classes.copyIcon} /> {props.text}
         </Button>
       )}
       <Snackbar
