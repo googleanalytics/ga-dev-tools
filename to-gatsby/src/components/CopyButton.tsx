@@ -51,7 +51,7 @@ const CopyButton: React.FC<CopyButtonProps> = props => {
           </IconButton>
         </Tooltip>
       ) : (
-        <Button {...props} onClick={copyCode}>
+        <Button variant={props.variant} color={props.color} onClick={copyCode}>
           <FileCopyIcon className={classes.copyIcon} /> {props.text}
         </Button>
       )}
