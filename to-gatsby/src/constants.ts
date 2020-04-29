@@ -42,4 +42,5 @@ export const StorageKey = {
   campaignBuilderName: "campaign-builder/name",
   campaignBuilderTerm: "campaign-builder/term",
   campaignBuilderContent: "campaign-builder/content",
+  campaignBuilderUseFragment: "campaign-builder/use-fragment",
 }

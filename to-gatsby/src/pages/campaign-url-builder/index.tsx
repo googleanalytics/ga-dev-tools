@@ -114,6 +114,15 @@ const GeneratedUrl: React.FC<GeneratedUrlProps> = ({
 
   const [generatedUrl, setGeneratedUrl] = React.useState("")
   const [hasAllRequired, setHasAllRequired] = React.useState(false)
+  const [useFragment, setUseFragment] = useLocalStorage(
+    StorageKey.campaignBuilderUseFragment,
+    false,
+    {
+      raw: false,
+      serializer: a => a.toString(),
+      deserializer: a => a === "true",
+    }
+  )
 
   React.useEffect(() => {
     if (websiteUrl === "") {
@@ -147,10 +156,19 @@ const GeneratedUrl: React.FC<GeneratedUrlProps> = ({
     term !== "" && params.set("utm_term", term)
     content !== "" && params.set("utm_content", content)
 
-    const asString = `?${params.toString()}`
+    const asString = `${useFragment ? "#" : "?"}${params.toString()}`
     const newUrl = `${websiteUrl}${asString}`
     setGeneratedUrl(newUrl)
-  }, [hasAllRequired, websiteUrl, source, medium, campaign, term, content])
+  }, [
+    hasAllRequired,
+    useFragment,
+    websiteUrl,
+    source,
+    medium,
+    campaign,
+    term,
+    content,
+  ])
 
   return (
     <Paper
@@ -168,11 +186,19 @@ const GeneratedUrl: React.FC<GeneratedUrlProps> = ({
           </Typography>
           <TextField multiline value={generatedUrl} variant="outlined" />
           <FormControlLabel
-            control={<Checkbox />}
+            control={
+              <Checkbox
+                checked={useFragment}
+                onChange={e => setUseFragment(e.target.checked)}
+              />
+            }
             label={
               <Typography variant="body2" component="span">
-                Set campaign parameters in the fragment protion of the URL (not
-                recommended)
+                Set campaign parameters in the fragment protion of the URL (
+                <Typography component="span" color="error" variant="inherit">
+                  not recommended
+                </Typography>
+                )
               </Typography>
             }
           />
