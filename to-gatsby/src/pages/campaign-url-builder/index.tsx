@@ -24,7 +24,6 @@ import { FileCopy } from "@material-ui/icons"
 import Table from "@material-ui/core/Table"
 import TableBody from "@material-ui/core/TableBody"
 import TableCell from "@material-ui/core/TableCell"
-import TableContainer from "@material-ui/core/TableContainer"
 import TableHead from "@material-ui/core/TableHead"
 import TableRow from "@material-ui/core/TableRow"
 
@@ -168,10 +167,10 @@ export const CampaignUrlBuilder = () => {
       </Typography>
       <Typography variant="body1">
         The following table gives a detailed explanation and example of each of
-        the campaign parameters.
+        the campaign parameters:
       </Typography>
 
-      <Table>
+      <Table size="small">
         <TableHead>
           <TableRow>
             <TableCell>Parameter</TableCell>
@@ -231,7 +230,7 @@ export const CampaignUrlBuilder = () => {
             </TableCell>
             <TableCell>
               <Typography variant="body1">
-                <Code>utm_campaign=spring_sale</Code>
+                <Code>spring_sale</Code>
               </Typography>
             </TableCell>
             <TableCell>
