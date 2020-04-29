@@ -1,8 +1,10 @@
 // Need to add in tests based on current functionality
 
-// Warning for using "ga-devtools"
+// Pasting in a website url that already has url params should keep them as is
 
-// Warning for play store link
+// Pasting in a website url with url params should add them to our inputs if they are one of our params.
+
+// All of this somehow works flawlessly with the fragment.
 
 //
 /* describe('campaign-url-builder', () => {
