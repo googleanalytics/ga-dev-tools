@@ -11,6 +11,7 @@ import FileCopyIcon from "@material-ui/icons/FileCopyOutlined"
 import Snackbar from "@material-ui/core/Snackbar"
 import MuiAlert from "@material-ui/lab/Alert"
 import copyToClipboard from "copy-to-clipboard"
+import CopyButton from "./CopyButton"
 
 const useStyles = makeStyles(theme => ({
   codeBlock: {
@@ -52,13 +53,7 @@ const CodeBlock: React.FC<CodeBlockProps> = ({
   ...props
 }) => {
   const classes = useStyles()
-  const [showAlert, setShowAlert] = React.useState(false)
   const [selectedTab, setSelectedTab] = React.useState(0)
-
-  const copyCode = React.useCallback(() => {
-    copyToClipboard(codeBlocks[selectedTab].code)
-    setShowAlert(true)
-  }, [codeBlocks, selectedTab])
 
   return (
     <Paper className={className}>
@@ -76,11 +71,7 @@ const CodeBlock: React.FC<CodeBlockProps> = ({
         idx !== selectedTab ? null : (
           <Paper square key={title} className={classes.codeBlock}>
             <div className={classes.copyButton}>
-              <Tooltip title="Copy">
-                <IconButton onClick={copyCode}>
-                  <FileCopyIcon />
-                </IconButton>
-              </Tooltip>
+              <CopyButton useIconButton toCopy={code} />
             </div>
             <SyntaxHighlighter
               {...props}
@@ -95,13 +86,6 @@ const CodeBlock: React.FC<CodeBlockProps> = ({
           </Paper>
         )
       )}
-      <Snackbar
-        open={showAlert}
-        autoHideDuration={2000}
-        onClose={() => setShowAlert(false)}
-      >
-        <MuiAlert>Code copied to clipboard.</MuiAlert>
-      </Snackbar>
     </Paper>
   )
 }
