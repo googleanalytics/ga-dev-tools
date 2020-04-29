@@ -36,10 +36,11 @@ const Code: React.FC = ({ children }) => {
 
 const useStyles = makeStyles(theme => ({
   code: {
-    backgroundColor: theme.palette.text.secondary,
-    color: theme.palette.getContrastText(theme.palette.text.secondary),
-    padding: theme.spacing(0.25),
+    backgroundColor: theme.palette.grey[300],
+    color: theme.palette.getContrastText(theme.palette.grey[300]),
+    padding: theme.spacing(0.25, 0.5),
     borderRadius: theme.spacing(0.25),
+    fontFamily: "'Source Code Pro', monospace",
   },
   infoTable: {
     "& tbody": {
