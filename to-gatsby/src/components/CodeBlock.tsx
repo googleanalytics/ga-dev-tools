@@ -19,12 +19,6 @@ import { SyntaxHighlighterProps } from "react-syntax-highlighter"
 import Paper from "@material-ui/core/Paper"
 import Tabs from "@material-ui/core/Tabs"
 import Tab from "@material-ui/core/Tab"
-import IconButton from "@material-ui/core/IconButton"
-import Tooltip from "@material-ui/core/Tooltip"
-import FileCopyIcon from "@material-ui/icons/FileCopyOutlined"
-import Snackbar from "@material-ui/core/Snackbar"
-import MuiAlert from "@material-ui/lab/Alert"
-import copyToClipboard from "copy-to-clipboard"
 import CopyButton from "./CopyButton"
 
 const useStyles = makeStyles(theme => ({
@@ -37,17 +31,6 @@ const useStyles = makeStyles(theme => ({
     top: theme.spacing(2),
     right: theme.spacing(2),
     cursor: "pointer",
-  },
-  svgContainer: {
-    display: "flex",
-    flexDirection: "column",
-    alignItems: "center",
-    "&:hover div": {
-      visibility: "visible",
-    },
-    "& div": {
-      visibility: "hidden",
-    },
   },
 }))
 
