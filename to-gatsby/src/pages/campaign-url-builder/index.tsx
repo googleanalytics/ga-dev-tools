@@ -192,6 +192,8 @@ const GeneratedUrl: React.FC<GeneratedUrlProps> = ({
             with this custom campaign.
           </Typography>
           <TextField
+            id="generated-url"
+            label="Generated URL"
             multiline
             value={generatedUrl}
             variant="outlined"
@@ -279,6 +281,7 @@ export const CampaignUrlBuilder = () => {
       </Typography>
       <section className={classes.inputs}>
         <TextField
+          id="website-url"
           required
           value={websiteUrl}
           onChange={e => setWebsiteUrl(e.target.value)}
@@ -291,6 +294,7 @@ export const CampaignUrlBuilder = () => {
           }
         />
         <TextField
+          id="campaign-source"
           required
           value={source}
           onChange={e => setSource(e.target.value)}
@@ -303,6 +307,7 @@ export const CampaignUrlBuilder = () => {
           }
         />
         <TextField
+          id="campaign-medium"
           required
           value={medium}
           onChange={e => setMedium(e.target.value)}
@@ -316,6 +321,7 @@ export const CampaignUrlBuilder = () => {
           }
         />
         <TextField
+          id="campaign-name"
           required
           value={campaign}
           onChange={e => setCampaign(e.target.value)}
@@ -328,12 +334,14 @@ export const CampaignUrlBuilder = () => {
           }
         />
         <TextField
+          id="campaign-term"
           value={term}
           onChange={e => setTerm(e.target.value)}
           label="Campaign Term"
           helperText="Identify the paid keywords"
         />
         <TextField
+          id="campaign-content"
           value={content}
           onChange={e => setContent(e.target.value)}
           label="Campaign Content"

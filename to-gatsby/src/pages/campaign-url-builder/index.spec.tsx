@@ -12,6 +12,37 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+import * as React from "react"
+import * as renderer from "@testing-library/react"
+import { withProviders } from "../../test-utils"
+import "@testing-library/jest-dom"
+import userEvent from "@testing-library/user-event"
+import { CampaignUrlBuilder } from "./index"
+
+describe("for the Campaign URL Builder component", () => {
+  test("can render page without error", () => {
+    const { wrapped } = withProviders(<CampaignUrlBuilder />)
+    renderer.render(wrapped)
+  })
+  test("generates url for happy path inputs", async () => {
+    const { wrapped } = withProviders(<CampaignUrlBuilder />)
+    const { findByLabelText: find } = renderer.render(wrapped)
+    // Enter happy path values
+    await userEvent.type(await find(/Website URL/), "https://example.com")
+    await userEvent.type(await find(/Campaign Source/), "google")
+    await userEvent.type(await find(/Campaign Medium/), "cpc")
+    await userEvent.type(await find(/Campaign Name/), "spring_sale")
+    await userEvent.type(await find(/Campaign Term/), "running+shoes")
+    await userEvent.type(await find(/Campaign Content/), "logolink")
+
+    const input = await find(/Generated URL/)
+
+    expect(input).toHaveValue(
+      "https://example.com?utm_source=google&utm_medium=cpc&utm_campaign=spring_sale&utm_term=running%2Bshoes&utm_content=logolink"
+    )
+  })
+})
+
 // Need to add in tests based on current functionality
 
 // Pasting in a website url that already has url params should keep them as is
