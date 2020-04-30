@@ -21,18 +21,112 @@ import FormControlLabel from "@material-ui/core/FormControlLabel"
 import { makeStyles } from "@material-ui/core/styles"
 import Button from "@material-ui/core/Button"
 import Error from "@material-ui/icons/ErrorOutline"
+import Warning from "@material-ui/icons/Warning"
 import Table from "@material-ui/core/Table"
 import TableBody from "@material-ui/core/TableBody"
 import TableCell from "@material-ui/core/TableCell"
 import TableHead from "@material-ui/core/TableHead"
 import TableRow from "@material-ui/core/TableRow"
 import { useLocalStorage } from "react-use"
-import classnames from "classnames"
+import { v4 as uuid } from "uuid"
 
 import { Url, StorageKey } from "../../constants"
 import Layout from "../../components/layout"
 import CopyButton from "../../components/CopyButton"
 import BitlyLogo from "-!svg-react-loader!../../images/bitly-logo.svg"
+
+const iosCampaignTracking = (
+  <a href={Url.iosCampaignTracking}>iOS Campaign Tracking URL Builder</a>
+)
+
+const googlePlayUrlBuilder = (
+  <a href={Url.googlePlayURLBuilder}>Google Play URL Builder</a>
+)
+
+interface WarningsForProps {
+  websiteUrl: string
+  onWarning: (warningPresent: boolean) => void
+}
+const WarningsFor: React.FC<WarningsForProps> = ({ websiteUrl, onWarning }) => {
+  const classes = useStyles()
+  const asUrl = React.useMemo<URL | undefined>(() => {
+    try {
+      return new URL(websiteUrl)
+    } catch (e) {
+      return undefined
+    }
+  }, [websiteUrl])
+
+  const BaseWarning: React.FC = ({ children }) => {
+    return (
+      <section className={classes.shareInvalid}>
+        <Warning />
+        <Typography variant="body1">{children}</Typography>
+      </section>
+    )
+  }
+
+  const [warnings, setWarnings] = React.useState<JSX.Element[]>([])
+
+  React.useEffect(() => {
+    if (asUrl === undefined) {
+      return
+    }
+    // Clear out the old value.
+    setWarnings([])
+    if (asUrl.hostname === "ga-dev-tools.appspot.com") {
+      setWarnings(old =>
+        old.concat([
+          <>
+            It appears that you are linking to this site,{" "}
+            <Code>ga-dev-tools.appspot.com</Code>, instead of your own. You
+            should put your own site's URL in the Website URL field, above.{" "}
+          </>,
+        ])
+      )
+    }
+
+    if (asUrl.hostname === "play.google.com") {
+      setWarnings(old =>
+        old.concat([
+          <>
+            It appears that you are creating a Google Play Store url. You should
+            use the {googlePlayUrlBuilder} instead for creating campaign links
+            for Play Store apps.
+          </>,
+        ])
+      )
+    }
+
+    if (asUrl.hostname === "itunes.apple.com") {
+      setWarnings(old =>
+        old.concat([
+          <>
+            It appears you are creating an iOS App Store URL. You should use the{" "}
+            {iosCampaignTracking} instead for creating campaign links for Play
+            Store apps.
+          </>,
+        ])
+      )
+    }
+  }, [asUrl])
+
+  React.useEffect(() => {
+    onWarning(warnings.length !== 0)
+  }, [warnings])
+
+  if (asUrl === undefined) {
+    return null
+  }
+
+  return (
+    <section data-testid="bad-url-warnings">
+      {warnings.map(childElement => (
+        <BaseWarning key={uuid()}>{childElement}</BaseWarning>
+      ))}
+    </section>
+  )
+}
 
 const Code: React.FC = ({ children }) => {
   const classes = useStyles()
@@ -87,10 +181,10 @@ const useStyles = makeStyles(theme => ({
   shareInvalid: {
     display: "flex",
     flexDirection: "row",
-    padding: theme.spacing(3),
+    paddingTop: theme.spacing(3),
     alignItems: "center",
     "& svg": {
-      marginRight: theme.spacing(1),
+      marginRight: theme.spacing(2),
     },
     "& p": {
       paddingBottom: "unset",
@@ -121,6 +215,7 @@ const GeneratedUrl: React.FC<GeneratedUrlProps> = ({
 
   const [generatedUrl, setGeneratedUrl] = React.useState("")
   const [hasAllRequired, setHasAllRequired] = React.useState(false)
+  const [problematicUrl, setProblematicUrl] = React.useState(false)
   const [useFragment, setUseFragment] = useLocalStorage(
     StorageKey.campaignBuilderUseFragment,
     false,
@@ -178,70 +273,76 @@ const GeneratedUrl: React.FC<GeneratedUrlProps> = ({
   ])
 
   return (
-    <Paper
-      className={classnames(classes.share, {
-        [classes.shareInvalid]: !hasAllRequired,
-      })}
-    >
-      {hasAllRequired ? (
-        <>
-          <Typography variant="h2">Share the generated campaign URL</Typography>
+    <Paper className={classes.share}>
+      <WarningsFor
+        websiteUrl={websiteUrl}
+        onWarning={warningPresent => setProblematicUrl(warningPresent)}
+      />
+      {!problematicUrl &&
+        (hasAllRequired ? (
+          <>
+            <Typography variant="h2">
+              Share the generated campaign URL
+            </Typography>
 
-          <Typography variant="body1">
-            Use this URL in any promotional channels you want to be associated
-            with this custom campaign.
-          </Typography>
-          <TextField
-            id="generated-url"
-            label="Generated URL"
-            multiline
-            value={generatedUrl}
-            variant="outlined"
-            className={classes.generatedInput}
-          />
-          <FormControlLabel
-            control={
-              <Checkbox
-                checked={useFragment}
-                onChange={e => setUseFragment(e.target.checked)}
-              />
-            }
-            label={
-              <Typography variant="body2" component="span">
-                Set campaign parameters in the fragment protion of the URL (
-                <Typography component="span" color="error" variant="inherit">
-                  not recommended
-                </Typography>
-                )
-              </Typography>
-            }
-          />
-          <section className={classes.buttons}>
-            <CopyButton
-              variant="contained"
-              color="primary"
-              toCopy={generatedUrl}
-              text="Copy URL"
-            />
-            <Button
+            <Typography variant="body1">
+              Use this URL in any promotional channels you want to be associated
+              with this custom campaign.
+            </Typography>
+            <TextField
+              id="generated-url"
+              label="Generated URL"
+              multiline
+              value={generatedUrl}
               variant="outlined"
-              startIcon={
-                <BitlyLogo className={classes.bitlyIcon} viewBox="0 0 24 21" />
+              className={classes.generatedInput}
+            />
+            <FormControlLabel
+              control={
+                <Checkbox
+                  checked={useFragment}
+                  onChange={e => setUseFragment(e.target.checked)}
+                />
               }
-            >
-              Convert URL to Short Link
-            </Button>
+              label={
+                <Typography variant="body2" component="span">
+                  Set campaign parameters in the fragment protion of the URL (
+                  <Typography component="span" color="error" variant="inherit">
+                    not recommended
+                  </Typography>
+                  )
+                </Typography>
+              }
+            />
+            <section className={classes.buttons}>
+              <CopyButton
+                variant="contained"
+                color="primary"
+                toCopy={generatedUrl}
+                text="Copy URL"
+              />
+              <Button
+                variant="outlined"
+                startIcon={
+                  <BitlyLogo
+                    className={classes.bitlyIcon}
+                    viewBox="0 0 24 21"
+                  />
+                }
+              >
+                Convert URL to Short Link
+              </Button>
+            </section>
+          </>
+        ) : (
+          <section className={classes.shareInvalid}>
+            <Error />
+            <Typography variant="body1">
+              Fill out all the required fields above and a URL will be
+              automatically generated for you here.
+            </Typography>
           </section>
-        </>
-      ) : (
-        <>
-          <Error />
-          <Typography variant="body1">
-            Fill out all the required fields above and a URL will be
-            automatically generated for you here.
-          </Typography>
-        </>
-      )}
+        ))}
     </Paper>
   )
 }
@@ -347,9 +448,6 @@ export const CampaignUrlBuilder = () => {
           label="Campaign Content"
           helperText="Use to differentiate ads"
         />
-        <Typography variant="body2" color="error">
-          All fields marked with an asterisk (*) are required.
-        </Typography>
       </section>
 
       <GeneratedUrl

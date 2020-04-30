@@ -41,6 +41,41 @@ describe("for the Campaign URL Builder component", () => {
       "https://example.com?utm_source=google&utm_medium=cpc&utm_campaign=spring_sale&utm_term=running%2Bshoes&utm_content=logolink"
     )
   })
+  describe("entering a no-no url shows a warning", () => {
+    test("url: ga-dev-tools.appspot.com", async () => {
+      const { wrapped } = withProviders(<CampaignUrlBuilder />)
+      const { findByLabelText: find, findByTestId } = renderer.render(wrapped)
+      await userEvent.type(
+        await find(/Website URL/),
+        "https://ga-dev-tools.appspot.com"
+      )
+
+      const warningBanner = await findByTestId("bad-url-warnings")
+
+      expect(warningBanner).toBeVisible()
+    })
+    test("url: play.google.com", async () => {
+      const { wrapped } = withProviders(<CampaignUrlBuilder />)
+      const { findByLabelText: find, findByTestId } = renderer.render(wrapped)
+      await userEvent.type(await find(/Website URL/), "https://play.google.com")
+
+      const warningBanner = await findByTestId("bad-url-warnings")
+
+      expect(warningBanner).toBeVisible()
+    })
+    test("url: itunes.apple.com", async () => {
+      const { wrapped } = withProviders(<CampaignUrlBuilder />)
+      const { findByLabelText: find, findByTestId } = renderer.render(wrapped)
+      await userEvent.type(
+        await find(/Website URL/),
+        "https://itunes.apple.com"
+      )
+
+      const warningBanner = await findByTestId("bad-url-warnings")
+
+      expect(warningBanner).toBeVisible()
+    })
+  })
 })
 
 // Need to add in tests based on current functionality

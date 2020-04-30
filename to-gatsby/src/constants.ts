@@ -15,6 +15,10 @@
 // All static links on the site should be put into this constant. This makes it
 // easier to update all instances of a link on the site.
 export const Url = {
+  iosCampaignTracking:
+    "https://developers.google.com/analytics/devguides/collection/ios/v3/campaigns#url-builder",
+  googlePlayURLBuilder:
+    "https://developers.google.com/analytics/devguides/collection/android/v4/campaigns#google-play-url-builder",
   customCampaigns: "https://support.google.com/analytics/answer/1033863",
   gaDebugger:
     "https://chrome.google.com/webstore/detail/google-analytics-debugger/jnkmfdileelhofjcijamephohjechhna",
