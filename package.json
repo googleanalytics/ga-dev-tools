@@ -75,7 +75,7 @@
     "imagemin-pngquant": "^5.1.0",
     "immutable": "^4.0.0-rc.12",
     "javascript-api-utils": "github:googleanalytics/javascript-api-utils#0.8.0",
-    "jquery": "^3.1.1",
+    "jquery": "^3.5.0",
     "lodash": "^4.16.4",
     "material-design-icons": "^3.0.1",
     "merge2": "^1.2.3",
