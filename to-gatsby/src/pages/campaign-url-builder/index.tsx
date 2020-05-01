@@ -19,7 +19,6 @@ import Paper from "@material-ui/core/Paper"
 import Checkbox from "@material-ui/core/Checkbox"
 import FormControlLabel from "@material-ui/core/FormControlLabel"
 import { makeStyles } from "@material-ui/core/styles"
-import Button from "@material-ui/core/Button"
 import Error from "@material-ui/icons/ErrorOutline"
 import Warning from "@material-ui/icons/Warning"
 import Table from "@material-ui/core/Table"
@@ -33,7 +32,7 @@ import { v4 as uuid } from "uuid"
 import { Url, StorageKey } from "../../constants"
 import Layout from "../../components/layout"
 import CopyButton from "../../components/CopyButton"
-import BitlyLogo from "-!svg-react-loader!../../images/bitly-logo.svg"
+import { extractParamsFromWebsiteUrl, websiteUrlFor } from "./_params"
 
 const iosCampaignTracking = (
   <a href={Url.iosCampaignTracking}>iOS Campaign Tracking URL Builder</a>
@@ -251,16 +250,19 @@ const GeneratedUrl: React.FC<GeneratedUrlProps> = ({
       setGeneratedUrl("")
       return
     }
-    const params = new URLSearchParams()
-    source !== "" && params.set("utm_source", source)
-    medium !== "" && params.set("utm_medium", medium)
-    campaign !== "" && params.set("utm_campaign", campaign)
-    term !== "" && params.set("utm_term", term)
-    content !== "" && params.set("utm_content", content)
-
-    const asString = `${useFragment ? "#" : "?"}${params.toString()}`
-    const newUrl = `${websiteUrl}${asString}`
-    setGeneratedUrl(newUrl)
+    setGeneratedUrl(
+      websiteUrlFor(
+        websiteUrl,
+        {
+          utm_source: source || undefined,
+          utm_medium: medium || undefined,
+          utm_campaign: campaign || undefined,
+          utm_term: term || undefined,
+          utm_content: content || undefined,
+        },
+        useFragment
+      )
+    )
   }, [
     hasAllRequired,
     useFragment,
@@ -321,17 +323,6 @@ const GeneratedUrl: React.FC<GeneratedUrlProps> = ({
                 toCopy={generatedUrl}
                 text="Copy URL"
               />
-              <Button
-                variant="outlined"
-                startIcon={
-                  <BitlyLogo
-                    className={classes.bitlyIcon}
-                    viewBox="0 0 24 21"
-                  />
-                }
-              >
-                Convert URL to Short Link
-              </Button>
             </section>
           </>
         ) : (
@@ -348,6 +339,7 @@ const GeneratedUrl: React.FC<GeneratedUrlProps> = ({
 }
 
 export const CampaignUrlBuilder = () => {
+  // TODO - Add support for shortlinks.
   const classes = useStyles()
   const [websiteUrl, setWebsiteUrl] = useLocalStorage(
     StorageKey.campaignBuilderWebsiteUrl,
@@ -371,6 +363,25 @@ export const CampaignUrlBuilder = () => {
     ""
   )
 
+  const onWebsiteChange = React.useCallback(e => {
+    const extractedParams = extractParamsFromWebsiteUrl(e.target.value)
+    if (extractedParams !== undefined) {
+      const {
+        utm_source,
+        utm_medium,
+        utm_campaign,
+        utm_term,
+        utm_content,
+      } = extractedParams
+      utm_source !== undefined && setSource(utm_source)
+      utm_medium !== undefined && setMedium(utm_medium)
+      utm_campaign !== undefined && setCampaign(utm_campaign)
+      utm_term !== undefined && setTerm(utm_term)
+      utm_content !== undefined && setContent(utm_content)
+    }
+    setWebsiteUrl(e.target.value)
+  }, [])
+
   return (
     <>
       <Typography variant="body1">
@@ -385,7 +396,7 @@ export const CampaignUrlBuilder = () => {
           id="website-url"
           required
           value={websiteUrl}
-          onChange={e => setWebsiteUrl(e.target.value)}
+          onChange={onWebsiteChange}
           label="Website URL"
           helperText={
             <span>

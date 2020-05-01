@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-interface CampaignParams {
+export interface CampaignParams {
   utm_source: string
   utm_medium: string
   utm_campaign: string
@@ -35,22 +35,32 @@ export const CampiagnParams: (keyof CampaignParams)[] = [
 
 export const extractParamsFromWebsiteUrl = (
   websiteUrl: string
-): ParsedCampaignUrl => {
+): Partial<CampaignParams> | undefined => {
   // Also support fragment params.
-  let cleanedWebsiteUrl = websiteUrl
-  const asUrl = new URL(websiteUrl)
+  let asUrl: URL
+  try {
+    let missingProtocol = /[^://].*?.com/
+    if (missingProtocol.test(websiteUrl)) {
+      asUrl = new URL(`https://${websiteUrl}`)
+    } else {
+      asUrl = new URL(websiteUrl)
+    }
+  } catch (e) {
+    return undefined
+  }
   const searchParams = asUrl.searchParams
-  let searchFirst = true
   const campaignParams: Partial<CampaignParams> = {}
 
   let fragment = asUrl.hash
-  // Some of the urls we see have fragment, then query params
+  // Some of the urls we see have fragment, then query params. We support
+  // parsing this out, but we do not support keeping it this way in the
+  // generated url.
+
   const queryIndex = fragment.indexOf("?")
   if (queryIndex !== -1) {
     const afterFragment = new URLSearchParams(fragment.substring(queryIndex))
     fragment = fragment.substring(0, queryIndex)
     afterFragment.forEach((v, k) => {
-      searchFirst = false
       searchParams.set(k, v)
     })
   }
@@ -60,44 +70,80 @@ export const extractParamsFromWebsiteUrl = (
   // Pull out any campaign params that are valid search params
   CampiagnParams.forEach(param => {
     const fromSearch = searchParams.get(param)
-    if (fromSearch !== null) {
+    if (fromSearch !== null && fromSearch !== "") {
       campaignParams[param] = fromSearch
     }
 
     const fromFragment = fragmentParams.get(param)
-    if (fromFragment !== null) {
+    if (fromFragment !== null && fromFragment !== "") {
       campaignParams[param] = fromFragment
     }
   })
 
-  // Remove any campaign params from the base url
+  return campaignParams
+}
+
+export const websiteUrlFor = (
+  original: string,
+  params: Partial<CampaignParams>,
+  useFragment: boolean = false
+): string => {
+  let copyOfOriginal = original
+
+  const fragmentIndex = copyOfOriginal.indexOf("#")
+  let fragmentString = ""
+  let fragmentParams = new URLSearchParams()
+  if (fragmentIndex !== -1) {
+    fragmentString = copyOfOriginal.substring(fragmentIndex)
+    if (fragmentString.indexOf("=") !== -1) {
+      fragmentParams = new URLSearchParams(fragmentString.substring(1))
+    }
+    copyOfOriginal = copyOfOriginal.substring(0, fragmentIndex)
+  }
+
+  const queryIndex = copyOfOriginal.indexOf("?")
+  let queryString = ""
+  let queryParams = new URLSearchParams()
+  if (queryIndex !== -1) {
+    queryString = copyOfOriginal.substring(queryIndex)
+    queryParams = new URLSearchParams(queryString)
+    copyOfOriginal = copyOfOriginal.substring(0, queryIndex)
+  }
+
+  // Delete the campaign params from their parameters
   CampiagnParams.forEach(param => {
-    searchParams.delete(param)
+    queryParams.delete(param)
     fragmentParams.delete(param)
   })
 
-  let cleanedSearchParams = searchParams.toString()
-  if (cleanedSearchParams !== "") {
-    cleanedSearchParams = "?" + cleanedSearchParams
+  const forOurParams = useFragment === true ? fragmentParams : queryParams
+  Object.entries(params).forEach(([key, value]) => {
+    if (value === undefined) {
+      return
+    }
+    forOurParams.set(key, value)
+  })
+
+  let fragment = ""
+  if (fragmentString !== "" || useFragment) {
+    let asParams = fragmentParams.toString()
+    if (asParams === "") {
+      if (fragmentString.indexOf("=") === -1) {
+        fragment = fragmentString
+      }
+    } else {
+      fragment = `#${asParams}`
+    }
   }
-  let cleanedFragmentParams = fragmentParams.toString()
-  if (cleanedFragmentParams !== "") {
-    cleanedFragmentParams = "#" + cleanedFragmentParams
+
+  let query = ""
+  if (queryString !== "" || !useFragment) {
+    let asParams = queryParams.toString()
+    if (asParams !== "") {
+      query = `?${asParams}`
+    } else {
+    }
   }
 
-  let pathName = asUrl.pathname
-  if (
-    websiteUrl.replace(asUrl.origin, "")[0] !== "/" &&
-    asUrl.pathname === "/"
-  ) {
-    pathName = ""
-  }
-
-  // Keep the order the user defined, even if it's weird.
-  let first = searchFirst ? cleanedSearchParams : cleanedFragmentParams
-  let second = searchFirst ? cleanedFragmentParams : cleanedSearchParams
-
-  cleanedWebsiteUrl = `${asUrl.origin}${pathName}${first}${second}`
-
-  return { campaignParams, cleanedWebsiteUrl }
+  return `${copyOfOriginal}${query}${fragment}`
 }

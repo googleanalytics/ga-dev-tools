@@ -13,151 +13,207 @@
 // limitations under the License.
 
 import * as sut from "./_params"
+import { CampaignParams } from "./_params"
 
 describe("for campaign url builder param parsing", () => {
-  describe("a url with", () => {
-    describe("unknown params", () => {
-      test("in search stays in cleaned url", () => {
-        const url = "https://example.com?abc=def"
-
-        const {
-          campaignParams: actual,
-          cleanedWebsiteUrl,
-        } = sut.extractParamsFromWebsiteUrl(url)
-
-        expect(Object.values(actual)).toHaveLength(0)
-        expect(cleanedWebsiteUrl).toBe("https://example.com?abc=def")
-      })
-
-      test("in fragment stays in cleaned url", () => {
-        const url = "https://example.com#abc=def"
-
-        const {
-          campaignParams: actual,
-          cleanedWebsiteUrl,
-        } = sut.extractParamsFromWebsiteUrl(url)
-
-        expect(Object.values(actual)).toHaveLength(0)
-        expect(cleanedWebsiteUrl).toBe("https://example.com#abc=def")
-      })
-
-      test("in [search -> fragment] stays in cleaned url", () => {
-        const url = "https://example.com?abc=def#ghi=jkl"
-
-        const {
-          campaignParams: actual,
-          cleanedWebsiteUrl,
-        } = sut.extractParamsFromWebsiteUrl(url)
-
-        expect(Object.values(actual)).toHaveLength(0)
-        expect(cleanedWebsiteUrl).toBe("https://example.com?abc=def#ghi=jkl")
-      })
-      test("in [fragment -> search] stays in cleaned url", () => {
-        const url = "https://example.com#ghi=jkl?abc=def"
-
-        const {
-          campaignParams: actual,
-          cleanedWebsiteUrl,
-        } = sut.extractParamsFromWebsiteUrl(url)
-
-        expect(Object.values(actual)).toHaveLength(0)
-        expect(cleanedWebsiteUrl).toBe("https://example.com#ghi=jkl?abc=def")
-      })
-    })
-    test("no ending slash stays that way", () => {
+  describe("for websiteUrlFor with", () => {
+    test("happy path [query]", () => {
       const url = "https://example.com"
-      const { cleanedWebsiteUrl } = sut.extractParamsFromWebsiteUrl(url)
-      expect(cleanedWebsiteUrl).toBe(url)
+      const params: Partial<CampaignParams> = { utm_source: "google" }
+      const actual = sut.websiteUrlFor(url, params)
+
+      expect(actual).toBe(`https://example.com?utm_source=google`)
+    })
+    test("happy path [fragment params]", () => {
+      const url = "https://example.com"
+      const params: Partial<CampaignParams> = { utm_source: "google" }
+      const actual = sut.websiteUrlFor(url, params, true)
+
+      expect(actual).toBe(`https://example.com#utm_source=google`)
+    })
+    test("normal fragment is left alone", () => {
+      const url = "https://example.com#abc"
+      const params: Partial<CampaignParams> = { utm_source: "google" }
+      const actual = sut.websiteUrlFor(url, params)
+
+      expect(actual).toBe(`https://example.com?utm_source=google#abc`)
     })
 
-    test("an ending slash stays that way", () => {
+    describe("existing parameters", () => {
+      describe("in fragment", () => {
+        test("not ours are left alone", () => {
+          const url = "https://example.com#abc=123"
+          const params: Partial<CampaignParams> = { utm_source: "google" }
+          const actual = sut.websiteUrlFor(url, params)
+
+          expect(actual).toBe(`https://example.com?utm_source=google#abc=123`)
+        })
+        test("ours are moved to query", () => {
+          const url = "https://example.com#utm_source=google"
+          const params: Partial<CampaignParams> = { utm_source: "google" }
+          const actual = sut.websiteUrlFor(url, params)
+
+          expect(actual).toBe(`https://example.com?utm_source=google`)
+        })
+        test("ours are kept in fragment if requested", () => {
+          const url = "https://example.com#utm_source=google"
+          const params: Partial<CampaignParams> = { utm_source: "google" }
+          const actual = sut.websiteUrlFor(url, params, true)
+
+          expect(actual).toBe(`https://example.com#utm_source=google`)
+        })
+      })
+      describe("in query", () => {
+        test("not ours are left alone", () => {
+          const url = "https://example.com?abc=123"
+          const params: Partial<CampaignParams> = { utm_source: "google" }
+          const actual = sut.websiteUrlFor(url, params)
+
+          expect(actual).toBe(`https://example.com?abc=123&utm_source=google`)
+        })
+        test("ours are 'moved' to query", () => {
+          const url = "https://example.com?utm_source=google"
+          const params: Partial<CampaignParams> = { utm_source: "google" }
+          const actual = sut.websiteUrlFor(url, params)
+
+          expect(actual).toBe(`https://example.com?utm_source=google`)
+        })
+        test("ours are moved to fragment if requested", () => {
+          const url = "https://example.com?utm_source=google"
+          const params: Partial<CampaignParams> = { utm_source: "google" }
+          const actual = sut.websiteUrlFor(url, params, true)
+
+          expect(actual).toBe(`https://example.com#utm_source=google`)
+        })
+      })
+      describe("in fragment and query", () => {
+        test("not ours are left alone", () => {
+          const url = "https://example.com?abc=123#def=456"
+          const params: Partial<CampaignParams> = { utm_source: "google" }
+          const actual = sut.websiteUrlFor(url, params)
+
+          expect(actual).toBe(
+            `https://example.com?abc=123&utm_source=google#def=456`
+          )
+        })
+        test("ours are moved to query", () => {
+          const url =
+            "https://example.com?utm_source=google#utm_campaign=spring_sale"
+          const params: Partial<CampaignParams> = {
+            utm_source: "google",
+            utm_campaign: "spring_sale",
+          }
+          const actual = sut.websiteUrlFor(url, params)
+
+          expect(actual).toBe(
+            `https://example.com?utm_source=google&utm_campaign=spring_sale`
+          )
+        })
+      })
+    })
+  })
+  describe("for extractParams with a url with", () => {
+    describe("common errors", () => {
+      test("missing protocol still works", () => {
+        const url = "example.com"
+        sut.extractParamsFromWebsiteUrl(url)!
+      })
+    })
+
+    test("our parameters [query], but empty are ignored", () => {
+      const url = "example.com?utm_source"
+      const actual = sut.extractParamsFromWebsiteUrl(url)!
+      expect(actual.utm_source).toBeUndefined()
+    })
+
+    test("our parameters [fragment], but empty are ignored", () => {
+      const url = "example.com#utm_source"
+      const actual = sut.extractParamsFromWebsiteUrl(url)!
+      expect(actual.utm_source).toBeUndefined()
+    })
+
+    describe("unknown params", () => {
+      test("in search are ignored", () => {
+        const url = "https://example.com?abc=def"
+        const actual = sut.extractParamsFromWebsiteUrl(url)!
+        expect(Object.values(actual)).toHaveLength(0)
+      })
+      test("in fragment are ignored", () => {
+        const url = "https://example.com#abc=def"
+        const actual = sut.extractParamsFromWebsiteUrl(url)!
+        expect(Object.values(actual)).toHaveLength(0)
+      })
+      test("in [search -> fragment] are ignored", () => {
+        const url = "https://example.com?abc=def#ghi=jkl"
+        const actual = sut.extractParamsFromWebsiteUrl(url)!
+        expect(Object.values(actual)).toHaveLength(0)
+      })
+      test("in [fragment -> search] are ignored", () => {
+        const url = "https://example.com#ghi=jkl?abc=def"
+        const actual = sut.extractParamsFromWebsiteUrl(url)!
+        expect(Object.values(actual)).toHaveLength(0)
+      })
+    })
+
+    test("no ending slash doesn't throw", () => {
+      const url = "https://example.com"
+      sut.extractParamsFromWebsiteUrl(url)!
+    })
+
+    test("an ending slash doesn't throw", () => {
       const url = "https://example.com/"
-      const { cleanedWebsiteUrl } = sut.extractParamsFromWebsiteUrl(url)
-      expect(cleanedWebsiteUrl).toBe(url)
+      sut.extractParamsFromWebsiteUrl(url)!
     })
     test("all parameters (query params) can be parsed correctly", () => {
       const url =
         "https://example.com?utm_source=google&utm_medium=cpc&utm_campaign=spring_sale&utm_term=running+shoes&utm_content=logolink"
 
-      const {
-        campaignParams: actual,
-        cleanedWebsiteUrl,
-      } = sut.extractParamsFromWebsiteUrl(url)
+      const actual = sut.extractParamsFromWebsiteUrl(url)!
 
       expect(actual.utm_source).toBe("google")
       expect(actual.utm_medium).toBe("cpc")
       expect(actual.utm_campaign).toBe("spring_sale")
       expect(actual.utm_term).toBe("running shoes")
       expect(actual.utm_content).toBe("logolink")
-
-      expect(cleanedWebsiteUrl).toBe("https://example.com")
     })
 
     test("all parameters (fragment) can be parsed correctly", () => {
       const url =
         "https://example.com#utm_source=google&utm_medium=cpc&utm_campaign=spring_sale&utm_term=running+shoes&utm_content=logolink"
 
-      const {
-        campaignParams: actual,
-        cleanedWebsiteUrl,
-      } = sut.extractParamsFromWebsiteUrl(url)
+      const actual = sut.extractParamsFromWebsiteUrl(url)!
 
       expect(actual.utm_source).toBe("google")
       expect(actual.utm_medium).toBe("cpc")
       expect(actual.utm_campaign).toBe("spring_sale")
       expect(actual.utm_term).toBe("running shoes")
       expect(actual.utm_content).toBe("logolink")
-      expect(cleanedWebsiteUrl).toBe("https://example.com")
     })
 
     test("only one parameter can be parsed correctly", () => {
       const url = "https://example.com?utm_source=google"
-
-      const {
-        campaignParams: actual,
-        cleanedWebsiteUrl,
-      } = sut.extractParamsFromWebsiteUrl(url)
-
+      const actual = sut.extractParamsFromWebsiteUrl(url)!
       expect(actual.utm_source).toBe("google")
-      expect(cleanedWebsiteUrl).toBe("https://example.com")
     })
 
     test("[fragment] can be parsed correctly", () => {
       const url = "https://example.com#utm_medium=cpc"
-
-      const {
-        campaignParams: actual,
-        cleanedWebsiteUrl,
-      } = sut.extractParamsFromWebsiteUrl(url)
-
+      const actual = sut.extractParamsFromWebsiteUrl(url)!
       expect(actual.utm_medium).toBe("cpc")
-      expect(cleanedWebsiteUrl).toBe("https://example.com")
     })
 
     test("[search params -> fragment] can be parsed correctly", () => {
       const url = "https://example.com?utm_source=google#utm_medium=cpc"
-
-      const {
-        campaignParams: actual,
-        cleanedWebsiteUrl,
-      } = sut.extractParamsFromWebsiteUrl(url)
-
+      const actual = sut.extractParamsFromWebsiteUrl(url)!
       expect(actual.utm_source).toBe("google")
       expect(actual.utm_medium).toBe("cpc")
-      expect(cleanedWebsiteUrl).toBe("https://example.com")
     })
 
     test("[fragment -> search params] can be parsed correctly", () => {
       const url = "https://example.com#utm_medium=cpc?utm_source=google"
-
-      const {
-        campaignParams: actual,
-        cleanedWebsiteUrl,
-      } = sut.extractParamsFromWebsiteUrl(url)
-
+      const actual = sut.extractParamsFromWebsiteUrl(url)!
       expect(actual.utm_source).toBe("google")
       expect(actual.utm_medium).toBe("cpc")
-      expect(cleanedWebsiteUrl).toBe("https://example.com")
     })
   })
 })

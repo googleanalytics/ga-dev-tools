@@ -41,6 +41,24 @@ describe("for the Campaign URL Builder component", () => {
       "https://example.com?utm_source=google&utm_medium=cpc&utm_campaign=spring_sale&utm_term=running%2Bshoes&utm_content=logolink"
     )
   })
+  describe("entering a website url with existing", () => {
+    test("fills all when provided", async () => {
+      const { wrapped } = withProviders(<CampaignUrlBuilder />)
+      const { findByLabelText: find } = renderer.render(wrapped)
+      renderer.fireEvent.change(await find(/Website URL/), {
+        target: {
+          value:
+            "https://example.com/?utm_source=google&utm_medium=cpc&utm_campaign=spring_sale&utm_term=term&utm_content=content",
+        },
+      })
+
+      expect(await find(/Campaign Source/)).toHaveValue("google")
+      expect(await find(/Campaign Medium/)).toHaveValue("cpc")
+      expect(await find(/Campaign Name/)).toHaveValue("spring_sale")
+      expect(await find(/Campaign Term/)).toHaveValue("term")
+      expect(await find(/Campaign Content/)).toHaveValue("content")
+    })
+  })
   describe("entering a no-no url shows a warning", () => {
     test("url: ga-dev-tools.appspot.com", async () => {
       const { wrapped } = withProviders(<CampaignUrlBuilder />)
