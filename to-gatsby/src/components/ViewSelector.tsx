@@ -3,6 +3,7 @@ import { makeStyles } from "@material-ui/core/styles"
 import TextField from "@material-ui/core/TextField"
 import Autocomplete from "@material-ui/lab/Autocomplete"
 import { useSelector } from "react-redux"
+import classnames from "classnames"
 
 import {
   getAnalyticsApi,
@@ -36,11 +37,13 @@ interface ViewSelector3Props {
   onViewChanged?: (hasView: HasView) => void
   // A callback that will be called when the available views change.
   onViewsChanged?: (views: HasView[]) => void
+  className?: string
 }
 
 const ViewSelector: React.FC<ViewSelector3Props> = ({
   onViewChanged,
   onViewsChanged,
+  className,
 }) => {
   const classes = useStyles()
 
@@ -196,7 +199,7 @@ const ViewSelector: React.FC<ViewSelector3Props> = ({
   }, [])
 
   return (
-    <div className={classes.root}>
+    <div className={classnames(classes.root, className)}>
       <Autocomplete<AccountSummary>
         blurOnSelect
         openOnFocus
