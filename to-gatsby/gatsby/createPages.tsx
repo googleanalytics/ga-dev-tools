@@ -29,6 +29,8 @@ const redirects: RedirectMap[] = [
   [`/polymer-elements`, `/`],
   [`/autotrack/`, `/`],
   [`/autotrack`, `/`],
+  [`/embed-api/`, `/`],
+  [`/embed-api`, `/`],
 ]
 
 export const createPages = async ({ actions }) => {
