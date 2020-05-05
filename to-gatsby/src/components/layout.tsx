@@ -233,7 +233,6 @@ const linkData: LinkData[] = [
     href: "/dimensions-metrics-explorer",
     type: "link",
   },
-  { text: "Embed API", href: "/embed-api", type: "link" },
   { text: "Enhanced Ecommerce", href: "/enhanced-ecommerce", type: "link" },
   { text: "Hit Builder", href: "/hit-builder", type: "link" },
   { text: "Query Explorer", href: "/query-explorer", type: "link" },
