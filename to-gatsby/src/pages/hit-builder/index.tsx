@@ -13,10 +13,48 @@
 // limitations under the License.
 
 import * as React from "react"
+import { Provider } from "react-redux"
 
+import store from "./_store"
 import Layout from "../../components/layout"
+import Parameters from "./_Parameters"
+import HitElement from "./_HitCard"
+import { Typography } from "@material-ui/core"
 
-const HitBuilder = () => {
-  return <Layout title="Hit Builder">TODO - add in content.</Layout>
+export const HitBuilder = () => {
+  return (
+    <>
+      <Typography variant="h3">Hit summary</Typography>
+      <Typography variant="body1">
+        The box below displays the full hit and its validation status. You can
+        update the hit in the text box and the parameter details below will be
+        automatically updated.
+      </Typography>
+
+      <HitElement />
+
+      <Typography variant="h3">Hit parameter details</Typography>
+      <Typography variant="body1">
+        The fields below are a breakdown of the individual parameters and values
+        for the hit in the text box above. When you update these values, the hit
+        above will be automatically updated.
+      </Typography>
+
+      <Parameters />
+    </>
+  )
 }
-export default HitBuilder
+export default () => {
+  return (
+    <Layout title="Hit Builder">
+      <Provider store={store}>
+        <HitBuilder />
+      </Provider>
+    </Layout>
+  )
+}
+
+// store.subscribe(() => {
+//   const state = store.getState()
+//   console.log({ state })
+// })
