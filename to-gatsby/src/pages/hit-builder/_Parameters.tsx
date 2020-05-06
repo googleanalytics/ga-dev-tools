@@ -63,7 +63,6 @@ const Parameters: React.FC = () => {
   const { validationMessages, params, properties } = useSelector<State, State>(
     a => a
   )
-  console.log("component", properties)
   const dispatch = useDispatch()
 
   const getValidationMessageForParam = React.useCallback(
@@ -127,6 +126,14 @@ const Parameters: React.FC = () => {
     dispatch(actions.updateHitPayload)
   }, [t, v])
 
+  const [localPropertyInput, setLocalPropertyInput] = React.useState("")
+
+  React.useEffect(() => {
+    if (tid.value !== localPropertyInput) {
+      setLocalPropertyInput(tid.value as string)
+    }
+  }, [tid.value, localPropertyInput])
+
   return (
     <section className={classes.inputs}>
       <FormControl>
@@ -136,6 +143,7 @@ const Parameters: React.FC = () => {
         </Select>
       </FormControl>
 
+      {/* TODO - make this an Autocomplete with freeSolo*/}
       <FormControl>
         <InputLabel>t</InputLabel>
         <Select
@@ -154,13 +162,22 @@ const Parameters: React.FC = () => {
         blurOnSelect
         freeSolo
         openOnFocus
-        autoSelect
         autoHighlight
         multiple={false}
         options={properties}
         getOptionLabel={a => a.id}
+        inputValue={localPropertyInput}
         onChange={(_, value) => {
-          setTid(value?.id || "")
+          if (value !== null) {
+            setTid(value.id)
+          }
+        }}
+        onInputChange={(_, value, reason) => {
+          // Don't set the local property input if the reason was reset.
+          if (reason === "clear" || reason === "input") {
+            setLocalPropertyInput(value)
+            setTid(value)
+          }
         }}
         filterOptions={(options, state) => {
           return options.filter(option => {
