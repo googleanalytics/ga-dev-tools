@@ -123,7 +123,7 @@ interface ParamType<T> {
 
 export interface Property {
   name: string
-  id: number
+  id: string
   group: string
 }
 export interface ValidationMessage {

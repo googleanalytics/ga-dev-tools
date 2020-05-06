@@ -13,13 +13,16 @@
 // limitations under the License.
 
 import * as React from "react"
-import { Provider } from "react-redux"
+import { Provider, useSelector } from "react-redux"
 
 import store from "./_store"
 import Layout from "../../components/layout"
 import Parameters from "./_Parameters"
 import HitElement from "./_HitCard"
 import { Typography } from "@material-ui/core"
+import { getAnalyticsApi } from "../../api"
+import actions from "./_actions"
+import { Property } from "./_types"
 
 export const HitBuilder = () => {
   return (
@@ -45,6 +48,33 @@ export const HitBuilder = () => {
   )
 }
 export default () => {
+  const gapi = useSelector((state: AppState) => state.gapi)
+
+  React.useEffect(() => {
+    if (gapi === undefined) {
+      return
+    }
+    ;(async () => {
+      const api = getAnalyticsApi(gapi)
+      const summaries = (await api.management.accountSummaries.list({})).result
+      const properties: Property[] = []
+      summaries.items?.forEach(account => {
+        const accountName = account.name || ""
+        account.webProperties?.forEach(property => {
+          const propertyName = property.name || ""
+          const propertyId = property.id || ""
+          properties.push({
+            name: propertyName,
+            id: propertyId,
+            group: accountName,
+          })
+        })
+      })
+      console.log({ properties })
+      store.dispatch(actions.setUserProperties(properties))
+    })()
+  }, [gapi])
+
   return (
     <Layout title="Hit Builder">
       <Provider store={store}>

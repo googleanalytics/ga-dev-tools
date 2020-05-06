@@ -14,13 +14,27 @@ import {
   IconButton,
   Tooltip,
   makeStyles,
+  Typography,
 } from "@material-ui/core"
 import Autocomplete from "@material-ui/lab/Autocomplete"
 import { Delete, Refresh } from "@material-ui/icons"
-import { State, HIT_TYPES } from "./_types"
+import { State, HIT_TYPES, Property } from "./_types"
 import { useDispatch, useSelector } from "react-redux"
 
 const useStyles = makeStyles(theme => ({
+  subdued: {
+    color: theme.palette.grey[500],
+  },
+  propertyOption: {
+    display: "flex",
+    width: "100%",
+    flexDirection: "column",
+    position: "relative",
+    "& > span": {
+      position: "absolute",
+      right: theme.spacing(2),
+    },
+  },
   inputs: {
     display: "flex",
     flexDirection: "column",
@@ -49,13 +63,8 @@ const Parameters: React.FC = () => {
   const { validationMessages, params, properties } = useSelector<State, State>(
     a => a
   )
+  console.log("component", properties)
   const dispatch = useDispatch()
-  const [newParamNeedsFocus, setNewParamNeedsFocus] = React.useState(false)
-
-  // Not sure If we need this.
-  React.useEffect(() => {
-    setNewParamNeedsFocus(false)
-  }, [])
 
   const getValidationMessageForParam = React.useCallback(
     (paramName: string) => {
@@ -141,16 +150,48 @@ const Parameters: React.FC = () => {
         </Select>
       </FormControl>
 
-      <Autocomplete<typeof properties>
+      <Autocomplete<Property>
         blurOnSelect
         freeSolo
         openOnFocus
         autoSelect
         autoHighlight
+        multiple={false}
         options={properties}
-        value={tid.value || null}
-        onChange={e => setTid(e.target.value)}
-        getOptionLabel={property => property}
+        getOptionLabel={a => a.id}
+        onChange={(_, value) => {
+          setTid(value?.id || "")
+        }}
+        filterOptions={(options, state) => {
+          return options.filter(option => {
+            return [option.group, option.id, option.name].find(v =>
+              v.match(state.inputValue)
+            )
+          })
+        }}
+        renderOption={a => {
+          return (
+            <div className={classes.propertyOption}>
+              <Typography variant="body1" component="div">
+                {a.name}
+              </Typography>
+              <Typography
+                variant="body2"
+                component="div"
+                className={classes.subdued}
+              >
+                {a.id}
+              </Typography>
+              <Typography
+                variant="body2"
+                component="span"
+                className={classes.subdued}
+              >
+                {a.group}
+              </Typography>
+            </div>
+          )
+        }}
         renderInput={params => (
           <TextField {...params} label="tid" placeholder="UA-XXXXX-Y" />
         )}
