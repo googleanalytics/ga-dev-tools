@@ -13,18 +13,44 @@
 // limitations under the License.
 
 import * as React from "react"
-import { Provider, useSelector } from "react-redux"
+import { Provider } from "react-redux"
 
 import store from "./_store"
 import Layout from "../../components/layout"
 import Parameters from "./_Parameters"
-import HitElement from "./_HitCard"
+import HitCard from "./_HitCard"
 import { Typography } from "@material-ui/core"
-import { getAnalyticsApi } from "../../api"
-import actions from "./_actions"
 import { Property } from "./_types"
+import * as hitUtils from "./_hit"
+import * as hooks from "./_hooks"
 
-export const HitBuilder = () => {
+interface HitBuilderProps {
+  properties: Property[]
+}
+
+export const HitBuilder: React.FC<HitBuilderProps> = ({ properties }) => {
+  const [hitPayload, setHitPayload] = React.useState("")
+
+  const {
+    updateParameterName,
+    updateParameterValue,
+    addParameter,
+    removeParameter,
+    parameters,
+  } = hooks.useParameters()
+
+  const {
+    hitStatus,
+    validationMessages,
+    validateHit,
+    sendHit,
+  } = hooks.useValidationServer(parameters)
+
+  // Update the hitPayload whenever the parameters change.
+  React.useEffect(() => {
+    setHitPayload(hitUtils.convertParamsToHit(parameters))
+  }, [parameters])
+
   return (
     <>
       <Typography variant="h3">Hit summary</Typography>
@@ -34,7 +60,13 @@ export const HitBuilder = () => {
         automatically updated.
       </Typography>
 
-      <HitElement />
+      <HitCard
+        validateHit={validateHit}
+        sendHit={sendHit}
+        hitPayload={hitPayload}
+        hitStatus={hitStatus}
+        validationMessages={validationMessages}
+      />
 
       <Typography variant="h3">Hit parameter details</Typography>
       <Typography variant="body1">
@@ -43,42 +75,24 @@ export const HitBuilder = () => {
         above will be automatically updated.
       </Typography>
 
-      <Parameters />
+      <Parameters
+        validationMessages={validationMessages}
+        properties={properties}
+        parameters={parameters}
+        updateParameterName={updateParameterName}
+        updateParameterValue={updateParameterValue}
+        removeParameter={removeParameter}
+        addParameter={addParameter}
+      />
     </>
   )
 }
 export default () => {
-  const gapi = useSelector((state: AppState) => state.gapi)
-
-  React.useEffect(() => {
-    if (gapi === undefined) {
-      return
-    }
-    ;(async () => {
-      const api = getAnalyticsApi(gapi)
-      const summaries = (await api.management.accountSummaries.list({})).result
-      const properties: Property[] = []
-      summaries.items?.forEach(account => {
-        const accountName = account.name || ""
-        account.webProperties?.forEach(property => {
-          const propertyName = property.name || ""
-          const propertyId = property.id || ""
-          properties.push({
-            name: propertyName,
-            id: propertyId,
-            group: accountName,
-          })
-        })
-      })
-      console.log({ properties })
-      store.dispatch(actions.setUserProperties(properties))
-    })()
-  }, [gapi])
-
+  const { properties } = hooks.useProperties()
   return (
     <Layout title="Hit Builder">
       <Provider store={store}>
-        <HitBuilder />
+        <HitBuilder properties={properties} />
       </Provider>
     </Layout>
   )

@@ -17,7 +17,7 @@
 import React from "react"
 import actions from "./_actions"
 import { HitStatus, ValidationMessage, State } from "./_types"
-import { useSelector, useDispatch } from "react-redux"
+import { useDispatch } from "react-redux"
 import Warning from "@material-ui/icons/Warning"
 import Error from "@material-ui/icons/Error"
 import Button from "@material-ui/core/Button"
@@ -60,40 +60,31 @@ const useStyles = makeStyles(theme => ({
 
 const ACTION_TIMEOUT = 1500
 
-const HitCard: React.FC = () => {
-  const hitStatus = useSelector<State, HitStatus>(a => a.hitStatus)
+interface HitCardProps {
+  hitPayload: string
+  hitStatus: HitStatus
+  validationMessages: ValidationMessage[]
+  sendHit: () => void
+  validateHit: () => void
+}
+
+const HitCard: React.FC<HitCardProps> = ({
+  validateHit,
+  sendHit,
+  hitPayload,
+  hitStatus,
+  validationMessages,
+}) => {
   const classes = useStyles()
-  const hitPayload = useSelector<State, string>(a => a.hitPayload)
   const [value, setValue] = React.useState(hitPayload)
-  const [editing, setIsEditing] = React.useState(false)
-  const dispatch = useDispatch()
-  const updateHit = React.useCallback(
-    (newHit: string) => {
-      dispatch(actions.updateHit(newHit))
-    },
-    [dispatch]
-  )
 
   // Update the localState of then input when the hitPayload changes.
   React.useEffect(() => {
     setValue(hitPayload)
   }, [hitPayload])
 
-  React.useEffect(() => {
-    // if (editing) {
-    //   $("body").addClass("is-editing")
-    // } else {
-    //   $("body").removeClass("is-editing")
-    // }
-  }, [editing])
-
-  const onFocus = React.useCallback(() => {
-    setIsEditing(true)
-  }, [])
-
   const onBlur = React.useCallback(() => {
-    setIsEditing(false)
-    updateHit(value)
+    // TODO update the hit on Blur, this should use the hit utils
   }, [value])
 
   const onChange = React.useCallback(
@@ -104,7 +95,10 @@ const HitCard: React.FC = () => {
   )
   return (
     <Paper className={classes.hitElement}>
-      <ValidationStatus />
+      <ValidationStatus
+        hitStatus={hitStatus}
+        validationMessages={validationMessages}
+      />
       <section className={classes.httpInfo}>
         <Typography variant="body2" component="span">
           POST /collect HTTP/1.1
@@ -121,22 +115,30 @@ const HitCard: React.FC = () => {
         className={classes.payload}
         value={value}
         onChange={onChange}
-        onFocus={onFocus}
         onBlur={onBlur}
       />
       <div className="HitElement-body">
-        <HitActions />
+        <HitActions
+          hitPayload={hitPayload}
+          hitStatus={hitStatus}
+          validateHit={validateHit}
+          sendHit={sendHit}
+        />
       </div>
     </Paper>
   )
 }
 
-const ValidationStatus: React.FC = () => {
+interface ValidationStatusProps {
+  validationMessages: ValidationMessage[]
+  hitStatus: HitStatus
+}
+
+const ValidationStatus: React.FC<ValidationStatusProps> = ({
+  validationMessages,
+  hitStatus,
+}) => {
   const classes = useStyles()
-  const validationMessages = useSelector<State, ValidationMessage[]>(
-    a => a.validationMessages
-  )
-  const hitStatus = useSelector<State>(a => a.hitStatus)
   switch (hitStatus) {
     case "VALID":
       return (
@@ -193,38 +195,43 @@ const ValidationStatus: React.FC = () => {
   }
 }
 
-const HitActions: React.FC = () => {
-  const hitStatus = useSelector<State, HitStatus>(a => a.hitStatus)
-  const hitPayload = useSelector<State, string>(a => a.hitPayload)
+interface HitActionsProps {
+  hitStatus: HitStatus
+  hitPayload: string
+  validateHit: () => void
+  sendHit: () => void
+}
+
+const HitActions: React.FC<HitActionsProps> = ({
+  hitStatus,
+  hitPayload,
+  validateHit,
+  sendHit,
+}) => {
   const [hitSent, setHitSent] = React.useState<boolean>(false)
   React.useEffect(() => {
     setHitSent(false)
   }, [hitPayload])
 
-  /**
-   * Sends the hit payload to Google Analytics and updates the button state
-   * to indicate the hit was successfully sent. After 1 second the button
-   * gets restored to its original state.
-   */
-  const sendHit = React.useCallback(async () => {
-    await fetch("https://www.google-analytics.com/collect", {
-      method: "POST",
-      body: hitPayload,
-    })
-    setHitSent(true)
-    // gaAll("send", "event", {
-    //   eventCategory: "Hit Builder",
-    //   eventAction: "send",
-    //   eventLabel: "payload",
-    // })
-    // await sleep(ACTION_TIMEOUT)
-    setHitSent(false)
-  }, [hitPayload])
-
-  const dispatch = useDispatch()
-  const validateHit = React.useCallback(() => {
-    dispatch(actions.validateHit)
-  }, [dispatch])
+  // /**
+  //  * Sends the hit payload to Google Analytics and updates the button state
+  //  * to indicate the hit was successfully sent. After 1 second the button
+  //  * gets restored to its original state.
+  //  */
+  // const sendHit = React.useCallback(async () => {
+  //   await fetch("https://www.google-analytics.com/collect", {
+  //     method: "POST",
+  //     body: hitPayload,
+  //   })
+  //   setHitSent(true)
+  //   // gaAll("send", "event", {
+  //   //   eventCategory: "Hit Builder",
+  //   //   eventAction: "send",
+  //   //   eventLabel: "payload",
+  //   // })
+  //   // await sleep(ACTION_TIMEOUT)
+  //   setHitSent(false)
+  // }, [hitPayload])
 
   if (hitStatus != "VALID") {
     const buttonText = (hitStatus == "INVALID" ? "Rev" : "V") + "alidate hit"

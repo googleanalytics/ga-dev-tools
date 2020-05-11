@@ -1,6 +1,5 @@
 import * as React from "react"
 
-import actions from "./_actions"
 import { v4 as uuid } from "uuid"
 import Add from "@material-ui/icons/Add"
 import Button from "@material-ui/core/Button"
@@ -18,8 +17,7 @@ import {
 } from "@material-ui/core"
 import Autocomplete from "@material-ui/lab/Autocomplete"
 import { Delete, Refresh } from "@material-ui/icons"
-import { State, HIT_TYPES, Property } from "./_types"
-import { useDispatch, useSelector } from "react-redux"
+import { HIT_TYPES, Property, Params, ValidationMessage } from "./_types"
 
 const useStyles = makeStyles(theme => ({
   subdued: {
@@ -58,13 +56,27 @@ const useStyles = makeStyles(theme => ({
   },
 }))
 
-const Parameters: React.FC = () => {
-  const classes = useStyles()
-  const { validationMessages, params, properties } = useSelector<State, State>(
-    a => a
-  )
-  const dispatch = useDispatch()
+interface ParametersProps {
+  updateParameterName: (id: number, newName: string) => void
+  updateParameterValue: (id: number, newValue: any) => void
+  removeParameter: (id: number) => void
+  addParameter: () => void
+  parameters: Params
+  properties: Property[]
+  validationMessages: ValidationMessage[]
+}
 
+const Parameters: React.FC<ParametersProps> = ({
+  updateParameterName,
+  updateParameterValue,
+  removeParameter,
+  addParameter,
+  parameters,
+  properties,
+  validationMessages,
+}) => {
+  const classes = useStyles()
+  const [_v, t, tid, cid, ...otherParams] = parameters
   const getValidationMessageForParam = React.useCallback(
     (paramName: string) => {
       const message = validationMessages.find(m => m.param === paramName)
@@ -73,59 +85,26 @@ const Parameters: React.FC = () => {
     [validationMessages]
   )
 
-  const addParameter = React.useCallback(() => {
-    setNewParamNeedsFocus(true)
-    dispatch(actions.addParam)
-  }, [dispatch])
-
-  const removeParameter = React.useCallback(
-    (id: number) => {
-      dispatch(actions.removeParam(id))
-    },
-    [dispatch]
-  )
-
-  const updateParameterName = React.useCallback(
-    (id: number, newName: string) => {
-      dispatch(actions.editParamName(id, newName))
-    },
-    [dispatch]
-  )
-
-  const updateParameterValue = React.useCallback(
-    (id: number, newValue: string) => {
-      dispatch(actions.editParamValue(id, newValue))
-    },
-    []
-  )
-
-  const [v, t, tid, cid, ...otherParams] = params
-
   const setHitType = React.useCallback(
     hitType => {
-      dispatch(actions.editParamValue(t.id, hitType))
+      updateParameterValue(t.id, hitType)
     },
-    [t.id, dispatch]
+    [t.id]
   )
 
   const setCid = React.useCallback(
     newId => {
-      dispatch(actions.editParamValue(cid.id, newId))
+      updateParameterValue(cid.id, newId)
     },
-    [cid.value, dispatch]
+    [cid.value]
   )
 
   const setTid = React.useCallback(
     newTid => {
-      dispatch(actions.editParamValue(tid.id, newTid))
+      updateParameterValue(tid.id, newTid)
     },
-    [tid.id, dispatch]
+    [tid.id]
   )
-
-  React.useEffect(() => {
-    dispatch(actions.updateHitPayload)
-  }, [t, v])
-
   const [localPropertyInput, setLocalPropertyInput] = React.useState("")
 
   React.useEffect(() => {

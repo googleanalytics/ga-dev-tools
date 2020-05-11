@@ -120,7 +120,19 @@ export function convertParamsToHit(params: Param[]): string {
 }
 
 interface ValidationResult {
-  response: any
+  response: {
+    parserMessage: any[]
+    hitParsingResult: {
+      valid: boolean
+      parserMessage: {
+        messageType: any
+        description: string
+        messageCode: any
+        parameter: string
+      }[]
+      hit: string
+    }[]
+  }
   hit: string
 }
 
@@ -129,15 +141,22 @@ interface ValidationResult {
  * and returns a promise that will be fulfilled with the response.
  * @param hit A Measurement Protocol hit payload.
  */
-export function getHitValidationResult(hit: string): Promise<ValidationResult> {
-  return new Promise((resolve, reject) => {
-    $.ajax({
-      method: "POST",
-      url: "https://www.google-analytics.com/debug/collect",
-      data: hit,
-      dataType: "json",
-      success: response => resolve({ response, hit }),
-      error: reject,
-    })
+export async function getHitValidationResult(
+  hit: string
+): Promise<ValidationResult> {
+  await new Promise(resolve => {
+    setTimeout(() => {
+      resolve()
+    }, 1000)
   })
+  const apiResponse = await fetch(
+    "https://www.google-analytics.com/debug/collect",
+    {
+      method: "POST",
+      body: hit,
+    }
+  )
+  const asJson = await apiResponse.json()
+  console.log({ asJson })
+  return { response: asJson, hit }
 }
