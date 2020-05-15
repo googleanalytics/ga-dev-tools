@@ -153,8 +153,30 @@ describe("HitBuilder", () => {
     })
 
     describe("when adding a parameter", () => {
-      test("updates hit payload when changing parameter name", () => {})
-      test("updates hit payload when changing parameter value", () => {})
+      test("updates hit payload when changing parameter name & value", async () => {
+        const { wrapped } = withProviders(
+          <HitBuilder properties={properties} />
+        )
+        const {
+          findByLabelText,
+          findByText,
+          findAllByLabelText,
+        } = renderer.render(wrapped)
+        const { hitPayload } = await getInputs(findByLabelText)
+        const addParameter = await findByText("Add parameter")
+
+        await renderer.act(async () => {
+          userEvent.click(addParameter)
+
+          const newParameterName = await findByLabelText("Parameter name")
+          await userEvent.type(newParameterName, "paramName")
+
+          const newParameterValue = await findByLabelText("Value for paramName")
+          await userEvent.type(newParameterValue, "paramValue")
+        })
+
+        expect(hitPayload.value).toContain("paramName=paramValue")
+      })
       test("updates hit payload when removing parameter", () => {})
     })
 
