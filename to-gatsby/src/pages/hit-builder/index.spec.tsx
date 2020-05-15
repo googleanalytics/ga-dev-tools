@@ -14,12 +14,23 @@
 
 import * as React from "react"
 import * as renderer from "@testing-library/react"
-import { withProviders, testGapi } from "../../test-utils"
+import { withProviders } from "../../test-utils"
+import userEvent from "@testing-library/user-event"
 import "@testing-library/jest-dom"
 
 import { HitBuilder } from "./index"
 import { Property } from "./_types"
-import { FindByText } from "@testing-library/react"
+
+const getParameterInputs = async (
+  findByLabelText: (label: string) => Promise<HTMLElement>
+) => {
+  const v = await findByLabelText("v")
+  const t = await findByLabelText("t")
+  const tid = await findByLabelText("tid")
+  const cid = await findByLabelText("cid")
+
+  return { v, t, tid, cid }
+}
 
 describe("HitBuilder", () => {
   const properties: Property[] = []
@@ -45,17 +56,6 @@ describe("HitBuilder", () => {
         expect(initialPayload).toHaveValue("v=1&t=pageview")
       })
 
-      const getParameterInputs = async (
-        findByLabelText: (label: string) => Promise<HTMLElement>
-      ) => {
-        const v = await findByLabelText("v")
-        const t = await findByLabelText("t")
-        const tid = await findByLabelText("tid")
-        const cid = await findByLabelText("cid")
-
-        return { v, t, tid, cid }
-      }
-
       test("with query parameters for a non-default t parameter", async () => {
         const queryParams = "v=1&t=screenview&tid=UA-fake&cid=abc&an=def&cd=ghi"
 
@@ -63,9 +63,7 @@ describe("HitBuilder", () => {
           <HitBuilder properties={properties} />,
           { path: `/hit-builder?${queryParams}` }
         )
-        const { findByLabelText, debug, findAllByLabelText } = renderer.render(
-          wrapped
-        )
+        const { findByLabelText, findAllByLabelText } = renderer.render(wrapped)
 
         const initialPayload = await findByLabelText("Hit payload")
         expect(initialPayload).toHaveValue(queryParams)
@@ -96,6 +94,22 @@ describe("HitBuilder", () => {
         expect(history.location.search.substring(1)).not.toEqual(queryParams)
         expect(history.location.search).toEqual("")
       })
+    })
+
+    test("adding a parameter gives its name label focus", async () => {
+      const { wrapped } = withProviders(<HitBuilder properties={properties} />)
+      const { findAllByLabelText, findByText } = renderer.render(wrapped)
+
+      const addParameter = await findByText("Add parameter")
+
+      await renderer.act(async () => {
+        userEvent.click(addParameter)
+      })
+
+      // Check that new field is focused
+      const parameterLabels = await findAllByLabelText("Parameter name")
+      expect(parameterLabels).toHaveLength(1)
+      expect(parameterLabels[0]).toHaveFocus()
     })
 
     describe("updates the hit payload", () => {

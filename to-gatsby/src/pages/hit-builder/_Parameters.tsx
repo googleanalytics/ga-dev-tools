@@ -76,7 +76,9 @@ const Parameters: React.FC<ParametersProps> = ({
   validationMessages,
 }) => {
   const classes = useStyles()
+  const newParam = React.useRef(null)
   const [v, t, tid, cid, ...otherParams] = parameters
+
   const getValidationMessageForParam = React.useCallback(
     (paramName: string) => {
       const message = validationMessages.find(m => m.param === paramName)
@@ -214,9 +216,12 @@ const Parameters: React.FC<ParametersProps> = ({
       />
 
       {otherParams.map((param, idx) => {
+        const isLast = idx === otherParams.length - 1
         return (
           <div className={classes.addedParam} key={param.id}>
             <TextField
+              autoFocus={isLast}
+              ref={newParam}
               id={`${param.name}-label`}
               label="Parameter name"
               value={param.name}
@@ -253,7 +258,13 @@ const Parameters: React.FC<ParametersProps> = ({
         )
       })}
 
-      <Button startIcon={<Add />} onClick={addParameter} variant="outlined">
+      <Button
+        startIcon={<Add />}
+        onClick={() => {
+          addParameter()
+        }}
+        variant="outlined"
+      >
         Add parameter
       </Button>
     </section>
