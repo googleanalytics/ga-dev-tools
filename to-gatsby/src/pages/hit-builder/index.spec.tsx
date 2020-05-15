@@ -18,34 +18,109 @@ import { withProviders, testGapi } from "../../test-utils"
 import "@testing-library/jest-dom"
 
 import { HitBuilder } from "./index"
+import { Property } from "./_types"
+import { FindByText } from "@testing-library/react"
 
 describe("HitBuilder", () => {
+  const properties: Property[] = []
+
+  test("can render page without error", () => {
+    const { wrapped } = withProviders(<HitBuilder properties={properties} />)
+    renderer.render(wrapped)
+  })
+
   // Does right thing when unauthed
 
-  // Does right thing when authed (happy path render)
+  describe("When authorized", () => {
+    // Does right thing when authed (happy path render)
 
-  describe("updates the hit payload", () => {
-    test("when t parameter is changed", () => {})
-    test("when tid parameter is changed", () => {})
-    test("when tcid parameter is changed", () => {})
-    test("after clicking 'generate uuid'", () => {})
+    describe("Initial parameter values are right", () => {
+      test("with no query parameters", async () => {
+        const { wrapped } = withProviders(
+          <HitBuilder properties={properties} />
+        )
+        const { findByLabelText } = renderer.render(wrapped)
+
+        const initialPayload = await findByLabelText("Hit payload")
+        expect(initialPayload).toHaveValue("v=1&t=pageview")
+      })
+
+      const getParameterInputs = async (
+        findByLabelText: (label: string) => Promise<HTMLElement>
+      ) => {
+        const v = await findByLabelText("v")
+        const t = await findByLabelText("t")
+        const tid = await findByLabelText("tid")
+        const cid = await findByLabelText("cid")
+
+        return { v, t, tid, cid }
+      }
+
+      test("with query parameters for a non-default t parameter", async () => {
+        const queryParams = "v=1&t=screenview&tid=UA-fake&cid=abc&an=def&cd=ghi"
+
+        const { wrapped, history } = withProviders(
+          <HitBuilder properties={properties} />,
+          { path: `/hit-builder?${queryParams}` }
+        )
+        const { findByLabelText, debug, findAllByLabelText } = renderer.render(
+          wrapped
+        )
+
+        const initialPayload = await findByLabelText("Hit payload")
+        expect(initialPayload).toHaveValue(queryParams)
+
+        const { v, t, tid, cid } = await getParameterInputs(findByLabelText)
+
+        // TODO - The select expects seem weird. See if there's a better way to
+        // expect the value for a select.
+        expect(v).toContainHTML("1")
+        expect(t).toContainHTML("screenview")
+        expect(tid).toHaveValue("UA-fake")
+        expect(cid).toHaveValue("abc")
+
+        const parameterLabels = await findAllByLabelText("Parameter name")
+        expect(parameterLabels).toHaveLength(2)
+
+        // an parameter
+        expect(parameterLabels[0]).toHaveValue("an")
+        const def = await findByLabelText("Value for an")
+        expect(def).toHaveValue("def")
+
+        // cd parameter
+        expect(parameterLabels[1]).toHaveValue("cd")
+        const ghi = await findByLabelText("Value for cd")
+        expect(ghi).toHaveValue("ghi")
+
+        // location.search should be reset
+        expect(history.location.search.substring(1)).not.toEqual(queryParams)
+        expect(history.location.search).toEqual("")
+      })
+    })
+
+    describe("updates the hit payload", () => {
+      test("when t parameter is changed", () => {})
+      test("when tid parameter is changed", () => {})
+      test("when tcid parameter is changed", () => {})
+      test("after clicking 'generate uuid'", () => {})
+    })
+
+    describe("when adding a parameter", () => {
+      test("updates hit payload when changing parameter name", () => {})
+      test("updates hit payload when changing parameter value", () => {})
+      test("updates hit payload when removing parameter", () => {})
+    })
+
+    describe("Validate hit", () => {
+      // TODO - I can't remember what this is supposed to do, exactly, so figure
+      // that out before merging this in.
+      // Probably makes sense to test against the title of the banner.
+      test("when valid updates the ui accordingly", () => {})
+      test("when invalid indicates which parameter is wrong", () => {})
+    })
+
+    // Changing the t parameter updates the hit payload
+
+    // Changing the tid parameter updates the hit payload
   })
-
-  describe("when adding a parameter", () => {
-    test("updates hit payload when changing parameter name", () => {})
-    test("updates hit payload when changing parameter value", () => {})
-    test("updates hit payload when removing parameter", () => {})
-  })
-
-  describe("Validate hit", () => {
-    // TODO - I can't remember what this is supposed to do, exactly, so figure
-    // that out before merging this in.
-    // Probably makes sense to test against the title of the banner.
-    test("when valid updates the ui accordingly", () => {})
-    test("when invalid indicates which parameter is wrong", () => {})
-  })
-
-  // Changing the t parameter updates the hit payload
-
-  // Changing the tid parameter updates the hit payload
 })
