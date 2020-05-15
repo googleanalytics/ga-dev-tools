@@ -124,21 +124,22 @@ const Parameters: React.FC<ParametersProps> = ({
         </Select>
       </FormControl>
 
-      {/* TODO - make this an Autocomplete with freeSolo*/}
-      <FormControl>
-        <InputLabel id="t-label">t</InputLabel>
-        <Select
-          labelId="t-label"
-          value={t.value}
-          onChange={e => setHitType(e.target.value as string)}
-        >
-          {HIT_TYPES.map(hitType => (
-            <MenuItem key={hitType} value={hitType}>
-              {hitType}
-            </MenuItem>
-          ))}
-        </Select>
-      </FormControl>
+      <Autocomplete<typeof HIT_TYPES[0]>
+        id="t"
+        blurOnSelect
+        openOnFocus
+        autoHighlight
+        autoSelect
+        multiple={false}
+        options={HIT_TYPES}
+        getOptionLabel={a => a}
+        renderOption={e => e}
+        value={t.value as string}
+        renderInput={params => <TextField {...params} label="t" />}
+        onChange={(_, value) => {
+          setHitType(value)
+        }}
+      />
 
       <Autocomplete<Property>
         id="tid"
@@ -206,7 +207,10 @@ const Parameters: React.FC<ParametersProps> = ({
           endAdornment: (
             <InputAdornment position="end">
               <Tooltip title="Randomly generate UUID" placement="right">
-                <IconButton onClick={() => setCid(uuid())}>
+                <IconButton
+                  data-testid="generate-uuid"
+                  onClick={() => setCid(uuid())}
+                >
                   <Refresh />
                 </IconButton>
               </Tooltip>

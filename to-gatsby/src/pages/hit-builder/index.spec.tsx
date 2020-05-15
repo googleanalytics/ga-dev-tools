@@ -21,15 +21,16 @@ import "@testing-library/jest-dom"
 import { HitBuilder } from "./index"
 import { Property } from "./_types"
 
-const getParameterInputs = async (
+const getInputs = async (
   findByLabelText: (label: string) => Promise<HTMLElement>
 ) => {
   const v = await findByLabelText("v")
   const t = await findByLabelText("t")
   const tid = await findByLabelText("tid")
-  const cid = await findByLabelText("cid")
+  const cid = (await findByLabelText("cid")) as HTMLInputElement
+  const hitPayload = (await findByLabelText("Hit payload")) as HTMLInputElement
 
-  return { v, t, tid, cid }
+  return { v, t, tid, cid, hitPayload }
 }
 
 describe("HitBuilder", () => {
@@ -52,8 +53,8 @@ describe("HitBuilder", () => {
         )
         const { findByLabelText } = renderer.render(wrapped)
 
-        const initialPayload = await findByLabelText("Hit payload")
-        expect(initialPayload).toHaveValue("v=1&t=pageview")
+        const { hitPayload } = await getInputs(findByLabelText)
+        expect(hitPayload).toHaveValue("v=1&t=pageview")
       })
 
       test("with query parameters for a non-default t parameter", async () => {
@@ -65,15 +66,13 @@ describe("HitBuilder", () => {
         )
         const { findByLabelText, findAllByLabelText } = renderer.render(wrapped)
 
-        const initialPayload = await findByLabelText("Hit payload")
-        expect(initialPayload).toHaveValue(queryParams)
-
-        const { v, t, tid, cid } = await getParameterInputs(findByLabelText)
+        const { v, t, tid, cid, hitPayload } = await getInputs(findByLabelText)
+        expect(hitPayload).toHaveValue(queryParams)
 
         // TODO - The select expects seem weird. See if there's a better way to
         // expect the value for a select.
         expect(v).toContainHTML("1")
-        expect(t).toContainHTML("screenview")
+        expect(t).toHaveValue("screenview")
         expect(tid).toHaveValue("UA-fake")
         expect(cid).toHaveValue("abc")
 
@@ -113,10 +112,44 @@ describe("HitBuilder", () => {
     })
 
     describe("updates the hit payload", () => {
-      test("when t parameter is changed", () => {})
-      test("when tid parameter is changed", () => {})
-      test("when tcid parameter is changed", () => {})
-      test("after clicking 'generate uuid'", () => {})
+      test("when t parameter is changed", async () => {
+        // TODO - figure how to write this test. I can't get the autocomplete to
+        // work.
+      })
+      test("when tid parameter is changed", () => {
+        // TODO - figure how to write this test. I can't get the autocomplete to
+        // work.
+      })
+      test("when cid parameter is changed", async () => {
+        const { wrapped } = withProviders(
+          <HitBuilder properties={properties} />
+        )
+        const { findByLabelText } = renderer.render(wrapped)
+        const { tid, hitPayload } = await getInputs(findByLabelText)
+
+        await renderer.act(async () => {
+          await userEvent.type(tid, "tid123")
+        })
+
+        expect(tid).toHaveValue("tid123")
+        expect(hitPayload.value).toContain("tid123")
+      })
+
+      test("after clicking 'generate uuid'", async () => {
+        const { wrapped } = withProviders(
+          <HitBuilder properties={properties} />
+        )
+        const { findByLabelText, findByTestId } = renderer.render(wrapped)
+        const { cid, hitPayload } = await getInputs(findByLabelText)
+
+        await renderer.act(async () => {
+          const generateUuid = await findByTestId("generate-uuid")
+          userEvent.click(generateUuid)
+        })
+
+        expect(cid.value).not.toEqual("")
+        expect(hitPayload.value).toContain(cid.value)
+      })
     })
 
     describe("when adding a parameter", () => {
