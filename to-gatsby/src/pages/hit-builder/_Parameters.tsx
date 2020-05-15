@@ -247,6 +247,7 @@ const Parameters: React.FC<ParametersProps> = ({
                   <InputAdornment position="end">
                     <Tooltip title="Remove parameter" placement="right">
                       <IconButton
+                        data-testid={`remove-${param.name}`}
                         onClick={() => {
                           removeParameter(param.id)
                         }}

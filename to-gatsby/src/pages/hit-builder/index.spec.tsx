@@ -173,7 +173,31 @@ describe("HitBuilder", () => {
 
         expect(hitPayload.value).toContain("paramName=paramValue")
       })
-      test("updates hit payload when removing parameter", () => {})
+      test("updates hit payload when removing parameter", async () => {
+        const { wrapped } = withProviders(
+          <HitBuilder properties={properties} />
+        )
+        const { findByLabelText, findByText, findByTestId } = renderer.render(
+          wrapped
+        )
+        const { hitPayload } = await getInputs(findByLabelText)
+        const addParameter = await findByText("Add parameter")
+
+        await renderer.act(async () => {
+          userEvent.click(addParameter)
+
+          const newParameterName = await findByLabelText("Parameter name")
+          await userEvent.type(newParameterName, "paramName")
+
+          const newParameterValue = await findByLabelText("Value for paramName")
+          await userEvent.type(newParameterValue, "paramValue")
+
+          const removeParameter = await findByTestId("remove-paramName")
+          userEvent.click(removeParameter)
+        })
+
+        expect(hitPayload.value).not.toContain("paramName=paramValue")
+      })
     })
 
     describe("Validate hit", () => {
@@ -183,9 +207,5 @@ describe("HitBuilder", () => {
       test("when valid updates the ui accordingly", () => {})
       test("when invalid indicates which parameter is wrong", () => {})
     })
-
-    // Changing the t parameter updates the hit payload
-
-    // Changing the tid parameter updates the hit payload
   })
 })
