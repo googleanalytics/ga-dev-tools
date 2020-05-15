@@ -157,11 +157,7 @@ describe("HitBuilder", () => {
         const { wrapped } = withProviders(
           <HitBuilder properties={properties} />
         )
-        const {
-          findByLabelText,
-          findByText,
-          findAllByLabelText,
-        } = renderer.render(wrapped)
+        const { findByLabelText, findByText } = renderer.render(wrapped)
         const { hitPayload } = await getInputs(findByLabelText)
         const addParameter = await findByText("Add parameter")
 
