@@ -18,6 +18,8 @@ import { Params, Param, ValidationMessage, HitStatus, Property } from "./_types"
 import * as hitUtils from "./_hit"
 import { useSelector } from "react-redux"
 import { getAnalyticsApi } from "../../api"
+import { useLocation, useNavigate } from "@reach/router"
+import { ListItemSecondaryAction } from "@material-ui/core"
 
 const formatMessage = (message: {
   parameter: any
@@ -57,19 +59,12 @@ export const useValidationServer: UseValidationServer = parameters => {
     try {
       const hit = hitUtils.convertParamsToHit(parameters)
       hitUtils.getHitValidationResult(hit).then(validationResult => {
-        const result = validationResult.response.hitParsingResult.find(
-          a => a.valid === false
+        const result = validationResult.response.hitParsingResult[0]
+        const validationMessages = result.parserMessage.filter(
+          // TODO - I might want to do something different with ERRORS
+          // versus INFOs. Check what the current one does.
+          message => message.messageType === "ERROR"
         )
-        const validationMessages =
-          result === undefined
-            ? []
-            : result.parserMessage.filter(
-                // TODO - I might want to do something different with ERRORS
-                // versus INFOs. Check what the current one does.
-                message => message.messageType === "ERROR"
-              )
-        // TODO - make sure validationMessages defaults to an empty array when
-        // nothing is wrong.
         setValidationMessages(validationMessages.map(formatMessage))
         if (result.valid) {
           setHitStatus(HitStatus.Valid)
@@ -129,18 +124,23 @@ type UseParameters = () => {
   removeParameter: (id: number) => void
   parameters: Params
 }
+
+let id = 0
+const nextId = () => {
+  id++
+  return id
+}
+
 // This hook encapsulates the logic needed for adding, removing & updating parameters.
 export const useParameters: UseParameters = () => {
-  const [parameters, setParameters] = React.useState<Params>(() => {
-    return hitUtils.convertHitToParams(hitUtils.getInitialHitAndUpdateUrl())
-  })
-  const [id, setId] = React.useState(0)
+  const location = useLocation()
+  const navigate = useNavigate()
 
-  const nextId = React.useCallback(() => {
-    const next = id + 1
-    setId(next)
-    return next
-  }, [id, setId])
+  const [parameters, setParameters] = React.useState<Params>(() => {
+    const initial = hitUtils.getInitialHitAndUpdateUrl(location, navigate)
+
+    return hitUtils.convertHitToParams(nextId, initial)
+  })
 
   const addParameter = React.useCallback(() => {
     const id = nextId()

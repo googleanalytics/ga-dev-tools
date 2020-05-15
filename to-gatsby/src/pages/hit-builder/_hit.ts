@@ -14,7 +14,6 @@
 
 /* global $ */
 
-import map from "lodash/map"
 import querystring from "querystring"
 import {
   Param,
@@ -27,29 +26,29 @@ import {
   ParamOptional,
   HIT_TYPES,
 } from "./_types"
+import { WindowLocation, NavigateFn } from "@reach/router"
 
 const DEFAULT_HIT = "v=1&t=pageview"
 
 let id = 1
 
 /**
- * Gets the initial hit from the URL if present. If a hit is found in the URL
- * it is captured and immediately stripped as to have two sources of state.
- * If no hit is found in the URL the default hit is used.
+ * Gets the initial hit from the URL if present. If no hit is found in the URL
+ * the default hit is used.
  * @return The default hit.
  */
-export function getInitialHitAndUpdateUrl(): string {
-  const query = location.search.slice(1)
+export function getInitialHitAndUpdateUrl(
+  l: WindowLocation,
+  navigate: NavigateFn
+): string {
+  const query = l.search.slice(1)
 
-  if (query) {
-    if (history && history.replaceState) {
-      // TODO(mjhamrick) - figure out if this needs to be added back in.
-      //history.replaceState(history.state, document.title, location.pathname);
-    }
-    return query
-  } else {
+  if (query === "") {
     return DEFAULT_HIT
   }
+  // Remove the query params after initial load.
+  navigate(location.pathname, { replace: true })
+  return query
 }
 
 /**
@@ -57,7 +56,10 @@ export function getInitialHitAndUpdateUrl(): string {
  * where the required params are always first and in the correct order.
  * @param hit A query string or hit payload.
  */
-export function convertHitToParams(hit: string = ""): Params {
+export function convertHitToParams(
+  nextId: () => number,
+  hit: string = ""
+): Params {
   // If the hit contains a "?", remove it and all characters before it.
   const searchIndex = hit.indexOf("?")
   if (searchIndex > -1) hit = hit.slice(searchIndex + 1)
@@ -66,25 +68,25 @@ export function convertHitToParams(hit: string = ""): Params {
 
   // Create required params first, regardless of order in the hit.
   const v: ParamV = {
-    id: id++,
+    id: nextId(),
     name: RequiredParams.V,
     value: query[RequiredParams.V] || "1",
     required: true,
   }
   const t: ParamT = {
-    id: id++,
+    id: nextId(),
     name: RequiredParams.T,
     value: query[RequiredParams.T] || HIT_TYPES[0],
     required: true,
   }
   const tid: ParamTId = {
-    id: id++,
+    id: nextId(),
     name: RequiredParams.T_Id,
     value: query[RequiredParams.T_Id] || "",
     required: true,
   }
   const cid: ParamCId = {
-    id: id++,
+    id: nextId(),
     name: RequiredParams.C_Id,
     value: query[RequiredParams.C_Id] || "",
     required: true,
@@ -95,12 +97,15 @@ export function convertHitToParams(hit: string = ""): Params {
   delete query[RequiredParams.C_Id]
 
   // Create optional params after required params.
-  const others: ParamOptional[] = map(query, (value, name) => ({
-    name,
-    value,
-    id: id++,
-    isOptional: true,
-  }))
+  const others: ParamOptional[] = Object.entries(query).map(([name, v]) => {
+    const value = v === undefined ? "" : v
+    return {
+      name,
+      value,
+      id: nextId(),
+      isOptional: true,
+    }
+  })
   const params: Params = [v, t, tid, cid, ...others]
   return params
 }
@@ -112,8 +117,10 @@ export function convertHitToParams(hit: string = ""): Params {
 export function convertParamsToHit(params: Param[]): string {
   const query: { [name: string]: any } = {}
   for (const { name, value } of params) {
-    // `name` must be present, `value` can be an empty string.
-    if (name && value != null) query[name] = value
+    if (value === "") {
+      continue
+    }
+    query[name] = value
   }
 
   return querystring.stringify(query)
@@ -144,11 +151,6 @@ interface ValidationResult {
 export async function getHitValidationResult(
   hit: string
 ): Promise<ValidationResult> {
-  await new Promise(resolve => {
-    setTimeout(() => {
-      resolve()
-    }, 1000)
-  })
   const apiResponse = await fetch(
     "https://www.google-analytics.com/debug/collect",
     {
@@ -157,6 +159,5 @@ export async function getHitValidationResult(
     }
   )
   const asJson = await apiResponse.json()
-  console.log({ asJson })
   return { response: asJson, hit }
 }

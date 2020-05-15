@@ -13,9 +13,7 @@
 // limitations under the License.
 
 import * as React from "react"
-import { Provider } from "react-redux"
 
-import store from "./_store"
 import Layout from "../../components/layout"
 import Parameters from "./_Parameters"
 import HitCard from "./_HitCard"
@@ -91,9 +89,7 @@ export default () => {
   const { properties } = hooks.useProperties()
   return (
     <Layout title="Hit Builder">
-      <Provider store={store}>
-        <HitBuilder properties={properties} />
-      </Provider>
+      <HitBuilder properties={properties} />
     </Layout>
   )
 }

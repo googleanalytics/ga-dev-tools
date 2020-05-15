@@ -1,4 +1,4 @@
-// Copyright 2016 Google Inc. All rights reserved.
+// Copyright 2020 Google Inc. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,12 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-/* global $ */
-
 import React from "react"
-import actions from "./_actions"
-import { HitStatus, ValidationMessage, State } from "./_types"
-import { useDispatch } from "react-redux"
+import { HitStatus, ValidationMessage } from "./_types"
 import Warning from "@material-ui/icons/Warning"
 import Error from "@material-ui/icons/Error"
 import Button from "@material-ui/core/Button"
@@ -25,8 +21,12 @@ import TextField from "@material-ui/core/TextField"
 import CopyButton from "../../components/CopyButton"
 import Check from "@material-ui/icons/Check"
 import Send from "@material-ui/icons/Send"
+import Cached from "@material-ui/icons/Cached"
 import { Paper, makeStyles, Typography } from "@material-ui/core"
 import classnames from "classnames"
+import green from "@material-ui/core/colors/green"
+import yellow from "@material-ui/core/colors/yellow"
+import red from "@material-ui/core/colors/red"
 
 const useStyles = makeStyles(theme => ({
   hitElement: {
@@ -36,16 +36,31 @@ const useStyles = makeStyles(theme => ({
   },
   validationStatus: {
     margin: theme.spacing(-3, -3, 1, -3),
-    padding: theme.spacing(0, 3, 0, 3),
+    padding: theme.spacing(0, 3, 3, 3),
+    "& > span": {
+      "& > svg": {
+        fontSize: theme.typography.h1.fontSize,
+      },
+      "& > h3": {
+        marginLeft: theme.spacing(1),
+        fontSize: theme.typography.h2.fontSize,
+      },
+      display: "flex",
+      alignItems: "center",
+      marginTop: theme.spacing(3),
+    },
   },
-  validationHeader: {
-    display: "flex",
-    alignItems: "center",
+  [HitStatus.Invalid]: {
+    backgroundColor: red[100],
+    color: red[900],
   },
-  [HitStatus.Valid]: {},
+  [HitStatus.Valid]: {
+    backgroundColor: green[100],
+    color: green[900],
+  },
   [HitStatus.Unvalidated]: {
-    backgroundColor: theme.palette.warning.main,
-    color: theme.palette.getContrastText(theme.palette.warning.main),
+    backgroundColor: yellow[100],
+    color: yellow[900],
   },
   httpInfo: {
     margin: theme.spacing(1, 0, 2, 0),
@@ -112,6 +127,7 @@ const HitCard: React.FC<HitCardProps> = ({
         multiline
         variant="outlined"
         label="Hit payload"
+        id="hit-payload"
         className={classes.payload}
         value={value}
         onChange={onChange}
@@ -139,60 +155,71 @@ const ValidationStatus: React.FC<ValidationStatusProps> = ({
   hitStatus,
 }) => {
   const classes = useStyles()
+
+  let headerIcon
+  let hitHeading
+  let hitContent
   switch (hitStatus) {
-    case "VALID":
-      return (
-        <header className="HitElement-status">
-          <span className="HitElement-statusIcon">
-            <Check />
-          </span>
-          <div className="HitElement-statusBody">
-            <h1 className="HitElement-statusHeading">Hit is valid!</h1>
-            <p className="HitElement-statusMessage">
-              Use the controls below to copy the hit or share it with coworkers.
-              <br />
-              You can also send the hit to Google Analytics and watch it in
-              action in the Real Time view.
-            </p>
-          </div>
-        </header>
-      )
-    case "INVALID":
-      return (
-        <header className="HitElement-status">
-          <span className="HitElement-statusIcon">
-            <Error />
-          </span>
-          <div className="HitElement-statusBody">
-            <h1 className="HitElement-statusHeading">Hit is invalid!</h1>
-            <ul className="HitElement-statusMessage">
-              {validationMessages.map(message => (
-                <li key={message.param}>{message.description}</li>
-              ))}
-            </ul>
-          </div>
-        </header>
-      )
-    default:
-      return (
-        <Paper
-          square
-          className={classnames(classes[hitStatus], classes.validationStatus)}
-        >
-          <Typography variant="h2" className={classes.validationHeader}>
-            <Warning />
-            This hit has not been validated
+    case HitStatus.Valid: {
+      headerIcon = <Check />
+      hitHeading = <Typography variant="h3">Hit is valid!</Typography>
+      hitContent = (
+        <>
+          <Typography variant="body1">
+            Use the controls below to copy the hit or share it with coworkers.
           </Typography>
           <Typography>
+            You can also send the hit to Google Analytics and watch it in action
+            in the Real Time view.
+          </Typography>
+        </>
+      )
+      break
+    }
+    case HitStatus.Invalid: {
+      headerIcon = <Error />
+      hitHeading = <Typography variant="h3">Hit is invalid!</Typography>
+      hitContent = validationMessages.map(message => (
+        <li key={message.param}>{message.description}</li>
+      ))
+      break
+    }
+    case HitStatus.Validating: {
+      headerIcon = <Cached />
+      hitHeading = <Typography variant="h3">Validiting hit...</Typography>
+      break
+    }
+    case HitStatus.Unvalidated: {
+      headerIcon = <Warning />
+      hitHeading = (
+        <Typography variant="h3">This hit has not been validated.</Typography>
+      )
+      hitContent = (
+        <>
+          <Typography variant="body1">
             You can update the hit using any of the controls below.
           </Typography>
-          <Typography>
+          <Typography variant="body1">
             When you're done, click the "Validate hit" button to make sure
             everything's OK.
           </Typography>
-        </Paper>
+        </>
       )
+      break
+    }
   }
+  return (
+    <Paper
+      square
+      className={classnames(classes[hitStatus], classes.validationStatus)}
+    >
+      <Typography component="span">
+        {headerIcon}
+        {hitHeading}
+      </Typography>
+      {hitContent}
+    </Paper>
+  )
 }
 
 interface HitActionsProps {

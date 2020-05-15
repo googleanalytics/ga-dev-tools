@@ -76,7 +76,7 @@ const Parameters: React.FC<ParametersProps> = ({
   validationMessages,
 }) => {
   const classes = useStyles()
-  const [_v, t, tid, cid, ...otherParams] = parameters
+  const [v, t, tid, cid, ...otherParams] = parameters
   const getValidationMessageForParam = React.useCallback(
     (paramName: string) => {
       const message = validationMessages.find(m => m.param === paramName)
@@ -116,16 +116,17 @@ const Parameters: React.FC<ParametersProps> = ({
   return (
     <section className={classes.inputs}>
       <FormControl>
-        <InputLabel>v</InputLabel>
-        <Select value={1}>
+        <InputLabel id="v-label">v</InputLabel>
+        <Select labelId="v-label" value={v.value}>
           <MenuItem value={1}>1</MenuItem>
         </Select>
       </FormControl>
 
       {/* TODO - make this an Autocomplete with freeSolo*/}
       <FormControl>
-        <InputLabel>t</InputLabel>
+        <InputLabel id="t-label">t</InputLabel>
         <Select
+          labelId="t-label"
           value={t.value}
           onChange={e => setHitType(e.target.value as string)}
         >
@@ -138,6 +139,7 @@ const Parameters: React.FC<ParametersProps> = ({
       </FormControl>
 
       <Autocomplete<Property>
+        id="tid"
         blurOnSelect
         freeSolo
         openOnFocus
@@ -194,6 +196,7 @@ const Parameters: React.FC<ParametersProps> = ({
       />
 
       <TextField
+        id="cid"
         value={cid.value || ""}
         onChange={e => setCid(e.target.value)}
         label="cid"
@@ -210,20 +213,23 @@ const Parameters: React.FC<ParametersProps> = ({
         }}
       />
 
-      {otherParams.map(param => {
-        const isLast = param === otherParams[otherParams.length - 1]
+      {otherParams.map((param, idx) => {
         return (
           <div className={classes.addedParam} key={param.id}>
             <TextField
+              id={`${param.name}-label`}
               label="Parameter name"
+              value={param.name}
               onChange={e => {
                 updateParameterName(param.id, e.target.value)
               }}
             />
             <TextField
+              id={`${param.name}-value`}
               label={
                 (param.name && `Value for ${param.name}`) || "Parameter value"
               }
+              value={param.value}
               onChange={e => {
                 updateParameterValue(param.id, e.target.value)
               }}
