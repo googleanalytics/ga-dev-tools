@@ -67,15 +67,13 @@ const SpreadsheetAddOn = () => {
     With this tool, you can:
     </Typography>
 
-    <Typography variant="body1">
-      <ul>
+    <Typography variant="body1" component="ul">
         <li>Query data from multiple views.</li>
         <li>Create custom calculations from your report data.</li>
         <li>Create visualizations with the built-in visualization tools, and embed those visualizations on third-party websites.</li>
         <li>Schedule your reports to run and update automatically.</li>
         <li>Easily control who can see your data and visualizations by leveraging Google Spreadsheet's existing sharing and privacy features.</li>
-      </ul>
-      </Typography>
+    </Typography>
    
       <Typography variant="h2">Learn More</Typography>
 

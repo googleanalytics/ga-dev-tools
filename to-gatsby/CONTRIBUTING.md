@@ -21,7 +21,7 @@ New demos or tools can be created by following these steps:
 
 1. Add a new folder to `/pages` with the title of the demo. Within that folder, add JSX files related to the demo, including `index.tsx`
 2. If the demo/tool needs images, create a 2x-resolution image and save it to the `/images` directory.
-3. If the demo/tool links to any URLs, place URL constants `constants.ts`
+3. If the demo/tool links to any URLs, place URL constants in `constants.ts`
 
 ## Legal
 
