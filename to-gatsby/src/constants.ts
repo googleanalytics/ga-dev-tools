@@ -15,6 +15,11 @@
 // All static links on the site should be put into this constant. This makes it
 // easier to update all instances of a link on the site.
 export const Url = {
+  iosCampaignTracking:
+    "https://developers.google.com/analytics/devguides/collection/ios/v3/campaigns#url-builder",
+  googlePlayURLBuilder:
+    "https://developers.google.com/analytics/devguides/collection/android/v4/campaigns#google-play-url-builder",
+  customCampaigns: "https://support.google.com/analytics/answer/1033863",
   gaDebugger:
     "https://chrome.google.com/webstore/detail/google-analytics-debugger/jnkmfdileelhofjcijamephohjechhna",
   analyticsJSDevsite:
@@ -34,4 +39,15 @@ export const Url = {
   reportingApis: "https://developers.google.com/analytics/devguides/reporting/",
   spreadsheetAddOn: "https://developers.google.com/analytics/solutions/google-analytics-spreadsheet-add-on",
   spreadsheetAddOnExternal: "https://gsuite.google.com/marketplace/app/google_analytics/477988381226",
+}
+
+// All data in localStorage should have its keys here.
+export const StorageKey = {
+  campaignBuilderWebsiteUrl: "campaign-builder/website-url",
+  campaignBuilderSource: "campaign-builder/source",
+  campaignBuilderMedium: "campaign-builder/medium",
+  campaignBuilderName: "campaign-builder/name",
+  campaignBuilderTerm: "campaign-builder/term",
+  campaignBuilderContent: "campaign-builder/content",
+  campaignBuilderUseFragment: "campaign-builder/use-fragment",
 }

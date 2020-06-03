@@ -25,19 +25,21 @@ import ViewSelector, { HasView } from "../../components/ViewSelector"
 import ViewsTable from "./_ViewTable"
 
 const useStyles = makeStyles(theme => ({
+  viewSelector: {
+    marginBottom: theme.spacing(1),
+  },
   section: {
     padding: theme.spacing(1),
   },
   paper: {
-    "margin-bottom": theme.spacing(1),
-    padding: theme.spacing(0, 1, 1),
+    padding: theme.spacing(3),
   },
   header: {
     margin: theme.spacing(0, 1, 0),
     padding: theme.spacing(0, 1, 0),
   },
   heading: {
-    margin: theme.spacing(3),
+    margin: theme.spacing(2),
     textAlign: "center",
   },
   search: {
@@ -140,6 +142,7 @@ export const AccountExplorer = () => {
               &hellip;or browse through all your accounts
             </Typography>
             <ViewSelector
+              className={classes.viewSelector}
               onViewsChanged={populatedViews => {
                 setAllViews(populatedViews)
               }}
