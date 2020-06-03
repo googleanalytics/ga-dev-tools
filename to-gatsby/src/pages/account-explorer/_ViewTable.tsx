@@ -1,38 +1,17 @@
 import * as React from "react"
 import { makeStyles } from "@material-ui/core/styles"
-import classnames from "classnames"
 import { useThrottle } from "react-use"
 import CallMadeIcon from "@material-ui/icons/CallMade"
+import Table from "@material-ui/core/Table"
+import TableBody from "@material-ui/core/TableBody"
+import TableCell from "@material-ui/core/TableCell"
+import TableHead from "@material-ui/core/TableHead"
+import TableRow from "@material-ui/core/TableRow"
 
 import { HasView } from "../../components/ViewSelector"
 import HighlightText from "./_HighlightText"
 
 const useStyles = makeStyles(theme => ({
-  table: {
-    "table-layout": "fixed",
-    width: "100%",
-    "& thead": {
-      "border-bottom": `1px solid ${theme.palette.text.secondary}`,
-      "& tr": {
-        "& th": {
-          "text-align": "left",
-          "padding-bottom": theme.spacing(1),
-        },
-      },
-    },
-    "& tbody": {
-      "& tr:not(:last-child)": {
-        "border-bottom": `1px solid ${theme.palette.text.secondary}`,
-      },
-      "& tr": {
-        "& td": {
-          width: "25%",
-          "padding-top": theme.spacing(1),
-          "padding-bottom": theme.spacing(1),
-        },
-      },
-    },
-  },
   id: {
     color: theme.palette.text.secondary,
   },
@@ -56,32 +35,33 @@ const ViewsTable: React.FC<ViewTableProps> = ({ views, className, search }) => {
   const throttledSearch = useThrottle(search, 100)
   const classes = useStyles()
   return (
-    <table
-      className={classnames(classes.table, className)}
+    <Table
+      size="small"
       data-testid="components/ViewTable"
+      className={className}
     >
-      <thead>
-        <tr>
-          <th>Account</th>
-          <th>Property</th>
-          <th>View</th>
-          <th>Table ID</th>
-        </tr>
-      </thead>
-      <tbody>
+      <TableHead>
+        <TableRow>
+          <TableCell>Account</TableCell>
+          <TableCell>Property</TableCell>
+          <TableCell>View</TableCell>
+          <TableCell>Table ID</TableCell>
+        </TableRow>
+      </TableHead>
+      <TableBody>
         {views.length === 0 && (
-          <tr data-testid="components/ViewTable/no-results">
-            <td colSpan={4}></td>
-          </tr>
+          <TableRow data-testid="components/ViewTable/no-results">
+            <TableCell colSpan={4}>No results</TableCell>
+          </TableRow>
         )}
         {views.map(populated => {
           const { account, property, view } = populated
           const viewUrl = `https://analytics.google.com/analytics/web/#/report/vistors-overview/a${account.id}w${property.internalWebPropertyId}p${view.id}`
           return (
-            <tr
+            <TableRow
               key={`${populated.account.name}-${populated.property.name}-${populated.view.name}`}
             >
-              <td>
+              <TableCell>
                 <div>
                   <HighlightText
                     className={classes.mark}
@@ -96,8 +76,8 @@ const ViewsTable: React.FC<ViewTableProps> = ({ views, className, search }) => {
                     text={account.id || ""}
                   ></HighlightText>
                 </div>
-              </td>
-              <td>
+              </TableCell>
+              <TableCell>
                 <div>
                   <HighlightText
                     className={classes.mark}
@@ -112,8 +92,8 @@ const ViewsTable: React.FC<ViewTableProps> = ({ views, className, search }) => {
                     text={property.id || ""}
                   />
                 </div>
-              </td>
-              <td>
+              </TableCell>
+              <TableCell>
                 <div>
                   <a
                     className={classes.link}
@@ -136,8 +116,8 @@ const ViewsTable: React.FC<ViewTableProps> = ({ views, className, search }) => {
                     text={view.id || ""}
                   />
                 </div>
-              </td>
-              <td>
+              </TableCell>
+              <TableCell>
                 <div className={classes.id}>
                   <HighlightText
                     className={classes.mark}
@@ -145,12 +125,12 @@ const ViewsTable: React.FC<ViewTableProps> = ({ views, className, search }) => {
                     text={`ga:${view.id}`}
                   />
                 </div>
-              </td>
-            </tr>
+              </TableCell>
+            </TableRow>
           )
         })}
-      </tbody>
-    </table>
+      </TableBody>
+    </Table>
   )
 }
 

@@ -25,7 +25,6 @@ import IconButton from "@material-ui/core/IconButton"
 import Drawer from "@material-ui/core/Drawer"
 import List from "@material-ui/core/List"
 import ListItem from "@material-ui/core/ListItem"
-import ListItemText from "@material-ui/core/ListItemText"
 import { navigate } from "@reach/router"
 import MenuIcon from "@material-ui/icons/Menu"
 import { useSelector } from "react-redux"
@@ -35,7 +34,7 @@ import Login from "./Login"
 const mobile = (theme: Theme) => theme.breakpoints.between(0, "sm")
 const notMobile = (theme: Theme) => theme.breakpoints.up("md")
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles<any, { disableNav: true | undefined }>(theme => ({
   root: {
     display: "flex",
     minHeight: "100%",
@@ -81,22 +80,28 @@ const useStyles = makeStyles(theme => ({
     display: "flex",
     flexWrap: "wrap",
     alignItems: "center",
-    [mobile(theme)]: {
-      display: "none",
-    },
+    [mobile(theme)]: props =>
+      props.disableNav
+        ? {}
+        : {
+            display: "none",
+          },
   },
   logo: {
     flexGrow: 1,
     height: "50px",
   },
-  appBarNav: {
-    [notMobile(theme)]: {
-      display: "none",
-    },
-    flexDirection: "row",
-    alignItems: "center",
-    paddingLeft: theme.spacing(1),
-  },
+  appBarNav: props =>
+    props.disableNav
+      ? { display: "none" }
+      : {
+          [notMobile(theme)]: {
+            display: "none",
+          },
+          flexDirection: "row",
+          alignItems: "center",
+          paddingLeft: theme.spacing(1),
+        },
   mobileNav: {
     color: theme.palette.getContrastText(theme.palette.grey[800]),
     backgroundColor: theme.palette.grey[800],
@@ -202,6 +207,7 @@ export const usePageView = (
 }
 
 interface LayoutProps {
+  disableNav?: true
   title: string
 }
 
@@ -227,7 +233,6 @@ const linkData: LinkData[] = [
     href: "/dimensions-metrics-explorer",
     type: "link",
   },
-  { text: "Embed API", href: "/embed-api", type: "link" },
   { text: "Enhanced Ecommerce", href: "/enhanced-ecommerce", type: "link" },
   { text: "Hit Builder", href: "/hit-builder", type: "link" },
   { text: "Query Explorer", href: "/query-explorer", type: "link" },
@@ -240,9 +245,9 @@ const linkData: LinkData[] = [
   { text: "Help & feedback", href: "/#help", type: "link" },
 ]
 
-const Layout: React.FC<LayoutProps> = ({ children, title }) => {
+const Layout: React.FC<LayoutProps> = ({ children, title, disableNav }) => {
   usePageView()
-  const classes = useStyles()
+  const classes = useStyles({ disableNav })
   const [open, setOpen] = React.useState(false)
 
   return (
@@ -344,7 +349,7 @@ const Layout: React.FC<LayoutProps> = ({ children, title }) => {
           {/* TODO - Figure out how to size the logo correctly. I probably want to use media queries with useStyles() */}
           <div className={classes.logoRow}>
             <Logo className={classes.logo} />
-            <Login />
+            {!disableNav && <Login />}
           </div>
           <Typography variant="h1">{title}</Typography>
         </header>

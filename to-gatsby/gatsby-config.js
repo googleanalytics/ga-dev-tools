@@ -32,6 +32,10 @@ module.exports = {
             family: `Roboto`,
             variants: [`400`],
           },
+          {
+            family: `Source Code Pro`,
+            variants: [`400`],
+          }
         ],
       },
     },
