@@ -27,10 +27,14 @@ import Icon from "../../components/icon";
 const HitBuilder: React.FC = () => {
   // TODO - The event picker should probably let you do a search to filter the dropdown.
   // TODO - make sure to focus on any new params.
-  const { event, clientId, userId, measurementId, firebaseAppId } = useSelector<
-    State,
-    State
-  >(a => a);
+  const {
+    event,
+    clientId,
+    userId,
+    measurementId,
+    firebaseAppId,
+    appInstanceId,
+  } = useSelector<State, State>((a) => a);
   const dispatch = useDispatch();
   const [category, setCategory] = React.useState<MPEventCategory>(
     event.getCategories()[0]
@@ -47,7 +51,7 @@ const HitBuilder: React.FC = () => {
     // If the new category doesn't have the current eventType as an option,
     // update it to an empty one.
     const categoryHasEvent =
-      event.getCategories().find(c => c === category) !== undefined;
+      event.getCategories().find((c) => c === category) !== undefined;
     if (!categoryHasEvent) {
       const firstEventFromNewCategory = MPEvent.eventTypes(category)[0];
       updateEvent(MPEvent.empty(firstEventFromNewCategory));
@@ -57,6 +61,12 @@ const HitBuilder: React.FC = () => {
   const updateClientId = React.useCallback(
     (clientId: string) => {
       dispatch(actions.setClientId(clientId));
+    },
+    [dispatch]
+  );
+  const updateAppInstanceId = React.useCallback(
+    (appInstanceId: string) => {
+      dispatch(actions.setAppInstanceId(appInstanceId));
     },
     [dispatch]
   );
@@ -80,7 +90,7 @@ const HitBuilder: React.FC = () => {
   );
 
   const updateCustomEventName = React.useCallback(
-    name => {
+    (name) => {
       updateEvent(event.updateName(name));
     },
     [event, updateEvent]
@@ -102,29 +112,32 @@ const HitBuilder: React.FC = () => {
           <APISecret />
           <div className="HitBuilderParam">
             <ReduxManagedInput
-              disabled={firebaseAppId !== ""}
-              labelText="Measurement ID"
-              update={updateMeasurementId}
-              initialValue={measurementId}
-            />
-            <ReduxManagedInput
-              disabled={measurementId !== ""}
+              disabled={measurementId !== "" || clientId !== ""}
               labelText="Firebase App Id"
               update={updateFirebaseAppId}
               initialValue={firebaseAppId}
             />
+            <ReduxManagedInput
+              disabled={firebaseAppId !== "" || appInstanceId !== ""}
+              labelText="Measurement ID"
+              update={updateMeasurementId}
+              initialValue={measurementId}
+            />
           </div>
-          <ReduxManagedInput
-            labelText={
-              <div>
-                clientId/
-                <br />
-                app_instance_id
-              </div>
-            }
-            update={updateClientId}
-            initialValue={clientId}
-          />
+          <div className="HitBuilderParam">
+            <ReduxManagedInput
+              disabled={measurementId !== "" || clientId !== ""}
+              labelText="appInstanceId"
+              update={updateAppInstanceId}
+              initialValue={appInstanceId}
+            />
+            <ReduxManagedInput
+              disabled={firebaseAppId !== "" || appInstanceId !== ""}
+              labelText="clientId"
+              update={updateClientId}
+              initialValue={clientId}
+            />
+          </div>
           <ReduxManagedInput
             labelText="userId"
             update={updateUserId}
@@ -136,13 +149,13 @@ const HitBuilder: React.FC = () => {
               <select
                 className="FormField"
                 value={category}
-                onChange={e => {
+                onChange={(e) => {
                   const newCategory: MPEventCategory = e.target
                     .value as MPEventCategory;
                   setCategory(newCategory);
                 }}
               >
-                {MPEvent.categories().map(option => (
+                {MPEvent.categories().map((option) => (
                   <option value={option} key={option}>
                     {option}
                   </option>
@@ -155,14 +168,14 @@ const HitBuilder: React.FC = () => {
                 <select
                   className="FormField"
                   value={event.getEventType()}
-                  onChange={e => {
+                  onChange={(e) => {
                     const newEventType: MPEventType = e.target
                       .value as MPEventType;
                     const newEvent = MPEvent.empty(newEventType);
                     dispatch(actions.setEvent(newEvent));
                   }}
                 >
-                  {MPEvent.eventTypes(category).map(option => (
+                  {MPEvent.eventTypes(category).map((option) => (
                     <option value={option} key={option}>
                       {option}
                     </option>
