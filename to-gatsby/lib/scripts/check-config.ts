@@ -6,7 +6,9 @@ type ConfigQuestionFilter = {
   askAll?: true | undefined
 } & Partial<RuntimeJson>
 
-const ensureNecessaryFiles = (runtimeJson: RuntimeJson): Promise<void> => {
+const ensureNecessaryFiles = async (
+  runtimeJson: RuntimeJson
+): Promise<RuntimeJson> => {
   // Create `runtime.json` if it doesn't exist.
   const exists = fs.existsSync(RuntimeJsonPath)
   if (!exists) {
@@ -18,7 +20,9 @@ const ensureNecessaryFiles = (runtimeJson: RuntimeJson): Promise<void> => {
     encoding: Encoding,
   })
 
-  return
+  console.log("Writing `runtime.json`.")
+
+  return runtimeJson
 }
 
 // Given a filter, returns an array of questions to be asked to make sure all
@@ -55,7 +59,7 @@ const configQuestions = (
 
 // Ensures that required config files exist. If they don't, prompt the user for
 // required values & creates necessary files.
-export const checkConfig = async () => {
+export const checkConfig = async (): Promise<RuntimeJson> => {
   console.log("Checking required configuration...")
 
   const exists = fs.existsSync(RuntimeJsonPath)
@@ -78,7 +82,8 @@ export const checkConfig = async () => {
     configQuestions(Object.assign({}, currentConfig, filter))
   )
 
-  await ensureNecessaryFiles(answers)
-  console.log(answers)
-  return true
+  const merged = Object.assign({}, currentConfig, answers)
+
+  const config = await ensureNecessaryFiles(merged)
+  return config
 }
