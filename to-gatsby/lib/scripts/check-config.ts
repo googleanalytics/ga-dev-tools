@@ -4,7 +4,7 @@ import { RuntimeJson, RuntimeJsonPath, Encoding } from "./types"
 
 type ConfigQuestionFilter = {
   askAll?: true | undefined
-}
+} & Partial<RuntimeJson>
 
 const ensureNecessaryFiles = (runtimeJson: RuntimeJson): Promise<void> => {
   // Create `runtime.json` if it doesn't exist.
@@ -21,6 +21,9 @@ const ensureNecessaryFiles = (runtimeJson: RuntimeJson): Promise<void> => {
   return
 }
 
+// Given a filter, returns an array of questions to be asked to make sure all
+// required configuration data is present. The filter allows some questions to
+// be skipped if already provided.
 const configQuestions = (
   filter: ConfigQuestionFilter
 ): inquirer.QuestionCollection<RuntimeJson> => {
@@ -28,25 +31,23 @@ const configQuestions = (
     {
       name: "gaMeasurementId",
       // TODO - Nice to have, list the user's available properties. Would
-      // require the user to authenticate first to make the request & could be
-      // optional.
+      // require the user to authenticate first to make the request.
       type: "input",
       message: "Measurement ID for production: ",
-      default: "none-provided",
+      default: filter.gaMeasurementId || "none-provided",
       when: () => {
-        return filter.askAll
+        return filter.askAll || filter.gaMeasurementId === undefined
       },
     },
     {
       name: "gaMeasurementIdDev",
       // TODO - Nice to have, list the user's available properties. Would
-      // require the user to authenticate first to make the request & could be
-      // optional.
+      // require the user to authenticate first to make the request.
       type: "input",
       message: "Measurement ID for development: ",
-      default: "none-provided",
+      default: filter.gaMeasurementIdDev || "none-provided",
       when: () => {
-        return filter.askAll
+        return filter.askAll || filter.gaMeasurementIdDev === undefined
       },
     },
   ]
@@ -56,18 +57,26 @@ const configQuestions = (
 // required values & creates necessary files.
 export const checkConfig = async () => {
   console.log("Checking required configuration...")
+
   const exists = fs.existsSync(RuntimeJsonPath)
 
   let filter: ConfigQuestionFilter = {}
+  let currentConfig: Partial<RuntimeJson> = {}
 
-  // If file doesn't exist at all, prompt for all configuration entries.
+  // If the file doesn't exist at all, prompt for all configuration entries.
   if (!exists) {
     filter = { askAll: true }
+  } else {
+    // Otherwise, read in the current configFile so that can be passed as the
+    // filter to the questions to ask.
+    currentConfig = JSON.parse(
+      fs.readFileSync(RuntimeJsonPath, { encoding: Encoding })
+    )
   }
 
-  // TODO if some of the values were already there, make sure to merge answers
-  // with the current values.
-  const answers = await inquirer.prompt(configQuestions(filter))
+  const answers = await inquirer.prompt(
+    configQuestions(Object.assign({}, currentConfig, filter))
+  )
 
   await ensureNecessaryFiles(answers)
   console.log(answers)
