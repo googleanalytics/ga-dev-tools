@@ -1,12 +1,14 @@
 import * as argparse from "argparse"
 import { checkConfig } from "./check-config"
 import { build } from "./build"
+import { develop } from "./develop"
 
 interface CheckRuntimeFilesArgs {}
 
 enum Command {
   CheckRequiredConfiguration = "check-config",
   Build = "build",
+  Develop = "develop",
 }
 
 type Args = CheckRuntimeFilesArgs & { cmd: Command }
@@ -32,6 +34,11 @@ const getParser = async (): Promise<argparse.ArgumentParser> => {
     help: "Builds the project. Runs any necessary validation before building.",
   })
 
+  subparsers.addParser(Command.Develop, {
+    help:
+      "Runs a local dev server. Runs any necessary validation before serving.",
+  })
+
   return parser
 }
 
@@ -46,6 +53,10 @@ const scripts = async () => {
     }
     case Command.Build: {
       await build()
+      break
+    }
+    case Command.Develop: {
+      await develop()
       break
     }
   }

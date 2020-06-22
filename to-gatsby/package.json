@@ -68,8 +68,9 @@
   },
   "scripts": {
     "generate-scripts": "cd lib && tsc",
+    "check-config": "yarn generate-scripts && node lib/build/index.js check-config",
     "build": "yarn generate-scripts && node lib/build/index.js build",
-    "develop": "yarn check-types && gatsby develop --host=0.0.0.0",
+    "develop": "yarn generate-scripts && node lib/build/index.js develop",
     "format": "prettier --write \"**/*.{js,jsx,json,md}\"",
     "start": "yarn run develop",
     "serve": "gatsby serve --host=0.0.0.0",
