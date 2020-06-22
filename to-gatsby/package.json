@@ -41,6 +41,7 @@
     "@testing-library/jest-dom": "^5.5.0",
     "@testing-library/react": "^10.0.3",
     "@testing-library/user-event": "^10.1.0",
+    "@types/argparse": "^1.0.38",
     "@types/classnames": "^2.2.10",
     "@types/gapi": "^0.0.39",
     "@types/gapi.auth2": "^0.0.51",
@@ -52,6 +53,7 @@
     "@types/react-syntax-highlighter": "^11.0.4",
     "@types/react-test-renderer": "^16.9.2",
     "@types/uuid": "^7.0.2",
+    "argparse": "^1.0.10",
     "babel-jest": "^25.3.0",
     "identity-obj-proxy": "^3.0.0",
     "jest": "^25.3.0",
@@ -61,6 +63,7 @@
     "typescript": "^3.8.3"
   },
   "scripts": {
+    "generate-scripts": "cd lib && tsc",
     "build": "yarn check-types && gatsby build",
     "develop": "yarn check-types && gatsby develop --host=0.0.0.0",
     "format": "prettier --write \"**/*.{js,jsx,json,md}\"",
