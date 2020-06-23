@@ -37,7 +37,7 @@ const configQuestions = (
       // TODO - Nice to have, list the user's available properties. Would
       // require the user to authenticate first to make the request.
       type: "input",
-      message: "Measurement ID for production: ",
+      message: "Google Analytics measurement ID for production: ",
       default: filter.gaMeasurementId || "none-provided",
       when: () => {
         return filter.askAll || filter.gaMeasurementId === undefined
@@ -48,7 +48,7 @@ const configQuestions = (
       // TODO - Nice to have, list the user's available properties. Would
       // require the user to authenticate first to make the request.
       type: "input",
-      message: "Measurement ID for development: ",
+      message: "Google Analytics measurement ID for development: ",
       default: filter.gaMeasurementIdDev || "none-provided",
       when: () => {
         return filter.askAll || filter.gaMeasurementIdDev === undefined
