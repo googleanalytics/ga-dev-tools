@@ -1,6 +1,7 @@
 import * as fs from "fs"
 import * as inquirer from "inquirer"
 import { RuntimeJson, RuntimeJsonPath, Encoding } from "./types"
+import * as execa from "execa"
 
 type ConfigQuestionFilter = {
   askAll?: true | undefined
@@ -54,7 +55,28 @@ const configQuestions = (
         return filter.askAll || filter.gaMeasurementIdDev === undefined
       },
     },
+    {
+      name: "firebaseStagingProjectId",
+      type: "input",
+      message: "Firebase project ID to use for staging environment:",
+      // TODO - See if listing is useful. Probably should only do it if there's not a ton.
+      default: filter.firebaseStagingProjectId,
+      when: () => {
+        return filter.askAll || filter.firebaseStagingProjectId === undefined
+      },
+    },
   ]
+}
+
+const ensureFirebaseLoginStatus = async () => {
+  console.log(`Ensuring that you're logged into to Firebase.`)
+
+  // TODO - --no-localhost might should be a flag to checkConfig.
+  return execa("yarn", ["run", "firebase", "login", "--no-localhost"], {
+    stderr: "inherit",
+    stdout: "inherit",
+    stdin: "inherit",
+  })
 }
 
 // Ensures that required config files exist. If they don't, prompt the user for
@@ -77,6 +99,12 @@ export const checkConfig = async (): Promise<RuntimeJson> => {
       fs.readFileSync(RuntimeJsonPath, { encoding: Encoding })
     )
   }
+
+  // TODO - This check is probably only needed for deploying or if we want to
+  // list the available projects for the firebase Project ID questions.
+
+  // Make sure user is logged into Firebase.
+  await ensureFirebaseLoginStatus()
 
   const answers = await inquirer.prompt(
     configQuestions(Object.assign({}, currentConfig, filter))

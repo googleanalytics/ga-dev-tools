@@ -7,4 +7,5 @@ export const RuntimeJsonPath = path.join(PWD, "runtime.json")
 export interface RuntimeJson {
   gaMeasurementId: string
   gaMeasurementIdDev: string
+  firebaseStagingProjectId: string
 }
