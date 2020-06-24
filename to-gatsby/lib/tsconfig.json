@@ -1,0 +1,11 @@
+{
+  "compilerOptions": {
+    "lib": ["es2018", "dom"],
+    "module": "commonjs",
+    "target": "es2018",
+    "outDir": "build"
+  },
+  "include": [
+    "./**/*.ts"
+  ]
+}
