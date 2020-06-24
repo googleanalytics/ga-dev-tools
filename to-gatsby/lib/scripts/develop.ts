@@ -6,10 +6,13 @@ export const develop = async () => {
   // TODO - update check config to take an argument for which command it is
   // running. All commands don't require all config to be set and this would
   // make it easier to get started.
-  const config = await checkConfig()
+  await checkConfig()
 
-  await execa("yarn", ["gatsby", "develop", "--host=0.0.0.0"], {
-    env: { GATSBY_GA_MEASUREMENT_ID: config.gaMeasurementIdDev },
+  // We use port 5000 because the generated oauth client for a firebase allows
+  // port 5000 by default on localhost. The developer can change this value, but
+  // they'll need to make sure that the host+post they use is set in the
+  // Authorized JavaScript origins.
+  await execa("yarn", ["gatsby", "develop", "--host=0.0.0.0", "--port=5000"], {
     stderr: "inherit",
     stdout: "inherit",
     stdin: "inherit",

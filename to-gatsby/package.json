@@ -75,6 +75,7 @@
     "format": "prettier --write \"**/*.{js,jsx,json,md}\"",
     "start": "yarn run develop",
     "serve": "yarn generate-scripts && node lib/build/index.js serve",
+    "stage:integration": "yarn generate-scripts && node lib/build/index.js stage:integration",
     "clean": "gatsby clean",
     "check-types": "tsc",
     "test": "yarn check-types && jest"

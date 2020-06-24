@@ -3,6 +3,7 @@ import { checkConfig } from "./check-config"
 import { build } from "./build"
 import { develop } from "./develop"
 import { serve } from "./serve"
+import { stage } from "./stage"
 import { Command, Args } from "./types"
 
 const getParser = async (): Promise<argparse.ArgumentParser> => {
@@ -24,6 +25,10 @@ const getParser = async (): Promise<argparse.ArgumentParser> => {
 
   subparsers.addParser(Command.Build, {
     help: "Builds the project. Runs any necessary validation before building.",
+  })
+
+  subparsers.addParser(Command.StageToIntegration, {
+    help: "Builds the project, then stages it to `firebaseStagingProjectId`.",
   })
 
   subparsers.addParser(Command.Develop, {
@@ -63,6 +68,10 @@ const scripts = async () => {
     }
     case Command.Serve: {
       await serve(args)
+      break
+    }
+    case Command.StageToIntegration: {
+      await stage("integration")
       break
     }
   }

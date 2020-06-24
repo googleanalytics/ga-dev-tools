@@ -1,6 +1,11 @@
 import * as fs from "fs"
 import * as inquirer from "inquirer"
-import { RuntimeJson, RuntimeJsonPath, Encoding } from "./types"
+import {
+  RuntimeJson,
+  RuntimeJsonPath,
+  Encoding,
+  DotEnvDevelopmentPath,
+} from "./types"
 import * as execa from "execa"
 
 type ConfigQuestionFilter = {
@@ -16,10 +21,26 @@ const ensureNecessaryFiles = async (
     fs.writeFileSync(RuntimeJsonPath, "")
   }
 
+  // Create `.env.development` if it doesn't exist.
+  if (!fs.existsSync(DotEnvDevelopmentPath)) {
+    fs.writeFileSync(DotEnvDevelopmentPath, "")
+  }
+
   // Overwrite `runtime.json` with provided configuration.
   fs.writeFileSync(RuntimeJsonPath, JSON.stringify(runtimeJson, null, "  "), {
     encoding: Encoding,
   })
+
+  // TODO - do this for .env.production as well.
+  // Overwrite `.env.development` with provided configuration.
+  fs.writeFileSync(
+    DotEnvDevelopmentPath,
+    [
+      `GAPI_CLIENT_ID=${runtimeJson.gapiClientId}`,
+      `GA_MEASUREMENT_ID=${runtimeJson.gaMeasurementIdDev}`,
+    ].join("\n"),
+    { encoding: Encoding }
+  )
 
   console.log("Writing `runtime.json`.")
 
@@ -65,6 +86,17 @@ const configQuestions = (
         return filter.askAll || filter.firebaseStagingProjectId === undefined
       },
     },
+    {
+      name: "gapiClientId",
+      type: "input",
+      // TODO - Check to see if there a way to make getting this value easier.
+      // (or at least provide a link to where the user can find this value)
+      message: "Client ID to use for user authentication to this site.",
+      default: filter.gapiClientId,
+      when: () => {
+        return filter.askAll || filter.gapiClientId === undefined
+      },
+    },
   ]
 }
 
@@ -78,6 +110,9 @@ const ensureFirebaseLoginStatus = async () => {
     stdin: "inherit",
   })
 }
+
+// TODO - Check config should take a flag to force a reauth for firebase since
+// the token is short-lived.
 
 // Ensures that required config files exist. If they don't, prompt the user for
 // required values & creates necessary files.
