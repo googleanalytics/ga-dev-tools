@@ -3,17 +3,7 @@ import { checkConfig } from "./check-config"
 import { build } from "./build"
 import { develop } from "./develop"
 import { serve } from "./serve"
-
-interface CheckRuntimeFilesArgs {}
-
-enum Command {
-  CheckRequiredConfiguration = "check-config",
-  Build = "build",
-  Develop = "develop",
-  Serve = "serve",
-}
-
-type Args = CheckRuntimeFilesArgs & { cmd: Command }
+import { Command, Args } from "./types"
 
 const getParser = async (): Promise<argparse.ArgumentParser> => {
   const parser = new argparse.ArgumentParser({
@@ -41,9 +31,14 @@ const getParser = async (): Promise<argparse.ArgumentParser> => {
       "Runs a local dev server. Runs any necessary validation before serving.",
   })
 
-  subparsers.addParser(Command.Serve, {
+  const serveParser = subparsers.addParser(Command.Serve, {
     help:
       "Serves the content in the build directory locally through the Firebase cli.",
+  })
+  serveParser.addArgument("--skip_build", {
+    defaultValue: false,
+    dest: "skipBuild",
+    action: "storeTrue",
   })
 
   return parser
@@ -67,7 +62,7 @@ const scripts = async () => {
       break
     }
     case Command.Serve: {
-      await serve()
+      await serve(args)
       break
     }
   }
