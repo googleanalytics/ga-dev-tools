@@ -14,7 +14,7 @@
 
 
 import {makeRequest, makeFullRequest} from './request';
-import {UserError} from '../utils';
+import {UserError} from '../utils-old';
 
 
 export const create = ({viewId, metric, dimension, maxResults, dateRange}) => {
