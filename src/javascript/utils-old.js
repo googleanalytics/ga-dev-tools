@@ -147,8 +147,8 @@ export class UserError extends Error {
 export const encodeQuery = query => {
   if (query) {
     const encoded = map(query, (value, key) =>
-                        `${encodeURIComponent(key)}=${encodeURIComponent(value)}`
-                       ).join('&');
+      `${encodeURIComponent(key)}=${encodeURIComponent(value)}`
+    ).join('&');
     return encoded ? `?${encoded}` : '';
   } else {
     return '';
@@ -172,10 +172,10 @@ export const promiseMemoize = func => {
     }
 
     const promise = new Promise(res => res(func(argument)))
-          .catch(error => {
-            cache.delete(argument);
-            throw error;
-          });
+        .catch(error => {
+          cache.delete(argument);
+          throw error;
+        });
     cache.set(argument, promise);
     return promise;
   };
@@ -209,10 +209,10 @@ export const cleanupingPromise = executor => {
   };
 
   const innerPromise = new Promise((resolve, reject) =>
-                                   executor(resolve, reject, cleaner => {
-                                     addCleanup(cleaner);
-                                   })
-                                  );
+    executor(resolve, reject, cleaner => {
+      addCleanup(cleaner);
+    })
+  );
 
   addCleanup = () => {
     throw new Error('Can\'t add new cleanup handlers asynchronously');
