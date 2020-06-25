@@ -24,7 +24,7 @@ import Icon from '../../components/icon';
 import IconButton from '../../components/icon-button';
 import supports from '../../supports';
 import {shortenUrl, isAuthorizedEvents} from '../../url-shortener';
-import {copyElementText} from '../../utils';
+import {copyElementText} from '../../utils-old';
 import renderProblematic from './problematic.js';
 
 
