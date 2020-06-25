@@ -5,6 +5,7 @@ import {
   RuntimeJsonPath,
   Encoding,
   DotEnvDevelopmentPath,
+  DotEnvProductionPath,
 } from "./types"
 import * as execa from "execa"
 
@@ -26,18 +27,32 @@ const ensureNecessaryFiles = async (
     fs.writeFileSync(DotEnvDevelopmentPath, "")
   }
 
+  // Create `.env.production` if it doesn't exist.
+  if (!fs.existsSync(DotEnvProductionPath)) {
+    fs.writeFileSync(DotEnvProductionPath, "")
+  }
+
   // Overwrite `runtime.json` with provided configuration.
   fs.writeFileSync(RuntimeJsonPath, JSON.stringify(runtimeJson, null, "  "), {
     encoding: Encoding,
   })
 
-  // TODO - do this for .env.production as well.
+  // TODO - this should be pulled out into a function.
   // Overwrite `.env.development` with provided configuration.
   fs.writeFileSync(
     DotEnvDevelopmentPath,
     [
       `GAPI_CLIENT_ID=${runtimeJson.gapiClientId}`,
-      `GA_MEASUREMENT_ID=${runtimeJson.gaMeasurementIdDev}`,
+      `GATSBY_GA_MEASUREMENT_ID=${runtimeJson.gaMeasurementIdDev}`,
+    ].join("\n"),
+    { encoding: Encoding }
+  )
+  // Overwrite `.env.production` with provided configuration.
+  fs.writeFileSync(
+    DotEnvProductionPath,
+    [
+      `GAPI_CLIENT_ID=${runtimeJson.gapiClientId}`,
+      `GATSBY_GA_MEASUREMENT_ID=${runtimeJson.gaMeasurementId}`,
     ].join("\n"),
     { encoding: Encoding }
   )

@@ -4,11 +4,13 @@ export const PWD = process.cwd()
 export const Encoding = "utf8"
 export const RuntimeJsonPath = path.join(PWD, "runtime.json")
 export const DotEnvDevelopmentPath = path.join(PWD, ".env.development")
+export const DotEnvProductionPath = path.join(PWD, ".env.production")
 
 export interface RuntimeJson {
   gaMeasurementId: string
   gaMeasurementIdDev: string
   firebaseStagingProjectId: string
+  // TODO there should be a different gapiClientID for production and development.
   gapiClientId: string
 }
 
