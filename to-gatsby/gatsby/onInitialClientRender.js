@@ -11,21 +11,23 @@ export const onInitialClientRender = () => {
      The reason we do this is to demonstrate how to use GA technologies in our
      demos. See usePageview in ./src/components/layout.tsx for an example.
   */
+  const measurementID = process.env.GA_MEASUREMENT_ID
+  store.dispatch({ type: "setMeasurementID", measurementID: measurementID })
   loadScript(
-    `https://www.googletagmanager.com/gtag/js?id=${process.env.GA_MEASUREMENT_ID}`,
-    err => {
-      if (err) {
-        console.error("Could not load gtag.js")
-        return
+      `https://www.googletagmanager.com/gtag/js?id=${measurementID}`,
+      err => {
+        if (err) {
+          console.error("Could not load gtag.js")
+          return
+        }
+        window.dataLayer = window.dataLayer || []
+        function gtag() {
+          window.dataLayer.push(arguments)
+        }
+        gtag("js", new Date())
+        window.gtag = gtag
+        store.dispatch({ type: "setGtag", gtag })
       }
-      window.dataLayer = window.dataLayer || []
-      function gtag() {
-        window.dataLayer.push(arguments)
-      }
-      gtag("js", new Date())
-      window.gtag = gtag
-      store.dispatch({ type: "setGtag", gtag })
-    }
   )
 
   loadScript(`https://apis.google.com/js/api.js`, err => {

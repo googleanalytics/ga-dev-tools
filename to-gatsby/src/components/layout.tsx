@@ -188,15 +188,11 @@ const useStyles = makeStyles<any, { disableNav: true | undefined }>(theme => ({
   },
 }))
 
-export const usePageView = (
-  measurementId: string | undefined = process.env.GATSBY_GA_MEASUREMENT_ID
-) => {
+export const usePageView = () => {
+  const measurementId = useSelector((a: AppState) => a.measurementID)
   const location = useLocation()
   const gtag = useSelector((a: AppState) => a.gtag)
   React.useEffect(() => {
-    if (measurementId === undefined) {
-      throw new Error("No measurementId is set.")
-    }
     if (gtag === undefined) {
       return
     }

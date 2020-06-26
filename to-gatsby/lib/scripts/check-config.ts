@@ -43,7 +43,7 @@ const ensureNecessaryFiles = async (
     DotEnvDevelopmentPath,
     [
       `GAPI_CLIENT_ID=${runtimeJson.gapiClientId}`,
-      `GATSBY_GA_MEASUREMENT_ID=${runtimeJson.gaMeasurementIdDev}`,
+      `GA_MEASUREMENT_ID=${runtimeJson.gaMeasurementIdDev}`,
     ].join("\n"),
     { encoding: Encoding }
   )
@@ -52,7 +52,7 @@ const ensureNecessaryFiles = async (
     DotEnvProductionPath,
     [
       `GAPI_CLIENT_ID=${runtimeJson.gapiClientId}`,
-      `GATSBY_GA_MEASUREMENT_ID=${runtimeJson.gaMeasurementId}`,
+      `GA_MEASUREMENT_ID=${runtimeJson.gaMeasurementId}`,
     ].join("\n"),
     { encoding: Encoding }
   )
