@@ -39,6 +39,12 @@ export const Url = {
   reportingApis: "https://developers.google.com/analytics/devguides/reporting/",
   spreadsheetAddOn: "https://developers.google.com/analytics/solutions/google-analytics-spreadsheet-add-on",
   spreadsheetAddOnExternal: "https://gsuite.google.com/marketplace/app/google_analytics/477988381226",
+  tagAssistantExternal: "https://chrome.google.com/webstore/detail/tag-assistant-by-google/kejbdjndbnbjgmefkgdddjlbokphdefk",
+  crossDomainTracking: "https://developers.google.com/analytics/devguides/collection/analyticsjs/cross-domain",
+  protocolParameters: "https://developers.google.com/analytics/devguides/collection/protocol/v1/parameters",
+  crossDomainLinker: "https://developers.google.com/analytics/devguides/collection/analyticsjs/linker",
+  aboutTagAssistant: "https://support.google.com/tagassistant/answer/2947093",
+  aboutTagAssistantRecordings: "https://support.google.com/analytics/answer/6277302",
 }
 
 // All data in localStorage should have its keys here.
