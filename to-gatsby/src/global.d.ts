@@ -24,4 +24,5 @@ declare interface AppState {
   user?: gapi.auth2.GoogleUser
   gapi?: typeof gapi
   gtag?: typeof gtag
+  measurementID: string
 }

@@ -6,6 +6,6 @@
     "outDir": "build"
   },
   "include": [
-    "./**/*.ts"
+    "**/*.ts"
   ]
 }

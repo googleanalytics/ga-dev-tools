@@ -58,6 +58,7 @@
     "argparse": "^1.0.10",
     "babel-jest": "^25.3.0",
     "execa": "^4.0.2",
+    "firebase-tools": "^8.4.3",
     "identity-obj-proxy": "^3.0.0",
     "inquirer": "^7.2.0",
     "jest": "^25.3.0",
@@ -67,13 +68,14 @@
     "typescript": "^3.8.3"
   },
   "scripts": {
-    "generate-scripts": "cd lib && tsc",
+    "generate-scripts": "cd lib && yarn build",
     "check-config": "yarn generate-scripts && node lib/build/index.js check-config",
     "build": "yarn generate-scripts && node lib/build/index.js build",
     "develop": "yarn generate-scripts && node lib/build/index.js develop",
     "format": "prettier --write \"**/*.{js,jsx,json,md}\"",
     "start": "yarn run develop",
-    "serve": "gatsby serve --host=0.0.0.0",
+    "serve": "yarn generate-scripts && node lib/build/index.js serve",
+    "stage:integration": "yarn generate-scripts && node lib/build/index.js stage:integration",
     "clean": "gatsby clean",
     "check-types": "tsc",
     "test": "yarn check-types && jest"

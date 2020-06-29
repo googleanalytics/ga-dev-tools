@@ -1,4 +1,5 @@
 import { checkConfig } from "./check-config"
+import { RuntimeJson } from "./types"
 import * as execa from "execa"
 
 const checkTypes = async () => {
@@ -12,13 +13,14 @@ const checkTypes = async () => {
 }
 
 // Building makes sure all necessary config items are provided, then runs gatsby build with all necessary environment variables.
-export const build = async () => {
-  const config = await checkConfig()
+export const build = async (shouldCheckConfig: boolean = true) => {
+  if (shouldCheckConfig) {
+    await checkConfig()
+  }
 
   await checkTypes()
 
   await execa("yarn", ["run", "gatsby", "build"], {
-    env: { GATSBY_GA_MEASUREMENT_ID: config.gaMeasurementId },
     stderr: "inherit",
     stdout: "inherit",
     stdin: "inherit",

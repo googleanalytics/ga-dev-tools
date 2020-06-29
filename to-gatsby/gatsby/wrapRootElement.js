@@ -11,6 +11,7 @@ const reducer = (state = {}, action) => {
     case "setUser": return { ...state, user: action.user }
     case "setGapi": return { ...state, gapi: action.gapi }
     case "setGtag": return { ...state, gtag: action.gtag }
+    case "setMeasurementID": return {...state, measurementID: action.measurementID}
     default: return state
   }
 }
@@ -66,9 +67,9 @@ const MyBaseline = withStyles(styles)(() => {
 
 export const makeStore = () => createStore(reducer)
 export const store = makeStore()
-store.subscribe(() => {
-  console.log("state change", store.getState())
-})
+// store.subscribe(() => {
+//   console.log("state change", store.getState())
+// })
 
 export default ({ element }) => {
   return (

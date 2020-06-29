@@ -27,3 +27,4 @@ build/
 service-account-key.json
 bitly_api_key.cfg
 /to-gatsby/runtime.json
+to-gatsby/.firebase

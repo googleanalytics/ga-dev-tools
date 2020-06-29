@@ -2,16 +2,9 @@ import * as argparse from "argparse"
 import { checkConfig } from "./check-config"
 import { build } from "./build"
 import { develop } from "./develop"
-
-interface CheckRuntimeFilesArgs {}
-
-enum Command {
-  CheckRequiredConfiguration = "check-config",
-  Build = "build",
-  Develop = "develop",
-}
-
-type Args = CheckRuntimeFilesArgs & { cmd: Command }
+import { serve } from "./serve"
+import { stage } from "./stage"
+import { Command, Args } from "./types"
 
 const getParser = async (): Promise<argparse.ArgumentParser> => {
   const parser = new argparse.ArgumentParser({
@@ -34,9 +27,23 @@ const getParser = async (): Promise<argparse.ArgumentParser> => {
     help: "Builds the project. Runs any necessary validation before building.",
   })
 
+  subparsers.addParser(Command.StageToIntegration, {
+    help: "Builds the project, then stages it to `firebaseStagingProjectId`.",
+  })
+
   subparsers.addParser(Command.Develop, {
     help:
       "Runs a local dev server. Runs any necessary validation before serving.",
+  })
+
+  const serveParser = subparsers.addParser(Command.Serve, {
+    help:
+      "Serves the content in the build directory locally through the Firebase cli.",
+  })
+  serveParser.addArgument("--skip_build", {
+    defaultValue: false,
+    dest: "skipBuild",
+    action: "storeTrue",
   })
 
   return parser
@@ -57,6 +64,14 @@ const scripts = async () => {
     }
     case Command.Develop: {
       await develop()
+      break
+    }
+    case Command.Serve: {
+      await serve(args)
+      break
+    }
+    case Command.StageToIntegration: {
+      await stage("integration")
       break
     }
   }
