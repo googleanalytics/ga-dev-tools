@@ -102,6 +102,10 @@ const configQuestions = (
       },
     },
     {
+      // TODO - Nice to have. Accept a value that lets the user create a new
+      // firebase project if they don't already have one. The firebase cli
+      // supports this so it shouldn't bee too tricky. This should probably use
+      // the --json flag for the cli so the data comes back in a useful format.
       name: "firebaseProjectIdProd",
       type: "input",
       message: "Firebase project ID to use for production:",
