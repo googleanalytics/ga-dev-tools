@@ -33,7 +33,7 @@ const getParser = async (): Promise<argparse.ArgumentParser> => {
   // TODO - It's probably worth implementing a workaround so this can be built
   // using the development environment variables. Right now, this works great
   // for local development, but it's less useful for the staging site.
-  subparsers.addParser(Command.Deploy, {
+  const deployParser = subparsers.addParser(Command.Deploy, {
     help:
       "Builds the project and deploys it to `--environment`. Note that due to a limitation in `gatsby build`, this will always use the production environment variables. Only the firebase projectId will be changed",
   })
@@ -54,7 +54,7 @@ const getParser = async (): Promise<argparse.ArgumentParser> => {
   })
 
   // Add the environment argument to all commands that support it.
-  ;[buildParser, serveParser].forEach(parser => {
+  ;[buildParser, serveParser, deployParser].forEach(parser => {
     parser.addArgument("--environment", {
       required: true,
       dest: "environment",

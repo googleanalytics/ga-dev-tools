@@ -9,6 +9,9 @@ export const serve = async (args: ServeArgs) => {
   let projectId: string
   if (args.environment === Environment.Development) {
     projectId = config.development.firebaseProjectId
+    console.warn(
+      `Note: serving using the development environment isn't fully supported. You should use "yarn start" instead to run locally.`
+    )
   } else if (args.environment === Environment.Production) {
     projectId = config.production.firebaseProjectId
   }

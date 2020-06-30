@@ -75,11 +75,10 @@
     "clean": "gatsby clean",
 
     "generate-scripts": "cd lib && yarn build",
-    "serve:development": "yarn generate-scripts && node lib/build/index.js serve --environment=development",
+    "serve:production": "yarn generate-scripts && node lib/build/index.js serve --environment=production",
     "check-config": "yarn generate-scripts && node lib/build/index.js check-config",
     "build:production": "yarn generate-scripts && node lib/build/index.js build --environment=production",
     "develop": "yarn generate-scripts && node lib/build/index.js develop",
-    "deploy:development": "yarn generate-scripts && node lib/build/index.js deploy --environment=development",
     "deploy:production": "yarn generate-scripts && node lib/build/index.js deploy --environment=production"
   }
 }
