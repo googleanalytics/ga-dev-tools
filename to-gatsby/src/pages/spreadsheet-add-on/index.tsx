@@ -59,7 +59,7 @@ const SpreadsheetAddOn = () => {
       <SpreadsheetImage/>
     </a>
 
-    <Typography variant="caption">
+    <Typography variant="caption" paragraph> 
     A Google Analytics Spreadsheet Add-on report
     </Typography>
 

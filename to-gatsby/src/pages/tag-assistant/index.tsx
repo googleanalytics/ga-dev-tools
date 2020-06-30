@@ -39,13 +39,12 @@ const TagAssistant = () => {
     To see how Tag Assistant works, check out the video below. In it Philip 
     Walton, Developer Programs Engineer on the Google Analytics team, 
     demonstrates how you can use Tag Assistant to catch errors and check the 
-    validity of advanced tracking implementations such as 
-    <a href={Url.crossDomainTracking}>cross-domain tracking</a>.
+    validity of advanced tracking implementations such as <a href={Url.crossDomainTracking}>cross-domain tracking</a>.
     </Typography>
 
-
-
-    <Typography variant="caption">
+    <iframe width="640" height="400" src="https://www.youtube.com/embed/O_FFUw1tSfI" frameBorder="0" allowFullScreen></iframe>
+    
+    <Typography variant="caption" paragraph>
     Using Tag Assistant to validate your tracking implementations.
     </Typography>
 
