@@ -4,7 +4,10 @@ import { build } from "./build"
 import { develop } from "./develop"
 import { serve } from "./serve"
 import { stage } from "./stage"
-import { Command, Args } from "./types"
+import { Command, Args, Environment } from "./types"
+
+// TODO - We should add some tests for pure functions in here for a bit more
+// confidence.
 
 const getParser = async (): Promise<argparse.ArgumentParser> => {
   const parser = new argparse.ArgumentParser({
@@ -23,12 +26,16 @@ const getParser = async (): Promise<argparse.ArgumentParser> => {
       "Ensures that all necessary configuration files exist & have required values.",
   })
 
-  subparsers.addParser(Command.Build, {
+  const buildParser = subparsers.addParser(Command.Build, {
     help: "Builds the project. Runs any necessary validation before building.",
   })
 
-  subparsers.addParser(Command.StageToIntegration, {
-    help: "Builds the project, then stages it to `firebaseStagingProjectId`.",
+  // TODO - It's probably worth implementing a workaround so this can be built
+  // using the development environment variables. Right now, this works great
+  // for local development, but it's less useful for the staging site.
+  subparsers.addParser(Command.Deploy, {
+    help:
+      "Builds the project and deploys it to `--environment`. Note that due to a limitation in `gatsby build`, this will always use the production environment variables. Only the firebase projectId will be changed",
   })
 
   subparsers.addParser(Command.Develop, {
@@ -44,6 +51,15 @@ const getParser = async (): Promise<argparse.ArgumentParser> => {
     defaultValue: false,
     dest: "skipBuild",
     action: "storeTrue",
+  })
+
+  // Add the environment argument to all commands that support it.
+  ;[buildParser, serveParser].forEach(parser => {
+    parser.addArgument("--environment", {
+      required: true,
+      dest: "environment",
+      choices: Object.values(Environment),
+    })
   })
 
   return parser
@@ -70,8 +86,8 @@ const scripts = async () => {
       await serve(args)
       break
     }
-    case Command.StageToIntegration: {
-      await stage("integration")
+    case Command.Deploy: {
+      await stage(args)
       break
     }
   }

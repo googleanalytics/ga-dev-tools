@@ -1,15 +1,16 @@
 import * as execa from "execa"
 import { build } from "./build"
 import { checkConfig } from "./check-config"
+import { DeployArgs, Environment } from "./types"
 
-export const stage = async (environment: "integration" | "production") => {
+export const stage = async (args: DeployArgs) => {
   const config = await checkConfig()
 
-  const projectId =
-    environment === "integration" ? config.firebaseStagingProjectId : undefined
-
-  if (projectId === undefined) {
-    throw new Error("Production deployments are not yet supported.")
+  let projectId: string
+  if (args.environment === Environment.Development) {
+    projectId = config.development.firebaseProjectId
+  } else if (args.environment === Environment.Production) {
+    projectId = config.production.firebaseProjectId
   }
 
   await build(false)

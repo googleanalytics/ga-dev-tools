@@ -6,12 +6,32 @@ export const RuntimeJsonPath = path.join(PWD, "runtime.json")
 export const DotEnvDevelopmentPath = path.join(PWD, ".env.development")
 export const DotEnvProductionPath = path.join(PWD, ".env.production")
 
-export interface RuntimeJson {
+interface CommonConfig {
   gaMeasurementId: string
-  gaMeasurementIdDev: string
-  firebaseStagingProjectId: string
-  // TODO there should be a different gapiClientID for production and development.
+  firebaseProjectId: string
   gapiClientId: string
+}
+
+export interface ProductionConfig extends CommonConfig {}
+export interface DevelopmentConfig extends CommonConfig {}
+
+export interface ConfigAnswers {
+  gaMeasurementIdProd: string
+  gaMeasurementIdDev: string
+  firebaseProjectIdProd: string
+  firebaseProjectIdDev: string
+  gapiClientIdProd: string
+  gapiClientIdDev: string
+}
+
+export interface RuntimeJson {
+  production: ProductionConfig
+  development: DevelopmentConfig
+}
+
+export enum Environment {
+  Production = "production",
+  Development = "development",
 }
 
 interface CheckRuntimeFilesArgs {
@@ -29,10 +49,12 @@ interface DevelopArgs {
 export interface ServeArgs {
   cmd: Command.Serve
   skipBuild: boolean
+  environment: Environment
 }
 
-interface StageToIntegrationArgs {
-  cmd: Command.StageToIntegration
+export interface DeployArgs {
+  cmd: Command.Deploy
+  environment: Environment
 }
 
 export enum Command {
@@ -40,7 +62,7 @@ export enum Command {
   Build = "build",
   Develop = "develop",
   Serve = "serve",
-  StageToIntegration = "stage:integration",
+  Deploy = "deploy",
 }
 
 export type Args =
@@ -48,4 +70,4 @@ export type Args =
   | ServeArgs
   | BuildArgs
   | DevelopArgs
-  | StageToIntegrationArgs
+  | DeployArgs

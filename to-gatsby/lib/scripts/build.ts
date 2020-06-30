@@ -1,5 +1,4 @@
 import { checkConfig } from "./check-config"
-import { RuntimeJson } from "./types"
 import * as execa from "execa"
 
 const checkTypes = async () => {
