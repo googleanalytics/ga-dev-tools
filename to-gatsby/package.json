@@ -68,16 +68,17 @@
     "typescript": "^3.8.3"
   },
   "scripts": {
-    "generate-scripts": "cd lib && yarn build",
-    "check-config": "yarn generate-scripts && node lib/build/index.js check-config",
-    "build": "yarn generate-scripts && node lib/build/index.js build",
-    "develop": "yarn generate-scripts && node lib/build/index.js develop",
     "format": "prettier --write \"**/*.{js,jsx,json,md}\"",
-    "start": "yarn run develop",
-    "serve": "yarn generate-scripts && node lib/build/index.js serve",
-    "stage:integration": "yarn generate-scripts && node lib/build/index.js stage:integration",
-    "clean": "gatsby clean",
     "check-types": "tsc",
-    "test": "yarn check-types && jest"
+    "test": "yarn check-types && jest",
+    "start": "yarn run develop",
+    "clean": "gatsby clean",
+
+    "generate-scripts": "cd lib && yarn build",
+    "serve:production": "yarn generate-scripts && node lib/build/index.js serve --environment=production",
+    "check-config": "yarn generate-scripts && node lib/build/index.js check-config",
+    "build:production": "yarn generate-scripts && node lib/build/index.js build --environment=production",
+    "develop": "yarn generate-scripts && node lib/build/index.js develop",
+    "deploy:production": "yarn generate-scripts && node lib/build/index.js deploy --environment=production"
   }
 }

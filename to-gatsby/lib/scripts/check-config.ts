@@ -6,6 +6,9 @@ import {
   Encoding,
   DotEnvDevelopmentPath,
   DotEnvProductionPath,
+  ConfigAnswers,
+  ProductionConfig,
+  DevelopmentConfig,
 } from "./types"
 import * as execa from "execa"
 
@@ -16,6 +19,9 @@ type ConfigQuestionFilter = {
 const ensureNecessaryFiles = async (
   runtimeJson: RuntimeJson
 ): Promise<RuntimeJson> => {
+  // TODO - Ideally this only re-writes a file if there's actually a difference
+  // between the current one and the new data.
+
   // Create `runtime.json` if it doesn't exist.
   const exists = fs.existsSync(RuntimeJsonPath)
   if (!exists) {
@@ -42,8 +48,8 @@ const ensureNecessaryFiles = async (
   fs.writeFileSync(
     DotEnvDevelopmentPath,
     [
-      `GAPI_CLIENT_ID=${runtimeJson.gapiClientId}`,
-      `GA_MEASUREMENT_ID=${runtimeJson.gaMeasurementIdDev}`,
+      `GAPI_CLIENT_ID=${runtimeJson.development.gapiClientId}`,
+      `GA_MEASUREMENT_ID=${runtimeJson.development.gaMeasurementId}`,
     ].join("\n"),
     { encoding: Encoding }
   )
@@ -51,13 +57,11 @@ const ensureNecessaryFiles = async (
   fs.writeFileSync(
     DotEnvProductionPath,
     [
-      `GAPI_CLIENT_ID=${runtimeJson.gapiClientId}`,
-      `GA_MEASUREMENT_ID=${runtimeJson.gaMeasurementId}`,
+      `GAPI_CLIENT_ID=${runtimeJson.production.gapiClientId}`,
+      `GA_MEASUREMENT_ID=${runtimeJson.production.gaMeasurementId}`,
     ].join("\n"),
     { encoding: Encoding }
   )
-
-  console.log("Writing `runtime.json`.")
 
   return runtimeJson
 }
@@ -67,17 +71,21 @@ const ensureNecessaryFiles = async (
 // be skipped if already provided.
 const configQuestions = (
   filter: ConfigQuestionFilter
-): inquirer.QuestionCollection<RuntimeJson> => {
+): inquirer.QuestionCollection<ConfigAnswers> => {
+  // TODO the `?.`s can be removed once this has stabilized. They're here now to
+  // be friendly as the runtimeJson type evolves.
   return [
     {
-      name: "gaMeasurementId",
+      name: "gaMeasurementIdProd",
       // TODO - Nice to have, list the user's available properties. Would
       // require the user to authenticate first to make the request.
       type: "input",
       message: "Google Analytics measurement ID for production: ",
-      default: filter.gaMeasurementId || "none-provided",
+      default: filter?.production?.gaMeasurementId || "none-provided",
       when: () => {
-        return filter.askAll || filter.gaMeasurementId === undefined
+        return (
+          filter.askAll || filter?.production?.gaMeasurementId === undefined
+        )
       },
     },
     {
@@ -86,30 +94,61 @@ const configQuestions = (
       // require the user to authenticate first to make the request.
       type: "input",
       message: "Google Analytics measurement ID for development: ",
-      default: filter.gaMeasurementIdDev || "none-provided",
+      default: filter?.development?.gaMeasurementId || "none-provided",
       when: () => {
-        return filter.askAll || filter.gaMeasurementIdDev === undefined
+        return (
+          filter.askAll || filter?.development?.gaMeasurementId === undefined
+        )
       },
     },
     {
-      name: "firebaseStagingProjectId",
+      // TODO - Nice to have. Accept a value that lets the user create a new
+      // firebase project if they don't already have one. The firebase cli
+      // supports this so it shouldn't bee too tricky. This should probably use
+      // the --json flag for the cli so the data comes back in a useful format.
+      name: "firebaseProjectIdProd",
       type: "input",
-      message: "Firebase project ID to use for staging environment:",
+      message: "Firebase project ID to use for production:",
       // TODO - See if listing is useful. Probably should only do it if there's not a ton.
-      default: filter.firebaseStagingProjectId,
+      default: filter?.production?.firebaseProjectId,
       when: () => {
-        return filter.askAll || filter.firebaseStagingProjectId === undefined
+        return (
+          filter.askAll || filter?.production?.firebaseProjectId === undefined
+        )
       },
     },
     {
-      name: "gapiClientId",
+      name: "firebaseProjectIdDev",
+      type: "input",
+      message: "Firebase project ID to use for development environment:",
+      // TODO - See if listing is useful. Probably should only do it if there's not a ton.
+      default: filter?.development?.firebaseProjectId,
+      when: () => {
+        return (
+          filter.askAll || filter?.development?.firebaseProjectId === undefined
+        )
+      },
+    },
+    {
+      name: "gapiClientIdProd",
       type: "input",
       // TODO - Check to see if there a way to make getting this value easier.
       // (or at least provide a link to where the user can find this value)
-      message: "Client ID to use for user authentication to this site.",
-      default: filter.gapiClientId,
+      message: "Google client ID to use for production:",
+      default: filter?.production?.gapiClientId,
       when: () => {
-        return filter.askAll || filter.gapiClientId === undefined
+        return filter.askAll || filter?.production?.gapiClientId === undefined
+      },
+    },
+    {
+      name: "gapiClientIdDev",
+      type: "input",
+      // TODO - Check to see if there a way to make getting this value easier.
+      // (or at least provide a link to where the user can find this value)
+      message: "Google client ID to use for development environment:",
+      default: filter?.development?.gapiClientId,
+      when: () => {
+        return filter.askAll || filter?.development?.gapiClientId === undefined
       },
     },
   ]
@@ -137,7 +176,7 @@ export const checkConfig = async (): Promise<RuntimeJson> => {
   const exists = fs.existsSync(RuntimeJsonPath)
 
   let filter: ConfigQuestionFilter = {}
-  let currentConfig: Partial<RuntimeJson> = {}
+  let currentConfig: RuntimeJson | undefined
 
   // If the file doesn't exist at all, prompt for all configuration entries.
   if (!exists) {
@@ -156,12 +195,69 @@ export const checkConfig = async (): Promise<RuntimeJson> => {
   // Make sure user is logged into Firebase.
   await ensureFirebaseLoginStatus()
 
-  const answers = await inquirer.prompt(
-    configQuestions(Object.assign({}, currentConfig, filter))
-  )
+  const questions = configQuestions(Object.assign({}, currentConfig, filter))
 
-  const merged = Object.assign({}, currentConfig, answers)
+  const answers: Partial<ConfigAnswers> = await inquirer.prompt(questions)
 
-  const config = await ensureNecessaryFiles(merged)
+  const asRuntime = toRuntimeJson(answers, currentConfig)
+
+  const config = await ensureNecessaryFiles(asRuntime)
   return config
+}
+
+const toRuntimeJson = (
+  answers: Partial<ConfigAnswers>,
+  currentConfig: RuntimeJson
+): RuntimeJson => {
+  const production: ProductionConfig = {
+    gaMeasurementId:
+      answers.gaMeasurementIdProd || currentConfig.production.gaMeasurementId,
+    firebaseProjectId:
+      answers.firebaseProjectIdProd ||
+      currentConfig.production.firebaseProjectId,
+    gapiClientId:
+      answers.gapiClientIdProd || currentConfig.production.gapiClientId,
+  }
+
+  const development: DevelopmentConfig = {
+    gaMeasurementId:
+      answers.gaMeasurementIdDev || currentConfig.development.gaMeasurementId,
+    firebaseProjectId:
+      answers.firebaseProjectIdDev ||
+      currentConfig.development.firebaseProjectId,
+    gapiClientId:
+      answers.gapiClientIdDev || currentConfig.development.gapiClientId,
+  }
+
+  const fullConfig = { production, development }
+
+  return assertAllValues(fullConfig)
+}
+
+const assertAllValues = (runtimeJson: RuntimeJson): RuntimeJson => {
+  if (runtimeJson.development.gapiClientId === undefined) {
+    throw new Error("Missing the development gapiClientId")
+  }
+
+  if (runtimeJson.development.gaMeasurementId === undefined) {
+    throw new Error("Missing the development gaMeasurementId")
+  }
+
+  if (runtimeJson.development.firebaseProjectId === undefined) {
+    throw new Error("Missing the development firebaseProjectId")
+  }
+
+  if (runtimeJson.production.gapiClientId === undefined) {
+    throw new Error("Missing the production gapiClientId")
+  }
+
+  if (runtimeJson.production.gaMeasurementId === undefined) {
+    throw new Error("Missing the production gaMeasurementId")
+  }
+
+  if (runtimeJson.production.firebaseProjectId === undefined) {
+    throw new Error("Missing the production firebaseProjectId")
+  }
+
+  return runtimeJson
 }
