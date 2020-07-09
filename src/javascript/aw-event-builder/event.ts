@@ -5,13 +5,22 @@ import {
   MPEventData,
   MPEventType,
   Parameters,
-  UrlParam
+  UrlParam,
 } from "./types";
 
-export interface UserOrClientId {
-  userId?: string;
+interface WebIds {
+  type: "web";
   clientId?: string;
+  userId?: string;
 }
+
+interface MobileIds {
+  type: "mobile";
+  appInstanceId?: string;
+  userId?: string;
+}
+
+export type ClientIds = WebIds | MobileIds;
 
 export interface InstanceId {
   measurementId?: string;
@@ -21,6 +30,7 @@ export interface InstanceId {
 export interface URLParts {
   eventName?: string;
   clientId?: string;
+  appInstanceId?: string;
   userId?: string;
   event?: MPEvent;
   measurementId?: string;
@@ -51,7 +61,7 @@ const getEventFromParams = (searchParams: URLSearchParams) => {
         gaAll("send", "event", {
           eventCategory: "App+Web Event Builder",
           eventAction: "hydrate",
-          eventLabel: "event-from-url"
+          eventLabel: "event-from-url",
         });
         return emptyEvent;
       }
@@ -96,6 +106,7 @@ export const unParameterizeUrl = (): URLParts => {
   const search = window.location.search;
   const searchParams = new URLSearchParams(search);
   const clientId = searchParams.get("clientId") || undefined;
+  const appInstanceId = searchParams.get("appInstanceId") || undefined;
   const userId = searchParams.get("userId") || undefined;
   const event = getEventFromParams(searchParams);
   const userProperties = getUserPropertiesFromParams(searchParams);
@@ -103,6 +114,7 @@ export const unParameterizeUrl = (): URLParts => {
   const firebaseAppId = searchParams.get("firebaseAppId") || undefined;
   const apiSecret = searchParams.get("apiSecret") || undefined;
   return {
+    appInstanceId,
     clientId,
     userId,
     event,
@@ -110,22 +122,26 @@ export const unParameterizeUrl = (): URLParts => {
     measurementId,
     firebaseAppId,
     apiSecret,
-    eventName: event.isCustomEvent() ? event.getEventName() : undefined
+    eventName: event.isCustomEvent() ? event.getEventName() : undefined,
   };
 };
 
 export const parameterizedUrl = ({
   clientId,
+  appInstanceId,
   userId,
   event,
   measurementId,
   firebaseAppId,
   apiSecret,
-  userProperties
+  userProperties,
 }: URLParts) => {
   const params = new URLSearchParams();
 
   clientId && clientId !== "" && params.append("clientId", clientId);
+  appInstanceId &&
+    appInstanceId !== "" &&
+    params.append("appInstanceId", appInstanceId);
   userId && userId !== "" && params.append("userId", userId);
   apiSecret && apiSecret !== "" && params.append("apiSecret", apiSecret);
   event &&
@@ -146,7 +162,7 @@ export const parameterizedUrl = ({
 
   if (userProperties !== undefined) {
     const filtered = userProperties.filter(
-      property => property.value !== undefined
+      (property) => property.value !== undefined
     );
     params.append(UrlParam.UserProperties, btoa(JSON.stringify(filtered)));
   }
@@ -172,24 +188,30 @@ const instanceQueryParamFor = (instanceId: InstanceId) => {
 // TODO add in type for MPPayload
 export const payloadFor = (
   events: MPEvent[],
-  requiredId: UserOrClientId,
+  clientIds: ClientIds,
   userProperties: Parameters
 ): {} => {
+  if (clientIds.type === "web" && clientIds.clientId === "") {
+    clientIds.clientId = undefined;
+  } else if (clientIds.type === "mobile" && clientIds.appInstanceId === "") {
+    clientIds.appInstanceId = undefined;
+  }
+  const { type, ...minusType } = clientIds;
   return {
-    userId: requiredId.userId || undefined,
-    clientId: requiredId.clientId || undefined,
-    events: events.map(event => event.asPayload()),
+    ...minusType,
+    userId: clientIds.userId || undefined,
+    events: events.map((event) => event.asPayload()),
     userProperties:
       userProperties.length === 0
         ? undefined
-        : MPEvent.parametersToPayload(userProperties)
+        : MPEvent.parametersToPayload(userProperties),
   };
 };
 
 export const validateHit = async (
   instanceId: InstanceId,
   api_secret: string,
-  requiredId: UserOrClientId,
+  requiredId: ClientIds,
   events: MPEvent[],
   userProperties: Parameters
 ): Promise<ValidationMessage[]> => {
@@ -198,11 +220,11 @@ export const validateHit = async (
   )}&api_secret=${api_secret}`;
   const payload = payloadFor(events, requiredId, userProperties);
   Object.assign(payload, {
-    validationBehavior: "ENFORCE_RECOMMENDATIONS"
+    validationBehavior: "ENFORCE_RECOMMENDATIONS",
   });
   const result = await fetch(url, {
     method: "POST",
-    body: JSON.stringify(payload)
+    body: JSON.stringify(payload),
   });
   const asJson = await result.json();
   return asJson.validationMessages as ValidationMessage[];
@@ -211,7 +233,7 @@ export const validateHit = async (
 export const sendEvent = async (
   instanceId: InstanceId,
   api_secret: string,
-  requiredId: UserOrClientId,
+  requiredId: ClientIds,
   events: MPEvent[],
   userProperties: Parameters
 ): Promise<Response> => {
@@ -220,7 +242,7 @@ export const sendEvent = async (
   )}&api_secret=${api_secret}`;
   const result = await fetch(url, {
     method: "POST",
-    body: JSON.stringify(payloadFor(events, requiredId, userProperties))
+    body: JSON.stringify(payloadFor(events, requiredId, userProperties)),
   });
   return result;
 };

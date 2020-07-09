@@ -22,24 +22,26 @@ Libraries. **[View the Site]**
 To run the site locally, first make sure you have all the dependencies
 installed:
 
+Prerequirements: 
+* [`Yarn`](https://classic.yarnpkg.com/en/docs/install)
+
 ```shell
 npm install
 ```
 
 Then simply run the following:
-
 ```shell
-env GA_MEASUREMENT_ID=YOUR_ID npm run start
+env GATSBY_GA_MEASUREMENT_ID=YOUR_ID npm run start
 ```
 
 This will set up a local hot-reloading instance of the app that you'll be able
-to navigate to by going to `http://locahost:8000`
+to navigate to by going to `http://localhost:8000`
 
 ## Whats in this repo
 
 ### `./src`
 
-This is where all (technically most, see [gatsby-broweser.js]) of the
+This is where all (technically most, see [gatsby-browser.js]) of the
 client-side code lives. All of our demo code can be found here.
 
 ### gatsby-browser.js

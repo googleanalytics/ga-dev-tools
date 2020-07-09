@@ -75,6 +75,9 @@ const ViewSelector: React.FC<ViewSelector3Props> = ({
       const api = getAnalyticsApi(gapi)
       const getData = async () => {
         // TODO - handle rejected promise from .list
+        // TODO - here and for all api requests. If the api isn't enabled, show
+        // a toast that lets the developer navigate to the API console to enable
+        // the api.
         const response = await api.management.accountSummaries.list({})
         const accounts = response.result.items
         if (accounts === undefined) {

@@ -36,6 +36,9 @@ export const Url = {
     "https://github.com/googleanalytics/ga-dev-tools/issues/new",
   gaDevsite: "http://developers.google.com/analytics",
   gaDevsiteHelp: "http://developers.google.com/analytics/help/",
+  reportingApis: "https://developers.google.com/analytics/devguides/reporting/",
+  spreadsheetAddOn: "https://developers.google.com/analytics/solutions/google-analytics-spreadsheet-add-on",
+  spreadsheetAddOnExternal: "https://gsuite.google.com/marketplace/app/google_analytics/477988381226",
 }
 
 // All data in localStorage should have its keys here.
