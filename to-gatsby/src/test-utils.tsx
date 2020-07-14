@@ -37,10 +37,8 @@ export const withProviders = (
   store: any
 } => {
   const history = createHistory(createMemorySource(path))
-  if (measurementID) {
-    process.env.GATSBY_GA_MEASUREMENT_ID = measurementID
-  }
   const store = makeStore()
+  store.dispatch({ type: "setMeasurementID", measurementID: measurementID })
   const wrapped = (
     <Provider store={store}>
       <LocationProvider history={history}>{component}</LocationProvider>
