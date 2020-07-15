@@ -164,7 +164,7 @@ export const AccountExplorer = () => {
 
 export default () => {
   return (
-    <Layout title="Account Explorer">
+    <Layout title="Account Explorer" requireLogin>
       <AccountExplorer />
     </Layout>
   )
