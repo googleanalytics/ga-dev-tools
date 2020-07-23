@@ -160,8 +160,34 @@ const userProperties: Reducer<Parameters, EventBuilderAction> = (
   }
 };
 
+const timestampMicros: Reducer<number | null, EventBuilderAction> = (
+  state = valuesFromUrlParameters.timestampMicros || null,
+  action
+) => {
+  switch (action.type) {
+    case ActionType.SetTimestampMicros:
+      return action.timestampMicros;
+    default:
+      return state;
+  }
+};
+
+const nonPersonalizedAds: Reducer<boolean, EventBuilderAction> = (
+  state = valuesFromUrlParameters.nonPersonalizedAds || false,
+  action
+) => {
+  switch (action.type) {
+    case ActionType.SetNonPersonalizedAds:
+      return action.nonPersonalizedAds;
+    default:
+      return state;
+  }
+};
+
 const app: Reducer<State, EventBuilderAction> = combineReducers({
   userProperties,
+  timestampMicros,
+  nonPersonalizedAds,
   validationStatus,
   measurementId,
   firebaseAppId,

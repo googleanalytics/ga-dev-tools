@@ -28,6 +28,8 @@ export interface InstanceId {
 }
 
 export interface URLParts {
+  timestampMicros?: number | null;
+  nonPersonalizedAds?: boolean;
   eventName?: string;
   clientId?: string;
   appInstanceId?: string;
@@ -113,7 +115,22 @@ export const unParameterizeUrl = (): URLParts => {
   const measurementId = searchParams.get("measurementId") || undefined;
   const firebaseAppId = searchParams.get("firebaseAppId") || undefined;
   const apiSecret = searchParams.get("apiSecret") || undefined;
+  const timestampMicrosString =
+    searchParams.get("timestampMicros") || undefined;
+  const timestampMicros = timestampMicrosString
+    ? parseInt(timestampMicrosString, 10)
+    : undefined;
+  const nonPersonalizedAdsString =
+    searchParams.get("nonPersonalizedAds") || undefined;
+  const nonPersonalizedAds =
+    nonPersonalizedAdsString === "true"
+      ? true
+      : nonPersonalizedAdsString === "false"
+      ? false
+      : undefined;
   return {
+    timestampMicros,
+    nonPersonalizedAds,
     appInstanceId,
     clientId,
     userId,
@@ -135,6 +152,8 @@ export const parameterizedUrl = ({
   firebaseAppId,
   apiSecret,
   userProperties,
+  timestampMicros,
+  nonPersonalizedAds,
 }: URLParts) => {
   const params = new URLSearchParams();
 
@@ -155,6 +174,13 @@ export const parameterizedUrl = ({
   firebaseAppId &&
     firebaseAppId !== "" &&
     params.append("firebaseAppId", firebaseAppId);
+
+  timestampMicros !== undefined &&
+    timestampMicros !== null &&
+    params.append("timestampMicros", timestampMicros.toString());
+
+  nonPersonalizedAds !== undefined &&
+    params.append("nonPersonalizedAds", nonPersonalizedAds.toString());
 
   // We base64 encode the JSON string to make the url a bit smaller.
   event &&
@@ -189,7 +215,9 @@ const instanceQueryParamFor = (instanceId: InstanceId) => {
 export const payloadFor = (
   events: MPEvent[],
   clientIds: ClientIds,
-  userProperties: Parameters
+  userProperties: Parameters,
+  timestampMicros: number | null,
+  nonPersonalizedAds: boolean
 ): {} => {
   if (clientIds.type === "web" && clientIds.clientId === "") {
     clientIds.clientId = undefined;
@@ -200,6 +228,9 @@ export const payloadFor = (
   return {
     ...minusType,
     userId: clientIds.userId || undefined,
+    timestampMicros: timestampMicros !== null ? timestampMicros : undefined,
+    nonPersonalizedAds:
+      nonPersonalizedAds !== null ? nonPersonalizedAds : undefined,
     events: events.map((event) => event.asPayload()),
     userProperties:
       userProperties.length === 0
@@ -213,12 +244,20 @@ export const validateHit = async (
   api_secret: string,
   requiredId: ClientIds,
   events: MPEvent[],
-  userProperties: Parameters
+  userProperties: Parameters,
+  timestampMicros: number | null,
+  nonPersonalizedAds: boolean
 ): Promise<ValidationMessage[]> => {
   const url = `https://www.google-analytics.com/debug/mp/collect?${instanceQueryParamFor(
     instanceId
   )}&api_secret=${api_secret}`;
-  const payload = payloadFor(events, requiredId, userProperties);
+  const payload = payloadFor(
+    events,
+    requiredId,
+    userProperties,
+    timestampMicros,
+    nonPersonalizedAds
+  );
   Object.assign(payload, {
     validationBehavior: "ENFORCE_RECOMMENDATIONS",
   });
@@ -235,14 +274,24 @@ export const sendEvent = async (
   api_secret: string,
   requiredId: ClientIds,
   events: MPEvent[],
-  userProperties: Parameters
+  userProperties: Parameters,
+  timestampMicros: number | null,
+  nonPersonalizedAds: boolean
 ): Promise<Response> => {
   const url = `https://www.google-analytics.com/mp/collect?${instanceQueryParamFor(
     instanceId
   )}&api_secret=${api_secret}`;
   const result = await fetch(url, {
     method: "POST",
-    body: JSON.stringify(payloadFor(events, requiredId, userProperties)),
+    body: JSON.stringify(
+      payloadFor(
+        events,
+        requiredId,
+        userProperties,
+        timestampMicros,
+        nonPersonalizedAds
+      )
+    ),
   });
   return result;
 };

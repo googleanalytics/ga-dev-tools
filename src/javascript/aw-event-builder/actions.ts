@@ -22,6 +22,8 @@ const sendEvent: ThunkResult<void> = async (_, getState) => {
     clientId,
     appInstanceId,
     userProperties,
+    timestampMicros,
+    nonPersonalizedAds,
   } = getState();
 
   let clientIds: api.ClientIds;
@@ -37,7 +39,9 @@ const sendEvent: ThunkResult<void> = async (_, getState) => {
     apiSecret,
     clientIds,
     [event],
-    userProperties
+    userProperties,
+    timestampMicros,
+    nonPersonalizedAds
   );
 };
 
@@ -53,6 +57,8 @@ const validateEvent: ThunkResult<void> = async (dispatch, getState) => {
     clientId,
     appInstanceId,
     userProperties,
+    timestampMicros,
+    nonPersonalizedAds,
   } = getState();
 
   let clientIds: api.ClientIds;
@@ -68,7 +74,9 @@ const validateEvent: ThunkResult<void> = async (dispatch, getState) => {
     apiSecret,
     clientIds,
     [event],
-    userProperties
+    userProperties,
+    timestampMicros,
+    nonPersonalizedAds
   );
   if (messages.length === 0) {
     dispatch(actions.setValidationStatus(ValidationStatus.Valid));
@@ -156,6 +164,20 @@ const setUserProperties: (userProperties: Parameters) => ThunkResult<void> = (
   dispatch({ type: ActionType.SetUserProperties, userProperties });
 };
 
+const setTimestampMicros: (
+  timestampMicros: number | null
+) => ThunkResult<void> = (timestampMicros) => (dispatch) => {
+  dispatch(thunkActions.resetValidation);
+  dispatch({ type: ActionType.SetTimestampMicros, timestampMicros });
+};
+
+const setNonPersonalizedAds: (
+  nonPersonalizedAds: boolean | null
+) => ThunkResult<void> = (nonPersonalizedAds) => (dispatch) => {
+  dispatch(thunkActions.resetValidation);
+  dispatch({ type: ActionType.SetNonPersonalizedAds, nonPersonalizedAds });
+};
+
 const actions = {
   setValidationStatus(validationStatus: ValidationStatus): EventBuilderAction {
     return { type: ActionType.SetValidationStatus, validationStatus };
@@ -183,6 +205,8 @@ const thunkActions = {
   setClientId,
   setAppInstanceId,
   setUserId,
+  setTimestampMicros,
+  setNonPersonalizedAds,
   setEvent,
   editParamValue,
   editParamName,
