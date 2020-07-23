@@ -126,6 +126,7 @@ const Parameters: React.FC<ParametersProps> = ({
 
       <Autocomplete<typeof HIT_TYPES[0]>
         id="t"
+        data-testid={`change-t`}
         blurOnSelect
         openOnFocus
         autoHighlight

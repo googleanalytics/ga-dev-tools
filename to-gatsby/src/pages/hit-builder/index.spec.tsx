@@ -19,7 +19,7 @@ import userEvent from "@testing-library/user-event"
 import "@testing-library/jest-dom"
 
 import { HitBuilder } from "./index"
-import { Property } from "./_types"
+import { Property, HIT_TYPES } from "./_types"
 
 const getInputs = async (
   findByLabelText: (label: string) => Promise<HTMLElement>
@@ -41,7 +41,16 @@ describe("HitBuilder", () => {
     renderer.render(wrapped)
   })
 
-  // Does right thing when unauthed
+  describe("when unauthorized", () => {
+    test("renders without error for an unauthorized user", async () => {
+      const { wrapped, store } = withProviders(<HitBuilder properties={properties} />)
+      store.dispatch({ type: "setUser", user: undefined })
+      const { findByText } = renderer.render(wrapped)
+      const result = await findByText("You must be logged in with Google for this demo.")
+      expect(result).toBeVisible()
+    })
+  }
+  )
 
   describe("When authorized", () => {
     // Does right thing when authed (happy path render)
@@ -113,14 +122,38 @@ describe("HitBuilder", () => {
 
     describe("updates the hit payload", () => {
       test("when t parameter is changed", async () => {
-        // TODO - figure how to write this test. I can't get the autocomplete to
-        // work.
+        const { wrapped } = withProviders(<HitBuilder properties={properties} />)
+        const {  getByText, findByLabelText } = renderer.render(wrapped)
+
+        const t = await findByLabelText("t")
+
+        await renderer.act(async () => {
+          userEvent.click(t)
+          userEvent.selectOptions(t, ['pageview'])
+        })
+
+        expect(t).toHaveValue("pageview")
+        
       })
-      test("when tid parameter is changed", () => {
-        // TODO - figure how to write this test. I can't get the autocomplete to
-        // work.
-      })
+
       test("when cid parameter is changed", async () => {
+        const { wrapped } = withProviders(
+          <HitBuilder properties={properties} />
+        )
+        const { findByLabelText } = renderer.render(wrapped)
+        const { cid, hitPayload } = await getInputs(findByLabelText)
+
+        await renderer.act(async () => {
+          await userEvent.clear(cid)
+          await userEvent.type(cid, 'cid123')
+
+        })
+
+        expect(cid).toHaveValue("cid123")
+        expect(hitPayload.value).toContain("cid123")
+      })
+
+      test("when tid parameter is changed", async () => {
         const { wrapped } = withProviders(
           <HitBuilder properties={properties} />
         )
@@ -128,14 +161,16 @@ describe("HitBuilder", () => {
         const { tid, hitPayload } = await getInputs(findByLabelText)
 
         await renderer.act(async () => {
-          await userEvent.type(tid, "tid123")
+          await userEvent.clear(tid)
+          await userEvent.type(tid, 'tid123')
+
         })
 
         expect(tid).toHaveValue("tid123")
         expect(hitPayload.value).toContain("tid123")
       })
 
-      test("after clicking 'generate uuid'", async () => {
+      test("after clicking 'generate uuid' something is generated", async () => {
         const { wrapped } = withProviders(
           <HitBuilder properties={properties} />
         )
@@ -153,7 +188,7 @@ describe("HitBuilder", () => {
     })
 
     describe("when adding a parameter", () => {
-      test("updates hit payload when changing parameter name & value", async () => {
+      test("updates hit payload when adding or changing parameter name & value", async () => {
         const { wrapped } = withProviders(
           <HitBuilder properties={properties} />
         )
@@ -172,7 +207,29 @@ describe("HitBuilder", () => {
         })
 
         expect(hitPayload.value).toContain("paramName=paramValue")
+
+        // Tests modifying parameter after adding it
+        const paramField = await findByLabelText("Parameter name")
+
+        await renderer.act(async () => {
+          await userEvent.clear(paramField)
+          await userEvent.type(paramField, 'newName')
+        })
+        expect(paramField).toHaveValue("newName")
+        expect(hitPayload.value).toContain("newName=paramValue")
+
+        // Tests modifying param value after param name is changed
+
+        const paramValue = await findByLabelText("Value for newName")
+
+        await renderer.act(async () => {
+          await userEvent.clear(paramValue)
+          await userEvent.type(paramValue, "paramValue2")
+        })
+        expect(hitPayload.value).toContain("newName=paramValue2")
+
       })
+
       test("updates hit payload when removing parameter", async () => {
         const { wrapped } = withProviders(
           <HitBuilder properties={properties} />
@@ -201,11 +258,56 @@ describe("HitBuilder", () => {
     })
 
     describe("Validate hit", () => {
-      // TODO - I can't remember what this is supposed to do, exactly, so figure
-      // that out before merging this in.
-      // Probably makes sense to test against the title of the banner.
-      test("when valid updates the ui accordingly", () => {})
-      test("when invalid indicates which parameter is wrong", () => {})
+      test("when valid updates the ui accordingly",  async () => {
+
+        const queryParams = "v=1&t=pageview&tid=UA-54516992-1&cid=555&dh=mydemo.com&dp=%2Fhome&dt=homepage"
+
+        const { wrapped, history } = withProviders(
+          <HitBuilder properties={properties} />,
+          { path: `/hit-builder?${queryParams}` }
+        )
+
+        const {findByText, findByLabelText} = renderer.render(
+          wrapped
+        )
+
+        const {hitPayload} = await getInputs(findByLabelText)
+        expect(hitPayload).toHaveValue(queryParams)
+
+
+        const validateButton = await findByText("Validate")
+        await renderer.act(async () => {
+          await userEvent.click(validateButton)
+        })
+
+        const result = await findByText("Hit is valid")
+        expect(result).not.toEqual("")
+      })
+      test("when valid updates the ui accordingly",  async () => {
+
+        const queryParams = "v=1&t=pageview&tid=UA-XXXXX-1&cid=555&dh=mydemo.com&dp=%2Fhome&dt=homepage"
+
+        const { wrapped, history } = withProviders(
+          <HitBuilder properties={properties} />,
+          { path: `/hit-builder?${queryParams}` }
+        )
+
+        const {findByText, findByLabelText} = renderer.render(
+          wrapped
+        )
+
+        const {hitPayload} = await getInputs(findByLabelText)
+        expect(hitPayload).toHaveValue(queryParams)
+
+
+        const validateButton = await findByText("Validate")
+        await renderer.act(async () => {
+          await userEvent.click(validateButton)
+        })
+
+        const result = await findByText("Hit is invalid")
+        expect(result).not.toEqual("")
+      })
     })
   })
 })

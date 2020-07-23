@@ -39,9 +39,9 @@
     "uuid": "^7.0.3"
   },
   "devDependencies": {
-    "@testing-library/jest-dom": "^5.5.0",
-    "@testing-library/react": "^10.0.3",
-    "@testing-library/user-event": "^10.1.0",
+    "@testing-library/jest-dom": "^5.11.1",
+    "@testing-library/react": "^10.4.7",
+    "@testing-library/user-event": "^12.0.12",
     "@types/argparse": "^1.0.38",
     "@types/classnames": "^2.2.10",
     "@types/execa": "^2.0.0",
@@ -75,7 +75,6 @@
     "test": "yarn check-types && jest",
     "start": "yarn run develop",
     "clean": "gatsby clean",
-
     "generate-scripts": "cd lib && yarn build",
     "serve:production": "yarn generate-scripts && node lib/build/index.js serve --environment=production",
     "check-config": "yarn generate-scripts && node lib/build/index.js check-config",
