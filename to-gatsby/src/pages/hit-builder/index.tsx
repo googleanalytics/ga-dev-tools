@@ -88,7 +88,7 @@ export const HitBuilder: React.FC<HitBuilderProps> = ({ properties }) => {
 export default () => {
   const { properties } = hooks.useProperties()
   return (
-    <Layout title="Hit Builder">
+    <Layout title="Hit Builder" requireLogin>
       <HitBuilder properties={properties} />
     </Layout>
   )
