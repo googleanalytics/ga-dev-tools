@@ -178,7 +178,7 @@ export const shortenUrl = async (longUrl, bitlyGuid) => {
   const {token} = await cleanupingPromise((resolve, reject, cleanup) => {
     // NOTE: see https://stackoverflow.com/q/51250834/864406 for a discussion
     // of the potential race condition here and why it isn't an issue.
-    
+
     // Attach a listener that will await a message via postMessage
     const messageListener = event => {
       if (
