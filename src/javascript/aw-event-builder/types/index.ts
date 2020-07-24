@@ -5,6 +5,8 @@ export * from "./MpEvent";
 export * from "./events";
 
 export enum ActionType {
+  SetNonPersonalizedAds = "SetNonPersonalizedAds",
+  SetTimestampMicros = "SetTimestampMicros",
   SetValidationStatus = "SetValidationStatus",
   SetMeasurementId = "SetMeasurementId",
   SetFirebaseAppId = "SetFirebaseAppId",
@@ -21,6 +23,16 @@ export enum ActionType {
   ReplaceParams = "REPLACE_PARAMS",
   SetUserProperties = "SET_USER_PROPERTIES",
   SetValidationMessages = "SET_VALIDATION_MESSAGES",
+}
+
+export interface SetNonPersonalizedAds {
+  type: ActionType.SetNonPersonalizedAds;
+  nonPersonalizedAds: boolean;
+}
+
+export interface SetTimestampMicros {
+  type: ActionType.SetTimestampMicros;
+  timestampMicros: number | null;
 }
 
 export interface SetUserProperties {
@@ -98,6 +110,8 @@ export interface SetFirebaseAppId {
 }
 
 export type EventBuilderAction =
+  | SetNonPersonalizedAds
+  | SetTimestampMicros
   | SetUserProperties
   | SetFirebaseAppId
   | SetValidationStatus
@@ -170,6 +184,8 @@ export interface State {
   appInstanceId: string;
   userId: string;
   apiSecret: string;
+  timestampMicros: number | null;
+  nonPersonalizedAds: boolean;
   event: MPEvent;
   userProperties: Parameters;
   isAuthorized: boolean;

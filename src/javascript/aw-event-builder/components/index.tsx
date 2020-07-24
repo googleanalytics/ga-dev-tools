@@ -17,6 +17,7 @@ import ValidateEvent from "./ValidateEvent";
 import EditEvent from "./EditEvent";
 import EditUserProperties from "./EditUserProperties";
 import ReduxManagedInput from "./ReduxManagedInput";
+import { ReduxManagedCheckbox } from "./ReduxManagedInput";
 import APISecret from "./APISecret";
 import actions from "../actions";
 import { State, MPEvent, MPEventType } from "../types";
@@ -34,6 +35,8 @@ const HitBuilder: React.FC = () => {
     measurementId,
     firebaseAppId,
     appInstanceId,
+    timestampMicros,
+    nonPersonalizedAds,
   } = useSelector<State, State>((a) => a);
   const dispatch = useDispatch();
   const [category, setCategory] = React.useState<MPEventCategory>(
@@ -85,6 +88,27 @@ const HitBuilder: React.FC = () => {
   const updateFirebaseAppId = React.useCallback(
     (firebase_app_id: string) => {
       dispatch(actions.setFirebaseAppId(firebase_app_id));
+    },
+    [dispatch]
+  );
+  const updateTimestampMicros = React.useCallback(
+    (timestampMicros: string) => {
+      try {
+        const asNumber = parseInt(timestampMicros, 10);
+        if (isNaN(asNumber)) {
+          dispatch(actions.setTimestampMicros(null));
+          return;
+        }
+        dispatch(actions.setTimestampMicros(asNumber));
+      } catch (e) {
+        console.error(e);
+      }
+    },
+    [dispatch]
+  );
+  const updateNonPersonalizedAds = React.useCallback(
+    (timestampMicros: boolean) => {
+      dispatch(actions.setNonPersonalizedAds(timestampMicros));
     },
     [dispatch]
   );
@@ -143,6 +167,18 @@ const HitBuilder: React.FC = () => {
             update={updateUserId}
             initialValue={userId}
           />
+          <div className="HitBuilderParam">
+            <ReduxManagedCheckbox
+              labelText="nonPersonalizedAds"
+              update={updateNonPersonalizedAds}
+              value={nonPersonalizedAds}
+            />
+            <ReduxManagedInput
+              labelText="timestampMicros"
+              update={updateTimestampMicros}
+              initialValue={timestampMicros?.toString()}
+            />
+          </div>
           <div className="HitBuilderParam">
             <div className="HitBuilderParam">
               <label className="HitBuilderParam-label">Category</label>

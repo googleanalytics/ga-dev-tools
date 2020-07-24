@@ -147,6 +147,12 @@ const EventActions: React.FC = () => {
   const appInstanceId = useSelector<State, string>((a) => a.appInstanceId);
   const userId = useSelector<State, string>((a) => a.userId);
   const measurementId = useSelector<State, string>((a) => a.measurementId);
+  const timestampMicros = useSelector<State, number | null>(
+    (a) => a.timestampMicros
+  );
+  const nonPersonalizedAds = useSelector<State, boolean>(
+    (a) => a.nonPersonalizedAds
+  );
   const apiSecret = useSelector<State, string>((a) => a.apiSecret);
   const firebaseAppId = useSelector<State, string>((a) => a.firebaseAppId);
   const validationStatus = useSelector<State, ValidationStatusT>(
@@ -168,6 +174,8 @@ const EventActions: React.FC = () => {
       firebaseAppId,
       apiSecret,
       userProperties,
+      timestampMicros,
+      nonPersonalizedAds,
     });
     setLinkToEvent(url);
   }, [
@@ -179,6 +187,8 @@ const EventActions: React.FC = () => {
     firebaseAppId,
     apiSecret,
     userProperties,
+    timestampMicros,
+    nonPersonalizedAds,
   ]);
 
   React.useEffect(() => {
@@ -188,8 +198,24 @@ const EventActions: React.FC = () => {
     } else {
       clientIds = { appInstanceId, userId, type: "mobile" };
     }
-    setPayload(payloadFor([event], clientIds, userProperties));
-  }, [event, clientId, appInstanceId, userId, userProperties]);
+    setPayload(
+      payloadFor(
+        [event],
+        clientIds,
+        userProperties,
+        timestampMicros,
+        nonPersonalizedAds
+      )
+    );
+  }, [
+    event,
+    clientId,
+    appInstanceId,
+    userId,
+    userProperties,
+    timestampMicros,
+    nonPersonalizedAds,
+  ]);
   const [eventSent, setEventSent] = React.useState<boolean>(false);
   React.useEffect(() => {
     setEventSent(false);
@@ -299,6 +325,12 @@ const EventPayloadInput: React.FC = () => {
   const clientId = useSelector<State, string>((a) => a.clientId);
   const appInstanceId = useSelector<State, string>((a) => a.appInstanceId);
   const userId = useSelector<State, string>((a) => a.userId);
+  const timestampMicros = useSelector<State, number | null>(
+    (a) => a.timestampMicros
+  );
+  const nonPersonalizedAds = useSelector<State, boolean>(
+    (a) => a.nonPersonalizedAds
+  );
   const userProperties = useSelector<State, Parameters>(
     (a) => a.userProperties
   );
@@ -311,8 +343,24 @@ const EventPayloadInput: React.FC = () => {
     } else {
       clientIds = { appInstanceId, userId, type: "mobile" };
     }
-    setPayload(payloadFor([event], clientIds, userProperties));
-  }, [event, clientId, userId, userProperties, appInstanceId]);
+    setPayload(
+      payloadFor(
+        [event],
+        clientIds,
+        userProperties,
+        timestampMicros,
+        nonPersonalizedAds
+      )
+    );
+  }, [
+    event,
+    clientId,
+    userId,
+    userProperties,
+    appInstanceId,
+    timestampMicros,
+    nonPersonalizedAds,
+  ]);
 
   return (
     <Textarea

@@ -14,7 +14,7 @@ const ReduxManagedInput: React.FC<ReduxManagedInputProps> = ({
   update,
   labelText,
   disabled,
-  initialValue
+  initialValue,
 }) => {
   const [localValue, setLocalValue] = React.useState<string>(
     initialValue || ""
@@ -31,8 +31,39 @@ const ReduxManagedInput: React.FC<ReduxManagedInputProps> = ({
         disabled={disabled}
         className="FormField"
         value={localValue}
-        onChange={e => setLocalValue(e.target.value)}
+        onChange={(e) => setLocalValue(e.target.value)}
         onBlur={updateInRedux}
+      />
+    </div>
+  );
+};
+
+interface ReduxManagedCheckboxProps {
+  flex?: string;
+  disabled?: boolean;
+  update: (localValue: boolean) => void;
+  labelText: string | JSX.Element;
+  value: boolean;
+}
+
+// TODO - not sure if it matters, but if the value changes in redux, this does not automatically update.
+export const ReduxManagedCheckbox: React.FC<ReduxManagedCheckboxProps> = ({
+  flex,
+  update,
+  labelText,
+  disabled,
+  value,
+}) => {
+  return (
+    <div className="HitBuilderParam">
+      <label className="HitBuilderParam-label" style={{ flex: flex }}>
+        {labelText}
+      </label>
+      <input
+        type="checkbox"
+        disabled={disabled}
+        checked={value}
+        onChange={(e) => update(e.target.checked)}
       />
     </div>
   );
