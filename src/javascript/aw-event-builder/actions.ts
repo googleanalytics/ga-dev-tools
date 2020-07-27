@@ -172,7 +172,7 @@ const setTimestampMicros: (
 };
 
 const setNonPersonalizedAds: (
-  nonPersonalizedAds: boolean | null
+  nonPersonalizedAds: boolean
 ) => ThunkResult<void> = (nonPersonalizedAds) => (dispatch) => {
   dispatch(thunkActions.resetValidation);
   dispatch({ type: ActionType.SetNonPersonalizedAds, nonPersonalizedAds });
