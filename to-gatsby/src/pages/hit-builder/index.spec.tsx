@@ -269,13 +269,13 @@ describe("HitBuilder", () => {
 
         const {findByText, findByLabelText} = renderer.render(
           wrapped
-        )
+        ) 
 
         const {hitPayload} = await getInputs(findByLabelText)
         expect(hitPayload).toHaveValue(queryParams)
 
 
-        const validateButton = await findByText("Validate")
+        const validateButton = renderer.screen.getByText("Send hit to Google Analytics")
         await renderer.act(async () => {
           await userEvent.click(validateButton)
         })
@@ -291,7 +291,6 @@ describe("HitBuilder", () => {
           <HitBuilder properties={properties} />,
           { path: `/hit-builder?${queryParams}` }
         )
-
         const {findByText, findByLabelText} = renderer.render(
           wrapped
         )
@@ -300,7 +299,8 @@ describe("HitBuilder", () => {
         expect(hitPayload).toHaveValue(queryParams)
 
 
-        const validateButton = await findByText("Validate")
+        
+        const validateButton = renderer.screen.getByText("Send hit to Google Analytics")
         await renderer.act(async () => {
           await userEvent.click(validateButton)
         })
