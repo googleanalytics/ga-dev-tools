@@ -81,6 +81,8 @@ interface HitCardProps {
   validationMessages: ValidationMessage[]
   sendHit: () => void
   validateHit: () => void
+  addParameter: (paramName: string) => void
+  hasParameter: (paramName: string) => boolean
 }
 
 const HitCard: React.FC<HitCardProps> = ({
@@ -89,6 +91,8 @@ const HitCard: React.FC<HitCardProps> = ({
   hitPayload,
   hitStatus,
   validationMessages,
+  addParameter,
+  hasParameter,
 }) => {
   const classes = useStyles()
   const [value, setValue] = React.useState(hitPayload)
@@ -111,6 +115,8 @@ const HitCard: React.FC<HitCardProps> = ({
   return (
     <Paper className={classes.hitElement}>
       <ValidationStatus
+        hasParameter={hasParameter}
+        addParameter={addParameter}
         hitStatus={hitStatus}
         validationMessages={validationMessages}
       />
@@ -148,11 +154,15 @@ const HitCard: React.FC<HitCardProps> = ({
 interface ValidationStatusProps {
   validationMessages: ValidationMessage[]
   hitStatus: HitStatus
+  addParameter: (paramName: string) => void
+  hasParameter: (paramName: string) => boolean
 }
 
 const ValidationStatus: React.FC<ValidationStatusProps> = ({
   validationMessages,
   hitStatus,
+  addParameter,
+  hasParameter,
 }) => {
   const classes = useStyles()
 
@@ -179,9 +189,25 @@ const ValidationStatus: React.FC<ValidationStatusProps> = ({
     case HitStatus.Invalid: {
       headerIcon = <Error />
       hitHeading = <Typography variant="h3">Hit is invalid!</Typography>
-      hitContent = validationMessages.map(message => (
-        <li key={message.param}>{message.description}</li>
-      ))
+      hitContent = validationMessages.map(message => {
+        console.log({ message })
+        let addParameterButton: JSX.Element | null = null
+        if (message.code === "VALUE_REQUIRED" && !hasParameter(message.param)) {
+          addParameterButton = (
+            <Button
+              variant="contained"
+              onClick={() => addParameter(message.param)}
+            >
+              Add {message.param}
+            </Button>
+          )
+        }
+        return (
+          <li key={message.param}>
+            {message.description} {addParameterButton}
+          </li>
+        )
+      })
       break
     }
     case HitStatus.Validating: {
@@ -266,6 +292,7 @@ const HitActions: React.FC<HitActionsProps> = ({
     return (
       <div className="HitElement-action">
         <Button
+          variant="contained"
           className="Button Button--action"
           disabled={hitStatus === "VALIDATING"}
           onClick={validateHit}

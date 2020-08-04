@@ -36,6 +36,7 @@ export const HitBuilder: React.FC<HitBuilderProps> = ({ properties }) => {
     addParameter,
     removeParameter,
     parameters,
+    hasParameter,
   } = hooks.useParameters()
 
   const {
@@ -63,7 +64,6 @@ export const HitBuilder: React.FC<HitBuilderProps> = ({ properties }) => {
       existing hit into the text box in the hit summary.
       </Typography>
 
-      <Typography variant="h3">Hit summary</Typography>
       <Typography variant="body1">
         The box below displays the full hit and its validation status. You can
         update the hit in the text box and the parameter details below will be
@@ -71,6 +71,8 @@ export const HitBuilder: React.FC<HitBuilderProps> = ({ properties }) => {
       </Typography>
 
       <HitCard
+        hasParameter={hasParameter}
+        addParameter={addParameter}
         validateHit={validateHit}
         sendHit={sendHit}
         hitPayload={hitPayload}

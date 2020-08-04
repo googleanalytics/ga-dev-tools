@@ -50,6 +50,10 @@ type UseValidationServer = (
 // This hook encapsulates the logic needed for the validation server
 export const useValidationServer: UseValidationServer = parameters => {
   const [hitStatus, setHitStatus] = React.useState(HitStatus.Unvalidated)
+  React.useEffect(() => {
+    setHitStatus(HitStatus.Unvalidated)
+  }, [parameters])
+
   const [validationMessages, setValidationMessages] = React.useState<
     ValidationMessage[]
   >([])
@@ -120,8 +124,9 @@ export const useValidationServer: UseValidationServer = parameters => {
 type UseParameters = () => {
   updateParameterName: (id: number, newName: string) => void
   updateParameterValue: (id: number, newValue: any) => void
-  addParameter: () => void
+  addParameter: (parameterName?: string) => void
   removeParameter: (id: number) => void
+  hasParameter: (parameterName: string) => boolean
   parameters: Params
 }
 
@@ -138,17 +143,27 @@ export const useParameters: UseParameters = () => {
 
   const [parameters, setParameters] = React.useState<Params>(() => {
     const initial = hitUtils.getInitialHitAndUpdateUrl(location, navigate)
-
     return hitUtils.convertHitToParams(nextId, initial)
   })
 
-  const addParameter = React.useCallback(() => {
-    const id = nextId()
-    const nuParameter: Param = { id, name: "", value: "" }
-    setParameters(([v, t, tid, cid, ...others]) => {
-      return [v, t, tid, cid, ...others.concat([nuParameter])]
-    })
-  }, [nextId])
+  const hasParameter = React.useCallback(
+    (parameterName: string): boolean => {
+      const param = parameters.find(p => p.name === parameterName)
+      return param !== undefined
+    },
+    [parameters]
+  )
+
+  const addParameter = React.useCallback(
+    (parameterName?: string) => {
+      const id = nextId()
+      const nuParameter: Param = { id, name: parameterName || "", value: "" }
+      setParameters(([v, t, tid, cid, ...others]) => {
+        return [v, t, tid, cid, ...others.concat([nuParameter])]
+      })
+    },
+    [nextId]
+  )
 
   const removeParameter = React.useCallback((id: number) => {
     setParameters(([v, t, tid, cid, ...others]) => {
@@ -190,6 +205,7 @@ export const useParameters: UseParameters = () => {
     updateParameterValue,
     addParameter,
     removeParameter,
+    hasParameter,
     parameters,
   }
 }
