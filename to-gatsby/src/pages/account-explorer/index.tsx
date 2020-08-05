@@ -17,7 +17,6 @@ import { makeStyles } from "@material-ui/core/styles"
 import TextField from "@material-ui/core/TextField"
 import Typography from "@material-ui/core/Typography"
 import Paper from "@material-ui/core/Paper"
-import { useSelector } from "react-redux"
 
 import Layout from "../../components/layout"
 import ViewSelector, { HasView } from "../../components/ViewSelector"
