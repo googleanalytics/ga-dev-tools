@@ -30,13 +30,23 @@ import red from "@material-ui/core/colors/red"
 
 const useStyles = makeStyles(theme => ({
   hitElement: {
-    padding: theme.spacing(3),
+    padding: theme.spacing(2, 3),
     display: "flex",
     flexDirection: "column",
   },
+  hitElementActions: {
+    marginTop: theme.spacing(2),
+    display: "flex",
+    "& > button": {
+      marginRight: theme.spacing(1),
+    },
+  },
+  addParameterButton: {
+    marginLeft: theme.spacing(1),
+  },
   validationStatus: {
     margin: theme.spacing(-3, -3, 1, -3),
-    padding: theme.spacing(0, 3, 3, 3),
+    padding: theme.spacing(0, 3),
     "& > span": {
       "& > svg": {
         fontSize: theme.typography.h1.fontSize,
@@ -47,7 +57,7 @@ const useStyles = makeStyles(theme => ({
       },
       display: "flex",
       alignItems: "center",
-      marginTop: theme.spacing(3),
+      marginTop: theme.spacing(1),
     },
   },
   [HitStatus.Invalid]: {
@@ -135,14 +145,12 @@ const HitCard: React.FC<HitCardProps> = ({
         value={value}
         onChange={onChange}
       />
-      <div className="HitElement-body">
-        <HitActions
-          hitPayload={hitPayload}
-          hitStatus={hitStatus}
-          validateHit={validateHit}
-          sendHit={sendHit}
-        />
-      </div>
+      <HitActions
+        hitPayload={hitPayload}
+        hitStatus={hitStatus}
+        validateHit={validateHit}
+        sendHit={sendHit}
+      />
     </Paper>
   )
 }
@@ -185,25 +193,38 @@ const ValidationStatus: React.FC<ValidationStatusProps> = ({
     case HitStatus.Invalid: {
       headerIcon = <Error />
       hitHeading = <Typography variant="h3">Hit is invalid!</Typography>
-      hitContent = validationMessages.map(message => {
-        console.log({ message })
-        let addParameterButton: JSX.Element | null = null
-        if (message.code === "VALUE_REQUIRED" && !hasParameter(message.param)) {
-          addParameterButton = (
-            <Button
-              variant="contained"
-              onClick={() => addParameter(message.param)}
-            >
-              Add {message.param}
-            </Button>
-          )
-        }
-        return (
-          <li key={message.param}>
-            {message.description} {addParameterButton}
-          </li>
-        )
-      })
+      hitContent = (
+        <ul>
+          {validationMessages.map(message => {
+            let addParameterButton: JSX.Element | null = null
+            // TODO - Think about adding a button to focus the value field if
+            // the parameter is already present.
+            if (
+              message.code === "VALUE_REQUIRED" &&
+              !hasParameter(message.param)
+            ) {
+              addParameterButton = (
+                <Button
+                  size="small"
+                  className={classes.addParameterButton}
+                  variant="contained"
+                  onClick={() => addParameter(message.param)}
+                >
+                  Add {message.param}
+                </Button>
+              )
+            }
+            return (
+              <li key={message.param}>
+                <Typography>
+                  {message.description}
+                  {addParameterButton}
+                </Typography>
+              </li>
+            )
+          })}
+        </ul>
+      )
       break
     }
     case HitStatus.Validating: {
@@ -222,8 +243,8 @@ const ValidationStatus: React.FC<ValidationStatusProps> = ({
             You can update the hit using any of the controls below.
           </Typography>
           <Typography variant="body1">
-            When you're done, click the "Validate hit" button to make sure
-            everything's OK.
+            When you're done editing parameters, click the "Validate hit" button
+            to make sure everything's OK.
           </Typography>
         </>
       )
@@ -257,6 +278,7 @@ const HitActions: React.FC<HitActionsProps> = ({
   validateHit,
   sendHit,
 }) => {
+  const classes = useStyles()
   const [hitSent, setHitSent] = React.useState<boolean>(false)
   React.useEffect(() => {
     setHitSent(false)
@@ -282,53 +304,59 @@ const HitActions: React.FC<HitActionsProps> = ({
   //   setHitSent(false)
   // }, [hitPayload])
 
-  if (hitStatus !== HitStatus.Valid) {
-    const buttonText =
-      (hitStatus === HitStatus.Invalid ? "Rev" : "V") + "alidate hit"
-
-    return (
-      <div className="HitElement-action">
+  switch (hitStatus) {
+    case HitStatus.Valid: {
+      const sendHitButton = (
         <Button
+          startIcon={hitSent ? <Check /> : <Send />}
+          onClick={sendHit}
+          className="Button Button--success Button-withIcon"
           variant="contained"
-          className="Button Button--action"
-          disabled={hitStatus === "VALIDATING"}
-          onClick={validateHit}
         >
-          {hitStatus === "VALIDATING" ? "Validating..." : buttonText}
+          Send hit to Google Analytics
         </Button>
-      </div>
-    )
+      )
+
+      const sharableLinkToHit =
+        window.location.protocol +
+        "//" +
+        window.location.host +
+        window.location.pathname +
+        "?" +
+        hitPayload
+      return (
+        <div className={classes.hitElementActions}>
+          {sendHitButton}
+          <CopyButton
+            toCopy={hitPayload}
+            text="Copy hit payload"
+            variant="contained"
+          />
+          <CopyButton
+            toCopy={sharableLinkToHit}
+            text="Copy sharable link to hit"
+            variant="contained"
+          />
+        </div>
+      )
+    }
+    default: {
+      return (
+        <div className={classes.hitElementActions}>
+          <Button
+            variant="contained"
+            className="Button Button--action"
+            disabled={hitStatus === "VALIDATING"}
+            onClick={validateHit}
+          >
+            {hitStatus === HitStatus.Validating
+              ? "Validating..."
+              : "Validate hit"}
+          </Button>
+        </div>
+      )
+    }
   }
-
-  const sendHitButton = (
-    <Button
-      startIcon={hitSent ? <Check /> : <Send />}
-      onClick={sendHit}
-      className="Button Button--success Button-withIcon"
-    >
-      Send hit to Google Analytics
-    </Button>
-  )
-
-  const sharableLinkToHit =
-    window.location.protocol +
-    "//" +
-    window.location.host +
-    window.location.pathname +
-    "?" +
-    hitPayload
-  return (
-    <div className="HitElement-action">
-      <div className="ButtonSet">
-        {sendHitButton}
-        <CopyButton toCopy={hitPayload} text="Copy hit payload" />
-        <CopyButton
-          toCopy={sharableLinkToHit}
-          text="Copy sharable link to hit"
-        />
-      </div>
-    </div>
-  )
 }
 
 export default HitCard
