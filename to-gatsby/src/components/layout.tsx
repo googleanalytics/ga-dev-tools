@@ -25,7 +25,6 @@ import classnames from "classnames"
 //
 // eslint-disable-next-line import/no-webpack-loader-syntax
 import Logo from "-!svg-react-loader!../images/ga-developer-logo.svg"
-import { useLocation } from "@reach/router"
 import AppBar from "@material-ui/core/AppBar"
 import IconButton from "@material-ui/core/IconButton"
 import Drawer from "@material-ui/core/Drawer"
@@ -33,9 +32,9 @@ import List from "@material-ui/core/List"
 import ListItem from "@material-ui/core/ListItem"
 import { navigate } from "@reach/router"
 import MenuIcon from "@material-ui/icons/Menu"
-import { useSelector } from "react-redux"
 
 import Login, { useLogin } from "./Login"
+import { usePageView } from "../hooks"
 
 const mobile = (theme: Theme) => theme.breakpoints.between(0, "sm")
 const notMobile = (theme: Theme) => theme.breakpoints.up("md")
@@ -193,20 +192,6 @@ const useStyles = makeStyles<any, { disableNav: true | undefined }>(theme => ({
     flexGrow: 1,
   },
 }))
-
-export const usePageView = () => {
-  const measurementId = useSelector((a: AppState) => a.measurementID)
-  const location = useLocation()
-  const gtag = useSelector((a: AppState) => a.gtag)
-  React.useEffect(() => {
-    if (gtag === undefined) {
-      return
-    }
-    gtag("config", measurementId, {
-      page_path: location.pathname,
-    })
-  }, [location.pathname, measurementId, gtag])
-}
 
 interface LayoutProps {
   requireLogin?: true

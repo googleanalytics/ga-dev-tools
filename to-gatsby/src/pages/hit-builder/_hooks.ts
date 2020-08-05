@@ -19,6 +19,7 @@ import * as hitUtils from "./_hit"
 import { useSelector } from "react-redux"
 import { getAnalyticsApi } from "../../api"
 import { useLocation, useNavigate } from "@reach/router"
+import { useSendEvent } from "../../hooks"
 
 const formatMessage = (message: {
   parameter: any
@@ -48,7 +49,9 @@ type UseValidationServer = (
 
 // This hook encapsulates the logic needed for the validation server
 export const useValidationServer: UseValidationServer = parameters => {
+  const sendEvent = useSendEvent()
   const [hitStatus, setHitStatus] = React.useState(HitStatus.Unvalidated)
+
   React.useEffect(() => {
     setHitStatus(HitStatus.Unvalidated)
   }, [parameters])
@@ -71,51 +74,39 @@ export const useValidationServer: UseValidationServer = parameters => {
         setValidationMessages(validationMessages.map(formatMessage))
         if (result.valid) {
           setHitStatus(HitStatus.Valid)
-          //       gaAll("send", "event", {
-          //         eventCategory: "Hit Builder",
-          //         eventAction: "validate",
-          //         eventLabel: "valid",
-          //       })
+          sendEvent("validate", {
+            event_category: "Hit Builder",
+            event_label: "valid",
+          })
         } else {
           setHitStatus(HitStatus.Invalid)
-          //       gaAll("send", "event", {
-          //         eventCategory: "Hit Builder",
-          //         eventAction: "validate",
-          //         eventLabel: "invalid",
-          //       })
+          sendEvent("validate", {
+            event_category: "Hit Builder",
+            event_label: "invalid",
+          })
         }
       })
     } catch (e) {
-      // TODO - handle errors.
-      //     gaAll("send", "event", {
-      //       eventCategory: "Hit Builder",
-      //       eventAction: "validate",
-      //       eventLabel: "error",
-      //     })
+      sendEvent("validate", {
+        event_category: "Hit Builder",
+        event_label: "error",
+      })
     }
-  }, [parameters])
+  }, [parameters, sendEvent])
 
-  const sendHit = React.useCallback(() => {
-    //   /**
-    //    * Sends the hit payload to Google Analytics and updates the button state
-    //    * to indicate the hit was successfully sent. After 1 second the button
-    //    * gets restored to its original state.
-    //    */
-    //   const sendHit = React.useCallback(async () => {
-    //     await fetch("https://www.google-analytics.com/collect", {
-    //       method: "POST",
-    //       body: hitPayload,
-    //     })
-    //     setHitSent(true)
-    //     // gaAll("send", "event", {
-    //     //   eventCategory: "Hit Builder",
-    //     //   eventAction: "send",
-    //     //   eventLabel: "payload",
-    //     // })
-    //     // await sleep(ACTION_TIMEOUT)
-    //     setHitSent(false)
-    //   }, [hitPayload])
-  }, [])
+  const sendHit = React.useCallback(async () => {
+    setHitStatus(HitStatus.Sending)
+    const hit = hitUtils.convertParamsToHit(parameters)
+    await fetch("https://www.google-analytics.com/collect", {
+      method: "POST",
+      body: hit,
+    })
+    setHitStatus(HitStatus.Sent)
+    sendEvent("validate", {
+      event_category: "Hit Builder",
+      event_label: "sent hit through tool",
+    })
+  }, [parameters, sendEvent])
 
   return { validationMessages, validateHit, hitStatus, sendHit }
 }

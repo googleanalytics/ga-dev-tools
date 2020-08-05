@@ -170,8 +170,8 @@ const ValidationStatus: React.FC<ValidationStatusProps> = ({
 }) => {
   const classes = useStyles()
 
-  let headerIcon: JSX.Element
-  let hitHeading: JSX.Element
+  let headerIcon: JSX.Element | null = null
+  let hitHeading: JSX.Element | null = null
   let hitContent: JSX.Element[] | JSX.Element | null = null
   switch (hitStatus) {
     case HitStatus.Valid: {
@@ -279,36 +279,13 @@ const HitActions: React.FC<HitActionsProps> = ({
   sendHit,
 }) => {
   const classes = useStyles()
-  const [hitSent, setHitSent] = React.useState<boolean>(false)
-  React.useEffect(() => {
-    setHitSent(false)
-  }, [hitPayload])
-
-  // /**
-  //  * Sends the hit payload to Google Analytics and updates the button state
-  //  * to indicate the hit was successfully sent. After 1 second the button
-  //  * gets restored to its original state.
-  //  */
-  // const sendHit = React.useCallback(async () => {
-  //   await fetch("https://www.google-analytics.com/collect", {
-  //     method: "POST",
-  //     body: hitPayload,
-  //   })
-  //   setHitSent(true)
-  //   // gaAll("send", "event", {
-  //   //   eventCategory: "Hit Builder",
-  //   //   eventAction: "send",
-  //   //   eventLabel: "payload",
-  //   // })
-  //   // await sleep(ACTION_TIMEOUT)
-  //   setHitSent(false)
-  // }, [hitPayload])
 
   switch (hitStatus) {
+    case HitStatus.Sent:
     case HitStatus.Valid: {
       const sendHitButton = (
         <Button
-          startIcon={hitSent ? <Check /> : <Send />}
+          startIcon={hitStatus === HitStatus.Sent ? <Check /> : <Send />}
           onClick={sendHit}
           className="Button Button--success Button-withIcon"
           variant="contained"
@@ -345,7 +322,6 @@ const HitActions: React.FC<HitActionsProps> = ({
         <div className={classes.hitElementActions}>
           <Button
             variant="contained"
-            className="Button Button--action"
             disabled={hitStatus === "VALIDATING"}
             onClick={validateHit}
           >

@@ -89,6 +89,8 @@ export enum HitStatus {
   Validating = "VALIDATING",
   Valid = "VALID",
   Invalid = "INVALID",
+  Sent = "Sent",
+  Sending = "Sending",
 }
 
 export enum RequiredParams {
