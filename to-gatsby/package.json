@@ -57,6 +57,7 @@
     "@types/uuid": "^7.0.2",
     "argparse": "^1.0.10",
     "babel-jest": "^25.3.0",
+    "eslint-config-react-app": "^5.2.1",
     "execa": "^4.0.2",
     "firebase-tools": "^8.4.3",
     "identity-obj-proxy": "^3.0.0",
@@ -68,12 +69,12 @@
     "typescript": "^3.8.3"
   },
   "scripts": {
+    "lint": "eslint 'src/**/*' 'lib/**/*' 'gatsby/**/*'",
     "format": "prettier --write \"**/*.{js,jsx,json,md}\"",
     "check-types": "tsc",
     "test": "yarn check-types && jest",
     "start": "yarn run develop",
     "clean": "gatsby clean",
-
     "generate-scripts": "cd lib && yarn build",
     "serve:production": "yarn generate-scripts && node lib/build/index.js serve --environment=production",
     "check-config": "yarn generate-scripts && node lib/build/index.js check-config",
