@@ -162,9 +162,9 @@ const ValidationStatus: React.FC<ValidationStatusProps> = ({
 }) => {
   const classes = useStyles()
 
-  let headerIcon: JSX.Element;
-  let hitHeading: JSX.Element;
-  let hitContent: JSX.Element[] | JSX.Element | null = null;
+  let headerIcon: JSX.Element
+  let hitHeading: JSX.Element
+  let hitContent: JSX.Element[] | JSX.Element | null = null
   switch (hitStatus) {
     case HitStatus.Valid: {
       headerIcon = <Check />
@@ -283,7 +283,8 @@ const HitActions: React.FC<HitActionsProps> = ({
   // }, [hitPayload])
 
   if (hitStatus !== HitStatus.Valid) {
-    const buttonText = (hitStatus === HitStatus.Invalid ? "Rev" : "V") + "alidate hit"
+    const buttonText =
+      (hitStatus === HitStatus.Invalid ? "Rev" : "V") + "alidate hit"
 
     return (
       <div className="HitElement-action">

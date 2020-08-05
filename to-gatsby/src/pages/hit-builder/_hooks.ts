@@ -150,7 +150,7 @@ export const useParameters: UseParameters = () => {
   // or not a parameter name or value should be focused.
   // TODO - This shouldn't focus the parameter name if it was already there.
   const setParametersFromString = React.useCallback((paramString: string) => {
-    setParameters(hitUtils.convertHitToParams(nextId, paramString)) 
+    setParameters(hitUtils.convertHitToParams(nextId, paramString))
   }, [])
 
   const hasParameter = React.useCallback(
@@ -161,18 +161,15 @@ export const useParameters: UseParameters = () => {
     [parameters]
   )
 
-  const addParameter = React.useCallback(
-    (parameterName?: string) => {
-      const id = nextId()
-      // TODO - If a parameter name is provided, we should focus the value, not
-      // the parameter name.
-      const nuParameter: Param = { id, name: parameterName || "", value: "" }
-      setParameters(([v, t, tid, cid, ...others]) => {
-        return [v, t, tid, cid, ...others.concat([nuParameter])]
-      })
-    },
-    []
-  )
+  const addParameter = React.useCallback((parameterName?: string) => {
+    const id = nextId()
+    // TODO - If a parameter name is provided, we should focus the value, not
+    // the parameter name.
+    const nuParameter: Param = { id, name: parameterName || "", value: "" }
+    setParameters(([v, t, tid, cid, ...others]) => {
+      return [v, t, tid, cid, ...others.concat([nuParameter])]
+    })
+  }, [])
 
   const removeParameter = React.useCallback((id: number) => {
     setParameters(([v, t, tid, cid, ...others]) => {

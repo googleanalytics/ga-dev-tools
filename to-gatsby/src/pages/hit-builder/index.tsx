@@ -54,15 +54,19 @@ export const HitBuilder: React.FC<HitBuilderProps> = ({ properties }) => {
 
   return (
     <>
-
       <Typography variant="body1">
-      This tools allows you to construct and validate <a href={Url.measurementProtocol}>Measurement Protocol</a> hits 
-      using the <a href={Url.validatingMeasurement}>Measurement Protocol Validation Server</a>.
+        This tools allows you to construct and validate{" "}
+        <a href={Url.measurementProtocol}>Measurement Protocol</a> hits using
+        the{" "}
+        <a href={Url.validatingMeasurement}>
+          Measurement Protocol Validation Server
+        </a>
+        .
       </Typography>
 
       <Typography variant="body1">
-      To get started, use the controls below to construct a new hit or paste an 
-      existing hit into the text box in the hit summary.
+        To get started, use the controls below to construct a new hit or paste
+        an existing hit into the text box in the hit summary.
       </Typography>
 
       <Typography variant="body1">
@@ -99,20 +103,22 @@ export const HitBuilder: React.FC<HitBuilderProps> = ({ properties }) => {
         addParameter={addParameter}
       />
 
-     <Typography variant="h3">References</Typography>
+      <Typography variant="h3">References</Typography>
 
+      <Typography variant="body1">
+        Click the info link to the right of each parameter in the details
+        section to go directly to its documentation. For general references,
+        refer to the links below:
+      </Typography>
 
-    <Typography variant="body1">
-     Click the info link to the right of each parameter in the details section 
-     to go directly to its documentation. For general references, refer to the 
-     links below:
-    </Typography>
-
-
-    <Typography variant="body1" component="ul">
-      <li><a href={Url.protocolParameters}>Parameter reference</a></li>
-      <li><a href={Url.commonHits}>Examples of common hits</a></li>
-    </Typography>
+      <Typography variant="body1" component="ul">
+        <li>
+          <a href={Url.protocolParameters}>Parameter reference</a>
+        </li>
+        <li>
+          <a href={Url.commonHits}>Examples of common hits</a>
+        </li>
+      </Typography>
     </>
   )
 }

@@ -43,14 +43,17 @@ describe("HitBuilder", () => {
 
   describe("when unauthorized", () => {
     test("renders without error for an unauthorized user", async () => {
-      const { wrapped, store } = withProviders(<HitBuilder properties={properties} />)
+      const { wrapped, store } = withProviders(
+        <HitBuilder properties={properties} />
+      )
       store.dispatch({ type: "setUser", user: undefined })
       const { findByText } = renderer.render(wrapped)
-      const result = await findByText("You must be logged in with Google for this demo.")
+      const result = await findByText(
+        "You must be logged in with Google for this demo."
+      )
       expect(result).toBeVisible()
     })
-  }
-  )
+  })
 
   describe("When authorized", () => {
     // Does right thing when authed (happy path render)
@@ -122,18 +125,19 @@ describe("HitBuilder", () => {
 
     describe("updates the hit payload", () => {
       test("when t parameter is changed", async () => {
-        const { wrapped } = withProviders(<HitBuilder properties={properties} />)
-        const {  findByLabelText } = renderer.render(wrapped)
+        const { wrapped } = withProviders(
+          <HitBuilder properties={properties} />
+        )
+        const { findByLabelText } = renderer.render(wrapped)
 
         const t = await findByLabelText("t")
 
         await renderer.act(async () => {
           userEvent.click(t)
-          userEvent.selectOptions(t, ['pageview'])
+          userEvent.selectOptions(t, ["pageview"])
         })
 
         expect(t).toHaveValue("pageview")
-        
       })
 
       test("when cid parameter is changed", async () => {
@@ -145,8 +149,7 @@ describe("HitBuilder", () => {
 
         await renderer.act(async () => {
           userEvent.clear(cid)
-          await userEvent.type(cid, 'cid123')
-
+          await userEvent.type(cid, "cid123")
         })
 
         expect(cid).toHaveValue("cid123")
@@ -162,8 +165,7 @@ describe("HitBuilder", () => {
 
         await renderer.act(async () => {
           userEvent.clear(tid)
-          await userEvent.type(tid, 'tid123')
-
+          await userEvent.type(tid, "tid123")
         })
 
         expect(tid).toHaveValue("tid123")
@@ -213,7 +215,7 @@ describe("HitBuilder", () => {
 
         await renderer.act(async () => {
           userEvent.clear(paramField)
-          await userEvent.type(paramField, 'newName')
+          await userEvent.type(paramField, "newName")
         })
         expect(paramField).toHaveValue("newName")
         expect(hitPayload.value).toContain("newName=paramValue")
@@ -227,7 +229,6 @@ describe("HitBuilder", () => {
           await userEvent.type(paramValue, "paramValue2")
         })
         expect(hitPayload.value).toContain("newName=paramValue2")
-
       })
 
       test("updates hit payload when removing parameter", async () => {
@@ -258,24 +259,23 @@ describe("HitBuilder", () => {
     })
 
     describe("Validate hit", () => {
-      test("when valid updates the ui accordingly",  async () => {
-
-        const queryParams = "v=1&t=pageview&tid=UA-54516992-1&cid=555&dh=mydemo.com&dp=%2Fhome&dt=homepage"
+      test("when valid updates the ui accordingly", async () => {
+        const queryParams =
+          "v=1&t=pageview&tid=UA-54516992-1&cid=555&dh=mydemo.com&dp=%2Fhome&dt=homepage"
 
         const { wrapped } = withProviders(
           <HitBuilder properties={properties} />,
           { path: `/hit-builder?${queryParams}` }
         )
 
-        const {findByText, findByLabelText} = renderer.render(
-          wrapped
-        ) 
+        const { findByText, findByLabelText } = renderer.render(wrapped)
 
-        const {hitPayload} = await getInputs(findByLabelText)
+        const { hitPayload } = await getInputs(findByLabelText)
         expect(hitPayload).toHaveValue(queryParams)
 
-
-        const validateButton = renderer.screen.getByText("Send hit to Google Analytics")
+        const validateButton = renderer.screen.getByText(
+          "Send hit to Google Analytics"
+        )
         await renderer.act(async () => {
           userEvent.click(validateButton)
         })
@@ -283,24 +283,22 @@ describe("HitBuilder", () => {
         const result = await findByText("Hit is valid")
         expect(result).not.toEqual("")
       })
-      test("when valid updates the ui accordingly",  async () => {
-
-        const queryParams = "v=1&t=pageview&tid=UA-XXXXX-1&cid=555&dh=mydemo.com&dp=%2Fhome&dt=homepage"
+      test("when valid updates the ui accordingly", async () => {
+        const queryParams =
+          "v=1&t=pageview&tid=UA-XXXXX-1&cid=555&dh=mydemo.com&dp=%2Fhome&dt=homepage"
 
         const { wrapped } = withProviders(
           <HitBuilder properties={properties} />,
           { path: `/hit-builder?${queryParams}` }
         )
-        const {findByText, findByLabelText} = renderer.render(
-          wrapped
-        )
+        const { findByText, findByLabelText } = renderer.render(wrapped)
 
-        const {hitPayload} = await getInputs(findByLabelText)
+        const { hitPayload } = await getInputs(findByLabelText)
         expect(hitPayload).toHaveValue(queryParams)
 
-
-        
-        const validateButton = renderer.screen.getByText("Send hit to Google Analytics")
+        const validateButton = renderer.screen.getByText(
+          "Send hit to Google Analytics"
+        )
         await renderer.act(async () => {
           userEvent.click(validateButton)
         })

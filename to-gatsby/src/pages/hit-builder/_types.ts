@@ -129,7 +129,7 @@ export interface Property {
 export interface ValidationMessage {
   param: string
   description: string
-  code: 'VALUE_REQUIRED'
+  code: "VALUE_REQUIRED"
 }
 
 export interface State {
