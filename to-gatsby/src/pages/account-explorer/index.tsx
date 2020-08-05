@@ -119,11 +119,16 @@ export const AccountExplorer = () => {
   const onViewsChanged = React.useCallback(
     populatedViews => {
       setAllViews(populatedViews)
-    }, [setAllViews]);
+    },
+    [setAllViews]
+  )
 
-  const onViewChanged = React.useCallback(viewData => {
-    setSelectedView(viewData)
-  }, [setSelectedView])
+  const onViewChanged = React.useCallback(
+    viewData => {
+      setSelectedView(viewData)
+    },
+    [setSelectedView]
+  )
 
   return (
     <>
