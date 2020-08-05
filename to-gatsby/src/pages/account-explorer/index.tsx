@@ -114,7 +114,7 @@ export const AccountExplorer = () => {
     } else if (selectedView !== undefined) {
       setFilteredViews([selectedView])
     }
-  }, [searchQuery, allViews])
+  }, [searchQuery, allViews, selectedView])
 
   const onViewsChanged = React.useCallback(
     populatedViews => {
