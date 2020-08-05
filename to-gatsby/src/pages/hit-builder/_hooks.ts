@@ -127,6 +127,7 @@ type UseParameters = () => {
   addParameter: (parameterName?: string) => void
   removeParameter: (id: number) => void
   hasParameter: (parameterName: string) => boolean
+  setParametersFromString: (paramString: string) => void
   parameters: Params
 }
 
@@ -146,6 +147,13 @@ export const useParameters: UseParameters = () => {
     return hitUtils.convertHitToParams(nextId, initial)
   })
 
+  // TODO - see if there's a simple way to keep track of some state for whether
+  // or not a parameter name or value should be focused.
+  // TODO - This shouldn't focus the parameter name if it was already there.
+  const setParametersFromString = React.useCallback((paramString: string) => {
+    setParameters(hitUtils.convertHitToParams(nextId, paramString)) 
+  }, [])
+
   const hasParameter = React.useCallback(
     (parameterName: string): boolean => {
       const param = parameters.find(p => p.name === parameterName)
@@ -157,6 +165,8 @@ export const useParameters: UseParameters = () => {
   const addParameter = React.useCallback(
     (parameterName?: string) => {
       const id = nextId()
+      // TODO - If a parameter name is provided, we should focus the value, not
+      // the parameter name.
       const nuParameter: Param = { id, name: parameterName || "", value: "" }
       setParameters(([v, t, tid, cid, ...others]) => {
         return [v, t, tid, cid, ...others.concat([nuParameter])]
@@ -206,6 +216,7 @@ export const useParameters: UseParameters = () => {
     addParameter,
     removeParameter,
     hasParameter,
+    setParametersFromString,
     parameters,
   }
 }

@@ -83,6 +83,7 @@ interface HitCardProps {
   validateHit: () => void
   addParameter: (paramName: string) => void
   hasParameter: (paramName: string) => boolean
+  setParametersFromString: (paramString: string) => void
 }
 
 const HitCard: React.FC<HitCardProps> = ({
@@ -93,6 +94,7 @@ const HitCard: React.FC<HitCardProps> = ({
   validationMessages,
   addParameter,
   hasParameter,
+  setParametersFromString,
 }) => {
   const classes = useStyles()
   const [value, setValue] = React.useState(hitPayload)
@@ -102,13 +104,10 @@ const HitCard: React.FC<HitCardProps> = ({
     setValue(hitPayload)
   }, [hitPayload])
 
-  const onBlur = React.useCallback(() => {
-    // TODO update the hit on Blur, this should use the hit utils
-  }, [value])
-
   const onChange = React.useCallback(
     (e: React.ChangeEvent<HTMLTextAreaElement>) => {
       setValue(e.target.value)
+      setParametersFromString(e.target.value)
     },
     []
   )
@@ -137,7 +136,6 @@ const HitCard: React.FC<HitCardProps> = ({
         className={classes.payload}
         value={value}
         onChange={onChange}
-        onBlur={onBlur}
       />
       <div className="HitElement-body">
         <HitActions

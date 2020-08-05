@@ -37,6 +37,7 @@ export const HitBuilder: React.FC<HitBuilderProps> = ({ properties }) => {
     removeParameter,
     parameters,
     hasParameter,
+    setParametersFromString,
   } = hooks.useParameters()
 
   const {
@@ -71,6 +72,7 @@ export const HitBuilder: React.FC<HitBuilderProps> = ({ properties }) => {
       </Typography>
 
       <HitCard
+        setParametersFromString={setParametersFromString}
         hasParameter={hasParameter}
         addParameter={addParameter}
         validateHit={validateHit}
