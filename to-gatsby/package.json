@@ -65,12 +65,13 @@
     "identity-obj-proxy": "^3.0.0",
     "inquirer": "^7.2.0",
     "jest": "^25.3.0",
-    "prettier": "2.0.4",
+    "prettier": "^2.0.5",
     "react-test-renderer": "^16.13.1",
     "ts-node": "^8.9.0",
     "typescript": "^3.8.3"
   },
   "scripts": {
+    "prettier": "prettier --write --ignore-path .eslintignore 'src/**/*' 'lib/**/*' 'gatsby/**/*' package.json gatsby-node.js gatsby-ssr.tsx gatsby-config.js gatsby-browser.js",
     "lint": "eslint 'src/**/*' 'lib/**/*' 'gatsby/**/*'",
     "format": "prettier --write \"**/*.{js,jsx,json,md}\"",
     "check-types": "tsc",

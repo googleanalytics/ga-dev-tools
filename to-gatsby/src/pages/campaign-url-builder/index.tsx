@@ -274,16 +274,14 @@ const GeneratedUrl: React.FC<GeneratedUrlProps> = ({
     content,
   ])
 
-  const onWarning = React.useCallback(warningPresent => 
-    setProblematicUrl(warningPresent), 
-    [setProblematicUrl]);
+  const onWarning = React.useCallback(
+    warningPresent => setProblematicUrl(warningPresent),
+    [setProblematicUrl]
+  )
 
   return (
     <Paper className={classes.share}>
-      <WarningsFor
-        websiteUrl={websiteUrl}
-        onWarning={onWarning}
-      />
+      <WarningsFor websiteUrl={websiteUrl} onWarning={onWarning} />
       {!problematicUrl &&
         (hasAllRequired ? (
           <>
@@ -367,24 +365,27 @@ export const CampaignUrlBuilder = () => {
     ""
   )
 
-  const onWebsiteChange = React.useCallback(e => {
-    const extractedParams = extractParamsFromWebsiteUrl(e.target.value)
-    if (extractedParams !== undefined) {
-      const {
-        utm_source,
-        utm_medium,
-        utm_campaign,
-        utm_term,
-        utm_content,
-      } = extractedParams
-      utm_source !== undefined && setSource(utm_source)
-      utm_medium !== undefined && setMedium(utm_medium)
-      utm_campaign !== undefined && setCampaign(utm_campaign)
-      utm_term !== undefined && setTerm(utm_term)
-      utm_content !== undefined && setContent(utm_content)
-    }
-    setWebsiteUrl(e.target.value)
-  }, [setCampaign, setMedium, setSource, setTerm, setContent, setWebsiteUrl])
+  const onWebsiteChange = React.useCallback(
+    e => {
+      const extractedParams = extractParamsFromWebsiteUrl(e.target.value)
+      if (extractedParams !== undefined) {
+        const {
+          utm_source,
+          utm_medium,
+          utm_campaign,
+          utm_term,
+          utm_content,
+        } = extractedParams
+        utm_source !== undefined && setSource(utm_source)
+        utm_medium !== undefined && setMedium(utm_medium)
+        utm_campaign !== undefined && setCampaign(utm_campaign)
+        utm_term !== undefined && setTerm(utm_term)
+        utm_content !== undefined && setContent(utm_content)
+      }
+      setWebsiteUrl(e.target.value)
+    },
+    [setCampaign, setMedium, setSource, setTerm, setContent, setWebsiteUrl]
+  )
 
   return (
     <>
