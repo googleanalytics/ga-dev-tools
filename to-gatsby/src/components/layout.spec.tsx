@@ -18,7 +18,7 @@ import "@testing-library/jest-dom"
 import { withProviders } from "../test-utils"
 
 import Layout from "./layout"
-import { usePageView } from "./layout"
+import { usePageView } from "../hooks"
 
 describe("Layout", () => {
   it("renders correctly", async () => {
@@ -30,6 +30,7 @@ describe("Layout", () => {
   })
 })
 
+// TODO - move this to hooks.spec.ts
 describe("usePageView hook", () => {
   const TestComponent: React.FC = () => {
     usePageView()
