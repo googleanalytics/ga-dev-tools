@@ -112,7 +112,7 @@ const WarningsFor: React.FC<WarningsForProps> = ({ websiteUrl, onWarning }) => {
 
   React.useEffect(() => {
     onWarning(warnings.length !== 0)
-  }, [warnings])
+  }, [warnings, onWarning])
 
   if (asUrl === undefined) {
     return null
@@ -274,11 +274,15 @@ const GeneratedUrl: React.FC<GeneratedUrlProps> = ({
     content,
   ])
 
+  const onWarning = React.useCallback(warningPresent => 
+    setProblematicUrl(warningPresent), 
+    [setProblematicUrl]);
+
   return (
     <Paper className={classes.share}>
       <WarningsFor
         websiteUrl={websiteUrl}
-        onWarning={warningPresent => setProblematicUrl(warningPresent)}
+        onWarning={onWarning}
       />
       {!problematicUrl &&
         (hasAllRequired ? (
