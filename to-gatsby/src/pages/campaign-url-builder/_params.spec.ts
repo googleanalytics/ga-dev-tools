@@ -116,7 +116,7 @@ describe("for campaign url builder param parsing", () => {
     describe("common errors", () => {
       test("missing protocol still works", () => {
         const url = "example.com"
-        sut.extractParamsFromWebsiteUrl(url)!
+        expect(sut.extractParamsFromWebsiteUrl(url)).not.toBeUndefined()
       })
     })
 
