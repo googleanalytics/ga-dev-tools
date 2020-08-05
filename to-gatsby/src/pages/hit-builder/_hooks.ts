@@ -47,6 +47,14 @@ type UseValidationServer = (
   sendHit: () => void
 }
 
+const sleep = async (milliseconds: number): Promise<void> => {
+  return new Promise(resolve => {
+    window.setTimeout(() => {
+      resolve()
+    }, milliseconds)
+  })
+}
+
 // This hook encapsulates the logic needed for the validation server
 export const useValidationServer: UseValidationServer = parameters => {
   const sendEvent = useSendEvent()
@@ -64,7 +72,10 @@ export const useValidationServer: UseValidationServer = parameters => {
     setHitStatus(HitStatus.Validating)
     try {
       const hit = hitUtils.convertParamsToHit(parameters)
-      hitUtils.getHitValidationResult(hit).then(validationResult => {
+      Promise.all<hitUtils.ValidationResult, void>([
+        hitUtils.getHitValidationResult(hit),
+        sleep(500),
+      ]).then(([validationResult, _]) => {
         const result = validationResult.response.hitParsingResult[0]
         const validationMessages = result.parserMessage.filter(
           // TODO - I might want to do something different with ERRORS
@@ -97,10 +108,13 @@ export const useValidationServer: UseValidationServer = parameters => {
   const sendHit = React.useCallback(async () => {
     setHitStatus(HitStatus.Sending)
     const hit = hitUtils.convertParamsToHit(parameters)
-    await fetch("https://www.google-analytics.com/collect", {
-      method: "POST",
-      body: hit,
-    })
+    await Promise.all([
+      sleep(500),
+      fetch("https://www.google-analytics.com/collect", {
+        method: "POST",
+        body: hit,
+      }),
+    ])
     setHitStatus(HitStatus.Sent)
     sendEvent("validate", {
       event_category: "Hit Builder",

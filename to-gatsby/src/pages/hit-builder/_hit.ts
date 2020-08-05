@@ -122,7 +122,7 @@ export function convertParamsToHit(params: Param[]): string {
   return querystring.stringify(query)
 }
 
-interface ValidationResult {
+export interface ValidationResult {
   response: {
     parserMessage: any[]
     hitParsingResult: {

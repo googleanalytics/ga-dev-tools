@@ -15,7 +15,7 @@
 import React from "react"
 import { HitStatus, ValidationMessage } from "./_types"
 import Warning from "@material-ui/icons/Warning"
-import Error from "@material-ui/icons/Error"
+import ErrorIcon from "@material-ui/icons/Error"
 import Button from "@material-ui/core/Button"
 import TextField from "@material-ui/core/TextField"
 import CopyButton from "../../components/CopyButton"
@@ -24,6 +24,7 @@ import Send from "@material-ui/icons/Send"
 import Cached from "@material-ui/icons/Cached"
 import { Paper, makeStyles, Typography } from "@material-ui/core"
 import classnames from "classnames"
+import orange from "@material-ui/core/colors/orange"
 import green from "@material-ui/core/colors/green"
 import yellow from "@material-ui/core/colors/yellow"
 import red from "@material-ui/core/colors/red"
@@ -60,9 +61,21 @@ const useStyles = makeStyles(theme => ({
       marginTop: theme.spacing(1),
     },
   },
+  [HitStatus.Validating]: {
+    backgroundColor: orange[100],
+    color: orange[900],
+  },
+  [HitStatus.Sending]: {
+    backgroundColor: orange[100],
+    color: orange[900],
+  },
   [HitStatus.Invalid]: {
     backgroundColor: red[100],
     color: red[900],
+  },
+  [HitStatus.Sent]: {
+    backgroundColor: green[100],
+    color: green[900],
   },
   [HitStatus.Valid]: {
     backgroundColor: green[100],
@@ -174,6 +187,7 @@ const ValidationStatus: React.FC<ValidationStatusProps> = ({
   let hitHeading: JSX.Element | null = null
   let hitContent: JSX.Element[] | JSX.Element | null = null
   switch (hitStatus) {
+    case HitStatus.Sent:
     case HitStatus.Valid: {
       headerIcon = <Check />
       hitHeading = <Typography variant="h3">Hit is valid!</Typography>
@@ -191,7 +205,7 @@ const ValidationStatus: React.FC<ValidationStatusProps> = ({
       break
     }
     case HitStatus.Invalid: {
-      headerIcon = <Error />
+      headerIcon = <ErrorIcon />
       hitHeading = <Typography variant="h3">Hit is invalid!</Typography>
       hitContent = (
         <ul>
@@ -227,9 +241,14 @@ const ValidationStatus: React.FC<ValidationStatusProps> = ({
       )
       break
     }
+    case HitStatus.Sending:
     case HitStatus.Validating: {
       headerIcon = <Cached />
-      hitHeading = <Typography variant="h3">Validiting hit...</Typography>
+      hitHeading = (
+        <Typography variant="h3">
+          {hitStatus === HitStatus.Sending ? "Sending" : "Validating"} hit...
+        </Typography>
+      )
       break
     }
     case HitStatus.Unvalidated: {
@@ -249,6 +268,9 @@ const ValidationStatus: React.FC<ValidationStatusProps> = ({
         </>
       )
       break
+    }
+    default: {
+      throw new Error(`${hitStatus} has not been accounted for.`)
     }
   }
   return (
