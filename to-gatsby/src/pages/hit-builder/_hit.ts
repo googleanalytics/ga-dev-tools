@@ -60,7 +60,13 @@ export function convertHitToParams(
   const searchIndex = hit.indexOf("?")
   if (searchIndex > -1) hit = hit.slice(searchIndex + 1)
 
-  const query = querystring.parse(hit)
+  let query: querystring.ParsedUrlQuery = {}
+  try {
+    query = querystring.parse(hit)
+  } catch (e) {
+    // It's common to paste in a string that's invalid, but we can easily
+    // recover from here.
+  }
 
   // Create required params first, regardless of order in the hit.
   const v: ParamV = {

@@ -38,6 +38,8 @@ export const HitBuilder: React.FC<HitBuilderProps> = ({ properties }) => {
     parameters,
     hasParameter,
     setParametersFromString,
+    shouldFocus,
+    setFocus,
   } = hooks.useParameters()
 
   const {
@@ -94,6 +96,7 @@ export const HitBuilder: React.FC<HitBuilderProps> = ({ properties }) => {
       </Typography>
 
       <Parameters
+        shouldFocus={shouldFocus}
         validationMessages={validationMessages}
         properties={properties}
         parameters={parameters}

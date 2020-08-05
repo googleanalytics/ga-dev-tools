@@ -60,6 +60,7 @@ interface ParametersProps {
   updateParameterName: (id: number, newName: string) => void
   updateParameterValue: (id: number, newValue: any) => void
   removeParameter: (id: number) => void
+  shouldFocus: (id: number, value: boolean) => boolean
   addParameter: () => void
   parameters: Params
   properties: Property[]
@@ -69,6 +70,7 @@ interface ParametersProps {
 const Parameters: React.FC<ParametersProps> = ({
   updateParameterName,
   updateParameterValue,
+  shouldFocus,
   removeParameter,
   addParameter,
   parameters,
@@ -124,6 +126,7 @@ const Parameters: React.FC<ParametersProps> = ({
         autoSelect
         multiple={false}
         options={HIT_TYPES}
+        freeSolo
         getOptionLabel={a => a}
         renderOption={e => e}
         value={t.value as string}
@@ -211,12 +214,11 @@ const Parameters: React.FC<ParametersProps> = ({
         }}
       />
 
-      {otherParams.map((param, idx) => {
-        const isLast = idx === otherParams.length - 1
+      {otherParams.map(param => {
         return (
           <div className={classes.addedParam} key={param.id}>
             <TextField
-              autoFocus={isLast}
+              autoFocus={shouldFocus(param.id, false)}
               ref={newParam}
               id={`${param.name}-label`}
               label="Parameter name"
@@ -226,6 +228,7 @@ const Parameters: React.FC<ParametersProps> = ({
               }}
             />
             <TextField
+              autoFocus={shouldFocus(param.id, true)}
               id={`${param.name}-value`}
               label={
                 (param.name && `Value for ${param.name}`) || "Parameter value"
