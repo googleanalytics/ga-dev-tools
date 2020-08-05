@@ -99,7 +99,7 @@ export const AccountExplorer = () => {
   // Whenever the selected view changes, if it is defined, the search should be
   // cleared & the table views set to the newly selected view.
   React.useEffect(() => {
-    if (selectedView != undefined) {
+    if (selectedView !== undefined) {
       setFilteredViews([selectedView])
       setSearchQuery("")
     }
