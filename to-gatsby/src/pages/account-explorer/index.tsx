@@ -17,7 +17,6 @@ import { makeStyles } from "@material-ui/core/styles"
 import TextField from "@material-ui/core/TextField"
 import Typography from "@material-ui/core/Typography"
 import Paper from "@material-ui/core/Paper"
-import { useSelector } from "react-redux"
 
 import Layout from "../../components/layout"
 import ViewSelector, { HasView } from "../../components/ViewSelector"
@@ -100,7 +99,7 @@ export const AccountExplorer = () => {
   // Whenever the selected view changes, if it is defined, the search should be
   // cleared & the table views set to the newly selected view.
   React.useEffect(() => {
-    if (selectedView != undefined) {
+    if (selectedView !== undefined) {
       setFilteredViews([selectedView])
       setSearchQuery("")
     }
@@ -115,7 +114,16 @@ export const AccountExplorer = () => {
     } else if (selectedView !== undefined) {
       setFilteredViews([selectedView])
     }
-  }, [searchQuery, allViews])
+  }, [searchQuery, allViews, selectedView])
+
+  const onViewsChanged = React.useCallback(
+    populatedViews => {
+      setAllViews(populatedViews)
+    }, [setAllViews]);
+
+  const onViewChanged = React.useCallback(viewData => {
+    setSelectedView(viewData)
+  }, [setSelectedView])
 
   return (
     <>
@@ -143,12 +151,8 @@ export const AccountExplorer = () => {
             </Typography>
             <ViewSelector
               className={classes.viewSelector}
-              onViewsChanged={populatedViews => {
-                setAllViews(populatedViews)
-              }}
-              onViewChanged={viewData => {
-                setSelectedView(viewData)
-              }}
+              onViewsChanged={onViewsChanged}
+              onViewChanged={onViewChanged}
             />
             <ViewsTable
               className={classes.table}

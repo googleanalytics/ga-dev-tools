@@ -100,6 +100,7 @@ const ViewsTable: React.FC<ViewTableProps> = ({ views, className, search }) => {
                     href={viewUrl}
                     title="Open this view in Google Analytics"
                     target="_blank"
+                    rel="noopener noreferrer"
                   >
                     <HighlightText
                       className={classes.mark}

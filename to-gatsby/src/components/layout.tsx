@@ -19,6 +19,11 @@ import Button from "@material-ui/core/Button"
 import { Link } from "gatsby"
 import { Home } from "@material-ui/icons"
 import classnames from "classnames"
+// TODO - Look into whether or not we can fix this.
+// See
+// https://github.com/benmosher/eslint-plugin-import/blob/master/docs/rules/no-webpack-loader-syntax.md
+//
+// eslint-disable-next-line import/no-webpack-loader-syntax
 import Logo from "-!svg-react-loader!../images/ga-developer-logo.svg"
 import { useLocation } from "@reach/router"
 import AppBar from "@material-ui/core/AppBar"

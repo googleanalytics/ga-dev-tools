@@ -42,7 +42,7 @@ const TagAssistant = () => {
     validity of advanced tracking implementations such as <a href={Url.crossDomainTracking}>cross-domain tracking</a>.
     </Typography>
 
-    <iframe width="640" height="400" src="https://www.youtube.com/embed/O_FFUw1tSfI" frameBorder="0" allowFullScreen></iframe>
+    <iframe title="Validating your Google Analytics Implementations with Google Tag Assistant" width="640" height="400" src="https://www.youtube.com/embed/O_FFUw1tSfI" frameBorder="0" allowFullScreen></iframe>
     
     <Typography variant="caption" paragraph>
     Using Tag Assistant to validate your tracking implementations.
