@@ -384,7 +384,7 @@ export const CampaignUrlBuilder = () => {
       utm_content !== undefined && setContent(utm_content)
     }
     setWebsiteUrl(e.target.value)
-  }, [])
+  }, [setCampaign, setMedium, setSource, setTerm, setContent, setWebsiteUrl])
 
   return (
     <>
