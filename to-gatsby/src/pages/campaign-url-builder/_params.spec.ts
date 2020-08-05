@@ -157,7 +157,7 @@ describe("for campaign url builder param parsing", () => {
 
     test("no ending slash doesn't throw", () => {
       const url = "https://example.com"
-      sut.extractParamsFromWebsiteUrl(url)!
+      expect(sut.extractParamsFromWebsiteUrl(url)).not.toBeUndefined();
     })
 
     test("an ending slash doesn't throw", () => {
