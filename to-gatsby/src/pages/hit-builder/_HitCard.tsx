@@ -73,8 +73,6 @@ const useStyles = makeStyles(theme => ({
   },
 }))
 
-const ACTION_TIMEOUT = 1500
-
 interface HitCardProps {
   hitPayload: string
   hitStatus: HitStatus
@@ -109,7 +107,7 @@ const HitCard: React.FC<HitCardProps> = ({
       setValue(e.target.value)
       setParametersFromString(e.target.value)
     },
-    []
+    [setParametersFromString]
   )
   return (
     <Paper className={classes.hitElement}>
@@ -164,9 +162,9 @@ const ValidationStatus: React.FC<ValidationStatusProps> = ({
 }) => {
   const classes = useStyles()
 
-  let headerIcon
-  let hitHeading
-  let hitContent
+  let headerIcon: JSX.Element;
+  let hitHeading: JSX.Element;
+  let hitContent: JSX.Element[] | JSX.Element | null = null;
   switch (hitStatus) {
     case HitStatus.Valid: {
       headerIcon = <Check />
@@ -284,8 +282,8 @@ const HitActions: React.FC<HitActionsProps> = ({
   //   setHitSent(false)
   // }, [hitPayload])
 
-  if (hitStatus != "VALID") {
-    const buttonText = (hitStatus == "INVALID" ? "Rev" : "V") + "alidate hit"
+  if (hitStatus !== HitStatus.Valid) {
+    const buttonText = (hitStatus === HitStatus.Invalid ? "Rev" : "V") + "alidate hit"
 
     return (
       <div className="HitElement-action">
@@ -312,10 +310,10 @@ const HitActions: React.FC<HitActionsProps> = ({
   )
 
   const sharableLinkToHit =
-    location.protocol +
+    window.location.protocol +
     "//" +
-    location.host +
-    location.pathname +
+    window.location.host +
+    window.location.pathname +
     "?" +
     hitPayload
   return (

@@ -19,7 +19,6 @@ import * as hitUtils from "./_hit"
 import { useSelector } from "react-redux"
 import { getAnalyticsApi } from "../../api"
 import { useLocation, useNavigate } from "@reach/router"
-import { ListItemSecondaryAction } from "@material-ui/core"
 
 const formatMessage = (message: {
   parameter: any
@@ -172,7 +171,7 @@ export const useParameters: UseParameters = () => {
         return [v, t, tid, cid, ...others.concat([nuParameter])]
       })
     },
-    [nextId]
+    []
   )
 
   const removeParameter = React.useCallback((id: number) => {

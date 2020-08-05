@@ -12,8 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-/* global $ */
-
 import querystring from "querystring"
 import {
   Param,
@@ -30,8 +28,6 @@ import { WindowLocation, NavigateFn } from "@reach/router"
 
 const DEFAULT_HIT = "v=1&t=pageview"
 
-let id = 1
-
 /**
  * Gets the initial hit from the URL if present. If no hit is found in the URL
  * the default hit is used.
@@ -47,7 +43,7 @@ export function getInitialHitAndUpdateUrl(
     return DEFAULT_HIT
   }
   // Remove the query params after initial load.
-  navigate(location.pathname, { replace: true })
+  navigate(window.location.pathname, { replace: true })
   return query
 }
 

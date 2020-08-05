@@ -19,7 +19,7 @@ import userEvent from "@testing-library/user-event"
 import "@testing-library/jest-dom"
 
 import { HitBuilder } from "./index"
-import { Property, HIT_TYPES } from "./_types"
+import { Property } from "./_types"
 
 const getInputs = async (
   findByLabelText: (label: string) => Promise<HTMLElement>
@@ -123,7 +123,7 @@ describe("HitBuilder", () => {
     describe("updates the hit payload", () => {
       test("when t parameter is changed", async () => {
         const { wrapped } = withProviders(<HitBuilder properties={properties} />)
-        const {  getByText, findByLabelText } = renderer.render(wrapped)
+        const {  findByLabelText } = renderer.render(wrapped)
 
         const t = await findByLabelText("t")
 
@@ -144,7 +144,7 @@ describe("HitBuilder", () => {
         const { cid, hitPayload } = await getInputs(findByLabelText)
 
         await renderer.act(async () => {
-          await userEvent.clear(cid)
+          userEvent.clear(cid)
           await userEvent.type(cid, 'cid123')
 
         })
@@ -161,7 +161,7 @@ describe("HitBuilder", () => {
         const { tid, hitPayload } = await getInputs(findByLabelText)
 
         await renderer.act(async () => {
-          await userEvent.clear(tid)
+          userEvent.clear(tid)
           await userEvent.type(tid, 'tid123')
 
         })
@@ -212,7 +212,7 @@ describe("HitBuilder", () => {
         const paramField = await findByLabelText("Parameter name")
 
         await renderer.act(async () => {
-          await userEvent.clear(paramField)
+          userEvent.clear(paramField)
           await userEvent.type(paramField, 'newName')
         })
         expect(paramField).toHaveValue("newName")
@@ -223,7 +223,7 @@ describe("HitBuilder", () => {
         const paramValue = await findByLabelText("Value for newName")
 
         await renderer.act(async () => {
-          await userEvent.clear(paramValue)
+          userEvent.clear(paramValue)
           await userEvent.type(paramValue, "paramValue2")
         })
         expect(hitPayload.value).toContain("newName=paramValue2")
@@ -262,7 +262,7 @@ describe("HitBuilder", () => {
 
         const queryParams = "v=1&t=pageview&tid=UA-54516992-1&cid=555&dh=mydemo.com&dp=%2Fhome&dt=homepage"
 
-        const { wrapped, history } = withProviders(
+        const { wrapped } = withProviders(
           <HitBuilder properties={properties} />,
           { path: `/hit-builder?${queryParams}` }
         )
@@ -277,7 +277,7 @@ describe("HitBuilder", () => {
 
         const validateButton = renderer.screen.getByText("Send hit to Google Analytics")
         await renderer.act(async () => {
-          await userEvent.click(validateButton)
+          userEvent.click(validateButton)
         })
 
         const result = await findByText("Hit is valid")
@@ -287,7 +287,7 @@ describe("HitBuilder", () => {
 
         const queryParams = "v=1&t=pageview&tid=UA-XXXXX-1&cid=555&dh=mydemo.com&dp=%2Fhome&dt=homepage"
 
-        const { wrapped, history } = withProviders(
+        const { wrapped } = withProviders(
           <HitBuilder properties={properties} />,
           { path: `/hit-builder?${queryParams}` }
         )
@@ -302,7 +302,7 @@ describe("HitBuilder", () => {
         
         const validateButton = renderer.screen.getByText("Send hit to Google Analytics")
         await renderer.act(async () => {
-          await userEvent.click(validateButton)
+          userEvent.click(validateButton)
         })
 
         const result = await findByText("Hit is invalid")

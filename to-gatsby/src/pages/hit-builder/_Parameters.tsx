@@ -73,39 +73,30 @@ const Parameters: React.FC<ParametersProps> = ({
   addParameter,
   parameters,
   properties,
-  validationMessages,
 }) => {
   const classes = useStyles()
   const newParam = React.useRef(null)
   const [v, t, tid, cid, ...otherParams] = parameters
 
-  const getValidationMessageForParam = React.useCallback(
-    (paramName: string) => {
-      const message = validationMessages.find(m => m.param === paramName)
-      return message && message.description
-    },
-    [validationMessages]
-  )
-
   const setHitType = React.useCallback(
     hitType => {
       updateParameterValue(t.id, hitType)
     },
-    [t.id]
+    [t.id, updateParameterValue]
   )
 
   const setCid = React.useCallback(
     newId => {
       updateParameterValue(cid.id, newId)
     },
-    [cid.value]
+    [cid.id, updateParameterValue]
   )
 
   const setTid = React.useCallback(
     newTid => {
       updateParameterValue(tid.id, newTid)
     },
-    [tid.id]
+    [tid.id, updateParameterValue]
   )
   const [localPropertyInput, setLocalPropertyInput] = React.useState("")
 
