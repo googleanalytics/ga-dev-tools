@@ -116,6 +116,15 @@ export const AccountExplorer = () => {
     }
   }, [searchQuery, allViews])
 
+  const onViewsChanged = React.useCallback(
+    populatedViews => {
+      setAllViews(populatedViews)
+    }, [setAllViews]);
+
+  const onViewChanged = React.useCallback(viewData => {
+    setSelectedView(viewData)
+  }, [setSelectedView])
+
   return (
     <>
       <Typography variant="h2">Overview</Typography>
@@ -142,12 +151,8 @@ export const AccountExplorer = () => {
             </Typography>
             <ViewSelector
               className={classes.viewSelector}
-              onViewsChanged={populatedViews => {
-                setAllViews(populatedViews)
-              }}
-              onViewChanged={viewData => {
-                setSelectedView(viewData)
-              }}
+              onViewsChanged={onViewsChanged}
+              onViewChanged={onViewChanged}
             />
             <ViewsTable
               className={classes.table}
