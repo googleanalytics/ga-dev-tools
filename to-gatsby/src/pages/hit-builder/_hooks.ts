@@ -161,9 +161,6 @@ export const useParameters: UseParameters = () => {
     | undefined
   >(undefined)
 
-  // TODO - see if there's a simple way to keep track of some state for whether
-  // or not a parameter name or value should be focused.
-  // TODO - This shouldn't focus the parameter name if it was already there.
   const setParametersFromString = React.useCallback((paramString: string) => {
     setFocusData(undefined)
     setParameters(hitUtils.convertHitToParams(nextId, paramString))
@@ -200,8 +197,6 @@ export const useParameters: UseParameters = () => {
   const addParameter = React.useCallback(
     (parameterName?: string) => {
       const id = nextId()
-      // TODO - If a parameter name is provided, we should focus the value, not
-      // the parameter name.
       const nuParameter: Param = { id, name: parameterName || "", value: "" }
       setParameters(([v, t, tid, cid, ...others]) => {
         return [v, t, tid, cid, ...others.concat([nuParameter])]

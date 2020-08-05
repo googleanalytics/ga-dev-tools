@@ -46,6 +46,10 @@ const useStyles = makeStyles(theme => ({
     marginLeft: theme.spacing(1),
   },
   validationStatus: {
+    // Picked this value through a bit of trial and error, but having a
+    // minHeight makes this not jump around during the "sending" and
+    // "validating" states.
+    minHeight: theme.spacing(24),
     margin: theme.spacing(-3, -3, 1, -3),
     padding: theme.spacing(0, 3),
     "& > span": {
@@ -211,8 +215,6 @@ const ValidationStatus: React.FC<ValidationStatusProps> = ({
         <ul>
           {validationMessages.map(message => {
             let addParameterButton: JSX.Element | null = null
-            // TODO - Think about adding a button to focus the value field if
-            // the parameter is already present.
             if (
               message.code === "VALUE_REQUIRED" &&
               !hasParameter(message.param)

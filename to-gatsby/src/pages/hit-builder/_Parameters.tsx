@@ -214,10 +214,20 @@ const Parameters: React.FC<ParametersProps> = ({
         }}
       />
 
-      {otherParams.map(param => {
+      {otherParams.map((param, idx) => {
+        const isDuplicate =
+          otherParams.find(
+            other =>
+              param.name !== "" &&
+              other.id !== param.id &&
+              param.name === other.name
+          ) !== undefined
+        const helperText = isDuplicate ? "Duplicate Parameter Name" : undefined
         return (
-          <div className={classes.addedParam} key={param.id}>
+          <div className={classes.addedParam} key={`${param.id}-${idx}`}>
             <TextField
+              error={isDuplicate}
+              helperText={helperText}
               autoFocus={shouldFocus(param.id, false)}
               ref={newParam}
               id={`${param.name}-label`}
@@ -228,6 +238,7 @@ const Parameters: React.FC<ParametersProps> = ({
               }}
             />
             <TextField
+              error={isDuplicate}
               autoFocus={shouldFocus(param.id, true)}
               id={`${param.name}-value`}
               label={
