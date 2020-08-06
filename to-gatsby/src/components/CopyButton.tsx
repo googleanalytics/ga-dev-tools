@@ -14,7 +14,7 @@
 
 import * as React from "react"
 import Button from "@material-ui/core/Button"
-import IconButton from "@material-ui/core/IconButton"
+import IconButton, { IconButtonProps } from "@material-ui/core/IconButton"
 import Tooltip from "@material-ui/core/Tooltip"
 import FileCopyIcon from "@material-ui/icons/FileCopy"
 import Snackbar from "@material-ui/core/Snackbar"
@@ -69,6 +69,43 @@ const CopyButton: React.FC<CopyButtonProps> = props => {
           <FileCopyIcon className={classes.copyIcon} /> {props.text}
         </Button>
       )}
+      <Snackbar
+        open={showAlert}
+        autoHideDuration={2000}
+        onClose={() => setShowAlert(false)}
+      >
+        <MuiAlert>Copied to clipboard.</MuiAlert>
+      </Snackbar>
+    </>
+  )
+}
+
+interface CopyIconButtonProps {
+  toCopy: string
+  tooltipText?: string
+  className?: string
+  size?: IconButtonProps["size"]
+}
+export const CopyIconButton: React.FC<CopyIconButtonProps> = ({
+  toCopy,
+  size,
+  className,
+  tooltipText = "Copy",
+}) => {
+  const [showAlert, setShowAlert] = React.useState(false)
+
+  const copyCode = React.useCallback(() => {
+    copyToClipboard(toCopy)
+    setShowAlert(true)
+  }, [toCopy])
+
+  return (
+    <>
+      <Tooltip title={tooltipText}>
+        <IconButton onClick={copyCode} size={size} className={className}>
+          <FileCopyIcon />
+        </IconButton>
+      </Tooltip>
       <Snackbar
         open={showAlert}
         autoHideDuration={2000}
