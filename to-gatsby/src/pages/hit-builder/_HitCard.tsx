@@ -13,7 +13,7 @@
 // limitations under the License.
 
 import React from "react"
-import { HitStatus, ValidationMessage } from "./_types"
+import { HitStatus } from "./_types"
 import Warning from "@material-ui/icons/Warning"
 import ErrorIcon from "@material-ui/icons/Error"
 import Button from "@material-ui/core/Button"
@@ -28,6 +28,7 @@ import orange from "@material-ui/core/colors/orange"
 import green from "@material-ui/core/colors/green"
 import yellow from "@material-ui/core/colors/yellow"
 import red from "@material-ui/core/colors/red"
+import { ParametersAPI, Validation } from "./_hooks"
 
 const useStyles = makeStyles(theme => ({
   hitElement: {
@@ -102,13 +103,13 @@ const useStyles = makeStyles(theme => ({
 
 interface HitCardProps {
   hitPayload: string
-  hitStatus: HitStatus
-  validationMessages: ValidationMessage[]
-  sendHit: () => void
-  validateHit: () => void
-  addParameter: (paramName: string) => void
-  hasParameter: (paramName: string) => boolean
-  setParametersFromString: (paramString: string) => void
+  hitStatus: Validation["hitStatus"]
+  validationMessages: Validation["validationMessages"]
+  sendHit: Validation["sendHit"]
+  validateHit: Validation["validateHit"]
+  addParameter: ParametersAPI["addParameter"]
+  hasParameter: ParametersAPI["hasParameter"]
+  setParametersFromString: ParametersAPI["setParametersFromString"]
 }
 
 const HitCard: React.FC<HitCardProps> = ({
@@ -173,10 +174,10 @@ const HitCard: React.FC<HitCardProps> = ({
 }
 
 interface ValidationStatusProps {
-  validationMessages: ValidationMessage[]
-  hitStatus: HitStatus
-  addParameter: (paramName: string) => void
-  hasParameter: (paramName: string) => boolean
+  validationMessages: Validation["validationMessages"]
+  hitStatus: Validation["hitStatus"]
+  addParameter: ParametersAPI["addParameter"]
+  hasParameter: ParametersAPI["hasParameter"]
 }
 
 const ValidationStatus: React.FC<ValidationStatusProps> = ({
@@ -290,10 +291,10 @@ const ValidationStatus: React.FC<ValidationStatusProps> = ({
 }
 
 interface HitActionsProps {
-  hitStatus: HitStatus
   hitPayload: string
-  validateHit: () => void
-  sendHit: () => void
+  hitStatus: Validation["hitStatus"]
+  validateHit: Validation["validateHit"]
+  sendHit: Validation["sendHit"]
 }
 
 const HitActions: React.FC<HitActionsProps> = ({

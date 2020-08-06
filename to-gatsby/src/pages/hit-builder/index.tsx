@@ -39,7 +39,6 @@ export const HitBuilder: React.FC<HitBuilderProps> = ({ properties }) => {
     hasParameter,
     setParametersFromString,
     shouldFocus,
-    setFocus,
   } = hooks.useParameters()
 
   const {

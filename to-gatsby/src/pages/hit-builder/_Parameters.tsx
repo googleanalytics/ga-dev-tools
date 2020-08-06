@@ -17,7 +17,8 @@ import {
 } from "@material-ui/core"
 import Autocomplete from "@material-ui/lab/Autocomplete"
 import { Delete, Refresh } from "@material-ui/icons"
-import { HIT_TYPES, Property, Params, ValidationMessage } from "./_types"
+import { HIT_TYPES, Property } from "./_types"
+import { Validation, ParametersAPI } from "./_hooks"
 
 const useStyles = makeStyles(theme => ({
   subdued: {
@@ -57,16 +58,15 @@ const useStyles = makeStyles(theme => ({
 }))
 
 interface ParametersProps {
-  updateParameterName: (id: number, newName: string) => void
-  updateParameterValue: (id: number, newValue: any) => void
-  removeParameter: (id: number) => void
-  shouldFocus: (id: number, value: boolean) => boolean
-  addParameter: () => void
-  parameters: Params
+  updateParameterName: ParametersAPI["updateParameterName"]
+  updateParameterValue: ParametersAPI["updateParameterValue"]
+  removeParameter: ParametersAPI["removeParameter"]
+  shouldFocus: ParametersAPI["shouldFocus"]
+  addParameter: ParametersAPI["addParameter"]
+  parameters: ParametersAPI["parameters"]
   properties: Property[]
-  validationMessages: ValidationMessage[]
+  validationMessages: Validation["validationMessages"]
 }
-
 const Parameters: React.FC<ParametersProps> = ({
   updateParameterName,
   updateParameterValue,

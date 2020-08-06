@@ -36,17 +36,6 @@ const formatMessage = (message: {
   }
 }
 
-type UseValidationServer = (
-  parameters: Params
-) => {
-  validationMessages: ValidationMessage[]
-  hitStatus: HitStatus
-  // Validate the hit against the measurement protocol validation server
-  validateHit: () => void
-  // Send the hit to GA
-  sendHit: () => void
-}
-
 const sleep = async (milliseconds: number): Promise<void> => {
   return new Promise(resolve => {
     window.setTimeout(() => {
@@ -55,7 +44,15 @@ const sleep = async (milliseconds: number): Promise<void> => {
   })
 }
 
-// This hook encapsulates the logic needed for the validation server
+export type Validation = {
+  validationMessages: ValidationMessage[]
+  hitStatus: HitStatus
+  // Validate the hit against the measurement protocol validation server
+  validateHit: () => void
+  // Send the hit to GA
+  sendHit: () => void
+}
+type UseValidationServer = (parameters: Params) => Validation
 export const useValidationServer: UseValidationServer = parameters => {
   const sendEvent = useSendEvent()
   const [hitStatus, setHitStatus] = React.useState(HitStatus.Unvalidated)
@@ -125,7 +122,13 @@ export const useValidationServer: UseValidationServer = parameters => {
   return { validationMessages, validateHit, hitStatus, sendHit }
 }
 
-type UseParameters = () => {
+let id = 0
+const nextId = () => {
+  id++
+  return id
+}
+
+export type ParametersAPI = {
   updateParameterName: (id: number, newName: string) => void
   updateParameterValue: (id: number, newValue: any) => void
   addParameter: (parameterName?: string) => void
@@ -136,14 +139,7 @@ type UseParameters = () => {
   shouldFocus: (id: number, value: boolean) => boolean
   setFocus: (id: number, value: boolean) => void
 }
-
-let id = 0
-const nextId = () => {
-  id++
-  return id
-}
-
-// This hook encapsulates the logic needed for adding, removing & updating parameters.
+type UseParameters = () => ParametersAPI
 export const useParameters: UseParameters = () => {
   const location = useLocation()
   const navigate = useNavigate()
