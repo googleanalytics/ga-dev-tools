@@ -8,11 +8,16 @@ import { createStore } from "redux"
 
 const reducer = (state = {}, action) => {
   switch (action.type) {
-    case "setUser": return { ...state, user: action.user }
-    case "setGapi": return { ...state, gapi: action.gapi }
-    case "setGtag": return { ...state, gtag: action.gtag }
-    case "setMeasurementID": return {...state, measurementID: action.measurementID}
-    default: return state
+    case "setUser":
+      return { ...state, user: action.user }
+    case "setGapi":
+      return { ...state, gapi: action.gapi }
+    case "setGtag":
+      return { ...state, gtag: action.gtag }
+    case "setMeasurementID":
+      return { ...state, measurementID: action.measurementID }
+    default:
+      return state
   }
 }
 
@@ -79,6 +84,6 @@ export default ({ element }) => {
         <MyBaseline />
         <ReduxProvider store={store}>{element}</ReduxProvider>
       </ThemeProvider>
-      </React.Fragment>
+    </React.Fragment>
   )
 }
