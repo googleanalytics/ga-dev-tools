@@ -178,13 +178,13 @@ const ViewSelector: React.FC<ViewSelector3Props> = ({
     ) {
       onViewChanged({ account, property, view })
     }
-  }, [account, property, view])
+  }, [account, property, view, onViewChanged])
 
   React.useEffect(() => {
     if (onViewsChanged !== undefined) {
       onViewsChanged(hasViews)
     }
-  }, [hasViews])
+  }, [hasViews, onViewsChanged])
 
   const accountOnChange = React.useCallback((_, a: AccountSummary | null) => {
     setAccount(a || undefined)
