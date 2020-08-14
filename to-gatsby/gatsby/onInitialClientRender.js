@@ -11,8 +11,10 @@ export const onInitialClientRender = () => {
      The reason we do this is to demonstrate how to use GA technologies in our
      demos. See usePageview in ./src/components/layout.tsx for an example.
   */
+  const measurementID = process.env.GA_MEASUREMENT_ID
+  store.dispatch({ type: "setMeasurementID", measurementID: measurementID })
   loadScript(
-    `https://www.googletagmanager.com/gtag/js?id=${process.env.GA_MEASUREMENT_ID}`,
+    `https://www.googletagmanager.com/gtag/js?id=${measurementID}`,
     err => {
       if (err) {
         console.error("Could not load gtag.js")
@@ -37,21 +39,27 @@ export const onInitialClientRender = () => {
     // we currently do it is to dim out the content, that probably still makes
     // sense, but I want to think about it before blindly doing it.
     var SCOPES = ["https://www.googleapis.com/auth/analytics.readonly"]
-    const clientId = `793177639245-olst43lspv93vkoql0b9l26hmpf9kfmv.apps.googleusercontent.com`
+
+    const clientId = process.env.GAPI_CLIENT_ID
 
     window.gapi.load("client:auth2:analytics", () => {
       window.gapi.client
         .init({
-          apiKey: "AIzaSyBs1iJjA7sf2ChWhnMziP3t2VOmNhP9nus",
           scope: SCOPES.join(" "),
           clientId,
         })
         .then(() => {
           store.dispatch({ type: "setGapi", gapi: window.gapi })
-          const user = window.gapi.auth2.getAuthInstance().currentUser.get();
-          store.dispatch({type: 'setUser', user: user.isSignedIn() ? user : undefined})
+          const user = window.gapi.auth2.getAuthInstance().currentUser.get()
+          store.dispatch({
+            type: "setUser",
+            user: user.isSignedIn() ? user : undefined,
+          })
           window.gapi.auth2.getAuthInstance().currentUser.listen(user => {
-            store.dispatch({ type: "setUser", user: user.isSignedIn() ? user : undefined})
+            store.dispatch({
+              type: "setUser",
+              user: user.isSignedIn() ? user : undefined,
+            })
           })
         })
     })

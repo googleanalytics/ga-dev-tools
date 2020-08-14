@@ -9,6 +9,7 @@ export enum ActionType {
   SetMeasurementId = "SetMeasurementId",
   SetFirebaseAppId = "SetFirebaseAppId",
   SetClientId = "SetClientId",
+  SetAppInstanceId = "SetAppInstanceId",
   SetUserId = "SetUserId",
   SetAuthKey = "SetAPISecret",
   SetEvent = "SetEvent",
@@ -19,7 +20,7 @@ export enum ActionType {
   EditParamValue = "EDIT_PARAM_VALUE",
   ReplaceParams = "REPLACE_PARAMS",
   SetUserProperties = "SET_USER_PROPERTIES",
-  SetValidationMessages = "SET_VALIDATION_MESSAGES"
+  SetValidationMessages = "SET_VALIDATION_MESSAGES",
 }
 
 export interface SetUserProperties {
@@ -75,6 +76,10 @@ export interface SetClientId {
   type: ActionType.SetClientId;
   clientId: string;
 }
+export interface SetAppInstanceId {
+  type: ActionType.SetAppInstanceId;
+  appInstanceId: string;
+}
 export interface SetUserId {
   type: ActionType.SetUserId;
   userId: string;
@@ -97,6 +102,7 @@ export type EventBuilderAction =
   | SetFirebaseAppId
   | SetValidationStatus
   | SetMid
+  | SetAppInstanceId
   | SetClientId
   | SetUserId
   | SetAPISecret
@@ -113,11 +119,11 @@ export enum RequiredParams {
   V = "v",
   T = "t",
   T_Id = "tid",
-  C_Id = "cid"
+  C_Id = "cid",
 }
 
 export enum UrlParam {
-  UserProperties = "userProperties"
+  UserProperties = "userProperties",
 }
 
 export type ParamV = ParamType<RequiredParams.V>;
@@ -147,7 +153,7 @@ export enum ValidationStatus {
   Valid = "VALID",
   Pending = "PENDING",
   Invalid = "INVALID",
-  Unset = "UNSET"
+  Unset = "UNSET",
 }
 
 export interface ValidationMessage {
@@ -161,6 +167,7 @@ export interface State {
   measurementId: string;
   firebaseAppId: string;
   clientId: string;
+  appInstanceId: string;
   userId: string;
   apiSecret: string;
   event: MPEvent;

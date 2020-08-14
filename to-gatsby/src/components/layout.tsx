@@ -15,9 +15,15 @@
 import React from "react"
 import { makeStyles, Theme } from "@material-ui/core/styles"
 import Typography from "@material-ui/core/Typography"
+import Button from "@material-ui/core/Button"
 import { Link } from "gatsby"
 import { Home } from "@material-ui/icons"
 import classnames from "classnames"
+// TODO - Look into whether or not we can fix this.
+// See
+// https://github.com/benmosher/eslint-plugin-import/blob/master/docs/rules/no-webpack-loader-syntax.md
+//
+// eslint-disable-next-line import/no-webpack-loader-syntax
 import Logo from "-!svg-react-loader!../images/ga-developer-logo.svg"
 import { useLocation } from "@reach/router"
 import AppBar from "@material-ui/core/AppBar"
@@ -29,7 +35,7 @@ import { navigate } from "@reach/router"
 import MenuIcon from "@material-ui/icons/Menu"
 import { useSelector } from "react-redux"
 
-import Login from "./Login"
+import Login, { useLogin } from "./Login"
 
 const mobile = (theme: Theme) => theme.breakpoints.between(0, "sm")
 const notMobile = (theme: Theme) => theme.breakpoints.up("md")
@@ -188,15 +194,11 @@ const useStyles = makeStyles<any, { disableNav: true | undefined }>(theme => ({
   },
 }))
 
-export const usePageView = (
-  measurementId: string | undefined = process.env.GATSBY_GA_MEASUREMENT_ID
-) => {
+export const usePageView = () => {
+  const measurementId = useSelector((a: AppState) => a.measurementID)
   const location = useLocation()
   const gtag = useSelector((a: AppState) => a.gtag)
   React.useEffect(() => {
-    if (measurementId === undefined) {
-      throw new Error("No measurementId is set.")
-    }
     if (gtag === undefined) {
       return
     }
@@ -207,6 +209,7 @@ export const usePageView = (
 }
 
 interface LayoutProps {
+  requireLogin?: true
   disableNav?: true
   title: string
 }
@@ -245,10 +248,18 @@ const linkData: LinkData[] = [
   { text: "Help & feedback", href: "/#help", type: "link" },
 ]
 
-const Layout: React.FC<LayoutProps> = ({ children, title, disableNav }) => {
+const Layout: React.FC<LayoutProps> = ({
+  children,
+  title,
+  disableNav,
+  requireLogin,
+}) => {
   usePageView()
   const classes = useStyles({ disableNav })
   const [open, setOpen] = React.useState(false)
+  const { user, loginLogout } = useLogin()
+
+  const showContent = requireLogin ? user?.isSignedIn() : true
 
   return (
     <div className={classes.root}>
@@ -354,7 +365,24 @@ const Layout: React.FC<LayoutProps> = ({ children, title, disableNav }) => {
           <Typography variant="h1">{title}</Typography>
         </header>
         <div className={classes.contentWrapper}>
-          <section className={classes.content}>{children}</section>
+          <section className={classes.content}>
+            {showContent ? (
+              children
+            ) : (
+              <div>
+                <Typography>
+                  You must be logged in with Google for this demo.
+                </Typography>
+                <Button
+                  variant="contained"
+                  color="primary"
+                  onClick={loginLogout}
+                >
+                  Login
+                </Button>
+              </div>
+            )}
+          </section>
         </div>
       </main>
     </div>

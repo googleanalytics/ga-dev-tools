@@ -9,7 +9,7 @@ interface LoginProps {
   className?: string
 }
 
-const Login: React.FC<LoginProps> = ({ className }) => {
+export const useLogin = () => {
   const user = useSelector((state: AppState) => state.user)
   const gapi = useSelector((state: AppState) => state.gapi)
 
@@ -24,6 +24,11 @@ const Login: React.FC<LoginProps> = ({ className }) => {
     }
   }, [gapi, user])
 
+  return { user, loginLogout }
+}
+
+const Login: React.FC<LoginProps> = ({ className }) => {
+  const { user, loginLogout } = useLogin()
   return (
     <Tooltip title={user === undefined ? "Login" : "Logout"}>
       <IconButton className={className} onClick={loginLogout}>

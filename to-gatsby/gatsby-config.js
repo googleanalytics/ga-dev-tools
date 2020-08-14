@@ -12,10 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-if (process.env.GATSBY_GA_MEASUREMENT_ID === undefined && process.env.gatsby_executing_command !== 'serve') {
-  throw new Error("GATSBY_GA_MEASUREMENT_ID environment variable must be set. Did you run this as\nenv GATSBY_GA_MEASUREMENT_ID=YOUR_ID yarn start")
-}
-
 module.exports = {
   siteMetadata: {
     title: `Discover the Google Analytics Platform`,
@@ -35,7 +31,7 @@ module.exports = {
           {
             family: `Source Code Pro`,
             variants: [`400`],
-          }
+          },
         ],
       },
     },
