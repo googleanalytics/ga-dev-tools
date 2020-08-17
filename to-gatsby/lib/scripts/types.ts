@@ -10,6 +10,8 @@ interface CommonConfig {
   gaMeasurementId: string
   firebaseProjectId: string
   gapiClientId: string
+  bitlyClientId: string
+  bitlyClientSecret: string
 }
 
 export interface ProductionConfig extends CommonConfig {}
@@ -22,6 +24,8 @@ export interface ConfigAnswers {
   firebaseProjectIdDev: string
   gapiClientIdProd: string
   gapiClientIdDev: string
+  bitlyClientId: string
+  bitlyClientSecret: string
 }
 
 export interface RuntimeJson {
@@ -34,8 +38,9 @@ export enum Environment {
   Development = "development",
 }
 
-interface CheckRuntimeFilesArgs {
-  cmd: Command.CheckRequiredConfiguration
+export interface CheckConfigArgs {
+  cmd: Command.CheckConfig
+  all: boolean
 }
 
 interface BuildArgs {
@@ -58,7 +63,7 @@ export interface DeployArgs {
 }
 
 export enum Command {
-  CheckRequiredConfiguration = "check-config",
+  CheckConfig = "check-config",
   Build = "build",
   Develop = "develop",
   Serve = "serve",
@@ -66,7 +71,7 @@ export enum Command {
 }
 
 export type Args =
-  | CheckRuntimeFilesArgs
+  | CheckConfigArgs
   | ServeArgs
   | BuildArgs
   | DevelopArgs

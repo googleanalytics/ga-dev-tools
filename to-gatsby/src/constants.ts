@@ -63,4 +63,6 @@ export const StorageKey = {
   campaignBuilderTerm: "campaign-builder/term",
   campaignBuilderContent: "campaign-builder/content",
   campaignBuilderUseFragment: "campaign-builder/use-fragment",
+  bitlyAccessToken: "bitly-auth/access-token",
+  bitlyCache: "bitly-auth/cache-storage",
 }
