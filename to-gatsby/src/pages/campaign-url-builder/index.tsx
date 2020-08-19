@@ -364,7 +364,7 @@ const GeneratedUrl: React.FC<GeneratedUrlProps> = ({
               <CopyButton
                 variant="contained"
                 color="primary"
-                toCopy={generatedUrl}
+                toCopy={showShort ? shortLink || "" : longLink}
                 text="Copy URL"
               />
               {canShorten && (
