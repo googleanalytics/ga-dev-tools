@@ -63,7 +63,7 @@ const updateBitlyCache = (
 }
 
 // https://dev.bitly.com/api-reference#createBitlink
-type ShortenResponse = {
+export type ShortenResponse = {
   link: string
 }
 const bitlyShorten = async (
@@ -109,7 +109,6 @@ const bitlyUser = async (token: string): Promise<UserResponse> => {
 
 const NO_BITLY_CLIENT_ID =
   "A bitly clientId is required for shortening links.\nPlease run:\nyarn check-config --all\nAnd provide a value for bitlyClientId"
-const clientId = process.env.BITLY_CLIENT_ID
 
 const WINDOW_FEATURES = [
   ["toolbar", "no"],
@@ -124,21 +123,13 @@ const WINDOW_FEATURES = [
 
 type UseShortLink = () => {
   authenticated: boolean
+  canShorten: boolean
   shorten: (
     longLink: string
   ) => Promise<{ shortLink: string; longLink: string }>
 }
 const useShortenLink: UseShortLink = () => {
-  if (clientId === undefined) {
-    console.error(NO_BITLY_CLIENT_ID)
-    // Return a stubbed out version that throws if you try to shorten a link.
-    return {
-      authenticated: false,
-      shorten: async _ => {
-        throw new Error(NO_BITLY_CLIENT_ID)
-      },
-    }
-  }
+  const clientId = process.env.BITLY_CLIENT_ID
   const [token, setToken] = useLocalStorage<string>(
     StorageKey.bitlyAccessToken,
     "",
@@ -195,7 +186,20 @@ const useShortenLink: UseShortLink = () => {
     [ensureAuth, cache, setCache]
   )
 
+  if (clientId === undefined) {
+    console.error(NO_BITLY_CLIENT_ID)
+    // Return a stubbed out version that throws if you try to shorten a link.
+    return {
+      canShorten: false,
+      authenticated: false,
+      shorten: async _ => {
+        throw new Error(NO_BITLY_CLIENT_ID)
+      },
+    }
+  }
+
   return {
+    canShorten: true,
     shorten,
     authenticated: token !== "",
   }

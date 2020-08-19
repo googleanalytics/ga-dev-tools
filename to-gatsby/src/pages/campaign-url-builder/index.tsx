@@ -229,7 +229,7 @@ const GeneratedUrl: React.FC<GeneratedUrlProps> = ({
       deserializer: a => a === "true",
     }
   )
-  const { authenticated, shorten } = useShortenLink()
+  const { authenticated, shorten, canShorten } = useShortenLink()
 
   const shortenLinkGui = React.useCallback(() => {
     if (showShort === true) {
@@ -367,13 +367,19 @@ const GeneratedUrl: React.FC<GeneratedUrlProps> = ({
                 toCopy={generatedUrl}
                 text="Copy URL"
               />
-              <Button variant="contained" onClick={shortenLinkGui}>
-                {authenticated === false
-                  ? "Convert URL to Short Link (authorization required)"
-                  : showShort
-                  ? "Show full URL"
-                  : "Convert URL to Short Link"}
-              </Button>
+              {canShorten && (
+                <Button
+                  variant="contained"
+                  onClick={shortenLinkGui}
+                  data-testid="shorten-button"
+                >
+                  {authenticated === false
+                    ? "Convert URL to Short Link (authorization required)"
+                    : showShort
+                    ? "Show full URL"
+                    : "Convert URL to Short Link"}
+                </Button>
+              )}
             </section>
           </>
         ) : (
