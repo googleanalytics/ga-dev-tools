@@ -52,7 +52,7 @@ export default () => {
       return
     }
     getToken(code).then(setApiKey)
-  }, [params, apiKey])
+  }, [params, apiKey, setApiKey])
 
   return (
     <Layout disableNav title="Bitly Auth">

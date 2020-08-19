@@ -75,7 +75,7 @@ const ensureFirebaseFunctionsConfig = async (
 
   console.log("Updating Firebase functions environment configuration...")
 
-  const currentConfig = await execa(
+  await execa(
     "yarn",
     [
       "run",

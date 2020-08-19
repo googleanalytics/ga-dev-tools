@@ -168,7 +168,7 @@ const useShortenLink: UseShortLink = () => {
       }
       window.addEventListener("storage", storageListener)
     })
-  }, [token, setToken])
+  }, [token, setToken, clientId])
 
   const shorten = React.useCallback(
     async (longLink: string) => {
