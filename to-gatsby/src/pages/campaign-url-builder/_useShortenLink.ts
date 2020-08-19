@@ -1,6 +1,7 @@
 import React from "react"
-import { StorageKey } from "../../constants"
+import { StorageKey, EventAction, EventCategory } from "../../constants"
 import { useLocalStorage } from "react-use"
+import { useSelector } from "react-redux"
 
 type BitlyStorageCache = {
   // Cache starts at guid level.
@@ -130,6 +131,7 @@ type UseShortLink = () => {
 }
 const useShortenLink: UseShortLink = () => {
   const clientId = process.env.BITLY_CLIENT_ID
+  const gtag = useSelector((a: AppState) => a.gtag)
   const [token, setToken] = useLocalStorage<string>(
     StorageKey.bitlyAccessToken,
     "",
@@ -145,6 +147,11 @@ const useShortenLink: UseShortLink = () => {
       return token
     }
     return new Promise(resolve => {
+      if (gtag !== undefined) {
+        gtag("event", EventAction.bitlyAuth, {
+          event_category: EventCategory.campaignUrlBuilder,
+        })
+      }
       const redirectUri = `${window.location.origin}/bitly-auth`
       const url = `https://bitly.com/oauth/authorize?client_id=${clientId}&redirect_uri=${redirectUri}`
       const name = "Login with Bit.ly"
@@ -168,7 +175,7 @@ const useShortenLink: UseShortLink = () => {
       }
       window.addEventListener("storage", storageListener)
     })
-  }, [token, setToken, clientId])
+  }, [token, setToken, clientId, gtag])
 
   const shorten = React.useCallback(
     async (longLink: string) => {
@@ -179,11 +186,15 @@ const useShortenLink: UseShortLink = () => {
         throw new Error("Cannot shortnen an empty string")
       }
       const token = await ensureAuth()
-      // Auth if necessary
       const shortLink = await shortenUrl(token, longLink, cache, setCache)
+      if (gtag !== undefined) {
+        gtag("event", EventAction.bitlyShorten, {
+          event_category: EventCategory.campaignUrlBuilder,
+        })
+      }
       return { shortLink, longLink }
     },
-    [ensureAuth, cache, setCache]
+    [ensureAuth, cache, setCache, gtag]
   )
 
   if (clientId === undefined) {

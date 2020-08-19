@@ -66,3 +66,12 @@ export const StorageKey = {
   bitlyAccessToken: "bitly-auth/access-token",
   bitlyCache: "bitly-auth/cache-storage",
 }
+
+export const EventAction = {
+  bitlyShorten: "bitly_shorten",
+  bitlyAuth: "bitly_auth",
+}
+
+export const EventCategory = {
+  campaignUrlBuilder: "Campaign URL Builder",
+}
