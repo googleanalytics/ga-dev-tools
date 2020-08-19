@@ -47,10 +47,17 @@ const writeEnvFile = async ({ file, config }: WriteEnvArgs) => {
     config.gaMeasurementId === SKIP_QUESTION
       ? undefined
       : `GA_MEASUREMENT_ID=${config.gaMeasurementId}`
+  const firebaseFunctionsBaseUrlLine = `FUNCTIONS_BASE_URL=${config.firebaseFunctionsBaseUrl}`
 
-  fs.writeFileSync(path, [gapiLine, bitlyLine, measurementIdLine].join("\n"), {
-    encoding: Encoding,
-  })
+  fs.writeFileSync(
+    path,
+    [gapiLine, bitlyLine, measurementIdLine, firebaseFunctionsBaseUrlLine].join(
+      "\n"
+    ),
+    {
+      encoding: Encoding,
+    }
+  )
 }
 
 const ensureFirebaseFunctionsConfig = async (
@@ -322,6 +329,12 @@ const toRuntimeJson = (
       answers.bitlyClientId || currentConfig.production.bitlyClientId,
     bitlyClientSecret:
       answers.bitlyClientSecret || currentConfig.production.bitlyClientSecret,
+    firebaseFunctionsBaseUrl:
+      currentConfig.production.firebaseFunctionsBaseUrl ||
+      `https://us-central1-${
+        answers.firebaseProjectIdProd ||
+        currentConfig.production.firebaseProjectId
+      }.cloudfunctions.net/bitly_auth`,
   }
 
   const development: DevelopmentConfig = {
@@ -338,6 +351,12 @@ const toRuntimeJson = (
       answers.bitlyClientId || currentConfig.production.bitlyClientId,
     bitlyClientSecret:
       answers.bitlyClientSecret || currentConfig.production.bitlyClientSecret,
+    firebaseFunctionsBaseUrl:
+      currentConfig.development.firebaseFunctionsBaseUrl ||
+      `https://us-central1-${
+        answers.firebaseProjectIdDev ||
+        currentConfig.development.firebaseProjectId
+      }.cloudfunctions.net/bitly_auth`,
   }
 
   const fullConfig = { production, development }
@@ -365,6 +384,10 @@ const assertAllValues = (runtimeJson: RuntimeJson): RuntimeJson => {
     throw new Error("Missing the development firebaseProjectId")
   }
 
+  if (runtimeJson.development.firebaseFunctionsBaseUrl === undefined) {
+    throw new Error("Missing the development firebase functions base url")
+  }
+
   if (runtimeJson.production.gapiClientId === undefined) {
     throw new Error("Missing the production gapiClientId")
   }
@@ -375,6 +398,10 @@ const assertAllValues = (runtimeJson: RuntimeJson): RuntimeJson => {
 
   if (runtimeJson.production.firebaseProjectId === undefined) {
     throw new Error("Missing the production firebaseProjectId")
+  }
+
+  if (runtimeJson.production.firebaseFunctionsBaseUrl === undefined) {
+    throw new Error("Missing the production firebase functions base url")
   }
 
   if (runtimeJson.production.bitlyClientId === undefined) {

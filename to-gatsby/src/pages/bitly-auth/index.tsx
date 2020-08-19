@@ -13,11 +13,13 @@ type BitlyAuthResponse = {
 }
 
 const getToken = async (code: string) => {
-  // TODO - see the best way of providing this value. There might be a better
-  // way than providing the full endpoint, but that's probably best for a
-  // start.
-  const apiEndpoint =
-    "http://localhost:5001/dev-tools-asha/us-central1/bitly_auth"
+  const baseEndpoint = process.env.FUNCTIONS_BASE_URL
+  if (baseEndpoint === undefined) {
+    console.error(
+      "process.env.FUNCTIONS_BASE_URL must be set for this page to work."
+    )
+  }
+  const apiEndpoint = `${baseEndpoint}bitly_auth`
   const response = await fetch(apiEndpoint, {
     method: "POST",
     body: JSON.stringify({

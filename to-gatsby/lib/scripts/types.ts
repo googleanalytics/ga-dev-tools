@@ -9,6 +9,7 @@ export const DotEnvProductionPath = path.join(PWD, ".env.production")
 interface CommonConfig {
   gaMeasurementId: string
   firebaseProjectId: string
+  firebaseFunctionsBaseUrl: string
   gapiClientId: string
   bitlyClientId: string
   bitlyClientSecret: string
