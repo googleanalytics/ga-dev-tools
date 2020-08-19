@@ -172,6 +172,7 @@ describe("for the Campaign URL Builder component", () => {
       })
 
       test("Successfull auth flow sets shortens link", async () => {
+        ;(window.open as any) = jest.fn()
         let sendStorageEvent:
           | ((e: Pick<StorageEvent, "key" | "newValue">) => void)
           | undefined
