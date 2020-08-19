@@ -33,8 +33,8 @@ const writeEnvFile = async ({ file, config }: WriteEnvArgs) => {
     process.exit(1)
   }
 
-  // If any questions are skip, don't include them in the outgoing .env files
-  // so they are `undefined` in `process.env[THEIR_INDEX]`.
+  // If any questions are skipped, don't include them in the outgoing .env
+  // files so they are `undefined` for `process.env[ENV_NAME]`.
   const gapiLine =
     config.gapiClientId === SKIP_QUESTION
       ? undefined
