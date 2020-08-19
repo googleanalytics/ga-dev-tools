@@ -83,9 +83,8 @@
     "typescript": "^3.8.3"
   },
   "scripts": {
-    "prettier": "prettier --write --ignore-path .eslintignore 'src/**/*' 'lib/**/*' 'gatsby/**/*' package.json gatsby-node.js gatsby-ssr.tsx gatsby-config.js gatsby-browser.js",
     "lint": "eslint 'src/**/*' 'lib/**/*' 'gatsby/**/*'",
-    "format": "prettier --write \"**/*.{js,jsx,json,md}\"",
+    "prettier": "prettier --write \"**/*.{js,jsx,json,md}\"",
     "check-types": "tsc",
     "test": "yarn check-types && jest",
     "start": "yarn run develop",
