@@ -12,9 +12,7 @@
     "downlevelIteration": true,
     "noImplicitAny": false,
     "lib": ["dom.iterable", "dom", "esnext"],
-    "noEmit": true,
+    "noEmit": true
   },
-  "include": [
-    "./src/"
-  ]
+  "include": ["./src/"]
 }
