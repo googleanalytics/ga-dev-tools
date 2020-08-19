@@ -26,8 +26,13 @@ const getToken = async (code: string) => {
       code,
     }),
   })
-  const { access_token }: BitlyAuthResponse = await response.json()
-  return access_token
+  if (response.ok) {
+    const { access_token }: BitlyAuthResponse = await response.json()
+    return access_token
+  } else {
+    throw new Error(`Error with auth endpoint: ${await response.text()}`)
+  }
+
 }
 
 // TODO - Consider adding a settings page for revoking access_tokens.
@@ -53,7 +58,7 @@ export default () => {
     if (apiKey !== "") {
       return
     }
-    getToken(code).then(setApiKey)
+    getToken(code).then(setApiKey).catch(console.error)
   }, [params, apiKey, setApiKey])
 
   if (params.get("code") == null) {
@@ -69,10 +74,10 @@ export default () => {
       <Typography variant="body1">
         {(apiKey === undefined || apiKey === "") &&
           "Authenticating with bitly..."}
-        {apiKey !== undefined &&
-          apiKey !== "" &&
-          "You have been successfully authenticated with bitly. You may now close this page."}
-      </Typography>
-    </Layout>
-  )
+  {apiKey !== undefined &&
+      apiKey !== "" &&
+      "You have been successfully authenticated with bitly. You may now close this page."}
+    </Typography>
+  </Layout>
+)
 }

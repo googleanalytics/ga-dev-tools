@@ -13,12 +13,14 @@ interface CommonConfig {
   gapiClientId: string
   bitlyClientId: string
   bitlyClientSecret: string
+  baseUri: string
 }
 
 export interface ProductionConfig extends CommonConfig {}
 export interface DevelopmentConfig extends CommonConfig {}
 
 export interface ConfigAnswers {
+  baseUriProd: string
   gaMeasurementIdProd: string
   gaMeasurementIdDev: string
   firebaseProjectIdProd: string

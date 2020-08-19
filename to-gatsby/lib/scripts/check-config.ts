@@ -72,6 +72,9 @@ const ensureFirebaseFunctionsConfig = async (
       ? ""
       : `bitly.client_secret=${config.production.bitlyClientSecret}`
 
+  const bitlyBaseUriProd = `bitly.base_uri=${config.production.baseUri}`
+  const bitlyBaseUriDev = `bitly.base_uri=${config.development.baseUri}`
+
   // Don't call the command at all if all of these values were unset.
   if ([bitlyClientSecret, bitlyClientId].every(a => a === "")) {
     console.log(
@@ -82,36 +85,39 @@ const ensureFirebaseFunctionsConfig = async (
 
   console.log("Updating Firebase functions environment configuration...")
 
-  await execa(
-    "yarn",
-    [
-      "run",
-      "firebase",
-      "--project",
-      config.development.firebaseProjectId,
-      "functions:config:set",
-      bitlyClientId,
-      bitlyClientSecret,
-    ],
-    {
-      stderr: "inherit",
-    }
-  )
-  await execa(
-    "yarn",
-    [
-      "run",
-      "firebase",
-      "--project",
-      config.production.firebaseProjectId,
-      "functions:config:set",
-      bitlyClientId,
-      bitlyClientSecret,
-    ],
-    {
-      stderr: "inherit",
-    }
-  )
+  try {
+    await execa(
+      "yarn",
+      [
+        "run",
+        "firebase",
+        "--project",
+        config.development.firebaseProjectId,
+        "functions:config:set",
+        bitlyClientId,
+        bitlyClientSecret,
+        bitlyBaseUriDev,
+      ],
+      {}
+    )
+    await execa(
+      "yarn",
+      [
+        "run",
+        "firebase",
+        "--project",
+        config.production.firebaseProjectId,
+        "functions:config:set",
+        bitlyClientId,
+        bitlyClientSecret,
+        bitlyBaseUriProd,
+      ],
+      {}
+    )
+  } catch (e) {
+    console.error("Couldn't update firebase functions config.")
+    process.exit(1)
+  }
   return
 }
 
@@ -161,6 +167,15 @@ const configQuestions = (
   // TODO the `?.`s can be removed once this has stabilized. They're here now to
   // be friendly as the runtimeJson type evolves.
   return [
+    {
+      name: "baseUriProd",
+      type: "input",
+      message: "Domain of production service (including https://):",
+      default: filter?.production?.baseUri || SKIP_QUESTION,
+      when: () => {
+        return filter.askAll || filter?.production?.baseUri === undefined
+      },
+    },
     {
       name: "gaMeasurementIdProd",
       // TODO - Nice to have, list the user's available properties. Would
@@ -318,6 +333,7 @@ const toRuntimeJson = (
   currentConfig: RuntimeJson
 ): RuntimeJson => {
   const production: ProductionConfig = {
+    baseUri: answers.baseUriProd || currentConfig.production.baseUri,
     gaMeasurementId:
       answers.gaMeasurementIdProd || currentConfig.production.gaMeasurementId,
     firebaseProjectId:
@@ -338,6 +354,8 @@ const toRuntimeJson = (
   }
 
   const development: DevelopmentConfig = {
+    // TODO - This could be a bit smarter. Especially if we support changing the port.
+    baseUri: currentConfig.development.baseUri || "http://localhost:5000",
     gaMeasurementId:
       answers.gaMeasurementIdDev || currentConfig.development.gaMeasurementId,
     firebaseProjectId:

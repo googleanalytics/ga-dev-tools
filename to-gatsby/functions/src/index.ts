@@ -39,13 +39,16 @@ exports.bitly_auth = functions.https.onRequest((req, res) => {
     )
   }
 
-  // TODO - figure out how this value should be configured. We want a different
-  // value when it's running in the emulator. Might be able to get away with
-  // process.env, but not sure.
-  const redirectUri = "http://localhost:5000/bitly-auth"
+  const baseUri = bitly.base_uri
+  if (baseUri === undefined) {
+    console.log(
+      "Missing bitly base_uri. Run:\nyarn check-config --all\nand provide a value for baseUri."
+    )
+  }
+
+  const redirectUri = `${baseUri}/bitly-auth`
 
   const bitlyAuthEndpoint = "https://api-ssl.bitly.com/oauth/access_token"
-  // const bitlyAuthEndpoint = "https://bitly.com/oauth/access_token"
   const bitlyBody = [
     ["client_id", clientId],
     ["client_secret", clientSecret],

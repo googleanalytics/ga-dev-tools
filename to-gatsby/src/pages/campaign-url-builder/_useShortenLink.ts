@@ -24,7 +24,8 @@ const shortenUrl = async (
   token: string,
   longUrl: string,
   cache: BitlyStorageCache,
-  setCacheValue: typeof defaultCacheSetter
+  setCacheValue: typeof defaultCacheSetter,
+  gtag: any
 ): Promise<string> => {
   const user = await bitlyUser(token)
   const guid = user.default_group_guid
@@ -36,6 +37,11 @@ const shortenUrl = async (
 
   // If the link isn't in the local cache, create it.
   const shortned = await bitlyShorten(token, longUrl, guid)
+  if (gtag !== undefined) {
+    gtag("event", EventAction.bitlyShorten, {
+      event_category: EventCategory.campaignUrlBuilder,
+    })
+  }
   const link = shortned.link
 
   updateBitlyCache(guid, longUrl, link, cache, setCacheValue)
@@ -177,12 +183,7 @@ const useShortenLink: UseShortLink = () => {
         throw new Error("Cannot shortnen an empty string")
       }
       const token = await ensureAuth()
-      const shortLink = await shortenUrl(token, longLink, cache, setCache)
-      if (gtag !== undefined) {
-        gtag("event", EventAction.bitlyShorten, {
-          event_category: EventCategory.campaignUrlBuilder,
-        })
-      }
+      const shortLink = await shortenUrl(token, longLink, cache, setCache, gtag)
       return { shortLink, longLink }
     },
     [ensureAuth, cache, setCache, gtag]
