@@ -2,7 +2,6 @@
 
 Want to contribute? Great! First, read this page (including the small print at the end).
 
-
 ## Technology overview
 
 The Demos & Tools site back end runs on [Gatsby](https://www.gatsbyjs.org/) which is a React-based, GraphQL powered static site generator. Gatsby will transform the demos into directories with single HTML files and static assets.
