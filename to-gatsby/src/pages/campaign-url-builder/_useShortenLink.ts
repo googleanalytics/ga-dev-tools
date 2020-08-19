@@ -162,15 +162,6 @@ const useShortenLink: UseShortLink = () => {
         if (e.key === StorageKey.bitlyAccessToken && e.newValue !== null) {
           setToken(e.newValue)
           resolve(e.newValue)
-          resolve()
-          if (newAuthWindow !== null) {
-            // Automatically close the window after the user has had enough time
-            // to read it.
-            setTimeout(() => {
-              newAuthWindow.close()
-              window.removeEventListener("storage", storageListener)
-            }, 5000)
-          }
         }
       }
       window.addEventListener("storage", storageListener)

@@ -54,12 +54,22 @@ export default () => {
     getToken(code).then(setApiKey)
   }, [params, apiKey, setApiKey])
 
+  if (params.get("code") == null) {
+    return (
+      <Layout disableNav title="Bitly Auth">
+        <Typography variant="body1">Not found.</Typography>
+      </Layout>
+    )
+  }
+
   return (
     <Layout disableNav title="Bitly Auth">
       <Typography variant="body1">
-        {apiKey === undefined && "Authenticating with bitly..."}
+        {(apiKey === undefined || apiKey === "") &&
+          "Authenticating with bitly..."}
         {apiKey !== undefined &&
-          "You have been successfully authenticated with bitly. You may now close this page. This page will automatically close in a few seconds."}
+          apiKey !== "" &&
+          "You have been successfully authenticated with bitly. You may now close this page."}
       </Typography>
     </Layout>
   )

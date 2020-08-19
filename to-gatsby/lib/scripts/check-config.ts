@@ -80,6 +80,23 @@ const ensureFirebaseFunctionsConfig = async (
     [
       "run",
       "firebase",
+      "--project",
+      config.development.firebaseProjectId,
+      "functions:config:set",
+      bitlyClientId,
+      bitlyClientSecret,
+    ],
+    {
+      stderr: "inherit",
+    }
+  )
+  await execa(
+    "yarn",
+    [
+      "run",
+      "firebase",
+      "--project",
+      config.production.firebaseProjectId,
       "functions:config:set",
       bitlyClientId,
       bitlyClientSecret,
