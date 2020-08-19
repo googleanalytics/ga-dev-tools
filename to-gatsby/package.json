@@ -38,6 +38,9 @@
     "uuid": "^7.0.3"
   },
   "devDependencies": {
+    "@babel/core": "^7.0",
+    "@babel/preset-typescript": "^7.10.4",
+    "@testing-library/dom": ">=5",
     "@testing-library/jest-dom": "^5.5.0",
     "@testing-library/react": "^10.0.3",
     "@testing-library/user-event": "^10.1.0",
@@ -60,6 +63,8 @@
     "argparse": "^1.0.10",
     "babel-eslint": "10.x",
     "babel-jest": "^25.3.0",
+    "babel-preset-gatsby": "^0.5.5",
+    "core-js": "^3.0.0",
     "eslint": "6.x",
     "eslint-config-react-app": "^5.2.1",
     "eslint-plugin-flowtype": "4.x",
