@@ -161,9 +161,9 @@ const useShortenLink: UseShortLink = () => {
       const redirectUri = `${window.location.origin}/bitly-auth`
       const url = `https://bitly.com/oauth/authorize?client_id=${clientId}&redirect_uri=${redirectUri}`
       const name = "Login with Bit.ly"
-      // This is a bit of a hack, but it's needed to make sure the button is kept
-      // up to date when the token is updated from the new window.
-      const newAuthWindow = window.open(url, name, WINDOW_FEATURES)
+      window.open(url, name, WINDOW_FEATURES)
+      // TODO - See if there's a better way of getting a notification from the
+      // oauth popup.
       const storageListener = (e: StorageEvent) => {
         if (e.key === StorageKey.bitlyAccessToken && e.newValue !== null) {
           setToken(e.newValue)
