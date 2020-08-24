@@ -13,13 +13,38 @@
 // limitations under the License.
 
 import * as React from "react"
-
+import Typography from "@material-ui/core/Typography"
+import Main from "./components/main"
+import ColumnGroupList from "./components/columnGroupList"
 import Layout from "../../components/layout"
+import { Url } from "../../constants"
 
 const DimensionsMetricsExploror = () => {
   return (
     <Layout title="Dimensions & Metrics Explorer">
-      TODO - add in content.
+    <Typography variant="body1">
+      The Dimensions & Metrics Explorer lists and describes all of the 
+      dimensions and metrics available through 
+      the <a href={Url.coreReporting}>Core Reporting API</a>.
+    </Typography>
+
+    <Typography variant="body1">
+      The Dimensions & Metrics Explorer has the following features:
+    </Typography>
+
+    <Typography variant="body1">
+      <b>Explore all of the dimensions and metrics</b> – Search or browse by 
+      group. Select a dimension or metric for additional details such as 
+      descriptions and attributes.
+    </Typography>
+
+    <Typography variant="body1">
+      <b>Identify valid combinations</b> – Not all dimensions and metrics can be 
+      queried together. Only certain dimensions and metrics can be used together
+       to create valid combinations. Select a dimension or metric checkbox to 
+       see all the other values that can be combined in the same query.
+    </Typography>
+
     </Layout>
   )
 }

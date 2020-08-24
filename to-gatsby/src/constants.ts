@@ -52,6 +52,7 @@ export const Url = {
   aboutTagAssistant: "https://support.google.com/tagassistant/answer/2947093",
   aboutTagAssistantRecordings:
     "https://support.google.com/analytics/answer/6277302",
+  coreReporting: "https://developers.google.com/analytics/devguides/reporting/core/v3/",
 }
 
 // All data in localStorage should have its keys here.
