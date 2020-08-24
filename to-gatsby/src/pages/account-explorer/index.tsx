@@ -63,20 +63,15 @@ const containsQuery = (
   searchQuery: string,
   populatedView: HasView
 ): boolean => {
-  const lower = searchQuery.toLowerCase()
-  const propertiesToCheck = [
-    populatedView.account?.name?.toLowerCase(),
-    populatedView.account?.id?.toLowerCase(),
-    populatedView.property?.name?.toLowerCase(),
-    populatedView.property?.id?.toLowerCase(),
-    populatedView.view?.name?.toLowerCase(),
-    populatedView.view?.id?.toLowerCase(),
-  ]
-  return (
-    propertiesToCheck.find(
-      property => property && property.indexOf(lower) !== -1
-    ) !== undefined
-  )
+  const pattern = new RegExp(`(${searchQuery})`, "ig")
+  const hasMatch =
+    populatedView.account?.name?.match(pattern) ||
+    populatedView.account?.id?.match(pattern) ||
+    populatedView.property?.name?.match(pattern) ||
+    populatedView.property?.id?.match(pattern) ||
+    populatedView.view?.name?.match(pattern) ||
+    populatedView.view?.id?.match(pattern)
+  return !!hasMatch
 }
 
 const viewsForSearch = (
@@ -88,6 +83,8 @@ const viewsForSearch = (
   )
 }
 
+// TODO The performance for this component is pretty bad when searching, it's
+// probably worth digging into at some point.
 export const AccountExplorer = () => {
   const classes = useStyles()
 
