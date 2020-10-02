@@ -4,7 +4,7 @@ import { checkConfig } from "./check-config"
 import { DeployArgs, Environment } from "./types"
 
 export const stage = async (args: DeployArgs) => {
-  const config = await checkConfig()
+  const config = await checkConfig({ all: false })
 
   let projectId: string
   if (args.environment === Environment.Development) {

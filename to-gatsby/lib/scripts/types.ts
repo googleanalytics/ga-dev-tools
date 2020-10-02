@@ -9,19 +9,26 @@ export const DotEnvProductionPath = path.join(PWD, ".env.production")
 interface CommonConfig {
   gaMeasurementId: string
   firebaseProjectId: string
+  firebaseFunctionsBaseUrl: string
   gapiClientId: string
+  bitlyClientId: string
+  bitlyClientSecret: string
+  baseUri: string
 }
 
 export interface ProductionConfig extends CommonConfig {}
 export interface DevelopmentConfig extends CommonConfig {}
 
 export interface ConfigAnswers {
+  baseUriProd: string
   gaMeasurementIdProd: string
   gaMeasurementIdDev: string
   firebaseProjectIdProd: string
   firebaseProjectIdDev: string
   gapiClientIdProd: string
   gapiClientIdDev: string
+  bitlyClientId: string
+  bitlyClientSecret: string
 }
 
 export interface RuntimeJson {
@@ -34,8 +41,9 @@ export enum Environment {
   Development = "development",
 }
 
-interface CheckRuntimeFilesArgs {
-  cmd: Command.CheckRequiredConfiguration
+export interface CheckConfigArgs {
+  cmd: Command.CheckConfig
+  all: boolean
 }
 
 interface BuildArgs {
@@ -58,7 +66,7 @@ export interface DeployArgs {
 }
 
 export enum Command {
-  CheckRequiredConfiguration = "check-config",
+  CheckConfig = "check-config",
   Build = "build",
   Develop = "develop",
   Serve = "serve",
@@ -66,7 +74,7 @@ export enum Command {
 }
 
 export type Args =
-  | CheckRuntimeFilesArgs
+  | CheckConfigArgs
   | ServeArgs
   | BuildArgs
   | DevelopArgs

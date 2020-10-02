@@ -6,7 +6,7 @@ export const develop = async () => {
   // TODO - update check config to take an argument for which command it is
   // running. All commands don't require all config to be set and this would
   // make it easier to get started.
-  await checkConfig()
+  await checkConfig({ all: false })
 
   // We use port 5000 because the generated oauth client for a firebase allows
   // port 5000 by default on localhost. The developer can change this value, but

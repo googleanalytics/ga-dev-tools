@@ -5,7 +5,5 @@
     "target": "es2018",
     "outDir": "build"
   },
-  "include": [
-    "**/*.ts"
-  ]
+  "include": ["**/*.ts"]
 }

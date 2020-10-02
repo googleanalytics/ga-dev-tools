@@ -2,3 +2,4 @@ src/images/*
 **/*.json
 **/*.lock
 lib/build/*
+node_modules/

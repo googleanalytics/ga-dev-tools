@@ -26,12 +26,14 @@ import TableBody from "@material-ui/core/TableBody"
 import TableCell from "@material-ui/core/TableCell"
 import TableHead from "@material-ui/core/TableHead"
 import TableRow from "@material-ui/core/TableRow"
+import Button from "@material-ui/core/Button"
 import { useLocalStorage } from "react-use"
 import { v4 as uuid } from "uuid"
 
 import { Url, StorageKey } from "../../constants"
 import Layout from "../../components/layout"
 import CopyButton from "../../components/CopyButton"
+import useShortenLink from "./_useShortenLink"
 import { extractParamsFromWebsiteUrl, websiteUrlFor } from "./_params"
 
 const iosCampaignTracking = (
@@ -215,6 +217,9 @@ const GeneratedUrl: React.FC<GeneratedUrlProps> = ({
   const [generatedUrl, setGeneratedUrl] = React.useState("")
   const [hasAllRequired, setHasAllRequired] = React.useState(false)
   const [problematicUrl, setProblematicUrl] = React.useState(false)
+  const [longLink, setLongLink] = React.useState<string>(generatedUrl)
+  const [shortLink, setShortLink] = React.useState<undefined | string>()
+  const [showShort, setShowShort] = React.useState(false)
   const [useFragment, setUseFragment] = useLocalStorage(
     StorageKey.campaignBuilderUseFragment,
     false,
@@ -224,6 +229,25 @@ const GeneratedUrl: React.FC<GeneratedUrlProps> = ({
       deserializer: a => a === "true",
     }
   )
+  const { authenticated, shorten, canShorten } = useShortenLink()
+
+  const shortenLinkGui = React.useCallback(() => {
+    if (showShort === true) {
+      // We're currently showing the short url and the user clicked "Show full
+      // URL". Set show short to false and return.
+      setShowShort(false)
+      return
+    }
+    // We can't shorten bit.ly links or links that are empty.
+    if (longLink === "" || longLink?.startsWith("https://bit.ly")) {
+      return
+    }
+    shorten(longLink).then(({ longLink, shortLink }) => {
+      setLongLink(longLink)
+      setShortLink(shortLink)
+      setShowShort(true)
+    })
+  }, [longLink, shorten, showShort])
 
   React.useEffect(() => {
     if (websiteUrl === "") {
@@ -245,26 +269,44 @@ const GeneratedUrl: React.FC<GeneratedUrlProps> = ({
     setHasAllRequired(true)
   }, [websiteUrl, source, medium, campaign])
 
-  React.useEffect(() => {
+  const setGeneratedFromInput = React.useCallback(() => {
     if (!hasAllRequired) {
       setGeneratedUrl("")
+      setLongLink("")
       return
     }
-    setGeneratedUrl(
-      websiteUrlFor(
-        websiteUrl,
-        {
-          utm_source: source || undefined,
-          utm_medium: medium || undefined,
-          utm_campaign: campaign || undefined,
-          utm_term: term || undefined,
-          utm_content: content || undefined,
-        },
-        useFragment
-      )
+    const generated = websiteUrlFor(
+      websiteUrl,
+      {
+        utm_source: source || undefined,
+        utm_medium: medium || undefined,
+        utm_campaign: campaign || undefined,
+        utm_term: term || undefined,
+        utm_content: content || undefined,
+      },
+      useFragment
     )
+    setGeneratedUrl(generated)
+    setLongLink(generated)
   }, [
     hasAllRequired,
+    useFragment,
+    websiteUrl,
+    source,
+    medium,
+    campaign,
+    term,
+    content,
+  ])
+  // This is a bit of a hack, but I don't want to duplicate the code that sets
+  // the generated url.
+  React.useEffect(() => {
+    setGeneratedFromInput()
+    setShortLink(undefined)
+    setShowShort(false)
+  }, [
+    hasAllRequired,
+    setGeneratedFromInput,
     useFragment,
     websiteUrl,
     source,
@@ -297,7 +339,7 @@ const GeneratedUrl: React.FC<GeneratedUrlProps> = ({
               id="generated-url"
               label="Generated URL"
               multiline
-              value={generatedUrl}
+              value={showShort ? shortLink : longLink}
               variant="outlined"
               className={classes.generatedInput}
             />
@@ -322,9 +364,22 @@ const GeneratedUrl: React.FC<GeneratedUrlProps> = ({
               <CopyButton
                 variant="contained"
                 color="primary"
-                toCopy={generatedUrl}
+                toCopy={showShort ? shortLink || "" : longLink}
                 text="Copy URL"
               />
+              {canShorten && (
+                <Button
+                  variant="contained"
+                  onClick={shortenLinkGui}
+                  data-testid="shorten-button"
+                >
+                  {authenticated === false
+                    ? "Convert URL to Short Link (authorization required)"
+                    : showShort
+                    ? "Show full URL"
+                    : "Convert URL to Short Link"}
+                </Button>
+              )}
             </section>
           </>
         ) : (

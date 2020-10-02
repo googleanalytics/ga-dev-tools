@@ -4,7 +4,7 @@ import { ServeArgs, Environment } from "./types"
 import { checkConfig } from "./check-config"
 
 export const serve = async (args: ServeArgs) => {
-  const config = await checkConfig()
+  const config = await checkConfig({ all: false })
 
   let projectId: string
   if (args.environment === Environment.Development) {

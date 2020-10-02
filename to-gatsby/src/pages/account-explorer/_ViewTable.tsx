@@ -1,7 +1,5 @@
 import * as React from "react"
 import { makeStyles } from "@material-ui/core/styles"
-import { useThrottle } from "react-use"
-import CallMadeIcon from "@material-ui/icons/CallMade"
 import Table from "@material-ui/core/Table"
 import TableBody from "@material-ui/core/TableBody"
 import TableCell from "@material-ui/core/TableCell"
@@ -9,6 +7,7 @@ import TableHead from "@material-ui/core/TableHead"
 import TableRow from "@material-ui/core/TableRow"
 
 import { HasView } from "../../components/ViewSelector"
+import { CopyIconButton } from "../../components/CopyButton"
 import HighlightText from "./_HighlightText"
 
 const useStyles = makeStyles(theme => ({
@@ -21,6 +20,14 @@ const useStyles = makeStyles(theme => ({
   link: {
     color: theme.palette.info.main,
   },
+  tableCell: {
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
+  copyIconButton: {
+    color: theme.palette.text.secondary,
+  },
 }))
 
 interface ViewTableProps {
@@ -29,10 +36,49 @@ interface ViewTableProps {
   search?: string
 }
 
+interface ViewCellProps {
+  firstRow: JSX.Element | string
+  secondRow?: JSX.Element | string
+  copyToolTip: string
+  textToCopy: string
+}
+const ViewCell: React.FC<ViewCellProps> = ({
+  firstRow,
+  secondRow,
+  copyToolTip,
+  textToCopy,
+}) => {
+  const classes = useStyles()
+  return (
+    <TableCell>
+      <div className={classes.tableCell}>
+        <div>
+          <div>{firstRow}</div>
+          {secondRow && <div className={classes.id}>{secondRow}</div>}
+        </div>
+        <CopyIconButton
+          className={classes.copyIconButton}
+          size="small"
+          toCopy={textToCopy}
+          tooltipText={copyToolTip}
+        />
+      </div>
+    </TableCell>
+  )
+}
+
+const maxCellWidth = 25
+const textClamp = (text: string, maxWidth: number) => {
+  if (text.length <= maxWidth) {
+    return text
+  } else {
+    return text.substring(0, maxWidth - 3) + "..."
+  }
+}
+
 // This table shows a list of populated views. A populated view is a combination
 // of account, property, and view, & table ID.
 const ViewsTable: React.FC<ViewTableProps> = ({ views, className, search }) => {
-  const throttledSearch = useThrottle(search, 100)
   const classes = useStyles()
   return (
     <Table
@@ -61,40 +107,46 @@ const ViewsTable: React.FC<ViewTableProps> = ({ views, className, search }) => {
             <TableRow
               key={`${populated.account.name}-${populated.property.name}-${populated.view.name}`}
             >
-              <TableCell>
-                <div>
+              <ViewCell
+                textToCopy={account.id || ""}
+                copyToolTip="Copy account ID"
+                firstRow={
                   <HighlightText
                     className={classes.mark}
-                    search={throttledSearch}
-                    text={account.name || ""}
+                    search={search}
+                    text={textClamp(account.name || "", maxCellWidth)}
                   />
-                </div>
-                <div className={classes.id}>
+                }
+                secondRow={
                   <HighlightText
                     className={classes.mark}
-                    search={throttledSearch}
+                    search={search}
                     text={account.id || ""}
-                  ></HighlightText>
-                </div>
-              </TableCell>
-              <TableCell>
-                <div>
-                  <HighlightText
-                    className={classes.mark}
-                    search={throttledSearch}
-                    text={property.name || ""}
                   />
-                </div>
-                <div className={classes.id}>
+                }
+              />
+              <ViewCell
+                textToCopy={property.id || ""}
+                copyToolTip="Copy property ID"
+                firstRow={
                   <HighlightText
                     className={classes.mark}
-                    search={throttledSearch}
+                    search={search}
+                    text={textClamp(property.name || "", maxCellWidth)}
+                  />
+                }
+                secondRow={
+                  <HighlightText
+                    className={classes.mark}
+                    search={search}
                     text={property.id || ""}
                   />
-                </div>
-              </TableCell>
-              <TableCell>
-                <div>
+                }
+              />
+              <ViewCell
+                textToCopy={view.id || ""}
+                copyToolTip="Copy view ID"
+                firstRow={
                   <a
                     className={classes.link}
                     href={viewUrl}
@@ -104,29 +156,30 @@ const ViewsTable: React.FC<ViewTableProps> = ({ views, className, search }) => {
                   >
                     <HighlightText
                       className={classes.mark}
-                      search={throttledSearch}
-                      text={view.name || ""}
+                      search={search}
+                      text={textClamp(view.name || "", maxCellWidth)}
                     />
-                    <CallMadeIcon />
                   </a>
-                </div>
-                <div className={classes.id}>
+                }
+                secondRow={
                   <HighlightText
                     className={classes.mark}
-                    search={throttledSearch}
+                    search={search}
                     text={view.id || ""}
                   />
-                </div>
-              </TableCell>
-              <TableCell>
-                <div className={classes.id}>
+                }
+              />
+              <ViewCell
+                textToCopy={`ga:${view.id}`}
+                copyToolTip="Copy table ID"
+                firstRow={
                   <HighlightText
                     className={classes.mark}
-                    search={throttledSearch}
+                    search={search}
                     text={`ga:${view.id}`}
                   />
-                </div>
-              </TableCell>
+                }
+              />
             </TableRow>
           )
         })}
