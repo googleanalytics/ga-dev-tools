@@ -14,7 +14,7 @@ const checkTypes = async () => {
 // Building makes sure all necessary config items are provided, then runs gatsby build with all necessary environment variables.
 export const build = async (shouldCheckConfig: boolean = true) => {
   if (shouldCheckConfig) {
-    await checkConfig()
+    await checkConfig({ all: false })
   }
 
   await checkTypes()

@@ -21,9 +21,14 @@ const getParser = async (): Promise<argparse.ArgumentParser> => {
     dest: "cmd",
   })
 
-  subparsers.addParser(Command.CheckRequiredConfiguration, {
+  const checkConfigParser = subparsers.addParser(Command.CheckConfig, {
     help:
       "Ensures that all necessary configuration files exist & have required values.",
+  })
+  checkConfigParser.addArgument("--all", {
+    defaultValue: false,
+    dest: "all",
+    action: "storeTrue",
   })
 
   const buildParser = subparsers.addParser(Command.Build, {
@@ -70,8 +75,8 @@ const scripts = async () => {
   const args = parser.parseArgs() as Args
 
   switch (args.cmd) {
-    case Command.CheckRequiredConfiguration: {
-      await checkConfig()
+    case Command.CheckConfig: {
+      await checkConfig(args)
       break
     }
     case Command.Build: {
