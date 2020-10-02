@@ -117,7 +117,7 @@ const Parameters: React.FC<ParametersProps> = ({
         </Select>
       </FormControl>
 
-      <Autocomplete<typeof HIT_TYPES[0]>
+      <Autocomplete<typeof HIT_TYPES[0], boolean, undefined, boolean>
         id="t"
         data-testid={`change-t`}
         blurOnSelect
@@ -136,7 +136,7 @@ const Parameters: React.FC<ParametersProps> = ({
         }}
       />
 
-      <Autocomplete<Property>
+      <Autocomplete<Property, boolean, undefined, boolean>
         id="tid"
         blurOnSelect
         freeSolo
@@ -148,7 +148,8 @@ const Parameters: React.FC<ParametersProps> = ({
         inputValue={localPropertyInput}
         onChange={(_, value) => {
           if (value !== null) {
-            setTid(value.id)
+            // TODO fix the type here later.
+            setTid((value as any).id)
           }
         }}
         onInputChange={(_, value, reason) => {
