@@ -76,9 +76,9 @@ projects:
     action: View Demo
     url: https://enhancedecommerce.appspot.com
   status: updated
-- title: App+Web Event Builder
+- title: GA4 Event Builder
   type: tool
-  slug: aw-event-builder
+  slug: ga4-event-builder
   tech:
   - measurement_protocol_validation_server
 - title: Hit Builder

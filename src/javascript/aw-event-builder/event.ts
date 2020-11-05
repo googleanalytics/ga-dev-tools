@@ -61,7 +61,7 @@ const getEventFromParams = (searchParams: URLSearchParams) => {
           emptyEvent = emptyEvent.updateParameters(() => parameters);
         }
         gaAll("send", "event", {
-          eventCategory: "App+Web Event Builder",
+          eventCategory: "GA4 Event Builder",
           eventAction: "hydrate",
           eventLabel: "event-from-url",
         });

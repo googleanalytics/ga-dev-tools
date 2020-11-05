@@ -22,6 +22,11 @@ class HomePageRedirect(webapp2.RequestHandler):
   def get(self):
     return webapp2.redirect('/', True)
 
+class AppWebRedirect(webapp2.RequestHandler):
+  def get(self):
+    return webapp2.redirect('/ga4-event-builder/', True)
+
+
 class EmbedApiRedirect(webapp2.RequestHandler):
   def get(self):
     return webapp2.redirect('/embed-api/', True)

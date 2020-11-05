@@ -230,7 +230,7 @@ const EventActions: React.FC = () => {
     dispatch(actions.sendEvent);
     setEventSent(true);
     gaAll("send", "event", {
-      eventCategory: "App+Web Event Builder",
+      eventCategory: "GA4 Event Builder",
       eventAction: "send",
       eventLabel: "payload",
     });
@@ -322,44 +322,44 @@ const ValidateEventButton: React.FC<ValidateEventButtonProps> = ({
 
 const EventPayloadInput: React.FC = () => {
   const event = useSelector<State, MPEvent>((a) => a.event);
-  const clientId = useSelector<State, string>((a) => a.clientId);
-  const appInstanceId = useSelector<State, string>((a) => a.appInstanceId);
-  const userId = useSelector<State, string>((a) => a.userId);
-  const timestampMicros = useSelector<State, number | null>(
+  const client_id = useSelector<State, string>((a) => a.clientId);
+  const app_instance_id = useSelector<State, string>((a) => a.appInstanceId);
+  const user_id = useSelector<State, string>((a) => a.userId);
+  const timestamp_micros = useSelector<State, number | null>(
     (a) => a.timestampMicros
   );
-  const nonPersonalizedAds = useSelector<State, boolean>(
+  const non_personalized_ads = useSelector<State, boolean>(
     (a) => a.nonPersonalizedAds
   );
-  const userProperties = useSelector<State, Parameters>(
+  const user_properties = useSelector<State, Parameters>(
     (a) => a.userProperties
   );
   const [payload, setPayload] = React.useState<any>({});
 
   React.useEffect(() => {
     let clientIds: ClientIds;
-    if (clientId !== "") {
-      clientIds = { clientId, userId, type: "web" };
+    if (client_id !== "") {
+      clientIds = { client_id, user_id, type: "web" };
     } else {
-      clientIds = { appInstanceId, userId, type: "mobile" };
+      clientIds = { app_instance_id, user_id, type: "mobile" };
     }
     setPayload(
       payloadFor(
         [event],
         clientIds,
-        userProperties,
-        timestampMicros,
-        nonPersonalizedAds
+        user_properties,
+        timestamp_micros,
+        non_personalized_ads
       )
     );
   }, [
     event,
-    clientId,
-    userId,
-    userProperties,
-    appInstanceId,
-    timestampMicros,
-    nonPersonalizedAds,
+    client_id,
+    user_id,
+    user_properties,
+    app_instance_id,
+    timestamp_micros,
+    non_personalized_ads,
   ]);
 
   return (
