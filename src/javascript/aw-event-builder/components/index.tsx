@@ -30,13 +30,13 @@ const HitBuilder: React.FC = () => {
   // TODO - make sure to focus on any new params.
   const {
     event,
-    client_id,
-    user_id,
-    measurement_id,
-    firebase_app_id,
-    app_instance_id,
-    timestamp_micros,
-    non_personalized_ads,
+    clientId,
+    userId,
+    measurementId,
+    firebaseAppId,
+    appInstanceId,
+    timestampMicros,
+    nonPersonalizedAds,
   } = useSelector<State, State>((a) => a);
   const dispatch = useDispatch();
   const [category, setCategory] = React.useState<MPEventCategory>(
@@ -62,39 +62,39 @@ const HitBuilder: React.FC = () => {
   }, [category, event]);
 
   const updateClientId = React.useCallback(
-    (client_id: string) => {
-      dispatch(actions.setClientId(client_id));
+    (clientId: string) => {
+      dispatch(actions.setClientId(clientId));
     },
     [dispatch]
   );
   const updateAppInstanceId = React.useCallback(
-    (app_instance_id: string) => {
-      dispatch(actions.setAppInstanceId(app_instance_id));
+    (appInstanceId: string) => {
+      dispatch(actions.setAppInstanceId(appInstanceId));
     },
     [dispatch]
   );
   const updateUserId = React.useCallback(
-    (user_id: string) => {
-      dispatch(actions.setUserId(user_id));
+    (userId: string) => {
+      dispatch(actions.setUserId(userId));
     },
     [dispatch]
   );
   const updateMeasurementId = React.useCallback(
-    (measurement_id: string) => {
-      dispatch(actions.setMeasurementId(measurement_id));
+    (measurementId: string) => {
+      dispatch(actions.setMeasurementId(measurementId));
     },
     [dispatch]
   );
   const updateFirebaseAppId = React.useCallback(
-    (firebase_app_id: string) => {
-      dispatch(actions.setFirebaseAppId(firebase_app_id));
+    (firebaseAppId: string) => {
+      dispatch(actions.setFirebaseAppId(firebaseAppId));
     },
     [dispatch]
   );
   const updateTimestampMicros = React.useCallback(
-    (timestamp_micros: string) => {
+    (timestampMicros: string) => {
       try {
-        const asNumber = parseInt(timestamp_micros, 10);
+        const asNumber = parseInt(timestampMicros, 10);
         if (isNaN(asNumber)) {
           dispatch(actions.setTimestampMicros(null));
           return;
@@ -107,8 +107,8 @@ const HitBuilder: React.FC = () => {
     [dispatch]
   );
   const updateNonPersonalizedAds = React.useCallback(
-    (non_personalized_ads: boolean) => {
-      dispatch(actions.setNonPersonalizedAds(non_personalized_ads));
+    (nonPersonalizedAds: boolean) => {
+      dispatch(actions.setNonPersonalizedAds(nonPersonalizedAds));
     },
     [dispatch]
   );
@@ -136,47 +136,47 @@ const HitBuilder: React.FC = () => {
           <APISecret />
           <div className="HitBuilderParam">
             <ReduxManagedInput
-              disabled={measurement_id !== "" || client_id !== ""}
+              disabled={measurementId !== "" || clientId !== ""}
               labelText="firebase_app_id"
               update={updateFirebaseAppId}
-              initialValue={firebase_app_id}
+              initialValue={firebaseAppId}
             />
             <ReduxManagedInput
-              disabled={firebase_app_id !== "" || app_instance_id !== ""}
+              disabled={firebaseAppId !== "" || appInstanceId !== ""}
               labelText="measurement_id"
               update={updateMeasurementId}
-              initialValue={measurement_id}
+              initialValue={measurementId}
             />
           </div>
           <div className="HitBuilderParam">
             <ReduxManagedInput
-              disabled={measurement_id !== "" || client_id !== ""}
+              disabled={measurementId !== "" || clientId !== ""}
               labelText="app_instance_id"
               update={updateAppInstanceId}
-              initialValue={app_instance_id}
+              initialValue={appInstanceId}
             />
             <ReduxManagedInput
-              disabled={firebase_app_id !== "" || app_instance_id !== ""}
+              disabled={firebaseAppId !== "" || appInstanceId !== ""}
               labelText="client_id"
               update={updateClientId}
-              initialValue={client_id}
+              initialValue={clientId}
             />
           </div>
           <ReduxManagedInput
             labelText="user_id"
             update={updateUserId}
-            initialValue={user_id}
+            initialValue={userId}
           />
           <div className="HitBuilderParam">
             <ReduxManagedCheckbox
               labelText="non_personalized_ads"
               update={updateNonPersonalizedAds}
-              value={non_personalized_ads}
+              value={nonPersonalizedAds}
             />
             <ReduxManagedInput
               labelText="timestamp_micros"
               update={updateTimestampMicros}
-              initialValue={timestamp_micros?.toString()}
+              initialValue={timestampMicros?.toString()}
             />
           </div>
           <div className="HitBuilderParam">

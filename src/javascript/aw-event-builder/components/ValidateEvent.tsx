@@ -322,44 +322,44 @@ const ValidateEventButton: React.FC<ValidateEventButtonProps> = ({
 
 const EventPayloadInput: React.FC = () => {
   const event = useSelector<State, MPEvent>((a) => a.event);
-  const client_id = useSelector<State, string>((a) => a.clientId);
-  const app_instance_id = useSelector<State, string>((a) => a.appInstanceId);
-  const user_id = useSelector<State, string>((a) => a.userId);
-  const timestamp_micros = useSelector<State, number | null>(
+  const clientId = useSelector<State, string>((a) => a.clientId);
+  const appInstanceId = useSelector<State, string>((a) => a.appInstanceId);
+  const userId = useSelector<State, string>((a) => a.userId);
+  const timestampMicros = useSelector<State, number | null>(
     (a) => a.timestampMicros
   );
-  const non_personalized_ads = useSelector<State, boolean>(
+  const nonPersonalizedAds = useSelector<State, boolean>(
     (a) => a.nonPersonalizedAds
   );
-  const user_properties = useSelector<State, Parameters>(
+  const userProperties = useSelector<State, Parameters>(
     (a) => a.userProperties
   );
   const [payload, setPayload] = React.useState<any>({});
 
   React.useEffect(() => {
     let clientIds: ClientIds;
-    if (client_id !== "") {
-      clientIds = { client_id, user_id, type: "web" };
+    if (clientId !== "") {
+      clientIds = { clientId, userId, type: "web" };
     } else {
-      clientIds = { app_instance_id, user_id, type: "mobile" };
+      clientIds = { appInstanceId, userId, type: "mobile" };
     }
     setPayload(
       payloadFor(
         [event],
         clientIds,
-        user_properties,
-        timestamp_micros,
-        non_personalized_ads
+        userProperties,
+        timestampMicros,
+        nonPersonalizedAds
       )
     );
   }, [
     event,
-    client_id,
-    user_id,
-    user_properties,
-    app_instance_id,
-    timestamp_micros,
-    non_personalized_ads,
+    clientId,
+    userId,
+    userProperties,
+    appInstanceId,
+    timestampMicros,
+    nonPersonalizedAds,
   ]);
 
   return (
