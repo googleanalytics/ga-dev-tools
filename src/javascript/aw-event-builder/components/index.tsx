@@ -80,14 +80,14 @@ const HitBuilder: React.FC = () => {
     [dispatch]
   );
   const updateMeasurementId = React.useCallback(
-    (measurementId: string) => {
-      dispatch(actions.setMeasurementId(measurementId));
+    (measurement_id: string) => {
+      dispatch(actions.setMeasurementId(measurement_id));
     },
     [dispatch]
   );
   const updateFirebaseAppId = React.useCallback(
-    (firebaseAppId: string) => {
-      dispatch(actions.setFirebaseAppId(firebaseAppId));
+    (firebase_app_id: string) => {
+      dispatch(actions.setFirebaseAppId(firebase_app_id));
     },
     [dispatch]
   );
