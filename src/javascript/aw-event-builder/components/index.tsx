@@ -107,8 +107,8 @@ const HitBuilder: React.FC = () => {
     [dispatch]
   );
   const updateNonPersonalizedAds = React.useCallback(
-    (timestampMicros: boolean) => {
-      dispatch(actions.setNonPersonalizedAds(timestampMicros));
+    (nonPersonalizedAds: boolean) => {
+      dispatch(actions.setNonPersonalizedAds(nonPersonalizedAds));
     },
     [dispatch]
   );
@@ -137,13 +137,13 @@ const HitBuilder: React.FC = () => {
           <div className="HitBuilderParam">
             <ReduxManagedInput
               disabled={measurementId !== "" || clientId !== ""}
-              labelText="Firebase App Id"
+              labelText="firebase_app_id"
               update={updateFirebaseAppId}
               initialValue={firebaseAppId}
             />
             <ReduxManagedInput
               disabled={firebaseAppId !== "" || appInstanceId !== ""}
-              labelText="Measurement ID"
+              labelText="measurement_id"
               update={updateMeasurementId}
               initialValue={measurementId}
             />
@@ -151,30 +151,30 @@ const HitBuilder: React.FC = () => {
           <div className="HitBuilderParam">
             <ReduxManagedInput
               disabled={measurementId !== "" || clientId !== ""}
-              labelText="appInstanceId"
+              labelText="app_instance_id"
               update={updateAppInstanceId}
               initialValue={appInstanceId}
             />
             <ReduxManagedInput
               disabled={firebaseAppId !== "" || appInstanceId !== ""}
-              labelText="clientId"
+              labelText="client_id"
               update={updateClientId}
               initialValue={clientId}
             />
           </div>
           <ReduxManagedInput
-            labelText="userId"
+            labelText="user_id"
             update={updateUserId}
             initialValue={userId}
           />
           <div className="HitBuilderParam">
             <ReduxManagedCheckbox
-              labelText="nonPersonalizedAds"
+              labelText="non_personalized_ads"
               update={updateNonPersonalizedAds}
               value={nonPersonalizedAds}
             />
             <ReduxManagedInput
-              labelText="timestampMicros"
+              labelText="timestamp_micros"
               update={updateTimestampMicros}
               initialValue={timestampMicros?.toString()}
             />

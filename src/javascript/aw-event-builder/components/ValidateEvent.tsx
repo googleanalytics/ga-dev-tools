@@ -230,7 +230,7 @@ const EventActions: React.FC = () => {
     dispatch(actions.sendEvent);
     setEventSent(true);
     gaAll("send", "event", {
-      eventCategory: "App+Web Event Builder",
+      eventCategory: "GA4 Event Builder",
       eventAction: "send",
       eventLabel: "payload",
     });

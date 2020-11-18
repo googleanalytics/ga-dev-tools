@@ -61,7 +61,7 @@ const getEventFromParams = (searchParams: URLSearchParams) => {
           emptyEvent = emptyEvent.updateParameters(() => parameters);
         }
         gaAll("send", "event", {
-          eventCategory: "App+Web Event Builder",
+          eventCategory: "GA4 Event Builder",
           eventAction: "hydrate",
           eventLabel: "event-from-url",
         });
@@ -107,21 +107,21 @@ const getUserPropertiesFromParams = (
 export const unParameterizeUrl = (): URLParts => {
   const search = window.location.search;
   const searchParams = new URLSearchParams(search);
-  const clientId = searchParams.get("clientId") || undefined;
-  const appInstanceId = searchParams.get("appInstanceId") || undefined;
-  const userId = searchParams.get("userId") || undefined;
+  const clientId = searchParams.get("client_id") || undefined;
+  const appInstanceId = searchParams.get("app_instance_id") || undefined;
+  const userId = searchParams.get("user_id") || undefined;
   const event = getEventFromParams(searchParams);
   const userProperties = getUserPropertiesFromParams(searchParams);
-  const measurementId = searchParams.get("measurementId") || undefined;
-  const firebaseAppId = searchParams.get("firebaseAppId") || undefined;
-  const apiSecret = searchParams.get("apiSecret") || undefined;
+  const measurementId = searchParams.get("measurement_id") || undefined;
+  const firebaseAppId = searchParams.get("firebase_app_id") || undefined;
+  const apiSecret = searchParams.get("api_secret") || undefined;
   const timestampMicrosString =
-    searchParams.get("timestampMicros") || undefined;
+    searchParams.get("timestamp_micros") || undefined;
   const timestampMicros = timestampMicrosString
     ? parseInt(timestampMicrosString, 10)
     : undefined;
   const nonPersonalizedAdsString =
-    searchParams.get("nonPersonalizedAds") || undefined;
+    searchParams.get("non_personalized_ads") || undefined;
   const nonPersonalizedAds =
     nonPersonalizedAdsString === "true"
       ? true
@@ -157,34 +157,34 @@ export const parameterizedUrl = ({
 }: URLParts) => {
   const params = new URLSearchParams();
 
-  clientId && clientId !== "" && params.append("clientId", clientId);
+  clientId && clientId !== "" && params.append("client_id", clientId);
   appInstanceId &&
     appInstanceId !== "" &&
-    params.append("appInstanceId", appInstanceId);
-  userId && userId !== "" && params.append("userId", userId);
-  apiSecret && apiSecret !== "" && params.append("apiSecret", apiSecret);
+    params.append("app_instance_id", appInstanceId);
+  userId && userId !== "" && params.append("user_id", userId);
+  apiSecret && apiSecret !== "" && params.append("api_secret", apiSecret);
   event &&
     event.getEventType() === MPEventType.CustomEvent &&
-    params.append("eventName", event.getEventName());
+    params.append("event_name", event.getEventName());
 
   measurementId &&
     measurementId !== "" &&
-    params.append("measurementId", measurementId);
+    params.append("measurement_id", measurementId);
 
   firebaseAppId &&
     firebaseAppId !== "" &&
-    params.append("firebaseAppId", firebaseAppId);
+    params.append("firebase_app_id", firebaseAppId);
 
   timestampMicros !== undefined &&
     timestampMicros !== null &&
-    params.append("timestampMicros", timestampMicros.toString());
+    params.append("timestamp_micros", timestampMicros.toString());
 
   nonPersonalizedAds !== undefined &&
-    params.append("nonPersonalizedAds", nonPersonalizedAds.toString());
+    params.append("non_personalized_ads", nonPersonalizedAds.toString());
 
   // We base64 encode the JSON string to make the url a bit smaller.
   event &&
-    params.append("eventData", btoa(JSON.stringify(event.getEventData())));
+    params.append("event_data", btoa(JSON.stringify(event.getEventData())));
 
   if (userProperties !== undefined) {
     const filtered = userProperties.filter(

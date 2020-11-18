@@ -137,7 +137,7 @@ export enum RequiredParams {
 }
 
 export enum UrlParam {
-  UserProperties = "userProperties",
+  UserProperties = "user_properties",
 }
 
 export type ParamV = ParamType<RequiredParams.V>;
