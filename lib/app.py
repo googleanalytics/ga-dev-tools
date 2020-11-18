@@ -33,7 +33,7 @@ router = webapp2.WSGIApplication([
   (r'/explorer/csvhandler.*', redirects.QueryExplorerCsvRedirect),
   (r'/explorer.*', redirects.QueryExplorerRedirect),
   (r'/polymer-elements.*', redirects.HomePageRedirect),
-  (r'/aw-event-builder.*', redirects.AppWebRedirect)
+  (r'/aw-event-builder.*', redirects.AppWebRedirect),
 
   # Static routes
   (r'/query-explorer/csvhandler.*', ExplorerCsvHandler),
