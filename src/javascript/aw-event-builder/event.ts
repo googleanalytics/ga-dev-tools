@@ -11,13 +11,13 @@ import {
 interface WebIds {
   type: "web";
   client_id?: string;
-  userId?: string;
+  user_id?: string;
 }
 
 interface MobileIds {
   type: "mobile";
   app_instance_id?: string;
-  userId?: string;
+  user_id?: string;
 }
 
 export type ClientIds = WebIds | MobileIds;
@@ -227,7 +227,7 @@ export const payloadFor = (
   const { type, ...minusType } = clientIds;
   return {
     ...minusType,
-    user_id: clientIds.userId || undefined,
+    user_id: clientIds.user_id || undefined,
     timestamp_micros: timestampMicros !== null ? timestampMicros : undefined,
     non_personalized_ads:
       nonPersonalizedAds !== null ? nonPersonalizedAds : undefined,
