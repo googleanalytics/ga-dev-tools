@@ -10,13 +10,13 @@ import {
 
 interface WebIds {
   type: "web";
-  clientId?: string;
+  client_id?: string;
   userId?: string;
 }
 
 interface MobileIds {
   type: "mobile";
-  appInstanceId?: string;
+  app_instance_id?: string;
   userId?: string;
 }
 
@@ -219,10 +219,10 @@ export const payloadFor = (
   timestampMicros: number | null,
   nonPersonalizedAds: boolean
 ): {} => {
-  if (clientIds.type === "web" && clientIds.clientId === "") {
-    clientIds.clientId = undefined;
-  } else if (clientIds.type === "mobile" && clientIds.appInstanceId === "") {
-    clientIds.appInstanceId = undefined;
+  if (clientIds.type === "web" && clientIds.client_id === "") {
+    clientIds.client_id = undefined;
+  } else if (clientIds.type === "mobile" && clientIds.app_instance_id === "") {
+    clientIds.app_instance_id = undefined;
   }
   const { type, ...minusType } = clientIds;
   return {
