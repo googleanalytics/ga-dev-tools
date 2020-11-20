@@ -227,12 +227,12 @@ export const payloadFor = (
   const { type, ...minusType } = clientIds;
   return {
     ...minusType,
-    userId: clientIds.userId || undefined,
-    timestampMicros: timestampMicros !== null ? timestampMicros : undefined,
-    nonPersonalizedAds:
+    user_id: clientIds.userId || undefined,
+    timestamp_micros: timestampMicros !== null ? timestampMicros : undefined,
+    non_personalized_ads:
       nonPersonalizedAds !== null ? nonPersonalizedAds : undefined,
     events: events.map((event) => event.asPayload()),
-    userProperties:
+    user_properties:
       userProperties.length === 0
         ? undefined
         : MPEvent.parametersToPayload(userProperties),
