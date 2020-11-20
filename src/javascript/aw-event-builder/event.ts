@@ -10,14 +10,14 @@ import {
 
 interface WebIds {
   type: "web";
-  clientId?: string;
-  userId?: string;
+  client_id?: string;
+  user_id?: string;
 }
 
 interface MobileIds {
   type: "mobile";
-  appInstanceId?: string;
-  userId?: string;
+  app_instance_id?: string;
+  user_id?: string;
 }
 
 export type ClientIds = WebIds | MobileIds;
@@ -219,20 +219,20 @@ export const payloadFor = (
   timestampMicros: number | null,
   nonPersonalizedAds: boolean
 ): {} => {
-  if (clientIds.type === "web" && clientIds.clientId === "") {
-    clientIds.clientId = undefined;
-  } else if (clientIds.type === "mobile" && clientIds.appInstanceId === "") {
-    clientIds.appInstanceId = undefined;
+  if (clientIds.type === "web" && clientIds.client_id === "") {
+    clientIds.client_id = undefined;
+  } else if (clientIds.type === "mobile" && clientIds.app_instance_id === "") {
+    clientIds.app_instance_id = undefined;
   }
   const { type, ...minusType } = clientIds;
   return {
     ...minusType,
-    userId: clientIds.userId || undefined,
-    timestampMicros: timestampMicros !== null ? timestampMicros : undefined,
-    nonPersonalizedAds:
+    user_id: clientIds.user_id || undefined,
+    timestamp_micros: timestampMicros !== null ? timestampMicros : undefined,
+    non_personalized_ads:
       nonPersonalizedAds !== null ? nonPersonalizedAds : undefined,
     events: events.map((event) => event.asPayload()),
-    userProperties:
+    user_properties:
       userProperties.length === 0
         ? undefined
         : MPEvent.parametersToPayload(userProperties),

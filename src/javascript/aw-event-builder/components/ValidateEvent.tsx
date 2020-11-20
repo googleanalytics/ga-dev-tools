@@ -194,9 +194,9 @@ const EventActions: React.FC = () => {
   React.useEffect(() => {
     let clientIds: ClientIds;
     if (clientId !== "") {
-      clientIds = { clientId, userId, type: "web" };
+      clientIds = { client_id: clientId, user_id: userId, type: "web" };
     } else {
-      clientIds = { appInstanceId, userId, type: "mobile" };
+      clientIds = { app_instance_id: appInstanceId, user_id: userId, type: "mobile" };
     }
     setPayload(
       payloadFor(
@@ -339,9 +339,9 @@ const EventPayloadInput: React.FC = () => {
   React.useEffect(() => {
     let clientIds: ClientIds;
     if (clientId !== "") {
-      clientIds = { clientId, userId, type: "web" };
+      clientIds = { client_id: clientId, user_id: userId, type: "web" };
     } else {
-      clientIds = { appInstanceId, userId, type: "mobile" };
+      clientIds = { app_instance_id: appInstanceId, user_id: userId, type: "mobile" };
     }
     setPayload(
       payloadFor(
