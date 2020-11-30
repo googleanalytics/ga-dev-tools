@@ -14,6 +14,8 @@ export const serve = async (args: ServeArgs) => {
     )
   } else if (args.environment === Environment.Production) {
     projectId = config.production.firebaseProjectId
+  } else {
+    throw new Error("Unreachable")
   }
 
   if (!args.skipBuild) {

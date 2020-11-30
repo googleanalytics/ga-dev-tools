@@ -211,7 +211,7 @@ const configQuestions = (
       type: "input",
       message: "Firebase project ID to use for production:",
       // TODO - See if listing is useful. Probably should only do it if there's not a ton.
-      default: filter?.production?.firebaseProjectId,
+      default: filter?.production?.firebaseProjectId || SKIP_QUESTION,
       when: () => {
         return (
           filter.askAll || filter?.production?.firebaseProjectId === undefined
@@ -223,7 +223,7 @@ const configQuestions = (
       type: "input",
       message: "Firebase project ID to use for development environment:",
       // TODO - See if listing is useful. Probably should only do it if there's not a ton.
-      default: filter?.development?.firebaseProjectId,
+      default: filter?.development?.firebaseProjectId || SKIP_QUESTION,
       when: () => {
         return (
           filter.askAll || filter?.development?.firebaseProjectId === undefined
@@ -328,53 +328,74 @@ export const checkConfig = async (
   return config
 }
 
+const throwIfUndefined = <T>(value: T | undefined): T => {
+  if (value === undefined) {
+    throw new Error("Value cannot be undefined")
+  } else {
+    return value
+  }
+}
+
 const toRuntimeJson = (
   answers: Partial<ConfigAnswers>,
-  currentConfig: RuntimeJson
+  currentConfig: RuntimeJson | undefined
 ): RuntimeJson => {
   const production: ProductionConfig = {
-    baseUri: answers.baseUriProd || currentConfig.production.baseUri,
-    gaMeasurementId:
-      answers.gaMeasurementIdProd || currentConfig.production.gaMeasurementId,
-    firebaseProjectId:
+    baseUri:
+      answers.baseUriProd ||
+      currentConfig?.production?.baseUri ||
+      "http://localhost:5000",
+    gaMeasurementId: throwIfUndefined(
+      answers.gaMeasurementIdProd || currentConfig?.production?.gaMeasurementId
+    ),
+    firebaseProjectId: throwIfUndefined(
       answers.firebaseProjectIdProd ||
-      currentConfig.production.firebaseProjectId,
-    gapiClientId:
-      answers.gapiClientIdProd || currentConfig.production.gapiClientId,
-    bitlyClientId:
-      answers.bitlyClientId || currentConfig.production.bitlyClientId,
-    bitlyClientSecret:
-      answers.bitlyClientSecret || currentConfig.production.bitlyClientSecret,
+        currentConfig?.production?.firebaseProjectId
+    ),
+    gapiClientId: throwIfUndefined(
+      answers.gapiClientIdProd || currentConfig?.production?.gapiClientId
+    ),
+    bitlyClientId: throwIfUndefined(
+      answers.bitlyClientId || currentConfig?.production?.bitlyClientId
+    ),
+    bitlyClientSecret: throwIfUndefined(
+      answers.bitlyClientSecret || currentConfig?.production?.bitlyClientSecret
+    ),
     firebaseFunctionsBaseUrl:
-      currentConfig.production.firebaseFunctionsBaseUrl ||
-      `https://us-central1-${
+      currentConfig?.production?.firebaseFunctionsBaseUrl ||
+      `https://us-central1-${throwIfUndefined(
         answers.firebaseProjectIdProd ||
-        currentConfig.production.firebaseProjectId
-      }.cloudfunctions.net/bitly_auth`,
+          currentConfig?.production?.firebaseProjectId
+      )}.cloudfunctions.net/bitly_auth`,
   }
 
   const development: DevelopmentConfig = {
     // TODO - This could be a bit smarter. Especially if we support changing the port.
-    baseUri: currentConfig.development.baseUri || "http://localhost:5000",
-    gaMeasurementId:
-      answers.gaMeasurementIdDev || currentConfig.development.gaMeasurementId,
-    firebaseProjectId:
+    baseUri: currentConfig?.development?.baseUri || "http://localhost:5000",
+    gaMeasurementId: throwIfUndefined(
+      answers.gaMeasurementIdDev || currentConfig?.development?.gaMeasurementId
+    ),
+    firebaseProjectId: throwIfUndefined(
       answers.firebaseProjectIdDev ||
-      currentConfig.development.firebaseProjectId,
-    gapiClientId:
-      answers.gapiClientIdDev || currentConfig.development.gapiClientId,
+        currentConfig?.development?.firebaseProjectId
+    ),
+    gapiClientId: throwIfUndefined(
+      answers.gapiClientIdDev || currentConfig?.development?.gapiClientId
+    ),
     // We intentially don't support a different clientID & clientSecret for
     // bitly for dev.
-    bitlyClientId:
-      answers.bitlyClientId || currentConfig.production.bitlyClientId,
-    bitlyClientSecret:
-      answers.bitlyClientSecret || currentConfig.production.bitlyClientSecret,
+    bitlyClientId: throwIfUndefined(
+      answers.bitlyClientId || currentConfig?.production?.bitlyClientId
+    ),
+    bitlyClientSecret: throwIfUndefined(
+      answers.bitlyClientSecret || currentConfig?.production?.bitlyClientSecret
+    ),
     firebaseFunctionsBaseUrl:
-      currentConfig.development.firebaseFunctionsBaseUrl ||
-      `https://us-central1-${
+      currentConfig?.development?.firebaseFunctionsBaseUrl ||
+      `https://us-central1-${throwIfUndefined(
         answers.firebaseProjectIdDev ||
-        currentConfig.development.firebaseProjectId
-      }.cloudfunctions.net/bitly_auth`,
+          currentConfig?.development?.firebaseProjectId
+      )}.cloudfunctions.net/bitly_auth`,
   }
 
   const fullConfig = { production, development }
