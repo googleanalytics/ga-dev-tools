@@ -14,6 +14,8 @@ export const stage = async (args: DeployArgs) => {
     )
   } else if (args.environment === Environment.Production) {
     projectId = config.production.firebaseProjectId
+  } else {
+    throw new Error("unreachable")
   }
 
   await build(false)
