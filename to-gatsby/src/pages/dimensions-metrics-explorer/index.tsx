@@ -15,11 +15,12 @@
 import * as React from "react"
 
 import Layout from "../../components/layout"
+import Temp from "./_temp"
 
 const DimensionsMetricsExploror = () => {
   return (
     <Layout title="Dimensions & Metrics Explorer">
-      TODO - add in content.
+      <Temp />
     </Layout>
   )
 }

@@ -26,6 +26,7 @@
     "gatsby-plugin-typescript": "^2.3.3",
     "gatsby-source-filesystem": "^2.2.2",
     "gatsby-transformer-sharp": "^2.4.3",
+    "immutable": "^4.0.0-rc.12",
     "load-script": "^1.0.0",
     "prop-types": "^15.7.2",
     "react": "^16.13.1",
