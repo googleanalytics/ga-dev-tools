@@ -17,7 +17,6 @@ import { groupBy, map, sortBy, keyBy } from "lodash"
 import { Set } from "immutable"
 
 import { CubesByColumn } from "./_cubes"
-import { Column } from "./_common-types"
 
 import Accordian from "@material-ui/core/Accordion"
 import AccordionSummary from "@material-ui/core/AccordionSummary"
@@ -31,6 +30,7 @@ import { RemoveCircle, AddCircle } from "@material-ui/icons"
 
 import { AutoScrollDiv } from "../../components/AutoScroll"
 import { Typography, makeStyles } from "@material-ui/core"
+import { Column } from "../../api"
 
 const useStyles = makeStyles(theme => ({
   expandContract: {
@@ -63,7 +63,7 @@ const ColumnLabel: React.FC<ColumnLabelProps> = ({ column }) => {
   return (
     <div className={classes.columnLabel}>
       <Typography component="span" className={classes.name}>
-        {column.attributes.uiName}
+        {column.attributes?.uiName}
       </Typography>
       <Typography color="primary" component="span" className={classes.id}>
         {column.id}
@@ -79,7 +79,7 @@ const SelectableColumn: React.FC<{
   setSelected: (selected: boolean) => void
 }> = ({ column, selected, disabled, setSelected }) => {
   return (
-    <AutoScrollDiv id={column.id}>
+    <AutoScrollDiv id={column.id!}>
       <FormControlLabel
         control={
           <Checkbox
@@ -113,7 +113,7 @@ const ColumnSubgroup: React.FC<{
   const sortedColumns = React.useMemo(
     () =>
       sortBy(columns, column =>
-        column.attributes.status === "PUBLIC" ? 0 : 1
+        column.attributes?.status === "PUBLIC" ? 0 : 1
       ),
     [columns]
   )
@@ -124,15 +124,15 @@ const ColumnSubgroup: React.FC<{
       <div>
         {sortedColumns.map(column => {
           const disabled =
-            allowableCubes.intersect(cubesByColumn.get(column.id, Set()))
+            allowableCubes.intersect(cubesByColumn.get(column.id!, Set()))
               .size === 0
           return (
             <SelectableColumn
               column={column}
               key={column.id}
-              setSelected={selected => selectColumn(column.id, selected)}
+              setSelected={selected => selectColumn(column.id!, selected)}
               disabled={disabled}
-              selected={selectedColumns.contains(column.id)}
+              selected={selectedColumns.contains(column.id!)}
             />
           )
         })}
@@ -174,7 +174,7 @@ const ColumnGroup: React.FC<{
         <ColumnSubgroup
           name="Dimensions"
           columns={columns.filter(
-            column => column.attributes.type === "DIMENSION"
+            column => column.attributes?.type === "DIMENSION"
           )}
           allowableCubes={allowableCubes}
           cubesByColumn={cubesByColumn}
@@ -184,7 +184,7 @@ const ColumnGroup: React.FC<{
         <ColumnSubgroup
           name="Metrics"
           columns={columns.filter(
-            column => column.attributes.type === "METRIC"
+            column => column.attributes?.type === "METRIC"
           )}
           allowableCubes={allowableCubes}
           cubesByColumn={cubesByColumn}
@@ -227,21 +227,21 @@ const ColumnGroupList: React.FC<{
 
     if (!allowDeprecated) {
       filtered = filtered.filter(
-        column => column.attributes.status != "DEPRECATED"
+        column => column.attributes?.status != "DEPRECATED"
       )
     }
 
     if (onlySegments) {
       filtered = filtered.filter(
-        column => column.attributes.allowedInSegments === "true"
+        column => column.attributes?.allowedInSegments === "true"
       )
     }
 
     filtered = filtered.filter(column =>
       searchTerms.every(
         term =>
-          column.id.toLowerCase().indexOf(term) != -1 ||
-          column.attributes.uiName.toLowerCase().indexOf(term) != -1
+          column.id!.toLowerCase().indexOf(term) != -1 ||
+          column.attributes?.uiName?.toLowerCase().indexOf(term) != -1
       )
     )
 
@@ -250,7 +250,7 @@ const ColumnGroupList: React.FC<{
 
   // Group all columns by Id
   const columnsByLowerId = React.useMemo(
-    () => keyBy(filteredColumns, column => column.id.toLowerCase()),
+    () => keyBy(filteredColumns, column => column.id!.toLowerCase()),
     [filteredColumns]
   )
 
@@ -260,7 +260,7 @@ const ColumnGroupList: React.FC<{
       // JS Sets guarantee insertion order is preserved, which is important
       // because the key order in this groupBy determines the order that
       // they appear in the UI.
-      groupBy(filteredColumns, column => column.attributes.group),
+      groupBy(filteredColumns, column => column.attributes?.group),
     [filteredColumns]
   )
 
@@ -300,7 +300,7 @@ const ColumnGroupList: React.FC<{
     const fragment = window.location.hash.replace(/^#/, "").toLowerCase()
     const selectedColumn = columnsByLowerId[fragment]
     if (selectedColumn !== undefined) {
-      setOpen(oldOpen => oldOpen.add(selectedColumn.attributes.group))
+      setOpen(oldOpen => oldOpen.add(selectedColumn.attributes!.group!))
     }
   }, [setOpen, columnsByLowerId])
 
