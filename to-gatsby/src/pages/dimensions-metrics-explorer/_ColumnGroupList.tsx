@@ -15,16 +15,62 @@
 import * as React from "react"
 import { groupBy, map, sortBy, keyBy } from "lodash"
 import { Set } from "immutable"
-import classNames from "classnames"
 
-import { useHash } from "../../hooks"
 import { CubesByColumn } from "./_cubes"
 import { Column } from "./_common-types"
 
+import Accordian from "@material-ui/core/Accordion"
+import AccordionSummary from "@material-ui/core/AccordionSummary"
+import AccordionDetails from "@material-ui/core/AccordionDetails"
+import ExpandMoreIcon from "@material-ui/icons/ExpandMore"
+
 import Button from "@material-ui/core/Button"
+import Checkbox from "@material-ui/core/Checkbox"
+import FormControlLabel from "@material-ui/core/FormControlLabel"
 import { RemoveCircle, AddCircle } from "@material-ui/icons"
 
 import { AutoScrollDiv } from "../../components/AutoScroll"
+import { Typography, makeStyles } from "@material-ui/core"
+
+const useStyles = makeStyles(theme => ({
+  columnGroup: {
+    marginBottom: theme.spacing(1),
+  },
+  columnDetails: {
+    display: "grid",
+    "grid-template-columns": "50% 50%",
+  },
+  columnLabel: {
+    display: "flex",
+    "flex-wrap": "wrap",
+  },
+  name: { marginRight: theme.spacing(1) },
+  id: {},
+  popover: {
+    pointerEvents: "none",
+  },
+  paper: {
+    padding: theme.spacing(1),
+  },
+}))
+
+type ColumnLabelProps = {
+  column: Column
+}
+const ColumnLabel: React.FC<ColumnLabelProps> = ({ column }) => {
+  const classes = useStyles()
+
+  return (
+    <div className={classes.columnLabel}>
+      <Typography component="span" className={classes.name}>
+        {column.attributes.uiName}
+      </Typography>
+      <Typography color="primary" component="span" className={classes.id}>
+        {column.id}
+      </Typography>
+    </div>
+  )
+}
 
 const SelectableColumn: React.FC<{
   column: Column
@@ -32,90 +78,18 @@ const SelectableColumn: React.FC<{
   disabled: boolean
   setSelected: (selected: boolean) => void
 }> = ({ column, selected, disabled, setSelected }) => {
-  // The column ID in the URL fragment
-  const columnFragment = useHash().toLowerCase()
-  const [infoExpanded, setExpanded] = React.useState(false)
-
-  // If the fragment is this column, expand it
-  React.useEffect(() => {
-    if (columnFragment === column.id.toLowerCase()) {
-      setExpanded(true)
-    }
-  }, [setExpanded, columnFragment])
-
-  const toggleExpanded = React.useCallback(() => setExpanded(exp => !exp), [
-    setExpanded,
-  ])
-
-  const replacedBy =
-    column.attributes.status === "DEPRECATED"
-      ? column.attributes.replacedBy
-      : null
-  // Deprecated columns cannot be selected
-  const allowedInSegments = column.attributes.allowedInSegments === "true"
-
-  const columnClass = classNames("dme-selectable-column", {
-    "dme-selectable-column-highlight":
-      columnFragment === column.id.toLowerCase(),
-  })
-
-  const titleClass = classNames("dme-selectable-column-title", {
-    "dme-selectable-column-disabled": disabled || replacedBy,
-    "dme-selectable-column-deprecated": replacedBy,
-  })
-
-  const inputClass = classNames("Checkbox", "dme-selectable-column-checkbox", {
-    "dme-selectable-column-deprecated": replacedBy,
-  })
-
   return (
-    <AutoScrollDiv className={columnClass} id={column.id}>
-      <input
-        type="checkbox"
-        value="Bike"
-        className={inputClass}
-        checked={selected}
-        disabled={disabled}
-        onChange={event => setSelected(event.target.checked)}
+    <AutoScrollDiv id={column.id}>
+      <FormControlLabel
+        control={
+          <Checkbox
+            checked={selected}
+            disabled={disabled}
+            onChange={event => setSelected(event.target.checked)}
+          />
+        }
+        label={<ColumnLabel column={column} />}
       />
-      <div className="dme-selectable-column-info">
-        <a onClick={toggleExpanded} className={titleClass}>
-          <span className="dme-selectable-column-uiname">
-            <strong>{column.attributes.uiName}</strong>
-          </span>
-          <span className="dme-selectable-column-id">
-            <code>{column.id}</code>
-          </span>
-        </a>
-        {infoExpanded && (
-          <div className="dme-selectable-column-detail">
-            <div className="dme-selectable-column-description">
-              {column.attributes.description}
-            </div>
-            <div>
-              <strong>Data Type:</strong>{" "}
-              <code>{column.attributes.dataType}</code>
-            </div>
-            <div>
-              <strong>
-                Added in API Version {column.attributes.addedInApiVersion}
-              </strong>
-            </div>
-            {allowedInSegments && (
-              <div>
-                <strong>Allowed in segments</strong>
-              </div>
-            )}
-            {replacedBy && (
-              <div>
-                <strong>Deprecated:</strong> Use <code>{replacedBy}</code>{" "}
-                instead.
-              </div>
-            )}
-            <a href={`#${column.id}`}>Permalink</a>
-          </div>
-        )}
-      </div>
     </AutoScrollDiv>
   )
 }
@@ -146,7 +120,7 @@ const ColumnSubgroup: React.FC<{
 
   return (
     <div className="dme-group-list-subgroup">
-      <span className="dme-group-list-subgroup-header">{name}</span>
+      <Typography variant="subtitle1">{name}</Typography>
       <div>
         {sortedColumns.map(column => {
           const disabled =
@@ -185,36 +159,52 @@ const ColumnGroup: React.FC<{
   cubesByColumn,
   selectedColumns,
   selectColumn,
-}) => (
-  <div className="dme-group">
-    <div className="dme-group-header" onClick={toggleOpen}>
-      <span className="dme-group-collapse">
-        {open ? <RemoveCircle /> : <AddCircle />}
-      </span>
-      <span>{name}</span>
-    </div>
-    <div className="dme-group-list" hidden={!open}>
-      <ColumnSubgroup
-        name="Dimensions"
-        columns={columns.filter(
-          column => column.attributes.type === "DIMENSION"
-        )}
-        allowableCubes={allowableCubes}
-        cubesByColumn={cubesByColumn}
-        selectColumn={selectColumn}
-        selectedColumns={selectedColumns}
-      />
-      <ColumnSubgroup
-        name="Metrics"
-        columns={columns.filter(column => column.attributes.type === "METRIC")}
-        allowableCubes={allowableCubes}
-        cubesByColumn={cubesByColumn}
-        selectColumn={selectColumn}
-        selectedColumns={selectedColumns}
-      />
-    </div>
-  </div>
-)
+}) => {
+  const classes = useStyles()
+  return (
+    <Accordian
+      expanded={open}
+      onChange={toggleOpen}
+      TransitionProps={{ unmountOnExit: true }}
+    >
+      <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+        {name}
+      </AccordionSummary>
+      <AccordionDetails className={classes.columnDetails}>
+        <ColumnSubgroup
+          name="Dimensions"
+          columns={columns.filter(
+            column => column.attributes.type === "DIMENSION"
+          )}
+          allowableCubes={allowableCubes}
+          cubesByColumn={cubesByColumn}
+          selectColumn={selectColumn}
+          selectedColumns={selectedColumns}
+        />
+        <ColumnSubgroup
+          name="Metrics"
+          columns={columns.filter(
+            column => column.attributes.type === "METRIC"
+          )}
+          allowableCubes={allowableCubes}
+          cubesByColumn={cubesByColumn}
+          selectColumn={selectColumn}
+          selectedColumns={selectedColumns}
+        />
+      </AccordionDetails>
+    </Accordian>
+  )
+}
+// <div className="dme-group">
+//   <div className="dme-group-header" onClick={toggleOpen}>
+//     <span className="dme-group-collapse">
+//       {open ? <RemoveCircle /> : <AddCircle />}
+//     </span>
+//     <span>{name}</span>
+//   </div>
+//   <div className="dme-group-list" hidden={!open}>
+//   </div>
+// </div>
 
 const ColumnGroupList: React.FC<{
   allowDeprecated: boolean
@@ -231,6 +221,7 @@ const ColumnGroupList: React.FC<{
   cubesByColumn,
   allCubes,
 }) => {
+  const classes = useStyles()
   const filteredColumns = React.useMemo(() => {
     let filtered: Column[] = columns
 
@@ -356,7 +347,7 @@ const ColumnGroupList: React.FC<{
       </div>
       <div>
         {map(groupedColumns, (columns, groupName) => (
-          <div key={groupName}>
+          <div key={groupName} className={classes.columnGroup}>
             <ColumnGroup
               open={open.contains(groupName)}
               columns={columns}
