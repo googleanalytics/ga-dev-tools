@@ -19,38 +19,44 @@ Libraries. **[View the Site]**
 
 ## Building and running the site locally
 
-To run the site locally, first make sure you have all the dependencies
-installed:
-
-Prerequirements:
+### Requirements
 
 - [`Yarn`](https://classic.yarnpkg.com/en/docs/install)
 
+    This site is only tested and developed using yarn.
+
+### Running
+
+To run the site locally, first make sure you have all the dependencies
+installed:
+
+
 ```shell
-npm install
+yarn
 ```
 
-Then simply run the following:
+Then run the following and answer all prompts:
+
+>> All prompts can be skipped.
 
 ```shell
-env GATSBY_GA_MEASUREMENT_ID=YOUR_ID npm run start
+yarn start
 ```
 
 This will set up a local hot-reloading instance of the app that you'll be able
-to navigate to by going to `http://localhost:8000`
+to navigate to by going to `http://localhost:5000`
 
 ## Whats in this repo
 
 ### `./src`
 
-This is where all (technically most, see [gatsby-browser.js]) of the
-client-side code lives. All of our demo code can be found here.
+This is where the majority of the client-side code lives. All of our demo code
+can be found here.
 
-### gatsby-browser.js
+### `./gatsby-browser.js`
 
-This file is used to add additional functionality at browser runtime. Since, for
-the most part, Gatsby outputs static js this file is useful to decorate our app
-with functionality that is needed at runtime.
+This file is useful to decorate our app with functionality that is needed at
+runtime.
 
 Of note, we use:
 
@@ -63,9 +69,9 @@ Of note, we use:
 
 - [`onInitialClientRender`](https://www.gatsbyjs.org/docs/browser-apis/#onInitialClientRender)
 
-  Let's us pull in gtag only on the first render of the site. It's mentioned
-  in the comment in the code, but we don't recommend loading gtag this way.
-  You should instead use
+  Lets us pull in gtag only on the first render of the site. It's mentioned in
+  the comment in the code, but we don't typically recommend loading gtag this
+  way.  You should instead use
   [gatsby-plugin-google-analytics](https://www.gatsbyjs.org/packages/gatsby-plugin-google-analytics/)
 
   The reason we use `onInitialClientRender` is so we can demonstrate how to
@@ -98,8 +104,8 @@ plugins are configured here.
 - [gatsby-plugin-typescript](https://www.gatsbyjs.org/packages/gatsby-plugin-typescript/)
 
   Provides drop-in support for Typescript and TSX. `<opinion>`For a site like
-  this, that has demos that will live over many years, typescript is a very
-  handy way to make it easier to jump back in the code.`</opinion`
+  this, with demos that will live over many years, typescript is a very handy
+  way to make it easier to jump back in the code.`</opinion>`
 
 - [gatsby-source-filesystem](https://www.gatsbyjs.org/packages/gatsby-source-filesystem/)
 
