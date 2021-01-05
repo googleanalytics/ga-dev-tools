@@ -18,9 +18,9 @@ import Layout from "../../components/layout"
 import Temp from "./_temp"
 import { Typography } from "@material-ui/core"
 
-const DimensionsMetricsExploror = () => {
+export const DimensionsAndMetricsExplorer = () => {
   return (
-    <Layout title="Dimensions & Metrics Explorer">
+    <>
       <Typography variant="body1">
         The Dimensions & Metrics Explorer lists and describes all of the
         dimensions and metrics available through the Core Reporting API.
@@ -45,7 +45,15 @@ const DimensionsMetricsExploror = () => {
       </Typography>
 
       <Temp />
+    </>
+  )
+}
+
+const Wrapped = () => {
+  return (
+    <Layout title="Dimensions & Metrics Explorer">
+      <DimensionsAndMetricsExplorer />
     </Layout>
   )
 }
-export default DimensionsMetricsExploror
+export default Wrapped
