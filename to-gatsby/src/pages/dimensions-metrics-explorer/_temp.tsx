@@ -21,9 +21,13 @@ import { getAnalyticsApi, Column } from "../../api"
 
 import { CubesByColumn, cubesByColumn, allCubes } from "./_cubes"
 
-import SearchBox from "./_SearchBox"
+import TextField from "@material-ui/core/TextField"
+import IconButton from "@material-ui/core/IconButton"
+import Clear from "@material-ui/icons/Clear"
 import ColumnGroupList from "./_ColumnGroupList"
 import { AutoScrollProvider } from "../../components/AutoScroll"
+import FormControlLabel from "@material-ui/core/FormControlLabel"
+import Checkbox from "@material-ui/core/Checkbox"
 
 const Main: React.FC = () => {
   const [searchText, setSearchText] = useLocalStorage("searchText", "")
@@ -87,13 +91,35 @@ const Main: React.FC = () => {
   return (
     <AutoScrollProvider behavior="auto" block="start">
       <div>
-        <SearchBox
-          searchText={searchText}
-          setSearchText={setSearchText}
-          allowDeprecated={allowDeprecated}
-          setAllowDeprecated={setAllowDeprecated}
-          onlySegments={onlySegments}
-          setOnlySegments={setOnlySegments}
+        <TextField
+          placeholder="Search"
+          value={searchText}
+          onChange={e => setSearchText(e.target.value)}
+          InputProps={{
+            endAdornment: (
+              <IconButton onClick={() => setSearchText("")}>
+                <Clear />
+              </IconButton>
+            ),
+          }}
+        />
+        <FormControlLabel
+          control={
+            <Checkbox
+              checked={onlySegments}
+              onChange={e => setOnlySegments(e.target.checked)}
+            />
+          }
+          label="Only show fields that are allowed in segments"
+        />
+        <FormControlLabel
+          control={
+            <Checkbox
+              checked={allowDeprecated}
+              onChange={e => setAllowDeprecated(e.target.checked)}
+            />
+          }
+          label="Include deprecated fields"
         />
         {localCubesByColumn !== null &&
         columns !== undefined &&

@@ -33,8 +33,8 @@ import { AutoScrollDiv } from "../../components/AutoScroll"
 import { Typography, makeStyles } from "@material-ui/core"
 
 const useStyles = makeStyles(theme => ({
-  columnGroup: {
-    marginBottom: theme.spacing(1),
+  expandContract: {
+    margin: theme.spacing(1),
   },
   columnDetails: {
     display: "grid",
@@ -333,32 +333,40 @@ const ColumnGroupList: React.FC<{
   const showCollapseAll = open.size > 0
   return (
     <div>
-      <div className="ButtonSet">
+      <div>
         {showExpandAll ? (
-          <Button startIcon={<AddCircle />} onClick={expandAll}>
+          <Button
+            variant="outlined"
+            className={classes.expandContract}
+            endIcon={<AddCircle />}
+            onClick={expandAll}
+          >
             Expand All
           </Button>
         ) : null}
         {showCollapseAll ? (
-          <Button startIcon={<RemoveCircle />} onClick={collapseAll}>
+          <Button
+            variant="outlined"
+            className={classes.expandContract}
+            endIcon={<RemoveCircle />}
+            onClick={collapseAll}
+          >
             Hide All
           </Button>
         ) : null}
       </div>
       <div>
         {map(groupedColumns, (columns, groupName) => (
-          <div key={groupName} className={classes.columnGroup}>
-            <ColumnGroup
-              open={open.contains(groupName)}
-              columns={columns}
-              name={groupName}
-              toggleOpen={() => toggleGroupOpen(groupName)}
-              allowableCubes={allowableCubes}
-              cubesByColumn={cubesByColumn}
-              selectedColumns={selectedColumns}
-              selectColumn={selectColumn}
-            />
-          </div>
+          <ColumnGroup
+            open={open.contains(groupName)}
+            columns={columns}
+            name={groupName}
+            toggleOpen={() => toggleGroupOpen(groupName)}
+            allowableCubes={allowableCubes}
+            cubesByColumn={cubesByColumn}
+            selectedColumns={selectedColumns}
+            selectColumn={selectColumn}
+          />
         ))}
       </div>
     </div>
