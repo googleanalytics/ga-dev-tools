@@ -361,6 +361,7 @@ const ColumnGroupList: React.FC<{
             open={open.contains(groupName)}
             columns={columns}
             name={groupName}
+            key={groupName}
             toggleOpen={() => toggleGroupOpen(groupName)}
             allowableCubes={allowableCubes}
             cubesByColumn={cubesByColumn}
