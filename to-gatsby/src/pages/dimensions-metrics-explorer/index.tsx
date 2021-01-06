@@ -15,7 +15,7 @@
 import * as React from "react"
 
 import Layout from "../../components/layout"
-import Compatable from "./_Compatable.tsx"
+import Compatable from "./_Compatable"
 import { Typography } from "@material-ui/core"
 
 export const DimensionsAndMetricsExplorer = () => {

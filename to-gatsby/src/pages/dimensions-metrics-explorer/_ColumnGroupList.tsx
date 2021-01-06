@@ -119,7 +119,7 @@ const ColumnSubgroup: React.FC<{
   )
 
   return (
-    <div className="dme-group-list-subgroup">
+    <div>
       <Typography variant="subtitle1">{name}</Typography>
       <div>
         {sortedColumns.map(column => {
@@ -195,16 +195,6 @@ const ColumnGroup: React.FC<{
     </Accordian>
   )
 }
-// <div className="dme-group">
-//   <div className="dme-group-header" onClick={toggleOpen}>
-//     <span className="dme-group-collapse">
-//       {open ? <RemoveCircle /> : <AddCircle />}
-//     </span>
-//     <span>{name}</span>
-//   </div>
-//   <div className="dme-group-list" hidden={!open}>
-//   </div>
-// </div>
 
 const ColumnGroupList: React.FC<{
   allowDeprecated: boolean
@@ -227,7 +217,7 @@ const ColumnGroupList: React.FC<{
 
     if (!allowDeprecated) {
       filtered = filtered.filter(
-        column => column.attributes?.status != "DEPRECATED"
+        column => column.attributes?.status !== "DEPRECATED"
       )
     }
 
@@ -240,8 +230,8 @@ const ColumnGroupList: React.FC<{
     filtered = filtered.filter(column =>
       searchTerms.every(
         term =>
-          column.id!.toLowerCase().indexOf(term) != -1 ||
-          column.attributes?.uiName?.toLowerCase().indexOf(term) != -1
+          column.id!.toLowerCase().indexOf(term) !== -1 ||
+          column.attributes?.uiName?.toLowerCase().indexOf(term) !== -1
       )
     )
 
@@ -291,7 +281,7 @@ const ColumnGroupList: React.FC<{
     } else {
       expandAll()
     }
-  }, [searchTerms.length === 0])
+  }, [searchTerms.length, collapseAll, expandAll])
 
   // When the page loads, if there is a fragment, auto-expand the group
   // containing that fragment. Make sure this effect happens after the

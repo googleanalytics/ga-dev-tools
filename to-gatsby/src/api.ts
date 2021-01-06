@@ -1,3 +1,6 @@
+import { useSelector } from "react-redux"
+import React from "react"
+
 interface AnalyticsApi {
   management: typeof gapi.client.management
   metadata: typeof gapi.client.metadata
@@ -10,4 +13,18 @@ export type Column = gapi.client.analytics.Column
 
 export const getAnalyticsApi = (g: typeof gapi): AnalyticsApi => {
   return (g as any).client.analytics
+}
+
+export const useApi = (): AnalyticsApi | undefined => {
+  const gapi = useSelector((state: AppState) => state.gapi)
+  const [api, setApi] = React.useState<AnalyticsApi | undefined>(undefined)
+
+  React.useEffect(() => {
+    if (gapi === undefined) {
+      return
+    }
+    setApi(getAnalyticsApi(gapi))
+  }, [gapi])
+
+  return api
 }

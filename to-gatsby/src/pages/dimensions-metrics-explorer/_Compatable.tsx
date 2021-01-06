@@ -14,10 +14,9 @@
 
 import * as React from "react"
 import { Set } from "immutable"
-import { useSelector } from "react-redux"
 
 import { useLocalStorage, useTypedLocalStorage } from "../../hooks"
-import { getAnalyticsApi, Column } from "../../api"
+import { Column, useApi } from "../../api"
 
 import { CubesByColumn, cubesByColumn, allCubes } from "./_cubes"
 
@@ -28,6 +27,22 @@ import ColumnGroupList from "./_ColumnGroupList"
 import { AutoScrollProvider } from "../../components/AutoScroll"
 import FormControlLabel from "@material-ui/core/FormControlLabel"
 import Checkbox from "@material-ui/core/Checkbox"
+
+const useColumns = (): Column[] | undefined => {
+  const api = useApi()
+  const [columns, setColumns] = React.useState<undefined | Column[]>(undefined)
+
+  React.useEffect(() => {
+    if (api === undefined) {
+      return
+    }
+
+    api.metadata.columns.list({ reportType: "ga" }).then(response => {
+      setColumns(response.result.items)
+    })
+  }, [api])
+  return columns
+}
 
 const Main: React.FC = () => {
   const [searchText, setSearchText] = useLocalStorage("searchText", "")
@@ -40,39 +55,16 @@ const Main: React.FC = () => {
     false
   )
 
-  // If there is a fragment, reset the search filters, to ensure that
-  // the column is definitely visible.
-  React.useEffect(() => {
-    if (window.location.hash) {
-      setSearchText("")
-      setAllowDeprecated(true)
-      setOnlySegments(false)
-    }
-  }, [setAllowDeprecated, setOnlySegments, setSearchText])
-
   const searchTerms = React.useMemo(
     () =>
       searchText
         .toLowerCase()
         .split(/\s+/)
-        .filter(term => term.length),
+        .filter(term => term.length > 0),
     [searchText]
   )
 
-  // Fetch all of the columns from the metadata API
-  const [columns, setColumns] = React.useState<undefined | Column[]>(undefined)
-  const gapi = useSelector((state: AppState) => state.gapi)
-
-  React.useEffect(() => {
-    if (gapi === undefined) {
-      return
-    }
-
-    const api = getAnalyticsApi(gapi)
-    api.metadata.columns.list({ reportType: "ga" }).then(response => {
-      setColumns(response.result.items)
-    })
-  }, [gapi])
+  const columns = useColumns()
 
   // Fetch the cubes
   const [

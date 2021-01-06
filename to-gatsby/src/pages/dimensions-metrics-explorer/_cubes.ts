@@ -1,5 +1,16 @@
-// In the future, this file will populate cubes from a devsite URL.
-// For now it's hardcoded.
+// Copyright 2019 Google Inc. All rights reserved.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
 
 import { reduce, once } from "lodash"
 import { Set, Map } from "immutable"
@@ -19,6 +30,13 @@ export type CubesByColumn = Map<string, Set<string>>
 
 const fetchRawCubes = once((): Promise<RawCubes> => Promise.resolve(cubes))
 
+// Take the RawCubes format and invent it to instead by a mapping of column
+// names to a set of cubes.
+//
+// In the demo, a user checks a column and the UI updates other columns based
+// on compatability (they are disabled if they are incompatable). Since only
+// columns that share a cube can be queried together, this means only columns
+// that share a cube are compatable with each other.
 const buildCubes = (rawCubes: RawCubes): CubesByColumn => {
   return reduce(
     rawCubes,
