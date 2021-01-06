@@ -15,6 +15,7 @@
 import * as React from "react"
 import * as renderer from "@testing-library/react"
 import { withProviders, testGapi } from "../../test-utils"
+import userEvent from "@testing-library/user-event"
 import "@testing-library/jest-dom"
 
 import { DimensionsAndMetricsExplorer } from "./index"
@@ -27,5 +28,28 @@ describe("Dimensions and Metrics Explorer", () => {
     // Add timeout since cubes are "fetched"
     await renderer.waitFor(() => {}, { timeout: 1000 })
     expect(container).toHaveTextContent("Metrics Explorer lists")
+  })
+  // This test may go out of date, but we want at least once instance of making
+  // sure the intersection logic works for compatable dimensions.
+  it("disables incompatable metric when 'User Type' dimension is selected", async () => {
+    const gapi = testGapi()
+    const { wrapped, store } = withProviders(<DimensionsAndMetricsExplorer />)
+    store.dispatch({ type: "setUser", user: {} })
+    store.dispatch({ type: "setGapi", gapi })
+    const { getByText, findByLabelText, debug, container } = renderer.render(
+      wrapped
+    )
+    // Add timeout since cubes are "fetched"
+    await renderer.waitFor(() => {}, { timeout: 1000 })
+
+    await renderer.act(async () => {
+      userEvent.click(getByText("User"))
+      const userType = await findByLabelText(/User Type/)
+      const oneDayActiveUsers = await findByLabelText(/1 Day Active Users/)
+      expect(userType).not.toBeDisabled()
+      expect(oneDayActiveUsers).not.toBeDisabled()
+      userEvent.click(userType)
+      expect(oneDayActiveUsers).toBeDisabled()
+    })
   })
 })
