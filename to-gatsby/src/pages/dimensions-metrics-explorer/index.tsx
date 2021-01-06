@@ -15,7 +15,7 @@
 import * as React from "react"
 
 import Layout from "../../components/layout"
-import Temp from "./_temp"
+import Compatable from "./_Compatable.tsx"
 import { Typography } from "@material-ui/core"
 
 export const DimensionsAndMetricsExplorer = () => {
@@ -44,7 +44,7 @@ export const DimensionsAndMetricsExplorer = () => {
         same query.
       </Typography>
 
-      <Temp />
+      <Compatable />
     </>
   )
 }
