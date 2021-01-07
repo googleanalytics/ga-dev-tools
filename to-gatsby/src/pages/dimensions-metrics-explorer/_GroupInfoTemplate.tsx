@@ -68,7 +68,7 @@ const ColumnInfo: React.FC<ColumnProps> = ({
   const classes = useStyles()
   return (
     <section id={column.id?.replace("ga:", "")}>
-      <Typography variant="h2" className={classes.columnHeading}>
+      <Typography variant="h3" className={classes.columnHeading}>
         {attributes?.uiName}{" "}
         <Typography component="span">{column.id}</Typography>
         <a href={`#${column.id?.replace("ga:", "")}`}>
@@ -108,7 +108,8 @@ const GroupInfoTemplate: React.FC<GroupInfoTemplateProps> = ({
 }) => {
   const classes = useStyles()
   return (
-    <Layout title={groupName}>
+    <Layout title="Dimensions & Metrics Explorer">
+      <Typography variant="h2">{groupName} group</Typography>
       <Link to="/dimensions-metrics-explorer" className={classes.returnLink}>
         <ArrowBack /> Dimensions & Metrics Explorer
       </Link>
