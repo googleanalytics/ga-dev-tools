@@ -17,21 +17,8 @@ import * as React from "react"
 import Layout from "../../components/layout"
 import { Column } from "../../api"
 import { Link } from "gatsby"
-import {
-  Typography,
-  Table,
-  TableRow,
-  TableCell,
-  Chip,
-  makeStyles,
-} from "@material-ui/core"
-import {
-  Done,
-  Delete,
-  Clear,
-  Link as LinkIcon,
-  ArrowBack,
-} from "@material-ui/icons"
+import { Typography, Chip, makeStyles } from "@material-ui/core"
+import { Done, Clear, Link as LinkIcon, ArrowBack } from "@material-ui/icons"
 import { sortBy } from "lodash"
 
 type GroupInfoTemplateProps = {
@@ -78,19 +65,19 @@ const ColumnInfo: React.FC<ColumnProps> = ({
   // TODO make the uiName be linkAble
   const classes = useStyles()
   return (
-    <section id={column.id.replace("ga:", "")}>
+    <section id={column.id?.replace("ga:", "")}>
       <Typography variant="h2" className={classes.columnHeading}>
-        {attributes.uiName}{" "}
+        {attributes?.uiName}{" "}
         <Typography component="span">{column.id}</Typography>
-        <a href={`#${column.id.replace("ga:", "")}`}>
+        <a href={`#${column.id?.replace("ga:", "")}`}>
           <LinkIcon className={classes.linkIcon} />
         </a>
       </Typography>
       <section className={classes.chips}>
-        {attributes.status === "DEPRECATED" && (
+        {attributes?.status === "DEPRECATED" && (
           <Chip size="small" label="Deprecated" icon={<Clear />} />
         )}
-        {attributes.allowedInSegments ? (
+        {attributes?.allowedInSegments ? (
           <Chip
             color="primary"
             size="small"
@@ -105,11 +92,11 @@ const ColumnInfo: React.FC<ColumnProps> = ({
             icon={<Clear />}
           />
         )}
-        <Chip size="small" label={attributes.type.toLowerCase()} />
-        <Chip size="small" label={attributes.dataType.toLowerCase()} />
-        <Chip size="small" label={`v${attributes.addedInApiVersion}`} />
+        <Chip size="small" label={attributes?.type.toLowerCase()} />
+        <Chip size="small" label={attributes?.dataType.toLowerCase()} />
+        <Chip size="small" label={`v${attributes?.addedInApiVersion}`} />
       </section>
-      <Typography variant="body1">{attributes.description}</Typography>
+      <Typography variant="body1">{attributes?.description}</Typography>
     </section>
   )
 }

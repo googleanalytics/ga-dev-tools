@@ -63,7 +63,7 @@ const ColumnLabel: React.FC<ColumnLabelProps> = ({ column }) => {
   const classes = useStyles()
   const slug = `/dimensions-metrics-explorer/${
     column.attributes?.group.replace(/ /g, "-").toLowerCase() || ""
-  }/#${column.id.replace("ga:", "")}`
+  }/#${column.id?.replace("ga:", "")}`
 
   return (
     <div className={classes.columnLabel}>
