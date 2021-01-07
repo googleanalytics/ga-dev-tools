@@ -12,12 +12,21 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+import path from "path"
+import axios from "axios"
+
 interface Actions {
   createRedirect: (options: {
     fromPath: string
     toPath: string
     isPermanent: boolean
     redirectInBrowser: boolean
+  }) => void
+  createPage: (page: {
+    path: string
+    matchPath?: string
+    component: string
+    context?: {}
   }) => void
 }
 
@@ -34,7 +43,7 @@ const redirects: RedirectMap[] = [
 ]
 
 export const createPages = async ({ actions }) => {
-  const { createRedirect }: Actions = actions
+  const { createRedirect, createPage }: Actions = actions
 
   redirects.forEach(([from, to]) => {
     console.info(`Creating redirect from: ${from} to: ${to}`)
@@ -43,6 +52,36 @@ export const createPages = async ({ actions }) => {
       toPath: to,
       isPermanent: true,
       redirectInBrowser: true,
+    })
+  })
+
+  const {
+    data: { items },
+  } = await axios.get(
+    "https://www.googleapis.com/analytics/v3/metadata/ga/columns"
+  )
+  // Group items by "group"
+  const byGroup = items.reduce((acc, item) => {
+    const groupName = item.attributes.group
+    const inGroup = acc[groupName] || []
+    inGroup.push(item)
+    return { ...acc, [groupName]: inGroup }
+  }, {})
+
+  Object.entries(byGroup).forEach(([groupName, items]) => {
+    const slugName = groupName.replace(/ /g, "-").toLowerCase()
+    const slug = `/dimensions-metrics-explorer/${slugName}`
+    console.info(`Creating page at slug: ${slug}`)
+
+    createPage({
+      path: slug,
+      component: path.resolve(
+        `${__dirname}/../src/pages/dimensions-metrics-explorer/_GroupInfoTemplate.tsx`
+      ),
+      context: {
+        groupName,
+        items,
+      },
     })
   })
 }

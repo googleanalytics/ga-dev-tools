@@ -15,6 +15,7 @@
 import * as React from "react"
 import { groupBy, map, sortBy, keyBy } from "lodash"
 import { Set } from "immutable"
+import { navigate } from "gatsby"
 
 import { CubesByColumn } from "./_cubes"
 
@@ -26,10 +27,10 @@ import ExpandMoreIcon from "@material-ui/icons/ExpandMore"
 import Button from "@material-ui/core/Button"
 import Checkbox from "@material-ui/core/Checkbox"
 import FormControlLabel from "@material-ui/core/FormControlLabel"
-import { RemoveCircle, AddCircle } from "@material-ui/icons"
+import { RemoveCircle, AddCircle, Info } from "@material-ui/icons"
 
 import { AutoScrollDiv } from "../../components/AutoScroll"
-import { Typography, makeStyles } from "@material-ui/core"
+import { Typography, makeStyles, IconButton } from "@material-ui/core"
 import { Column } from "../../api"
 
 const useStyles = makeStyles(theme => ({
@@ -42,6 +43,7 @@ const useStyles = makeStyles(theme => ({
   },
   columnLabel: {
     display: "flex",
+    alignItems: "center",
     "flex-wrap": "wrap",
   },
   name: { marginRight: theme.spacing(1) },
@@ -59,6 +61,9 @@ type ColumnLabelProps = {
 }
 const ColumnLabel: React.FC<ColumnLabelProps> = ({ column }) => {
   const classes = useStyles()
+  const slug = `/dimensions-metrics-explorer/${
+    column.attributes?.group.replace(/ /g, "-").toLowerCase() || ""
+  }/#${column.id.replace("ga:", "")}`
 
   return (
     <div className={classes.columnLabel}>
@@ -68,6 +73,9 @@ const ColumnLabel: React.FC<ColumnLabelProps> = ({ column }) => {
       <Typography color="primary" component="span" className={classes.id}>
         {column.id}
       </Typography>
+      <IconButton onClick={() => navigate(slug)}>
+        <Info />
+      </IconButton>
     </div>
   )
 }
@@ -79,18 +87,16 @@ const SelectableColumn: React.FC<{
   setSelected: (selected: boolean) => void
 }> = ({ column, selected, disabled, setSelected }) => {
   return (
-    <AutoScrollDiv id={column.id!}>
-      <FormControlLabel
-        control={
-          <Checkbox
-            checked={selected}
-            disabled={disabled}
-            onChange={event => setSelected(event.target.checked)}
-          />
-        }
-        label={<ColumnLabel column={column} />}
-      />
-    </AutoScrollDiv>
+    <FormControlLabel
+      control={
+        <Checkbox
+          checked={selected}
+          disabled={disabled}
+          onChange={event => setSelected(event.target.checked)}
+        />
+      }
+      label={<ColumnLabel column={column} />}
+    />
   )
 }
 
