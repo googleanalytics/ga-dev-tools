@@ -41,6 +41,7 @@ const useStyles = makeStyles(theme => ({
     },
   },
   columnHeading: {
+    marginBottom: theme.spacing(1),
     display: "flex",
     alignItems: "baseline",
     "& span": {
@@ -51,6 +52,7 @@ const useStyles = makeStyles(theme => ({
     "& div": {
       marginRight: theme.spacing(1),
     },
+    marginBottom: theme.spacing(1),
   },
   linkIcon: {
     alignSelf: "center",
