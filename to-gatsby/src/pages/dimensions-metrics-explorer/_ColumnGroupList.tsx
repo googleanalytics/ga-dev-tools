@@ -37,14 +37,24 @@ const useStyles = makeStyles(theme => ({
   expandContract: {
     margin: theme.spacing(1),
   },
+  column: {
+    display: "flex",
+    alignItems: "baseline",
+  },
   columnDetails: {
     display: "grid",
     "grid-template-columns": "50% 50%",
   },
   columnLabel: {
     display: "flex",
-    alignItems: "center",
-    "flex-wrap": "wrap",
+    alignItems: "flex-start",
+    flexWrap: "wrap",
+    position: "relative",
+    top: theme.spacing(-1),
+  },
+  columnButton: {
+    padding: "unset",
+    paddingLeft: theme.spacing(1),
   },
   name: { marginRight: theme.spacing(1) },
   id: {},
@@ -54,6 +64,7 @@ const useStyles = makeStyles(theme => ({
   paper: {
     padding: theme.spacing(1),
   },
+  labelText: {},
 }))
 
 type ColumnLabelProps = {
@@ -67,13 +78,23 @@ const ColumnLabel: React.FC<ColumnLabelProps> = ({ column }) => {
 
   return (
     <div className={classes.columnLabel}>
-      <Typography component="span" className={classes.name}>
-        {column.attributes?.uiName}
-      </Typography>
-      <Typography color="primary" component="span" className={classes.id}>
-        {column.id}
-      </Typography>
-      <IconButton onClick={() => navigate(slug)}>
+      <div className={classes.labelText}>
+        <Typography component="div" className={classes.name}>
+          {column.attributes?.uiName}
+        </Typography>
+        <Typography
+          color="primary"
+          component="div"
+          variant="body2"
+          className={classes.id}
+        >
+          {column.id}
+        </Typography>
+      </div>
+      <IconButton
+        onClick={() => navigate(slug)}
+        className={classes.columnButton}
+      >
         <Info />
       </IconButton>
     </div>
@@ -86,8 +107,10 @@ const SelectableColumn: React.FC<{
   disabled: boolean
   setSelected: (selected: boolean) => void
 }> = ({ column, selected, disabled, setSelected }) => {
+  const classes = useStyles()
   return (
     <FormControlLabel
+      className={classes.column}
       control={
         <Checkbox
           checked={selected}
