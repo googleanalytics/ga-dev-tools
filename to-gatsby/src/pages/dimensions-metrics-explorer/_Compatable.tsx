@@ -24,7 +24,6 @@ import TextField from "@material-ui/core/TextField"
 import IconButton from "@material-ui/core/IconButton"
 import Clear from "@material-ui/icons/Clear"
 import ColumnGroupList from "./_ColumnGroupList"
-import { AutoScrollProvider } from "../../components/AutoScroll"
 import FormControlLabel from "@material-ui/core/FormControlLabel"
 import Checkbox from "@material-ui/core/Checkbox"
 
@@ -81,54 +80,52 @@ const Main: React.FC = () => {
   }, [])
 
   return (
-    <AutoScrollProvider behavior="auto" block="start">
-      <div>
-        <TextField
-          placeholder="Search"
-          value={searchText}
-          onChange={e => setSearchText(e.target.value)}
-          InputProps={{
-            endAdornment: (
-              <IconButton onClick={() => setSearchText("")}>
-                <Clear />
-              </IconButton>
-            ),
-          }}
-        />
-        <FormControlLabel
-          control={
-            <Checkbox
-              checked={onlySegments}
-              onChange={e => setOnlySegments(e.target.checked)}
-            />
-          }
-          label="Only show fields that are allowed in segments"
-        />
-        <FormControlLabel
-          control={
-            <Checkbox
-              checked={allowDeprecated}
-              onChange={e => setAllowDeprecated(e.target.checked)}
-            />
-          }
-          label="Include deprecated fields"
-        />
-        {localCubesByColumn !== null &&
-        columns !== undefined &&
-        localAllCubes !== null ? (
-          <ColumnGroupList
-            searchTerms={searchTerms}
-            allowDeprecated={allowDeprecated}
-            onlySegments={onlySegments}
-            columns={columns}
-            cubesByColumn={localCubesByColumn}
-            allCubes={localAllCubes}
+    <div>
+      <TextField
+        placeholder="Search"
+        value={searchText}
+        onChange={e => setSearchText(e.target.value)}
+        InputProps={{
+          endAdornment: (
+            <IconButton onClick={() => setSearchText("")}>
+              <Clear />
+            </IconButton>
+          ),
+        }}
+      />
+      <FormControlLabel
+        control={
+          <Checkbox
+            checked={onlySegments}
+            onChange={e => setOnlySegments(e.target.checked)}
           />
-        ) : (
-          <div>Loading dimensions and metrics...</div>
-        )}
-      </div>
-    </AutoScrollProvider>
+        }
+        label="Only show fields that are allowed in segments"
+      />
+      <FormControlLabel
+        control={
+          <Checkbox
+            checked={allowDeprecated}
+            onChange={e => setAllowDeprecated(e.target.checked)}
+          />
+        }
+        label="Include deprecated fields"
+      />
+      {localCubesByColumn !== null &&
+      columns !== undefined &&
+      localAllCubes !== null ? (
+        <ColumnGroupList
+          searchTerms={searchTerms}
+          allowDeprecated={allowDeprecated}
+          onlySegments={onlySegments}
+          columns={columns}
+          cubesByColumn={localCubesByColumn}
+          allCubes={localAllCubes}
+        />
+      ) : (
+        <div>Loading dimensions and metrics...</div>
+      )}
+    </div>
   )
 }
 

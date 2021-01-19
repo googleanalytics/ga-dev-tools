@@ -29,7 +29,6 @@ import Checkbox from "@material-ui/core/Checkbox"
 import FormControlLabel from "@material-ui/core/FormControlLabel"
 import { RemoveCircle, AddCircle, Info } from "@material-ui/icons"
 
-import { AutoScrollDiv } from "../../components/AutoScroll"
 import { Typography, makeStyles, IconButton } from "@material-ui/core"
 import { Column } from "../../api"
 

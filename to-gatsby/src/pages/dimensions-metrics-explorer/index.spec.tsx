@@ -36,9 +36,7 @@ describe("Dimensions and Metrics Explorer", () => {
     const { wrapped, store } = withProviders(<DimensionsAndMetricsExplorer />)
     store.dispatch({ type: "setUser", user: {} })
     store.dispatch({ type: "setGapi", gapi })
-    const { getByText, findByLabelText, debug, container } = renderer.render(
-      wrapped
-    )
+    const { getByText, findByLabelText } = renderer.render(wrapped)
     // Add timeout since cubes are "fetched"
     await renderer.waitFor(() => {}, { timeout: 1000 })
 
