@@ -13,7 +13,7 @@
 // limitations under the License.
 
 import * as React from "react"
-import { groupBy, map, sortBy, keyBy } from "lodash"
+import { groupBy, map, sortBy } from "lodash"
 import { Set } from "immutable"
 import { navigate } from "gatsby"
 
@@ -31,6 +31,7 @@ import { RemoveCircle, AddCircle, Info } from "@material-ui/icons"
 
 import { Typography, makeStyles, IconButton } from "@material-ui/core"
 import { Column } from "../../api"
+import classnames from "classnames"
 
 const useStyles = makeStyles(theme => ({
   expandContract: {
@@ -40,9 +41,18 @@ const useStyles = makeStyles(theme => ({
     display: "flex",
     alignItems: "baseline",
   },
+  columnSubgroup: {
+    marginBottom: theme.spacing(1),
+  },
+  deprecatedColumn: {
+    textDecoration: "line-through",
+  },
+  deprecatedCheckbox: {
+    visibility: "hidden",
+  },
   columnDetails: {
-    display: "grid",
-    "grid-template-columns": "50% 50%",
+    display: "flex",
+    flexDirection: "column",
   },
   columnLabel: {
     display: "flex",
@@ -68,15 +78,20 @@ const useStyles = makeStyles(theme => ({
 
 type ColumnLabelProps = {
   column: Column
+  isDeprecated: boolean
 }
-const ColumnLabel: React.FC<ColumnLabelProps> = ({ column }) => {
+const ColumnLabel: React.FC<ColumnLabelProps> = ({ column, isDeprecated }) => {
   const classes = useStyles()
   const slug = `/dimensions-metrics-explorer/${
     column.attributes?.group.replace(/ /g, "-").toLowerCase() || ""
   }/#${column.id?.replace("ga:", "")}`
 
   return (
-    <div className={classes.columnLabel}>
+    <div
+      className={classnames(classes.columnLabel, {
+        [classes.deprecatedColumn]: isDeprecated,
+      })}
+    >
       <div className={classes.labelText}>
         <Typography component="div" className={classes.name}>
           {column.attributes?.uiName}
@@ -107,17 +122,22 @@ const SelectableColumn: React.FC<{
   setSelected: (selected: boolean) => void
 }> = ({ column, selected, disabled, setSelected }) => {
   const classes = useStyles()
+  const isDeprecated = React.useMemo(
+    () => column.attributes?.status !== "PUBLIC",
+    [column.attributes?.status]
+  )
   return (
     <FormControlLabel
       className={classes.column}
       control={
         <Checkbox
+          className={classnames({ [classes.deprecatedCheckbox]: isDeprecated })}
           checked={selected}
           disabled={disabled}
           onChange={event => setSelected(event.target.checked)}
         />
       }
-      label={<ColumnLabel column={column} />}
+      label={<ColumnLabel column={column} isDeprecated={isDeprecated} />}
     />
   )
 }
@@ -126,6 +146,8 @@ const ColumnSubgroup: React.FC<{
   columns: Column[]
   name: "Dimensions" | "Metrics"
   allowableCubes: Set<string>
+  allowDeprecated: boolean
+  onlySegments: boolean
   cubesByColumn: CubesByColumn
   selectedColumns: Set<string>
   selectColumn: (column: string, selected: boolean) => void
@@ -135,35 +157,54 @@ const ColumnSubgroup: React.FC<{
   selectColumn,
   selectedColumns,
   allowableCubes,
+  allowDeprecated,
+  onlySegments,
   cubesByColumn,
 }) => {
+  const classes = useStyles()
   // Move deprecated columns to the bottom
   const sortedColumns = React.useMemo(
     () =>
       sortBy(columns, column =>
         column.attributes?.status === "PUBLIC" ? 0 : 1
-      ),
-    [columns]
+      )
+        .filter(
+          column =>
+            (allowDeprecated && column.attributes?.status !== "PUBLIC") ||
+            column.attributes?.status === "PUBLIC"
+        )
+        .filter(column => {
+          if (onlySegments) {
+            return column.attributes?.allowedInSegments === "true"
+          } else {
+            return true
+          }
+        }),
+    [columns, allowDeprecated, onlySegments]
   )
 
   return (
-    <div>
+    <div className={classes.columnSubgroup}>
       <Typography variant="subtitle1">{name}</Typography>
       <div>
-        {sortedColumns.map(column => {
-          const disabled =
-            allowableCubes.intersect(cubesByColumn.get(column.id!, Set()))
-              .size === 0
-          return (
-            <SelectableColumn
-              column={column}
-              key={column.id}
-              setSelected={selected => selectColumn(column.id!, selected)}
-              disabled={disabled}
-              selected={selectedColumns.contains(column.id!)}
-            />
-          )
-        })}
+        {sortedColumns.length === 0 ? (
+          <>No {name}.</>
+        ) : (
+          sortedColumns.map(column => {
+            const disabled =
+              allowableCubes.intersect(cubesByColumn.get(column.id!, Set()))
+                .size === 0
+            return (
+              <SelectableColumn
+                column={column}
+                key={column.id}
+                setSelected={selected => selectColumn(column.id!, selected)}
+                disabled={disabled}
+                selected={selectedColumns.contains(column.id!)}
+              />
+            )
+          })
+        )}
       </div>
     </div>
   )
@@ -174,6 +215,8 @@ const ColumnGroup: React.FC<{
   toggleOpen: () => void
   name: string
   columns: Column[]
+  onlySegments: boolean
+  allowDeprecated: boolean
   allowableCubes: Set<string>
   cubesByColumn: CubesByColumn
   selectedColumns: Set<string>
@@ -182,6 +225,8 @@ const ColumnGroup: React.FC<{
   open,
   toggleOpen,
   name,
+  allowDeprecated,
+  onlySegments,
   columns,
   allowableCubes,
   cubesByColumn,
@@ -190,11 +235,7 @@ const ColumnGroup: React.FC<{
 }) => {
   const classes = useStyles()
   return (
-    <Accordian
-      expanded={open}
-      onChange={toggleOpen}
-      TransitionProps={{ unmountOnExit: true }}
-    >
+    <Accordian expanded={open} onChange={toggleOpen}>
       <AccordionSummary expandIcon={<ExpandMoreIcon />}>
         {name}
       </AccordionSummary>
@@ -205,6 +246,8 @@ const ColumnGroup: React.FC<{
             column => column.attributes?.type === "DIMENSION"
           )}
           allowableCubes={allowableCubes}
+          allowDeprecated={allowDeprecated}
+          onlySegments={onlySegments}
           cubesByColumn={cubesByColumn}
           selectColumn={selectColumn}
           selectedColumns={selectedColumns}
@@ -215,6 +258,8 @@ const ColumnGroup: React.FC<{
             column => column.attributes?.type === "METRIC"
           )}
           allowableCubes={allowableCubes}
+          allowDeprecated={allowDeprecated}
+          onlySegments={onlySegments}
           cubesByColumn={cubesByColumn}
           selectColumn={selectColumn}
           selectedColumns={selectedColumns}
@@ -240,50 +285,22 @@ const ColumnGroupList: React.FC<{
   allCubes,
 }) => {
   const classes = useStyles()
-  const filteredColumns = React.useMemo(() => {
-    let filtered: Column[] = columns
-
-    if (!allowDeprecated) {
-      filtered = filtered.filter(
-        column => column.attributes?.status !== "DEPRECATED"
-      )
-    }
-
-    if (onlySegments) {
-      filtered = filtered.filter(
-        column => column.attributes?.allowedInSegments === "true"
-      )
-    }
-
-    filtered = filtered.filter(column =>
-      searchTerms.every(
-        term =>
-          column.id!.toLowerCase().indexOf(term) !== -1 ||
-          column.attributes?.uiName?.toLowerCase().indexOf(term) !== -1
-      )
-    )
-
-    return filtered
-  }, [columns, allowDeprecated, onlySegments, searchTerms])
-
-  // Group all columns by Id
-  const columnsByLowerId = React.useMemo(
-    () => keyBy(filteredColumns, column => column.id!.toLowerCase()),
-    [filteredColumns]
-  )
 
   // Group all the columns by group
-  const groupedColumns = React.useMemo(
-    () =>
-      // JS Sets guarantee insertion order is preserved, which is important
-      // because the key order in this groupBy determines the order that
-      // they appear in the UI.
-      groupBy(filteredColumns, column => column.attributes?.group),
-    [filteredColumns]
-  )
+  const groupedColumns = React.useMemo(() =>
+    // JS Sets guarantee insertion order is preserved, which is important
+    // because the key order in this groupBy determines the order that
+    // they appear in the UI.
+    {
+      console.log("groupedColumns effect ran")
+      return groupBy(columns, column => column.attributes?.group)
+    }, [columns])
 
   // Set of column groups that are currently expanded.
-  const [open, setOpen] = React.useState<Set<string>>(() => Set())
+  const [open, setOpen] = React.useState<Set<string>>(() => {
+    console.log("set open initalization happened")
+    return Set()
+  })
 
   // Expand/Collapse callbacks
   const toggleGroupOpen = React.useCallback(
@@ -310,17 +327,6 @@ const ColumnGroupList: React.FC<{
       expandAll()
     }
   }, [searchTerms.length, collapseAll, expandAll])
-
-  // When the page loads, if there is a fragment, auto-expand the group
-  // containing that fragment. Make sure this effect happens after the
-  // auto-expand or auto-collapse hook, above.
-  React.useEffect(() => {
-    const fragment = window.location.hash.replace(/^#/, "").toLowerCase()
-    const selectedColumn = columnsByLowerId[fragment]
-    if (selectedColumn !== undefined) {
-      setOpen(oldOpen => oldOpen.add(selectedColumn.attributes!.group!))
-    }
-  }, [setOpen, columnsByLowerId])
 
   // selectedColumns is the set of selected columns Each column is
   // associated with one or more "cubes", and a only columns that share
@@ -374,19 +380,24 @@ const ColumnGroupList: React.FC<{
         ) : null}
       </div>
       <div>
-        {map(groupedColumns, (columns, groupName) => (
-          <ColumnGroup
-            open={open.contains(groupName)}
-            columns={columns}
-            name={groupName}
-            key={groupName}
-            toggleOpen={() => toggleGroupOpen(groupName)}
-            allowableCubes={allowableCubes}
-            cubesByColumn={cubesByColumn}
-            selectedColumns={selectedColumns}
-            selectColumn={selectColumn}
-          />
-        ))}
+        {map(groupedColumns, (columns, groupName) => {
+          // console.log(`${groupName} is open: ${open.contains(groupName)}`)
+          return (
+            <ColumnGroup
+              open={open.contains(groupName)}
+              onlySegments={onlySegments}
+              allowDeprecated={allowDeprecated}
+              columns={columns}
+              name={groupName}
+              key={groupName}
+              toggleOpen={() => toggleGroupOpen(groupName)}
+              allowableCubes={allowableCubes}
+              cubesByColumn={cubesByColumn}
+              selectedColumns={selectedColumns}
+              selectColumn={selectColumn}
+            />
+          )
+        })}
       </div>
     </div>
   )

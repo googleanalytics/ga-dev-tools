@@ -53,7 +53,10 @@ export const useLocalStorage = function (
 ): [string, React.Dispatch<React.SetStateAction<string>>] {
   // Set up the state; initialize from localStorage if available.
   const [currentValue, setValue] = React.useState(() => {
-    const storedValue = window.localStorage.getItem(key)
+    let storedValue: null | string = null
+    if (typeof window !== "undefined") {
+      storedValue = window.localStorage.getItem(key)
+    }
     return storedValue !== null
       ? storedValue
       : initialValue instanceof Function
