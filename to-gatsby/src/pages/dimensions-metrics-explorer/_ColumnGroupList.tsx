@@ -132,7 +132,7 @@ const SelectableColumn: React.FC<{
   const classes = useStyles()
   const isDeprecated = React.useMemo(
     () => column.attributes?.status !== "PUBLIC",
-    [column.attributes?.status]
+    [column.attributes]
   )
   return (
     <FormControlLabel
@@ -255,7 +255,7 @@ const ColumnGroup: React.FC<{
                 .toLowerCase()
                 .replace(" ", "-")}#${name.replace(" ", "-")}`}
             >
-              <LinkIcon className={classes.linkIcon} />
+              <LinkIcon />
             </a>
           )}
         </Typography>
@@ -313,13 +313,11 @@ const ColumnGroupList: React.FC<{
     // because the key order in this groupBy determines the order that
     // they appear in the UI.
     {
-      console.log("groupedColumns effect ran")
       return groupBy(columns, column => column.attributes?.group)
     }, [columns])
 
   // Set of column groups that are currently expanded.
   const [open, setOpen] = React.useState<Set<string>>(() => {
-    console.log("set open initalization happened")
     return Set()
   })
 
@@ -401,24 +399,21 @@ const ColumnGroupList: React.FC<{
         ) : null}
       </div>
       <div>
-        {map(groupedColumns, (columns, groupName) => {
-          // console.log(`${groupName} is open: ${open.contains(groupName)}`)
-          return (
-            <ColumnGroup
-              open={open.contains(groupName)}
-              onlySegments={onlySegments}
-              allowDeprecated={allowDeprecated}
-              columns={columns}
-              name={groupName}
-              key={groupName}
-              toggleOpen={() => toggleGroupOpen(groupName)}
-              allowableCubes={allowableCubes}
-              cubesByColumn={cubesByColumn}
-              selectedColumns={selectedColumns}
-              selectColumn={selectColumn}
-            />
-          )
-        })}
+        {map(groupedColumns, (columns, groupName) => (
+          <ColumnGroup
+            open={open.contains(groupName)}
+            onlySegments={onlySegments}
+            allowDeprecated={allowDeprecated}
+            columns={columns}
+            name={groupName}
+            key={groupName}
+            toggleOpen={() => toggleGroupOpen(groupName)}
+            allowableCubes={allowableCubes}
+            cubesByColumn={cubesByColumn}
+            selectedColumns={selectedColumns}
+            selectColumn={selectColumn}
+          />
+        ))}
       </div>
     </div>
   )

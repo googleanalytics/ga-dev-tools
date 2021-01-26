@@ -19,7 +19,7 @@ import classnames from "classnames"
 import { Column } from "../../api"
 import { Link } from "gatsby"
 import { Typography, Chip, makeStyles } from "@material-ui/core"
-import { Done, Clear, Link as LinkIcon, ArrowBack } from "@material-ui/icons"
+import { Link as LinkIcon, ArrowBack } from "@material-ui/icons"
 import { sortBy } from "lodash"
 import CopyButton from "../../components/CopyButton"
 
@@ -106,7 +106,7 @@ const ColumnInfo: React.FC<ColumnProps> = ({
       )}
       <CopyButton
         text="Copy API Name"
-        toCopy={column.id}
+        toCopy={column.id || ""}
         variant="outlined"
         size="small"
       />
@@ -116,7 +116,6 @@ const ColumnInfo: React.FC<ColumnProps> = ({
 
 const GroupInfoTemplate: React.FC<GroupInfoTemplateProps> = ({
   pageContext: { groupName, dimensions, metrics },
-  pageContext,
 }) => {
   const classes = useStyles()
   return (
