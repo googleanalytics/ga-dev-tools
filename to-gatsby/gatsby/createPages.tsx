@@ -55,6 +55,9 @@ export const createPages = async ({ actions }) => {
     })
   })
 
+  // TODO - Ideally this wouldn't be fetching from the API, but instead using a
+  // gatsby data source. That will take a while though, so this is fine for the
+  // time being.
   const {
     data: { items },
   } = await axios.get(
@@ -68,10 +71,13 @@ export const createPages = async ({ actions }) => {
     return { ...acc, [groupName]: inGroup }
   }, {})
 
-  Object.entries(byGroup).forEach(([groupName, items]) => {
+  ;(Object as any).entries(byGroup).forEach(([groupName, items]) => {
     const slugName = groupName.replace(/ /g, "-").toLowerCase()
     const slug = `/dimensions-metrics-explorer/${slugName}`
     console.info(`Creating page at slug: ${slug}`)
+
+    const metrics = items.filter(a => a.attributes.type === "METRIC")
+    const dimensions = items.filter(a => a.attributes.type === "DIMENSION")
 
     createPage({
       path: slug,
@@ -80,7 +86,8 @@ export const createPages = async ({ actions }) => {
       ),
       context: {
         groupName,
-        items,
+        metrics,
+        dimensions,
       },
     })
   })

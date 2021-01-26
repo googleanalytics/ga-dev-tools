@@ -41,6 +41,7 @@ interface CopyButtonPropsButton extends BaseCopyButtonProps {
   color?: "primary"
   useIconButton?: undefined
   text: string
+  size?: IconButtonProps["size"]
 }
 
 type CopyButtonProps = CopyButtonPropsIconButton | CopyButtonPropsButton
@@ -65,7 +66,12 @@ const CopyButton: React.FC<CopyButtonProps> = props => {
           </IconButton>
         </Tooltip>
       ) : (
-        <Button variant={props.variant} color={props.color} onClick={copyCode}>
+        <Button
+          variant={props.variant}
+          color={props.color}
+          onClick={copyCode}
+          size={props.size}
+        >
           <FileCopyIcon className={classes.copyIcon} /> {props.text}
         </Button>
       )}

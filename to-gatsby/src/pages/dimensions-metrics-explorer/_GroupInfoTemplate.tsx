@@ -15,16 +15,19 @@
 import * as React from "react"
 
 import Layout from "../../components/layout"
+import classnames from "classnames"
 import { Column } from "../../api"
 import { Link } from "gatsby"
 import { Typography, Chip, makeStyles } from "@material-ui/core"
 import { Done, Clear, Link as LinkIcon, ArrowBack } from "@material-ui/icons"
 import { sortBy } from "lodash"
+import CopyButton from "../../components/CopyButton"
 
 type GroupInfoTemplateProps = {
   pageContext: {
     groupName: string
-    items: Column[]
+    dimensions: Column[]
+    metrics: Column[]
   }
 }
 
@@ -33,6 +36,9 @@ type ColumnProps = {
 }
 
 const useStyles = makeStyles(theme => ({
+  deprecatedText: {
+    textDecoration: "line-through",
+  },
   returnLink: {
     display: "flex",
     alignItems: "center",
@@ -68,7 +74,12 @@ const ColumnInfo: React.FC<ColumnProps> = ({
   const classes = useStyles()
   return (
     <section id={column.id?.replace("ga:", "")}>
-      <Typography variant="h3" className={classes.columnHeading}>
+      <Typography
+        variant="h4"
+        className={classnames(classes.columnHeading, {
+          [classes.deprecatedText]: attributes?.status === "DEPRECATED",
+        })}
+      >
         {attributes?.uiName}{" "}
         <Typography component="span">{column.id}</Typography>
         <a href={`#${column.id?.replace("ga:", "")}`}>
@@ -76,44 +87,57 @@ const ColumnInfo: React.FC<ColumnProps> = ({
         </a>
       </Typography>
       <section className={classes.chips}>
-        {attributes?.status === "DEPRECATED" && (
-          <Chip size="small" label="Deprecated" icon={<Clear />} />
-        )}
-        {attributes?.allowedInSegments ? (
-          <Chip
-            color="primary"
-            size="small"
-            label="Allowed In Segments"
-            icon={<Done />}
-          />
-        ) : (
-          <Chip
-            color="secondary"
-            size="small"
-            label="Disallowed in Segments"
-            icon={<Clear />}
-          />
-        )}
-        <Chip size="small" label={attributes?.type.toLowerCase()} />
         <Chip size="small" label={attributes?.dataType.toLowerCase()} />
         <Chip size="small" label={`v${attributes?.addedInApiVersion}`} />
+        {attributes?.addedInApiVersion === "3" && (
+          <Chip size="small" label={`v4`} />
+        )}
       </section>
+      {attributes?.status === "DEPRECATED" && (
+        <Typography variant="body1" color="secondary">
+          This field is deprecated and should no longer be used.
+        </Typography>
+      )}
       <Typography variant="body1">{attributes?.description}</Typography>
+      {!attributes?.allowedInSegments && (
+        <Typography variant="body1">
+          This field is disallowed in segments.
+        </Typography>
+      )}
+      <CopyButton
+        text="Copy API Name"
+        toCopy={column.id}
+        variant="outlined"
+        size="small"
+      />
     </section>
   )
 }
 
 const GroupInfoTemplate: React.FC<GroupInfoTemplateProps> = ({
-  pageContext: { groupName, items },
+  pageContext: { groupName, dimensions, metrics },
+  pageContext,
 }) => {
   const classes = useStyles()
   return (
     <Layout title="Dimensions & Metrics Explorer">
-      <Typography variant="h2">{groupName} group</Typography>
+      <Typography variant="h2">
+        {groupName} group
+        <a href={`#${groupName.replace(" ", "-")}`}>
+          <LinkIcon className={classes.linkIcon} />
+        </a>
+      </Typography>
       <Link to="/dimensions-metrics-explorer" className={classes.returnLink}>
         <ArrowBack /> Dimensions & Metrics Explorer
       </Link>
-      {sortBy(items, column =>
+      <Typography variant="h3">Dimensions</Typography>
+      {sortBy(dimensions, column =>
+        column.attributes?.status === "PUBLIC" ? 0 : 1
+      ).map(item => (
+        <ColumnInfo key={item.id} column={item} />
+      ))}
+      <Typography variant="h3">Metrics</Typography>
+      {sortBy(metrics, column =>
         column.attributes?.status === "PUBLIC" ? 0 : 1
       ).map(item => (
         <ColumnInfo key={item.id} column={item} />

@@ -30,16 +30,23 @@ import FormControlLabel from "@material-ui/core/FormControlLabel"
 import { RemoveCircle, AddCircle, Info } from "@material-ui/icons"
 
 import { Typography, makeStyles, IconButton } from "@material-ui/core"
+import LinkIcon from "@material-ui/icons/Link"
 import { Column } from "../../api"
 import classnames from "classnames"
+import { CopyIconButton } from "../../components/CopyButton"
 
 const useStyles = makeStyles(theme => ({
+  accordionTitle: { margin: 0 },
   expandContract: {
     margin: theme.spacing(1),
   },
   column: {
     display: "flex",
     alignItems: "baseline",
+  },
+  columnSubgroupTitle: {
+    margin: 0,
+    marginBottom: theme.spacing(1),
   },
   columnSubgroup: {
     marginBottom: theme.spacing(1),
@@ -84,7 +91,7 @@ const ColumnLabel: React.FC<ColumnLabelProps> = ({ column, isDeprecated }) => {
   const classes = useStyles()
   const slug = `/dimensions-metrics-explorer/${
     column.attributes?.group.replace(/ /g, "-").toLowerCase() || ""
-  }/#${column.id?.replace("ga:", "")}`
+  }#${column.id?.replace("ga:", "")}`
 
   return (
     <div
@@ -103,6 +110,7 @@ const ColumnLabel: React.FC<ColumnLabelProps> = ({ column, isDeprecated }) => {
           className={classes.id}
         >
           {column.id}
+          <CopyIconButton toCopy={column.id || ""} />
         </Typography>
       </div>
       <IconButton
@@ -185,7 +193,9 @@ const ColumnSubgroup: React.FC<{
 
   return (
     <div className={classes.columnSubgroup}>
-      <Typography variant="subtitle1">{name}</Typography>
+      <Typography variant="h4" className={classes.columnSubgroupTitle}>
+        {name}
+      </Typography>
       <div>
         {sortedColumns.length === 0 ? (
           <>No {name}.</>
@@ -237,7 +247,18 @@ const ColumnGroup: React.FC<{
   return (
     <Accordian expanded={open} onChange={toggleOpen}>
       <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-        {name}
+        <Typography variant="h3" className={classes.accordionTitle}>
+          {name}{" "}
+          {open && (
+            <a
+              href={`/dimensions-metrics-explorer/${name
+                .toLowerCase()
+                .replace(" ", "-")}#${name.replace(" ", "-")}`}
+            >
+              <LinkIcon className={classes.linkIcon} />
+            </a>
+          )}
+        </Typography>
       </AccordionSummary>
       <AccordionDetails className={classes.columnDetails}>
         <ColumnSubgroup
