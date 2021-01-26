@@ -17,7 +17,7 @@ import { groupBy, map, sortBy } from "lodash"
 import { Set } from "immutable"
 import { navigate } from "gatsby"
 
-import { CubesByColumn } from "./_cubes"
+import { CUBES_BY_COLUMN_NAME, CUBE_NAMES, CubesByColumnName } from "./_cubes"
 
 import Accordian from "@material-ui/core/Accordion"
 import AccordionSummary from "@material-ui/core/AccordionSummary"
@@ -156,7 +156,7 @@ const ColumnSubgroup: React.FC<{
   allowableCubes: Set<string>
   allowDeprecated: boolean
   onlySegments: boolean
-  cubesByColumn: CubesByColumn
+  cubesByColumnName: CubesByColumnName
   selectedColumns: Set<string>
   selectColumn: (column: string, selected: boolean) => void
 }> = ({
@@ -167,7 +167,7 @@ const ColumnSubgroup: React.FC<{
   allowableCubes,
   allowDeprecated,
   onlySegments,
-  cubesByColumn,
+  cubesByColumnName,
 }) => {
   const classes = useStyles()
   // Move deprecated columns to the bottom
@@ -202,7 +202,7 @@ const ColumnSubgroup: React.FC<{
         ) : (
           sortedColumns.map(column => {
             const disabled =
-              allowableCubes.intersect(cubesByColumn.get(column.id!, Set()))
+              allowableCubes.intersect(cubesByColumnName.get(column.id!, Set()))
                 .size === 0
             return (
               <SelectableColumn
@@ -228,7 +228,7 @@ const ColumnGroup: React.FC<{
   onlySegments: boolean
   allowDeprecated: boolean
   allowableCubes: Set<string>
-  cubesByColumn: CubesByColumn
+  cubesByColumnName: CubesByColumnName
   selectedColumns: Set<string>
   selectColumn: (column: string, selected: boolean) => void
 }> = ({
@@ -239,7 +239,7 @@ const ColumnGroup: React.FC<{
   onlySegments,
   columns,
   allowableCubes,
-  cubesByColumn,
+  cubesByColumnName,
   selectedColumns,
   selectColumn,
 }) => {
@@ -269,7 +269,7 @@ const ColumnGroup: React.FC<{
           allowableCubes={allowableCubes}
           allowDeprecated={allowDeprecated}
           onlySegments={onlySegments}
-          cubesByColumn={cubesByColumn}
+          cubesByColumnName={cubesByColumnName}
           selectColumn={selectColumn}
           selectedColumns={selectedColumns}
         />
@@ -281,7 +281,7 @@ const ColumnGroup: React.FC<{
           allowableCubes={allowableCubes}
           allowDeprecated={allowDeprecated}
           onlySegments={onlySegments}
-          cubesByColumn={cubesByColumn}
+          cubesByColumnName={cubesByColumnName}
           selectColumn={selectColumn}
           selectedColumns={selectedColumns}
         />
@@ -294,17 +294,8 @@ const ColumnGroupList: React.FC<{
   allowDeprecated: boolean
   searchTerms: string[]
   onlySegments: boolean
-  cubesByColumn: CubesByColumn
-  allCubes: Set<string>
   columns: Column[]
-}> = ({
-  allowDeprecated,
-  searchTerms,
-  onlySegments,
-  columns,
-  cubesByColumn,
-  allCubes,
-}) => {
+}> = ({ allowDeprecated, searchTerms, onlySegments, columns }) => {
   const classes = useStyles()
 
   // Group all the columns by group
@@ -367,9 +358,12 @@ const ColumnGroupList: React.FC<{
   const allowableCubes = React.useMemo<Set<string>>(
     () =>
       selectedColumns
-        .map(columnId => cubesByColumn.get(columnId) || (Set() as Set<string>))
-        .reduce((cubes1, cubes2) => cubes1.intersect(cubes2), allCubes),
-    [selectedColumns, cubesByColumn, allCubes]
+        .map(
+          columnId =>
+            CUBES_BY_COLUMN_NAME.get(columnId) || (Set() as Set<string>)
+        )
+        .reduce((cubes1, cubes2) => cubes1.intersect(cubes2), CUBE_NAMES),
+    [selectedColumns]
   )
 
   const showExpandAll = open.size < Object.keys(groupedColumns).length
@@ -409,7 +403,7 @@ const ColumnGroupList: React.FC<{
             key={groupName}
             toggleOpen={() => toggleGroupOpen(groupName)}
             allowableCubes={allowableCubes}
-            cubesByColumn={cubesByColumn}
+            cubesByColumnName={CUBES_BY_COLUMN_NAME}
             selectedColumns={selectedColumns}
             selectColumn={selectColumn}
           />

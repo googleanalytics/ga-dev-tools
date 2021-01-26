@@ -14,7 +14,9 @@
 
 import { reduce, once } from "lodash"
 import { Set, Map } from "immutable"
-import cubes from "./_ga_cubes.json"
+// TODO - If time allows, this file should be processed at build time instead
+// of runtime.
+import CUBES from "./_ga_cubes.json"
 
 // The ga_cubes.json file is a mapping of cubes to column names. The
 // format looks like this:
@@ -23,37 +25,28 @@ import cubes from "./_ga_cubes.json"
 //
 // In other words, each set of columns is an object where the keys are
 // column names and the values are meaningless placeholders
-export type RawCubes = { [cube: string]: { [column: string]: any } }
+export type Cubes = { [cube: string]: { [column: string]: any } }
 
 // Mapping of Column names to sets of cubes
-export type CubesByColumn = Map<string, Set<string>>
+export type CubesByColumnName = Map<string, Set<string>>
 
-const fetchRawCubes = once((): Promise<RawCubes> => Promise.resolve(cubes))
-
-// Take the RawCubes format and invent it to instead by a mapping of column
-// names to a set of cubes.
+// Take the Cubes format and invert it to instead be a map of column names to a
+// set of cubes.
 //
 // In the demo, a user checks a column and the UI updates other columns based
 // on compatability (they are disabled if they are incompatable). Since only
 // columns that share a cube can be queried together, this means only columns
 // that share a cube are compatable with each other.
-const buildCubes = (rawCubes: RawCubes): CubesByColumn => {
-  return reduce(
-    rawCubes,
-    (cubesByColumn, columnList, cubeName) =>
-      reduce(
-        columnList,
-        (cubesByColumn, _, columnName) =>
-          cubesByColumn.update(columnName, Set(), cubes => cubes.add(cubeName)),
-        cubesByColumn
-      ),
-    Map()
-  )
-}
+export const CUBES_BY_COLUMN_NAME: CubesByColumnName = reduce(
+  CUBES,
+  (cubesByColumn, columnList, cubeName) =>
+    reduce(
+      columnList,
+      (cubesByColumn, _, columnName) =>
+        cubesByColumn.update(columnName, Set(), cubes => cubes.add(cubeName)),
+      cubesByColumn
+    ),
+  Map()
+)
 
-// This is a promise because in the future it will be loaded via a fetch.
-export const cubesByColumn = (): Promise<CubesByColumn> =>
-  fetchRawCubes().then(rawCubes => buildCubes(rawCubes))
-
-export const allCubes = (): Promise<Set<string>> =>
-  fetchRawCubes().then(rawCubes => Set.fromKeys(rawCubes))
+export const CUBE_NAMES: Set<string> = Set.fromKeys(CUBES)

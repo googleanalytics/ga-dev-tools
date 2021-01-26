@@ -13,12 +13,10 @@
 // limitations under the License.
 
 import * as React from "react"
-import { Set } from "immutable"
 
 import { useLocalStorage, useTypedLocalStorage } from "../../hooks"
 import { Column, useApi } from "../../api"
-
-import { CubesByColumn, cubesByColumn, allCubes } from "./_cubes"
+import { CUBES_BY_COLUMN_NAME, CUBE_NAMES } from "./_cubes"
 
 import TextField from "@material-ui/core/TextField"
 import IconButton from "@material-ui/core/IconButton"
@@ -27,9 +25,13 @@ import ColumnGroupList from "./_ColumnGroupList"
 import FormControlLabel from "@material-ui/core/FormControlLabel"
 import Checkbox from "@material-ui/core/Checkbox"
 
-const useColumns = (): Column[] | undefined => {
+const useColumns = (): Column[] => {
   const api = useApi()
-  const [columns, setColumns] = React.useState<undefined | Column[]>(undefined)
+  const [columns, setColumns] = useTypedLocalStorage<Column[]>(
+    "metadata.columns",
+    "[]",
+    false
+  )
 
   React.useEffect(() => {
     if (api === undefined) {
@@ -37,7 +39,7 @@ const useColumns = (): Column[] | undefined => {
     }
 
     api.metadata.columns.list({ reportType: "ga" }).then(response => {
-      setColumns(response.result.items)
+      setColumns(response.result.items!)
     })
   }, [api])
   return columns
@@ -64,20 +66,6 @@ const Main: React.FC = () => {
   )
 
   const columns = useColumns()
-
-  // Fetch the cubes
-  const [
-    localCubesByColumn,
-    setCubesByColumn,
-  ] = React.useState<null | CubesByColumn>(null)
-  React.useEffect(() => {
-    cubesByColumn().then(cubes => setCubesByColumn(cubes))
-  }, [])
-
-  const [localAllCubes, setAllCubes] = React.useState<null | Set<string>>(null)
-  React.useEffect(() => {
-    allCubes().then(cubes => setAllCubes(cubes))
-  }, [])
 
   return (
     <div>
@@ -111,16 +99,14 @@ const Main: React.FC = () => {
         }
         label="Include deprecated fields"
       />
-      {localCubesByColumn !== null &&
-      columns !== undefined &&
-      localAllCubes !== null ? (
+      {CUBES_BY_COLUMN_NAME !== null &&
+      columns.length !== 0 &&
+      CUBE_NAMES !== null ? (
         <ColumnGroupList
           searchTerms={searchTerms}
           allowDeprecated={allowDeprecated}
           onlySegments={onlySegments}
           columns={columns}
-          cubesByColumn={localCubesByColumn}
-          allCubes={localAllCubes}
         />
       ) : (
         <div>Loading dimensions and metrics...</div>
