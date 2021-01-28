@@ -28,9 +28,12 @@ import {
   InputLabel,
   FormHelperText,
 } from "@material-ui/core"
+import Autocomplete from "@material-ui/lab/Autocomplete"
 import { Url } from "../../constants"
 import ViewSelector, { HasView } from "../../components/ViewSelector"
 import { Info } from "@material-ui/icons"
+import useQueryExplorer from "./_useQueryExplorer"
+import ConceptMultiSelect from "./_ConceptMultiSelect"
 
 const coreReportingApi = <a href={Url.coreReportingApi}>Core Reporting API</a>
 
@@ -59,6 +62,14 @@ const useStyles = makeStyles(theme => ({
   includeEmpty: {
     marginTop: theme.spacing(2),
     marginBottom: theme.spacing(1),
+  },
+  conceptOption: {
+    display: "flex",
+    flexDirection: "column",
+    "& > p": {
+      margin: 0,
+      padding: 0,
+    },
   },
 }))
 
@@ -94,18 +105,29 @@ const Linked: React.FC<LinkedProps> = ({ children, hash }) => {
 }
 
 type SamplingLevel = "DEFAULT" | "FASTER" | "HIGHER_PRECISION"
+interface ConceptOption {
+  id: string
+  name: string
+}
 
 export const QueryExplorer = () => {
   const classes = useStyles()
   const [selectedView, setSelectedView] = React.useState<HasView | undefined>(
     undefined
   )
+  const { metrics, dimensions } = useQueryExplorer(selectedView)
   const [view, setView] = React.useState("")
-  const [startDate, setStartDate] = React.useState("")
-  const [endDate, setEndDate] = React.useState("")
+  const [startDate, setStartDate] = React.useState("7daysAgo")
+  const [endDate, setEndDate] = React.useState("yesterday")
   const [samplingLevel, setSamplingLevel] = React.useState<SamplingLevel>(
     "DEFAULT"
   )
+  const [selectedMetrics, setSelectedMetrics] = React.useState<ConceptOption[]>(
+    []
+  )
+  const [selectedDimensions, setSelectedDimensions] = React.useState<
+    ConceptOption[]
+  >([])
 
   const requiredParameters = React.useMemo(() => {
     return view !== "" && startDate !== "" && endDate !== ""
@@ -179,19 +201,19 @@ export const QueryExplorer = () => {
           />
         </Linked>
         <Linked hash="metrics">
-          <TextField
-            fullWidth
-            id="metrics"
-            label="metrics"
-            helperText="Metrics to include in query."
+          <ConceptMultiSelect
+            label="Metrics"
+            helperText="Metrics to include in the query."
+            columns={metrics}
+            setSelectedOptions={setSelectedMetrics}
           />
         </Linked>
         <Linked hash="dimensions">
-          <TextField
-            fullWidth
-            id="dimensions"
-            label="dimensions"
-            helperText="A list of metrics and dimensions indicating the sorting order and sorting direction for the returned data."
+          <ConceptMultiSelect
+            label="Dimensions"
+            helperText="dimensions to include in the query."
+            columns={dimensions}
+            setSelectedOptions={setSelectedDimensions}
           />
         </Linked>
         <Linked hash="sort">
@@ -221,7 +243,7 @@ export const QueryExplorer = () => {
         <FormControlLabel
           className={classes.showSegments}
           control={<Checkbox />}
-          label="Show segment defininitions instead of IDs."
+          label="Show segment definitions instead of IDs."
         />
         <Linked hash="samplingLevel">
           <FormControl fullWidth>
