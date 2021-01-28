@@ -16,7 +16,6 @@ import * as React from "react"
 
 import { useLocalStorage, useTypedLocalStorage } from "../../hooks"
 import { Column, useApi } from "../../api"
-import { CUBES_BY_COLUMN_NAME, CUBE_NAMES } from "./_cubes"
 
 import TextField from "@material-ui/core/TextField"
 import IconButton from "@material-ui/core/IconButton"
@@ -29,7 +28,7 @@ const useColumns = (): Column[] => {
   const api = useApi()
   const [columns, setColumns] = useTypedLocalStorage<Column[]>(
     "metadata.columns",
-    "[]",
+    [],
     false
   )
 
@@ -39,9 +38,13 @@ const useColumns = (): Column[] => {
     }
 
     api.metadata.columns.list({ reportType: "ga" }).then(response => {
-      setColumns(response.result.items!)
+      const nu = response.result.items!
+      // Since changing the columns will cause an expensive re-render, only
+      // update them if the API has a result different from the one that was
+      // in localStorage.
+      setColumns(old => (JSON.stringify(old) === JSON.stringify(nu) ? old : nu))
     })
-  }, [api])
+  }, [api, setColumns])
   return columns
 }
 
@@ -99,9 +102,7 @@ const Main: React.FC = () => {
         }
         label="Include deprecated fields"
       />
-      {CUBES_BY_COLUMN_NAME !== null &&
-      columns.length !== 0 &&
-      CUBE_NAMES !== null ? (
+      {columns.length !== 0 ? (
         <ColumnGroupList
           searchTerms={searchTerms}
           allowDeprecated={allowDeprecated}

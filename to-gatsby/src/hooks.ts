@@ -125,6 +125,8 @@ export function useTypedLocalStorage<T extends Stringable>(
     () =>
       initialValue instanceof Function
         ? initialValue().toString()
+        : initialValue instanceof Array
+        ? JSON.stringify(initialValue)
         : initialValue.toString(),
     [initialValue]
   )

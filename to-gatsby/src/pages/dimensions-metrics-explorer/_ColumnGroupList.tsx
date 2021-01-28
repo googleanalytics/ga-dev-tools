@@ -89,9 +89,13 @@ type ColumnLabelProps = {
 }
 const ColumnLabel: React.FC<ColumnLabelProps> = ({ column, isDeprecated }) => {
   const classes = useStyles()
-  const slug = `/dimensions-metrics-explorer/${
-    column.attributes?.group.replace(/ /g, "-").toLowerCase() || ""
-  }#${column.id?.replace("ga:", "")}`
+  const slug = React.useMemo(
+    () =>
+      `/dimensions-metrics-explorer/${
+        column.attributes?.group.replace(/ /g, "-").toLowerCase() || ""
+      }#${column.id?.replace("ga:", "")}`,
+    [column]
+  )
 
   return (
     <div
@@ -245,7 +249,11 @@ const ColumnGroup: React.FC<{
 }) => {
   const classes = useStyles()
   return (
-    <Accordian expanded={open} onChange={toggleOpen}>
+    <Accordian
+      expanded={open}
+      onChange={toggleOpen}
+      TransitionProps={{ mountOnEnter: true }}
+    >
       <AccordionSummary expandIcon={<ExpandMoreIcon />}>
         <Typography variant="h3" className={classes.accordionTitle}>
           {name}{" "}
@@ -296,6 +304,7 @@ const ColumnGroupList: React.FC<{
   onlySegments: boolean
   columns: Column[]
 }> = ({ allowDeprecated, searchTerms, onlySegments, columns }) => {
+  console.log("rendered")
   const classes = useStyles()
 
   // Group all the columns by group
@@ -328,15 +337,12 @@ const ColumnGroupList: React.FC<{
     [setOpen, groupedColumns]
   )
 
-  // When a search term is entered, auto-expand all groups. When the search
-  // terms are cleared, auto-collapse all groups.
+  // When a search term is entered, auto-expand all groups.
   React.useEffect(() => {
-    if (searchTerms.length === 0) {
-      collapseAll()
-    } else {
+    if (searchTerms.length !== 0) {
       expandAll()
     }
-  }, [searchTerms.length, collapseAll, expandAll])
+  }, [searchTerms.length, expandAll])
 
   // selectedColumns is the set of selected columns Each column is
   // associated with one or more "cubes", and a only columns that share
