@@ -28,14 +28,18 @@ const globalTheme = createMuiTheme({
   typography: palette => ({
     fontFamily: ['"Roboto"', "sans-serif"].join(", "),
     h1: {
-      fontSize: "2.5em",
+      fontSize: "3.0em",
     },
     h2: {
-      fontSize: "1.75em",
+      fontSize: "2.25em",
       margin: "1em 0",
     },
     h3: {
-      fontSize: "1.25em",
+      fontSize: "1.75em",
+      margin: "1em 0",
+    },
+    h4: {
+      fontSize: "1.50em",
       margin: "1em 0",
     },
   }),
