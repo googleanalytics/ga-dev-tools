@@ -23,11 +23,14 @@ import {
   Checkbox,
   Button,
   Select,
+  MenuItem,
   FormControl,
   InputLabel,
+  FormHelperText,
 } from "@material-ui/core"
 import { Url } from "../../constants"
 import ViewSelector, { HasView } from "../../components/ViewSelector"
+import { Info } from "@material-ui/icons"
 
 const coreReportingApi = <a href={Url.coreReportingApi}>Core Reporting API</a>
 
@@ -42,13 +45,22 @@ const useStyles = makeStyles(theme => ({
     alignSelf: "flex-start",
     marginTop: theme.spacing(1),
   },
+  linked: {
+    display: "flex",
+    alignItems: "baseline",
+    "& > a": {
+      marginLeft: theme.spacing(1),
+    },
+  },
+  showSegments: {
+    marginTop: theme.spacing(-2),
+    marginBottom: theme.spacing(1),
+  },
+  includeEmpty: {
+    marginTop: theme.spacing(2),
+    marginBottom: theme.spacing(1),
+  },
 }))
-
-const idsLink = (
-  <a href="https://developers.google.com/analytics/devguides/reporting/core/v3/reference#ids">
-    ids
-  </a>
-)
 
 const startDateLink = (
   <a href="https://developers.google.com/analytics/devguides/reporting/core/v3/reference#startDate">
@@ -62,6 +74,27 @@ const endDateLink = (
   </a>
 )
 
+interface LinkedProps {
+  hash: string
+}
+
+const Linked: React.FC<LinkedProps> = ({ children, hash }) => {
+  const classes = useStyles()
+  return (
+    <div className={classes.linked}>
+      {children}
+      <a
+        href={`https://developers.google.com/analytics/devguides/reporting/core/v3/reference#${hash}`}
+        target="_blank"
+      >
+        <Info />
+      </a>
+    </div>
+  )
+}
+
+type SamplingLevel = "DEFAULT" | "FASTER" | "HIGHER_PRECISION"
+
 export const QueryExplorer = () => {
   const classes = useStyles()
   const [selectedView, setSelectedView] = React.useState<HasView | undefined>(
@@ -70,7 +103,9 @@ export const QueryExplorer = () => {
   const [view, setView] = React.useState("")
   const [startDate, setStartDate] = React.useState("")
   const [endDate, setEndDate] = React.useState("")
-  const [metrics, setMetrics] = React.useState<string[]>([])
+  const [samplingLevel, setSamplingLevel] = React.useState<SamplingLevel>(
+    "DEFAULT"
+  )
 
   const requiredParameters = React.useMemo(() => {
     return view !== "" && startDate !== "" && endDate !== ""
@@ -100,89 +135,132 @@ export const QueryExplorer = () => {
 
       <Typography variant="h3">Set query parameters</Typography>
       <section className={classes.inputs}>
-        <TextField
-          id="ids"
-          label="ids"
-          value={view}
-          onChange={e => setView(e.target.value)}
-          required
-          helperText={
-            <>
-              The unique ID used to retrieve the Analytics data. See {idsLink}{" "}
-              on devsite.
-            </>
-          }
-        />
-        <TextField
-          id="start-date"
-          label="start-date"
-          value={startDate}
-          onChange={e => setStartDate(e.target.value)}
-          required
-          helperText={
-            <>
-              The start of the date range for the data request. Format should be
-              YYYY-MM-DD. See {startDateLink} for other allowed values.
-            </>
-          }
-        />
-        <TextField
-          id="end-date"
-          label="end-date"
-          value={endDate}
-          onChange={e => setEndDate(e.target.value)}
-          required
-          helperText={
-            <>
-              The end of the date range for the data request. Format should be
-              YYYY-MM-DD. See {endDateLink} for other allowed values.
-            </>
-          }
-        />
-        <TextField required id="metrics" label="metrics" />
-        <FormControl>
-          <InputLabel id="demo-mutiple-chip-label">Metrics</InputLabel>
-          <Select
-            labelId="demo-mutiple-chip-label"
-            id="demo-mutiple-chip"
-            multiple
-            value={metrics}
-            onChange={e => {
-              setMetrics(e)
-            }}
-            input={<Input id="select-multiple-chip" />}
-            renderValue={selected => (
-              <div className={classes.chips}>
-                {selected.map(value => (
-                  <Chip key={value} label={value} className={classes.chip} />
-                ))}
-              </div>
-            )}
-            MenuProps={MenuProps}
-          >
-            {names.map(name => (
-              <MenuItem
-                key={name}
-                value={name}
-                style={getStyles(name, personName, theme)}
-              >
-                {name}
-              </MenuItem>
-            ))}
-          </Select>
-        </FormControl>
-        <TextField id="dimensions" label="dimensions" />
-        <TextField id="sort" label="sort" />
-        <TextField id="filters" label="filters" />
-        <TextField id="segment" label="segment" />
+        <Linked hash="ids">
+          <TextField
+            fullWidth
+            id="ids"
+            label="ids"
+            value={view}
+            onChange={e => setView(e.target.value)}
+            required
+            helperText={<>The unique ID used to retrieve the Analytics data.</>}
+          />
+        </Linked>
+        <Linked hash="startDate">
+          <TextField
+            fullWidth
+            id="start-date"
+            label="start-date"
+            value={startDate}
+            onChange={e => setStartDate(e.target.value)}
+            required
+            helperText={
+              <>
+                The start of the date range for the data request. Format should
+                be YYYY-MM-DD. See {startDateLink} for other allowed values.
+              </>
+            }
+          />
+        </Linked>
+        <Linked hash="endDate">
+          <TextField
+            fullWidth
+            id="end-date"
+            label="end-date"
+            value={endDate}
+            onChange={e => setEndDate(e.target.value)}
+            required
+            helperText={
+              <>
+                The end of the date range for the data request. Format should be
+                YYYY-MM-DD. See {endDateLink} for other allowed values.
+              </>
+            }
+          />
+        </Linked>
+        <Linked hash="metrics">
+          <TextField
+            fullWidth
+            id="metrics"
+            label="metrics"
+            helperText="Metrics to include in query."
+          />
+        </Linked>
+        <Linked hash="dimensions">
+          <TextField
+            fullWidth
+            id="dimensions"
+            label="dimensions"
+            helperText="A list of metrics and dimensions indicating the sorting order and sorting direction for the returned data."
+          />
+        </Linked>
+        <Linked hash="sort">
+          <TextField
+            fullWidth
+            id="sort"
+            label="sort"
+            helperText="A list of metrics and dimensions indicating the sorting order and sorting direction for the returned data."
+          />
+        </Linked>
+        <Linked hash="filters">
+          <TextField
+            id="filters"
+            label="filters"
+            fullWidth
+            helperText="The filters to apply to the query."
+          />
+        </Linked>
+        <Linked hash="segment">
+          <TextField
+            id="segment"
+            label="segment"
+            fullWidth
+            helperText="The segment to use for the query"
+          />
+        </Linked>
         <FormControlLabel
+          className={classes.showSegments}
           control={<Checkbox />}
           label="Show segment defininitions instead of IDs."
         />
-        <TextField id="samplingLevel" label="samplingLevel" />
-        <TextField id="include-empty-rows" label="include-empty-rows" />
-        <TextField id="start-index" label="start-index" />
-        <TextField id="max-results" label="max-results" />
+        <Linked hash="samplingLevel">
+          <FormControl fullWidth>
+            <InputLabel>SamplingLevel</InputLabel>
+            <Select
+              fullWidth
+              value={samplingLevel}
+              onChange={e => setSamplingLevel((e as any).target.value)}
+            >
+              <MenuItem value="DEFAULT">Default</MenuItem>
+              <MenuItem value="FASTER">Faster</MenuItem>
+              <MenuItem value="HIGHER_PRECISION">Higher Precision</MenuItem>
+            </Select>
+            <FormHelperText>The level of sampling to apply.</FormHelperText>
+          </FormControl>
+        </Linked>
+        <Linked hash="startIndex">
+          <TextField
+            id="start-index"
+            label="start-index"
+            fullWidth
+            helperText="The start index for the result. Indices are 1-based."
+          />
+        </Linked>
+        <Linked hash="maxResults">
+          <TextField
+            id="max-results"
+            label="max-results"
+            fullWidth
+            helperText="Maximum number of rows to include in the response."
+          />
+        </Linked>
+        <Linked hash="includeEmptyRows">
+          <FormControlLabel
+            className={classes.includeEmpty}
+            control={<Checkbox />}
+            label="Include Empty Rows"
+          />
+        </Linked>
         <Button
           disabled={!requiredParameters}
           variant="outlined"
