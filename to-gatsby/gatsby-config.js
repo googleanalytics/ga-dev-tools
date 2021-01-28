@@ -21,18 +21,9 @@ module.exports = {
   plugins: [
     `gatsby-plugin-material-ui`,
     {
-      resolve: `gatsby-plugin-prefetch-google-fonts`,
+      resolve: `gatsby-plugin-google-fonts`,
       options: {
-        fonts: [
-          {
-            family: `Roboto`,
-            variants: [`400`],
-          },
-          {
-            family: `Source Code Pro`,
-            variants: [`400`],
-          },
-        ],
+        fonts: ["Roboto:400", "Source Code Pro:400"],
       },
     },
     {

@@ -15,12 +15,45 @@
 import * as React from "react"
 
 import Layout from "../../components/layout"
+import DimensionsAndMetricsExplorer from "./_DimensionsAndMetricsExplorer"
+import { Typography } from "@material-ui/core"
 
-const DimensionsMetricsExploror = () => {
+export const Prose = () => {
+  return (
+    <>
+      <Typography variant="body1">
+        The Dimensions & Metrics Explorer lists and describes all of the
+        dimensions and metrics available through the Core Reporting API.
+      </Typography>
+
+      <Typography variant="body1">
+        The Dimensions & Metrics Explorer has the following features:
+      </Typography>
+
+      <Typography variant="body1">
+        <strong>Explore all of the dimensions and metrics</strong> – Search or
+        browse by group. Select a dimension or metric for additional details
+        such as descriptions and attributes.
+      </Typography>
+
+      <Typography variant="body1">
+        <strong>Identify valid combinations</strong> – Not all dimensions and
+        metrics can be queried together. Only certain dimensions and metrics can
+        be used together to create valid combinations. Select a dimension or
+        metric checkbox to see all the other values that can be combined in the
+        same query.
+      </Typography>
+
+      <DimensionsAndMetricsExplorer />
+    </>
+  )
+}
+
+const Wrapped = () => {
   return (
     <Layout title="Dimensions & Metrics Explorer">
-      TODO - add in content.
+      <DimensionsAndMetricsExplorer />
     </Layout>
   )
 }
-export default DimensionsMetricsExploror
+export default Wrapped
