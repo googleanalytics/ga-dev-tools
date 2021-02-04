@@ -1,5 +1,5 @@
 import * as React from "react"
-import { makeStyles } from "@material-ui/core/styles"
+import { makeStyles, Theme } from "@material-ui/core/styles"
 import TextField from "@material-ui/core/TextField"
 import Autocomplete from "@material-ui/lab/Autocomplete"
 import { useSelector } from "react-redux"
@@ -12,14 +12,16 @@ import {
   WebPropertySummary,
 } from "../api"
 
-const useStyles = makeStyles(theme => ({
-  root: {
+const useStyles = makeStyles<Theme, ViewSelector3Props>(theme => ({
+  root: props => ({
     display: "flex",
+    flexDirection: props.vertical ? "column" : "unset",
     width: "100%",
-  },
+  }),
   formControl: {
     width: "100%",
     margin: theme.spacing(1),
+    marginLeft: "unset",
   },
 }))
 
@@ -38,14 +40,20 @@ interface ViewSelector3Props {
   // A callback that will be called when the available views change.
   onViewsChanged?: (views: HasView[]) => void
   className?: string
+  vertical?: true | undefined
+  size?: "small" | "medium"
+  variant?: "outlined" | "standard"
 }
 
-const ViewSelector: React.FC<ViewSelector3Props> = ({
-  onViewChanged,
-  onViewsChanged,
-  className,
-}) => {
-  const classes = useStyles()
+const ViewSelector: React.FC<ViewSelector3Props> = props => {
+  const {
+    onViewChanged,
+    onViewsChanged,
+    className,
+    size = "medium",
+    variant = "standard",
+  } = props
+  const classes = useStyles(props)
 
   // Options for selects
   const [accounts, setAccounts] = React.useState<AccountSummary[]>([])
@@ -213,7 +221,14 @@ const ViewSelector: React.FC<ViewSelector3Props> = ({
         value={account || null}
         onChange={accountOnChange}
         getOptionLabel={account => account.name || ""}
-        renderInput={params => <TextField {...params} label="Account" />}
+        renderInput={params => (
+          <TextField
+            {...params}
+            label="Account"
+            size={size}
+            variant={variant}
+          />
+        )}
       />
       <Autocomplete<WebPropertySummary>
         blurOnSelect
@@ -225,7 +240,14 @@ const ViewSelector: React.FC<ViewSelector3Props> = ({
         value={property || null}
         onChange={propertyOnChange}
         getOptionLabel={property => property.name || ""}
-        renderInput={params => <TextField {...params} label="Property" />}
+        renderInput={params => (
+          <TextField
+            {...params}
+            label="Property"
+            size={size}
+            variant={variant}
+          />
+        )}
       />
       <Autocomplete<ProfileSummary>
         blurOnSelect
@@ -237,7 +259,9 @@ const ViewSelector: React.FC<ViewSelector3Props> = ({
         value={view || null}
         onChange={viewOnChange}
         getOptionLabel={view => view.name || ""}
-        renderInput={params => <TextField {...params} label="View" />}
+        renderInput={params => (
+          <TextField {...params} label="View" size={size} variant={variant} />
+        )}
       />
     </div>
   )

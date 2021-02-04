@@ -61,6 +61,9 @@ const useStyles = makeStyles(theme => ({
     },
     opacity: 0.3,
   },
+  viewSelector: {
+    maxWidth: "500px",
+  },
   // TODO - Align the icon centered with the text box.
   linked: {
     maxWidth: "500px",
@@ -191,7 +194,13 @@ export const QueryExplorer = () => {
         client libraries to build your own tools.
       </Typography>
       <Typography variant="h3">Select View</Typography>
-      <ViewSelector onViewChanged={setSelectedView} />
+      <ViewSelector
+        className={classes.viewSelector}
+        onViewChanged={setSelectedView}
+        vertical
+        size="small"
+        variant="outlined"
+      />
 
       <Typography variant="h3">Set query parameters</Typography>
       <section className={classes.inputs}>
