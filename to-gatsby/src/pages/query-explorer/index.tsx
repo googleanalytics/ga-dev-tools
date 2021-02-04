@@ -22,11 +22,6 @@ import {
   FormControlLabel,
   Checkbox,
   Button,
-  Select,
-  MenuItem,
-  FormControl,
-  InputLabel,
-  FormHelperText,
   Tooltip,
 } from "@material-ui/core"
 import { Url } from "../../constants"
@@ -258,6 +253,7 @@ export const QueryExplorer = () => {
         </Linked>
         <Linked hash="metrics">
           <ConceptMultiSelect
+            viewId={selectedView?.view.id}
             label="Metrics"
             helperText="Metrics to include in the query."
             columns={metrics}
@@ -266,6 +262,7 @@ export const QueryExplorer = () => {
         </Linked>
         <Linked hash="dimensions">
           <ConceptMultiSelect
+            viewId={selectedView?.view.id}
             label="Dimensions"
             helperText="dimensions to include in the query."
             columns={dimensions}

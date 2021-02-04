@@ -45,6 +45,8 @@ interface ViewSelector3Props {
   variant?: "outlined" | "standard"
 }
 
+// TODO - This should keep the last value you selected instead of making you
+// reselect every time.
 const ViewSelector: React.FC<ViewSelector3Props> = props => {
   const {
     onViewChanged,

@@ -40,6 +40,7 @@ interface ConceptMultiSelectProps {
   helperText: string
   columns: Column[] | undefined
   setSelectedColumns: (columns: Column[]) => void
+  viewId: string | undefined
 }
 
 export const ConceptMultiSelect: React.FC<ConceptMultiSelectProps> = ({
@@ -47,9 +48,30 @@ export const ConceptMultiSelect: React.FC<ConceptMultiSelectProps> = ({
   helperText,
   columns,
   setSelectedColumns,
+  viewId,
 }) => {
   const classes = useStyles()
   const [localColumns, setLocalColumns] = React.useState<Column[]>([])
+
+  // TODO - maybe clean this up to be a tree instead of flat. i.e.
+  // { viewId: {label: {columns...}} }
+  React.useEffect(() => {
+    const asString = window.localStorage.getItem(`${viewId} ${label} columns`)
+    if (asString === null) {
+      return
+    }
+    try {
+      const parsed = JSON.parse(asString)
+      setLocalColumns(parsed)
+    } catch (e) {}
+  }, [viewId])
+
+  React.useEffect(() => {
+    window.localStorage.setItem(
+      `${viewId} ${label} columns`,
+      JSON.stringify(localColumns)
+    )
+  }, [localColumns])
 
   React.useEffect(() => {
     setSelectedColumns(localColumns)
@@ -98,7 +120,6 @@ export const ConceptMultiSelect: React.FC<ConceptMultiSelectProps> = ({
           {...params}
           label={label}
           helperText={helperText}
-          variant="outlined"
           size="small"
           variant="outlined"
         />
