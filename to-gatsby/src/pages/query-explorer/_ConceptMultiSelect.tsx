@@ -18,7 +18,7 @@ import { Typography, TextField, makeStyles } from "@material-ui/core"
 import Autocomplete from "@material-ui/lab/Autocomplete"
 import { Column } from "../../api"
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles(_ => ({
   conceptOption: {
     display: "flex",
     width: "100%",
@@ -35,47 +35,37 @@ const useStyles = makeStyles(theme => ({
   group: {},
 }))
 
-interface ConceptOption {
-  id: string
-  name: string
-  group: string
-}
-
 interface ConceptMultiSelectProps {
   label: string
   helperText: string
   columns: Column[] | undefined
-  setSelectedOptions: (options: ConceptOption[]) => void
+  setSelectedColumns: (columns: Column[]) => void
 }
 
 export const ConceptMultiSelect: React.FC<ConceptMultiSelectProps> = ({
   label,
   helperText,
   columns,
-  setSelectedOptions,
+  setSelectedColumns,
 }) => {
   const classes = useStyles()
-  const [localOptions, setLocalOptions] = React.useState<ConceptOption[]>([])
+  const [localColumns, setLocalColumns] = React.useState<Column[]>([])
 
   React.useEffect(() => {
-    setSelectedOptions(localOptions)
-  }, [localOptions])
+    setSelectedColumns(localColumns)
+  }, [localColumns])
 
-  const columnOptions = React.useMemo<ConceptOption[]>(() => {
-    if (columns === undefined) {
-      return []
-    }
-    return columns
-      .filter(column => column.attributes?.status !== "DEPRECATED")
-      .map(column => ({
-        id: column.id!,
-        name: column.attributes!.uiName,
-        group: column.attributes!.group,
-      }))
-  }, [columns])
+  // Filter out the deprecated columns so they can't be selected.
+  const columnOptions = React.useMemo<Column[]>(
+    () =>
+      (columns || []).filter(
+        column => column.attributes?.status !== "DEPRECATED"
+      ),
+    [columns]
+  )
 
   return (
-    <Autocomplete<ConceptOption, true, undefined, true>
+    <Autocomplete<Column, true, undefined, true>
       fullWidth
       autoComplete
       autoHighlight
@@ -83,30 +73,35 @@ export const ConceptMultiSelect: React.FC<ConceptMultiSelectProps> = ({
       multiple
       debug
       options={columnOptions}
-      getOptionLabel={option => option.id}
-      value={localOptions}
-      onChange={(_event, value, _state) =>
-        setLocalOptions(value as ConceptOption[])
-      }
+      getOptionLabel={option => option.id!}
+      value={localColumns}
+      onChange={(_event, value, _state) => setLocalColumns(value as Column[])}
       renderOption={option => (
         <div className={classes.conceptOption}>
           <div className={classes.nameId}>
-            <Typography variant="body1">{option.name}</Typography>
+            <Typography variant="body1">{option.attributes!.uiName}</Typography>
             <Typography variant="subtitle2" color="primary">
               {option.id}
             </Typography>
           </div>
           <Typography
             className={classes.group}
-            variant="subtitle"
+            variant="subtitle1"
             color="textSecondary"
           >
-            {option.group}
+            {option.attributes!.group}
           </Typography>
         </div>
       )}
       renderInput={params => (
-        <TextField {...params} label={label} helperText={helperText} />
+        <TextField
+          {...params}
+          label={label}
+          helperText={helperText}
+          variant="outlined"
+          size="small"
+          variant="outlined"
+        />
       )}
     />
   )

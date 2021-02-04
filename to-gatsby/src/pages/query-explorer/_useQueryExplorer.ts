@@ -54,16 +54,19 @@ import { useApi, Column } from "../../api"
 
 //
 interface UseQueryExplorer {
-  metrics: Column[]
-  dimensions: Column[]
+  metrics: Column[] | undefined
+  dimensions: Column[] | undefined
 }
-const useQueryExplorer = (view: HasView): UseQueryExplorer => {
+const useQueryExplorer = (view: HasView | undefined): UseQueryExplorer => {
   const api = useApi()
   const [metrics, setMetrics] = useState<Column[] | undefined>(undefined)
   const [dimensions, setDimensions] = useState<Column[] | undefined>(undefined)
 
   useEffect(() => {
     if (api === undefined) {
+      return
+    }
+    if (view === undefined) {
       return
     }
     // TODO - This should be updated to also return custom metrics &

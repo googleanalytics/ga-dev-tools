@@ -27,37 +27,58 @@ import {
   FormControl,
   InputLabel,
   FormHelperText,
+  Tooltip,
 } from "@material-ui/core"
-import Autocomplete from "@material-ui/lab/Autocomplete"
 import { Url } from "../../constants"
 import ViewSelector, { HasView } from "../../components/ViewSelector"
-import { Info } from "@material-ui/icons"
+import { Launch } from "@material-ui/icons"
 import useQueryExplorer from "./_useQueryExplorer"
 import ConceptMultiSelect from "./_ConceptMultiSelect"
+import Sort from "./_Sort"
+import { Column } from "../../api"
 
 const coreReportingApi = <a href={Url.coreReportingApi}>Core Reporting API</a>
 
 const useStyles = makeStyles(theme => ({
   inputs: {
-    display: "flex",
-    flexDirection: "column",
+    // display: "flex",
+    // flexDirection: "column",
+    // display: "grid",
+    // gridTemplateColumns: "50% 50%",
+    // "& > div": {
+    //   marginRight: theme.spacing(2),
+    // },
     marginBottom: theme.spacing(1),
-    marginLeft: theme.spacing(1),
+    // marginLeft: theme.spacing(1),
   },
   runButton: {
     alignSelf: "flex-start",
     marginTop: theme.spacing(1),
   },
+  externalReference: {
+    "&:hover": {
+      opacity: 1.0,
+    },
+    opacity: 0.3,
+  },
+  // TODO - Align the icon centered with the text box.
   linked: {
+    maxWidth: "500px",
     display: "flex",
-    alignItems: "baseline",
+    alignItems: "center",
+    "& > a:hover": {
+      opacity: "1.0",
+    },
     "& > a": {
+      opacity: "0.3",
       marginLeft: theme.spacing(1),
     },
   },
   showSegments: {
+    marginLeft: theme.spacing(1),
     marginTop: theme.spacing(-2),
     marginBottom: theme.spacing(1),
+    color: theme.palette.text.secondary,
   },
   includeEmpty: {
     marginTop: theme.spacing(2),
@@ -91,23 +112,41 @@ interface LinkedProps {
 
 const Linked: React.FC<LinkedProps> = ({ children, hash }) => {
   const classes = useStyles()
-  return (
-    <div className={classes.linked}>
-      {children}
-      <a
-        href={`https://developers.google.com/analytics/devguides/reporting/core/v3/reference#${hash}`}
-        target="_blank"
-      >
-        <Info />
-      </a>
-    </div>
-  )
+  return <div className={classes.linked}>{children}</div>
 }
 
 type SamplingLevel = "DEFAULT" | "FASTER" | "HIGHER_PRECISION"
-interface ConceptOption {
-  id: string
-  name: string
+
+export type SortableColumn = Column & { sort: "ASCENDING" | "DESCENDING" }
+type UseQueryUrl = () => {
+  url: string
+  setSort: (sortBy: SortableColumn[] | undefined) => void
+}
+const useQueryUrl: UseQueryUrl = () => {
+  const [url, setUrl] = React.useState("")
+  const [sort, setSort] = React.useState<SortableColumn[] | undefined>(
+    undefined
+  )
+
+  return {
+    url,
+    setSort,
+  }
+}
+
+const DevsiteLink: React.FC<{ hash: string }> = ({ tooltipText, hash }) => {
+  const classes = useStyles()
+  return (
+    <Tooltip title={`See ${hash} on devsite.`}>
+      <a
+        className={classes.externalReference}
+        href={`https://developers.google.com/analytics/devguides/reporting/core/v3/reference#${hash}`}
+        target="_blank"
+      >
+        <Launch color="action" />
+      </a>
+    </Tooltip>
+  )
 }
 
 export const QueryExplorer = () => {
@@ -115,6 +154,7 @@ export const QueryExplorer = () => {
   const [selectedView, setSelectedView] = React.useState<HasView | undefined>(
     undefined
   )
+  const { setSort } = useQueryUrl()
   const { metrics, dimensions } = useQueryExplorer(selectedView)
   const [view, setView] = React.useState("")
   const [startDate, setStartDate] = React.useState("7daysAgo")
@@ -122,12 +162,10 @@ export const QueryExplorer = () => {
   const [samplingLevel, setSamplingLevel] = React.useState<SamplingLevel>(
     "DEFAULT"
   )
-  const [selectedMetrics, setSelectedMetrics] = React.useState<ConceptOption[]>(
+  const [selectedMetrics, setSelectedMetrics] = React.useState<Column[]>([])
+  const [selectedDimensions, setSelectedDimensions] = React.useState<Column[]>(
     []
   )
-  const [selectedDimensions, setSelectedDimensions] = React.useState<
-    ConceptOption[]
-  >([])
 
   const requiredParameters = React.useMemo(() => {
     return view !== "" && startDate !== "" && endDate !== ""
@@ -159,6 +197,11 @@ export const QueryExplorer = () => {
       <section className={classes.inputs}>
         <Linked hash="ids">
           <TextField
+            size="small"
+            InputProps={{
+              endAdornment: <DevsiteLink hash="ids" />,
+            }}
+            variant="outlined"
             fullWidth
             id="ids"
             label="ids"
@@ -170,6 +213,8 @@ export const QueryExplorer = () => {
         </Linked>
         <Linked hash="startDate">
           <TextField
+            size="small"
+            variant="outlined"
             fullWidth
             id="start-date"
             label="start-date"
@@ -187,6 +232,8 @@ export const QueryExplorer = () => {
         <Linked hash="endDate">
           <TextField
             fullWidth
+            size="small"
+            variant="outlined"
             id="end-date"
             label="end-date"
             value={endDate}
@@ -205,7 +252,7 @@ export const QueryExplorer = () => {
             label="Metrics"
             helperText="Metrics to include in the query."
             columns={metrics}
-            setSelectedOptions={setSelectedMetrics}
+            setSelectedColumns={setSelectedMetrics}
           />
         </Linked>
         <Linked hash="dimensions">
@@ -213,19 +260,19 @@ export const QueryExplorer = () => {
             label="Dimensions"
             helperText="dimensions to include in the query."
             columns={dimensions}
-            setSelectedOptions={setSelectedDimensions}
+            setSelectedColumns={setSelectedDimensions}
           />
         </Linked>
         <Linked hash="sort">
-          <TextField
-            fullWidth
-            id="sort"
-            label="sort"
-            helperText="A list of metrics and dimensions indicating the sorting order and sorting direction for the returned data."
+          <Sort
+            columns={selectedDimensions.concat(selectedMetrics)}
+            setSort={setSort}
           />
         </Linked>
         <Linked hash="filters">
           <TextField
+            size="small"
+            variant="outlined"
             id="filters"
             label="filters"
             fullWidth
@@ -234,6 +281,8 @@ export const QueryExplorer = () => {
         </Linked>
         <Linked hash="segment">
           <TextField
+            size="small"
+            variant="outlined"
             id="segment"
             label="segment"
             fullWidth
@@ -245,6 +294,7 @@ export const QueryExplorer = () => {
           control={<Checkbox />}
           label="Show segment definitions instead of IDs."
         />
+        {/*
         <Linked hash="samplingLevel">
           <FormControl fullWidth>
             <InputLabel>SamplingLevel</InputLabel>
@@ -260,8 +310,11 @@ export const QueryExplorer = () => {
             <FormHelperText>The level of sampling to apply.</FormHelperText>
           </FormControl>
         </Linked>
+          */}
         <Linked hash="startIndex">
           <TextField
+            size="small"
+            variant="outlined"
             id="start-index"
             label="start-index"
             fullWidth
@@ -270,6 +323,8 @@ export const QueryExplorer = () => {
         </Linked>
         <Linked hash="maxResults">
           <TextField
+            size="small"
+            variant="outlined"
             id="max-results"
             label="max-results"
             fullWidth
