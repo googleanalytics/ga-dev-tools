@@ -4,6 +4,7 @@ import React from "react"
 interface AnalyticsApi {
   management: typeof gapi.client.management
   metadata: typeof gapi.client.metadata
+  data: typeof gapi.client.data
 }
 
 export type AccountSummary = gapi.client.analytics.AccountSummary

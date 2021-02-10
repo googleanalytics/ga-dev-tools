@@ -30,21 +30,15 @@ import { Launch } from "@material-ui/icons"
 import useQueryExplorer from "./_useQueryExplorer"
 import ConceptMultiSelect from "./_ConceptMultiSelect"
 import Sort from "./_Sort"
-import { Column } from "../../api"
+import Report from "./_Report"
+import { Column, useApi } from "../../api"
 
 const coreReportingApi = <a href={Url.coreReportingApi}>Core Reporting API</a>
 
 const useStyles = makeStyles(theme => ({
   inputs: {
-    // display: "flex",
-    // flexDirection: "column",
-    // display: "grid",
-    // gridTemplateColumns: "50% 50%",
-    // "& > div": {
-    //   marginRight: theme.spacing(2),
-    // },
+    maxWidth: "500px",
     marginBottom: theme.spacing(1),
-    // marginLeft: theme.spacing(1),
   },
   runButton: {
     alignSelf: "flex-start",
@@ -58,19 +52,6 @@ const useStyles = makeStyles(theme => ({
   },
   viewSelector: {
     maxWidth: "500px",
-  },
-  // TODO - Align the icon centered with the text box.
-  linked: {
-    maxWidth: "500px",
-    display: "flex",
-    alignItems: "center",
-    "& > a:hover": {
-      opacity: "1.0",
-    },
-    "& > a": {
-      opacity: "0.3",
-      marginLeft: theme.spacing(1),
-    },
   },
   showSegments: {
     marginLeft: theme.spacing(1),
@@ -108,16 +89,12 @@ interface LinkedProps {
   hash: string
 }
 
-const Linked: React.FC<LinkedProps> = ({ children, hash }) => {
-  const classes = useStyles()
-  return <div className={classes.linked}>{children}</div>
-}
-
 type SamplingLevel = "DEFAULT" | "FASTER" | "HIGHER_PRECISION"
 
 export type SortableColumn = Column & { sort: "ASCENDING" | "DESCENDING" }
 type UseQueryUrl = () => {
   url: string
+  sort: SortableColumn[] | undefined
   setSort: (sortBy: SortableColumn[] | undefined) => void
 }
 const useQueryUrl: UseQueryUrl = () => {
@@ -128,11 +105,12 @@ const useQueryUrl: UseQueryUrl = () => {
 
   return {
     url,
+    sort,
     setSort,
   }
 }
 
-const DevsiteLink: React.FC<{ hash: string }> = ({ tooltipText, hash }) => {
+const DevsiteLink: React.FC<{ hash: string }> = ({ hash }) => {
   const classes = useStyles()
   return (
     <Tooltip title={`See ${hash} on devsite.`}>
@@ -152,7 +130,8 @@ export const QueryExplorer = () => {
   const [selectedView, setSelectedView] = React.useState<HasView | undefined>(
     undefined
   )
-  const { setSort } = useQueryUrl()
+  const { setSort, sort } = useQueryUrl()
+  const api = useApi()
   const { metrics, dimensions } = useQueryExplorer(selectedView)
   const [view, setView] = React.useState("")
   const [startDate, setStartDate] = React.useState("7daysAgo")
@@ -160,10 +139,15 @@ export const QueryExplorer = () => {
   const [samplingLevel, setSamplingLevel] = React.useState<SamplingLevel>(
     "DEFAULT"
   )
+  const [startIndex, setStartIndex] = React.useState<string>()
+  const [maxResults, setMaxResults] = React.useState<string>()
   const [selectedMetrics, setSelectedMetrics] = React.useState<Column[]>([])
   const [selectedDimensions, setSelectedDimensions] = React.useState<Column[]>(
     []
   )
+  const [queryResponse, setQueryResponse] = React.useState<
+    gapi.client.analytics.GaData
+  >()
 
   const requiredParameters = React.useMemo(() => {
     return view !== "" && startDate !== "" && endDate !== ""
@@ -178,6 +162,46 @@ export const QueryExplorer = () => {
     const viewId = `ga:${selectedView.view.id}`
     setView(viewId)
   }, [selectedView])
+
+  const runQuery = React.useCallback(() => {
+    if (api === undefined) {
+      return
+    }
+    const apiObject = {
+      ids: view,
+      "start-date": startDate,
+      "end-date": endDate,
+      metrics: selectedMetrics.map(a => a.id).join(","),
+      dimensions: selectedDimensions.map(a => a.id).join(","),
+    }
+    if (startIndex !== undefined) {
+      apiObject["start-index"] = startIndex
+    }
+    if (maxResults !== undefined) {
+      apiObject["max-results"] = maxResults
+    }
+    if (sort !== undefined) {
+      apiObject["sort"] = sort
+        .map(a => `${a.sort === "ASCENDING" ? "" : "-"}${a.id}`)
+        .join(",")
+    }
+    console.log({ apiObject })
+    api.data.ga
+      .get(apiObject)
+      .then(response => {
+        setQueryResponse(response.result)
+      })
+      .catch(e => console.error(e))
+  }, [
+    view,
+    startDate,
+    endDate,
+    selectedDimensions,
+    selectedMetrics,
+    sort,
+    startIndex,
+    maxResults,
+  ])
 
   return (
     <>
@@ -199,102 +223,103 @@ export const QueryExplorer = () => {
 
       <Typography variant="h3">Set query parameters</Typography>
       <section className={classes.inputs}>
-        <Linked hash="ids">
-          <TextField
-            size="small"
-            InputProps={{
-              endAdornment: <DevsiteLink hash="ids" />,
-            }}
-            variant="outlined"
-            fullWidth
-            id="ids"
-            label="ids"
-            value={view}
-            onChange={e => setView(e.target.value)}
-            required
-            helperText={<>The unique ID used to retrieve the Analytics data.</>}
-          />
-        </Linked>
-        <Linked hash="startDate">
-          <TextField
-            size="small"
-            variant="outlined"
-            fullWidth
-            id="start-date"
-            label="start-date"
-            value={startDate}
-            onChange={e => setStartDate(e.target.value)}
-            required
-            helperText={
-              <>
-                The start of the date range for the data request. Format should
-                be YYYY-MM-DD. See {startDateLink} for other allowed values.
-              </>
-            }
-          />
-        </Linked>
-        <Linked hash="endDate">
-          <TextField
-            fullWidth
-            size="small"
-            variant="outlined"
-            id="end-date"
-            label="end-date"
-            value={endDate}
-            onChange={e => setEndDate(e.target.value)}
-            required
-            helperText={
-              <>
-                The end of the date range for the data request. Format should be
-                YYYY-MM-DD. See {endDateLink} for other allowed values.
-              </>
-            }
-          />
-        </Linked>
-        <Linked hash="metrics">
-          <ConceptMultiSelect
-            viewId={selectedView?.view.id}
-            label="Metrics"
-            helperText="Metrics to include in the query."
-            columns={metrics}
-            setSelectedColumns={setSelectedMetrics}
-          />
-        </Linked>
-        <Linked hash="dimensions">
-          <ConceptMultiSelect
-            viewId={selectedView?.view.id}
-            label="Dimensions"
-            helperText="dimensions to include in the query."
-            columns={dimensions}
-            setSelectedColumns={setSelectedDimensions}
-          />
-        </Linked>
-        <Linked hash="sort">
-          <Sort
-            columns={selectedDimensions.concat(selectedMetrics)}
-            setSort={setSort}
-          />
-        </Linked>
-        <Linked hash="filters">
-          <TextField
-            size="small"
-            variant="outlined"
-            id="filters"
-            label="filters"
-            fullWidth
-            helperText="The filters to apply to the query."
-          />
-        </Linked>
-        <Linked hash="segment">
-          <TextField
-            size="small"
-            variant="outlined"
-            id="segment"
-            label="segment"
-            fullWidth
-            helperText="The segment to use for the query"
-          />
-        </Linked>
+        <TextField
+          className={classes.inputWithLink}
+          InputProps={{
+            endAdornment: <DevsiteLink hash="ids" />,
+          }}
+          size="small"
+          variant="outlined"
+          fullWidth
+          id="ids"
+          label="ids"
+          value={view}
+          onChange={e => setView(e.target.value)}
+          required
+          helperText={<>The unique ID used to retrieve the Analytics data.</>}
+        />
+        <TextField
+          className={classes.inputWithLink}
+          InputProps={{
+            endAdornment: <DevsiteLink hash="startDate" />,
+          }}
+          size="small"
+          variant="outlined"
+          fullWidth
+          id="start-date"
+          label="start-date"
+          value={startDate}
+          onChange={e => setStartDate(e.target.value)}
+          required
+          helperText={
+            <>
+              The start of the date range for the data request. Format should be
+              YYYY-MM-DD. See {startDateLink} for other allowed values.
+            </>
+          }
+        />
+        <TextField
+          className={classes.inputWithLink}
+          InputProps={{
+            endAdornment: <DevsiteLink hash="endDate" />,
+          }}
+          fullWidth
+          size="small"
+          variant="outlined"
+          id="end-date"
+          label="end-date"
+          value={endDate}
+          onChange={e => setEndDate(e.target.value)}
+          required
+          helperText={
+            <>
+              The end of the date range for the data request. Format should be
+              YYYY-MM-DD. See {endDateLink} for other allowed values.
+            </>
+          }
+        />
+        <ConceptMultiSelect
+          viewId={selectedView?.view.id}
+          label="Metrics"
+          helperText="Metrics to include in the query."
+          columns={metrics}
+          setSelectedColumns={setSelectedMetrics}
+        />
+        <ConceptMultiSelect
+          viewId={selectedView?.view.id}
+          label="Dimensions"
+          helperText="dimensions to include in the query."
+          columns={dimensions}
+          setSelectedColumns={setSelectedDimensions}
+        />
+        <Sort
+          columns={selectedDimensions.concat(selectedMetrics)}
+          setSort={setSort}
+        />
+        <TextField
+          className={classes.inputWithLink}
+          InputProps={{
+            endAdornment: <DevsiteLink hash="filters" />,
+          }}
+          size="small"
+          variant="outlined"
+          id="filters"
+          label="filters"
+          fullWidth
+          helperText="The filters to apply to the query."
+        />
+        <TextField
+          className={classes.inputWithLink}
+          InputProps={{
+            endAdornment: <DevsiteLink hash="segment" />,
+          }}
+          size="small"
+          variant="outlined"
+          id="segment"
+          label="segment"
+          fullWidth
+          helperText="The segment to use for the query"
+        />
         <FormControlLabel
           className={classes.showSegments}
           control={<Checkbox />}
@@ -317,42 +342,67 @@ export const QueryExplorer = () => {
           </FormControl>
         </Linked>
           */}
-        <Linked hash="startIndex">
-          <TextField
-            size="small"
-            variant="outlined"
-            id="start-index"
-            label="start-index"
-            fullWidth
-            helperText="The start index for the result. Indices are 1-based."
-          />
-        </Linked>
-        <Linked hash="maxResults">
-          <TextField
-            size="small"
-            variant="outlined"
-            id="max-results"
-            label="max-results"
-            fullWidth
-            helperText="Maximum number of rows to include in the response."
-          />
-        </Linked>
-        <Linked hash="includeEmptyRows">
-          <FormControlLabel
-            className={classes.includeEmpty}
-            control={<Checkbox />}
-            label="Include Empty Rows"
-          />
-        </Linked>
+        <TextField
+          className={classes.inputWithLink}
+          InputProps={{
+            endAdornment: <DevsiteLink hash="startIndex" />,
+          }}
+          size="small"
+          variant="outlined"
+          id="start-index"
+          label="start-index"
+          fullWidth
+          helperText="The start index for the result. Indices are 1-based."
+          value={startIndex || ""}
+          onChange={e => setStartIndex(e.target.value)}
+        />
+        <TextField
+          className={classes.inputWithLink}
+          InputProps={{
+            endAdornment: <DevsiteLink hash="maxResults" />,
+          }}
+          size="small"
+          variant="outlined"
+          id="max-results"
+          label="max-results"
+          fullWidth
+          helperText="Maximum number of rows to include in the response."
+          value={maxResults || ""}
+          onChange={e => setMaxResults(e.target.value)}
+        />
+        <FormControlLabel
+          className={classes.includeEmpty}
+          control={<Checkbox />}
+          label="Include Empty Rows"
+        />
         <Button
           disabled={!requiredParameters}
           variant="outlined"
           color="primary"
           className={classes.runButton}
+          onClick={runQuery}
         >
           Run Query
         </Button>
       </section>
+      {queryResponse !== undefined && (
+        <section>
+          <section>
+            <div>
+              Showing <strong>{queryResponse.rows?.length}</strong> out of{" "}
+              <strong>{queryResponse.totalResults}</strong> total results.
+            </div>
+            <div>
+              {queryResponse.containsSampledData ? (
+                <>Contains sampled data.</>
+              ) : (
+                <>Does not contain sampled data.</>
+              )}
+            </div>
+          </section>
+          <Report queryResponse={queryResponse} />
+        </section>
+      )}
     </>
   )
 }

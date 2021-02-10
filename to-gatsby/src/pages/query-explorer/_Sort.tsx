@@ -77,7 +77,11 @@ const Sort: React.FC<SortProps> = ({ columns, setSort }) => {
   }, [columns, localSortColumns])
 
   React.useEffect(() => {
-    setSort(localSortColumns)
+    if (localSortColumns.length === 0) {
+      setSort(undefined)
+    } else {
+      setSort(localSortColumns)
+    }
   }, [localSortColumns])
 
   // TODO renderOption={...} should be extracted since this and
