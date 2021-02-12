@@ -21,19 +21,22 @@ import {
   TableCell,
   TableBody,
   TableContainer,
+  Paper,
+  Typography,
 } from "@material-ui/core"
 
-const useStyles = makeStyles(_ => ({
+const useStyles = makeStyles(theme => ({
+  paper: {},
+  preamble: {
+    padding: theme.spacing(2, 2, 0, 2),
+    margin: "unset",
+  },
   container: {
     maxHeight: 440,
   },
 }))
 
-interface ReportProps {
-  queryResponse: gapi.client.analytics.GaData | undefined
-}
-
-const Report: React.FC<ReportProps> = ({ queryResponse }) => {
+const ReportTable: React.FC<ReportProps> = ({ queryResponse }) => {
   const classes = useStyles()
 
   if (queryResponse === undefined) {
@@ -50,16 +53,51 @@ const Report: React.FC<ReportProps> = ({ queryResponse }) => {
           </TableRow>
         </TableHead>
         <TableBody>
-          {queryResponse.rows?.map(row => (
-            <TableRow>
-              {row.map(column => (
-                <TableCell>{column}</TableCell>
+          {queryResponse.rows?.map((row, idx) => (
+            <TableRow key={`row-${idx}`}>
+              {row.map((column, innerIdx) => (
+                <TableCell key={`row-${idx} column-${innerIdx}`}>
+                  {column}
+                </TableCell>
               ))}
             </TableRow>
           ))}
         </TableBody>
       </Table>
     </TableContainer>
+  )
+}
+
+interface ReportProps {
+  queryResponse: gapi.client.analytics.GaData | undefined
+}
+
+const Report: React.FC<ReportProps> = ({ queryResponse }) => {
+  const classes = useStyles()
+  if (queryResponse === undefined) {
+    return null
+  }
+  return (
+    <Paper className={classes.paper}>
+      <Typography variant="h4" className={classes.preamble}>
+        {queryResponse.profileInfo?.profileName}
+      </Typography>
+      <section className={classes.preamble}>
+        <Typography>
+          Showing <strong>{queryResponse.rows?.length}</strong> out of{" "}
+          <strong>{queryResponse.totalResults}</strong> total results.
+        </Typography>
+        <Typography>
+          {queryResponse.containsSampledData ? (
+            <>Contains sampled data.</>
+          ) : (
+            <>Does not contain sampled data.</>
+          )}
+        </Typography>
+        <Typography>{queryResponse.selfLink}</Typography>
+      </section>
+      <ReportTable queryResponse={queryResponse} />
+    </Paper>
   )
 }
 

@@ -85,10 +85,6 @@ const endDateLink = (
   </a>
 )
 
-interface LinkedProps {
-  hash: string
-}
-
 type SamplingLevel = "DEFAULT" | "FASTER" | "HIGHER_PRECISION"
 
 export type SortableColumn = Column & { sort: "ASCENDING" | "DESCENDING" }
@@ -97,6 +93,7 @@ type UseQueryUrl = () => {
   sort: SortableColumn[] | undefined
   setSort: (sortBy: SortableColumn[] | undefined) => void
 }
+// TODO remove since this is handled by the client library.
 const useQueryUrl: UseQueryUrl = () => {
   const [url, setUrl] = React.useState("")
   const [sort, setSort] = React.useState<SortableColumn[] | undefined>(
@@ -141,6 +138,7 @@ export const QueryExplorer = () => {
   )
   const [startIndex, setStartIndex] = React.useState<string>()
   const [maxResults, setMaxResults] = React.useState<string>()
+  const [filters, setFilters] = React.useState<string>()
   const [selectedMetrics, setSelectedMetrics] = React.useState<Column[]>([])
   const [selectedDimensions, setSelectedDimensions] = React.useState<Column[]>(
     []
@@ -174,11 +172,14 @@ export const QueryExplorer = () => {
       metrics: selectedMetrics.map(a => a.id).join(","),
       dimensions: selectedDimensions.map(a => a.id).join(","),
     }
-    if (startIndex !== undefined) {
+    if (startIndex !== undefined && startIndex !== "") {
       apiObject["start-index"] = startIndex
     }
-    if (maxResults !== undefined) {
+    if (maxResults !== undefined && maxResults !== "") {
       apiObject["max-results"] = maxResults
+    }
+    if (filters !== undefined && filters !== "") {
+      apiObject["filters"] = encodeURI(filters)
     }
     if (sort !== undefined) {
       apiObject["sort"] = sort
@@ -201,6 +202,7 @@ export const QueryExplorer = () => {
     sort,
     startIndex,
     maxResults,
+    filters,
   ])
 
   return (
@@ -224,7 +226,6 @@ export const QueryExplorer = () => {
       <Typography variant="h3">Set query parameters</Typography>
       <section className={classes.inputs}>
         <TextField
-          className={classes.inputWithLink}
           InputProps={{
             endAdornment: <DevsiteLink hash="ids" />,
           }}
@@ -239,7 +240,6 @@ export const QueryExplorer = () => {
           helperText={<>The unique ID used to retrieve the Analytics data.</>}
         />
         <TextField
-          className={classes.inputWithLink}
           InputProps={{
             endAdornment: <DevsiteLink hash="startDate" />,
           }}
@@ -259,7 +259,6 @@ export const QueryExplorer = () => {
           }
         />
         <TextField
-          className={classes.inputWithLink}
           InputProps={{
             endAdornment: <DevsiteLink hash="endDate" />,
           }}
@@ -297,10 +296,11 @@ export const QueryExplorer = () => {
           setSort={setSort}
         />
         <TextField
-          className={classes.inputWithLink}
           InputProps={{
             endAdornment: <DevsiteLink hash="filters" />,
           }}
+          value={filters || ""}
+          onChange={e => setFilters(e.target.value)}
           size="small"
           variant="outlined"
           id="filters"
@@ -309,7 +309,6 @@ export const QueryExplorer = () => {
           helperText="The filters to apply to the query."
         />
         <TextField
-          className={classes.inputWithLink}
           InputProps={{
             endAdornment: <DevsiteLink hash="segment" />,
           }}
@@ -343,7 +342,6 @@ export const QueryExplorer = () => {
         </Linked>
           */}
         <TextField
-          className={classes.inputWithLink}
           InputProps={{
             endAdornment: <DevsiteLink hash="startIndex" />,
           }}
@@ -357,7 +355,6 @@ export const QueryExplorer = () => {
           onChange={e => setStartIndex(e.target.value)}
         />
         <TextField
-          className={classes.inputWithLink}
           InputProps={{
             endAdornment: <DevsiteLink hash="maxResults" />,
           }}
@@ -385,24 +382,7 @@ export const QueryExplorer = () => {
           Run Query
         </Button>
       </section>
-      {queryResponse !== undefined && (
-        <section>
-          <section>
-            <div>
-              Showing <strong>{queryResponse.rows?.length}</strong> out of{" "}
-              <strong>{queryResponse.totalResults}</strong> total results.
-            </div>
-            <div>
-              {queryResponse.containsSampledData ? (
-                <>Contains sampled data.</>
-              ) : (
-                <>Does not contain sampled data.</>
-              )}
-            </div>
-          </section>
-          <Report queryResponse={queryResponse} />
-        </section>
-      )}
+      <Report queryResponse={queryResponse} />
     </>
   )
 }
