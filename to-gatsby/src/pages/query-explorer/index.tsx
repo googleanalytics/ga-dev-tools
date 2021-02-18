@@ -30,8 +30,10 @@ import { Launch } from "@material-ui/icons"
 import useQueryExplorer from "./_useQueryExplorer"
 import ConceptMultiSelect from "./_ConceptMultiSelect"
 import Sort from "./_Sort"
+import SegmentC from "./_Segment"
 import Report from "./_Report"
-import { Column, useApi } from "../../api"
+import { Column, useApi, useSegments, Segment } from "../../api"
+import { SamplingLevelComponent, SamplingLevel } from "./_SamplingLevel"
 
 const coreReportingApi = <a href={Url.coreReportingApi}>Core Reporting API</a>
 
@@ -85,27 +87,7 @@ const endDateLink = (
   </a>
 )
 
-type SamplingLevel = "DEFAULT" | "FASTER" | "HIGHER_PRECISION"
-
 export type SortableColumn = Column & { sort: "ASCENDING" | "DESCENDING" }
-type UseQueryUrl = () => {
-  url: string
-  sort: SortableColumn[] | undefined
-  setSort: (sortBy: SortableColumn[] | undefined) => void
-}
-// TODO remove since this is handled by the client library.
-const useQueryUrl: UseQueryUrl = () => {
-  const [url, setUrl] = React.useState("")
-  const [sort, setSort] = React.useState<SortableColumn[] | undefined>(
-    undefined
-  )
-
-  return {
-    url,
-    sort,
-    setSort,
-  }
-}
 
 const DevsiteLink: React.FC<{ hash: string }> = ({ hash }) => {
   const classes = useStyles()
@@ -127,25 +109,36 @@ export const QueryExplorer = () => {
   const [selectedView, setSelectedView] = React.useState<HasView | undefined>(
     undefined
   )
-  const { setSort, sort } = useQueryUrl()
+  const [sort, setSort] = React.useState<SortableColumn[] | undefined>(
+    undefined
+  )
   const api = useApi()
   const { metrics, dimensions } = useQueryExplorer(selectedView)
+  const segments = useSegments()
   const [view, setView] = React.useState("")
   const [startDate, setStartDate] = React.useState("7daysAgo")
   const [endDate, setEndDate] = React.useState("yesterday")
-  const [samplingLevel, setSamplingLevel] = React.useState<SamplingLevel>(
-    "DEFAULT"
-  )
   const [startIndex, setStartIndex] = React.useState<string>()
   const [maxResults, setMaxResults] = React.useState<string>()
+  // TODO - Improve filters with a filter builder that helps to create valid
+  // filters. It's currently very easy to create in invalid filter such as
+  //
+  // ga:sessionCount>10
+  //
+  // This doesn't work since sessionCount is a dimension.
   const [filters, setFilters] = React.useState<string>()
+  const [selectedSegment, setSelectedSegment] = React.useState<Segment>()
   const [selectedMetrics, setSelectedMetrics] = React.useState<Column[]>([])
   const [selectedDimensions, setSelectedDimensions] = React.useState<Column[]>(
     []
   )
+  const [includeEmptyRows, setIncludeEmptyRows] = React.useState(true)
   const [queryResponse, setQueryResponse] = React.useState<
     gapi.client.analytics.GaData
   >()
+  const [selectedSamplingValue, setSelectedSamplingValue] = React.useState(
+    SamplingLevel.Default
+  )
 
   const requiredParameters = React.useMemo(() => {
     return view !== "" && startDate !== "" && endDate !== ""
@@ -161,16 +154,28 @@ export const QueryExplorer = () => {
     setView(viewId)
   }, [selectedView])
 
+  // TODO - Add error handling and visual indication when an error happens.
   const runQuery = React.useCallback(() => {
-    if (api === undefined) {
+    if (api === undefined || selectedMetrics.length === 0) {
       return
     }
+    const metrics = selectedMetrics.map(a => a.id).join(",")
+    const dimensions =
+      selectedDimensions.length === 0
+        ? undefined
+        : selectedDimensions.map(a => a.id).join(",")
+
     const apiObject = {
       ids: view,
       "start-date": startDate,
       "end-date": endDate,
-      metrics: selectedMetrics.map(a => a.id).join(","),
-      dimensions: selectedDimensions.map(a => a.id).join(","),
+      "include-empty-rows": includeEmptyRows,
+      samplingLevel: selectedSamplingValue,
+      metrics,
+      dimensions,
+    }
+    if (selectedSegment !== undefined) {
+      apiObject["segment"] = selectedSegment.segmentId
     }
     if (startIndex !== undefined && startIndex !== "") {
       apiObject["start-index"] = startIndex
@@ -186,7 +191,6 @@ export const QueryExplorer = () => {
         .map(a => `${a.sort === "ASCENDING" ? "" : "-"}${a.id}`)
         .join(",")
     }
-    console.log({ apiObject })
     api.data.ga
       .get(apiObject)
       .then(response => {
@@ -203,6 +207,8 @@ export const QueryExplorer = () => {
     startIndex,
     maxResults,
     filters,
+    selectedSamplingValue,
+    includeEmptyRows,
   ])
 
   return (
@@ -308,39 +314,15 @@ export const QueryExplorer = () => {
           fullWidth
           helperText="The filters to apply to the query."
         />
-        <TextField
-          InputProps={{
-            endAdornment: <DevsiteLink hash="segment" />,
-          }}
-          size="small"
-          variant="outlined"
-          id="segment"
-          label="segment"
-          fullWidth
-          helperText="The segment to use for the query"
-        />
+        <SegmentC segments={segments} setSelectedSegment={setSelectedSegment} />
         <FormControlLabel
           className={classes.showSegments}
           control={<Checkbox />}
           label="Show segment definitions instead of IDs."
         />
-        {/*
-        <Linked hash="samplingLevel">
-          <FormControl fullWidth>
-            <InputLabel>SamplingLevel</InputLabel>
-            <Select
-              fullWidth
-              value={samplingLevel}
-              onChange={e => setSamplingLevel((e as any).target.value)}
-            >
-              <MenuItem value="DEFAULT">Default</MenuItem>
-              <MenuItem value="FASTER">Faster</MenuItem>
-              <MenuItem value="HIGHER_PRECISION">Higher Precision</MenuItem>
-            </Select>
-            <FormHelperText>The level of sampling to apply.</FormHelperText>
-          </FormControl>
-        </Linked>
-          */}
+        <SamplingLevelComponent
+          onSamplingLevelChange={setSelectedSamplingValue}
+        />
         <TextField
           InputProps={{
             endAdornment: <DevsiteLink hash="startIndex" />,
@@ -369,7 +351,12 @@ export const QueryExplorer = () => {
         />
         <FormControlLabel
           className={classes.includeEmpty}
-          control={<Checkbox />}
+          control={
+            <Checkbox
+              checked={includeEmptyRows}
+              onChange={e => setIncludeEmptyRows(e.target.checked)}
+            />
+          }
           label="Include Empty Rows"
         />
         <Button

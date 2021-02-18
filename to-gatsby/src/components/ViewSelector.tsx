@@ -11,6 +11,7 @@ import {
   ProfileSummary,
   WebPropertySummary,
 } from "../api"
+import { useTypedLocalStorage } from "../hooks"
 
 const useStyles = makeStyles<Theme, ViewSelector3Props>(theme => ({
   root: props => ({
@@ -28,8 +29,8 @@ const useStyles = makeStyles<Theme, ViewSelector3Props>(theme => ({
 export type HasView = Required<Omit<SelectedView, "views">>
 export interface SelectedView {
   account?: AccountSummary
-  view?: ProfileSummary
   property?: WebPropertySummary
+  view?: ProfileSummary
   // This is a filtered down list that has an account, view & property.
   views: HasView[]
 }
@@ -45,11 +46,209 @@ interface ViewSelector3Props {
   variant?: "outlined" | "standard"
 }
 
+type UseViewSelector = () => {
+  accounts: AccountSummary[]
+  properties: WebPropertySummary[]
+  views: ProfileSummary[]
+  selectedAccount: AccountSummary | undefined
+  setSelectedAccount: (account: AccountSummary | undefined) => void
+  selectedProperty: WebPropertySummary | undefined
+  setSelectedProperty: (property: WebPropertySummary | undefined) => void
+  selectedView: ProfileSummary | undefined
+  setSelectedView: (view: ProfileSummary | undefined) => void
+}
+const useViewSelector: UseViewSelector = () => {
+  const gapi = useSelector((state: AppState) => state.gapi)
+  const user = useSelector((state: AppState) => state.user)
+
+  const [hasRun, setHasRun] = React.useState<{
+    selectedAccount: boolean
+    selectedProperty: boolean
+    selectedView: boolean
+  }>({
+    selectedAccount: false,
+    selectedProperty: false,
+    selectedView: false,
+  })
+  const [localData, setLocalData] = useTypedLocalStorage<{
+    [key: string]: {
+      apiResponse: AccountSummary[]
+      selectedAccount: AccountSummary | undefined
+      selectedProperty: WebPropertySummary | undefined
+      selectedView: AccountSummary | undefined
+    }
+  }>("viewSelector - apiResponse", () => "{}" as any, false)
+
+  const [account, setAccount] = React.useState<AccountSummary>()
+  const [property, setProperty] = React.useState<WebPropertySummary>()
+  const [view, setView] = React.useState<AccountSummary>()
+
+  // Use last selected account
+  React.useEffect(() => {
+    if (user === undefined || hasRun.selectedAccount) {
+      return
+    }
+    const forUser = localData[user.getId()]
+    if (forUser === undefined) {
+      return
+    }
+    setAccount(forUser.selectedAccount)
+    setHasRun(old => ({ ...old, selectedAccount: true }))
+  }, [user, localData, hasRun])
+
+  // Use last selected property
+  React.useEffect(() => {
+    if (user === undefined || hasRun.selectedProperty) {
+      return
+    }
+    const forUser = localData[user.getId()]
+    if (forUser === undefined) {
+      return
+    }
+    setProperty(forUser.selectedProperty)
+    setHasRun(old => ({ ...old, selectedProperty: true }))
+  }, [user, localData, hasRun])
+
+  // Use last selected property
+  React.useEffect(() => {
+    if (user === undefined || hasRun.selectedView) {
+      return
+    }
+    const forUser = localData[user.getId()]
+    if (forUser === undefined) {
+      return
+    }
+    setView(forUser.selectedView)
+    setHasRun(old => ({ ...old, selectedView: true }))
+  }, [user, localData, hasRun])
+
+  const setSelectedAccount = React.useCallback(
+    (account: AccountSummary | undefined) => {
+      if (user === undefined) {
+        return
+      }
+      setLocalData(old => ({
+        ...old,
+        [user.getId()]: {
+          ...old[user.getId()],
+          selectedAccount: account,
+        },
+      }))
+      setAccount(account)
+      // Since this is only called from the controls, it is always good to
+      // clear the other options here.
+      setSelectedProperty(undefined)
+      setSelectedView(undefined)
+    },
+    [user]
+  )
+
+  const setSelectedProperty = React.useCallback(
+    (property: WebPropertySummary | undefined) => {
+      if (user === undefined) {
+        return
+      }
+      setLocalData(old => ({
+        ...old,
+        [user.getId()]: {
+          ...old[user.getId()],
+          selectedProperty: property,
+        },
+      }))
+      setProperty(property)
+      setSelectedView(undefined)
+    },
+    [user]
+  )
+
+  const setSelectedView = React.useCallback(
+    (view: ProfileSummary | undefined) => {
+      if (user === undefined) {
+        return
+      }
+      setLocalData(old => ({
+        ...old,
+        [user.getId()]: {
+          ...old[user.getId()],
+          selectedView: view,
+        },
+      }))
+      setView(view)
+    },
+    [user]
+  )
+
+  const accounts = React.useMemo(() => {
+    if (user === undefined) {
+      return []
+    }
+    if (localData[user.getId()] === undefined) {
+      return []
+    }
+    const accountsForUser = localData[user.getId()].apiResponse
+    return accountsForUser
+  }, [localData, user])
+
+  const properties = React.useMemo(() => {
+    if (account === undefined) {
+      return []
+    }
+    // TODO - not sure if this is the right logic.
+    const a = accounts.find(a => a.id === account.id)
+    if (a === undefined) {
+      return []
+    }
+    return a.webProperties || []
+  }, [accounts, account])
+
+  const views = React.useMemo(() => {
+    if (property === undefined) {
+      return []
+    }
+    // TODO - not sure if this is the right logic.
+    const p = properties.find(p => p.id === property.id)
+    if (p === undefined) {
+      return []
+    }
+    return p.profiles || []
+  }, [properties, property])
+
+  React.useEffect(() => {
+    if (user === undefined) {
+      return
+    }
+    if (gapi !== undefined) {
+      const api = getAnalyticsApi(gapi)
+      api.management.accountSummaries.list({}).then(response => {
+        setLocalData(old => ({
+          ...old,
+          [user.getId()]: {
+            ...old[user.getId()],
+            apiResponse: response.result.items!,
+          },
+        }))
+      })
+    }
+  }, [gapi, user])
+  return {
+    accounts,
+    selectedAccount: account,
+    setSelectedAccount,
+    properties,
+    selectedProperty: property,
+    setSelectedProperty,
+    views,
+    selectedView: view,
+    setSelectedView,
+  }
+}
+
 // TODO - This should keep the last value you selected instead of making you
 // reselect every time.
 const ViewSelector: React.FC<ViewSelector3Props> = props => {
   const {
     onViewChanged,
+    // TODO - Implement this.
     onViewsChanged,
     className,
     size = "medium",
@@ -57,159 +256,58 @@ const ViewSelector: React.FC<ViewSelector3Props> = props => {
   } = props
   const classes = useStyles(props)
 
-  // Options for selects
-  const [accounts, setAccounts] = React.useState<AccountSummary[]>([])
-  const [properties, setProperties] = React.useState<WebPropertySummary[]>([])
-  const [views, setViews] = React.useState<ProfileSummary[]>([])
-
-  // Selected values
-  const [account, setAccount] = React.useState<AccountSummary>()
-  const [property, setProperty] = React.useState<WebPropertySummary>()
-  const [view, setView] = React.useState<ProfileSummary>()
-
-  const gapi = useSelector((state: AppState) => state.gapi)
-  const user = useSelector((state: AppState) => state.user)
-
-  // Filtered list of account, property, view that has all values populated.
-  const [hasViews, setHasViews] = React.useState<HasView[]>([])
-
-  React.useEffect(() => {
-    if (user === undefined) {
-      setHasViews([])
-      setAccount(undefined)
-      setProperty(undefined)
-      setView(undefined)
-      return
-    }
-    if (gapi !== undefined) {
-      const api = getAnalyticsApi(gapi)
-      const getData = async () => {
-        // TODO - handle rejected promise from .list
-        // TODO - here and for all api requests. If the api isn't enabled, show
-        // a toast that lets the developer navigate to the API console to enable
-        // the api.
-        const response = await api.management.accountSummaries.list({})
-        const accounts = response.result.items
-        if (accounts === undefined) {
-          return
-        }
-        setAccounts(accounts)
-
-        if (accounts.length === 0) {
-          return
-        }
-        const account = accounts[0]
-        setAccount(account)
-
-        if (
-          account.webProperties === undefined ||
-          account.webProperties.length === 0
-        ) {
-          return
-        }
-
-        const property = account.webProperties[0]
-        setProperty(property)
-
-        if (property.profiles === undefined || property.profiles.length === 0) {
-          return
-        }
-        const view = property.profiles[0]
-        setView(view)
-
-        const hasViews: HasView[] = []
-        accounts.forEach(account => {
-          account.webProperties?.forEach(property => {
-            property.profiles?.forEach(view => {
-              hasViews.push({ account, property, view })
-            })
-          })
-        })
-        setHasViews(hasViews)
-      }
-      getData()
-    }
-  }, [gapi, user])
-
-  // When account changes, update the property options.
-  React.useEffect(() => {
-    if (account !== undefined) {
-      const properties = account.webProperties
-      setProperties(properties || [])
-    } else {
-      setProperties([])
-    }
-  }, [account])
-
-  // When property changes, update the view options.
-  React.useEffect(() => {
-    if (property !== undefined) {
-      setViews(property.profiles || [])
-    } else {
-      setViews([])
-    }
-  }, [property])
-
-  // If accounts changes and there is at least one in the list, default to the first.
-  React.useEffect(() => {
-    if (accounts.length > 0) {
-      setAccount(accounts[0])
-    } else {
-      setAccount(undefined)
-    }
-  }, [accounts])
-
-  // If the property options change and there is at least one in the list, default to the first.
-  React.useEffect(() => {
-    if (properties.length > 0) {
-      setProperty(properties[0])
-    } else {
-      setProperty(undefined)
-    }
-  }, [properties])
-
-  // If the view options change and there is at least on in the list, default to the first.
-  React.useEffect(() => {
-    if (views.length > 0) {
-      setView(views[0])
-    } else {
-      setView(undefined)
-    }
-  }, [views])
+  const {
+    accounts,
+    selectedAccount,
+    setSelectedAccount,
+    properties,
+    selectedProperty,
+    setSelectedProperty,
+    views,
+    selectedView,
+    setSelectedView,
+  } = useViewSelector()
 
   // Call onViewChanged callback whenever the selected account, property, or
   // view changes via user interaction.
   React.useEffect(() => {
     if (
       onViewChanged !== undefined &&
-      account !== undefined &&
-      property !== undefined &&
-      view !== undefined
+      selectedAccount !== undefined &&
+      selectedProperty !== undefined &&
+      selectedView !== undefined
     ) {
-      onViewChanged({ account, property, view })
+      onViewChanged({
+        account: selectedAccount,
+        property: selectedProperty,
+        view: selectedView,
+      })
     }
-  }, [account, property, view, onViewChanged])
+  }, [selectedAccount, selectedProperty, selectedView, onViewChanged])
 
   React.useEffect(() => {
     if (onViewsChanged !== undefined) {
-      onViewsChanged(hasViews)
+      const populatedViews: HasView[] = accounts
+        .flatMap(account => {
+          const properties = account.webProperties
+          if (properties !== undefined) {
+            return properties.flatMap(property => {
+              const views = account.webProperties
+              if (views !== undefined) {
+                return views.map(view => ({
+                  account,
+                  property,
+                  view,
+                }))
+              }
+            })
+          }
+        })
+        .filter(a => a !== undefined) as HasView[]
+      // TODO - this should probably be removed entirely.
+      // onViewsChanged(populatedViews)
     }
-  }, [hasViews, onViewsChanged])
-
-  const accountOnChange = React.useCallback((_, a: AccountSummary | null) => {
-    setAccount(a || undefined)
-  }, [])
-
-  const propertyOnChange = React.useCallback(
-    (_, a: WebPropertySummary | null) => {
-      setProperty(a || undefined)
-    },
-    []
-  )
-
-  const viewOnChange = React.useCallback((_, a: ProfileSummary | null) => {
-    setView(a || undefined)
-  }, [])
+  }, [accounts, onViewsChanged])
 
   return (
     <div className={classnames(classes.root, className)}>
@@ -220,8 +318,11 @@ const ViewSelector: React.FC<ViewSelector3Props> = props => {
         autoHighlight
         className={classes.formControl}
         options={accounts}
-        value={account || null}
-        onChange={accountOnChange}
+        value={selectedAccount || null}
+        onChange={(_, a: AccountSummary | null) => {
+          setSelectedAccount(a || undefined)
+        }}
+        getOptionSelected={(a, b) => a.id === b.id}
         getOptionLabel={account => account.name || ""}
         renderInput={params => (
           <TextField
@@ -239,8 +340,11 @@ const ViewSelector: React.FC<ViewSelector3Props> = props => {
         autoHighlight
         className={classes.formControl}
         options={properties}
-        value={property || null}
-        onChange={propertyOnChange}
+        value={selectedProperty || null}
+        onChange={(_, p: WebPropertySummary | null) => {
+          setSelectedProperty(p || undefined)
+        }}
+        getOptionSelected={(a, b) => a.id === b.id}
         getOptionLabel={property => property.name || ""}
         renderInput={params => (
           <TextField
@@ -258,8 +362,11 @@ const ViewSelector: React.FC<ViewSelector3Props> = props => {
         autoHighlight
         className={classes.formControl}
         options={views}
-        value={view || null}
-        onChange={viewOnChange}
+        value={selectedView || null}
+        getOptionSelected={(a, b) => a.id === b.id}
+        onChange={(_, v: ProfileSummary | null) => {
+          setSelectedView(v || undefined)
+        }}
         getOptionLabel={view => view.name || ""}
         renderInput={params => (
           <TextField {...params} label="View" size={size} variant={variant} />

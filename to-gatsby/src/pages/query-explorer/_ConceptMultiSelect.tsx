@@ -14,26 +14,10 @@
 
 import * as React from "react"
 
-import { Typography, TextField, makeStyles } from "@material-ui/core"
+import { Typography, TextField } from "@material-ui/core"
 import Autocomplete from "@material-ui/lab/Autocomplete"
 import { Column } from "../../api"
-
-const useStyles = makeStyles(_ => ({
-  conceptOption: {
-    display: "flex",
-    width: "100%",
-  },
-  nameId: {
-    flexGrow: 1,
-    display: "flex",
-    flexDirection: "column",
-    "& > p": {
-      margin: 0,
-      padding: 0,
-    },
-  },
-  group: {},
-}))
+import { FancyOption } from "../../components/FancyOption"
 
 interface ConceptMultiSelectProps {
   label: string
@@ -50,7 +34,6 @@ export const ConceptMultiSelect: React.FC<ConceptMultiSelectProps> = ({
   setSelectedColumns,
   viewId,
 }) => {
-  const classes = useStyles()
   const [localColumns, setLocalColumns] = React.useState<Column[]>([])
 
   // TODO - maybe clean this up to be a tree instead of flat. i.e.
@@ -86,6 +69,9 @@ export const ConceptMultiSelect: React.FC<ConceptMultiSelectProps> = ({
     [columns]
   )
 
+  // TODO - the FancyOption children should probably also be generalized since
+  // they need to all be formatted the same as well.
+
   return (
     <Autocomplete<Column, true, undefined, true>
       fullWidth
@@ -99,21 +85,18 @@ export const ConceptMultiSelect: React.FC<ConceptMultiSelectProps> = ({
       value={localColumns}
       onChange={(_event, value, _state) => setLocalColumns(value as Column[])}
       renderOption={option => (
-        <div className={classes.conceptOption}>
-          <div className={classes.nameId}>
-            <Typography variant="body1">{option.attributes!.uiName}</Typography>
-            <Typography variant="subtitle2" color="primary">
-              {option.id}
+        <FancyOption
+          right={
+            <Typography variant="subtitle1" color="textSecondary">
+              {option.attributes!.group}
             </Typography>
-          </div>
-          <Typography
-            className={classes.group}
-            variant="subtitle1"
-            color="textSecondary"
-          >
-            {option.attributes!.group}
+          }
+        >
+          <Typography variant="body1">{option.attributes!.uiName}</Typography>
+          <Typography variant="subtitle2" color="primary">
+            {option.id}
           </Typography>
-        </div>
+        </FancyOption>
       )}
       renderInput={params => (
         <TextField

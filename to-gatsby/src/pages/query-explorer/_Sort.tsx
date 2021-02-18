@@ -38,7 +38,7 @@ const useStyles = makeStyles(_ => ({
 
 interface SortProps {
   columns: Column[]
-  setSort: (sortableColumns: SortableColumn[]) => void
+  setSort: (sortableColumns: SortableColumn[] | undefined) => void
 }
 
 const Sort: React.FC<SortProps> = ({ columns, setSort }) => {
