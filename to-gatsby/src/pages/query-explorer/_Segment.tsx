@@ -32,7 +32,7 @@ export const SegmentComponent: React.FC<SegmentProps> = ({
 
   React.useEffect(() => {
     setSelectedSegment(localSegment)
-  }, [localSegment])
+  }, [localSegment, setSelectedSegment])
 
   return (
     <Autocomplete<Segment, false, undefined, true>

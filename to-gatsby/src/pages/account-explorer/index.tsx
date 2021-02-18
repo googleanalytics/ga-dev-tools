@@ -90,6 +90,7 @@ export const AccountExplorer = () => {
 
   const [searchQuery, setSearchQuery] = React.useState("")
   const [selectedView, setSelectedView] = React.useState<HasView>()
+  // TODO - Create a hook for getting all views.
   const [allViews, setAllViews] = React.useState<HasView[]>([])
   const [filteredViews, setFilteredViews] = React.useState<HasView[]>([])
 
@@ -112,13 +113,6 @@ export const AccountExplorer = () => {
       setFilteredViews([selectedView])
     }
   }, [searchQuery, allViews, selectedView])
-
-  const onViewsChanged = React.useCallback(
-    populatedViews => {
-      setAllViews(populatedViews)
-    },
-    [setAllViews]
-  )
 
   const onViewChanged = React.useCallback(
     viewData => {
@@ -153,7 +147,6 @@ export const AccountExplorer = () => {
             </Typography>
             <ViewSelector
               className={classes.viewSelector}
-              onViewsChanged={onViewsChanged}
               onViewChanged={onViewChanged}
             />
             <ViewsTable

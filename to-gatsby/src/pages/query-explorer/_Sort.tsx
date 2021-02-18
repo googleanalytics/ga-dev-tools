@@ -82,7 +82,7 @@ const Sort: React.FC<SortProps> = ({ columns, setSort }) => {
     } else {
       setSort(localSortColumns)
     }
-  }, [localSortColumns])
+  }, [localSortColumns, setSort])
 
   // TODO renderOption={...} should be extracted since this and
   // _ConceptMultiSelect use the same styling.

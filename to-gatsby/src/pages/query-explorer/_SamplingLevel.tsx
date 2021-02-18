@@ -25,19 +25,19 @@ export enum SamplingLevel {
 }
 
 interface SamplingLevelProps {
-  onSamplingLevelChange: (samplingLevel: SamplingLevel) => void
+  onSamplingLevelChanged: (samplingLevel: SamplingLevel) => void
 }
 
 export const SamplingLevelComponent: React.FC<SamplingLevelProps> = ({
-  onSamplingLevelChange,
+  onSamplingLevelChanged,
 }) => {
   const [samplingLevel, setSamplingLevel] = React.useState(
     SamplingLevel.Default
   )
 
   React.useEffect(() => {
-    onSamplingLevelChange(samplingLevel)
-  }, [samplingLevel])
+    onSamplingLevelChanged(samplingLevel)
+  }, [samplingLevel, onSamplingLevelChanged])
 
   // TODO - This doesn't need to be the autocomplete component. It can just be a Select.
   return (
@@ -45,7 +45,6 @@ export const SamplingLevelComponent: React.FC<SamplingLevelProps> = ({
       fullWidth
       autoComplete
       autoHighlight
-      freeSolo
       debug
       options={[
         SamplingLevel.Default,

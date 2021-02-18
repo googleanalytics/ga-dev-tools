@@ -1,7 +1,5 @@
 import React from "react"
-import { makeStyles, Typography } from "@material-ui/core"
-import { CopyFilterAsync } from "fs-extra"
-import Autocomplete from "@material-ui/lab/Autocomplete"
+import { makeStyles } from "@material-ui/core"
 
 const useStyles = makeStyles(_ => ({
   option: {

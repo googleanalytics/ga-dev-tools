@@ -47,18 +47,18 @@ export const ConceptMultiSelect: React.FC<ConceptMultiSelectProps> = ({
       const parsed = JSON.parse(asString)
       setLocalColumns(parsed)
     } catch (e) {}
-  }, [viewId])
+  }, [viewId, label])
 
   React.useEffect(() => {
     window.localStorage.setItem(
       `${viewId} ${label} columns`,
       JSON.stringify(localColumns)
     )
-  }, [localColumns])
+  }, [localColumns, label, viewId])
 
   React.useEffect(() => {
     setSelectedColumns(localColumns)
-  }, [localColumns])
+  }, [localColumns, setSelectedColumns])
 
   // Filter out the deprecated columns so they can't be selected.
   const columnOptions = React.useMemo<Column[]>(

@@ -38,8 +38,6 @@ export interface SelectedView {
 interface ViewSelector3Props {
   // A callback that will be called when the view changes.
   onViewChanged?: (hasView: HasView) => void
-  // A callback that will be called when the available views change.
-  onViewsChanged?: (views: HasView[]) => void
   className?: string
   vertical?: true | undefined
   size?: "small" | "medium"
@@ -122,6 +120,41 @@ const useViewSelector: UseViewSelector = () => {
     setHasRun(old => ({ ...old, selectedView: true }))
   }, [user, localData, hasRun])
 
+  const setSelectedView = React.useCallback(
+    (view: ProfileSummary | undefined) => {
+      if (user === undefined) {
+        return
+      }
+      setLocalData(old => ({
+        ...old,
+        [user.getId()]: {
+          ...old[user.getId()],
+          selectedView: view,
+        },
+      }))
+      setView(view)
+    },
+    [user, setLocalData]
+  )
+
+  const setSelectedProperty = React.useCallback(
+    (property: WebPropertySummary | undefined) => {
+      if (user === undefined) {
+        return
+      }
+      setLocalData(old => ({
+        ...old,
+        [user.getId()]: {
+          ...old[user.getId()],
+          selectedProperty: property,
+        },
+      }))
+      setProperty(property)
+      setSelectedView(undefined)
+    },
+    [user, setLocalData, setSelectedView]
+  )
+
   const setSelectedAccount = React.useCallback(
     (account: AccountSummary | undefined) => {
       if (user === undefined) {
@@ -140,42 +173,7 @@ const useViewSelector: UseViewSelector = () => {
       setSelectedProperty(undefined)
       setSelectedView(undefined)
     },
-    [user]
-  )
-
-  const setSelectedProperty = React.useCallback(
-    (property: WebPropertySummary | undefined) => {
-      if (user === undefined) {
-        return
-      }
-      setLocalData(old => ({
-        ...old,
-        [user.getId()]: {
-          ...old[user.getId()],
-          selectedProperty: property,
-        },
-      }))
-      setProperty(property)
-      setSelectedView(undefined)
-    },
-    [user]
-  )
-
-  const setSelectedView = React.useCallback(
-    (view: ProfileSummary | undefined) => {
-      if (user === undefined) {
-        return
-      }
-      setLocalData(old => ({
-        ...old,
-        [user.getId()]: {
-          ...old[user.getId()],
-          selectedView: view,
-        },
-      }))
-      setView(view)
-    },
-    [user]
+    [user, setLocalData, setSelectedProperty, setSelectedView]
   )
 
   const accounts = React.useMemo(() => {
@@ -229,7 +227,7 @@ const useViewSelector: UseViewSelector = () => {
         }))
       })
     }
-  }, [gapi, user])
+  }, [gapi, user, setLocalData])
   return {
     accounts,
     selectedAccount: account,
@@ -249,7 +247,6 @@ const ViewSelector: React.FC<ViewSelector3Props> = props => {
   const {
     onViewChanged,
     // TODO - Implement this.
-    onViewsChanged,
     className,
     size = "medium",
     variant = "standard",
@@ -284,30 +281,6 @@ const ViewSelector: React.FC<ViewSelector3Props> = props => {
       })
     }
   }, [selectedAccount, selectedProperty, selectedView, onViewChanged])
-
-  React.useEffect(() => {
-    if (onViewsChanged !== undefined) {
-      const populatedViews: HasView[] = accounts
-        .flatMap(account => {
-          const properties = account.webProperties
-          if (properties !== undefined) {
-            return properties.flatMap(property => {
-              const views = account.webProperties
-              if (views !== undefined) {
-                return views.map(view => ({
-                  account,
-                  property,
-                  view,
-                }))
-              }
-            })
-          }
-        })
-        .filter(a => a !== undefined) as HasView[]
-      // TODO - this should probably be removed entirely.
-      // onViewsChanged(populatedViews)
-    }
-  }, [accounts, onViewsChanged])
 
   return (
     <div className={classnames(classes.root, className)}>

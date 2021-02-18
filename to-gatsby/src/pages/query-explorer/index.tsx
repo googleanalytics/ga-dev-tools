@@ -97,6 +97,7 @@ const DevsiteLink: React.FC<{ hash: string }> = ({ hash }) => {
         className={classes.externalReference}
         href={`https://developers.google.com/analytics/devguides/reporting/core/v3/reference#${hash}`}
         target="_blank"
+        rel="noreferrer"
       >
         <Launch color="action" />
       </a>
@@ -191,6 +192,7 @@ export const QueryExplorer = () => {
         .map(a => `${a.sort === "ASCENDING" ? "" : "-"}${a.id}`)
         .join(",")
     }
+    // TODO - add in a loading indicator since this can take a while.
     api.data.ga
       .get(apiObject)
       .then(response => {
@@ -203,12 +205,14 @@ export const QueryExplorer = () => {
     endDate,
     selectedDimensions,
     selectedMetrics,
+    selectedSegment,
     sort,
     startIndex,
     maxResults,
     filters,
     selectedSamplingValue,
     includeEmptyRows,
+    api,
   ])
 
   return (
@@ -321,7 +325,7 @@ export const QueryExplorer = () => {
           label="Show segment definitions instead of IDs."
         />
         <SamplingLevelComponent
-          onSamplingLevelChange={setSelectedSamplingValue}
+          onSamplingLevelChanged={setSelectedSamplingValue}
         />
         <TextField
           InputProps={{
