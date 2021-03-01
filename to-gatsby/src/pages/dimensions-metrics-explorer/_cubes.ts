@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import { reduce, once } from "lodash"
+import { reduce } from "lodash"
 import { Set, Map } from "immutable"
 // TODO - If time allows, this file should be processed at build time instead
 // of runtime.
