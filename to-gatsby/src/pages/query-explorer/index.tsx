@@ -22,11 +22,9 @@ import {
   FormControlLabel,
   Checkbox,
   Button,
-  Tooltip,
 } from "@material-ui/core"
 import { Url } from "../../constants"
 import ViewSelector, { HasView } from "../../components/ViewSelector"
-import { Launch } from "@material-ui/icons"
 import useQueryExplorer from "./_useQueryExplorer"
 import ConceptMultiSelect from "./_ConceptMultiSelect"
 import Sort from "./_Sort"
@@ -34,6 +32,7 @@ import SegmentC from "./_Segment"
 import Report from "./_Report"
 import { Column, useApi, useSegments, Segment } from "../../api"
 import { SamplingLevelComponent, SamplingLevel } from "./_SamplingLevel"
+import ExternalLink from "../../components/ExternalLink"
 
 const coreReportingApi = <a href={Url.coreReportingApi}>Core Reporting API</a>
 
@@ -89,21 +88,10 @@ const endDateLink = (
 
 export type SortableColumn = Column & { sort: "ASCENDING" | "DESCENDING" }
 
-const DevsiteLink: React.FC<{ hash: string }> = ({ hash }) => {
-  const classes = useStyles()
-  return (
-    <Tooltip title={`See ${hash} on devsite.`}>
-      <a
-        className={classes.externalReference}
-        href={`https://developers.google.com/analytics/devguides/reporting/core/v3/reference#${hash}`}
-        target="_blank"
-        rel="noreferrer"
-      >
-        <Launch color="action" />
-      </a>
-    </Tooltip>
-  )
-}
+const referenceLink = (hash: string) =>
+  `https://developers.google.com/analytics/devguides/reporting/core/v3/reference#${hash}`
+
+const titleFor = (id: string) => `See ${id} on devsite.`
 
 export const QueryExplorer = () => {
   const classes = useStyles()
@@ -237,7 +225,12 @@ export const QueryExplorer = () => {
       <section className={classes.inputs}>
         <TextField
           InputProps={{
-            endAdornment: <DevsiteLink hash="ids" />,
+            endAdornment: (
+              <ExternalLink
+                href={referenceLink("ids")}
+                title={titleFor("ids")}
+              />
+            ),
           }}
           size="small"
           variant="outlined"
@@ -251,7 +244,12 @@ export const QueryExplorer = () => {
         />
         <TextField
           InputProps={{
-            endAdornment: <DevsiteLink hash="startDate" />,
+            endAdornment: (
+              <ExternalLink
+                href={referenceLink("startDate")}
+                title={titleFor("startDate")}
+              />
+            ),
           }}
           size="small"
           variant="outlined"
@@ -270,7 +268,12 @@ export const QueryExplorer = () => {
         />
         <TextField
           InputProps={{
-            endAdornment: <DevsiteLink hash="endDate" />,
+            endAdornment: (
+              <ExternalLink
+                href={referenceLink("endDate")}
+                title={titleFor("endDate")}
+              />
+            ),
           }}
           fullWidth
           size="small"
@@ -307,7 +310,12 @@ export const QueryExplorer = () => {
         />
         <TextField
           InputProps={{
-            endAdornment: <DevsiteLink hash="filters" />,
+            endAdornment: (
+              <ExternalLink
+                href={referenceLink("filters")}
+                title={titleFor("filters")}
+              />
+            ),
           }}
           value={filters || ""}
           onChange={e => setFilters(e.target.value)}
@@ -329,7 +337,12 @@ export const QueryExplorer = () => {
         />
         <TextField
           InputProps={{
-            endAdornment: <DevsiteLink hash="startIndex" />,
+            endAdornment: (
+              <ExternalLink
+                href={referenceLink("startIndex")}
+                title={titleFor("startIndex")}
+              />
+            ),
           }}
           size="small"
           variant="outlined"
@@ -342,7 +355,12 @@ export const QueryExplorer = () => {
         />
         <TextField
           InputProps={{
-            endAdornment: <DevsiteLink hash="maxResults" />,
+            endAdornment: (
+              <ExternalLink
+                href={referenceLink("maxResults")}
+                title={titleFor("maxResults")}
+              />
+            ),
           }}
           size="small"
           variant="outlined"

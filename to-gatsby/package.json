@@ -10,6 +10,8 @@
     "@material-ui/icons": "^4.11.2",
     "@material-ui/lab": "^4.0.0-alpha.57",
     "@material-ui/styles": "^4.11.3",
+    "@types/gapi.analytics": "^0.0.3",
+    "@types/gapi.client.analyticsreporting": "^4.0.3",
     "@types/gtag.js": "^0.0.3",
     "classnames": "^2.2.6",
     "copy-to-clipboard": "^3.3.1",

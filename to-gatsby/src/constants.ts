@@ -73,6 +73,8 @@ export const StorageKey = {
   campaignBuilderUseFragment: "campaign-builder/use-fragment",
   bitlyAccessToken: "bitly-auth/access-token",
   bitlyCache: "bitly-auth/cache-storage",
+  histogramRequestDimension: "request-composer/histogram-request-dimension",
+  histogramRequestMetric: "request-composer/histogram-request-metric",
 }
 
 export const EventAction = {

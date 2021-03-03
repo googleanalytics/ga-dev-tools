@@ -15,17 +15,22 @@
 import * as React from "react"
 
 import { makeStyles, Typography, Tabs, Tab, Box } from "@material-ui/core"
-import ViewSelector from "../../components/ViewSelector"
+import ViewSelector, { HasView } from "../../components/ViewSelector"
 import HistogramRequest from "./_HistogramRequest"
 import PivotRequest from "./_PivotRequest"
 import CohortRequest from "./_CohortRequest"
 import MetricExpression from "./_MetricExpression"
 
+// TODO - Talk to someone about how to make these look the right size without
+// being completely arbitrary?
 const useStyles = makeStyles(theme => ({
   viewSelector: {
     flexDirection: "column",
-    maxWidth: theme.spacing(50),
+    // maxWidth: theme.spacing(63),
   },
+  // panel: {
+  //   maxWidth: theme.spacing(63),
+  // },
 }))
 
 const TabPanel: React.FC<{ value: number; index: number }> = ({
@@ -33,18 +38,16 @@ const TabPanel: React.FC<{ value: number; index: number }> = ({
   index,
   children,
 }) => {
+  const classes = useStyles()
   return (
     <div
       role="tabpanel"
       hidden={value !== index}
       id={`simple-tabpanel-${index}`}
       aria-labelledby={`simple-tab-${index}`}
+      className={classes.panel}
     >
-      {value === index && (
-        <Box p={3}>
-          <Typography>{children}</Typography>
-        </Box>
-      )}
+      {value === index && <Box p={3}>{children}</Box>}
     </div>
   )
 }
@@ -52,11 +55,19 @@ const TabPanel: React.FC<{ value: number; index: number }> = ({
 const RequestComposer = () => {
   const classes = useStyles()
   const [tab, setTab] = React.useState(0)
+  const [view, setView] = React.useState<HasView | undefined>()
+  const onViewChanged = React.useCallback((view: HasView) => {
+    setView(view)
+  }, [])
+
   return (
     <>
       <section>
         <Typography variant="h4">Select account, property, and view</Typography>
-        <ViewSelector className={classes.viewSelector} />
+        <ViewSelector
+          className={classes.viewSelector}
+          onViewChanged={onViewChanged}
+        />
       </section>
       <section>
         <Tabs
@@ -71,7 +82,7 @@ const RequestComposer = () => {
           <Tab label="Metric Expression" />
         </Tabs>
         <TabPanel value={tab} index={0}>
-          <HistogramRequest />
+          <HistogramRequest view={view} />
         </TabPanel>
         <TabPanel value={tab} index={1}>
           <PivotRequest />

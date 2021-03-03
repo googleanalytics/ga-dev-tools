@@ -26,6 +26,8 @@ const useStyles = makeStyles<Theme, ViewSelector3Props>(theme => ({
   },
 }))
 
+// TODO - This naming should be cleaned up. HasView should probably be View,
+// and SelectedView probably doesn't need to be external.
 export type HasView = Required<Omit<SelectedView, "views">>
 export interface SelectedView {
   account?: AccountSummary
@@ -241,12 +243,9 @@ const useViewSelector: UseViewSelector = () => {
   }
 }
 
-// TODO - This should keep the last value you selected instead of making you
-// reselect every time.
 const ViewSelector: React.FC<ViewSelector3Props> = props => {
   const {
     onViewChanged,
-    // TODO - Implement this.
     className,
     size = "medium",
     variant = "standard",
