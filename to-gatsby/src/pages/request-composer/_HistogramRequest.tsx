@@ -33,11 +33,14 @@ import {
   Column,
   useAnalyticsReportingAPI,
   useDimensionsAndMetrics,
+  Segment,
 } from "./_api"
 import SelectMultiple from "../../components/SelectMultiple"
 import { StorageKey } from "../../constants"
 import { FancyOption } from "../../components/FancyOption"
 import { useState, useMemo, useEffect } from "react"
+import { useSegments } from "../../api"
+import SelectSingle from "../../components/SelectSingle"
 
 const useStyles = makeStyles(_ => ({
   container: {
@@ -152,6 +155,8 @@ const useHistogramRequestParameters = (view: HasView | undefined) => {
     )
   }, [filtersExpression])
 
+  const [selectedSegment, setSelectedSegment] = useState<Segment>()
+
   useMemo(() => {
     const id = view?.view.id
     if (id !== undefined) {
@@ -174,6 +179,8 @@ const useHistogramRequestParameters = (view: HasView | undefined) => {
     setBuckets,
     filtersExpression,
     setFiltersExpression,
+    selectedSegment,
+    setSelectedSegment,
   }
 }
 
@@ -185,6 +192,7 @@ const useHistogramRequestObject = ({
   startDate,
   endDate,
   filtersExpression,
+  selectedSegment,
 }: {
   selectedMetrics: Column[]
   selectedDimensions: Column[]
@@ -193,6 +201,7 @@ const useHistogramRequestObject = ({
   startDate: string
   endDate: string
   filtersExpression: string
+  selectedSegment: Segment | undefined
 }) => {
   const histogramRequestObject = useMemo(() => {
     if (viewId === undefined) {
@@ -212,6 +221,17 @@ const useHistogramRequestObject = ({
     }
     if (filtersExpression !== "") {
       optionalParameters["filtersExpression"] = filtersExpression
+    }
+    if (selectedSegment !== undefined) {
+      optionalParameters["segments"] = [
+        { segmentId: selectedSegment.segmentId },
+      ]
+      optionalParameters["dimensions"] = [
+        {
+          histogramBuckets: buckets.split(",").map(s => parseInt(s, 10)),
+          name: "ga:segment",
+        },
+      ].concat(optionalParameters["dimensions"] || [])
     }
 
     return {
@@ -236,6 +256,7 @@ const useHistogramRequestObject = ({
     startDate,
     endDate,
     filtersExpression,
+    selectedSegment,
   ])
 
   return histogramRequestObject
@@ -258,6 +279,8 @@ const HistogramRequest: React.FC<HistogramRequestProps> = ({ view }) => {
     setBuckets,
     filtersExpression,
     setFiltersExpression,
+    selectedSegment,
+    setSelectedSegment,
   } = useHistogramRequestParameters(view)
   const requestObject = useHistogramRequestObject({
     viewId,
@@ -267,8 +290,10 @@ const HistogramRequest: React.FC<HistogramRequestProps> = ({ view }) => {
     selectedMetrics,
     buckets,
     filtersExpression,
+    selectedSegment,
   })
   const { dimensions, metrics } = useDimensionsAndMetrics()
+  const segments = useSegments()
 
   const [reportsResponse, setReportsResponse] = useState<GetReportsResponse>()
 
@@ -403,6 +428,39 @@ const HistogramRequest: React.FC<HistogramRequestProps> = ({ view }) => {
         value={filtersExpression}
         onChange={e => setFiltersExpression(e.target.value)}
         helperText="Filters that restrict the data returned for the histogram request."
+      />
+      <SelectSingle<Segment>
+        options={segments || []}
+        getOptionLabel={segment => segment.segmentId!}
+        label="Segment"
+        helperText="The segment to use for the request."
+        renderOption={segment => (
+          <FancyOption
+            right={
+              <Typography variant="subtitle1" color="textSecondary">
+                {segment.type === "CUSTOM"
+                  ? "Custom Segment"
+                  : "Built In Segment"}
+              </Typography>
+            }
+          >
+            <Typography variant="body1">{segment.name}</Typography>
+            <Typography variant="subtitle2" color="primary">
+              {segment.segmentId}
+            </Typography>
+          </FancyOption>
+        )}
+        onSelectedChanged={setSelectedSegment}
+        serializer={segment => ({
+          key: StorageKey.histogramRequestSegment,
+          serialized: JSON.stringify(segment),
+        })}
+        deserializer={(s: string) => {
+          if (s === "undefined") {
+            return undefined
+          }
+          return JSON.parse(s)
+        }}
       />
       <Button onClick={makeRequest}>Make Request</Button>
 

@@ -3,9 +3,11 @@ import { useEffect, useState } from "react"
 
 export type GetReportsResponse = gapi.client.analyticsreporting.GetReportsResponse
 export type Column = gapi.client.analytics.Column
+export type Segment = gapi.client.analytics.Segment
 
 type ReportingAPI = typeof gapi.client.analyticsreporting
 type MetadataAPI = gapi.client.analytics.MetadataResource
+type ManagementAPI = typeof gapi.client.analytics.management
 
 export const useAnalyticsReportingAPI = (): ReportingAPI | undefined => {
   const gapi = useSelector((state: AppState) => state.gapi)
@@ -35,6 +37,20 @@ const useMetadataAPI = (): MetadataAPI | undefined => {
   return metadataAPI
 }
 
+const useManagementAPI = (): ManagementAPI | undefined => {
+  const gapi = useSelector((state: AppState) => state.gapi)
+  const [managementAPI, setManagementAPI] = useState<ManagementAPI>()
+
+  useEffect(() => {
+    if (gapi === undefined) {
+      return
+    }
+    setManagementAPI(gapi.client.analytics.management)
+  }, [gapi])
+
+  return managementAPI
+}
+
 export const useDimensionsAndMetrics = () => {
   const metadataAPI = useMetadataAPI()
   const [dimensions, setDimensions] = useState<Column[]>()
@@ -58,4 +74,21 @@ export const useDimensionsAndMetrics = () => {
   }, [metadataAPI])
 
   return { dimensions, metrics }
+}
+
+export const useSegments = () => {
+  const managementAPI = useManagementAPI()
+  const [segments, setSegments] = useState<Segment[]>()
+
+  useEffect(() => {
+    if (managementAPI === undefined) {
+      return
+    }
+
+    managementAPI.segments.list({}).then(response => {
+      setSegments(response.result.items)
+    })
+  }, [managementAPI])
+
+  return segments
 }
