@@ -1,6 +1,8 @@
 import { useSelector } from "react-redux"
 import React from "react"
 
+// TODO - this file should be removed and the api-specific things for each demo
+// should be handled like in request-composer.
 interface AnalyticsApi {
   management: typeof gapi.client.management
   metadata: typeof gapi.client.metadata
@@ -15,7 +17,6 @@ export type Column = gapi.client.analytics.Column
 export type Segment = gapi.client.analytics.Segment
 export type GetReportsResponse = gapi.client.analyticsreporting.GetReportsResponse
 export type V4Dimensions = gapi.client.analyticsreporting.Dimension
-// export type gapi.client.analyticsreporting.reports
 
 export const getAnalyticsApi = (g: typeof gapi): AnalyticsApi => {
   return (g as any).client.analytics

@@ -75,6 +75,10 @@ export const StorageKey = {
   bitlyCache: "bitly-auth/cache-storage",
   histogramRequestDimension: "request-composer/histogram-request-dimension",
   histogramRequestMetric: "request-composer/histogram-request-metric",
+  histogramBuckets: "request-composer/histogram-buckets",
+  histogramStartDate: "request-composer/histogram-start-date",
+  histogramEndDate: "request-composer/histogram-end-date",
+  histogramFiltersExpression: "request-composer/hitogram-filters-expression",
 }
 
 export const EventAction = {

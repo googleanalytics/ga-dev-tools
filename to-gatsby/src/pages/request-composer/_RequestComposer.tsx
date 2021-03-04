@@ -23,7 +23,7 @@ import MetricExpression from "./_MetricExpression"
 
 // TODO - Talk to someone about how to make these look the right size without
 // being completely arbitrary?
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles(_ => ({
   viewSelector: {
     flexDirection: "column",
     // maxWidth: theme.spacing(63),
@@ -38,14 +38,12 @@ const TabPanel: React.FC<{ value: number; index: number }> = ({
   index,
   children,
 }) => {
-  const classes = useStyles()
   return (
     <div
       role="tabpanel"
       hidden={value !== index}
       id={`simple-tabpanel-${index}`}
       aria-labelledby={`simple-tab-${index}`}
-      className={classes.panel}
     >
       {value === index && <Box p={3}>{children}</Box>}
     </div>

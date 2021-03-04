@@ -37,6 +37,7 @@ import {
 import SelectMultiple from "../../components/SelectMultiple"
 import { StorageKey } from "../../constants"
 import { FancyOption } from "../../components/FancyOption"
+import { useState, useMemo, useEffect } from "react"
 
 const useStyles = makeStyles(_ => ({
   container: {
@@ -105,74 +106,180 @@ interface HistogramRequestProps {
   view: HasView | undefined
 }
 
-const HistogramRequest: React.FC<HistogramRequestProps> = ({ view }) => {
-  const reportingAPI = useAnalyticsReportingAPI()
-  const [viewId, setViewId] = React.useState("")
-  const [startDate, setStartDate] = React.useState("7daysAgo")
-  const [endDate, setEndDate] = React.useState("yesterday")
-  const [selectedDimensions, setSelectedDimensions] = React.useState<Column[]>(
-    []
-  )
-  const [selectedMetrics, setSelectedMetrics] = React.useState<Column[]>([])
-  const [buckets, setBuckets] = React.useState("")
+const useHistogramRequestParameters = (view: HasView | undefined) => {
+  const [viewId, setViewId] = useState("")
+  const [selectedDimensions, setSelectedDimensions] = useState<Column[]>([])
+  const [selectedMetrics, setSelectedMetrics] = useState<Column[]>([])
 
-  const { dimensions, metrics } = useDimensionsAndMetrics()
+  const [startDate, setStartDate] = useState(() => {
+    const startDate = window.localStorage.getItem(StorageKey.histogramStartDate)
+    return startDate || "7daysAgo"
+  })
+  // Keep the startDate value in sync with localStorage.
+  useEffect(() => {
+    window.localStorage.setItem(StorageKey.histogramStartDate, startDate)
+  }, [startDate])
 
-  const [reportsResponse, setReportsResponse] = React.useState<
-    GetReportsResponse | undefined
-  >()
+  const [endDate, setEndDate] = useState(() => {
+    const endDate = window.localStorage.getItem(StorageKey.histogramEndDate)
+    return endDate || "yesterday"
+  })
+  // Keep the endDate value in sync with localStorage.
+  useEffect(() => {
+    window.localStorage.setItem(StorageKey.histogramEndDate, endDate)
+  }, [endDate])
 
-  React.useMemo(() => {
+  const [buckets, setBuckets] = useState(() => {
+    const buckets = window.localStorage.getItem(StorageKey.histogramBuckets)
+    return buckets || ""
+  })
+  // Keep the histogram bucket value in sync with localStorage.
+  useEffect(() => {
+    window.localStorage.setItem(StorageKey.histogramBuckets, buckets)
+  }, [buckets])
+
+  const [filtersExpression, setFiltersExpression] = useState(() => {
+    const filtersExpression = window.localStorage.getItem(
+      StorageKey.histogramFiltersExpression
+    )
+    return filtersExpression || ""
+  })
+  // Keep the histogram filters expression value in sync with localStorage.
+  useEffect(() => {
+    window.localStorage.setItem(
+      StorageKey.histogramFiltersExpression,
+      filtersExpression
+    )
+  }, [filtersExpression])
+
+  useMemo(() => {
     const id = view?.view.id
     if (id !== undefined) {
       setViewId(id)
     }
   }, [view])
 
-  const makeRequest = React.useCallback(() => {
-    if (reportingAPI === undefined) {
-      return
+  return {
+    viewId,
+    setViewId,
+    startDate,
+    setStartDate,
+    endDate,
+    setEndDate,
+    selectedDimensions,
+    setSelectedDimensions,
+    selectedMetrics,
+    setSelectedMetrics,
+    buckets,
+    setBuckets,
+    filtersExpression,
+    setFiltersExpression,
+  }
+}
+
+const useHistogramRequestObject = ({
+  selectedMetrics,
+  selectedDimensions,
+  buckets,
+  viewId,
+  startDate,
+  endDate,
+  filtersExpression,
+}: {
+  selectedMetrics: Column[]
+  selectedDimensions: Column[]
+  buckets: string
+  viewId: string
+  startDate: string
+  endDate: string
+  filtersExpression: string
+}) => {
+  const histogramRequestObject = useMemo(() => {
+    if (viewId === undefined) {
+      return undefined
     }
-    const optionals = {}
+    const optionalParameters = {}
     if (selectedMetrics.length > 0) {
-      optionals["metrics"] = selectedMetrics.map(column => ({
+      optionalParameters["metrics"] = selectedMetrics.map(column => ({
         expression: column.id,
       }))
     }
     if (selectedDimensions.length > 0) {
-      optionals["dimensions"] = selectedDimensions.map(column => ({
+      optionalParameters["dimensions"] = selectedDimensions.map(column => ({
         histogramBuckets: buckets.split(",").map(s => parseInt(s, 10)),
         name: column.id,
       }))
     }
-    reportingAPI.reports
-      .batchGet(
-        {},
+    if (filtersExpression !== "") {
+      optionalParameters["filtersExpression"] = filtersExpression
+    }
+
+    return {
+      reportRequests: [
         {
-          reportRequests: [
+          viewId: viewId,
+          dateRanges: [
             {
-              viewId: viewId,
-              dateRanges: [
-                {
-                  startDate,
-                  endDate,
-                },
-              ],
-              ...optionals,
+              startDate,
+              endDate,
             },
           ],
-        }
-      )
-      .then(response => setReportsResponse(response.result), console.error)
+          ...optionalParameters,
+        },
+      ],
+    }
   }, [
+    selectedMetrics,
+    buckets,
+    selectedDimensions,
     viewId,
-    reportingAPI,
     startDate,
     endDate,
-    selectedMetrics,
-    selectedDimensions,
-    buckets,
+    filtersExpression,
   ])
+
+  return histogramRequestObject
+}
+
+const HistogramRequest: React.FC<HistogramRequestProps> = ({ view }) => {
+  const reportingAPI = useAnalyticsReportingAPI()
+  const {
+    viewId,
+    setViewId,
+    startDate,
+    setStartDate,
+    endDate,
+    setEndDate,
+    selectedDimensions,
+    setSelectedDimensions,
+    selectedMetrics,
+    setSelectedMetrics,
+    buckets,
+    setBuckets,
+    filtersExpression,
+    setFiltersExpression,
+  } = useHistogramRequestParameters(view)
+  const requestObject = useHistogramRequestObject({
+    viewId,
+    startDate,
+    endDate,
+    selectedDimensions,
+    selectedMetrics,
+    buckets,
+    filtersExpression,
+  })
+  const { dimensions, metrics } = useDimensionsAndMetrics()
+
+  const [reportsResponse, setReportsResponse] = useState<GetReportsResponse>()
+
+  const makeRequest = React.useCallback(() => {
+    if (reportingAPI === undefined || requestObject === undefined) {
+      return
+    }
+    reportingAPI.reports
+      .batchGet({}, requestObject)
+      .then(response => setReportsResponse(response.result), console.error)
+  }, [reportingAPI, requestObject])
 
   return (
     <>
@@ -280,7 +387,24 @@ const HistogramRequest: React.FC<HistogramRequestProps> = ({ view }) => {
         required
         helperText="The buckets to use for the histogram request."
       />
-      <Button onClick={makeRequest}>Test Request</Button>
+      <TextField
+        InputProps={{
+          endAdornment: (
+            <ExternalLink
+              href={linkFor("ReportRequest.FIELDS.filters_expression")}
+              title={titleFor("filtersExpression")}
+            />
+          ),
+        }}
+        size="small"
+        variant="outlined"
+        fullWidth
+        label="Filters Expression"
+        value={filtersExpression}
+        onChange={e => setFiltersExpression(e.target.value)}
+        helperText="Filters that restrict the data returned for the histogram request."
+      />
+      <Button onClick={makeRequest}>Make Request</Button>
 
       <ReportTable response={reportsResponse} />
     </>
