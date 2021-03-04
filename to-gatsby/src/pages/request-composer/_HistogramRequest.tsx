@@ -29,11 +29,11 @@ import {
 import { HasView } from "../../components/ViewSelector"
 import GADate from "../../components/GADate"
 import {
-  useAnalyticsReportingAPI,
   GetReportsResponse,
   Column,
-  useV4Columns,
-} from "../../api"
+  useAnalyticsReportingAPI,
+  useDimensionsAndMetrics,
+} from "./_api"
 import SelectMultiple from "../../components/SelectMultiple"
 import { StorageKey } from "../../constants"
 import { FancyOption } from "../../components/FancyOption"
@@ -106,7 +106,7 @@ interface HistogramRequestProps {
 }
 
 const HistogramRequest: React.FC<HistogramRequestProps> = ({ view }) => {
-  const api = useAnalyticsReportingAPI()
+  const reportingAPI = useAnalyticsReportingAPI()
   const [viewId, setViewId] = React.useState("")
   const [startDate, setStartDate] = React.useState("7daysAgo")
   const [endDate, setEndDate] = React.useState("yesterday")
@@ -116,7 +116,7 @@ const HistogramRequest: React.FC<HistogramRequestProps> = ({ view }) => {
   const [selectedMetrics, setSelectedMetrics] = React.useState<Column[]>([])
   const [buckets, setBuckets] = React.useState("")
 
-  const { dimensions, metrics } = useV4Columns()
+  const { dimensions, metrics } = useDimensionsAndMetrics()
 
   const [reportsResponse, setReportsResponse] = React.useState<
     GetReportsResponse | undefined
@@ -130,7 +130,7 @@ const HistogramRequest: React.FC<HistogramRequestProps> = ({ view }) => {
   }, [view])
 
   const makeRequest = React.useCallback(() => {
-    if (api === undefined) {
+    if (reportingAPI === undefined) {
       return
     }
     const optionals = {}
@@ -145,7 +145,7 @@ const HistogramRequest: React.FC<HistogramRequestProps> = ({ view }) => {
         name: column.id,
       }))
     }
-    api.reports
+    reportingAPI.reports
       .batchGet(
         {},
         {
@@ -166,7 +166,7 @@ const HistogramRequest: React.FC<HistogramRequestProps> = ({ view }) => {
       .then(response => setReportsResponse(response.result), console.error)
   }, [
     viewId,
-    api,
+    reportingAPI,
     startDate,
     endDate,
     selectedMetrics,

@@ -21,24 +21,6 @@ export const getAnalyticsApi = (g: typeof gapi): AnalyticsApi => {
   return (g as any).client.analytics
 }
 
-// The interface to the V4 Reporting API. See:
-// https://developers.google.com/analytics/devguides/reporting/core/v4/rest
-export const useAnalyticsReportingAPI = () => {
-  const g = useSelector((state: AppState) => state.gapi)
-  const [api, setApi] = React.useState<
-    typeof gapi.client.analyticsreporting | undefined
-  >()
-
-  React.useEffect(() => {
-    if (g === undefined) {
-      return
-    }
-    setApi(g.client.analyticsreporting)
-  }, [g])
-
-  return api
-}
-
 export const useApi = (): AnalyticsApi | undefined => {
   const gapi = useSelector((state: AppState) => state.gapi)
   const [api, setApi] = React.useState<AnalyticsApi | undefined>(undefined)
@@ -67,34 +49,6 @@ export const useMetadataAPI = (): typeof gapi.client.metadata | undefined => {
   }, [g])
 
   return api
-}
-
-// TODO - I don't think here is actually a difference between v4 and v3
-// dimensions so not sure this is necessary naming-wise.
-export const useV4Columns = () => {
-  const metadata = useMetadataAPI()
-  // TODO - if this works, set & kind: 'DIMENSION'
-  const [dimensions, setDimensions] = React.useState<Column[]>()
-  const [metrics, setMetrics] = React.useState<Column[]>()
-
-  React.useEffect(() => {
-    if (metadata === undefined) {
-      return
-    }
-    metadata.columns.list({ reportType: "ga" }).then(response => {
-      const columns = response.result.items || []
-      const dimensions = columns.filter(
-        column => column.attributes?.type === "DIMENSION"
-      )
-      setDimensions(dimensions)
-      const metrics = columns.filter(
-        column => column.attributes?.type === "METRIC"
-      )
-      setMetrics(metrics)
-    })
-  }, [metadata])
-
-  return { dimensions, metrics }
 }
 
 // TODO - should segments be filtered based on potentially selected dimensions
