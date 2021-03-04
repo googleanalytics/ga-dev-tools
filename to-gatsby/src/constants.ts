@@ -80,6 +80,7 @@ export const StorageKey = {
   histogramEndDate: "request-composer/histogram-end-date",
   histogramFiltersExpression: "request-composer/histogram-filters-expression",
   histogramRequestSegment: "request-composer/histogram-request-segment",
+  histogramSamplingLevel: "request-composer/histogram-sampling-level",
 }
 
 export const EventAction = {

@@ -25,7 +25,11 @@ import {
   TableCell,
   TableBody,
   Typography,
+  useTheme,
 } from "@material-ui/core"
+import "react-loader-spinner/dist/loader/css/react-spinner-loader.css"
+import Loader from "react-loader-spinner"
+
 import { HasView } from "../../components/ViewSelector"
 import GADate from "../../components/GADate"
 import {
@@ -42,9 +46,24 @@ import { useState, useMemo, useEffect } from "react"
 import { useSegments } from "../../api"
 import SelectSingle from "../../components/SelectSingle"
 
-const useStyles = makeStyles(_ => ({
+enum SamplingLevel {
+  Default = "DEFAULT",
+  SMALL = "SMALL",
+  LARGE = "LARGE",
+}
+
+const useStyles = makeStyles(theme => ({
+  loadingIndicator: {
+    marginTop: theme.spacing(2),
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+  },
   container: {
     maxHeight: 440,
+  },
+  reports: {
+    marginTop: theme.spacing(2),
   },
 }))
 
@@ -57,7 +76,7 @@ const ReportTable: React.FC<{ response: GetReportsResponse | undefined }> = ({
     return null
   }
   return (
-    <>
+    <section className={classes.reports}>
       {response.reports?.map((reportData, reportIdx) => {
         return (
           <TableContainer key={reportIdx} className={classes.container}>
@@ -96,7 +115,7 @@ const ReportTable: React.FC<{ response: GetReportsResponse | undefined }> = ({
           </TableContainer>
         )
       })}
-    </>
+    </section>
   )
 }
 
@@ -113,6 +132,7 @@ const useHistogramRequestParameters = (view: HasView | undefined) => {
   const [viewId, setViewId] = useState("")
   const [selectedDimensions, setSelectedDimensions] = useState<Column[]>([])
   const [selectedMetrics, setSelectedMetrics] = useState<Column[]>([])
+  const [samplingLevel, setSamplingLevel] = useState<SamplingLevel>()
 
   const [startDate, setStartDate] = useState(() => {
     const startDate = window.localStorage.getItem(StorageKey.histogramStartDate)
@@ -181,6 +201,8 @@ const useHistogramRequestParameters = (view: HasView | undefined) => {
     setFiltersExpression,
     selectedSegment,
     setSelectedSegment,
+    samplingLevel,
+    setSamplingLevel,
   }
 }
 
@@ -193,6 +215,7 @@ const useHistogramRequestObject = ({
   endDate,
   filtersExpression,
   selectedSegment,
+  samplingLevel,
 }: {
   selectedMetrics: Column[]
   selectedDimensions: Column[]
@@ -202,6 +225,7 @@ const useHistogramRequestObject = ({
   endDate: string
   filtersExpression: string
   selectedSegment: Segment | undefined
+  samplingLevel: SamplingLevel | undefined
 }) => {
   const histogramRequestObject = useMemo(() => {
     if (viewId === undefined) {
@@ -233,6 +257,9 @@ const useHistogramRequestObject = ({
         },
       ].concat(optionalParameters["dimensions"] || [])
     }
+    if (samplingLevel !== undefined) {
+      optionalParameters["samplingLevel"] = samplingLevel
+    }
 
     return {
       reportRequests: [
@@ -263,6 +290,7 @@ const useHistogramRequestObject = ({
 }
 
 const HistogramRequest: React.FC<HistogramRequestProps> = ({ view }) => {
+  const classes = useStyles()
   const reportingAPI = useAnalyticsReportingAPI()
   const {
     viewId,
@@ -281,6 +309,8 @@ const HistogramRequest: React.FC<HistogramRequestProps> = ({ view }) => {
     setFiltersExpression,
     selectedSegment,
     setSelectedSegment,
+    samplingLevel,
+    setSamplingLevel,
   } = useHistogramRequestParameters(view)
   const requestObject = useHistogramRequestObject({
     viewId,
@@ -291,19 +321,45 @@ const HistogramRequest: React.FC<HistogramRequestProps> = ({ view }) => {
     buckets,
     filtersExpression,
     selectedSegment,
+    samplingLevel,
   })
   const { dimensions, metrics } = useDimensionsAndMetrics()
   const segments = useSegments()
 
   const [reportsResponse, setReportsResponse] = useState<GetReportsResponse>()
+  const [longRequest, setLongRequest] = useState(false)
+  const theme = useTheme()
 
   const makeRequest = React.useCallback(() => {
     if (reportingAPI === undefined || requestObject === undefined) {
       return
     }
-    reportingAPI.reports
-      .batchGet({}, requestObject)
-      .then(response => setReportsResponse(response.result), console.error)
+    ;(async () => {
+      const first = await Promise.race<string>([
+        (async () => {
+          const response = await reportingAPI.reports.batchGet(
+            {},
+            requestObject
+          )
+          setReportsResponse(response.result)
+          // TODO - this could be more nuianced, but this is good enough for
+          // now. This makes it where for requests that take longer than 300ms,
+          // the loader shows up for at least 500ms so it's not as jumpy.
+          setTimeout(() => {
+            setLongRequest(false)
+          }, 500)
+          return "API"
+        })(),
+        new Promise<string>(resolve => {
+          window.setTimeout(() => {
+            resolve("TIMEOUT")
+          }, 300)
+        }),
+      ])
+      if (first === "TIMEOUT") {
+        setLongRequest(true)
+      }
+    })()
   }, [reportingAPI, requestObject])
 
   return (
@@ -462,8 +518,33 @@ const HistogramRequest: React.FC<HistogramRequestProps> = ({ view }) => {
           return JSON.parse(s)
         }}
       />
-      <Button onClick={makeRequest}>Make Request</Button>
-
+      <SelectSingle<SamplingLevel>
+        options={Object.values(SamplingLevel)}
+        getOptionLabel={samplingLevel => samplingLevel}
+        label="samplingLevel"
+        helperText="The desired sample size for the report."
+        renderOption={samplingLevel => <>{samplingLevel}</>}
+        onSelectedChanged={setSamplingLevel}
+        serializer={s => ({
+          key: StorageKey.histogramSamplingLevel,
+          serialized: s?.toString() || "undefined",
+        })}
+        deserializer={s => {
+          if (s === "undefined") {
+            return undefined
+          }
+          return s as SamplingLevel
+        }}
+      />
+      <Button variant="outlined" color="primary" onClick={makeRequest}>
+        Make Request
+      </Button>
+      {longRequest && (
+        <section className={classes.loadingIndicator}>
+          <Loader type="Circles" color={theme.palette.primary.main} />
+          <Typography>Loading...</Typography>
+        </section>
+      )}
       <ReportTable response={reportsResponse} />
     </>
   )

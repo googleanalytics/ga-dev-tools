@@ -33,6 +33,8 @@ const useStyles = makeStyles(_ => ({
   // },
 }))
 
+// TODO - I think I want a min width that's at least as tall as the longest tab
+// so far?
 const TabPanel: React.FC<{ value: number; index: number }> = ({
   value,
   index,
