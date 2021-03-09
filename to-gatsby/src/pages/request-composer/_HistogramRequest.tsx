@@ -53,9 +53,6 @@ export enum SamplingLevel {
 }
 
 const useStyles = makeStyles(theme => ({
-  inputs: {
-    maxWidth: "600px",
-  },
   loadingIndicator: {
     marginTop: theme.spacing(2),
     display: "flex",
@@ -74,10 +71,12 @@ const useStyles = makeStyles(theme => ({
   },
 }))
 
-const ReportTable: React.FC<{ response: GetReportsResponse | undefined }> = ({
-  response,
-}) => {
+export const ReportTable: React.FC<{
+  response: GetReportsResponse | undefined
+}> = ({ response }) => {
   const classes = useStyles()
+  // TODO - Add in functionality so this works right with cohort requests (or
+  // just make a cohortRequest Table which might be clearer.)
 
   if (response === undefined) {
     return null
@@ -134,6 +133,7 @@ export const titleFor = (id: string) => `See ${id} on devsite.`
 
 interface HistogramRequestProps {
   view: HasView | undefined
+  controlWidth: string
 }
 
 const useHistogramRequestParameters = (view: HasView | undefined) => {
@@ -297,7 +297,10 @@ const useHistogramRequestObject = ({
   return histogramRequestObject
 }
 
-const HistogramRequest: React.FC<HistogramRequestProps> = ({ view }) => {
+const HistogramRequest: React.FC<HistogramRequestProps> = ({
+  view,
+  controlWidth,
+}) => {
   const classes = useStyles()
   const reportingAPI = useAnalyticsReportingAPI()
   const {
@@ -372,7 +375,7 @@ const HistogramRequest: React.FC<HistogramRequestProps> = ({ view }) => {
 
   return (
     <>
-      <section className={classes.inputs}>
+      <section className={controlWidth}>
         <TextField
           InputProps={{
             endAdornment: (

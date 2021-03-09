@@ -73,6 +73,7 @@ export const StorageKey = {
   campaignBuilderUseFragment: "campaign-builder/use-fragment",
   bitlyAccessToken: "bitly-auth/access-token",
   bitlyCache: "bitly-auth/cache-storage",
+  requestComposerTab: "request-composer/tab",
   histogramRequestDimension: "request-composer/histogram-request-dimension",
   histogramRequestMetric: "request-composer/histogram-request-metric",
   histogramBuckets: "request-composer/histogram-buckets",
