@@ -21,16 +21,11 @@ import PivotRequest from "./_PivotRequest"
 import CohortRequest from "./_CohortRequest"
 import MetricExpression from "./_MetricExpression"
 
-// TODO - Talk to someone about how to make these look the right size without
-// being completely arbitrary?
 const useStyles = makeStyles(_ => ({
   viewSelector: {
     flexDirection: "column",
-    // maxWidth: theme.spacing(63),
+    maxWidth: "650px",
   },
-  // panel: {
-  //   maxWidth: theme.spacing(63),
-  // },
 }))
 
 // TODO - I think I want a min width that's at least as tall as the longest tab
@@ -63,9 +58,11 @@ const RequestComposer = () => {
   return (
     <>
       <section>
-        <Typography variant="h4">Select account, property, and view</Typography>
+        <Typography variant="h3">Select View</Typography>
         <ViewSelector
           className={classes.viewSelector}
+          variant="outlined"
+          size="small"
           onViewChanged={onViewChanged}
         />
       </section>
@@ -88,7 +85,7 @@ const RequestComposer = () => {
           <PivotRequest />
         </TabPanel>
         <TabPanel value={tab} index={2}>
-          <CohortRequest />
+          <CohortRequest view={view} />
         </TabPanel>
         <TabPanel value={tab} index={3}>
           <MetricExpression />

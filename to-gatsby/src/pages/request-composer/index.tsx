@@ -28,6 +28,7 @@ const RequestComposer = () => {
   const classes = useStyles()
   return (
     <>
+      <Typography variant="h3">Overview</Typography>
       <Typography>
         The Request Composer demonstrates how to compose the following Analytics
         Reporting API v4 requests and visualize their responses:
