@@ -83,6 +83,7 @@ export const StorageKey = {
   histogramRequestSegment: "request-composer/histogram-request-segment",
   histogramSamplingLevel: "request-composer/histogram-sampling-level",
   cohortRequestMetric: "request-composer/cohort-request-metric",
+  cohortSize: "request-composer/cohort-size",
 }
 
 export const EventAction = {

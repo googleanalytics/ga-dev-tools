@@ -29,7 +29,7 @@ import { FancyOption } from "../../../components/FancyOption"
 import { StorageKey } from "../../../constants"
 import SelectSingle from "../../../components/SelectSingle"
 import useCohortRequestParameters from "./_useCohortRequestParameters"
-import useCohortRequest from "./_useCohortRequest"
+import useCohortRequest, { CohortSize } from "./_useCohortRequest"
 import Loader from "react-loader-spinner"
 import useMakeCohortRequest from "./_useMakeCohortRequest"
 
@@ -62,6 +62,7 @@ const CohortRequest: React.FC<CohortRequestProps> = ({
     selectedMetric,
     setSelectedMetric,
     cohortSize,
+    setCohortSize,
   } = useCohortRequestParameters(view)
   const classes = useStyles()
   const theme = useTheme()
@@ -126,6 +127,27 @@ const CohortRequest: React.FC<CohortRequestProps> = ({
               return undefined
             }
             return JSON.parse(s)
+          }}
+        />
+
+        <SelectSingle<CohortSize>
+          options={[CohortSize.Day, CohortSize.Week, CohortSize.Month]}
+          getOptionLabel={cohortSize => cohortSize}
+          label="Cohort Size"
+          helperText="The size of the cohort to use in the request."
+          renderOption={cohortSize => cohortSize}
+          onSelectedChanged={cohortSize =>
+            setCohortSize(cohortSize as CohortSize)
+          }
+          serializer={cohortSize => ({
+            key: StorageKey.cohortSize,
+            serialized: cohortSize,
+          })}
+          deserializer={(s: string) => {
+            if (s === "undefined" || s === "null") {
+              return undefined
+            }
+            return s as CohortSize
           }}
         />
 

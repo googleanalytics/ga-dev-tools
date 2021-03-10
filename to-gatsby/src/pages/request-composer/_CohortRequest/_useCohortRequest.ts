@@ -126,7 +126,7 @@ const useCohortRequest = ({
     return {
       reportRequests: [reportRequest],
     }
-  }, [viewId, selectedMetric])
+  }, [viewId, selectedMetric, cohortSize])
   return request
 }
 
