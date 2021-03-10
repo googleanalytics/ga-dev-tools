@@ -13,13 +13,8 @@
 // limitations under the License.
 
 import * as React from "react"
-import { useState } from "react"
 import { HasView } from "../../../components/ViewSelector"
-import {
-  Column,
-  useDimensionsAndMetrics,
-  useAnalyticsReportingAPI,
-} from "../_api"
+import { Column, useDimensionsAndMetrics } from "../_api"
 // TODO - ReportTable should be a general component for this Demo.
 import { linkFor, titleFor, ReportTable } from "../_HistogramRequest"
 import ExternalLink from "../../../components/ExternalLink"
@@ -35,8 +30,8 @@ import { StorageKey } from "../../../constants"
 import SelectSingle from "../../../components/SelectSingle"
 import useCohortRequestParameters from "./_useCohortRequestParameters"
 import useCohortRequest from "./_useCohortRequest"
-import { GetReportsResponse } from "../../../api"
 import Loader from "react-loader-spinner"
+import useMakeCohortRequest from "./_useMakeCohortRequest"
 
 interface CohortRequestProps {
   view: HasView | undefined
@@ -70,46 +65,14 @@ const CohortRequest: React.FC<CohortRequestProps> = ({
   } = useCohortRequestParameters(view)
   const classes = useStyles()
   const theme = useTheme()
-  const requestObject = useCohortRequest({ viewId, selectedMetric, cohortSize })
-  console.log({ requestObject })
   // TODO - perf improvement - this should probably be passed down from the
   // parent instead of done for each one?
   const { metrics } = useDimensionsAndMetrics()
-  const reportingAPI = useAnalyticsReportingAPI()
-  const [reportsResponse, setReportsResponse] = useState<GetReportsResponse>()
-  const [longRequest, setLongRequest] = useState(false)
+  const requestObject = useCohortRequest({ viewId, selectedMetric, cohortSize })
+  const { response, longRequest, makeRequest } = useMakeCohortRequest(
+    requestObject
+  )
 
-  const makeRequest = React.useCallback(() => {
-    if (reportingAPI === undefined || requestObject === undefined) {
-      return
-    }
-    ;(async () => {
-      const first = await Promise.race<string>([
-        (async () => {
-          const response = await reportingAPI.reports.batchGet(
-            {},
-            requestObject
-          )
-          setReportsResponse(response.result)
-          // TODO - this could be more nuianced, but this is good enough for
-          // now. This makes it where for requests that take longer than 300ms,
-          // the loader shows up for at least 500ms so it's not as jumpy.
-          setTimeout(() => {
-            setLongRequest(false)
-          }, 500)
-          return "API"
-        })(),
-        new Promise<string>(resolve => {
-          window.setTimeout(() => {
-            resolve("TIMEOUT")
-          }, 300)
-        }),
-      ])
-      if (first === "TIMEOUT") {
-        setLongRequest(true)
-      }
-    })()
-  }, [reportingAPI, requestObject])
   return (
     <>
       <section className={controlWidth}>
@@ -182,7 +145,7 @@ const CohortRequest: React.FC<CohortRequestProps> = ({
           <Typography>Loading...</Typography>
         </section>
       )}
-      <ReportTable response={reportsResponse} />
+      <ReportTable response={response} />
     </>
   )
 }
