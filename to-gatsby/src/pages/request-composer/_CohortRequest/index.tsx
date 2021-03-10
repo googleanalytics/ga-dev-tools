@@ -14,7 +14,7 @@
 
 import * as React from "react"
 import { HasView } from "../../../components/ViewSelector"
-import { Column, useDimensionsAndMetrics } from "../_api"
+import { Column, useDimensionsAndMetrics, Segment } from "../_api"
 // TODO - ReportTable should be a general component for this Demo.
 import { linkFor, titleFor, ReportTable } from "../_HistogramRequest"
 import ExternalLink from "../../../components/ExternalLink"
@@ -32,6 +32,7 @@ import useCohortRequestParameters from "./_useCohortRequestParameters"
 import useCohortRequest, { CohortSize } from "./_useCohortRequest"
 import Loader from "react-loader-spinner"
 import useMakeCohortRequest from "./_useMakeCohortRequest"
+import { useSegments } from "../../../api"
 
 interface CohortRequestProps {
   view: HasView | undefined
@@ -63,13 +64,21 @@ const CohortRequest: React.FC<CohortRequestProps> = ({
     setSelectedMetric,
     cohortSize,
     setCohortSize,
+    selectedSegment,
+    setSelectedSegment,
   } = useCohortRequestParameters(view)
   const classes = useStyles()
   const theme = useTheme()
   // TODO - perf improvement - this should probably be passed down from the
   // parent instead of done for each one?
   const { metrics } = useDimensionsAndMetrics()
-  const requestObject = useCohortRequest({ viewId, selectedMetric, cohortSize })
+  const segments = useSegments()
+  const requestObject = useCohortRequest({
+    viewId,
+    selectedMetric,
+    cohortSize,
+    selectedSegment,
+  })
   const { response, longRequest, makeRequest } = useMakeCohortRequest(
     requestObject
   )
@@ -141,13 +150,47 @@ const CohortRequest: React.FC<CohortRequestProps> = ({
           }
           serializer={cohortSize => ({
             key: StorageKey.cohortSize,
-            serialized: cohortSize,
+            serialized: cohortSize === undefined ? "undefined" : cohortSize,
           })}
           deserializer={(s: string) => {
             if (s === "undefined" || s === "null") {
               return undefined
             }
             return s as CohortSize
+          }}
+        />
+
+        <SelectSingle<Segment>
+          options={segments || []}
+          getOptionLabel={segment => segment.segmentId!}
+          label="Segment"
+          helperText="The segment to use for the request."
+          renderOption={segment => (
+            <FancyOption
+              right={
+                <Typography variant="subtitle1" color="textSecondary">
+                  {segment.type === "CUSTOM"
+                    ? "Custom Segment"
+                    : "Built In Segment"}
+                </Typography>
+              }
+            >
+              <Typography variant="body1">{segment.name}</Typography>
+              <Typography variant="subtitle2" color="primary">
+                {segment.segmentId}
+              </Typography>
+            </FancyOption>
+          )}
+          onSelectedChanged={setSelectedSegment}
+          serializer={segment => ({
+            key: StorageKey.histogramRequestSegment,
+            serialized: JSON.stringify(segment),
+          })}
+          deserializer={(s: string) => {
+            if (s === "undefined") {
+              return undefined
+            }
+            return JSON.parse(s)
           }}
         />
 

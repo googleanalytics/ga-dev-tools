@@ -1,5 +1,5 @@
 import { useMemo } from "react"
-import { Column } from "../_api"
+import { Column, Segment } from "../_api"
 import moment from "moment"
 
 type ReportRequest = gapi.client.analyticsreporting.ReportRequest
@@ -96,10 +96,12 @@ const cohortsFor = (cohortSize: CohortSize) => {
 const useCohortRequest = ({
   viewId,
   selectedMetric,
+  selectedSegment,
   cohortSize,
 }: {
   viewId: string
   selectedMetric: Column | undefined
+  selectedSegment: Segment | undefined
   cohortSize: CohortSize
 }) => {
   const request = useMemo<
@@ -123,10 +125,21 @@ const useCohortRequest = ({
         cohorts: cohortsFor(cohortSize),
       },
     }
+    if (selectedSegment !== undefined) {
+      reportRequest["segments"] = [
+        {
+          segmentId: selectedSegment.segmentId,
+        },
+      ]
+      reportRequest.dimensions = reportRequest!.dimensions!.concat([
+        { name: "ga:segment" },
+      ])
+    }
+
     return {
       reportRequests: [reportRequest],
     }
-  }, [viewId, selectedMetric, cohortSize])
+  }, [viewId, selectedMetric, cohortSize, selectedSegment])
   return request
 }
 
