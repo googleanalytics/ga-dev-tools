@@ -16,7 +16,12 @@ import * as React from "react"
 import { HasView } from "../../../components/ViewSelector"
 import { Column, useDimensionsAndMetrics, Segment } from "../_api"
 // TODO - ReportTable should be a general component for this Demo.
-import { linkFor, titleFor, ReportTable } from "../_HistogramRequest"
+import {
+  linkFor,
+  titleFor,
+  ReportTable,
+  SamplingLevel,
+} from "../_HistogramRequest"
 import ExternalLink from "../../../components/ExternalLink"
 import {
   TextField,
@@ -66,6 +71,8 @@ const CohortRequest: React.FC<CohortRequestProps> = ({
     setCohortSize,
     selectedSegment,
     setSelectedSegment,
+    samplingLevel,
+    setSamplingLevel,
   } = useCohortRequestParameters(view)
   const classes = useStyles()
   const theme = useTheme()
@@ -78,6 +85,7 @@ const CohortRequest: React.FC<CohortRequestProps> = ({
     selectedMetric,
     cohortSize,
     selectedSegment,
+    samplingLevel,
   })
   const { response, longRequest, makeRequest } = useMakeCohortRequest(
     requestObject
@@ -183,7 +191,7 @@ const CohortRequest: React.FC<CohortRequestProps> = ({
           )}
           onSelectedChanged={setSelectedSegment}
           serializer={segment => ({
-            key: StorageKey.histogramRequestSegment,
+            key: StorageKey.cohortRequestSegment,
             serialized: JSON.stringify(segment),
           })}
           deserializer={(s: string) => {
@@ -191,6 +199,24 @@ const CohortRequest: React.FC<CohortRequestProps> = ({
               return undefined
             }
             return JSON.parse(s)
+          }}
+        />
+        <SelectSingle<SamplingLevel>
+          options={Object.values(SamplingLevel)}
+          getOptionLabel={samplingLevel => samplingLevel}
+          label="samplingLevel"
+          helperText="The desired sample size for the report."
+          renderOption={samplingLevel => <>{samplingLevel}</>}
+          onSelectedChanged={setSamplingLevel}
+          serializer={s => ({
+            key: StorageKey.cohortSamplingLevel,
+            serialized: s?.toString() || "undefined",
+          })}
+          deserializer={s => {
+            if (s === "undefined") {
+              return undefined
+            }
+            return s as SamplingLevel
           }}
         />
 

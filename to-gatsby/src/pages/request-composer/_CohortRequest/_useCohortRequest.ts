@@ -1,6 +1,7 @@
 import { useMemo } from "react"
 import { Column, Segment } from "../_api"
 import moment from "moment"
+import { SamplingLevel } from "../_HistogramRequest"
 
 type ReportRequest = gapi.client.analyticsreporting.ReportRequest
 type Cohort = gapi.client.analyticsreporting.Cohort
@@ -98,11 +99,13 @@ const useCohortRequest = ({
   selectedMetric,
   selectedSegment,
   cohortSize,
+  samplingLevel,
 }: {
   viewId: string
   selectedMetric: Column | undefined
   selectedSegment: Segment | undefined
   cohortSize: CohortSize
+  samplingLevel: SamplingLevel | undefined
 }) => {
   const request = useMemo<
     { reportRequests: Array<ReportRequest> } | undefined
@@ -135,11 +138,14 @@ const useCohortRequest = ({
         { name: "ga:segment" },
       ])
     }
+    if (samplingLevel !== undefined) {
+      reportRequest["samplingLevel"] = samplingLevel
+    }
 
     return {
       reportRequests: [reportRequest],
     }
-  }, [viewId, selectedMetric, cohortSize, selectedSegment])
+  }, [viewId, selectedMetric, cohortSize, selectedSegment, samplingLevel])
   return request
 }
 

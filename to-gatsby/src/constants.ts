@@ -81,7 +81,9 @@ export const StorageKey = {
   histogramEndDate: "request-composer/histogram-end-date",
   histogramFiltersExpression: "request-composer/histogram-filters-expression",
   histogramRequestSegment: "request-composer/histogram-request-segment",
+  cohortRequestSegment: "request-composer/cohort-request-segment",
   histogramSamplingLevel: "request-composer/histogram-sampling-level",
+  cohortSamplingLevel: "request-composer/cohort-sampling-level",
   cohortRequestMetric: "request-composer/cohort-request-metric",
   cohortSize: "request-composer/cohort-size",
 }
