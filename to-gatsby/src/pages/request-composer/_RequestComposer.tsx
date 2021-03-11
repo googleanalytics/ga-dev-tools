@@ -110,7 +110,7 @@ const RequestComposer = () => {
           />
         </TabPanel>
         <TabPanel value={tab} index={1}>
-          <PivotRequest />
+          <PivotRequest view={view} controlWidth={classes.maxControlWidth} />
         </TabPanel>
         <TabPanel value={tab} index={2}>
           <CohortRequest view={view} controlWidth={classes.maxControlWidth} />

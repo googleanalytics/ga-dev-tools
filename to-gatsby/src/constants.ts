@@ -86,6 +86,13 @@ export const StorageKey = {
   cohortSamplingLevel: "request-composer/cohort-sampling-level",
   cohortRequestMetric: "request-composer/cohort-request-metric",
   cohortSize: "request-composer/cohort-size",
+  pivotRequestMetrics: "request-composer/pivot-request-metrics",
+  pivotRequestPivotMetrics: "request-composer/pivot-request-pivot-metrics",
+  pivotRequestSegment: "request-composer/pivot-request-segment",
+  pivotSamplingLevel: "request-composer/pivot-sampling-level",
+  pivotRequestDimensions: "request-composer/pivot-request-dimensions",
+  pivotRequestPivotDimensions:
+    "request-composer/pivot-request-pivot-dimensions",
 }
 
 export const EventAction = {
