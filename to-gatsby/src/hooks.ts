@@ -42,6 +42,30 @@ export const useSendEvent: UseSendEvent = () => {
   return sendEvent
 }
 
+type UsePersistentBoolean = (
+  key: StorageKey,
+  initialValue: boolean
+) => [boolean, React.Dispatch<React.SetStateAction<boolean>>]
+
+export const usePersistentBoolean: UsePersistentBoolean = (
+  key,
+  initialValue
+) => {
+  const [value, setValue] = useState<boolean>(() => {
+    const fromStorage = window.localStorage.getItem(key)
+    if (fromStorage === null) {
+      return initialValue
+    }
+    return JSON.parse(fromStorage).value
+  })
+
+  useEffect(() => {
+    window.localStorage.setItem(key, JSON.stringify({ value }))
+  }, [value])
+
+  return [value, setValue]
+}
+
 type UsePersistentString = (
   key: StorageKey,
   initialValue?: string

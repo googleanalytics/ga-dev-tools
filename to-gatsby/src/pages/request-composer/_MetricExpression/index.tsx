@@ -84,6 +84,7 @@ const MetricExpression: React.FC<MetricExpressionRequestProps> = ({
     startDate,
     endDate,
     metricExpressions,
+    metricAliases,
     selectedDimensions,
     selectedSegment,
     pageToken,
@@ -105,7 +106,7 @@ const MetricExpression: React.FC<MetricExpressionRequestProps> = ({
           helperText="The analytics view ID from which to retrieve data."
         />
         <GADate
-          value={startDate}
+          value={startDate || ""}
           onChange={setStartDate}
           href="https://developers.google.com/analytics/devguides/reporting/core/v4/rest/v4/reports/batchGet#ReportRequest.FIELDS.date_ranges"
           linkTitle="see dateRanges on Devsite."
@@ -113,7 +114,7 @@ const MetricExpression: React.FC<MetricExpressionRequestProps> = ({
           helperText="The start of the date range for the data request. Format: YYYY-MM-DD."
         />
         <GADate
-          value={endDate}
+          value={endDate || ""}
           onChange={setEndDate}
           href="https://developers.google.com/analytics/devguides/reporting/core/v4/rest/v4/reports/batchGet#ReportRequest.FIELDS.date_ranges"
           linkTitle="see dateRanges on Devsite."
@@ -124,7 +125,7 @@ const MetricExpression: React.FC<MetricExpressionRequestProps> = ({
           href={linkFor("Metric.FIELDS.expression")}
           linkTitle={titleFor("Metric.expression")}
           label="metric expressions"
-          value={metricExpressions}
+          value={metricExpressions || ""}
           onChange={setMetricExpressions}
           required
           helperText="The metric expressions to include in the request. Separate multiple expressions with a comma."
@@ -133,7 +134,7 @@ const MetricExpression: React.FC<MetricExpressionRequestProps> = ({
           href={linkFor("Metric.FIELDS.alias")}
           linkTitle={titleFor("Metric.alias")}
           label="metric aliases"
-          value={metricAliases}
+          value={metricAliases || ""}
           onChange={setMetricAliases}
           helperText="Aliases to use for your expressions. Separate multiple aliases with a comma."
         />
@@ -169,7 +170,7 @@ const MetricExpression: React.FC<MetricExpressionRequestProps> = ({
           href={linkFor("ReportRequest.FIELDS.filters_expression")}
           linkTitle={titleFor("filtersExpression")}
           label="Filters Expression"
-          value={filtersExpression}
+          value={filtersExpression || ""}
           onChange={setFiltersExpression}
           helperText="Filters that restrict the data returned for the metric expression request."
         />

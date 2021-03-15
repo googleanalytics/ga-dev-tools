@@ -8,9 +8,10 @@ interface Parameters {
   viewId: string
   samplingLevel: SamplingLevel | undefined
   filtersExpression: string | undefined
-  startDate: string
-  endDate: string
-  metricExpressions: string
+  startDate: string | undefined
+  endDate: string | undefined
+  metricExpressions: string | undefined
+  metricAliases: string | undefined
   selectedDimensions: Column[]
   selectedSegment: Segment | undefined
   pageToken: string | undefined
@@ -24,6 +25,7 @@ const useMetricExpressionRequest = ({
   startDate,
   endDate,
   metricExpressions,
+  metricAliases,
   selectedDimensions,
   selectedSegment,
   pageToken,
@@ -31,7 +33,12 @@ const useMetricExpressionRequest = ({
 }: Parameters): Request | undefined => {
   const metricExpressionRequestObject = useMemo<Request | undefined>(() => {
     // TODO - there could be helpful error messaging here.
-    if (viewId === undefined) {
+    if (
+      viewId === undefined ||
+      metricExpressions === undefined ||
+      startDate === undefined ||
+      endDate === undefined
+    ) {
       return undefined
     }
 
@@ -40,7 +47,17 @@ const useMetricExpressionRequest = ({
     if (baseMetricExpressions.length === 0) {
       return
     }
-    const metrics = baseMetricExpressions.map(expression => ({ expression }))
+    const aliases = (metricAliases || "").split(",")
+    const metrics = baseMetricExpressions.map((expression, idx) => {
+      const alias = aliases[idx]
+      const metric = {
+        expression,
+      }
+      if (alias !== undefined) {
+        metric["alias"] = alias
+      }
+      return metric
+    })
 
     const reportRequest: ReportRequest = {
       viewId,

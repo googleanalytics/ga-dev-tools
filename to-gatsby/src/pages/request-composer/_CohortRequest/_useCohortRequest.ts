@@ -120,8 +120,6 @@ const useCohortRequest = ({
           name: "ga:cohort",
         },
         dimensionFor(cohortSize),
-        // TODO - Add segments in, need a dropdown, etc.
-        // { name: "ga:segment" },
       ],
       cohortGroup: {
         cohorts: cohortsFor(cohortSize),

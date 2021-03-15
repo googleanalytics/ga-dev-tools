@@ -118,7 +118,7 @@ const PivotRequest: React.FC<PivotRequestProps> = ({ view, controlWidth }) => {
           helperText="The analytics view ID from which to retrieve data."
         />
         <GADate
-          value={startDate}
+          value={startDate || ""}
           onChange={setStartDate}
           href="https://developers.google.com/analytics/devguides/reporting/core/v4/rest/v4/reports/batchGet#ReportRequest.FIELDS.date_ranges"
           linkTitle="see dateRanges on Devsite."
@@ -126,7 +126,7 @@ const PivotRequest: React.FC<PivotRequestProps> = ({ view, controlWidth }) => {
           helperText="The start of the date range for the data request. Format: YYYY-MM-DD."
         />
         <GADate
-          value={endDate}
+          value={endDate || ""}
           onChange={setEndDate}
           href="https://developers.google.com/analytics/devguides/reporting/core/v4/rest/v4/reports/batchGet#ReportRequest.FIELDS.date_ranges"
           linkTitle="see dateRanges on Devsite."
@@ -257,7 +257,7 @@ const PivotRequest: React.FC<PivotRequestProps> = ({ view, controlWidth }) => {
           href={linkFor("Pivot.FIELDS.start_group")}
           linkTitle={titleFor("startGroup")}
           label="Pivot startGroup"
-          value={startGroup}
+          value={startGroup || ""}
           onChange={setStartGroup}
           helperText="The pivot start group"
         />
@@ -265,7 +265,7 @@ const PivotRequest: React.FC<PivotRequestProps> = ({ view, controlWidth }) => {
           href={linkFor("Pivot.FIELDS.max_group_count")}
           linkTitle={titleFor("maxGroupCount")}
           label="Pivot maxGroupCount"
-          value={maxGroupCount}
+          value={maxGroupCount || ""}
           onChange={setMaxGroupCount}
           helperText="The maximum number of groups to return."
         />
