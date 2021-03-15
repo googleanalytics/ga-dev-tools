@@ -22,14 +22,7 @@ import {
   ReportTable,
   SamplingLevel,
 } from "../_HistogramRequest"
-import ExternalLink from "../../../components/ExternalLink"
-import {
-  TextField,
-  Typography,
-  Button,
-  makeStyles,
-  useTheme,
-} from "@material-ui/core"
+import { Typography, Button, makeStyles, useTheme } from "@material-ui/core"
 import { FancyOption } from "../../../components/FancyOption"
 import { StorageKey } from "../../../constants"
 import SelectSingle from "../../../components/SelectSingle"
@@ -38,6 +31,7 @@ import useCohortRequest, { CohortSize } from "./_useCohortRequest"
 import Loader from "react-loader-spinner"
 import useMakeCohortRequest from "./_useMakeCohortRequest"
 import { useSegments } from "../../../api"
+import LinkedTextField from "../../../components/LinkedTextField"
 
 interface CohortRequestProps {
   view: HasView | undefined
@@ -94,21 +88,12 @@ const CohortRequest: React.FC<CohortRequestProps> = ({
   return (
     <>
       <section className={controlWidth}>
-        <TextField
-          InputProps={{
-            endAdornment: (
-              <ExternalLink
-                href={linkFor("ReportRequest.FIELDS.view_id")}
-                title={titleFor("viewId")}
-              />
-            ),
-          }}
-          size="small"
-          variant="outlined"
-          fullWidth
+        <LinkedTextField
+          href={linkFor("ReportRequest.FIELDS.view_id")}
+          linkTitle={titleFor("viewId")}
           label="viewId"
           value={viewId}
-          onChange={e => setViewId(e.target.value)}
+          onChange={setViewId}
           required
           helperText="The analytics view ID from which to retrieve data."
         />

@@ -13,9 +13,7 @@
 // limitations under the License.
 
 import * as React from "react"
-import ExternalLink from "../../components/ExternalLink"
 import {
-  TextField,
   Button,
   TableContainer,
   Table,
@@ -45,6 +43,7 @@ import { FancyOption } from "../../components/FancyOption"
 import { useState, useMemo, useEffect } from "react"
 import { useSegments } from "../../api"
 import SelectSingle from "../../components/SelectSingle"
+import LinkedTextField from "../../components/LinkedTextField"
 
 export enum SamplingLevel {
   Default = "DEFAULT",
@@ -376,37 +375,28 @@ const HistogramRequest: React.FC<HistogramRequestProps> = ({
   return (
     <>
       <section className={controlWidth}>
-        <TextField
-          InputProps={{
-            endAdornment: (
-              <ExternalLink
-                href={linkFor("ReportRequest.FIELDS.view_id")}
-                title={titleFor("viewId")}
-              />
-            ),
-          }}
-          size="small"
-          variant="outlined"
-          fullWidth
+        <LinkedTextField
+          href={linkFor("ReportRequest.FIELDS.view_id")}
+          linkTitle={titleFor("viewId")}
           label="viewId"
           value={viewId}
-          onChange={e => setViewId(e.target.value)}
+          onChange={setViewId}
           required
           helperText="The analytics view ID from which to retrieve data."
         />
         <GADate
-          initialValue={startDate}
-          onDateChanged={setStartDate}
+          value={startDate}
+          onChange={setStartDate}
           href="https://developers.google.com/analytics/devguides/reporting/core/v4/rest/v4/reports/batchGet#ReportRequest.FIELDS.date_ranges"
-          title="see dateRanges on Devsite."
+          linkTitle="see dateRanges on Devsite."
           label="startDate"
           helperText="The start of the date range for the data request. Format: YYYY-MM-DD."
         />
         <GADate
-          initialValue={endDate}
-          onDateChanged={setEndDate}
+          value={endDate}
+          onChange={setEndDate}
           href="https://developers.google.com/analytics/devguides/reporting/core/v4/rest/v4/reports/batchGet#ReportRequest.FIELDS.date_ranges"
-          title="see dateRanges on Devsite."
+          linkTitle="see dateRanges on Devsite."
           label="endDate"
           helperText="The end of the date range for the data request. Format: YYYY-MM-DD."
         />
@@ -466,39 +456,21 @@ const HistogramRequest: React.FC<HistogramRequestProps> = ({
           })}
           deserializer={(s: string) => JSON.parse(s).data}
         />
-        <TextField
-          InputProps={{
-            endAdornment: (
-              <ExternalLink
-                href={linkFor("Dimension.FIELDS.histogram_buckets")}
-                title={titleFor("histogramBuckets[]")}
-              />
-            ),
-          }}
-          size="small"
-          variant="outlined"
-          fullWidth
+        <LinkedTextField
+          href={linkFor("Dimension.FIELDS.histogram_buckets")}
+          linkTitle={titleFor("histogramBuckets[]")}
           label="Buckets"
           value={buckets}
-          onChange={e => setBuckets(e.target.value)}
+          onChange={setBuckets}
           required
           helperText="The buckets to use for the histogram request."
         />
-        <TextField
-          InputProps={{
-            endAdornment: (
-              <ExternalLink
-                href={linkFor("ReportRequest.FIELDS.filters_expression")}
-                title={titleFor("filtersExpression")}
-              />
-            ),
-          }}
-          size="small"
-          variant="outlined"
-          fullWidth
+        <LinkedTextField
+          href={linkFor("ReportRequest.FIELDS.filters_expression")}
+          linkTitle={titleFor("filtersExpression")}
           label="Filters Expression"
           value={filtersExpression}
-          onChange={e => setFiltersExpression(e.target.value)}
+          onChange={setFiltersExpression}
           helperText="Filters that restrict the data returned for the histogram request."
         />
         <SelectSingle<Segment>
