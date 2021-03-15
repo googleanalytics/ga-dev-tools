@@ -2,6 +2,7 @@ import { HasView } from "../../../components/ViewSelector"
 import { useState, useEffect, useMemo } from "react"
 import { Column, Segment, SamplingLevel } from "../_api"
 import { StorageKey } from "../../../constants"
+import { usePersistentString } from "../../../hooks"
 
 const useHistogramRequestParameters = (view: HasView | undefined) => {
   const [viewId, setViewId] = useState("")
@@ -9,47 +10,19 @@ const useHistogramRequestParameters = (view: HasView | undefined) => {
   const [selectedMetrics, setSelectedMetrics] = useState<Column[]>([])
   const [samplingLevel, setSamplingLevel] = useState<SamplingLevel>()
 
-  const [startDate, setStartDate] = useState(() => {
-    const startDate = window.localStorage.getItem(StorageKey.histogramStartDate)
-    return startDate || "7daysAgo"
-  })
-  // Keep the startDate value in sync with localStorage.
-  useEffect(() => {
-    window.localStorage.setItem(StorageKey.histogramStartDate, startDate)
-  }, [startDate])
-
-  const [endDate, setEndDate] = useState(() => {
-    const endDate = window.localStorage.getItem(StorageKey.histogramEndDate)
-    return endDate || "yesterday"
-  })
-  // Keep the endDate value in sync with localStorage.
-  useEffect(() => {
-    window.localStorage.setItem(StorageKey.histogramEndDate, endDate)
-  }, [endDate])
-
-  const [buckets, setBuckets] = useState(() => {
-    const buckets = window.localStorage.getItem(StorageKey.histogramBuckets)
-    return buckets || ""
-  })
-  // Keep the histogram bucket value in sync with localStorage.
-  useEffect(() => {
-    window.localStorage.setItem(StorageKey.histogramBuckets, buckets)
-  }, [buckets])
-
-  const [filtersExpression, setFiltersExpression] = useState(() => {
-    const filtersExpression = window.localStorage.getItem(
-      StorageKey.histogramFiltersExpression
-    )
-    return filtersExpression || ""
-  })
-  // Keep the histogram filters expression value in sync with localStorage.
-  useEffect(() => {
-    window.localStorage.setItem(
-      StorageKey.histogramFiltersExpression,
-      filtersExpression
-    )
-  }, [filtersExpression])
-
+  const [startDate, setStartDate] = usePersistentString(
+    StorageKey.histogramStartDate,
+    "7daysAgo"
+  )
+  const [endDate, setEndDate] = usePersistentString(
+    StorageKey.histogramEndDate,
+    "yesterday"
+  )
+  const [buckets, setBuckets] = usePersistentString(StorageKey.histogramBuckets)
+  const [filtersExpression, setFiltersExpression] = usePersistentString(
+    StorageKey.histogramFiltersExpression,
+    "ga:browser=~^Chrome"
+  )
   const [selectedSegment, setSelectedSegment] = useState<Segment>()
 
   useMemo(() => {

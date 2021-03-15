@@ -1,10 +1,13 @@
 import { Column, Segment, SamplingLevel } from "../_api"
 import { useMemo } from "react"
 
+type ReportRequest = gapi.client.analyticsreporting.ReportRequest
+type Request = { reportRequests: Array<ReportRequest> }
+
 interface Parameters {
   selectedMetrics: Column[]
   selectedDimensions: Column[]
-  buckets: string
+  buckets: string | undefined
   viewId: string
   startDate: string
   endDate: string
@@ -23,54 +26,52 @@ const useHistogramRequest = ({
   filtersExpression,
   selectedSegment,
   samplingLevel,
-}: Parameters) => {
-  const histogramRequestObject = useMemo(() => {
-    if (viewId === undefined) {
+}: Parameters): Request | undefined => {
+  const histogramRequestObject = useMemo<Request | undefined>(() => {
+    if (viewId === undefined || buckets === undefined) {
       return undefined
     }
-    const optionalParameters = {}
+    const reportRequest: ReportRequest = {
+      viewId,
+      dateRanges: [
+        {
+          startDate,
+          endDate,
+        },
+      ],
+    }
+
     if (selectedMetrics.length > 0) {
-      optionalParameters["metrics"] = selectedMetrics.map(column => ({
+      reportRequest["metrics"] = selectedMetrics.map(column => ({
         expression: column.id,
       }))
     }
     if (selectedDimensions.length > 0) {
-      optionalParameters["dimensions"] = selectedDimensions.map(column => ({
-        histogramBuckets: buckets.split(",").map(s => parseInt(s, 10)),
+      reportRequest["dimensions"] = selectedDimensions.map(column => ({
+        // TODO - The types for this are incorrect. Might need to check the
+        // client library code?
+        histogramBuckets: buckets.split(",").map(s => parseInt(s, 10)) as any,
         name: column.id,
       }))
     }
     if (filtersExpression !== undefined && filtersExpression !== "") {
-      optionalParameters["filtersExpression"] = filtersExpression
+      reportRequest["filtersExpression"] = filtersExpression
     }
     if (selectedSegment !== undefined) {
-      optionalParameters["segments"] = [
-        { segmentId: selectedSegment.segmentId },
-      ]
-      optionalParameters["dimensions"] = [
+      reportRequest["segments"] = [{ segmentId: selectedSegment.segmentId }]
+      reportRequest["dimensions"] = (reportRequest["dimensions"] || []).concat([
         {
-          histogramBuckets: buckets.split(",").map(s => parseInt(s, 10)),
+          histogramBuckets: buckets.split(",").map(s => parseInt(s, 10)) as any,
           name: "ga:segment",
         },
-      ].concat(optionalParameters["dimensions"] || [])
+      ])
     }
     if (samplingLevel !== undefined) {
-      optionalParameters["samplingLevel"] = samplingLevel
+      reportRequest["samplingLevel"] = samplingLevel
     }
 
     return {
-      reportRequests: [
-        {
-          viewId: viewId,
-          dateRanges: [
-            {
-              startDate,
-              endDate,
-            },
-          ],
-          ...optionalParameters,
-        },
-      ],
+      reportRequests: [reportRequest],
     }
   }, [
     selectedMetrics,
