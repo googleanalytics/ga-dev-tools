@@ -13,8 +13,6 @@ interface SelectSingleProps<T> {
   deserializer: (t: string) => T | undefined
 }
 
-// TODO - Update files so nothing is using AutoComplete directly. This will
-// also require making a SelectSingle that's basically the same as this.
 const SelectSingle = <T extends any>({
   getOptionLabel,
   options,
@@ -55,7 +53,13 @@ const SelectSingle = <T extends any>({
       options={options}
       getOptionLabel={getOptionLabel}
       value={selected || null}
-      onChange={(_event, value, _state) => setSelected(value as T)}
+      onChange={(_event, value, reason) => {
+        if (reason === "clear") {
+          setSelected(undefined)
+        } else {
+          setSelected(value as T)
+        }
+      }}
       renderOption={renderOption}
       renderInput={params => (
         <TextField

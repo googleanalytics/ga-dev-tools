@@ -19,6 +19,8 @@ import {
   Button,
   useTheme,
   makeStyles,
+  FormControlLabel,
+  Checkbox,
 } from "@material-ui/core"
 import ExternalLink from "../../../components/ExternalLink"
 import {
@@ -37,7 +39,6 @@ import Loader from "react-loader-spinner"
 import { HasView } from "../../../components/ViewSelector"
 import useMakePivotRequest from "./_useMakePivotRequest"
 import usePivotRequest from "./_usePivotRequest"
-import { useState } from "react"
 import GADate from "../../../components/GADate"
 
 const useStyles = makeStyles(theme => ({
@@ -89,6 +90,12 @@ const PivotRequest: React.FC<PivotRequestProps> = ({ view, controlWidth }) => {
     setSamplingLevel,
     maxGroupCount,
     setMaxGroupCount,
+    includeEmptyRows,
+    setIncludeEmptyRows,
+    pageToken,
+    setPageToken,
+    pageSize,
+    setPageSize,
   } = usePivotRequestParameters(view)
   const request = usePivotRequest({
     viewId,
@@ -100,10 +107,13 @@ const PivotRequest: React.FC<PivotRequestProps> = ({ view, controlWidth }) => {
     pivotDimensions,
     selectedSegment,
     startGroup,
+    samplingLevel,
+    maxGroupCount,
+    includeEmptyRows,
+    pageToken,
+    pageSize,
   })
-  console.log({ request })
-  const { makeRequest, longRequest } = useMakePivotRequest(request)
-  const [response, setResponse] = useState()
+  const { makeRequest, longRequest, response } = useMakePivotRequest(request)
   return (
     <>
       <section className={controlWidth}>
@@ -336,7 +346,13 @@ const PivotRequest: React.FC<PivotRequestProps> = ({ view, controlWidth }) => {
           label="samplingLevel"
           helperText="The desired sample size for the report."
           renderOption={samplingLevel => <>{samplingLevel}</>}
-          onSelectedChanged={setSamplingLevel}
+          onSelectedChanged={samplingLevel => {
+            if (samplingLevel === undefined) {
+              setSamplingLevel(SamplingLevel.Default)
+            } else {
+              setSamplingLevel(samplingLevel)
+            }
+          }}
           serializer={s => ({
             key: StorageKey.pivotSamplingLevel,
             serialized: s?.toString() || "undefined",
@@ -347,6 +363,54 @@ const PivotRequest: React.FC<PivotRequestProps> = ({ view, controlWidth }) => {
             }
             return s as SamplingLevel
           }}
+        />
+
+        <TextField
+          InputProps={{
+            endAdornment: (
+              <ExternalLink
+                href={linkFor("ReportRequest.FIELDS.page_token")}
+                title={titleFor("pageToken")}
+              />
+            ),
+          }}
+          size="small"
+          variant="outlined"
+          fullWidth
+          label="pageToken"
+          value={pageToken || ""}
+          onChange={e => setPageToken(e.target.value)}
+          required
+          helperText="The continuation token to get the next page of the results."
+        />
+
+        <TextField
+          InputProps={{
+            endAdornment: (
+              <ExternalLink
+                href={linkFor("ReportRequest.FIELDS.page_size")}
+                title={titleFor("pageSize")}
+              />
+            ),
+          }}
+          size="small"
+          variant="outlined"
+          fullWidth
+          label="pageSize"
+          value={pageSize || ""}
+          onChange={e => setPageSize(e.target.value)}
+          required
+          helperText="The maximum number of rows to include in the response. Maximum of 100,000"
+        />
+
+        <FormControlLabel
+          control={
+            <Checkbox
+              checked={includeEmptyRows}
+              onChange={e => setIncludeEmptyRows(e.target.checked)}
+            />
+          }
+          label="Include Empty Rows"
         />
 
         <Button

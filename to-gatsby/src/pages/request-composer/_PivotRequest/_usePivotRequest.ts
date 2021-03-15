@@ -14,8 +14,12 @@ const usePivotRequest = ({
   dimensions,
   pivotDimensions,
   startGroup,
+  maxGroupCount,
   selectedSegment,
   samplingLevel,
+  pageToken,
+  pageSize,
+  includeEmptyRows,
 }: {
   viewId: string | undefined
   startDate: string | undefined
@@ -25,8 +29,12 @@ const usePivotRequest = ({
   dimensions: Column[]
   pivotDimensions: Column[]
   startGroup: string | undefined
+  maxGroupCount: string | undefined
   selectedSegment: Segment | undefined
   samplingLevel: SamplingLevel
+  pageToken: string | undefined
+  pageSize: string | undefined
+  includeEmptyRows: boolean
 }) => {
   const request = useMemo<Request | undefined>(() => {
     if (
@@ -43,6 +51,7 @@ const usePivotRequest = ({
     const reportRequest: ReportRequest = {
       viewId,
       metrics: metrics.map(metric => ({ expression: metric.id })),
+      includeEmptyRows,
       dimensions: dimensions.map(dimension => ({ name: dimension.id })),
       pivots: [
         {
@@ -55,10 +64,15 @@ const usePivotRequest = ({
     }
     if (startGroup !== undefined) {
       const parsed = parseInt(startGroup, 10)
-      if (isNaN(parsed)) {
-        return
+      if (!isNaN(parsed)) {
+        reportRequest["pivots"]![0].startGroup = parsed
       }
-      reportRequest["pivots"]![0].startGroup = parsed
+    }
+    if (maxGroupCount !== undefined) {
+      const parsed = parseInt(maxGroupCount, 10)
+      if (!isNaN(parsed)) {
+        reportRequest["pivots"]![0].maxGroupCount = parsed
+      }
     }
     if (selectedSegment !== undefined) {
       reportRequest["segments"] = [
@@ -73,6 +87,15 @@ const usePivotRequest = ({
     if (samplingLevel !== undefined) {
       reportRequest["samplingLevel"] = samplingLevel
     }
+    if (pageToken !== undefined) {
+      reportRequest["pageToken"] = pageToken
+    }
+    if (pageSize !== undefined) {
+      const parsed = parseInt(pageSize, 10)
+      if (!isNaN(parsed)) {
+        reportRequest["pageSize"] = parsed
+      }
+    }
 
     return {
       reportRequests: [reportRequest],
@@ -84,8 +107,12 @@ const usePivotRequest = ({
     dimensions,
     pivotDimensions,
     startGroup,
+    maxGroupCount,
     selectedSegment,
     samplingLevel,
+    pageToken,
+    pageSize,
+    includeEmptyRows,
   ])
   return request
 }

@@ -13,8 +13,6 @@ interface SelectMultipleProps<T> {
   deserializer: (t: string) => T[]
 }
 
-// TODO - Update files so nothing is using AutoComplete directly. This will
-// also require making a SelectSingle that's basically the same as this.
 const SelectMultiple = <T extends object>({
   getOptionLabel,
   options,

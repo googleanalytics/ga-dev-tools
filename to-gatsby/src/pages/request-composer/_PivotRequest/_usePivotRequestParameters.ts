@@ -14,8 +14,11 @@ const usePivotRequestParameters = (view: HasView | undefined) => {
   const [startGroup, setStartGroup] = useState("")
   const [maxGroupCount, setMaxGroupCount] = useState("")
   const [selectedSegment, setSelectedSegment] = useState<Segment>()
-  const [samplingLevel, setSamplingLevel] = useState<SamplingLevel>()
+  const [samplingLevel, setSamplingLevel] = useState(SamplingLevel.Default)
   const [segment, setSegment] = useState<Segment>()
+  const [pageToken, setPageToken] = useState<string>()
+  const [pageSize, setPageSize] = useState<string>()
+  const [includeEmptyRows, setIncludeEmptyRows] = useState(false)
 
   useMemo(() => {
     const id = view?.view.id
@@ -49,6 +52,12 @@ const usePivotRequestParameters = (view: HasView | undefined) => {
     setSamplingLevel,
     segment,
     setSegment,
+    includeEmptyRows,
+    setIncludeEmptyRows,
+    pageToken,
+    setPageToken,
+    pageSize,
+    setPageSize,
   }
 }
 
