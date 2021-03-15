@@ -54,6 +54,7 @@ export const useMetadataAPI = (): typeof gapi.client.metadata | undefined => {
 
 // TODO - should segments be filtered based on potentially selected dimensions
 // and metrics?
+// TODO - This should be cached locally since it's used in a lot of places.
 export const useSegments = () => {
   const api = useApi()
   const [segments, setSegments] = React.useState<Segment[]>()

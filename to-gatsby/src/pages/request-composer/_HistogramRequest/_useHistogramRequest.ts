@@ -1,6 +1,18 @@
 import { Column, Segment, SamplingLevel } from "../_api"
 import { useMemo } from "react"
 
+interface Parameters {
+  selectedMetrics: Column[]
+  selectedDimensions: Column[]
+  buckets: string
+  viewId: string
+  startDate: string
+  endDate: string
+  filtersExpression: string | undefined
+  selectedSegment: Segment | undefined
+  samplingLevel: SamplingLevel | undefined
+}
+
 const useHistogramRequest = ({
   selectedMetrics,
   selectedDimensions,
@@ -11,17 +23,7 @@ const useHistogramRequest = ({
   filtersExpression,
   selectedSegment,
   samplingLevel,
-}: {
-  selectedMetrics: Column[]
-  selectedDimensions: Column[]
-  buckets: string
-  viewId: string
-  startDate: string
-  endDate: string
-  filtersExpression: string
-  selectedSegment: Segment | undefined
-  samplingLevel: SamplingLevel | undefined
-}) => {
+}: Parameters) => {
   const histogramRequestObject = useMemo(() => {
     if (viewId === undefined) {
       return undefined
@@ -38,7 +40,7 @@ const useHistogramRequest = ({
         name: column.id,
       }))
     }
-    if (filtersExpression !== "") {
+    if (filtersExpression !== undefined && filtersExpression !== "") {
       optionalParameters["filtersExpression"] = filtersExpression
     }
     if (selectedSegment !== undefined) {

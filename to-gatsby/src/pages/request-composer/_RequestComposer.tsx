@@ -116,7 +116,10 @@ const RequestComposer = () => {
           <CohortRequest view={view} controlWidth={classes.maxControlWidth} />
         </TabPanel>
         <TabPanel value={tab} index={3}>
-          <MetricExpression />
+          <MetricExpression
+            view={view}
+            controlWidth={classes.maxControlWidth}
+          />
         </TabPanel>
       </section>
     </>

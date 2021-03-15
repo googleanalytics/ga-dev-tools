@@ -4,6 +4,23 @@ import { Column, Segment, SamplingLevel } from "../_api"
 type ReportRequest = gapi.client.analyticsreporting.ReportRequest
 type Request = { reportRequests: Array<ReportRequest> }
 
+interface Parameters {
+  viewId: string | undefined
+  startDate: string | undefined
+  endDate: string | undefined
+  metrics: Column[]
+  pivotMetrics: Column[]
+  dimensions: Column[]
+  pivotDimensions: Column[]
+  startGroup: string | undefined
+  maxGroupCount: string | undefined
+  selectedSegment: Segment | undefined
+  samplingLevel: SamplingLevel
+  pageToken: string | undefined
+  pageSize: string | undefined
+  includeEmptyRows: boolean
+}
+
 const usePivotRequest = ({
   viewId,
   startDate,
@@ -19,22 +36,7 @@ const usePivotRequest = ({
   pageToken,
   pageSize,
   includeEmptyRows,
-}: {
-  viewId: string | undefined
-  startDate: string | undefined
-  endDate: string | undefined
-  metrics: Column[]
-  pivotMetrics: Column[]
-  dimensions: Column[]
-  pivotDimensions: Column[]
-  startGroup: string | undefined
-  maxGroupCount: string | undefined
-  selectedSegment: Segment | undefined
-  samplingLevel: SamplingLevel
-  pageToken: string | undefined
-  pageSize: string | undefined
-  includeEmptyRows: boolean
-}) => {
+}: Parameters) => {
   const request = useMemo<Request | undefined>(() => {
     if (
       viewId === undefined ||

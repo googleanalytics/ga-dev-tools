@@ -93,6 +93,12 @@ export const StorageKey = {
   pivotRequestDimensions: "request-composer/pivot-request-dimensions",
   pivotRequestPivotDimensions:
     "request-composer/pivot-request-pivot-dimensions",
+  metricExpressionRequestDimensions:
+    "request-composer/metric-expression-request-dimensions",
+  metricExpressionRequestSegment:
+    "request-composer/metric-expression-request-segment",
+  metricExpressionSamplingLevel:
+    "request-composer/metric-expression-sampling-level",
 }
 
 export const EventAction = {
