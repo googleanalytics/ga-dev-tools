@@ -9,8 +9,8 @@ interface Parameters {
   selectedDimensions: Column[]
   buckets: string | undefined
   viewId: string
-  startDate: string
-  endDate: string
+  startDate: string | undefined
+  endDate: string | undefined
   filtersExpression: string | undefined
   selectedSegment: Segment | undefined
   samplingLevel: SamplingLevel | undefined
@@ -28,7 +28,12 @@ const useHistogramRequest = ({
   samplingLevel,
 }: Parameters): Request | undefined => {
   const histogramRequestObject = useMemo<Request | undefined>(() => {
-    if (viewId === undefined || buckets === undefined) {
+    if (
+      viewId === undefined ||
+      buckets === undefined ||
+      startDate === undefined ||
+      endDate === undefined
+    ) {
       return undefined
     }
     const reportRequest: ReportRequest = {

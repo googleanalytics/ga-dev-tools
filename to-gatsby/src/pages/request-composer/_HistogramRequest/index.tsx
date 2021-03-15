@@ -33,6 +33,10 @@ import GADate from "../../../components/GADate"
 import useHistogramRequest from "./_useHistogramRequest"
 import useHistogramRequestParameters from "./_useHistogramRequestParameters"
 import ReportsTable from "../_ReportsTable"
+import PrettyJson, {
+  shouldCollapseResponse,
+  shouldCollapseRequest,
+} from "../_PrettyJson"
 
 const useStyles = makeStyles(theme => ({
   makeRequest: {
@@ -107,7 +111,7 @@ const HistogramRequest: React.FC<HistogramRequestProps> = ({
           helperText="The analytics view ID from which to retrieve data."
         />
         <GADate
-          value={startDate}
+          value={startDate || ""}
           onChange={setStartDate}
           href="https://developers.google.com/analytics/devguides/reporting/core/v4/rest/v4/reports/batchGet#ReportRequest.FIELDS.date_ranges"
           linkTitle="see dateRanges on Devsite."
@@ -115,7 +119,7 @@ const HistogramRequest: React.FC<HistogramRequestProps> = ({
           helperText="The start of the date range for the data request. Format: YYYY-MM-DD."
         />
         <GADate
-          value={endDate}
+          value={endDate || ""}
           onChange={setEndDate}
           href="https://developers.google.com/analytics/devguides/reporting/core/v4/rest/v4/reports/batchGet#ReportRequest.FIELDS.date_ranges"
           linkTitle="see dateRanges on Devsite."
@@ -182,7 +186,7 @@ const HistogramRequest: React.FC<HistogramRequestProps> = ({
           href={linkFor("Dimension.FIELDS.histogram_buckets")}
           linkTitle={titleFor("histogramBuckets[]")}
           label="Buckets"
-          value={buckets}
+          value={buckets || ""}
           onChange={setBuckets}
           required
           helperText="The buckets to use for the histogram request."
@@ -191,7 +195,7 @@ const HistogramRequest: React.FC<HistogramRequestProps> = ({
           href={linkFor("ReportRequest.FIELDS.filters_expression")}
           linkTitle={titleFor("filtersExpression")}
           label="Filters Expression"
-          value={filtersExpression}
+          value={filtersExpression || ""}
           onChange={setFiltersExpression}
           helperText="Filters that restrict the data returned for the histogram request."
         />
@@ -254,6 +258,14 @@ const HistogramRequest: React.FC<HistogramRequestProps> = ({
         >
           Make Request
         </Button>
+      </section>
+
+      <section>
+        <Typography variant="h3">Request JSON</Typography>
+        <PrettyJson
+          object={requestObject}
+          shouldCollapse={shouldCollapseRequest}
+        />
       </section>
       <ReportsTable response={response} longRequest={longRequest} />
     </>

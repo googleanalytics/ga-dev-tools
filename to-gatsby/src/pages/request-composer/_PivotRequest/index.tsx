@@ -39,6 +39,7 @@ import usePivotRequest from "./_usePivotRequest"
 import GADate from "../../../components/GADate"
 import LinkedTextField from "../../../components/LinkedTextField"
 import ReportsTable from "../_ReportsTable"
+import PrettyJson, { shouldCollapseRequest } from "../_PrettyJson"
 
 const useStyles = makeStyles(theme => ({
   makeRequest: {
@@ -88,7 +89,7 @@ const PivotRequest: React.FC<PivotRequestProps> = ({ view, controlWidth }) => {
     pageSize,
     setPageSize,
   } = usePivotRequestParameters(view)
-  const request = usePivotRequest({
+  const requestObject = usePivotRequest({
     viewId,
     startDate,
     endDate,
@@ -104,7 +105,9 @@ const PivotRequest: React.FC<PivotRequestProps> = ({ view, controlWidth }) => {
     pageToken,
     pageSize,
   })
-  const { makeRequest, longRequest, response } = useMakeReportsRequest(request)
+  const { makeRequest, longRequest, response } = useMakeReportsRequest(
+    requestObject
+  )
   return (
     <>
       <section className={controlWidth}>
@@ -362,6 +365,11 @@ const PivotRequest: React.FC<PivotRequestProps> = ({ view, controlWidth }) => {
           Make Request
         </Button>
       </section>
+
+      <PrettyJson
+        object={requestObject}
+        shouldCollapse={shouldCollapseRequest}
+      />
       <ReportsTable response={response} longRequest={longRequest} />
     </>
   )

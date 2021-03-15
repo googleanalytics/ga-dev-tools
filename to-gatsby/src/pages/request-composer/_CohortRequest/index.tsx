@@ -31,6 +31,7 @@ import useCohortRequest, { CohortSize } from "./_useCohortRequest"
 import { useSegments } from "../../../api"
 import LinkedTextField from "../../../components/LinkedTextField"
 import ReportsTable from "../_ReportsTable"
+import PrettyJson, { shouldCollapseRequest } from "../_PrettyJson"
 
 interface CohortRequestProps {
   view: HasView | undefined
@@ -206,6 +207,10 @@ const CohortRequest: React.FC<CohortRequestProps> = ({
         </Button>
       </section>
 
+      <PrettyJson
+        object={requestObject}
+        shouldCollapse={shouldCollapseRequest}
+      />
       <ReportsTable response={response} longRequest={longRequest} />
     </>
   )

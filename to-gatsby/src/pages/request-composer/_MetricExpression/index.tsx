@@ -33,6 +33,7 @@ import { FancyOption } from "../../../components/FancyOption"
 import { StorageKey } from "../../../constants"
 import SelectSingle from "../../../components/SelectSingle"
 import { useSegments } from "../../../api"
+import PrettyJson, { shouldCollapseRequest } from "../_PrettyJson"
 
 const useStyles = makeStyles(theme => ({
   makeRequest: {
@@ -257,6 +258,11 @@ const MetricExpression: React.FC<MetricExpressionRequestProps> = ({
           Make Request
         </Button>
       </section>
+
+      <PrettyJson
+        object={requestObject}
+        shouldCollapse={shouldCollapseRequest}
+      />
       <ReportsTable response={response} longRequest={longRequest} />
     </>
   )
