@@ -13,32 +13,26 @@
 // limitations under the License.
 
 import * as React from "react"
-import {
-  Typography,
-  Button,
-  makeStyles,
-  FormControlLabel,
-  Checkbox,
-} from "@material-ui/core"
-import { linkFor, titleFor } from "../_HistogramRequest"
-import usePivotRequestParameters from "./_usePivotRequestParameters"
-import SelectSingle from "../../../components/SelectSingle"
-import {
-  Column,
-  useDimensionsAndMetrics,
-  Segment,
-  useSegments,
-  SamplingLevel,
-  useMakeReportsRequest,
-} from "../_api"
-import { FancyOption } from "../../../components/FancyOption"
-import SelectMultiple from "../../../components/SelectMultiple"
-import { StorageKey } from "../../../constants"
-import { HasView } from "../../../components/ViewSelector"
-import usePivotRequest from "./_usePivotRequest"
-import GADate from "../../../components/GADate"
 import LinkedTextField from "../../../components/LinkedTextField"
+import { linkFor, titleFor } from "../_HistogramRequest/_index"
+import { HasView } from "../../../components/ViewSelector"
+import useMetricExpressionRequestParameters from "./_useMetricExpressionRequestParameters"
+import { Button, makeStyles, Typography } from "@material-ui/core"
 import ReportsTable from "../_ReportsTable"
+import {
+  useMakeReportsRequest,
+  useDimensionsAndMetrics,
+  Column,
+  Segment,
+  SamplingLevel,
+} from "../_api"
+import useMetricExpressionRequest from "./_useMetricExpressionRequest"
+import GADate from "../../../components/GADate"
+import SelectMultiple from "../../../components/SelectMultiple"
+import { FancyOption } from "../../../components/FancyOption"
+import { StorageKey } from "../../../constants"
+import SelectSingle from "../../../components/SelectSingle"
+import { useSegments } from "../../../api"
 import PrettyJson, { shouldCollapseRequest } from "../_PrettyJson"
 
 const useStyles = makeStyles(theme => ({
@@ -48,17 +42,18 @@ const useStyles = makeStyles(theme => ({
   },
 }))
 
-interface PivotRequestProps {
+interface MetricExpressionRequestProps {
   view: HasView | undefined
   controlWidth: string
 }
 
-const PivotRequest: React.FC<PivotRequestProps> = ({ view, controlWidth }) => {
+const MetricExpression: React.FC<MetricExpressionRequestProps> = ({
+  view,
+  controlWidth,
+}) => {
   const classes = useStyles()
-
-  const { metrics, dimensions } = useDimensionsAndMetrics()
+  const { dimensions } = useDimensionsAndMetrics()
   const segments = useSegments()
-
   const {
     viewId,
     setViewId,
@@ -66,46 +61,37 @@ const PivotRequest: React.FC<PivotRequestProps> = ({ view, controlWidth }) => {
     setStartDate,
     endDate,
     setEndDate,
-    selectedMetrics,
-    setSelectedMetrics,
+    metricExpressions,
+    setMetricExpressions,
+    metricAliases,
+    setMetricAliases,
     selectedDimensions,
     setSelectedDimensions,
-    pivotMetrics,
-    setPivotMetrics,
-    pivotDimensions,
-    setPivotDimensions,
-    startGroup,
-    setStartGroup,
+    filtersExpression,
+    setFiltersExpression,
     selectedSegment,
     setSelectedSegment,
     samplingLevel,
     setSamplingLevel,
-    maxGroupCount,
-    setMaxGroupCount,
-    includeEmptyRows,
-    setIncludeEmptyRows,
-    pageToken,
-    setPageToken,
     pageSize,
     setPageSize,
-  } = usePivotRequestParameters(view)
-  const requestObject = usePivotRequest({
+    pageToken,
+    setPageToken,
+  } = useMetricExpressionRequestParameters(view)
+  const requestObject = useMetricExpressionRequest({
     viewId,
+    samplingLevel,
+    filtersExpression,
     startDate,
     endDate,
-    metrics: selectedMetrics,
-    dimensions: selectedDimensions,
-    pivotMetrics,
-    pivotDimensions,
+    metricExpressions,
+    metricAliases,
+    selectedDimensions,
     selectedSegment,
-    startGroup,
-    samplingLevel,
-    maxGroupCount,
-    includeEmptyRows,
     pageToken,
     pageSize,
   })
-  const { makeRequest, longRequest, response } = useMakeReportsRequest(
+  const { response, makeRequest, longRequest } = useMakeReportsRequest(
     requestObject
   )
   return (
@@ -136,40 +122,27 @@ const PivotRequest: React.FC<PivotRequestProps> = ({ view, controlWidth }) => {
           label="endDate"
           helperText="The end of the date range for the data request. Format: YYYY-MM-DD."
         />
-        <SelectMultiple<Column>
-          options={metrics || []}
-          getOptionLabel={column => column.id!}
-          label="Metrics"
-          helperText="The metrics to include in the request."
-          renderOption={column => (
-            <FancyOption
-              right={
-                <Typography variant="subtitle1" color="textSecondary">
-                  {column.attributes!.group}
-                </Typography>
-              }
-            >
-              <Typography variant="body1">
-                {column.attributes!.uiName}
-              </Typography>
-              <Typography variant="subtitle2" color="primary">
-                {column.id}
-              </Typography>
-            </FancyOption>
-          )}
-          onSelectedChanged={setSelectedMetrics}
-          serializer={column => ({
-            key: StorageKey.pivotRequestMetrics,
-            serialized: JSON.stringify(column),
-          })}
-          deserializer={(s: string) => {
-            return JSON.parse(s)
-          }}
+        <LinkedTextField
+          href={linkFor("Metric.FIELDS.expression")}
+          linkTitle={titleFor("Metric.expression")}
+          label="metric expressions"
+          value={metricExpressions || ""}
+          onChange={setMetricExpressions}
+          required
+          helperText="The metric expressions to include in the request. Separate multiple expressions with a comma."
+        />
+        <LinkedTextField
+          href={linkFor("Metric.FIELDS.alias")}
+          linkTitle={titleFor("Metric.alias")}
+          label="metric aliases"
+          value={metricAliases || ""}
+          onChange={setMetricAliases}
+          helperText="Aliases to use for your expressions. Separate multiple aliases with a comma."
         />
         <SelectMultiple<Column>
           options={dimensions || []}
           getOptionLabel={column => column.id!}
-          label="Dimensions"
+          label="dimensions"
           helperText="The dimensions to include in the request."
           renderOption={column => (
             <FancyOption
@@ -188,89 +161,19 @@ const PivotRequest: React.FC<PivotRequestProps> = ({ view, controlWidth }) => {
             </FancyOption>
           )}
           onSelectedChanged={setSelectedDimensions}
-          serializer={column => ({
-            key: StorageKey.pivotRequestDimensions,
-            serialized: JSON.stringify(column),
+          serializer={columns => ({
+            key: StorageKey.metricExpressionRequestDimensions,
+            serialized: JSON.stringify({ data: columns }),
           })}
-          deserializer={(s: string) => {
-            return JSON.parse(s)
-          }}
-        />
-        <SelectMultiple<Column>
-          options={metrics || []}
-          getOptionLabel={column => column.id!}
-          label="Pivot Metrics"
-          helperText="The pivot metrics to include in the request."
-          renderOption={column => (
-            <FancyOption
-              right={
-                <Typography variant="subtitle1" color="textSecondary">
-                  {column.attributes!.group}
-                </Typography>
-              }
-            >
-              <Typography variant="body1">
-                {column.attributes!.uiName}
-              </Typography>
-              <Typography variant="subtitle2" color="primary">
-                {column.id}
-              </Typography>
-            </FancyOption>
-          )}
-          onSelectedChanged={setPivotMetrics}
-          serializer={column => ({
-            key: StorageKey.pivotRequestPivotMetrics,
-            serialized: JSON.stringify(column),
-          })}
-          deserializer={(s: string) => {
-            return JSON.parse(s)
-          }}
-        />
-        <SelectMultiple<Column>
-          options={dimensions || []}
-          getOptionLabel={column => column.id!}
-          label="Pivot Dimensions"
-          helperText="The pivot dimensions to include in the request."
-          renderOption={column => (
-            <FancyOption
-              right={
-                <Typography variant="subtitle1" color="textSecondary">
-                  {column.attributes!.group}
-                </Typography>
-              }
-            >
-              <Typography variant="body1">
-                {column.attributes!.uiName}
-              </Typography>
-              <Typography variant="subtitle2" color="primary">
-                {column.id}
-              </Typography>
-            </FancyOption>
-          )}
-          onSelectedChanged={setPivotDimensions}
-          serializer={column => ({
-            key: StorageKey.pivotRequestPivotDimensions,
-            serialized: JSON.stringify(column),
-          })}
-          deserializer={(s: string) => {
-            return JSON.parse(s)
-          }}
+          deserializer={(s: string) => JSON.parse(s).data}
         />
         <LinkedTextField
-          href={linkFor("Pivot.FIELDS.start_group")}
-          linkTitle={titleFor("startGroup")}
-          label="Pivot startGroup"
-          value={startGroup || ""}
-          onChange={setStartGroup}
-          helperText="The pivot start group"
-        />
-        <LinkedTextField
-          href={linkFor("Pivot.FIELDS.max_group_count")}
-          linkTitle={titleFor("maxGroupCount")}
-          label="Pivot maxGroupCount"
-          value={maxGroupCount || ""}
-          onChange={setMaxGroupCount}
-          helperText="The maximum number of groups to return."
+          href={linkFor("ReportRequest.FIELDS.filters_expression")}
+          linkTitle={titleFor("filtersExpression")}
+          label="Filters Expression"
+          value={filtersExpression || ""}
+          onChange={setFiltersExpression}
+          helperText="Filters that restrict the data returned for the metric expression request."
         />
         <SelectSingle<Segment>
           options={segments || []}
@@ -295,7 +198,7 @@ const PivotRequest: React.FC<PivotRequestProps> = ({ view, controlWidth }) => {
           )}
           onSelectedChanged={setSelectedSegment}
           serializer={segment => ({
-            key: StorageKey.pivotRequestSegment,
+            key: StorageKey.metricExpressionRequestSegment,
             serialized: JSON.stringify(segment),
           })}
           deserializer={(s: string) => {
@@ -319,8 +222,8 @@ const PivotRequest: React.FC<PivotRequestProps> = ({ view, controlWidth }) => {
             }
           }}
           serializer={s => ({
-            key: StorageKey.pivotSamplingLevel,
-            serialized: s?.toString() || "undefined",
+            key: StorageKey.metricExpressionSamplingLevel,
+            serialized: s?.toString() || SamplingLevel.Default,
           })}
           deserializer={s => {
             if (s === "undefined") {
@@ -329,7 +232,6 @@ const PivotRequest: React.FC<PivotRequestProps> = ({ view, controlWidth }) => {
             return s as SamplingLevel
           }}
         />
-
         <LinkedTextField
           href={linkFor("ReportRequest.FIELDS.page_token")}
           linkTitle={titleFor("pageToken")}
@@ -345,15 +247,6 @@ const PivotRequest: React.FC<PivotRequestProps> = ({ view, controlWidth }) => {
           value={pageSize || ""}
           onChange={setPageSize}
           helperText="The maximum number of rows to include in the response. Maximum of 100,000"
-        />
-        <FormControlLabel
-          control={
-            <Checkbox
-              checked={includeEmptyRows}
-              onChange={e => setIncludeEmptyRows(e.target.checked)}
-            />
-          }
-          label="Include Empty Rows"
         />
 
         <Button
@@ -375,4 +268,4 @@ const PivotRequest: React.FC<PivotRequestProps> = ({ view, controlWidth }) => {
   )
 }
 
-export default PivotRequest
+export default MetricExpression

@@ -21,7 +21,7 @@ import {
   useMakeReportsRequest,
   SamplingLevel,
 } from "../_api"
-import { linkFor, titleFor } from "../_HistogramRequest"
+import { linkFor, titleFor } from "../_HistogramRequest/_index"
 import { Typography, Button, makeStyles } from "@material-ui/core"
 import { FancyOption } from "../../../components/FancyOption"
 import { StorageKey } from "../../../constants"
