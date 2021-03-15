@@ -1,42 +1,25 @@
 import React from "react"
-import { TextField } from "@material-ui/core"
-import ExternalLink from "./ExternalLink"
+import LinkedTextField, { LinkedTextFieldProps } from "./LinkedTextField"
 
-interface GADateProps {
-  href: string
-  title: string
-  label: string
-  helperText: string | JSX.Element
-  onDateChanged: (date: string) => void
-  initialValue?: string
-}
+interface GADateProps extends LinkedTextFieldProps {}
 
 const GADate: React.FC<GADateProps> = ({
-  title,
+  linkTitle,
   href,
   helperText,
   label,
-  initialValue,
-  onDateChanged,
+  value,
+  onChange,
+  required,
 }) => {
-  const [date, setDate] = React.useState(initialValue || "")
-
-  React.useEffect(() => {
-    onDateChanged(date)
-  }, [date])
-
   return (
-    <TextField
-      InputProps={{
-        endAdornment: <ExternalLink href={href} title={title} />,
-      }}
-      size="small"
-      variant="outlined"
-      fullWidth
+    <LinkedTextField
+      href={href}
+      linkTitle={linkTitle}
       label={label}
-      value={date}
-      onChange={e => setDate(e.target.value)}
-      required
+      value={value}
+      onChange={onChange}
+      required={required}
       helperText={helperText}
     />
   )

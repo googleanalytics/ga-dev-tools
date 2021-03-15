@@ -14,7 +14,6 @@
 
 import * as React from "react"
 import {
-  TextField,
   Typography,
   Button,
   useTheme,
@@ -22,7 +21,6 @@ import {
   FormControlLabel,
   Checkbox,
 } from "@material-ui/core"
-import ExternalLink from "../../../components/ExternalLink"
 import {
   linkFor,
   titleFor,
@@ -40,6 +38,7 @@ import { HasView } from "../../../components/ViewSelector"
 import useMakePivotRequest from "./_useMakePivotRequest"
 import usePivotRequest from "./_usePivotRequest"
 import GADate from "../../../components/GADate"
+import LinkedTextField from "../../../components/LinkedTextField"
 
 const useStyles = makeStyles(theme => ({
   // TODO - The loading indictor should be abstracted away for general use.
@@ -117,37 +116,28 @@ const PivotRequest: React.FC<PivotRequestProps> = ({ view, controlWidth }) => {
   return (
     <>
       <section className={controlWidth}>
-        <TextField
-          InputProps={{
-            endAdornment: (
-              <ExternalLink
-                href={linkFor("ReportRequest.FIELDS.view_id")}
-                title={titleFor("viewId")}
-              />
-            ),
-          }}
-          size="small"
-          variant="outlined"
-          fullWidth
+        <LinkedTextField
+          href={linkFor("ReportRequest.FIELDS.view_id")}
+          linkTitle={titleFor("viewId")}
           label="viewId"
           value={viewId}
-          onChange={e => setViewId(e.target.value)}
+          onChange={setViewId}
           required
           helperText="The analytics view ID from which to retrieve data."
         />
         <GADate
-          initialValue={startDate}
-          onDateChanged={setStartDate}
+          value={startDate}
+          onChange={setStartDate}
           href="https://developers.google.com/analytics/devguides/reporting/core/v4/rest/v4/reports/batchGet#ReportRequest.FIELDS.date_ranges"
-          title="see dateRanges on Devsite."
+          linkTitle="see dateRanges on Devsite."
           label="startDate"
           helperText="The start of the date range for the data request. Format: YYYY-MM-DD."
         />
         <GADate
-          initialValue={endDate}
-          onDateChanged={setEndDate}
+          value={endDate}
+          onChange={setEndDate}
           href="https://developers.google.com/analytics/devguides/reporting/core/v4/rest/v4/reports/batchGet#ReportRequest.FIELDS.date_ranges"
-          title="see dateRanges on Devsite."
+          linkTitle="see dateRanges on Devsite."
           label="endDate"
           helperText="The end of the date range for the data request. Format: YYYY-MM-DD."
         />
@@ -271,40 +261,20 @@ const PivotRequest: React.FC<PivotRequestProps> = ({ view, controlWidth }) => {
             return JSON.parse(s)
           }}
         />
-        <TextField
-          InputProps={{
-            endAdornment: (
-              <ExternalLink
-                href={linkFor("Pivot.FIELDS.start_group")}
-                title={titleFor("startGroup")}
-              />
-            ),
-          }}
-          size="small"
-          variant="outlined"
-          fullWidth
+        <LinkedTextField
+          href={linkFor("Pivot.FIELDS.start_group")}
+          linkTitle={titleFor("startGroup")}
           label="Pivot startGroup"
           value={startGroup}
-          onChange={e => setStartGroup(e.target.value)}
-          required
+          onChange={setStartGroup}
           helperText="The pivot start group"
         />
-        <TextField
-          InputProps={{
-            endAdornment: (
-              <ExternalLink
-                href={linkFor("Pivot.FIELDS.max_group_count")}
-                title={titleFor("maxGroupCount")}
-              />
-            ),
-          }}
-          size="small"
-          variant="outlined"
-          fullWidth
+        <LinkedTextField
+          href={linkFor("Pivot.FIELDS.max_group_count")}
+          linkTitle={titleFor("maxGroupCount")}
           label="Pivot maxGroupCount"
           value={maxGroupCount}
-          onChange={e => setMaxGroupCount(e.target.value)}
-          required
+          onChange={setMaxGroupCount}
           helperText="The maximum number of groups to return."
         />
         <SelectSingle<Segment>
@@ -365,44 +335,22 @@ const PivotRequest: React.FC<PivotRequestProps> = ({ view, controlWidth }) => {
           }}
         />
 
-        <TextField
-          InputProps={{
-            endAdornment: (
-              <ExternalLink
-                href={linkFor("ReportRequest.FIELDS.page_token")}
-                title={titleFor("pageToken")}
-              />
-            ),
-          }}
-          size="small"
-          variant="outlined"
-          fullWidth
+        <LinkedTextField
+          href={linkFor("ReportRequest.FIELDS.page_token")}
+          linkTitle={titleFor("pageToken")}
           label="pageToken"
           value={pageToken || ""}
-          onChange={e => setPageToken(e.target.value)}
-          required
+          onChange={setPageToken}
           helperText="The continuation token to get the next page of the results."
         />
-
-        <TextField
-          InputProps={{
-            endAdornment: (
-              <ExternalLink
-                href={linkFor("ReportRequest.FIELDS.page_size")}
-                title={titleFor("pageSize")}
-              />
-            ),
-          }}
-          size="small"
-          variant="outlined"
-          fullWidth
+        <LinkedTextField
+          href={linkFor("ReportRequest.FIELDS.page_size")}
+          linkTitle={titleFor("pageSize")}
           label="pageSize"
           value={pageSize || ""}
-          onChange={e => setPageSize(e.target.value)}
-          required
+          onChange={setPageSize}
           helperText="The maximum number of rows to include in the response. Maximum of 100,000"
         />
-
         <FormControlLabel
           control={
             <Checkbox
