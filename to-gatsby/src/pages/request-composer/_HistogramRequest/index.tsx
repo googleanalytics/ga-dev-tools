@@ -13,6 +13,8 @@
 // limitations under the License.
 
 import * as React from "react"
+import { Button, makeStyles, Typography } from "@material-ui/core"
+
 import { HasView } from "../../../components/ViewSelector"
 import {
   Column,
@@ -21,21 +23,16 @@ import {
   useMakeReportsRequest,
   SamplingLevel,
 } from "../_api"
-import { linkFor, titleFor } from "../_HistogramRequest"
-import { Typography, Button, makeStyles } from "@material-ui/core"
-import { FancyOption } from "../../../components/FancyOption"
+import SelectMultiple from "../../../components/SelectMultiple"
 import { StorageKey } from "../../../constants"
-import SelectSingle from "../../../components/SelectSingle"
-import useCohortRequestParameters from "./_useCohortRequestParameters"
-import useCohortRequest, { CohortSize } from "./_useCohortRequest"
+import { FancyOption } from "../../../components/FancyOption"
 import { useSegments } from "../../../api"
+import SelectSingle from "../../../components/SelectSingle"
 import LinkedTextField from "../../../components/LinkedTextField"
+import GADate from "../../../components/GADate"
+import useHistogramRequest from "./_useHistogramRequest"
+import useHistogramRequestParameters from "./_useHistogramRequestParameters"
 import ReportsTable from "../_ReportsTable"
-
-interface CohortRequestProps {
-  view: HasView | undefined
-  controlWidth: string
-}
 
 const useStyles = makeStyles(theme => ({
   makeRequest: {
@@ -44,35 +41,56 @@ const useStyles = makeStyles(theme => ({
   },
 }))
 
-const CohortRequest: React.FC<CohortRequestProps> = ({
+export const linkFor = (hash: string) =>
+  `https://developers.google.com/analytics/devguides/reporting/core/v4/rest/v4/reports/batchGet#${hash}`
+
+export const titleFor = (id: string) => `See ${id} on devsite.`
+
+interface HistogramRequestProps {
+  view: HasView | undefined
+  controlWidth: string
+}
+
+const HistogramRequest: React.FC<HistogramRequestProps> = ({
   view,
   controlWidth,
 }) => {
+  const classes = useStyles()
   const {
     viewId,
     setViewId,
-    selectedMetric,
-    setSelectedMetric,
-    cohortSize,
-    setCohortSize,
+    startDate,
+    setStartDate,
+    endDate,
+    setEndDate,
+    selectedDimensions,
+    setSelectedDimensions,
+    selectedMetrics,
+    setSelectedMetrics,
+    buckets,
+    setBuckets,
+    filtersExpression,
+    setFiltersExpression,
     selectedSegment,
     setSelectedSegment,
     samplingLevel,
     setSamplingLevel,
-  } = useCohortRequestParameters(view)
-  const classes = useStyles()
-  // TODO - perf improvement - this should probably be passed down from the
-  // parent instead of done for each one?
-  const { metrics } = useDimensionsAndMetrics()
-  const segments = useSegments()
-  const requestObject = useCohortRequest({
+  } = useHistogramRequestParameters(view)
+  const requestObject = useHistogramRequest({
     viewId,
-    selectedMetric,
-    cohortSize,
+    startDate,
+    endDate,
+    selectedDimensions,
+    selectedMetrics,
+    buckets,
+    filtersExpression,
     selectedSegment,
     samplingLevel,
   })
-  const { response, longRequest, makeRequest } = useMakeReportsRequest(
+  const { dimensions, metrics } = useDimensionsAndMetrics()
+  const segments = useSegments()
+
+  const { makeRequest, response, longRequest } = useMakeReportsRequest(
     requestObject
   )
 
@@ -88,11 +106,26 @@ const CohortRequest: React.FC<CohortRequestProps> = ({
           required
           helperText="The analytics view ID from which to retrieve data."
         />
-
-        <SelectSingle<Column>
+        <GADate
+          value={startDate}
+          onChange={setStartDate}
+          href="https://developers.google.com/analytics/devguides/reporting/core/v4/rest/v4/reports/batchGet#ReportRequest.FIELDS.date_ranges"
+          linkTitle="see dateRanges on Devsite."
+          label="startDate"
+          helperText="The start of the date range for the data request. Format: YYYY-MM-DD."
+        />
+        <GADate
+          value={endDate}
+          onChange={setEndDate}
+          href="https://developers.google.com/analytics/devguides/reporting/core/v4/rest/v4/reports/batchGet#ReportRequest.FIELDS.date_ranges"
+          linkTitle="see dateRanges on Devsite."
+          label="endDate"
+          helperText="The end of the date range for the data request. Format: YYYY-MM-DD."
+        />
+        <SelectMultiple<Column>
           options={metrics || []}
           getOptionLabel={column => column.id!}
-          label="Cohort Metric"
+          label="Metrics"
           helperText="The metrics to include in the request."
           renderOption={column => (
             <FancyOption
@@ -110,40 +143,58 @@ const CohortRequest: React.FC<CohortRequestProps> = ({
               </Typography>
             </FancyOption>
           )}
-          onSelectedChanged={setSelectedMetric}
-          serializer={column => ({
-            key: StorageKey.cohortRequestMetric,
-            serialized: JSON.stringify(column),
+          onSelectedChanged={setSelectedMetrics}
+          serializer={columns => ({
+            key: StorageKey.histogramRequestMetric,
+            serialized: JSON.stringify({ data: columns }),
           })}
-          deserializer={(s: string) => {
-            if (s === "undefined" || s === "null") {
-              return undefined
-            }
-            return JSON.parse(s)
-          }}
+          deserializer={(s: string) => JSON.parse(s).data}
         />
-
-        <SelectSingle<CohortSize>
-          options={[CohortSize.Day, CohortSize.Week, CohortSize.Month]}
-          getOptionLabel={cohortSize => cohortSize}
-          label="Cohort Size"
-          helperText="The size of the cohort to use in the request."
-          renderOption={cohortSize => cohortSize}
-          onSelectedChanged={cohortSize =>
-            setCohortSize(cohortSize as CohortSize)
-          }
-          serializer={cohortSize => ({
-            key: StorageKey.cohortSize,
-            serialized: cohortSize === undefined ? "undefined" : cohortSize,
+        <SelectMultiple<Column>
+          options={dimensions || []}
+          getOptionLabel={column => column.id!}
+          label="Histogram Dimension"
+          helperText="The dimensions to include in the request."
+          renderOption={column => (
+            <FancyOption
+              right={
+                <Typography variant="subtitle1" color="textSecondary">
+                  {column.attributes!.group}
+                </Typography>
+              }
+            >
+              <Typography variant="body1">
+                {column.attributes!.uiName}
+              </Typography>
+              <Typography variant="subtitle2" color="primary">
+                {column.id}
+              </Typography>
+            </FancyOption>
+          )}
+          onSelectedChanged={setSelectedDimensions}
+          serializer={columns => ({
+            key: StorageKey.histogramRequestDimension,
+            serialized: JSON.stringify({ data: columns }),
           })}
-          deserializer={(s: string) => {
-            if (s === "undefined" || s === "null") {
-              return undefined
-            }
-            return s as CohortSize
-          }}
+          deserializer={(s: string) => JSON.parse(s).data}
         />
-
+        <LinkedTextField
+          href={linkFor("Dimension.FIELDS.histogram_buckets")}
+          linkTitle={titleFor("histogramBuckets[]")}
+          label="Buckets"
+          value={buckets}
+          onChange={setBuckets}
+          required
+          helperText="The buckets to use for the histogram request."
+        />
+        <LinkedTextField
+          href={linkFor("ReportRequest.FIELDS.filters_expression")}
+          linkTitle={titleFor("filtersExpression")}
+          label="Filters Expression"
+          value={filtersExpression}
+          onChange={setFiltersExpression}
+          helperText="Filters that restrict the data returned for the histogram request."
+        />
         <SelectSingle<Segment>
           options={segments || []}
           getOptionLabel={segment => segment.segmentId!}
@@ -167,7 +218,7 @@ const CohortRequest: React.FC<CohortRequestProps> = ({
           )}
           onSelectedChanged={setSelectedSegment}
           serializer={segment => ({
-            key: StorageKey.cohortRequestSegment,
+            key: StorageKey.histogramRequestSegment,
             serialized: JSON.stringify(segment),
           })}
           deserializer={(s: string) => {
@@ -185,7 +236,7 @@ const CohortRequest: React.FC<CohortRequestProps> = ({
           renderOption={samplingLevel => <>{samplingLevel}</>}
           onSelectedChanged={setSamplingLevel}
           serializer={s => ({
-            key: StorageKey.cohortSamplingLevel,
+            key: StorageKey.histogramSamplingLevel,
             serialized: s?.toString() || "undefined",
           })}
           deserializer={s => {
@@ -195,7 +246,6 @@ const CohortRequest: React.FC<CohortRequestProps> = ({
             return s as SamplingLevel
           }}
         />
-
         <Button
           variant="contained"
           color="primary"
@@ -205,10 +255,9 @@ const CohortRequest: React.FC<CohortRequestProps> = ({
           Make Request
         </Button>
       </section>
-
       <ReportsTable response={response} longRequest={longRequest} />
     </>
   )
 }
 
-export default CohortRequest
+export default HistogramRequest

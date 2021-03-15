@@ -1,7 +1,6 @@
 import { useState, useMemo } from "react"
 import { HasView } from "../../../components/ViewSelector"
-import { Column, Segment } from "../_api"
-import { SamplingLevel } from "../_HistogramRequest"
+import { Column, Segment, SamplingLevel } from "../_api"
 
 const usePivotRequestParameters = (view: HasView | undefined) => {
   const [viewId, setViewId] = useState("")

@@ -16,38 +16,31 @@ import * as React from "react"
 import {
   Typography,
   Button,
-  useTheme,
   makeStyles,
   FormControlLabel,
   Checkbox,
 } from "@material-ui/core"
-import {
-  linkFor,
-  titleFor,
-  SamplingLevel,
-  ReportTable,
-} from "../_HistogramRequest"
+import { linkFor, titleFor } from "../_HistogramRequest"
 import usePivotRequestParameters from "./_usePivotRequestParameters"
 import SelectSingle from "../../../components/SelectSingle"
-import { Column, useDimensionsAndMetrics, Segment, useSegments } from "../_api"
+import {
+  Column,
+  useDimensionsAndMetrics,
+  Segment,
+  useSegments,
+  SamplingLevel,
+  useMakeReportsRequest,
+} from "../_api"
 import { FancyOption } from "../../../components/FancyOption"
 import SelectMultiple from "../../../components/SelectMultiple"
 import { StorageKey } from "../../../constants"
-import Loader from "react-loader-spinner"
 import { HasView } from "../../../components/ViewSelector"
-import useMakePivotRequest from "./_useMakePivotRequest"
 import usePivotRequest from "./_usePivotRequest"
 import GADate from "../../../components/GADate"
 import LinkedTextField from "../../../components/LinkedTextField"
+import ReportsTable from "../_ReportsTable"
 
 const useStyles = makeStyles(theme => ({
-  // TODO - The loading indictor should be abstracted away for general use.
-  loadingIndicator: {
-    marginTop: theme.spacing(2),
-    display: "flex",
-    flexDirection: "column",
-    alignItems: "center",
-  },
   makeRequest: {
     marginTop: theme.spacing(1),
     marginBottom: theme.spacing(2),
@@ -61,7 +54,6 @@ interface PivotRequestProps {
 
 const PivotRequest: React.FC<PivotRequestProps> = ({ view, controlWidth }) => {
   const classes = useStyles()
-  const theme = useTheme()
 
   const { metrics, dimensions } = useDimensionsAndMetrics()
   const segments = useSegments()
@@ -112,7 +104,7 @@ const PivotRequest: React.FC<PivotRequestProps> = ({ view, controlWidth }) => {
     pageToken,
     pageSize,
   })
-  const { makeRequest, longRequest, response } = useMakePivotRequest(request)
+  const { makeRequest, longRequest, response } = useMakeReportsRequest(request)
   return (
     <>
       <section className={controlWidth}>
@@ -370,14 +362,7 @@ const PivotRequest: React.FC<PivotRequestProps> = ({ view, controlWidth }) => {
           Make Request
         </Button>
       </section>
-
-      {longRequest && (
-        <section className={classes.loadingIndicator}>
-          <Loader type="Circles" color={theme.palette.primary.main} />
-          <Typography>Loading...</Typography>
-        </section>
-      )}
-      <ReportTable response={response} />
+      <ReportsTable response={response} longRequest={longRequest} />
     </>
   )
 }

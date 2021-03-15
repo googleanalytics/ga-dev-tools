@@ -1,5 +1,5 @@
 import { useSelector } from "react-redux"
-import { useEffect, useState } from "react"
+import { useEffect, useState, useCallback } from "react"
 
 export type GetReportsResponse = gapi.client.analyticsreporting.GetReportsResponse
 export type Column = gapi.client.analytics.Column
@@ -8,6 +8,12 @@ export type Segment = gapi.client.analytics.Segment
 type ReportingAPI = typeof gapi.client.analyticsreporting
 type MetadataAPI = gapi.client.analytics.MetadataResource
 type ManagementAPI = typeof gapi.client.analytics.management
+
+export enum SamplingLevel {
+  Default = "DEFAULT",
+  SMALL = "SMALL",
+  LARGE = "LARGE",
+}
 
 export const useAnalyticsReportingAPI = (): ReportingAPI | undefined => {
   const gapi = useSelector((state: AppState) => state.gapi)
@@ -91,4 +97,45 @@ export const useSegments = () => {
   }, [managementAPI])
 
   return segments
+}
+
+type GetReportsRequest = gapi.client.analyticsreporting.GetReportsRequest
+
+export const useMakeReportsRequest = (
+  requestObject: GetReportsRequest | undefined
+) => {
+  const reportingAPI = useAnalyticsReportingAPI()
+  const [response, setResponse] = useState<GetReportsResponse>()
+  const [longRequest, setLongRequest] = useState(false)
+
+  const makeRequest = useCallback(() => {
+    if (reportingAPI === undefined || requestObject === undefined) {
+      return
+    }
+    ;(async () => {
+      const first = await Promise.race<string>([
+        (async () => {
+          const response = await reportingAPI.reports.batchGet(
+            {},
+            requestObject
+          )
+          setResponse(response.result)
+          setTimeout(() => {
+            setLongRequest(false)
+          }, 500)
+          return "API"
+        })(),
+        new Promise<string>(resolve => {
+          window.setTimeout(() => {
+            resolve("TIMEOUT")
+          }, 300)
+        }),
+      ])
+      if (first === "TIMEOUT") {
+        setLongRequest(true)
+      }
+    })()
+  }, [reportingAPI, requestObject])
+
+  return { makeRequest, response, longRequest }
 }

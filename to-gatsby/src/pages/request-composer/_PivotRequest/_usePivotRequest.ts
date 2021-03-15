@@ -1,6 +1,5 @@
 import { useMemo } from "react"
-import { Column, Segment } from "../_api"
-import { SamplingLevel } from "../_HistogramRequest"
+import { Column, Segment, SamplingLevel } from "../_api"
 
 type ReportRequest = gapi.client.analyticsreporting.ReportRequest
 type Request = { reportRequests: Array<ReportRequest> }
