@@ -93,7 +93,7 @@ const RequestComposer = () => {
 
 const Wrapper = () => {
   return (
-    <Layout title="Request Composer">
+    <Layout title="Request Composer" requireLogin>
       <RequestComposer />
     </Layout>
   )

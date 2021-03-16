@@ -255,3 +255,7 @@ export const useEventValue = (setValue: (value: string) => void) =>
       setValue(event.target.value),
     [setValue]
   )
+
+export const isServerSide = () => {
+  return typeof window === "undefined"
+}

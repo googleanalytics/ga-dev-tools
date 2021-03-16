@@ -1,6 +1,7 @@
 import React from "react"
 import Autocomplete from "@material-ui/lab/Autocomplete"
 import { TextField } from "@material-ui/core"
+import { isServerSide } from "../hooks"
 
 interface SelectMultipleProps<T> {
   options: T[]
@@ -44,7 +45,14 @@ const SelectMultiple = <T extends object>({
     }
 
     onSelectedChanged(selectedOptions)
+    // TODO - This is missing the serializer dep, but in order for that to work
+    // it'd need to be wrapped in useCallback which isn't a refactor I want to
+    // do right now.
   }, [selectedOptions])
+
+  if (isServerSide()) {
+    return <div></div>
+  }
 
   return (
     <Autocomplete<T, true, undefined, true>

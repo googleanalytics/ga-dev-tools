@@ -65,6 +65,8 @@ const TabPanel: React.FC<{ value: number; index: number }> = ({
   )
 }
 
+// TODO - The Select Singles don't work correctly with SSR, but there's likely
+// a fix somewhere that someone has done already. Look into it.
 // TODO - It'd be nice if this value could be initialized from the
 // urlParameters, if present. This will be something to be careful about (if
 // you want to be accurate over time) for the ga4 version of this demo because

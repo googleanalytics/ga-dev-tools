@@ -1,6 +1,7 @@
 import React from "react"
 import Autocomplete from "@material-ui/lab/Autocomplete"
 import { TextField } from "@material-ui/core"
+import { isServerSide } from "../hooks"
 
 interface SelectSingleProps<T> {
   options: T[]
@@ -46,6 +47,10 @@ const SelectSingle = <T extends any>({
 
     onSelectedChanged(selected)
   }, [selected])
+
+  if (isServerSide()) {
+    return null
+  }
 
   return (
     <Autocomplete<T, false, undefined, true>
