@@ -124,7 +124,7 @@ const EnhancedEcommerce = () => {
   const classes = useStyles()
   return (
     <Layout title="Enhanced Ecommerce">
-      <Typography variant="h3">Overview</Typography>
+      <Typography variant="h2">Overview</Typography>
       <Typography variant="body1">
         The {demoStore} is a sample ecommerce application with a complete
         implementation of {enhancedEcommerceHelp}. Use this demo to understand

@@ -58,6 +58,8 @@ export const Url = {
     "https://developers.google.com/analytics/devguides/collection/protocol/v1",
   validatingMeasurement:
     "https://developers.google.com/analytics/devguides/collection/protocol/v1/validating-hits",
+  coreReportingApi:
+    "https://developers.google.com/analytics/devguides/reporting/core/v3/",
 }
 
 // All data in localStorage should have its keys here.
