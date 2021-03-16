@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-// All static links on the site should be put into this constant. This makes it
+// All static links on the site should be put into this enum. This makes it
 // easier to update all instances of a link on the site.
 // TODO - Add in a bulid step that makes sure the values in this enum are unique.
 export enum Url {
