@@ -13,22 +13,36 @@
 // limitations under the License.
 
 import * as React from "react"
-import { makeStyles, Typography, Tabs, Tab, Box } from "@material-ui/core"
+import {
+  makeStyles,
+  Typography,
+  Tabs,
+  Tab,
+  Box,
+  Button,
+} from "@material-ui/core"
 import ViewSelector, { HasView } from "../../components/ViewSelector"
 import HistogramRequest from "./_HistogramRequest/_index"
 import PivotRequest from "./_PivotRequest/_index"
 import CohortRequest from "./_CohortRequest/_index"
 import MetricExpression from "./_MetricExpression/_index"
 import { StorageKey } from "../../constants"
-import { useEffect } from "react"
+import { useEffect, useState } from "react"
+import { useMakeReportsRequest } from "./_api"
+import PrettyJson, { shouldCollapseRequest } from "./_PrettyJson"
+import ReportsTable from "./_ReportsTable"
 
-const useStyles = makeStyles(_ => ({
+const useStyles = makeStyles(theme => ({
   viewSelector: {
     flexDirection: "column",
     maxWidth: "650px",
   },
   maxControlWidth: {
     maxWidth: "600px",
+  },
+  makeRequest: {
+    marginTop: theme.spacing(1),
+    marginBottom: theme.spacing(2),
   },
 }))
 
@@ -57,6 +71,9 @@ const TabPanel: React.FC<{ value: number; index: number }> = ({
 // if we add new request types, we might not want to add them to the end.
 const useTab = (): [number, React.Dispatch<React.SetStateAction<number>>] => {
   const [tab, setTab] = React.useState<number>(() => {
+    if (typeof window === "undefined") {
+      return 0
+    }
     let asString = window.localStorage.getItem(StorageKey.requestComposerTab)
     if (asString === null) {
       return 0
@@ -65,19 +82,42 @@ const useTab = (): [number, React.Dispatch<React.SetStateAction<number>>] => {
   })
 
   useEffect(() => {
+    if (typeof window === "undefined") {
+      return
+    }
     window.localStorage.setItem(StorageKey.requestComposerTab, tab.toString())
   }, [tab])
 
   return [tab, setTab]
 }
 
+export type ReportRequest = gapi.client.analyticsreporting.ReportRequest
+export type ReportsRequest = { reportRequests: Array<ReportRequest> }
+
 const RequestComposer = () => {
   const classes = useStyles()
   const [tab, setTab] = useTab()
+  const [requestObject, setRequestObject] = useState<ReportsRequest>()
   const [view, setView] = React.useState<HasView | undefined>()
+  const { makeRequest, response, longRequest } = useMakeReportsRequest(
+    requestObject
+  )
   const onViewChanged = React.useCallback((view: HasView) => {
     setView(view)
   }, [])
+
+  const button = React.useMemo(() => {
+    return (
+      <Button
+        variant="contained"
+        color="primary"
+        onClick={makeRequest}
+        className={classes.makeRequest}
+      >
+        Make Request
+      </Button>
+    )
+  }, [classes, makeRequest])
 
   return (
     <>
@@ -107,20 +147,48 @@ const RequestComposer = () => {
           <HistogramRequest
             view={view}
             controlWidth={classes.maxControlWidth}
-          />
+            setRequestObject={setRequestObject}
+          >
+            {button}
+          </HistogramRequest>
         </TabPanel>
         <TabPanel value={tab} index={1}>
-          <PivotRequest view={view} controlWidth={classes.maxControlWidth} />
+          <PivotRequest
+            view={view}
+            controlWidth={classes.maxControlWidth}
+            setRequestObject={setRequestObject}
+          >
+            {button}
+          </PivotRequest>
         </TabPanel>
         <TabPanel value={tab} index={2}>
-          <CohortRequest view={view} controlWidth={classes.maxControlWidth} />
+          <CohortRequest
+            view={view}
+            controlWidth={classes.maxControlWidth}
+            setRequestObject={setRequestObject}
+          >
+            {button}
+          </CohortRequest>
         </TabPanel>
         <TabPanel value={tab} index={3}>
           <MetricExpression
             view={view}
             controlWidth={classes.maxControlWidth}
-          />
+            setRequestObject={setRequestObject}
+          >
+            {button}
+          </MetricExpression>
         </TabPanel>
+      </section>
+
+      <section className={classes.viewSelector}>
+        <PrettyJson
+          object={requestObject}
+          shouldCollapse={shouldCollapseRequest}
+        />
+      </section>
+      <section className={classes.viewSelector}>
+        <ReportsTable response={response} longRequest={longRequest} />
       </section>
     </>
   )

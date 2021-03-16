@@ -13,13 +13,7 @@
 // limitations under the License.
 
 import * as React from "react"
-import {
-  Typography,
-  Button,
-  makeStyles,
-  FormControlLabel,
-  Checkbox,
-} from "@material-ui/core"
+import { Typography, FormControlLabel, Checkbox } from "@material-ui/core"
 import { linkFor, titleFor } from "../_HistogramRequest/_index"
 import usePivotRequestParameters from "./_usePivotRequestParameters"
 import SelectSingle from "../../../components/SelectSingle"
@@ -29,7 +23,6 @@ import {
   Segment,
   useSegments,
   SamplingLevel,
-  useMakeReportsRequest,
 } from "../_api"
 import { FancyOption } from "../../../components/FancyOption"
 import SelectMultiple from "../../../components/SelectMultiple"
@@ -38,24 +31,21 @@ import { HasView } from "../../../components/ViewSelector"
 import usePivotRequest from "./_usePivotRequest"
 import GADate from "../../../components/GADate"
 import LinkedTextField from "../../../components/LinkedTextField"
-import ReportsTable from "../_ReportsTable"
-import PrettyJson, { shouldCollapseRequest } from "../_PrettyJson"
-
-const useStyles = makeStyles(theme => ({
-  makeRequest: {
-    marginTop: theme.spacing(1),
-    marginBottom: theme.spacing(2),
-  },
-}))
+import { useEffect } from "react"
+import { ReportsRequest } from "../_RequestComposer"
 
 interface PivotRequestProps {
   view: HasView | undefined
   controlWidth: string
+  setRequestObject: (request: ReportsRequest | undefined) => void
 }
 
-const PivotRequest: React.FC<PivotRequestProps> = ({ view, controlWidth }) => {
-  const classes = useStyles()
-
+const PivotRequest: React.FC<PivotRequestProps> = ({
+  view,
+  controlWidth,
+  setRequestObject,
+  children,
+}) => {
   const { metrics, dimensions } = useDimensionsAndMetrics()
   const segments = useSegments()
 
@@ -105,9 +95,11 @@ const PivotRequest: React.FC<PivotRequestProps> = ({ view, controlWidth }) => {
     pageToken,
     pageSize,
   })
-  const { makeRequest, longRequest, response } = useMakeReportsRequest(
-    requestObject
-  )
+
+  useEffect(() => {
+    setRequestObject(requestObject)
+  }, [requestObject])
+
   return (
     <>
       <section className={controlWidth}>
@@ -355,22 +347,8 @@ const PivotRequest: React.FC<PivotRequestProps> = ({ view, controlWidth }) => {
           }
           label="Include Empty Rows"
         />
-
-        <Button
-          variant="contained"
-          color="primary"
-          onClick={makeRequest}
-          className={classes.makeRequest}
-        >
-          Make Request
-        </Button>
+        {children}
       </section>
-
-      <PrettyJson
-        object={requestObject}
-        shouldCollapse={shouldCollapseRequest}
-      />
-      <ReportsTable response={response} longRequest={longRequest} />
     </>
   )
 }

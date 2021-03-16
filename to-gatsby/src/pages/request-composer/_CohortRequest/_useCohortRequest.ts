@@ -1,8 +1,8 @@
 import { useMemo } from "react"
 import { Column, Segment, SamplingLevel } from "../_api"
 import moment from "moment"
+import { ReportsRequest, ReportRequest } from "../_RequestComposer"
 
-type ReportRequest = gapi.client.analyticsreporting.ReportRequest
 type Cohort = gapi.client.analyticsreporting.Cohort
 
 export enum CohortSize {
@@ -106,9 +106,7 @@ const useCohortRequest = ({
   cohortSize: CohortSize
   samplingLevel: SamplingLevel | undefined
 }) => {
-  const request = useMemo<
-    { reportRequests: Array<ReportRequest> } | undefined
-  >(() => {
+  const request = useMemo<ReportsRequest | undefined>(() => {
     if (selectedMetric === undefined) {
       return
     }

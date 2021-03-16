@@ -13,14 +13,13 @@
 // limitations under the License.
 
 import * as React from "react"
-import { Button, makeStyles, Typography } from "@material-ui/core"
+import { Typography } from "@material-ui/core"
 
 import { HasView } from "../../../components/ViewSelector"
 import {
   Column,
   useDimensionsAndMetrics,
   Segment,
-  useMakeReportsRequest,
   SamplingLevel,
 } from "../_api"
 import SelectMultiple from "../../../components/SelectMultiple"
@@ -32,18 +31,8 @@ import LinkedTextField from "../../../components/LinkedTextField"
 import GADate from "../../../components/GADate"
 import useHistogramRequest from "./_useHistogramRequest"
 import useHistogramRequestParameters from "./_useHistogramRequestParameters"
-import ReportsTable from "../_ReportsTable"
-import PrettyJson, {
-  shouldCollapseResponse,
-  shouldCollapseRequest,
-} from "../_PrettyJson"
-
-const useStyles = makeStyles(theme => ({
-  makeRequest: {
-    marginTop: theme.spacing(1),
-    marginBottom: theme.spacing(2),
-  },
-}))
+import { useEffect } from "react"
+import { ReportsRequest } from "../_RequestComposer"
 
 export const linkFor = (hash: string) =>
   `https://developers.google.com/analytics/devguides/reporting/core/v4/rest/v4/reports/batchGet#${hash}`
@@ -53,13 +42,15 @@ export const titleFor = (id: string) => `See ${id} on devsite.`
 interface HistogramRequestProps {
   view: HasView | undefined
   controlWidth: string
+  setRequestObject: (request: ReportsRequest | undefined) => void
 }
 
 const HistogramRequest: React.FC<HistogramRequestProps> = ({
   view,
   controlWidth,
+  setRequestObject,
+  children,
 }) => {
-  const classes = useStyles()
   const {
     viewId,
     setViewId,
@@ -91,12 +82,13 @@ const HistogramRequest: React.FC<HistogramRequestProps> = ({
     selectedSegment,
     samplingLevel,
   })
+
+  useEffect(() => {
+    setRequestObject(requestObject)
+  }, [requestObject])
+
   const { dimensions, metrics } = useDimensionsAndMetrics()
   const segments = useSegments()
-
-  const { makeRequest, response, longRequest } = useMakeReportsRequest(
-    requestObject
-  )
 
   return (
     <>
@@ -250,24 +242,8 @@ const HistogramRequest: React.FC<HistogramRequestProps> = ({
             return s as SamplingLevel
           }}
         />
-        <Button
-          variant="contained"
-          color="primary"
-          onClick={makeRequest}
-          className={classes.makeRequest}
-        >
-          Make Request
-        </Button>
+        {children}
       </section>
-
-      <section>
-        <Typography variant="h3">Request JSON</Typography>
-        <PrettyJson
-          object={requestObject}
-          shouldCollapse={shouldCollapseRequest}
-        />
-      </section>
-      <ReportsTable response={response} longRequest={longRequest} />
     </>
   )
 }

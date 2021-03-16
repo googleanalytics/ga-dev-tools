@@ -27,7 +27,8 @@ const SelectMultiple = <T extends object>({
   // just the selected options?
   const [selectedOptions, setSelectedOptions] = React.useState<T[]>(() => {
     const { key } = serializer([])
-    const asString = window.localStorage.getItem(key)
+    const asString =
+      typeof window === "undefined" ? null : window.localStorage.getItem(key)
     if (asString === null) {
       return []
     } else {
@@ -38,7 +39,9 @@ const SelectMultiple = <T extends object>({
   React.useEffect(() => {
     // Store value in localStorage.
     const { key, serialized } = serializer(selectedOptions)
-    window.localStorage.setItem(key, serialized)
+    if (typeof window !== "undefined") {
+      window.localStorage.setItem(key, serialized)
+    }
 
     onSelectedChanged(selectedOptions)
   }, [selectedOptions])

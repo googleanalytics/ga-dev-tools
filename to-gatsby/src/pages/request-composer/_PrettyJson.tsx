@@ -1,13 +1,16 @@
-import React, { useCallback } from "react"
-import { Typography, Collapse, makeStyles, Paper } from "@material-ui/core"
-import ReactJson, { CollapsedFieldProps } from "react-json-view"
+import React from "react"
+import { makeStyles, Paper } from "@material-ui/core"
+// import ReactJson, { CollapsedFieldProps } from "react-json-view"
 
 interface PrettyJsonProps {
   object: object | undefined
-  shouldCollapse?: (props: CollapsedFieldProps) => boolean
+  // shouldCollapse?: (props: CollapsedFieldProps) => boolean
+  // TODO - This is a workaround because react-json-view doesn't work with
+  // gatsby ssr.
+  shouldCollapse?: (props: any) => boolean
 }
 
-export const shouldCollapseRequest = ({ namespace }: CollapsedFieldProps) => {
+export const shouldCollapseRequest = ({ namespace }: any) => {
   // The number 4 refers to the number of levels to show by default, this value
   // was gotten to mostly by trial an error, but concretely it's the number of
   // unique "keys" in "object" that we want to show by default.
@@ -28,7 +31,7 @@ export const shouldCollapseRequest = ({ namespace }: CollapsedFieldProps) => {
   return true
 }
 
-export const shouldCollapseResponse = ({ namespace }: CollapsedFieldProps) => {
+export const shouldCollapseResponse = ({ namespace }: any) => {
   if (namespace.length < 5) {
     return false
   }
@@ -47,6 +50,16 @@ const PrettyJson: React.FC<PrettyJsonProps> = ({ object, shouldCollapse }) => {
   if (object === undefined) {
     return null
   }
+
+  if (typeof window === "undefined") {
+    return null
+  }
+
+  // TODO - This is a workaround because react-json-view doesn't support SSR.
+  // This path shouldn't be run during SSR since the typeof window check will
+  // return undefined.
+  const ReactJson = require("react-json-view").default
+
   return (
     <Paper className={classes.jsonPaper}>
       <ReactJson

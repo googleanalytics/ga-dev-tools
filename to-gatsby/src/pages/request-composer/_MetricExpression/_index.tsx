@@ -17,10 +17,8 @@ import LinkedTextField from "../../../components/LinkedTextField"
 import { linkFor, titleFor } from "../_HistogramRequest/_index"
 import { HasView } from "../../../components/ViewSelector"
 import useMetricExpressionRequestParameters from "./_useMetricExpressionRequestParameters"
-import { Button, makeStyles, Typography } from "@material-ui/core"
-import ReportsTable from "../_ReportsTable"
+import { Typography } from "@material-ui/core"
 import {
-  useMakeReportsRequest,
   useDimensionsAndMetrics,
   Column,
   Segment,
@@ -33,25 +31,21 @@ import { FancyOption } from "../../../components/FancyOption"
 import { StorageKey } from "../../../constants"
 import SelectSingle from "../../../components/SelectSingle"
 import { useSegments } from "../../../api"
-import PrettyJson, { shouldCollapseRequest } from "../_PrettyJson"
-
-const useStyles = makeStyles(theme => ({
-  makeRequest: {
-    marginTop: theme.spacing(1),
-    marginBottom: theme.spacing(2),
-  },
-}))
+import { ReportsRequest } from "../_RequestComposer"
+import { useEffect } from "react"
 
 interface MetricExpressionRequestProps {
   view: HasView | undefined
   controlWidth: string
+  setRequestObject: (request: ReportsRequest | undefined) => void
 }
 
 const MetricExpression: React.FC<MetricExpressionRequestProps> = ({
   view,
   controlWidth,
+  setRequestObject,
+  children,
 }) => {
-  const classes = useStyles()
   const { dimensions } = useDimensionsAndMetrics()
   const segments = useSegments()
   const {
@@ -91,9 +85,11 @@ const MetricExpression: React.FC<MetricExpressionRequestProps> = ({
     pageToken,
     pageSize,
   })
-  const { response, makeRequest, longRequest } = useMakeReportsRequest(
-    requestObject
-  )
+
+  useEffect(() => {
+    setRequestObject(requestObject)
+  }, [requestObject])
+
   return (
     <>
       <section className={controlWidth}>
@@ -248,22 +244,8 @@ const MetricExpression: React.FC<MetricExpressionRequestProps> = ({
           onChange={setPageSize}
           helperText="The maximum number of rows to include in the response. Maximum of 100,000"
         />
-
-        <Button
-          variant="contained"
-          color="primary"
-          onClick={makeRequest}
-          className={classes.makeRequest}
-        >
-          Make Request
-        </Button>
+        {children}
       </section>
-
-      <PrettyJson
-        object={requestObject}
-        shouldCollapse={shouldCollapseRequest}
-      />
-      <ReportsTable response={response} longRequest={longRequest} />
     </>
   )
 }

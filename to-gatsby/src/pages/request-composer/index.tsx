@@ -85,6 +85,7 @@ const RequestComposer = () => {
         <li>Set query parameters.</li>
         <li>Click Make Request.</li>
       </ol>
+
       <Tool />
     </>
   )

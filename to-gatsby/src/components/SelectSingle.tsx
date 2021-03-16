@@ -28,7 +28,8 @@ const SelectSingle = <T extends any>({
   const [selected, setSelected] = React.useState<T | undefined>(() => {
     // This is a bit lazy, but it works as long as the serializer isn't fancy.
     const { key } = serializer({} as T)
-    const asString = window.localStorage.getItem(key)
+    const asString =
+      typeof window === "undefined" ? null : window.localStorage.getItem(key)
     if (asString === null) {
       return undefined
     } else {
@@ -39,7 +40,9 @@ const SelectSingle = <T extends any>({
   React.useEffect(() => {
     // Store value in localStorage.
     const { key, serialized } = serializer(selected)
-    window.localStorage.setItem(key, serialized)
+    if (typeof window !== "undefined") {
+      window.localStorage.setItem(key, serialized)
+    }
 
     onSelectedChanged(selected)
   }, [selected])

@@ -1,8 +1,6 @@
 import { Column, Segment, SamplingLevel } from "../_api"
 import { useMemo } from "react"
-
-type ReportRequest = gapi.client.analyticsreporting.ReportRequest
-type Request = { reportRequests: Array<ReportRequest> }
+import { ReportsRequest, ReportRequest } from "../_RequestComposer"
 
 interface Parameters {
   viewId: string
@@ -30,8 +28,10 @@ const useMetricExpressionRequest = ({
   selectedSegment,
   pageToken,
   pageSize,
-}: Parameters): Request | undefined => {
-  const metricExpressionRequestObject = useMemo<Request | undefined>(() => {
+}: Parameters): ReportsRequest | undefined => {
+  const metricExpressionRequestObject = useMemo<
+    ReportsRequest | undefined
+  >(() => {
     // TODO - there could be helpful error messaging here.
     if (
       viewId === undefined ||

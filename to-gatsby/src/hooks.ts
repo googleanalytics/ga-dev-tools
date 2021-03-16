@@ -52,7 +52,8 @@ export const usePersistentBoolean: UsePersistentBoolean = (
   initialValue
 ) => {
   const [value, setValue] = useState<boolean>(() => {
-    const fromStorage = window.localStorage.getItem(key)
+    const fromStorage =
+      typeof window === "undefined" ? null : window.localStorage.getItem(key)
     if (fromStorage === null) {
       return initialValue
     }
@@ -60,6 +61,9 @@ export const usePersistentBoolean: UsePersistentBoolean = (
   })
 
   useEffect(() => {
+    if (typeof window === "undefined") {
+      return
+    }
     window.localStorage.setItem(key, JSON.stringify({ value }))
   }, [value])
 
@@ -76,7 +80,8 @@ type UsePersistentString = (
 
 export const usePersistentString: UsePersistentString = (key, initialValue) => {
   const [value, setValue] = useState<string | undefined>(() => {
-    const fromStorage = window.localStorage.getItem(key)
+    const fromStorage =
+      typeof window === "undefined" ? null : window.localStorage.getItem(key)
     if (fromStorage === null) {
       return initialValue || undefined
     }
@@ -87,6 +92,9 @@ export const usePersistentString: UsePersistentString = (key, initialValue) => {
   })
 
   useEffect(() => {
+    if (typeof window === "undefined") {
+      return
+    }
     if (value === undefined) {
       window.localStorage.setItem(key, JSON.stringify(undefined))
     } else {

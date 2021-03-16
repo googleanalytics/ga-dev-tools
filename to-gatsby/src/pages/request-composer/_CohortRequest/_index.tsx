@@ -18,11 +18,10 @@ import {
   Column,
   useDimensionsAndMetrics,
   Segment,
-  useMakeReportsRequest,
   SamplingLevel,
 } from "../_api"
 import { linkFor, titleFor } from "../_HistogramRequest/_index"
-import { Typography, Button, makeStyles } from "@material-ui/core"
+import { Typography } from "@material-ui/core"
 import { FancyOption } from "../../../components/FancyOption"
 import { StorageKey } from "../../../constants"
 import SelectSingle from "../../../components/SelectSingle"
@@ -30,24 +29,20 @@ import useCohortRequestParameters from "./_useCohortRequestParameters"
 import useCohortRequest, { CohortSize } from "./_useCohortRequest"
 import { useSegments } from "../../../api"
 import LinkedTextField from "../../../components/LinkedTextField"
-import ReportsTable from "../_ReportsTable"
-import PrettyJson, { shouldCollapseRequest } from "../_PrettyJson"
+import { useEffect } from "react"
+import { ReportsRequest } from "../_RequestComposer"
 
 interface CohortRequestProps {
   view: HasView | undefined
   controlWidth: string
+  setRequestObject: (request: ReportsRequest | undefined) => void
 }
-
-const useStyles = makeStyles(theme => ({
-  makeRequest: {
-    marginTop: theme.spacing(1),
-    marginBottom: theme.spacing(2),
-  },
-}))
 
 const CohortRequest: React.FC<CohortRequestProps> = ({
   view,
   controlWidth,
+  setRequestObject,
+  children,
 }) => {
   const {
     viewId,
@@ -61,7 +56,6 @@ const CohortRequest: React.FC<CohortRequestProps> = ({
     samplingLevel,
     setSamplingLevel,
   } = useCohortRequestParameters(view)
-  const classes = useStyles()
   // TODO - perf improvement - this should probably be passed down from the
   // parent instead of done for each one?
   const { metrics } = useDimensionsAndMetrics()
@@ -73,9 +67,10 @@ const CohortRequest: React.FC<CohortRequestProps> = ({
     selectedSegment,
     samplingLevel,
   })
-  const { response, longRequest, makeRequest } = useMakeReportsRequest(
-    requestObject
-  )
+
+  useEffect(() => {
+    setRequestObject(requestObject)
+  }, [requestObject])
 
   return (
     <>
@@ -196,22 +191,8 @@ const CohortRequest: React.FC<CohortRequestProps> = ({
             return s as SamplingLevel
           }}
         />
-
-        <Button
-          variant="contained"
-          color="primary"
-          onClick={makeRequest}
-          className={classes.makeRequest}
-        >
-          Make Request
-        </Button>
+        {children}
       </section>
-
-      <PrettyJson
-        object={requestObject}
-        shouldCollapse={shouldCollapseRequest}
-      />
-      <ReportsTable response={response} longRequest={longRequest} />
     </>
   )
 }

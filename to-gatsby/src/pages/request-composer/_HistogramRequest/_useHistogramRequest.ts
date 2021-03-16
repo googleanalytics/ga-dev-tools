@@ -1,8 +1,6 @@
 import { Column, Segment, SamplingLevel } from "../_api"
 import { useMemo } from "react"
-
-type ReportRequest = gapi.client.analyticsreporting.ReportRequest
-type Request = { reportRequests: Array<ReportRequest> }
+import { ReportsRequest, ReportRequest } from "../_RequestComposer"
 
 interface Parameters {
   selectedMetrics: Column[]
@@ -26,8 +24,8 @@ const useHistogramRequest = ({
   filtersExpression,
   selectedSegment,
   samplingLevel,
-}: Parameters): Request | undefined => {
-  const histogramRequestObject = useMemo<Request | undefined>(() => {
+}: Parameters): ReportsRequest | undefined => {
+  const histogramRequestObject = useMemo<ReportsRequest | undefined>(() => {
     if (
       viewId === undefined ||
       buckets === undefined ||
