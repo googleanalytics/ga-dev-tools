@@ -1,6 +1,8 @@
 import * as React from "react"
 import { useSelector } from "react-redux"
 import { useLocation } from "@reach/router"
+import { StorageKey } from "./constants"
+import { useState, useEffect } from "react"
 
 export const usePageView = () => {
   const measurementId = useSelector((a: AppState) => a.measurementID)
@@ -38,6 +40,69 @@ export const useSendEvent: UseSendEvent = () => {
   )
 
   return sendEvent
+}
+
+type UsePersistentBoolean = (
+  key: StorageKey,
+  initialValue: boolean
+) => [boolean, React.Dispatch<React.SetStateAction<boolean>>]
+
+export const usePersistentBoolean: UsePersistentBoolean = (
+  key,
+  initialValue
+) => {
+  const [value, setValue] = useState<boolean>(() => {
+    const fromStorage =
+      typeof window === "undefined" ? null : window.localStorage.getItem(key)
+    if (fromStorage === null) {
+      return initialValue
+    }
+    return JSON.parse(fromStorage).value
+  })
+
+  useEffect(() => {
+    if (typeof window === "undefined") {
+      return
+    }
+    window.localStorage.setItem(key, JSON.stringify({ value }))
+  }, [value])
+
+  return [value, setValue]
+}
+
+type UsePersistentString = (
+  key: StorageKey,
+  initialValue?: string
+) => [
+  string | undefined,
+  React.Dispatch<React.SetStateAction<string | undefined>>
+]
+
+export const usePersistentString: UsePersistentString = (key, initialValue) => {
+  const [value, setValue] = useState<string | undefined>(() => {
+    const fromStorage =
+      typeof window === "undefined" ? null : window.localStorage.getItem(key)
+    if (fromStorage === null) {
+      return initialValue || undefined
+    }
+    if (fromStorage === "undefined" || fromStorage === "") {
+      return undefined
+    }
+    return JSON.parse(fromStorage).value
+  })
+
+  useEffect(() => {
+    if (typeof window === "undefined") {
+      return
+    }
+    if (value === undefined) {
+      window.localStorage.setItem(key, JSON.stringify(undefined))
+    } else {
+      window.localStorage.setItem(key, JSON.stringify({ value }))
+    }
+  }, [value])
+
+  return [value, setValue]
 }
 
 // TODO: remove this and replaced with a typed version using enums.
@@ -190,3 +255,7 @@ export const useEventValue = (setValue: (value: string) => void) =>
       setValue(event.target.value),
     [setValue]
   )
+
+export const isServerSide = () => {
+  return typeof window === "undefined"
+}

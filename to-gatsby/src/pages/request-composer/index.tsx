@@ -15,8 +15,87 @@
 import * as React from "react"
 
 import Layout from "../../components/layout"
+import { Typography, makeStyles } from "@material-ui/core"
+import Tool from "./_RequestComposer"
+
+const useStyles = makeStyles(theme => ({
+  list: {
+    marginTop: theme.spacing(0),
+  },
+}))
 
 const RequestComposer = () => {
-  return <Layout title="Request Composer">TODO - add in content.</Layout>
+  const classes = useStyles()
+  return (
+    <>
+      <Typography variant="h3">Overview</Typography>
+      <Typography>
+        The Request Composer demonstrates how to compose the following Analytics
+        Reporting API v4 requests and visualize their responses:
+      </Typography>
+      <ul className={classes.list}>
+        <li>
+          <a href="https://developers.google.com/analytics/devguides/reporting/core/v4/basics#histogram_buckets">
+            Histogram request
+          </a>
+        </li>
+        <li>
+          <a href="https://developers.google.com/analytics/devguides/reporting/core/v4/advanced#pivots">
+            Pivot request
+          </a>
+        </li>
+        <li>
+          <a href="https://developers.google.com/analytics/devguides/reporting/core/v4/advanced#cohorts">
+            Cohort request
+          </a>
+        </li>
+        <li>
+          <a href="https://developers.google.com/analytics/devguides/reporting/core/v4/basics#expressions">
+            metric expressions
+          </a>
+        </li>
+      </ul>
+
+      <Typography>
+        This version of Request Composer does not support the following
+        features:
+      </Typography>
+      <ul className={classes.list}>
+        <li>
+          <a href="https://developers.google.com/analytics/devguides/reporting/core/v4/basics#multiple_date_ranges">
+            multiple date ranges
+          </a>
+        </li>
+        <li>
+          <a href="https://developers.google.com/analytics/devguides/reporting/core/v4/basics#segments">
+            advanced segment configuration
+          </a>
+        </li>
+        <li>
+          <a href="https://developers.google.com/analytics/devguides/reporting/core/v4/basics#filtering_1">
+            advanced filter configuration
+          </a>
+        </li>
+      </ul>
+
+      <Typography>To compose a request:</Typography>
+      <ol className={classes.list}>
+        <li>Select an account, a property, and a view.</li>
+        <li>Select a request type (Histogram, Pivot, or Cohort).</li>
+        <li>Set query parameters.</li>
+        <li>Click Make Request.</li>
+      </ol>
+
+      <Tool />
+    </>
+  )
 }
-export default RequestComposer
+
+const Wrapper = () => {
+  return (
+    <Layout title="Request Composer" requireLogin>
+      <RequestComposer />
+    </Layout>
+  )
+}
+export default Wrapper
