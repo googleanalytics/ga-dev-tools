@@ -104,9 +104,6 @@ const RequestComposer = () => {
   const { makeRequest, response, longRequest } = useMakeReportsRequest(
     requestObject
   )
-  const onViewChanged = React.useCallback((view: HasView) => {
-    setView(view)
-  }, [])
 
   const button = React.useMemo(() => {
     return (
@@ -120,6 +117,12 @@ const RequestComposer = () => {
       </Button>
     )
   }, [classes, makeRequest])
+
+  const onViewChanged = React.useCallback(view => {
+    if ([view.account, view.property, view.view].every(a => a !== undefined)) {
+      setView(view as HasView)
+    }
+  }, [])
 
   return (
     <>

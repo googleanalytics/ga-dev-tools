@@ -38,8 +38,11 @@ export interface SelectedView {
 }
 
 interface ViewSelector3Props {
+  // TODO - create one that's the partial view, and one that's only called when
+  // the view is fully selected. ONce the fully selected callback exists,
+  // switch the query-expoler and request composer to use that one.
   // A callback that will be called when the view changes.
-  onViewChanged?: (hasView: HasView) => void
+  onViewChanged?: (hasView: Partial<HasView>) => void
   className?: string
   vertical?: true | undefined
   size?: "small" | "medium"
@@ -246,7 +249,6 @@ const useViewSelector: UseViewSelector = () => {
 const ViewSelector: React.FC<ViewSelector3Props> = props => {
   const {
     onViewChanged,
-    // TODO - Implement this.
     className,
     size = "medium",
     variant = "standard",
@@ -268,12 +270,7 @@ const ViewSelector: React.FC<ViewSelector3Props> = props => {
   // Call onViewChanged callback whenever the selected account, property, or
   // view changes via user interaction.
   React.useEffect(() => {
-    if (
-      onViewChanged !== undefined &&
-      selectedAccount !== undefined &&
-      selectedProperty !== undefined &&
-      selectedView !== undefined
-    ) {
+    if (onViewChanged !== undefined) {
       onViewChanged({
         account: selectedAccount,
         property: selectedProperty,

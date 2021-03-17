@@ -42,6 +42,7 @@
     "react-use": "^14.1.1",
     "redux": "^4.0.5",
     "redux-thunk": "^2.3.0",
+    "use-debounce": "^6.0.0",
     "uuid": "^7.0.3"
   },
   "devDependencies": {

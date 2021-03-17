@@ -20,8 +20,10 @@ import Paper from "@material-ui/core/Paper"
 
 import Layout from "../../components/layout"
 import ViewSelector, { HasView } from "../../components/ViewSelector"
+import { useDebounce } from "use-debounce"
 
 import ViewsTable from "./_ViewTable"
+import useAllViews from "./_useAllViews"
 
 const useStyles = makeStyles(theme => ({
   viewSelector: {
@@ -83,36 +85,58 @@ const viewsForSearch = (
   )
 }
 
-// TODO The performance for this component is pretty bad when searching, it's
-// probably worth digging into at some point.
+const populatedView = (view: Partial<HasView>): HasView | undefined => {
+  if (
+    view.account !== undefined &&
+    view.property !== undefined &&
+    view.view !== undefined
+  ) {
+    return view as HasView
+  }
+  return undefined
+}
+
 export const AccountExplorer = () => {
   const classes = useStyles()
 
   const [searchQuery, setSearchQuery] = React.useState("")
-  const [selectedView, setSelectedView] = React.useState<HasView>()
-  // TODO - Create a hook for getting all views.
-  const [allViews, setAllViews] = React.useState<HasView[]>([])
+  const [debouncedQuery] = useDebounce(searchQuery, 100, { trailing: true })
+  const [selectedView, setSelectedView] = React.useState<Partial<HasView>>({})
+  const allViews = useAllViews()
   const [filteredViews, setFilteredViews] = React.useState<HasView[]>([])
 
   // Whenever the selected view changes, if it is defined, the search should be
   // cleared & the table views set to the newly selected view.
   React.useEffect(() => {
-    if (selectedView !== undefined) {
-      setFilteredViews([selectedView])
+    if (populatedView(selectedView) !== undefined) {
+      setFilteredViews([populatedView(selectedView)!])
       setSearchQuery("")
     }
-  }, [selectedView])
+    // If account or property is selected filter out views to only views with that property and view.
+    const filtered = allViews
+      .filter(view =>
+        selectedView.account !== undefined
+          ? selectedView.account.id === view.account.id
+          : true
+      )
+      .filter(view =>
+        selectedView.property !== undefined
+          ? selectedView.property.id === view.property.id
+          : true
+      )
+    setFilteredViews(filtered)
+  }, [selectedView, allViews])
 
   // When there is a search query, the views for the table should be the
   // filtered list. When there is no query, the value should be reset to the value
   // selected in the ViewSelector (if present)
   React.useEffect(() => {
-    if (searchQuery !== "") {
-      setFilteredViews(viewsForSearch(searchQuery, allViews))
-    } else if (selectedView !== undefined) {
-      setFilteredViews([selectedView])
+    if (debouncedQuery !== "") {
+      setFilteredViews(viewsForSearch(debouncedQuery, allViews))
+    } else if (populatedView(selectedView) !== undefined) {
+      setFilteredViews([populatedView(selectedView)!])
     }
-  }, [searchQuery, allViews, selectedView])
+  }, [debouncedQuery, allViews, selectedView])
 
   const onViewChanged = React.useCallback(
     viewData => {

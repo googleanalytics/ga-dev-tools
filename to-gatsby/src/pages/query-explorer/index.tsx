@@ -215,6 +215,12 @@ export const QueryExplorer = () => {
     api,
   ])
 
+  const onViewChanged = React.useCallback(view => {
+    if ([view.view, view.account, view.property].every(a => a !== undefined)) {
+      setSelectedView(view as HasView)
+    }
+  }, [])
+
   return (
     <>
       <Typography variant="h2">Overview</Typography>
@@ -227,7 +233,7 @@ export const QueryExplorer = () => {
       <Typography variant="h3">Select View</Typography>
       <ViewSelector
         className={classes.viewSelector}
-        onViewChanged={setSelectedView}
+        onViewChanged={onViewChanged}
         vertical
         size="small"
         variant="outlined"
