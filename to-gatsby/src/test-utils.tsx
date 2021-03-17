@@ -28,6 +28,7 @@ interface WithProvidersConfig {
   measurementID?: string
 }
 
+// TODO this should have support for a user being defined or not.
 export const withProviders = (
   component: JSX.Element | null,
   { measurementID, path }: WithProvidersConfig = { path: "/" }
