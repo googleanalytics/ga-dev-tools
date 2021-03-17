@@ -165,11 +165,15 @@ export const AccountExplorer = () => {
               placeholder="Start typing to search..."
               value={searchQuery}
               onChange={e => setSearchQuery(e.target.value)}
+              variant="outlined"
+              size="small"
             />
             <Typography variant="h3" className={classes.heading}>
               &hellip;or browse through all your accounts
             </Typography>
             <ViewSelector
+              variant="outlined"
+              size="small"
               className={classes.viewSelector}
               onViewChanged={onViewChanged}
             />

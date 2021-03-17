@@ -169,11 +169,13 @@ const useStyles = makeStyles(theme => ({
     display: "flex",
     flexDirection: "column",
     marginBottom: theme.spacing(1),
+    maxWidth: "600px",
   },
   bold: {
     fontWeight: "bold",
   },
   share: {
+    maxWidth: "600px",
     padding: theme.spacing(3),
     paddingTop: "unset",
     display: "flex",
@@ -458,6 +460,8 @@ export const CampaignUrlBuilder = () => {
           value={websiteUrl}
           onChange={onWebsiteChange}
           label="Website URL"
+          size="small"
+          variant="outlined"
           helperText={
             <span>
               The full website URL (e.g.{" "}
@@ -471,6 +475,8 @@ export const CampaignUrlBuilder = () => {
           value={source}
           onChange={e => setSource(e.target.value)}
           label="Campaign Source"
+          size="small"
+          variant="outlined"
           helperText={
             <span>
               The referrer (e.g. <span className={classes.bold}>google</span>,{" "}
@@ -484,6 +490,8 @@ export const CampaignUrlBuilder = () => {
           value={medium}
           onChange={e => setMedium(e.target.value)}
           label="Campaign Medium"
+          size="small"
+          variant="outlined"
           helperText={
             <span>
               Marketing medium (e.g. <span className={classes.bold}>cpc</span>,{" "}
@@ -498,6 +506,8 @@ export const CampaignUrlBuilder = () => {
           value={campaign}
           onChange={e => setCampaign(e.target.value)}
           label="Campaign Name"
+          size="small"
+          variant="outlined"
           helperText={
             <span>
               Product, promo code, or slogan (e.g.{" "}
@@ -510,6 +520,8 @@ export const CampaignUrlBuilder = () => {
           value={term}
           onChange={e => setTerm(e.target.value)}
           label="Campaign Term"
+          size="small"
+          variant="outlined"
           helperText="Identify the paid keywords"
         />
         <TextField
@@ -517,6 +529,8 @@ export const CampaignUrlBuilder = () => {
           value={content}
           onChange={e => setContent(e.target.value)}
           label="Campaign Content"
+          size="small"
+          variant="outlined"
           helperText="Use to differentiate ads"
         />
       </section>

@@ -35,6 +35,7 @@ const useStyles = makeStyles(theme => ({
     },
   },
   inputs: {
+    maxWidth: "600px",
     display: "flex",
     flexDirection: "column",
     "& > div": {
@@ -110,9 +111,9 @@ const Parameters: React.FC<ParametersProps> = ({
 
   return (
     <section className={classes.inputs}>
-      <FormControl>
+      <FormControl size="small">
         <InputLabel id="v-label">v</InputLabel>
-        <Select labelId="v-label" value={v.value}>
+        <Select labelId="v-label" value={v.value} variant="outlined">
           <MenuItem value={1}>1</MenuItem>
         </Select>
       </FormControl>
@@ -130,7 +131,9 @@ const Parameters: React.FC<ParametersProps> = ({
         getOptionLabel={a => a}
         renderOption={e => e}
         value={t.value as string}
-        renderInput={params => <TextField {...params} label="t" />}
+        renderInput={params => (
+          <TextField {...params} variant="outlined" size="small" label="t" />
+        )}
         onChange={(_, value) => {
           setHitType(value)
         }}
@@ -190,7 +193,13 @@ const Parameters: React.FC<ParametersProps> = ({
           )
         }}
         renderInput={params => (
-          <TextField {...params} label="tid" placeholder="UA-XXXXX-Y" />
+          <TextField
+            {...params}
+            label="tid"
+            placeholder="UA-XXXXX-Y"
+            variant="outlined"
+            size="small"
+          />
         )}
       />
 
@@ -199,6 +208,8 @@ const Parameters: React.FC<ParametersProps> = ({
         value={cid.value || ""}
         onChange={e => setCid(e.target.value)}
         label="cid"
+        variant="outlined"
+        size="small"
         InputProps={{
           endAdornment: (
             <InputAdornment position="end">
@@ -227,6 +238,8 @@ const Parameters: React.FC<ParametersProps> = ({
         return (
           <div className={classes.addedParam} key={`${param.id}-${idx}`}>
             <TextField
+              variant="outlined"
+              size="small"
               error={isDuplicate}
               helperText={helperText}
               autoFocus={shouldFocus(param.id, false)}
@@ -239,6 +252,8 @@ const Parameters: React.FC<ParametersProps> = ({
               }}
             />
             <TextField
+              variant="outlined"
+              size="small"
               error={isDuplicate}
               autoFocus={shouldFocus(param.id, true)}
               id={`${param.name}-value`}
