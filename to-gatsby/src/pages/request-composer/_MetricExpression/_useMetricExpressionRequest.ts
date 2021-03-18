@@ -32,12 +32,15 @@ const useMetricExpressionRequest = ({
   const metricExpressionRequestObject = useMemo<
     ReportsRequest | undefined
   >(() => {
-    // TODO - there could be helpful error messaging here.
     if (
       viewId === undefined ||
+      viewId === "" ||
       metricExpressions === undefined ||
+      metricExpressions === "" ||
       startDate === undefined ||
-      endDate === undefined
+      startDate === "" ||
+      endDate === undefined ||
+      endDate === ""
     ) {
       return undefined
     }

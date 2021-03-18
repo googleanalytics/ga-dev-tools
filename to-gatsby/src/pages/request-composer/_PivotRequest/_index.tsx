@@ -113,6 +113,7 @@ const PivotRequest: React.FC<PivotRequestProps> = ({
           helperText="The analytics view ID from which to retrieve data."
         />
         <GADate
+          required
           value={startDate || ""}
           onChange={setStartDate}
           href="https://developers.google.com/analytics/devguides/reporting/core/v4/rest/v4/reports/batchGet#ReportRequest.FIELDS.date_ranges"
@@ -121,6 +122,7 @@ const PivotRequest: React.FC<PivotRequestProps> = ({
           helperText="The start of the date range for the data request. Format: YYYY-MM-DD."
         />
         <GADate
+          required
           value={endDate || ""}
           onChange={setEndDate}
           href="https://developers.google.com/analytics/devguides/reporting/core/v4/rest/v4/reports/batchGet#ReportRequest.FIELDS.date_ranges"
@@ -129,6 +131,7 @@ const PivotRequest: React.FC<PivotRequestProps> = ({
           helperText="The end of the date range for the data request. Format: YYYY-MM-DD."
         />
         <SelectMultiple<Column>
+          required
           options={metrics || []}
           getOptionLabel={column => column.id!}
           label="Metrics"
@@ -159,6 +162,7 @@ const PivotRequest: React.FC<PivotRequestProps> = ({
           }}
         />
         <SelectMultiple<Column>
+          required
           options={dimensions || []}
           getOptionLabel={column => column.id!}
           label="Dimensions"
@@ -189,6 +193,7 @@ const PivotRequest: React.FC<PivotRequestProps> = ({
           }}
         />
         <SelectMultiple<Column>
+          required
           options={metrics || []}
           getOptionLabel={column => column.id!}
           label="Pivot Metrics"
@@ -219,6 +224,7 @@ const PivotRequest: React.FC<PivotRequestProps> = ({
           }}
         />
         <SelectMultiple<Column>
+          required
           options={dimensions || []}
           getOptionLabel={column => column.id!}
           label="Pivot Dimensions"

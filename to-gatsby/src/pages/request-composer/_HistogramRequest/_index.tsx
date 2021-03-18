@@ -103,6 +103,7 @@ const HistogramRequest: React.FC<HistogramRequestProps> = ({
           helperText="The analytics view ID from which to retrieve data."
         />
         <GADate
+          required
           value={startDate || ""}
           onChange={setStartDate}
           href="https://developers.google.com/analytics/devguides/reporting/core/v4/rest/v4/reports/batchGet#ReportRequest.FIELDS.date_ranges"
@@ -111,6 +112,7 @@ const HistogramRequest: React.FC<HistogramRequestProps> = ({
           helperText="The start of the date range for the data request. Format: YYYY-MM-DD."
         />
         <GADate
+          required
           value={endDate || ""}
           onChange={setEndDate}
           href="https://developers.google.com/analytics/devguides/reporting/core/v4/rest/v4/reports/batchGet#ReportRequest.FIELDS.date_ranges"

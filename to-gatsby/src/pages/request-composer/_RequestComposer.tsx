@@ -101,22 +101,26 @@ const RequestComposer = () => {
   const [tab, setTab] = useTab()
   const [requestObject, setRequestObject] = useState<ReportsRequest>()
   const [view, setView] = React.useState<HasView | undefined>()
-  const { makeRequest, response, longRequest } = useMakeReportsRequest(
-    requestObject
-  )
+  const {
+    makeRequest,
+    response,
+    longRequest,
+    canMakeRequest,
+  } = useMakeReportsRequest(requestObject)
 
   const button = React.useMemo(() => {
     return (
       <Button
         variant="contained"
         color="primary"
+        disabled={!canMakeRequest}
         onClick={makeRequest}
         className={classes.makeRequest}
       >
         Make Request
       </Button>
     )
-  }, [classes, makeRequest])
+  }, [classes, makeRequest, canMakeRequest])
 
   const onViewChanged = React.useCallback(view => {
     if ([view.account, view.property, view.view].every(a => a !== undefined)) {

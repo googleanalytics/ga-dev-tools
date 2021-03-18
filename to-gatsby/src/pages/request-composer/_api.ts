@@ -1,5 +1,5 @@
 import { useSelector } from "react-redux"
-import { useEffect, useState, useCallback } from "react"
+import { useEffect, useState, useCallback, useMemo } from "react"
 
 export type GetReportsResponse = gapi.client.analyticsreporting.GetReportsResponse
 export type Column = gapi.client.analytics.Column
@@ -108,6 +108,10 @@ export const useMakeReportsRequest = (
   const [response, setResponse] = useState<GetReportsResponse>()
   const [longRequest, setLongRequest] = useState(false)
 
+  const canMakeRequest = useMemo(() => {
+    return requestObject !== undefined
+  }, [requestObject])
+
   const makeRequest = useCallback(() => {
     if (reportingAPI === undefined || requestObject === undefined) {
       return
@@ -137,5 +141,5 @@ export const useMakeReportsRequest = (
     })()
   }, [reportingAPI, requestObject])
 
-  return { makeRequest, response, longRequest }
+  return { makeRequest, response, longRequest, canMakeRequest }
 }

@@ -30,7 +30,9 @@ const useHistogramRequest = ({
       viewId === undefined ||
       buckets === undefined ||
       startDate === undefined ||
-      endDate === undefined
+      startDate === "" ||
+      endDate === undefined ||
+      endDate === ""
     ) {
       return undefined
     }

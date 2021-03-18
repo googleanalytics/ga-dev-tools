@@ -12,6 +12,7 @@ interface SelectMultipleProps<T> {
   helperText: string
   serializer: (t: T[]) => { serialized: string; key: string }
   deserializer: (t: string) => T[]
+  required?: true
 }
 
 const SelectMultiple = <T extends object>({
@@ -23,6 +24,7 @@ const SelectMultiple = <T extends object>({
   helperText,
   serializer,
   deserializer,
+  required,
 }: SelectMultipleProps<T>) => {
   // TODO - maybe this should also store the available options locally and not
   // just the selected options?
@@ -69,6 +71,7 @@ const SelectMultiple = <T extends object>({
       renderInput={params => (
         <TextField
           {...params}
+          required={required}
           label={label}
           helperText={helperText}
           size="small"

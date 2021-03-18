@@ -40,14 +40,17 @@ const usePivotRequest = ({
   const request = useMemo<Request | undefined>(() => {
     if (
       viewId === undefined ||
+      viewId === "" ||
       startDate === undefined ||
+      startDate === "" ||
       endDate === undefined ||
+      endDate === "" ||
       metrics.length === 0 ||
       dimensions.length === 0 ||
       pivotMetrics.length === 0 ||
       pivotDimensions.length === 0
     ) {
-      return
+      return undefined
     }
     const reportRequest: ReportRequest = {
       viewId,
@@ -102,6 +105,8 @@ const usePivotRequest = ({
       reportRequests: [reportRequest],
     }
   }, [
+    startDate,
+    endDate,
     viewId,
     metrics,
     pivotMetrics,

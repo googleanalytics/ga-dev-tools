@@ -103,12 +103,17 @@ const useCohortRequest = ({
   viewId: string
   selectedMetric: Column | undefined
   selectedSegment: Segment | undefined
-  cohortSize: CohortSize
+  cohortSize: CohortSize | undefined
   samplingLevel: SamplingLevel | undefined
 }) => {
   const request = useMemo<ReportsRequest | undefined>(() => {
-    if (selectedMetric === undefined) {
-      return
+    if (
+      viewId === undefined ||
+      viewId === "" ||
+      selectedMetric === undefined ||
+      cohortSize === undefined
+    ) {
+      return undefined
     }
     const reportRequest: ReportRequest = {
       viewId,
