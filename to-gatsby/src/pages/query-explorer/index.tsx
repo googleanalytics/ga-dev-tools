@@ -142,8 +142,13 @@ export const QueryExplorer = () => {
   )
 
   const requiredParameters = React.useMemo(() => {
-    return view !== "" && startDate !== "" && endDate !== ""
-  }, [view, startDate, endDate])
+    return (
+      view !== "" &&
+      startDate !== "" &&
+      endDate !== "" &&
+      selectedMetrics.length !== 0
+    )
+  }, [view, startDate, endDate, selectedMetrics])
 
   // When the selected view is changed, update the text box for view with the
   // id.
@@ -299,6 +304,7 @@ export const QueryExplorer = () => {
           helperText="Metrics to include in the query."
           columns={metrics}
           setSelectedColumns={setSelectedMetrics}
+          required
         />
         <ConceptMultiSelect
           viewId={selectedView?.view.id}

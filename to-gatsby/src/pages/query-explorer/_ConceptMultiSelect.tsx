@@ -25,6 +25,7 @@ interface ConceptMultiSelectProps {
   columns: Column[] | undefined
   setSelectedColumns: (columns: Column[]) => void
   viewId: string | undefined
+  required?: true
 }
 
 export const ConceptMultiSelect: React.FC<ConceptMultiSelectProps> = ({
@@ -33,6 +34,7 @@ export const ConceptMultiSelect: React.FC<ConceptMultiSelectProps> = ({
   columns,
   setSelectedColumns,
   viewId,
+  required,
 }) => {
   const [localColumns, setLocalColumns] = React.useState<Column[]>([])
 
@@ -101,6 +103,7 @@ export const ConceptMultiSelect: React.FC<ConceptMultiSelectProps> = ({
       renderInput={params => (
         <TextField
           {...params}
+          required={required}
           label={label}
           helperText={helperText}
           size="small"
