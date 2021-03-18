@@ -23,6 +23,7 @@ import Clear from "@material-ui/icons/Clear"
 import ColumnGroupList from "./_ColumnGroupList"
 import FormControlLabel from "@material-ui/core/FormControlLabel"
 import Checkbox from "@material-ui/core/Checkbox"
+import { useDebounce } from "use-debounce/lib"
 
 const useColumns = (): Column[] => {
   const api = useApi()
@@ -68,6 +69,8 @@ const Main: React.FC = () => {
     [searchText]
   )
 
+  const [throttledSearch] = useDebounce(searchTerms, 100, { trailing: true })
+
   const columns = useColumns()
 
   return (
@@ -104,7 +107,7 @@ const Main: React.FC = () => {
       />
       {columns.length !== 0 ? (
         <ColumnGroupList
-          searchTerms={searchTerms}
+          searchTerms={throttledSearch}
           allowDeprecated={allowDeprecated}
           onlySegments={onlySegments}
           columns={columns}

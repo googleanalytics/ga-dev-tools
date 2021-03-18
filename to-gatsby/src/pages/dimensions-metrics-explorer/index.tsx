@@ -52,7 +52,7 @@ export const Prose = () => {
 const Wrapped = () => {
   return (
     <Layout title="Dimensions & Metrics Explorer">
-      <DimensionsAndMetricsExplorer />
+      <Prose />
     </Layout>
   )
 }

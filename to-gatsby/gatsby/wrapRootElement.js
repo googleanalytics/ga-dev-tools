@@ -45,6 +45,10 @@ const globalTheme = createMuiTheme({
       fontSize: "1.50em",
       margin: "1em 0",
     },
+    h5: {
+      fontSize: "1.25em",
+      margin: "1em 0",
+    },
   }),
 })
 

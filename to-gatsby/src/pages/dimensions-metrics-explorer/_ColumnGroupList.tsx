@@ -19,17 +19,12 @@ import { navigate } from "gatsby"
 
 import { CUBES_BY_COLUMN_NAME, CUBE_NAMES, CubesByColumnName } from "./_cubes"
 
-import Accordian from "@material-ui/core/Accordion"
-import AccordionSummary from "@material-ui/core/AccordionSummary"
-import AccordionDetails from "@material-ui/core/AccordionDetails"
-import ExpandMoreIcon from "@material-ui/icons/ExpandMore"
-
 import Button from "@material-ui/core/Button"
 import Checkbox from "@material-ui/core/Checkbox"
 import FormControlLabel from "@material-ui/core/FormControlLabel"
-import { RemoveCircle, AddCircle, Info } from "@material-ui/icons"
+import { RemoveCircle, AddCircle, Info, Remove } from "@material-ui/icons"
 
-import { Typography, makeStyles, IconButton } from "@material-ui/core"
+import { Typography, makeStyles, IconButton, Tooltip } from "@material-ui/core"
 import LinkIcon from "@material-ui/icons/Link"
 import { Column } from "../../api"
 import classnames from "classnames"
@@ -43,18 +38,34 @@ const useStyles = makeStyles(theme => ({
   column: {
     display: "flex",
     alignItems: "baseline",
+    padding: "unset",
   },
   columnSubgroupTitle: {
-    margin: 0,
     marginBottom: theme.spacing(1),
+    marginTop: theme.spacing(0.5),
+    marginLeft: theme.spacing(-1),
+    "& > svg": {
+      marginRight: theme.spacing(1),
+    },
+    "& > a": {
+      marginLeft: theme.spacing(1),
+    },
+    display: "flex",
   },
   columnSubgroup: {
+    marginLeft: theme.spacing(4),
     marginBottom: theme.spacing(1),
   },
   deprecatedColumn: {
     textDecoration: "line-through",
   },
+  checkbox: {
+    padding: "unset",
+    paddingRight: theme.spacing(1),
+  },
   deprecatedCheckbox: {
+    padding: "unset",
+    paddingRight: theme.spacing(1),
     visibility: "hidden",
   },
   columnDetails: {
@@ -73,14 +84,29 @@ const useStyles = makeStyles(theme => ({
     paddingLeft: theme.spacing(1),
   },
   name: { marginRight: theme.spacing(1) },
-  id: {},
+  id: {
+    "& > button": {
+      // display: "none",
+      padding: "unset",
+      paddingLeft: theme.spacing(1),
+    },
+    // "&:hover": {
+    //   "& > button": {
+    //     display: "unset",
+    //   },
+    // },
+  },
   popover: {
     pointerEvents: "none",
   },
   paper: {
     padding: theme.spacing(1),
   },
-  labelText: {},
+  labelText: {
+    display: "flex",
+    flexDirection: "row",
+    alignItems: "center",
+  },
 }))
 
 type ColumnLabelProps = {
@@ -114,15 +140,20 @@ const ColumnLabel: React.FC<ColumnLabelProps> = ({ column, isDeprecated }) => {
           className={classes.id}
         >
           {column.id}
-          <CopyIconButton toCopy={column.id || ""} />
+          <CopyIconButton
+            toCopy={column.id || ""}
+            tooltipText={`Copy ${column.id}`}
+          />
         </Typography>
+        <Tooltip title={`See more info on  ${column.attributes?.uiName}`}>
+          <IconButton
+            onClick={() => navigate(slug)}
+            className={classes.columnButton}
+          >
+            <Info />
+          </IconButton>
+        </Tooltip>
       </div>
-      <IconButton
-        onClick={() => navigate(slug)}
-        className={classes.columnButton}
-      >
-        <Info />
-      </IconButton>
     </div>
   )
 }
@@ -143,7 +174,10 @@ const SelectableColumn: React.FC<{
       className={classes.column}
       control={
         <Checkbox
-          className={classnames({ [classes.deprecatedCheckbox]: isDeprecated })}
+          className={classnames({
+            [classes.deprecatedCheckbox]: isDeprecated,
+            [classes.checkbox]: !isDeprecated,
+          })}
           checked={selected}
           disabled={disabled}
           onChange={event => setSelected(event.target.checked)}
@@ -197,7 +231,7 @@ const ColumnSubgroup: React.FC<{
 
   return (
     <div className={classes.columnSubgroup}>
-      <Typography variant="h4" className={classes.columnSubgroupTitle}>
+      <Typography variant="h5" className={classes.columnSubgroupTitle}>
         {name}
       </Typography>
       <div>
@@ -248,27 +282,37 @@ const ColumnGroup: React.FC<{
   selectColumn,
 }) => {
   const classes = useStyles()
-  return (
-    <Accordian
-      expanded={open}
-      onChange={toggleOpen}
-      TransitionProps={{ mountOnEnter: true }}
-    >
-      <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-        <Typography variant="h3" className={classes.accordionTitle}>
-          {name}{" "}
-          {open && (
-            <a
-              href={`/dimensions-metrics-explorer/${name
-                .toLowerCase()
-                .replace(" ", "-")}#${name.replace(" ", "-")}`}
-            >
-              <LinkIcon />
-            </a>
-          )}
+
+  if (!open) {
+    return (
+      <Typography
+        variant="h4"
+        onClick={toggleOpen}
+        className={classes.columnSubgroupTitle}
+      >
+        <AddCircle />
+        {name}
+      </Typography>
+    )
+  } else {
+    return (
+      <>
+        <Typography
+          variant="h4"
+          onClick={toggleOpen}
+          className={classes.columnSubgroupTitle}
+        >
+          <RemoveCircle />
+          {name}
+          <a
+            href={`/dimensions-metrics-explorer/${name
+              .toLowerCase()
+              .replace(" ", "-")}#${name.replace(" ", "-")}`}
+          >
+            <LinkIcon />
+          </a>
         </Typography>
-      </AccordionSummary>
-      <AccordionDetails className={classes.columnDetails}>
+
         <ColumnSubgroup
           name="Dimensions"
           columns={columns.filter(
@@ -293,9 +337,9 @@ const ColumnGroup: React.FC<{
           selectColumn={selectColumn}
           selectedColumns={selectedColumns}
         />
-      </AccordionDetails>
-    </Accordian>
-  )
+      </>
+    )
+  }
 }
 
 const ColumnGroupList: React.FC<{
@@ -304,7 +348,6 @@ const ColumnGroupList: React.FC<{
   onlySegments: boolean
   columns: Column[]
 }> = ({ allowDeprecated, searchTerms, onlySegments, columns }) => {
-  console.log("rendered")
   const classes = useStyles()
 
   // Group all the columns by group
