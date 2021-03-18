@@ -13,7 +13,7 @@
 // limitations under the License.
 
 import React from "react"
-import { makeStyles, Theme } from "@material-ui/core/styles"
+import { makeStyles, Theme, useTheme } from "@material-ui/core/styles"
 import Typography from "@material-ui/core/Typography"
 import Button from "@material-ui/core/Button"
 import { Link } from "gatsby"
@@ -33,13 +33,19 @@ import ListItem from "@material-ui/core/ListItem"
 import { navigate } from "@reach/router"
 import MenuIcon from "@material-ui/icons/Menu"
 
-import Login, { useLogin } from "./Login"
+import Login, { useLogin, UserStatus } from "./Login"
 import { usePageView } from "../hooks"
+import Loader from "react-loader-spinner"
 
 const mobile = (theme: Theme) => theme.breakpoints.between(0, "sm")
 const notMobile = (theme: Theme) => theme.breakpoints.up("md")
 
 const useStyles = makeStyles<any, { disableNav: true | undefined }>(theme => ({
+  loadingIndicator: {
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+  },
   root: {
     display: "flex",
     minHeight: "100%",
@@ -240,11 +246,10 @@ const Layout: React.FC<LayoutProps> = ({
   requireLogin,
 }) => {
   usePageView()
+  const theme = useTheme()
   const classes = useStyles({ disableNav })
   const [open, setOpen] = React.useState(false)
-  const { user, loginLogout } = useLogin()
-
-  const showContent = requireLogin ? user?.isSignedIn() : true
+  const { userStatus, loginLogout } = useLogin()
 
   return (
     <div className={classes.root}>
@@ -351,9 +356,9 @@ const Layout: React.FC<LayoutProps> = ({
         </header>
         <div className={classes.contentWrapper}>
           <section className={classes.content}>
-            {showContent ? (
+            {!requireLogin || userStatus === UserStatus.SignedIn ? (
               children
-            ) : (
+            ) : userStatus === UserStatus.SignedOut ? (
               <div>
                 <Typography>
                   You must be logged in with Google for this demo.
@@ -366,6 +371,11 @@ const Layout: React.FC<LayoutProps> = ({
                   Login
                 </Button>
               </div>
+            ) : (
+              <section className={classes.loadingIndicator}>
+                <Typography>Checking if you're logged in...</Typography>
+                <Loader type="Circles" color={theme.palette.primary.main} />
+              </section>
             )}
           </section>
         </div>

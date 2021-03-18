@@ -392,7 +392,7 @@ export const QueryExplorer = () => {
 
 const Wrapped = () => {
   return (
-    <Layout title="Query Explorer">
+    <Layout title="Query Explorer" requireLogin>
       <QueryExplorer />
     </Layout>
   )
