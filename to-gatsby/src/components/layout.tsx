@@ -233,7 +233,6 @@ const linkData: LinkData[] = [
   { text: "Request Composer", href: "/request-composer", type: "link" },
   { text: "Spreadsheet Add-on", href: "/spreadsheet-add-on", type: "link" },
   { text: "Tag Assistant", href: "/tag-assistant", type: "link" },
-  { text: "Usage Trends", href: "/usage-trends", type: "link" },
   { text: "Resources", type: "heading" },
   { text: "About this Site", href: "/#about", type: "link" },
   { text: "Help & feedback", href: "/#help", type: "link" },
