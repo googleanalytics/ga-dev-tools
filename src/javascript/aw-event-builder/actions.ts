@@ -28,9 +28,13 @@ const sendEvent: ThunkResult<void> = async (_, getState) => {
 
   let clientIds: api.ClientIds;
   if (clientId !== "") {
-    clientIds = { clientId, userId, type: "web" };
+    clientIds = { client_id: clientId, user_id: userId, type: "web" };
   } else {
-    clientIds = { appInstanceId, userId, type: "mobile" };
+    clientIds = {
+      app_instance_id: appInstanceId,
+      user_id: userId,
+      type: "mobile",
+    };
   }
   const instanceId = { measurementId, firebaseAppId };
 
@@ -63,11 +67,18 @@ const validateEvent: ThunkResult<void> = async (dispatch, getState) => {
 
   let clientIds: api.ClientIds;
   if (clientId !== "") {
-    clientIds = { clientId, userId, type: "web" };
+    clientIds = { client_id: clientId, user_id: userId, type: "web" };
   } else {
-    clientIds = { appInstanceId, userId, type: "mobile" };
+    clientIds = {
+      app_instance_id: appInstanceId,
+      user_id: userId,
+      type: "mobile",
+    };
   }
-  const instanceId = { measurementId, firebaseAppId };
+  const instanceId = {
+    measurement_id: measurementId,
+    firebase_app_id: firebaseAppId,
+  };
 
   const messages = await api.validateHit(
     instanceId,
@@ -173,9 +184,9 @@ const setTimestampMicros: (
 
 const setNonPersonalizedAds: (
   nonPersonalizedAds: boolean
-) => ThunkResult<void> = (nonPersonalizedAds) => (dispatch) => {
+) => ThunkResult<void> = (non_personalized_ads) => (dispatch) => {
   dispatch(thunkActions.resetValidation);
-  dispatch({ type: ActionType.SetNonPersonalizedAds, nonPersonalizedAds });
+  dispatch({ type: ActionType.SetNonPersonalizedAds, non_personalized_ads });
 };
 
 const actions = {

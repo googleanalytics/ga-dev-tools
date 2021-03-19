@@ -30,13 +30,13 @@ const HitBuilder: React.FC = () => {
   // TODO - make sure to focus on any new params.
   const {
     event,
-    clientId,
-    userId,
-    measurementId,
-    firebaseAppId,
-    appInstanceId,
-    timestampMicros,
-    nonPersonalizedAds,
+    client_id,
+    user_id,
+    measurement_id,
+    firebase_app_id,
+    app_instance_id,
+    timestamp_micros,
+    non_personalized_ads,
   } = useSelector<State, State>((a) => a);
   const dispatch = useDispatch();
   const [category, setCategory] = React.useState<MPEventCategory>(
@@ -136,47 +136,47 @@ const HitBuilder: React.FC = () => {
           <APISecret />
           <div className="HitBuilderParam">
             <ReduxManagedInput
-              disabled={measurementId !== "" || clientId !== ""}
+              disabled={measurement_id !== "" || client_id !== ""}
               labelText="firebase_app_id"
               update={updateFirebaseAppId}
-              initialValue={firebaseAppId}
+              initialValue={firebase_app_id}
             />
             <ReduxManagedInput
-              disabled={firebaseAppId !== "" || appInstanceId !== ""}
+              disabled={firebase_app_id !== "" || app_instance_id !== ""}
               labelText="measurement_id"
               update={updateMeasurementId}
-              initialValue={measurementId}
+              initialValue={measurement_id}
             />
           </div>
           <div className="HitBuilderParam">
             <ReduxManagedInput
-              disabled={measurementId !== "" || clientId !== ""}
+              disabled={measurement_id !== "" || client_id !== ""}
               labelText="app_instance_id"
               update={updateAppInstanceId}
-              initialValue={appInstanceId}
+              initialValue={app_instance_id}
             />
             <ReduxManagedInput
-              disabled={firebaseAppId !== "" || appInstanceId !== ""}
+              disabled={firebase_app_id !== "" || app_instance_id !== ""}
               labelText="client_id"
               update={updateClientId}
-              initialValue={clientId}
+              initialValue={client_id}
             />
           </div>
           <ReduxManagedInput
             labelText="user_id"
             update={updateUserId}
-            initialValue={userId}
+            initialValue={user_id}
           />
           <div className="HitBuilderParam">
             <ReduxManagedCheckbox
               labelText="non_personalized_ads"
               update={updateNonPersonalizedAds}
-              value={nonPersonalizedAds}
+              value={non_personalized_ads}
             />
             <ReduxManagedInput
               labelText="timestamp_micros"
               update={updateTimestampMicros}
-              initialValue={timestampMicros?.toString()}
+              initialValue={timestamp_micros?.toString()}
             />
           </div>
           <div className="HitBuilderParam">

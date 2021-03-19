@@ -27,17 +27,17 @@ export enum ActionType {
 
 export interface SetNonPersonalizedAds {
   type: ActionType.SetNonPersonalizedAds;
-  nonPersonalizedAds: boolean;
+  non_personalized_ads: boolean;
 }
 
 export interface SetTimestampMicros {
   type: ActionType.SetTimestampMicros;
-  timestampMicros: number | null;
+  timestamp_micros: number | null;
 }
 
 export interface SetUserProperties {
   type: ActionType.SetUserProperties;
-  userProperties: Parameters;
+  user_properties: Parameters;
 }
 
 export interface SetAuthorized {
@@ -86,15 +86,15 @@ export interface SetAPISecret {
 }
 export interface SetClientId {
   type: ActionType.SetClientId;
-  clientId: string;
+  client_id: string;
 }
 export interface SetAppInstanceId {
   type: ActionType.SetAppInstanceId;
-  appInstanceId: string;
+  app_instance_id: string;
 }
 export interface SetUserId {
   type: ActionType.SetUserId;
-  userId: string;
+  user_id: string;
 }
 export interface SetMid {
   type: ActionType.SetMeasurementId;
@@ -138,6 +138,9 @@ export enum RequiredParams {
 
 export enum UrlParam {
   UserProperties = "user_properties",
+  EventData = "event_data",
+  EventName = "event_name",
+  EventType = "event_type",
 }
 
 export type ParamV = ParamType<RequiredParams.V>;
@@ -178,16 +181,16 @@ export interface ValidationMessage {
 
 export interface State {
   validationStatus: ValidationStatus;
-  measurementId: string;
-  firebaseAppId: string;
-  clientId: string;
-  appInstanceId: string;
-  userId: string;
-  apiSecret: string;
-  timestampMicros: number | null;
-  nonPersonalizedAds: boolean;
+  measurement_id: string;
+  firebase_app_id: string;
+  client_id: string;
+  app_instance_id: string;
+  user_id: string;
+  api_secret: string;
+  timestamp_micros: number | null;
+  non_personalized_ads: boolean;
   event: MPEvent;
-  userProperties: Parameters;
+  user_properties: Parameters;
   isAuthorized: boolean;
   validationMessages: ValidationMessage[];
 }
