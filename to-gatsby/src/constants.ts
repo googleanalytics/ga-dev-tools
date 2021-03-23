@@ -44,9 +44,15 @@ export enum Url {
   coreReportingApi = "https=//developers.google.com/analytics/devguides/reporting/core/v3/",
 }
 
+export enum GAVersion {
+  UniversalAnalytics = "ua",
+  GoogleAnalytics4 = "ga4",
+}
+
 // All data in localStorage should have its keys here.
 // TODO - Add in a build step that makes sure the values in this enum are unique.
 export enum StorageKey {
+  gaVersion = "/ga-version",
   campaignBuilderWebsiteUrl = "campaign-builder/website-url",
   campaignBuilderSource = "campaign-builder/source",
   campaignBuilderMedium = "campaign-builder/medium",

@@ -1,7 +1,7 @@
 import * as React from "react"
 import { useSelector } from "react-redux"
-import { useLocation } from "@reach/router"
-import { StorageKey } from "./constants"
+import { useLocation, useNavigate } from "@reach/router"
+import { StorageKey, GAVersion } from "./constants"
 import { useState, useEffect } from "react"
 
 export const usePageView = () => {
@@ -258,4 +258,51 @@ export const useEventValue = (setValue: (value: string) => void) =>
 
 export const isServerSide = () => {
   return typeof window === "undefined"
+}
+
+const getRedirectPath = (path: string) => {
+  switch (path) {
+    case "/hit-builder":
+      return "/ga4/event-builder"
+    case "/ga4/event-builder":
+      return "/hit-builder"
+    default:
+      return "/"
+  }
+}
+
+// TODO - IT might be worth looking into creating a hook that only allows
+// values from an enum.
+export const useGAVersion = (): {
+  gaVersion: GAVersion
+  setGAVersion: (version: GAVersion) => void
+} => {
+  const location = useLocation()
+  const navigate = useNavigate()
+  const [string_, setString] = usePersistentString(
+    StorageKey.gaVersion,
+    GAVersion.UniversalAnalytics
+  )
+  const gaVersion = React.useMemo(() => {
+    switch (string_) {
+      case GAVersion.UniversalAnalytics:
+        return GAVersion.UniversalAnalytics
+      case GAVersion.GoogleAnalytics4:
+        return GAVersion.GoogleAnalytics4
+      default:
+        throw new Error(`Value: ${string_} is not a valid GAVersion.`)
+    }
+  }, [string_])
+
+  const setGAVersion = React.useCallback(
+    (version: GAVersion) => {
+      const redirectPath = getRedirectPath(location.pathname)
+      setString(version)
+      console.log({ redirectPath })
+      navigate(redirectPath)
+    },
+    [setString, location.pathname, navigate]
+  )
+
+  return { gaVersion, setGAVersion }
 }
