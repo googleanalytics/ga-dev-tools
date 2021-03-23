@@ -8,10 +8,12 @@ export const stage = async (args: DeployArgs) => {
 
   let projectId: string
   if (args.environment === Environment.Development) {
+    // TODO - support development deployments.
     projectId = config.development.firebaseProjectId
-    console.warn(
-      `Note: deploying using the development environment isn't fully supported. Deployment will use the production configuration values. Only the firebase project ID will be used.`
+    console.error(
+      `Note: deploying using the development environment supported.`
     )
+    process.exit(1)
   } else if (args.environment === Environment.Production) {
     projectId = config.production.firebaseProjectId
   } else {

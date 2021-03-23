@@ -60,6 +60,8 @@ const writeEnvFile = async ({ file, config }: WriteEnvArgs) => {
   )
 }
 
+// TODO - This probably shouldn't run unless we say --all. It maybe should only
+// run during deploy.
 const ensureFirebaseFunctionsConfig = async (
   config: RuntimeJson
 ): Promise<void> => {
