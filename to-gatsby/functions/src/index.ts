@@ -58,8 +58,6 @@ exports.bitly_auth = functions.https.onRequest((req, res) => {
     .map(kv => kv.join("="))
     .join("&")
 
-  console.log(bitlyBody)
-
   // TODO - This can be cleaned up a lot with async/await
   // TODO - I probably should set the content-type I'm returning somewhere?
   fetch(bitlyAuthEndpoint, {
