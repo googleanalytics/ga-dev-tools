@@ -393,7 +393,6 @@ const GeneratedUrl: React.FC<GeneratedUrlProps> = ({
 }
 
 export const CampaignUrlBuilder = () => {
-  // TODO - Add support for shortlinks.
   const classes = useStyles()
 
   const [websiteUrl, setWebsiteUrl] = usePersistentString(
