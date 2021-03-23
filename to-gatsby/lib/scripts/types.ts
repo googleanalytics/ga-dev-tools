@@ -9,6 +9,7 @@ export const DotEnvProductionPath = path.join(PWD, ".env.production")
 interface CommonConfig {
   gaMeasurementId: string
   firebaseProjectId: string
+  firebaseProjectIdFunctions: string
   firebaseFunctionsBaseUrl: string
   gapiClientId: string
   bitlyClientId: string
@@ -25,6 +26,10 @@ export interface ConfigAnswers {
   gaMeasurementIdDev: string
   firebaseProjectIdProd: string
   firebaseProjectIdDev: string
+  // TODO - This field should eventually be removed, but is currently in place
+  // because we're using a separate firebase project for cloud functions and
+  // hosting.
+  firebaseProjectIdFunctions: string
   gapiClientIdProd: string
   gapiClientIdDev: string
   bitlyClientId: string

@@ -94,7 +94,7 @@ const ensureFirebaseFunctionsConfig = async (
         "run",
         "firebase",
         "--project",
-        config.development.firebaseProjectId,
+        config.development.firebaseProjectIdFunctions,
         "functions:config:set",
         bitlyClientId,
         bitlyClientSecret,
@@ -108,7 +108,7 @@ const ensureFirebaseFunctionsConfig = async (
         "run",
         "firebase",
         "--project",
-        config.production.firebaseProjectId,
+        config.production.firebaseProjectIdFunctions,
         "functions:config:set",
         bitlyClientId,
         bitlyClientSecret,
@@ -229,6 +229,19 @@ const configQuestions = (
       when: () => {
         return (
           filter.askAll || filter?.development?.firebaseProjectId === undefined
+        )
+      },
+    },
+    {
+      name: "firebaseProjectIdFunctions",
+      type: "input",
+      message: "Firebase project ID to use for cloud functions:",
+      // TODO - See if listing is useful. Probably should only do it if there's not a ton.
+      default: filter?.production?.firebaseProjectIdFunctions || SKIP_QUESTION,
+      when: () => {
+        return (
+          filter.askAll ||
+          filter?.production?.firebaseProjectIdFunctions === undefined
         )
       },
     },
@@ -354,6 +367,10 @@ const toRuntimeJson = (
       answers.firebaseProjectIdProd ||
         currentConfig?.production?.firebaseProjectId
     ),
+    firebaseProjectIdFunctions: throwIfUndefined(
+      answers.firebaseProjectIdFunctions ||
+        currentConfig?.production?.firebaseProjectIdFunctions
+    ),
     gapiClientId: throwIfUndefined(
       answers.gapiClientIdProd || currentConfig?.production?.gapiClientId
     ),
@@ -363,6 +380,8 @@ const toRuntimeJson = (
     bitlyClientSecret: throwIfUndefined(
       answers.bitlyClientSecret || currentConfig?.production?.bitlyClientSecret
     ),
+    // TODO - This is pretty messy. It should probably just ask you what the
+    // bitly_auth url is.
     firebaseFunctionsBaseUrl:
       currentConfig?.production?.firebaseFunctionsBaseUrl ||
       `https://us-central1-${throwIfUndefined(
@@ -380,6 +399,10 @@ const toRuntimeJson = (
     firebaseProjectId: throwIfUndefined(
       answers.firebaseProjectIdDev ||
         currentConfig?.development?.firebaseProjectId
+    ),
+    firebaseProjectIdFunctions: throwIfUndefined(
+      answers.firebaseProjectIdFunctions ||
+        currentConfig?.development.firebaseProjectIdFunctions
     ),
     gapiClientId: throwIfUndefined(
       answers.gapiClientIdDev || currentConfig?.development?.gapiClientId
@@ -425,6 +448,10 @@ const assertAllValues = (runtimeJson: RuntimeJson): RuntimeJson => {
     throw new Error("Missing the development firebaseProjectId")
   }
 
+  if (runtimeJson.development.firebaseProjectIdFunctions === undefined) {
+    throw new Error("Missing the firebaseProjectId for functions")
+  }
+
   if (runtimeJson.development.firebaseFunctionsBaseUrl === undefined) {
     throw new Error("Missing the development firebase functions base url")
   }
@@ -439,6 +466,10 @@ const assertAllValues = (runtimeJson: RuntimeJson): RuntimeJson => {
 
   if (runtimeJson.production.firebaseProjectId === undefined) {
     throw new Error("Missing the production firebaseProjectId")
+  }
+
+  if (runtimeJson.production.firebaseProjectIdFunctions === undefined) {
+    throw new Error("Missing the firebaseProjectId for functions")
   }
 
   if (runtimeJson.production.firebaseFunctionsBaseUrl === undefined) {
