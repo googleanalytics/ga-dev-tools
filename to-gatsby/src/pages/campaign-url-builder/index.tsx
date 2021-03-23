@@ -27,7 +27,6 @@ import TableCell from "@material-ui/core/TableCell"
 import TableHead from "@material-ui/core/TableHead"
 import TableRow from "@material-ui/core/TableRow"
 import Button from "@material-ui/core/Button"
-import { useLocalStorage } from "react-use"
 import { v4 as uuid } from "uuid"
 
 import { Url, StorageKey } from "../../constants"
@@ -35,6 +34,7 @@ import Layout from "../../components/layout"
 import CopyButton from "../../components/CopyButton"
 import useShortenLink from "./_useShortenLink"
 import { extractParamsFromWebsiteUrl, websiteUrlFor } from "./_params"
+import { usePersistentString, usePersistentBoolean } from "../../hooks"
 
 const iosCampaignTracking = (
   <a href={Url.iosCampaignTracking}>iOS Campaign Tracking URL Builder</a>
@@ -222,14 +222,9 @@ const GeneratedUrl: React.FC<GeneratedUrlProps> = ({
   const [longLink, setLongLink] = React.useState<string>(generatedUrl)
   const [shortLink, setShortLink] = React.useState<undefined | string>()
   const [showShort, setShowShort] = React.useState(false)
-  const [useFragment, setUseFragment] = useLocalStorage(
+  const [useFragment, setUseFragment] = usePersistentBoolean(
     StorageKey.campaignBuilderUseFragment,
-    false,
-    {
-      raw: false,
-      serializer: a => a.toString(),
-      deserializer: a => a === "true",
-    }
+    false
   )
   const { authenticated, shorten, canShorten } = useShortenLink()
 
@@ -400,24 +395,28 @@ const GeneratedUrl: React.FC<GeneratedUrlProps> = ({
 export const CampaignUrlBuilder = () => {
   // TODO - Add support for shortlinks.
   const classes = useStyles()
-  const [websiteUrl, setWebsiteUrl] = useLocalStorage(
+
+  const [websiteUrl, setWebsiteUrl] = usePersistentString(
     StorageKey.campaignBuilderWebsiteUrl,
     ""
   )
-  const [source, setSource] = useLocalStorage(
+  const [source, setSource] = usePersistentString(
     StorageKey.campaignBuilderSource,
     ""
   )
-  const [medium, setMedium] = useLocalStorage(
+  const [medium, setMedium] = usePersistentString(
     StorageKey.campaignBuilderMedium,
     ""
   )
-  const [campaign, setCampaign] = useLocalStorage(
+  const [campaign, setCampaign] = usePersistentString(
     StorageKey.campaignBuilderName,
     ""
   )
-  const [term, setTerm] = useLocalStorage(StorageKey.campaignBuilderTerm, "")
-  const [content, setContent] = useLocalStorage(
+  const [term, setTerm] = usePersistentString(
+    StorageKey.campaignBuilderTerm,
+    ""
+  )
+  const [content, setContent] = usePersistentString(
     StorageKey.campaignBuilderContent,
     ""
   )
@@ -457,7 +456,7 @@ export const CampaignUrlBuilder = () => {
         <TextField
           id="website-url"
           required
-          value={websiteUrl}
+          value={websiteUrl || ""}
           onChange={onWebsiteChange}
           label="Website URL"
           size="small"
@@ -472,7 +471,7 @@ export const CampaignUrlBuilder = () => {
         <TextField
           id="campaign-source"
           required
-          value={source}
+          value={source || ""}
           onChange={e => setSource(e.target.value)}
           label="Campaign Source"
           size="small"
@@ -487,7 +486,7 @@ export const CampaignUrlBuilder = () => {
         <TextField
           id="campaign-medium"
           required
-          value={medium}
+          value={medium || ""}
           onChange={e => setMedium(e.target.value)}
           label="Campaign Medium"
           size="small"
@@ -503,7 +502,7 @@ export const CampaignUrlBuilder = () => {
         <TextField
           id="campaign-name"
           required
-          value={campaign}
+          value={campaign || ""}
           onChange={e => setCampaign(e.target.value)}
           label="Campaign Name"
           size="small"
@@ -517,7 +516,7 @@ export const CampaignUrlBuilder = () => {
         />
         <TextField
           id="campaign-term"
-          value={term}
+          value={term || ""}
           onChange={e => setTerm(e.target.value)}
           label="Campaign Term"
           size="small"
@@ -526,7 +525,7 @@ export const CampaignUrlBuilder = () => {
         />
         <TextField
           id="campaign-content"
-          value={content}
+          value={content || ""}
           onChange={e => setContent(e.target.value)}
           label="Campaign Content"
           size="small"
@@ -536,7 +535,12 @@ export const CampaignUrlBuilder = () => {
       </section>
 
       <GeneratedUrl
-        {...{ source, websiteUrl, medium, campaign, term, content }}
+        source={source || ""}
+        websiteUrl={websiteUrl || ""}
+        medium={medium || ""}
+        campaign={campaign || ""}
+        term={term || ""}
+        content={content || ""}
       />
 
       <Typography variant="h2">
