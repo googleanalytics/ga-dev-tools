@@ -452,9 +452,8 @@ const Layout: React.FC<LayoutProps> = ({
         </header>
         <div className={classes.contentWrapper}>
           {gaVersion === GAVersion.GoogleAnalytics4 &&
-            // TODO - Turn this into a proper "warning" component. Probably
-            // already exists somewhere in mui.
-            location.pathname.indexOf("ga4") === -1 && (
+            location.pathname.indexOf("ga4") === -1 &&
+            location.pathname !== "/" && (
               <Info className={classes.info}>
                 You're viewing a demo for Universal Analytics.
               </Info>
