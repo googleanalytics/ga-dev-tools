@@ -47,7 +47,9 @@ const EventBuilder: React.FC = () => {
   const {
     event,
     validateEvent,
+    sendEvent,
     setEvent,
+    parameterizedUrl,
     category,
     api_secret,
     setAPISecret,
@@ -85,10 +87,12 @@ const EventBuilder: React.FC = () => {
 
       <ValidateEvent
         payload={payload}
-        validateEvent={validateEvent}
         validationMessages={validationMessages}
         validationStatus={validationStatus}
         event={event}
+        sendEvent={sendEvent}
+        parameterizedUrl={parameterizedUrl}
+        validateEvent={validateEvent}
         user_properties={user_properties}
         client_id={client_id || ""}
         user_id={user_id || ""}

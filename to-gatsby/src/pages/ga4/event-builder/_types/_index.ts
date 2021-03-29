@@ -123,7 +123,17 @@ export enum RequiredParams {
 }
 
 export enum UrlParam {
-  UserProperties = "userProperties",
+  TimestampMicros = "timestamp_micros",
+  NonPersonalizedAds = "non_personalized_ads",
+  EventData = "event_data",
+  FirebaseAppId = "firebase_app_id",
+  MeasurementId = "measurement_id",
+  EventName = "event_name",
+  APISecret = "api_secret",
+  UserId = "user_id",
+  UserProperties = "user_properties",
+  ClientId = "client_id",
+  AppInstanceId = "app_instance_id",
 }
 
 export type ParamV = ParamType<RequiredParams.V>
@@ -205,4 +215,6 @@ export interface URLParts {
   firebase_app_id?: string
   api_secret?: string
   user_properties?: Parameters
+  timestamp_micros?: string
+  non_personalized_ads?: boolean
 }

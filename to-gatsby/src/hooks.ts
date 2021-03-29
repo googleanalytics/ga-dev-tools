@@ -44,14 +44,19 @@ export const useSendEvent: UseSendEvent = () => {
 
 type UsePersistentBoolean = (
   key: StorageKey,
-  initialValue: boolean
+  initialValue: boolean,
+  overwrite: boolean
 ) => [boolean, React.Dispatch<React.SetStateAction<boolean>>]
 
 export const usePersistentBoolean: UsePersistentBoolean = (
   key,
-  initialValue
+  initialValue,
+  overwrite
 ) => {
   const [value, setValue] = useState<boolean>(() => {
+    if (overwrite !== undefined) {
+      return overwrite
+    }
     const fromStorage =
       typeof window === "undefined" ? null : window.localStorage.getItem(key)
     if (fromStorage === null) {
@@ -72,14 +77,22 @@ export const usePersistentBoolean: UsePersistentBoolean = (
 
 type UsePersistentString = (
   key: StorageKey,
-  initialValue?: string
+  initialValue?: string,
+  overwrite?: string
 ) => [
   string | undefined,
   React.Dispatch<React.SetStateAction<string | undefined>>
 ]
 
-export const usePersistentString: UsePersistentString = (key, initialValue) => {
+export const usePersistentString: UsePersistentString = (
+  key,
+  initialValue,
+  overwrite
+) => {
   const [value, setValue] = useState<string | undefined>(() => {
+    if (overwrite !== undefined) {
+      return overwrite
+    }
     const fromStorage =
       typeof window === "undefined" ? null : window.localStorage.getItem(key)
     if (fromStorage === null) {

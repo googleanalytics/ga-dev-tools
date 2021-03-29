@@ -34,8 +34,10 @@ import { Check, Error as ErrorIcon, Warning, Send } from "@material-ui/icons"
 import green from "@material-ui/core/colors/green"
 import red from "@material-ui/core/colors/red"
 import grey from "@material-ui/core/colors/grey"
+import CopyButton from "../../../components/CopyButton"
 
 interface ValidateEventProps {
+  parameterizedUrl: string
   measurement_id: string
   app_instance_id: string
   firebase_app_id: string
@@ -44,6 +46,7 @@ interface ValidateEventProps {
   user_id: string
   event: MPEvent
   validateEvent: () => void
+  sendEvent: () => void
   payload: {}
   user_properties: Parameters
   validationStatus: ValidationStatusT
@@ -192,9 +195,24 @@ const ValidationStatus: React.FC<{
   )
 }
 
+const useStylesEventActions = makeStyles(theme => ({
+  eventActions: {
+    margin: theme.spacing(1, 0),
+    "&> *": {
+      marginRight: theme.spacing(1),
+    },
+  },
+}))
+
 const EventActions: React.FC<ValidateEventProps> = props => {
-  const { payload, validationStatus, validateEvent } = props
-  // const linkToEvent = useMemo(() => parameterizedUrl({}), [])
+  const classes = useStylesEventActions()
+  const {
+    payload,
+    validationStatus,
+    validateEvent,
+    sendEvent,
+    parameterizedUrl,
+  } = props
 
   const [eventSent, setEventSent] = React.useState<boolean>(false)
   React.useEffect(() => {
@@ -206,56 +224,54 @@ const EventActions: React.FC<ValidateEventProps> = props => {
    * to indicate the event was successfully sent. After 1 second the button
    * gets restored to its original state.
    */
-  const sendEvent = React.useCallback(async () => {
-    // TODO reimplement this functionality.
-    // dispatch(actions.sendEvent)
+  const onClick = React.useCallback(async () => {
+    sendEvent()
     setEventSent(true)
-    // gaAll("send", "event", {
-    //   eventCategory: "App+Web Event Builder",
-    //   eventAction: "send",
-    //   eventLabel: "payload",
-    // })
-    // TODO - figure out ui pause here.
-    // await sleep(ACTION_TIMEOUT)
-    setEventSent(false)
+    new Promise(resolve => {
+      setTimeout(() => {
+        resolve()
+      }, 1000)
+    }).then(() => {
+      setEventSent(false)
+    })
   }, [payload])
 
   if (validationStatus !== ValidationStatusT.Valid) {
     return (
-      <ValidateEventButton
-        validationStatus={validationStatus}
-        validateEvent={validateEvent}
-      />
+      <section className={classes.eventActions}>
+        <ValidateEventButton
+          validationStatus={validationStatus}
+          validateEvent={validateEvent}
+        />
+      </section>
     )
   }
 
-  const sendEventButton = (
-    <Button startIcon={eventSent ? <Check /> : <Send />} onClick={sendEvent}>
-      Send event to Google Analytics
-    </Button>
-  )
+  return (
+    <section className={classes.eventActions}>
+      <Button
+        color="primary"
+        variant="contained"
+        startIcon={eventSent ? <Check /> : <Send />}
+        onClick={onClick}
+      >
+        Send to GA
+      </Button>
 
-  // TODO - Figure out copy-paste. (use existing solution)
-  // if (supports.copyToClipboard()) {
-  //   return (
-  //     <div className="HitElement-action">
-  //       <div className="ButtonSet">
-  //         {sendEventButton}
-  //         <CopyButton
-  //           textToCopy={JSON.stringify(payload)}
-  //           type="content-paste"
-  //           appPlusWeb
-  //         >
-  //           Copy event payload
-  //         </CopyButton>
-  //         <CopyButton type="link" textToCopy={linkToEvent} appPlusWeb link>
-  //           Copy sharable link to event
-  //         </CopyButton>
-  //       </div>
-  //     </div>
-  //   )
-  // } else {
-  return <div className="HitElement-action">{sendEventButton}</div>
+      <CopyButton
+        text="Copy payload"
+        variant="outlined"
+        color="secondary"
+        toCopy={JSON.stringify(payload)}
+      />
+      <CopyButton
+        variant="outlined"
+        color="secondary"
+        toCopy={parameterizedUrl}
+        text="Copy sharable link"
+      />
+    </section>
+  )
   // }
 }
 
@@ -264,17 +280,10 @@ interface ValidateEventButtonProps {
   validateEvent: () => void
 }
 
-const useStylesValidateButton = makeStyles(theme => ({
-  validateButton: {
-    margin: theme.spacing(1, 0),
-  },
-}))
-
 const ValidateEventButton: React.FC<ValidateEventButtonProps> = ({
   validationStatus,
   validateEvent,
 }) => {
-  const classes = useStylesValidateButton()
   let buttonText: string
   switch (validationStatus) {
     case ValidationStatusT.Invalid:
@@ -290,7 +299,6 @@ const ValidateEventButton: React.FC<ValidateEventButtonProps> = ({
 
   return (
     <Button
-      className={classes.validateButton}
       variant="contained"
       color="primary"
       disabled={validationStatus === ValidationStatusT.Pending}

@@ -7,7 +7,9 @@ import {
   Parameters,
   ValidationMessage,
   InstanceId,
-  ClientIds,
+  URLParts,
+  UrlParam,
+  MPEventData,
 } from "./_types/_index"
 import { usePersistentString, usePersistentBoolean } from "../../../hooks"
 import { StorageKey } from "../../../constants"
@@ -18,6 +20,7 @@ interface UseEventsReturn {
   setEvent: Dispatch<MPEvent>
   event: MPEvent
   validateEvent: () => void
+  sendEvent: () => void
   updateCustomEventName: (name: string) => void
   updateEventCategory: (category: MPEventCategory) => void
 
@@ -55,46 +58,62 @@ interface UseEventsReturn {
   validationMessages: ValidationMessage[]
 
   payload: {}
+  parameterizedUrl: string
 }
 
 type UseEvents = () => UseEventsReturn
 const useEvents: UseEvents = () => {
+  const urlParts = useMemo(() => {
+    return unParameterizeUrl()
+  }, [])
   // TODO - default this back to MPEvent.default()
-  const [event, setEvent] = useState(MPEvent.empty(MPEventType.Purchase))
+  const [event, setEvent] = useState(
+    urlParts.event || MPEvent.empty(MPEvent.default().getEventType())
+  )
   const [api_secret, setAPISecret] = usePersistentString(
     StorageKey.eventBuilderApiSecret,
-    ""
+    "",
+    urlParts.api_secret
   )
   const [firebase_app_id, setFirebaseAppId] = usePersistentString(
     StorageKey.eventBuilderFirebaseAppId,
-    ""
+    "",
+    urlParts.firebase_app_id
   )
   const [measurement_id, setMeasurementId] = usePersistentString(
     StorageKey.eventBuilderMeasurementId,
-    ""
+    "",
+    urlParts.measurement_id
   )
   const [client_id, setClientId] = usePersistentString(
     StorageKey.eventBuilderClientId,
-    ""
+    "",
+    urlParts.client_id
   )
   const [app_instance_id, setAppInstanceId] = usePersistentString(
     StorageKey.eventBuilderAppInstanceId,
-    ""
+    "",
+    urlParts.app_instance_id
   )
   const [user_id, setUserId] = usePersistentString(
     StorageKey.eventBuilderUserId,
-    ""
+    "",
+    urlParts.user_id
   )
   const [category, setCategory] = useState(event.getCategories()[0])
   const [non_personalized_ads, setNonPersonalizedAds] = usePersistentBoolean(
     StorageKey.eventBuilderNonPersonalizedAds,
-    false
+    false,
+    urlParts.non_personalized_ads
   )
   const [timestamp_micros, setTimestampMicros] = usePersistentString(
     StorageKey.eventBuilderTimestampMicros,
-    ""
+    "",
+    urlParts.timestamp_micros
   )
-  const [user_properties, setUserProperties] = useState<Parameters>([])
+  const [user_properties, setUserProperties] = useState<Parameters>(
+    urlParts.user_properties || []
+  )
   const [validationStatus, setValidationStatus] = useState(
     ValidationStatus.Unset
   )
@@ -135,6 +154,7 @@ const useEvents: UseEvents = () => {
     event,
     timestamp_micros,
     non_personalized_ads,
+    user_properties,
   ])
 
   const updateCustomEventName = useCallback(
@@ -153,6 +173,17 @@ const useEvents: UseEvents = () => {
     },
     [event, setCategory]
   )
+
+  const sendEvent = useCallback(() => {
+    if (measurement_id === undefined && firebase_app_id === undefined) {
+      return
+    }
+    if (api_secret === undefined) {
+      return
+    }
+    const instance_id = { measurement_id, firebase_app_id }
+    sendHit(payload, instance_id, api_secret)
+  }, [payload, measurement_id, firebase_app_id, api_secret])
 
   const validateEvent = useCallback(() => {
     if (measurement_id === undefined && firebase_app_id === undefined) {
@@ -173,6 +204,32 @@ const useEvents: UseEvents = () => {
     })
   }, [payload, measurement_id, firebase_app_id, api_secret])
 
+  const parameterizedUrl = useMemo(() => {
+    return parameterizedUrlFor({
+      client_id,
+      app_instance_id,
+      user_id,
+      event,
+      measurement_id,
+      firebase_app_id,
+      api_secret,
+      user_properties,
+      timestamp_micros,
+      non_personalized_ads,
+    })
+  }, [
+    client_id,
+    app_instance_id,
+    user_id,
+    event,
+    measurement_id,
+    firebase_app_id,
+    api_secret,
+    user_properties,
+    timestamp_micros,
+    non_personalized_ads,
+  ])
+
   useEffect(() => {
     setValidationStatus(ValidationStatus.Unset)
   }, [
@@ -189,12 +246,14 @@ const useEvents: UseEvents = () => {
 
   return {
     event,
+    sendEvent,
     setEvent,
     updateCustomEventName,
     updateEventCategory,
     category,
     setCategory,
     api_secret,
+    parameterizedUrl,
     setAPISecret,
     firebase_app_id,
     setFirebaseAppId,
@@ -239,15 +298,179 @@ const validateHit = async (
   const url = `https://www.google-analytics.com/debug/mp/collect?${instanceQueryParamFor(
     instanceId
   )}&api_secret=${api_secret}`
-  Object.assign({}, payload, {
+  const body = Object.assign({}, payload, {
     validationBehavior: "ENFORCE_RECOMMENDATIONS",
   })
   const result = await fetch(url, {
     method: "POST",
-    body: JSON.stringify(payload),
+    body: JSON.stringify(body),
   })
   const asJson = await result.json()
   return asJson.validationMessages as ValidationMessage[]
+}
+
+const sendHit = async (
+  payload: {},
+  instanceId: InstanceId,
+  api_secret: string
+): Promise<void> => {
+  const url = `https://www.google-analytics.com/mp/collect?${instanceQueryParamFor(
+    instanceId
+  )}&api_secret=${api_secret}`
+  const body = Object.assign({}, payload, {
+    validationBehavior: "ENFORCE_RECOMMENDATIONS",
+  })
+  await fetch(url, {
+    method: "POST",
+    body: JSON.stringify(body),
+  })
+  return
+}
+
+const getEventFromParams = (searchParams: URLSearchParams) => {
+  if (searchParams.has(UrlParam.EventData)) {
+    const eventDataString = searchParams.get(UrlParam.EventData)!
+    try {
+      const decoded = atob(eventDataString)
+      const eventData = JSON.parse(decoded) as MPEventData
+      console.log({ decoded, eventData })
+      const eventType = MPEvent.eventTypeFromString(eventData.type as string)
+      if (eventType !== undefined) {
+        let emptyEvent = MPEvent.empty(eventType)
+        if (eventType === MPEventType.CustomEvent) {
+          const eventName = searchParams.get(UrlParam.EventName)
+          if (eventName !== null) {
+            emptyEvent = emptyEvent.updateName(eventName)
+          }
+        }
+        const parameters = eventData.parameters
+        if (parameters !== undefined) {
+          emptyEvent = emptyEvent.updateParameters(() => parameters)
+        }
+        // TODO - Add measurement for hydrating from url.
+        return emptyEvent
+      }
+    } catch (e) {
+      console.error(e)
+      // ignore
+    }
+  }
+  return MPEvent.default()
+}
+const getUserPropertiesFromParams = (
+  searchParams: URLSearchParams
+): Parameters | undefined => {
+  const userPropertiesString = searchParams.get(UrlParam.UserProperties)
+  if (userPropertiesString !== null) {
+    try {
+      const decoded = atob(userPropertiesString)
+      const userProperties = JSON.parse(decoded) as Parameters
+      if (Array.isArray(userProperties)) {
+        // TODO - could add better asserts here in the future to make sure that
+        // each value is actually a good Parameter.
+        return userProperties
+      } else {
+        throw new Error(`Invalid userPropertiesString: ${userProperties}`)
+      }
+    } catch (e) {
+      console.error(e)
+      // ignore
+    }
+  }
+  return undefined
+}
+
+export const unParameterizeUrl = (): URLParts => {
+  const search = window.location.search
+  const searchParams = new URLSearchParams(search)
+  const client_id = searchParams.get(UrlParam.ClientId) || undefined
+  const app_instance_id = searchParams.get(UrlParam.AppInstanceId) || undefined
+  const user_id = searchParams.get(UrlParam.UserId) || undefined
+  const measurement_id = searchParams.get(UrlParam.MeasurementId) || undefined
+  const firebase_app_id = searchParams.get(UrlParam.FirebaseAppId) || undefined
+  const api_secret = searchParams.get(UrlParam.APISecret) || undefined
+  const timestamp_micros =
+    searchParams.get(UrlParam.TimestampMicros) || undefined
+  const non_personalized_ads =
+    searchParams.get(UrlParam.NonPersonalizedAds) === "true" ? true : false
+
+  const event = getEventFromParams(searchParams)
+  const user_properties = getUserPropertiesFromParams(searchParams)
+
+  return {
+    timestamp_micros,
+    non_personalized_ads,
+    app_instance_id,
+    client_id,
+    user_id,
+    event,
+    user_properties,
+    measurement_id,
+    firebase_app_id,
+    api_secret,
+    event_name: event.isCustomEvent() ? event.getEventName() : undefined,
+  }
+}
+
+export const parameterizedUrlFor = ({
+  client_id,
+  app_instance_id,
+  user_id,
+  event,
+  measurement_id,
+  firebase_app_id,
+  api_secret,
+  user_properties,
+  non_personalized_ads,
+  timestamp_micros,
+}: URLParts) => {
+  const params = new URLSearchParams()
+
+  client_id && client_id !== "" && params.append(UrlParam.ClientId, client_id)
+  app_instance_id &&
+    app_instance_id !== "" &&
+    params.append(UrlParam.AppInstanceId, app_instance_id)
+  user_id && user_id !== "" && params.append(UrlParam.UserId, user_id)
+  api_secret &&
+    api_secret !== "" &&
+    params.append(UrlParam.APISecret, api_secret)
+  event &&
+    event.getEventType() === MPEventType.CustomEvent &&
+    params.append(UrlParam.EventName, event.getEventName())
+
+  measurement_id &&
+    measurement_id !== "" &&
+    params.append(UrlParam.MeasurementId, measurement_id)
+
+  firebase_app_id &&
+    firebase_app_id !== "" &&
+    params.append(UrlParam.FirebaseAppId, firebase_app_id)
+
+  timestamp_micros &&
+    timestamp_micros !== "" &&
+    params.append(UrlParam.TimestampMicros, timestamp_micros)
+
+  non_personalized_ads !== undefined &&
+    params.append(UrlParam.NonPersonalizedAds, non_personalized_ads.toString())
+
+  // We base64 encode the JSON string to make the url a bit smaller.
+  event &&
+    params.append(
+      UrlParam.EventData,
+      btoa(JSON.stringify(event.getEventData()))
+    )
+
+  if (user_properties !== undefined) {
+    const filtered = user_properties.filter(
+      property => property.value !== undefined
+    )
+    params.append(UrlParam.UserProperties, btoa(JSON.stringify(filtered)))
+  }
+
+  const urlParams = params.toString()
+  const { protocol, host, pathname } = location
+
+  return `${protocol}//${host}${pathname}?${urlParams}`
 }
 
 export default useEvents
