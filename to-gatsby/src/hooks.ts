@@ -45,7 +45,7 @@ export const useSendEvent: UseSendEvent = () => {
 type UsePersistentBoolean = (
   key: StorageKey,
   initialValue: boolean,
-  overwrite: boolean
+  overwrite?: boolean
 ) => [boolean, React.Dispatch<React.SetStateAction<boolean>>]
 
 export const usePersistentBoolean: UsePersistentBoolean = (
