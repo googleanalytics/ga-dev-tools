@@ -1,35 +1,22 @@
-import React from "react";
-import IconButton from "../../components/icon-button";
-import EditParameter from "./EditParameter";
+import React from "react"
+import EditParameter from "./_EditParameter/_index"
 
-import { makeStyles } from "@material-ui/core/styles";
-import { Parameters, defaultStringParam, Parameter, State } from "../types";
-import { useSelector, useDispatch } from "react-redux";
-import actions from "../actions";
+import { Parameters, defaultStringParam, Parameter } from "./_types/_index"
+import { Button, Typography } from "@material-ui/core"
+import { AddCircle } from "@material-ui/icons"
 
-const useStyles = makeStyles({
-  addUserProperty: {
-    display: "flex",
-    "justify-content": "flex-end"
-  }
-});
+interface EditUserPropertiesProps {
+  user_properties: Parameters
+  setUserProperties: React.Dispatch<React.SetStateAction<Parameters>>
+}
 
-interface EditUserPropertiesProps {}
-
-const EditUserProperties: React.FC<EditUserPropertiesProps> = () => {
-  const classes = useStyles();
-  const userProperties = useSelector<State, Parameters>(a => a.userProperties);
-  const dispatch = useDispatch();
-  const setUserProperties = React.useCallback(
-    (cb: (old: Parameters) => Parameters) => {
-      dispatch(actions.setUserProperties(cb(userProperties)));
-    },
-    [userProperties, dispatch]
-  );
-
+const EditUserProperties: React.FC<EditUserPropertiesProps> = ({
+  user_properties,
+  setUserProperties,
+}) => {
   const addProperty = React.useCallback(() => {
-    setUserProperties(old => old.concat([defaultStringParam("", true)]));
-  }, [setUserProperties]);
+    setUserProperties(old => old.concat([defaultStringParam("", true)]))
+  }, [setUserProperties])
 
   const updatePropertyName = React.useCallback(
     (idx: number) => (_oldName: string, nuName: string) => {
@@ -37,66 +24,61 @@ const EditUserProperties: React.FC<EditUserPropertiesProps> = () => {
         old.map((property, i) =>
           idx === i ? { ...property, name: nuName } : property
         )
-      );
+      )
     },
     [setUserProperties]
-  );
+  )
   const removeProperty = React.useCallback(
     (idx: number) => () => {
-      setUserProperties(old => old.filter((_, i) => i !== idx));
+      setUserProperties(old => old.filter((_, i) => i !== idx))
     },
     [setUserProperties]
-  );
+  )
   const updateProperty = React.useCallback(
     (idx: number) => (nu: Parameter) => {
       setUserProperties(old =>
         old.map((current, i) => (i === idx ? nu : current))
-      );
+      )
     },
     [setUserProperties]
-  );
+  )
   return (
     <>
-      <h3>User Properties</h3>
-      {userProperties.length === 0 ? (
-        <div>
-          <p>No user properties configured.</p>
-          <div className={classes.addUserProperty}>
-            <IconButton
-              type="add-circle"
-              iconStyle={{ color: "hsl(150,60%,40%)" }}
-              onClick={addProperty}
-            >
-              User Property
-            </IconButton>
-          </div>
-        </div>
+      <Typography variant="h3">User Properties</Typography>
+      {user_properties.length === 0 ? (
+        <section>
+          <Typography>No user properties configured.</Typography>
+          <Button
+            startIcon={<AddCircle />}
+            variant="outlined"
+            color="primary"
+            onClick={addProperty}
+          >
+            User Property
+          </Button>
+        </section>
       ) : (
-        <>
-          <div>
-            {userProperties.map((property, idx) => (
-              <EditParameter
-                key={`userProperty-${idx}`}
-                updateParameter={updateProperty(idx)}
-                isNested={false}
-                parameter={property}
-                updateName={updatePropertyName(idx)}
-                remove={removeProperty(idx)}
-              />
-            ))}
-          </div>
-          <div className={classes.addUserProperty}>
-            <IconButton
-              type="add-circle"
-              iconStyle={{ color: "hsl(150,60%,40%)" }}
-              onClick={addProperty}
-            >
-              User Property
-            </IconButton>
-          </div>
-        </>
+        <section>
+          {user_properties.map((property, idx) => (
+            <EditParameter
+              key={`userProperty-${idx}`}
+              updateParameter={updateProperty(idx)}
+              isNested={false}
+              parameter={property}
+              updateName={updatePropertyName(idx)}
+              remove={removeProperty(idx)}
+            />
+          ))}
+          <Button
+            startIcon={<AddCircle />}
+            variant="outlined"
+            onClick={addProperty}
+          >
+            User Property
+          </Button>
+        </section>
       )}
     </>
-  );
-};
-export default EditUserProperties;
+  )
+}
+export default EditUserProperties

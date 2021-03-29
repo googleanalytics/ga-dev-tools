@@ -175,3 +175,34 @@ export interface State {
   isAuthorized: boolean
   validationMessages: ValidationMessage[]
 }
+
+interface WebIds {
+  type: "web"
+  client_id?: string
+  user_id?: string
+}
+
+interface MobileIds {
+  type: "mobile"
+  app_instance_id?: string
+  user_id?: string
+}
+
+export type ClientIds = WebIds | MobileIds
+
+export interface InstanceId {
+  measurement_id?: string
+  firebase_app_id?: string
+}
+
+export interface URLParts {
+  event_name?: string
+  client_id?: string
+  app_instance_id?: string
+  user_id?: string
+  event?: MPEvent
+  measurement_id?: string
+  firebase_app_id?: string
+  api_secret?: string
+  user_properties?: Parameters
+}

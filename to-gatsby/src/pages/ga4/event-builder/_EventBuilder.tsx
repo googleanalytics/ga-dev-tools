@@ -25,6 +25,8 @@ import {
 import { MPEventCategory, MPEventType, MPEvent } from "./_types/_index"
 import Autocomplete from "@material-ui/lab/Autocomplete"
 import EditEvent from "./_EditEvent"
+import EditUserProperties from "./_EditUserProperties"
+import ValidateEvent from "./_ValidateEvent"
 
 const useStyles = makeStyles(theme => ({
   unifiedParameters: {
@@ -44,9 +46,9 @@ const EventBuilder: React.FC = () => {
   const classes = useStyles()
   const {
     event,
+    validateEvent,
     setEvent,
     category,
-    setCategory,
     api_secret,
     setAPISecret,
     firebase_app_id,
@@ -65,6 +67,11 @@ const EventBuilder: React.FC = () => {
     setNonPersonalizedAds,
     timestamp_micros,
     setTimestampMicros,
+    validationStatus,
+    validationMessages,
+    user_properties,
+    setUserProperties,
+    payload,
   } = useEvents()
 
   // const eventReferenceUrl = `https://developers.google.com/analytics/devguides/collection/protocol/app-web/reference/events?tech=aw_measurement_protocol#${event.getEventName()}`
@@ -76,9 +83,20 @@ const EventBuilder: React.FC = () => {
         The box below displays the full event and its validation status.
       </Typography>
 
-      {/* 
-    <ValidateEvent />
-      */}
+      <ValidateEvent
+        payload={payload}
+        validateEvent={validateEvent}
+        validationMessages={validationMessages}
+        validationStatus={validationStatus}
+        event={event}
+        user_properties={user_properties}
+        client_id={client_id}
+        user_id={user_id}
+        api_secret={api_secret}
+        measurement_id={measurement_id}
+        app_instance_id={app_instance_id}
+        firebase_app_id={firebase_app_id}
+      />
 
       <div className={classes.unifiedParameters}>
         <section className={classes.parameterPair}>
@@ -222,12 +240,11 @@ const EventBuilder: React.FC = () => {
           />
         </section>
       </div>
-
       <EditEvent event={event} setEvent={setEvent} />
-
-      {/* 
-          <EditUserProperties />
-          */}
+      <EditUserProperties
+        user_properties={user_properties}
+        setUserProperties={setUserProperties}
+      />
     </div>
   )
 }

@@ -14,43 +14,91 @@
 
 /* global $ */
 
-import React from "react";
-import Textarea from "react-textarea-autosize";
-import { gaAll } from "../../analytics";
-import Icon from "../../components/icon";
-import IconButton from "../../components/icon-button";
-import CopyButton from "../../hit-builder/components/copy-button";
-import supports from "../../supports";
-import { sleep } from "../../utils";
-import actions from "../actions";
+import React, { useMemo } from "react"
+// import Textarea from "react-textarea-autosize"
 import {
   ValidationMessage,
-  State,
   MPEvent,
   ValidationStatus as ValidationStatusT,
   Parameters,
-} from "../types";
-import { useSelector, useDispatch } from "react-redux";
-import classnames from "classnames";
-import { parameterizedUrl, payloadFor, ClientIds } from "../event";
+} from "./_types/_index"
+import {
+  makeStyles,
+  Theme,
+  Typography,
+  Button,
+  Paper,
+  TextareaAutosize,
+} from "@material-ui/core"
+import { Check, Error as ErrorIcon, Warning, Send } from "@material-ui/icons"
+import green from "@material-ui/core/colors/green"
+import red from "@material-ui/core/colors/red"
+import grey from "@material-ui/core/colors/grey"
 
-const ACTION_TIMEOUT = 1500;
+interface ValidateEventProps {
+  measurement_id: string
+  app_instance_id: string
+  firebase_app_id: string
+  api_secret: string
+  client_id: string
+  user_id: string
+  event: MPEvent
+  validateEvent: () => void
+  payload: {}
+  user_properties: Parameters
+  validationStatus: ValidationStatusT
+  validationMessages: ValidationMessage[]
+}
 
-const EventElement: React.FC = () => {
-  const measurement_id = useSelector<State, string>((a) => a.measurementId);
-  const firebase_app_id = useSelector<State, string>((a) => a.firebaseAppId);
-  const api_secret = useSelector<State, string>((a) => a.apiSecret);
-  const validationStatus = useSelector<State, ValidationStatusT>(
-    (a) => a.validationStatus
-  );
-  const className = classnames("HitElement", {
-    "HitElement--valid": validationStatus === ValidationStatusT.Valid,
-    "HitElement--invalid": validationStatus === ValidationStatusT.Invalid,
-  });
+// const ACTION_TIMEOUT = 1500
+
+const useStyles = makeStyles<Theme, ValidateEventProps>(theme => ({
+  payloadTitle: {
+    margin: theme.spacing(1, 0),
+  },
+  editEvent: {
+    "& > *": {
+      padding: theme.spacing(1, 2),
+    },
+  },
+  validationStatus: ({ validationStatus }) => {
+    const baseColor =
+      validationStatus === ValidationStatusT.Invalid
+        ? red
+        : validationStatus === ValidationStatusT.Unset ||
+          validationStatus === ValidationStatusT.Pending
+        ? grey
+        : green
+    return {
+      backgroundColor: baseColor[100],
+      border: `1px solid ${baseColor[500]}`,
+      borderTopLeftRadius: theme.spacing(1),
+      borderTopRightRadius: theme.spacing(1),
+      "&> h2 > svg": {
+        marginRight: theme.spacing(1),
+      },
+    }
+  },
+}))
+
+const ValidateEvent: React.FC<ValidateEventProps> = props => {
+  const {
+    measurement_id,
+    firebase_app_id,
+    api_secret,
+    validationStatus,
+    validationMessages,
+    payload,
+  } = props
+  const classes = useStyles(props)
 
   return (
-    <section className={className}>
-      <ValidationStatus />
+    <Paper className={classes.editEvent}>
+      <ValidationStatus
+        className={classes.validationStatus}
+        validationStatus={validationStatus}
+        validationMessages={validationMessages}
+      />
       <div className="HitElement-body">
         <div className="HitElement-requestInfo">
           POST /mp/collect?
@@ -65,135 +113,93 @@ const EventElement: React.FC = () => {
         </div>
         <div className="HitElement-requestBody">
           <div className="FormControl FormControl--full">
-            <label className="FormControl-label">Event payload</label>
             <div className="FormControl-body">
-              <EventPayloadInput />
+              <Typography className={classes.payloadTitle} variant="h4">
+                Payload:
+              </Typography>
+              <EventPayloadInput payload={payload} />
             </div>
           </div>
         </div>
-        <EventActions />
+        <EventActions {...props} payload={payload} />
       </div>
-    </section>
-  );
-};
+    </Paper>
+  )
+}
 
-export default EventElement;
+export default ValidateEvent
 
-const ValidationStatus: React.FC = () => {
-  const validationMessages = useSelector<State, ValidationMessage[]>(
-    (a) => a.validationMessages
-  );
-  const validationStatus = useSelector<State>((a) => a.validationStatus);
-  switch (validationStatus) {
-    case ValidationStatusT.Valid:
-      return (
-        <header className="HitElement-status">
-          <span className="HitElement-statusIcon">
-            <Icon type="check" />
-          </span>
-          <div className="HitElement-statusBody">
-            <h1 className="HitElement-statusHeading">Event is valid!</h1>
-            <p className="HitElement-statusMessage">
+const ValidationStatus: React.FC<{
+  validationMessages: ValidationMessage[]
+  validationStatus: ValidationStatusT
+  className: string
+}> = ({ validationMessages, validationStatus, className }) => {
+  const [headingText, icon, body] = useMemo(() => {
+    switch (validationStatus) {
+      case ValidationStatusT.Valid:
+        return [
+          "Event is valid!",
+          <Check />,
+          <>
+            <Typography>
               Use the controls below to copy the event payload or share it with
               coworkers.
-              <br />
+            </Typography>
+            <Typography>
               You can also send the event to Google Analytics and watch it in
               action in the Real Time view.
-            </p>
-          </div>
-        </header>
-      );
-    case ValidationStatusT.Invalid:
-      return (
-        <header className="HitElement-status">
-          <span className="HitElement-statusIcon">
-            <Icon type="error-outline" />
-          </span>
-          <div className="HitElement-statusBody">
-            <h1 className="HitElement-statusHeading">Event is invalid!</h1>
+            </Typography>
+          </>,
+        ]
+      case ValidationStatusT.Invalid:
+        return [
+          "Event is invalid!",
+          <ErrorIcon />,
+          <>
             <ul className="HitElement-statusMessage">
-              {validationMessages.map((message) => (
+              {validationMessages.map(message => (
                 <li key={message.fieldPath}>{message.description}</li>
               ))}
             </ul>
-          </div>
-        </header>
-      );
-    default:
-      return (
-        <header className="HitElement-status">
-          <span className="HitElement-statusIcon">
-            <Icon type="warning" />
-          </span>
-          <div className="HitElement-statusBody">
-            <h1 className="HitElement-statusHeading">
-              This event has not yet been validated
-            </h1>
-            <p className="HitElement-statusMessage">
+          </>,
+        ]
+      default:
+        return [
+          "This event has not yet been validated",
+          <Warning />,
+
+          <>
+            <Typography>
               You can update the event using any of the controls below.
-              <br />
+            </Typography>
+            <Typography>
               When you're done, click the "Validate Event" button to make sure
               everything's OK.
-            </p>
-          </div>
-        </header>
-      );
-  }
-};
-
-const EventActions: React.FC = () => {
-  const event = useSelector<State, MPEvent>((a) => a.event);
-  const clientId = useSelector<State, string>((a) => a.clientId);
-  const appInstanceId = useSelector<State, string>((a) => a.appInstanceId);
-  const userId = useSelector<State, string>((a) => a.userId);
-  const measurementId = useSelector<State, string>((a) => a.measurementId);
-  const apiSecret = useSelector<State, string>((a) => a.apiSecret);
-  const firebaseAppId = useSelector<State, string>((a) => a.firebaseAppId);
-  const validationStatus = useSelector<State, ValidationStatusT>(
-    (a) => a.validationStatus
-  );
-  const userProperties = useSelector<State, Parameters>(
-    (a) => a.userProperties
-  );
-  const [payload, setPayload] = React.useState<any>({});
-  const [linkToEvent, setLinkToEvent] = React.useState<string>("");
-
-  React.useEffect(() => {
-    const url = parameterizedUrl({
-      clientId,
-      appInstanceId,
-      userId,
-      event,
-      measurementId,
-      firebaseAppId,
-      apiSecret,
-      userProperties,
-    });
-    setLinkToEvent(url);
-  }, [
-    appInstanceId,
-    clientId,
-    userId,
-    event,
-    measurementId,
-    firebaseAppId,
-    apiSecret,
-    userProperties,
-  ]);
-
-  React.useEffect(() => {
-    let clientIds: ClientIds;
-    if (clientId !== "") {
-      clientIds = { clientId, userId, type: "web" };
-    } else {
-      clientIds = { appInstanceId, userId, type: "mobile" };
+            </Typography>
+          </>,
+        ]
     }
-    setPayload(payloadFor([event], clientIds, userProperties));
-  }, [event, clientId, appInstanceId, userId, userProperties]);
-  const [eventSent, setEventSent] = React.useState<boolean>(false);
+  }, [validationStatus])
+
+  return (
+    <section className={className}>
+      <Typography variant="h2">
+        {icon}
+        {headingText}
+      </Typography>
+      <div>{body}</div>
+    </section>
+  )
+}
+
+const EventActions: React.FC<ValidateEventProps> = props => {
+  const { payload, validationStatus, validateEvent } = props
+  // const linkToEvent = useMemo(() => parameterizedUrl({}), [])
+
+  const [eventSent, setEventSent] = React.useState<boolean>(false)
   React.useEffect(() => {
-    setEventSent(false);
-  }, [payload]);
+    setEventSent(false)
+  }, [payload])
 
   /**
    * Sends the event payload to Google Analytics and updates the button state
@@ -201,124 +207,114 @@ const EventActions: React.FC = () => {
    * gets restored to its original state.
    */
   const sendEvent = React.useCallback(async () => {
-    dispatch(actions.sendEvent);
-    setEventSent(true);
-    gaAll("send", "event", {
-      eventCategory: "App+Web Event Builder",
-      eventAction: "send",
-      eventLabel: "payload",
-    });
-    await sleep(ACTION_TIMEOUT);
-    setEventSent(false);
-  }, [payload]);
+    // TODO reimplement this functionality.
+    // dispatch(actions.sendEvent)
+    setEventSent(true)
+    // gaAll("send", "event", {
+    //   eventCategory: "App+Web Event Builder",
+    //   eventAction: "send",
+    //   eventLabel: "payload",
+    // })
+    // TODO - figure out ui pause here.
+    // await sleep(ACTION_TIMEOUT)
+    setEventSent(false)
+  }, [payload])
 
-  const dispatch = useDispatch();
-  const validateEvent = React.useCallback(() => {
-    dispatch(actions.validateEvent);
-  }, [dispatch]);
-
-  if (validationStatus != "VALID") {
+  if (validationStatus !== ValidationStatusT.Valid) {
     return (
       <ValidateEventButton
         validationStatus={validationStatus}
         validateEvent={validateEvent}
       />
-    );
+    )
   }
 
   const sendEventButton = (
-    <IconButton
-      className="Button Button--success Button--withIcon"
-      type={eventSent ? "check" : "send"}
-      onClick={sendEvent}
-    >
+    <Button startIcon={eventSent ? <Check /> : <Send />} onClick={sendEvent}>
       Send event to Google Analytics
-    </IconButton>
-  );
+    </Button>
+  )
 
-  if (supports.copyToClipboard()) {
-    return (
-      <div className="HitElement-action">
-        <div className="ButtonSet">
-          {sendEventButton}
-          <CopyButton
-            textToCopy={JSON.stringify(payload)}
-            type="content-paste"
-            appPlusWeb
-          >
-            Copy event payload
-          </CopyButton>
-          <CopyButton type="link" textToCopy={linkToEvent} appPlusWeb link>
-            Copy sharable link to event
-          </CopyButton>
-        </div>
-      </div>
-    );
-  } else {
-    return <div className="HitElement-action">{sendEventButton}</div>;
-  }
-};
+  // TODO - Figure out copy-paste. (use existing solution)
+  // if (supports.copyToClipboard()) {
+  //   return (
+  //     <div className="HitElement-action">
+  //       <div className="ButtonSet">
+  //         {sendEventButton}
+  //         <CopyButton
+  //           textToCopy={JSON.stringify(payload)}
+  //           type="content-paste"
+  //           appPlusWeb
+  //         >
+  //           Copy event payload
+  //         </CopyButton>
+  //         <CopyButton type="link" textToCopy={linkToEvent} appPlusWeb link>
+  //           Copy sharable link to event
+  //         </CopyButton>
+  //       </div>
+  //     </div>
+  //   )
+  // } else {
+  return <div className="HitElement-action">{sendEventButton}</div>
+  // }
+}
 
 interface ValidateEventButtonProps {
-  validationStatus: ValidationStatusT;
-  validateEvent: () => void;
+  validationStatus: ValidationStatusT
+  validateEvent: () => void
 }
+
+const useStylesValidateButton = makeStyles(theme => ({
+  validateButton: {
+    margin: theme.spacing(1, 0),
+  },
+}))
 
 const ValidateEventButton: React.FC<ValidateEventButtonProps> = ({
   validationStatus,
   validateEvent,
 }) => {
-  let buttonText: string;
+  const classes = useStylesValidateButton()
+  let buttonText: string
   switch (validationStatus) {
     case ValidationStatusT.Invalid:
-      buttonText = "Revalidate event";
-      break;
+      buttonText = "Revalidate event"
+      break
     case ValidationStatusT.Pending:
-      buttonText = "Validating...";
-      break;
+      buttonText = "Validating..."
+      break
     default:
-      buttonText = "Validate event";
-      break;
+      buttonText = "Validate event"
+      break
   }
 
   return (
-    <div className="HitElement-action">
-      <button
-        className="Button Button--action"
-        disabled={validationStatus === ValidationStatusT.Pending}
-        onClick={validateEvent}
-      >
-        {buttonText}
-      </button>
-    </div>
-  );
-};
+    <Button
+      className={classes.validateButton}
+      variant="contained"
+      color="primary"
+      disabled={validationStatus === ValidationStatusT.Pending}
+      onClick={validateEvent}
+    >
+      {buttonText}
+    </Button>
+  )
+}
 
-const EventPayloadInput: React.FC = () => {
-  const event = useSelector<State, MPEvent>((a) => a.event);
-  const clientId = useSelector<State, string>((a) => a.clientId);
-  const appInstanceId = useSelector<State, string>((a) => a.appInstanceId);
-  const userId = useSelector<State, string>((a) => a.userId);
-  const userProperties = useSelector<State, Parameters>(
-    (a) => a.userProperties
-  );
-  const [payload, setPayload] = React.useState<any>({});
+const useStylesPayloadInput = makeStyles(theme => ({
+  textarea: {
+    width: "100%",
+    padding: theme.spacing(1),
+  },
+}))
 
-  React.useEffect(() => {
-    let clientIds: ClientIds;
-    if (clientId !== "") {
-      clientIds = { clientId, userId, type: "web" };
-    } else {
-      clientIds = { appInstanceId, userId, type: "mobile" };
-    }
-    setPayload(payloadFor([event], clientIds, userProperties));
-  }, [event, clientId, userId, userProperties, appInstanceId]);
-
+const EventPayloadInput: React.FC<{ payload: {} }> = ({ payload }) => {
+  const classes = useStylesPayloadInput()
   return (
-    <Textarea
-      className="FormField"
+    <TextareaAutosize
+      className={classes.textarea}
       value={JSON.stringify(payload, undefined, "  ")}
       disabled
     />
-  );
-};
+  )
+}
