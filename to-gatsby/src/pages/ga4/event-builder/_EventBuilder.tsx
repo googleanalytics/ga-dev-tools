@@ -30,6 +30,7 @@ import ValidateEvent from "./_ValidateEvent"
 
 const useStyles = makeStyles(theme => ({
   unifiedParameters: {
+    marginTop: theme.spacing(2),
     "& > *": {
       marginTop: theme.spacing(1),
     },
