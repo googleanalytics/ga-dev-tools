@@ -102,6 +102,8 @@ export enum StorageKey {
   metricExpressionFiltersExpression = "request-composer/metric-expression-filters-expression",
   metricExpressionPageToken = "request-composer/metric-expression-page-token",
   metricExpressionPageSize = "request-composer/metric-expression-page-size",
+
+  eventBuilderCategory = "ga4/event-builder/event-category",
 }
 
 export const EventAction = {

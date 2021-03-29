@@ -260,15 +260,39 @@ export const isServerSide = () => {
   return typeof window === "undefined"
 }
 
-const getRedirectPath = (path: string) => {
-  switch (path) {
-    case "/hit-builder":
-      return "/ga4/event-builder"
-    case "/ga4/event-builder":
-      return "/hit-builder"
-    default:
-      return "/"
+const getRedirectPath = (
+  path: string,
+  version: GAVersion
+): string | undefined => {
+  switch (version) {
+    case GAVersion.UniversalAnalytics: {
+      switch (path) {
+        // If switching to UA, and you're already on a UA demo, do nothing.
+        case "/account-explorer":
+        case "/campaign-url-builder":
+        case "/dimensions-metrics-explorer":
+        case "/enhanced-ecommerce":
+        case "/hit-builder":
+        case "/query-explorer":
+        case "/request-composer":
+        case "/spreadsheet-add-on":
+        case "/tag-assistant":
+          return undefined
+        case "/ga4/event-builder":
+          return "/hit-builder"
+      }
+    }
+    case GAVersion.GoogleAnalytics4: {
+      switch (path) {
+        // If switching to GA4, and you're already on a GA4 demo, do nothing.
+        case "/ga4/event-builder":
+          return undefined
+        case "/hit-builder":
+          return "/ga4/event-builder"
+      }
+    }
   }
+  return undefined
 }
 
 // TODO - IT might be worth looking into creating a hook that only allows
@@ -296,9 +320,11 @@ export const useGAVersion = (): {
 
   const setGAVersion = React.useCallback(
     (version: GAVersion) => {
-      const redirectPath = getRedirectPath(location.pathname)
+      const redirectPath = getRedirectPath(location.pathname, version)
       setString(version)
-      console.log({ redirectPath })
+      if (redirectPath === undefined) {
+        return
+      }
       navigate(redirectPath)
     },
     [setString, location.pathname, navigate]

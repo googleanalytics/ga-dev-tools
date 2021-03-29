@@ -10,6 +10,7 @@ export interface LinkedTextFieldProps {
   onChange: (e: string) => void
   helperText: string
   required?: true
+  disabled?: boolean
 }
 
 const LinkedTextField: React.FC<LinkedTextFieldProps> = ({
@@ -20,6 +21,7 @@ const LinkedTextField: React.FC<LinkedTextFieldProps> = ({
   onChange,
   required,
   helperText,
+  disabled,
 }) => {
   return (
     <TextField
@@ -34,6 +36,7 @@ const LinkedTextField: React.FC<LinkedTextFieldProps> = ({
       onChange={e => onChange(e.target.value)}
       required={required}
       helperText={helperText}
+      disabled={disabled}
     />
   )
 }

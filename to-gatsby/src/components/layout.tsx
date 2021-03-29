@@ -38,11 +38,15 @@ import { usePageView, useGAVersion } from "../hooks"
 import Loader from "react-loader-spinner"
 import { Switch, FormControlLabel } from "@material-ui/core"
 import { GAVersion } from "../constants"
+import Info from "./Info"
 
 const mobile = (theme: Theme) => theme.breakpoints.between(0, "sm")
 const notMobile = (theme: Theme) => theme.breakpoints.up("md")
 
 const useStyles = makeStyles<any, { disableNav: true | undefined }>(theme => ({
+  info: {
+    maxWidth: 930,
+  },
   loadingIndicator: {
     display: "flex",
     flexDirection: "column",
@@ -165,9 +169,9 @@ const useStyles = makeStyles<any, { disableNav: true | undefined }>(theme => ({
   home: {
     margin: "unset",
     color: "unset",
-    marginTop: theme.spacing(1),
     display: "flex",
     alignItems: "center",
+    paddingLeft: theme.spacing(2),
     [notMobile(theme)]: {
       "&:hover": {
         color: theme.palette.primary.main,
@@ -447,6 +451,14 @@ const Layout: React.FC<LayoutProps> = ({
           <Typography variant="h1">{title}</Typography>
         </header>
         <div className={classes.contentWrapper}>
+          {gaVersion === GAVersion.GoogleAnalytics4 &&
+            // TODO - Turn this into a proper "warning" component. Probably
+            // already exists somewhere in mui.
+            location.pathname.indexOf("ga4") === -1 && (
+              <Info className={classes.info}>
+                You're viewing a demo for Universal Analytics.
+              </Info>
+            )}
           <section className={classes.content}>
             {!requireLogin || userStatus === UserStatus.SignedIn ? (
               children
