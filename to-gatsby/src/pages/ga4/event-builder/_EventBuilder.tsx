@@ -90,20 +90,21 @@ const EventBuilder: React.FC = () => {
         validationStatus={validationStatus}
         event={event}
         user_properties={user_properties}
-        client_id={client_id}
-        user_id={user_id}
-        api_secret={api_secret}
-        measurement_id={measurement_id}
-        app_instance_id={app_instance_id}
-        firebase_app_id={firebase_app_id}
+        client_id={client_id || ""}
+        user_id={user_id || ""}
+        api_secret={api_secret || ""}
+        measurement_id={measurement_id || ""}
+        app_instance_id={app_instance_id || ""}
+        firebase_app_id={firebase_app_id || ""}
       />
 
       <div className={classes.unifiedParameters}>
         <section className={classes.parameterPair}>
           <LinkedTextField
+            required
             href="https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference#api_secret"
             linkTitle="See api_secret on devsite."
-            value={api_secret}
+            value={api_secret || ""}
             label="api_secret"
             helperText=""
             onChange={setAPISecret}
@@ -113,8 +114,8 @@ const EventBuilder: React.FC = () => {
           <LinkedTextField
             href="https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference?client_type=firebase#firebase_app_id"
             linkTitle="See firebase_app_id on devsite."
-            disabled={measurement_id !== "" || client_id !== ""}
-            value={firebase_app_id}
+            disabled={!!(measurement_id || client_id)}
+            value={firebase_app_id || ""}
             label="firebase_app_id"
             helperText=""
             onChange={setFirebaseAppId}
@@ -122,8 +123,8 @@ const EventBuilder: React.FC = () => {
           <LinkedTextField
             href="https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference?client_type=gtag#measurement_id"
             linkTitle="See measurement_id on devsite."
-            disabled={firebase_app_id !== "" || app_instance_id !== ""}
-            value={measurement_id}
+            disabled={!!(firebase_app_id || app_instance_id)}
+            value={measurement_id || ""}
             label="measurement_id"
             helperText=""
             onChange={setMeasurementId}
@@ -133,8 +134,8 @@ const EventBuilder: React.FC = () => {
           <LinkedTextField
             href=""
             linkTitle="See app_instance_id on devsite."
-            disabled={measurement_id !== "" || client_id !== ""}
-            value={app_instance_id}
+            disabled={!!(measurement_id || client_id)}
+            value={app_instance_id || ""}
             label="app_instance_id"
             helperText=""
             onChange={setAppInstanceId}
@@ -142,8 +143,8 @@ const EventBuilder: React.FC = () => {
           <LinkedTextField
             href=""
             linkTitle="See client_id on devsite."
-            disabled={firebase_app_id !== "" || app_instance_id !== ""}
-            value={client_id}
+            disabled={!!(firebase_app_id || app_instance_id)}
+            value={client_id || ""}
             label="client_id"
             helperText=""
             onChange={setClientId}
@@ -152,7 +153,7 @@ const EventBuilder: React.FC = () => {
         <LinkedTextField
           href=""
           linkTitle="See user_id on devsite."
-          value={user_id}
+          value={user_id || ""}
           label="user_id"
           helperText=""
           onChange={setUserId}

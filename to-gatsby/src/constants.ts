@@ -104,6 +104,14 @@ export enum StorageKey {
   metricExpressionPageSize = "request-composer/metric-expression-page-size",
 
   eventBuilderCategory = "ga4/event-builder/event-category",
+  eventBuilderApiSecret = "ga4/event-builder/api-secret",
+  eventBuilderFirebaseAppId = "ga4/event-builder/firebase-app-id",
+  eventBuilderMeasurementId = "ga4/event-builder/measurement-id",
+  eventBuilderAppInstanceId = "ga4/event-builder/app-instance-id",
+  eventBuilderClientId = "ga4/event-builder/client-id",
+  eventBuilderUserId = "ga4/event-builder/user-id",
+  eventBuilderTimestampMicros = "ga4/event-builder/timestamp-micros",
+  eventBuilderNonPersonalizedAds = "ga4/event-builder/non-personalized-ads",
 }
 
 export const EventAction = {

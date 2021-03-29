@@ -83,7 +83,7 @@ export const usePersistentString: UsePersistentString = (key, initialValue) => {
     const fromStorage =
       typeof window === "undefined" ? null : window.localStorage.getItem(key)
     if (fromStorage === null) {
-      return initialValue || undefined
+      return undefined || initialValue
     }
     if (fromStorage === "undefined" || fromStorage === "") {
       return undefined

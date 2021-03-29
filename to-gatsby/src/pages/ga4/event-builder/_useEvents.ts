@@ -9,6 +9,8 @@ import {
   InstanceId,
   ClientIds,
 } from "./_types/_index"
+import { usePersistentString, usePersistentBoolean } from "../../../hooks"
+import { StorageKey } from "../../../constants"
 
 type Dispatch<T> = React.Dispatch<React.SetStateAction<T>>
 
@@ -25,29 +27,29 @@ interface UseEventsReturn {
   category: MPEventCategory
   setCategory: (category: MPEventCategory) => void
 
-  api_secret: string
-  setAPISecret: Dispatch<string>
+  api_secret: string | undefined
+  setAPISecret: Dispatch<string | undefined>
 
-  firebase_app_id: string
-  setFirebaseAppId: Dispatch<string>
+  firebase_app_id: string | undefined
+  setFirebaseAppId: Dispatch<string | undefined>
 
-  measurement_id: string
-  setMeasurementId: Dispatch<string>
+  measurement_id: string | undefined
+  setMeasurementId: Dispatch<string | undefined>
 
-  client_id: string
-  setClientId: Dispatch<string>
+  client_id: string | undefined
+  setClientId: Dispatch<string | undefined>
 
-  app_instance_id: string
-  setAppInstanceId: Dispatch<string>
+  app_instance_id: string | undefined
+  setAppInstanceId: Dispatch<string | undefined>
 
-  user_id: string
-  setUserId: Dispatch<string>
+  user_id: string | undefined
+  setUserId: Dispatch<string | undefined>
 
   non_personalized_ads: boolean
   setNonPersonalizedAds: Dispatch<boolean>
 
-  timestamp_micros: string
-  setTimestampMicros: Dispatch<string>
+  timestamp_micros: string | undefined
+  setTimestampMicros: Dispatch<string | undefined>
 
   validationStatus: ValidationStatus
   validationMessages: ValidationMessage[]
@@ -59,15 +61,39 @@ type UseEvents = () => UseEventsReturn
 const useEvents: UseEvents = () => {
   // TODO - default this back to MPEvent.default()
   const [event, setEvent] = useState(MPEvent.empty(MPEventType.Purchase))
-  const [api_secret, setAPISecret] = useState("")
-  const [firebase_app_id, setFirebaseAppId] = useState("")
-  const [measurement_id, setMeasurementId] = useState("")
-  const [client_id, setClientId] = useState("")
-  const [app_instance_id, setAppInstanceId] = useState("")
-  const [user_id, setUserId] = useState("")
+  const [api_secret, setAPISecret] = usePersistentString(
+    StorageKey.eventBuilderApiSecret,
+    ""
+  )
+  const [firebase_app_id, setFirebaseAppId] = usePersistentString(
+    StorageKey.eventBuilderFirebaseAppId,
+    ""
+  )
+  const [measurement_id, setMeasurementId] = usePersistentString(
+    StorageKey.eventBuilderMeasurementId,
+    ""
+  )
+  const [client_id, setClientId] = usePersistentString(
+    StorageKey.eventBuilderClientId,
+    ""
+  )
+  const [app_instance_id, setAppInstanceId] = usePersistentString(
+    StorageKey.eventBuilderAppInstanceId,
+    ""
+  )
+  const [user_id, setUserId] = usePersistentString(
+    StorageKey.eventBuilderUserId,
+    ""
+  )
   const [category, setCategory] = useState(event.getCategories()[0])
-  const [non_personalized_ads, setNonPersonalizedAds] = useState(false)
-  const [timestamp_micros, setTimestampMicros] = useState("")
+  const [non_personalized_ads, setNonPersonalizedAds] = usePersistentBoolean(
+    StorageKey.eventBuilderNonPersonalizedAds,
+    false
+  )
+  const [timestamp_micros, setTimestampMicros] = usePersistentString(
+    StorageKey.eventBuilderTimestampMicros,
+    ""
+  )
   const [user_properties, setUserProperties] = useState<Parameters>([])
   const [validationStatus, setValidationStatus] = useState(
     ValidationStatus.Unset
@@ -77,21 +103,6 @@ const useEvents: UseEvents = () => {
   >([])
 
   const payload = useMemo<{}>(() => {
-    let client_ids: ClientIds
-    if (client_id !== "") {
-      client_ids = { client_id, user_id, type: "web" }
-    } else {
-      client_ids = { app_instance_id, user_id, type: "mobile" }
-    }
-    if (client_ids.type === "web" && client_ids.client_id === "") {
-      client_ids.client_id = undefined
-    } else if (
-      client_ids.type === "mobile" &&
-      client_ids.app_instance_id === ""
-    ) {
-      client_ids.app_instance_id = undefined
-    }
-    const { type, ...minusType } = client_ids
     const optionals = {}
     if (timestamp_micros !== undefined && timestamp_micros !== "") {
       optionals["timestamp_micros"] = timestamp_micros
@@ -99,10 +110,17 @@ const useEvents: UseEvents = () => {
     if (non_personalized_ads) {
       optionals["non_personalized_ads"] = non_personalized_ads
     }
+    if (user_id !== "") {
+      optionals["user_id"] = user_id
+    }
+    if (client_id !== "") {
+      optionals["client_id"] = client_id
+    }
+    if (app_instance_id !== "") {
+      optionals["app_instance_id"] = app_instance_id
+    }
     return {
-      ...minusType,
       ...optionals,
-      user_id: client_ids.user_id || undefined,
       events: [event.asPayload()],
       user_properties:
         user_properties.length === 0
@@ -137,6 +155,12 @@ const useEvents: UseEvents = () => {
   )
 
   const validateEvent = useCallback(() => {
+    if (measurement_id === undefined && firebase_app_id === undefined) {
+      return
+    }
+    if (api_secret === undefined) {
+      return
+    }
     const instance_id = { measurement_id, firebase_app_id }
     setValidationStatus(ValidationStatus.Pending)
     validateHit(payload, instance_id, api_secret).then(messages => {
@@ -152,6 +176,7 @@ const useEvents: UseEvents = () => {
   useEffect(() => {
     setValidationStatus(ValidationStatus.Unset)
   }, [
+    payload,
     client_id,
     user_id,
     measurement_id,
@@ -159,6 +184,7 @@ const useEvents: UseEvents = () => {
     api_secret,
     event,
     user_properties,
+    timestamp_micros,
   ])
 
   return {
