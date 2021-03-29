@@ -1,7 +1,7 @@
 import * as React from "react"
 import { useSelector } from "react-redux"
-import { useLocation } from "@reach/router"
-import { StorageKey } from "./constants"
+import { useLocation, useNavigate } from "@reach/router"
+import { StorageKey, GAVersion } from "./constants"
 import { useState, useEffect } from "react"
 
 export const usePageView = () => {
@@ -44,14 +44,19 @@ export const useSendEvent: UseSendEvent = () => {
 
 type UsePersistentBoolean = (
   key: StorageKey,
-  initialValue: boolean
+  initialValue: boolean,
+  overwrite?: boolean
 ) => [boolean, React.Dispatch<React.SetStateAction<boolean>>]
 
 export const usePersistentBoolean: UsePersistentBoolean = (
   key,
-  initialValue
+  initialValue,
+  overwrite
 ) => {
   const [value, setValue] = useState<boolean>(() => {
+    if (overwrite !== undefined) {
+      return overwrite
+    }
     const fromStorage =
       typeof window === "undefined" ? null : window.localStorage.getItem(key)
     if (fromStorage === null) {
@@ -72,18 +77,26 @@ export const usePersistentBoolean: UsePersistentBoolean = (
 
 type UsePersistentString = (
   key: StorageKey,
-  initialValue?: string
+  initialValue?: string,
+  overwrite?: string
 ) => [
   string | undefined,
   React.Dispatch<React.SetStateAction<string | undefined>>
 ]
 
-export const usePersistentString: UsePersistentString = (key, initialValue) => {
+export const usePersistentString: UsePersistentString = (
+  key,
+  initialValue,
+  overwrite
+) => {
   const [value, setValue] = useState<string | undefined>(() => {
+    if (overwrite !== undefined) {
+      return overwrite
+    }
     const fromStorage =
       typeof window === "undefined" ? null : window.localStorage.getItem(key)
     if (fromStorage === null) {
-      return initialValue || undefined
+      return undefined || initialValue
     }
     if (fromStorage === "undefined" || fromStorage === "") {
       return undefined
@@ -258,4 +271,77 @@ export const useEventValue = (setValue: (value: string) => void) =>
 
 export const isServerSide = () => {
   return typeof window === "undefined"
+}
+
+const getRedirectPath = (
+  path: string,
+  version: GAVersion
+): string | undefined => {
+  switch (version) {
+    case GAVersion.UniversalAnalytics: {
+      switch (path) {
+        // If switching to UA, and you're already on a UA demo, do nothing.
+        case "/account-explorer":
+        case "/campaign-url-builder":
+        case "/dimensions-metrics-explorer":
+        case "/enhanced-ecommerce":
+        case "/hit-builder":
+        case "/query-explorer":
+        case "/request-composer":
+        case "/spreadsheet-add-on":
+        case "/tag-assistant":
+          return undefined
+        case "/ga4/event-builder":
+          return "/hit-builder"
+      }
+    }
+    case GAVersion.GoogleAnalytics4: {
+      switch (path) {
+        // If switching to GA4, and you're already on a GA4 demo, do nothing.
+        case "/ga4/event-builder":
+          return undefined
+        case "/hit-builder":
+          return "/ga4/event-builder"
+      }
+    }
+  }
+  return undefined
+}
+
+// TODO - IT might be worth looking into creating a hook that only allows
+// values from an enum.
+export const useGAVersion = (): {
+  gaVersion: GAVersion
+  setGAVersion: (version: GAVersion) => void
+} => {
+  const location = useLocation()
+  const navigate = useNavigate()
+  const [string_, setString] = usePersistentString(
+    StorageKey.gaVersion,
+    GAVersion.UniversalAnalytics
+  )
+  const gaVersion = React.useMemo(() => {
+    switch (string_) {
+      case GAVersion.UniversalAnalytics:
+        return GAVersion.UniversalAnalytics
+      case GAVersion.GoogleAnalytics4:
+        return GAVersion.GoogleAnalytics4
+      default:
+        throw new Error(`Value: ${string_} is not a valid GAVersion.`)
+    }
+  }, [string_])
+
+  const setGAVersion = React.useCallback(
+    (version: GAVersion) => {
+      const redirectPath = getRedirectPath(location.pathname, version)
+      setString(version)
+      if (redirectPath === undefined) {
+        return
+      }
+      navigate(redirectPath)
+    },
+    [setString, location.pathname, navigate]
+  )
+
+  return { gaVersion, setGAVersion }
 }

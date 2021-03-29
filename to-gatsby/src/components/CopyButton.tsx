@@ -38,7 +38,7 @@ interface CopyButtonPropsIconButton extends BaseCopyButtonProps {
 
 interface CopyButtonPropsButton extends BaseCopyButtonProps {
   variant?: "outlined" | "contained"
-  color?: "primary"
+  color?: "primary" | "secondary"
   useIconButton?: undefined
   text: string
   size?: IconButtonProps["size"]

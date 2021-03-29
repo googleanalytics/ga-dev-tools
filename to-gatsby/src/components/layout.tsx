@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import React from "react"
+import React, { useMemo, useEffect } from "react"
 import { makeStyles, Theme, useTheme } from "@material-ui/core/styles"
 import Typography from "@material-ui/core/Typography"
 import Button from "@material-ui/core/Button"
@@ -34,13 +34,19 @@ import { navigate } from "@reach/router"
 import MenuIcon from "@material-ui/icons/Menu"
 
 import Login, { useLogin, UserStatus } from "./Login"
-import { usePageView } from "../hooks"
+import { usePageView, useGAVersion } from "../hooks"
 import Loader from "react-loader-spinner"
+import { Switch, FormControlLabel } from "@material-ui/core"
+import { GAVersion } from "../constants"
+import Info from "./Info"
 
 const mobile = (theme: Theme) => theme.breakpoints.between(0, "sm")
 const notMobile = (theme: Theme) => theme.breakpoints.up("md")
 
 const useStyles = makeStyles<any, { disableNav: true | undefined }>(theme => ({
+  info: {
+    maxWidth: 930,
+  },
   loadingIndicator: {
     display: "flex",
     flexDirection: "column",
@@ -163,9 +169,9 @@ const useStyles = makeStyles<any, { disableNav: true | undefined }>(theme => ({
   home: {
     margin: "unset",
     color: "unset",
-    marginTop: theme.spacing(1),
     display: "flex",
     alignItems: "center",
+    paddingLeft: theme.spacing(2),
     [notMobile(theme)]: {
       "&:hover": {
         color: theme.palette.primary.main,
@@ -208,10 +214,12 @@ interface LayoutProps {
 interface Heading {
   type: "heading"
   text: string
+  versions: GAVersion[]
 }
 
 interface LinkT {
   type: "link"
+  versions: GAVersion[]
   text: string
   href: string
 }
@@ -219,23 +227,88 @@ interface LinkT {
 type LinkData = LinkT | Heading
 
 const linkData: LinkData[] = [
-  { text: "Demos & Tools", type: "heading" },
-  { text: "Account Explorer", href: "/account-explorer/", type: "link" },
-  { text: "Campaign URL Builder", href: "/campaign-url-builder", type: "link" },
+  {
+    text: "Demos & Tools",
+    type: "heading",
+    versions: [GAVersion.GoogleAnalytics4, GAVersion.UniversalAnalytics],
+  },
+  {
+    text: "Account Explorer",
+    href: "/account-explorer/",
+    type: "link",
+    versions: [GAVersion.UniversalAnalytics],
+  },
+  {
+    text: "Campaign URL Builder",
+    href: "/campaign-url-builder",
+    type: "link",
+    versions: [GAVersion.UniversalAnalytics],
+  },
   {
     text: "Dimensions & Metrics Explorer",
     href: "/dimensions-metrics-explorer",
     type: "link",
+    versions: [GAVersion.UniversalAnalytics],
   },
-  { text: "Enhanced Ecommerce", href: "/enhanced-ecommerce", type: "link" },
-  { text: "Hit Builder", href: "/hit-builder", type: "link" },
-  { text: "Query Explorer", href: "/query-explorer", type: "link" },
-  { text: "Request Composer", href: "/request-composer", type: "link" },
-  { text: "Spreadsheet Add-on", href: "/spreadsheet-add-on", type: "link" },
-  { text: "Tag Assistant", href: "/tag-assistant", type: "link" },
-  { text: "Resources", type: "heading" },
-  { text: "About this Site", href: "/#about", type: "link" },
-  { text: "Help & feedback", href: "/#help", type: "link" },
+  {
+    text: "Enhanced Ecommerce",
+    href: "/enhanced-ecommerce",
+    type: "link",
+    versions: [GAVersion.UniversalAnalytics],
+  },
+  {
+    text: "Hit Builder",
+    href: "/hit-builder",
+    type: "link",
+    versions: [GAVersion.UniversalAnalytics],
+  },
+  {
+    text: "Event Builder",
+    href: "/ga4/event-builder",
+    type: "link",
+    versions: [GAVersion.GoogleAnalytics4],
+  },
+  {
+    text: "Query Explorer",
+    href: "/query-explorer",
+    type: "link",
+    versions: [GAVersion.UniversalAnalytics],
+  },
+  {
+    text: "Request Composer",
+    href: "/request-composer",
+    type: "link",
+    versions: [GAVersion.UniversalAnalytics],
+  },
+  {
+    text: "Spreadsheet Add-on",
+    href: "/spreadsheet-add-on",
+    type: "link",
+    versions: [GAVersion.UniversalAnalytics],
+  },
+  {
+    text: "Tag Assistant",
+    href: "/tag-assistant",
+    type: "link",
+    versions: [GAVersion.UniversalAnalytics],
+  },
+  {
+    text: "Resources",
+    type: "heading",
+    versions: [GAVersion.UniversalAnalytics, GAVersion.GoogleAnalytics4],
+  },
+  {
+    text: "About this Site",
+    href: "/#about",
+    type: "link",
+    versions: [GAVersion.UniversalAnalytics, GAVersion.GoogleAnalytics4],
+  },
+  {
+    text: "Help & feedback",
+    href: "/#help",
+    type: "link",
+    versions: [GAVersion.UniversalAnalytics, GAVersion.GoogleAnalytics4],
+  },
 ]
 
 const Layout: React.FC<LayoutProps> = ({
@@ -245,10 +318,17 @@ const Layout: React.FC<LayoutProps> = ({
   requireLogin,
 }) => {
   usePageView()
+  const { gaVersion, setGAVersion } = useGAVersion()
   const theme = useTheme()
   const classes = useStyles({ disableNav })
   const [open, setOpen] = React.useState(false)
   const { userStatus, loginLogout } = useLogin()
+
+  const links = useMemo(() => {
+    return linkData.filter(linkData =>
+      linkData.versions.find(version => version === gaVersion)
+    )
+  }, [gaVersion])
 
   return (
     <div className={classes.root}>
@@ -274,7 +354,7 @@ const Layout: React.FC<LayoutProps> = ({
                 <Home className={classes.homeIcon} /> Home
               </Typography>
             </Link>
-            {linkData.map(linkData => {
+            {links.map(linkData => {
               if (linkData.type === "heading") {
                 return (
                   <Typography
@@ -314,8 +394,25 @@ const Layout: React.FC<LayoutProps> = ({
                 <Home className={classes.homeIcon} /> Home
               </Typography>
             </Link>
+            <FormControlLabel
+              control={
+                <Switch
+                  checked={gaVersion === GAVersion.GoogleAnalytics4}
+                  onChange={e => {
+                    if (e.target.checked === true) {
+                      setGAVersion(GAVersion.GoogleAnalytics4)
+                    } else {
+                      setGAVersion(GAVersion.UniversalAnalytics)
+                    }
+                  }}
+                  name="use GA4"
+                  color="primary"
+                />
+              }
+              label="GA4"
+            />
           </li>
-          {linkData.map(linkData => {
+          {links.map(linkData => {
             if (linkData.type === "heading") {
               return (
                 <li key={linkData.text}>
@@ -354,6 +451,14 @@ const Layout: React.FC<LayoutProps> = ({
           <Typography variant="h1">{title}</Typography>
         </header>
         <div className={classes.contentWrapper}>
+          {gaVersion === GAVersion.GoogleAnalytics4 &&
+            // TODO - Turn this into a proper "warning" component. Probably
+            // already exists somewhere in mui.
+            location.pathname.indexOf("ga4") === -1 && (
+              <Info className={classes.info}>
+                You're viewing a demo for Universal Analytics.
+              </Info>
+            )}
           <section className={classes.content}>
             {!requireLogin || userStatus === UserStatus.SignedIn ? (
               children
