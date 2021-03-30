@@ -396,23 +396,25 @@ const Layout: React.FC<LayoutProps> = ({
                 <Home className={classes.homeIcon} /> Home
               </Typography>
             </Link>
-            <FormControlLabel
-              control={
-                <Switch
-                  checked={gaVersion === GAVersion.GoogleAnalytics4}
-                  onChange={e => {
-                    if (e.target.checked === true) {
-                      setGAVersion(GAVersion.GoogleAnalytics4)
-                    } else {
-                      setGAVersion(GAVersion.UniversalAnalytics)
-                    }
-                  }}
-                  name="use GA4"
-                  color="primary"
-                />
-              }
-              label="GA4"
-            />
+            {pathname === "/" ? null : (
+              <FormControlLabel
+                control={
+                  <Switch
+                    checked={gaVersion === GAVersion.GoogleAnalytics4}
+                    onChange={e => {
+                      if (e.target.checked === true) {
+                        setGAVersion(GAVersion.GoogleAnalytics4)
+                      } else {
+                        setGAVersion(GAVersion.UniversalAnalytics)
+                      }
+                    }}
+                    name="use GA4"
+                    color="primary"
+                  />
+                }
+                label="GA4"
+              />
+            )}
           </li>
           {links.map(linkData => {
             if (linkData.type === "heading") {
