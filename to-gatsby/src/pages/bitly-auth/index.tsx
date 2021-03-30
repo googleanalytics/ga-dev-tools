@@ -19,7 +19,7 @@ const getToken = async (code: string) => {
       "process.env.FUNCTIONS_BASE_URL must be set for this page to work."
     )
   }
-  const apiEndpoint = `${baseEndpoint}bitly_auth`
+  const apiEndpoint = `${baseEndpoint}`
   const response = await fetch(apiEndpoint, {
     method: "POST",
     body: JSON.stringify({
