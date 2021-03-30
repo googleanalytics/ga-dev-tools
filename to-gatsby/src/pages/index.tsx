@@ -44,8 +44,8 @@ const PartnersImage = () => {
   )
 }
 
-const IndexPage: React.FC = () => (
-  <Layout title="Discover the Gooogle Analytics platform">
+const IndexPage = ({ location: { pathname } }) => (
+  <Layout title="Discover the Gooogle Analytics platform" pathname={pathname}>
     <PartnersImage />
     <Typography variant="h2" id="about">
       About This Site

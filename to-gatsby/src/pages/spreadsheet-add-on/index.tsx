@@ -46,9 +46,9 @@ const SpreadsheetImage = () => {
   )
 }
 
-const SpreadsheetAddOn = () => {
+const SpreadsheetAddOn = ({ location: { pathname } }) => {
   return (
-    <Layout title="Spreadsheet Add-on">
+    <Layout title="Spreadsheet Add-on" pathname={pathname}>
       <Typography variant="h2">Overview</Typography>
 
       <Typography variant="body1">

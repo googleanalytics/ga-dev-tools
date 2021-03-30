@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import React, { useMemo, useEffect } from "react"
+import React, { useMemo } from "react"
 import { makeStyles, Theme, useTheme } from "@material-ui/core/styles"
 import Typography from "@material-ui/core/Typography"
 import Button from "@material-ui/core/Button"
@@ -209,6 +209,7 @@ interface LayoutProps {
   requireLogin?: true
   disableNav?: true
   title: string
+  pathname: string
 }
 
 interface Heading {
@@ -316,9 +317,10 @@ const Layout: React.FC<LayoutProps> = ({
   title,
   disableNav,
   requireLogin,
+  pathname,
 }) => {
   usePageView()
-  const { gaVersion, setGAVersion } = useGAVersion()
+  const { gaVersion, setGAVersion } = useGAVersion(pathname)
   const theme = useTheme()
   const classes = useStyles({ disableNav })
   const [open, setOpen] = React.useState(false)
@@ -452,8 +454,8 @@ const Layout: React.FC<LayoutProps> = ({
         </header>
         <div className={classes.contentWrapper}>
           {gaVersion === GAVersion.GoogleAnalytics4 &&
-            location.pathname.indexOf("ga4") === -1 &&
-            location.pathname !== "/" && (
+            pathname.indexOf("ga4") === -1 &&
+            pathname !== "/" && (
               <Info className={classes.info}>
                 You're viewing a demo for Universal Analytics.
               </Info>

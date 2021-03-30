@@ -70,7 +70,7 @@ export const usePersistentBoolean: UsePersistentBoolean = (
       return
     }
     window.localStorage.setItem(key, JSON.stringify({ value }))
-  }, [value])
+  }, [value, key])
 
   return [value, setValue]
 }
@@ -113,7 +113,7 @@ export const usePersistentString: UsePersistentString = (
     } else {
       window.localStorage.setItem(key, JSON.stringify({ value }))
     }
-  }, [value])
+  }, [value, key])
 
   return [value, setValue]
 }
@@ -293,6 +293,8 @@ const getRedirectPath = (
           return undefined
         case "/ga4/event-builder":
           return "/hit-builder"
+        default:
+          return undefined
       }
     }
     case GAVersion.GoogleAnalytics4: {
@@ -308,12 +310,25 @@ const getRedirectPath = (
   return undefined
 }
 
+// TODO - Since SSR and client side render are different evaluations, this
+// could maybe just be a static bool? But this works and I don't want to try to
+// change this right now.
+const useIsSSR = () => {
+  const isSSR = React.useMemo(() => {
+    return typeof window === "undefined"
+  }, [typeof window === "undefined"])
+  return isSSR
+}
+
 // TODO - IT might be worth looking into creating a hook that only allows
 // values from an enum.
-export const useGAVersion = (): {
+export const useGAVersion = (
+  pathname: string
+): {
   gaVersion: GAVersion
   setGAVersion: (version: GAVersion) => void
 } => {
+  const isSSR = useIsSSR()
   const location = useLocation()
   const navigate = useNavigate()
   const [string_, setString] = usePersistentString(
@@ -321,6 +336,13 @@ export const useGAVersion = (): {
     GAVersion.UniversalAnalytics
   )
   const gaVersion = React.useMemo(() => {
+    if (isSSR) {
+      if (pathname.includes("/ga4/")) {
+        return GAVersion.GoogleAnalytics4
+      } else {
+        return GAVersion.UniversalAnalytics
+      }
+    }
     switch (string_) {
       case GAVersion.UniversalAnalytics:
         return GAVersion.UniversalAnalytics
@@ -329,7 +351,7 @@ export const useGAVersion = (): {
       default:
         throw new Error(`Value: ${string_} is not a valid GAVersion.`)
     }
-  }, [string_])
+  }, [string_, isSSR, pathname])
 
   const setGAVersion = React.useCallback(
     (version: GAVersion) => {

@@ -390,9 +390,9 @@ export const QueryExplorer = () => {
   )
 }
 
-const Wrapped = () => {
+const Wrapped = ({ location: { pathname } }) => {
   return (
-    <Layout title="Query Explorer" requireLogin>
+    <Layout title="Query Explorer" requireLogin pathname={pathname}>
       <QueryExplorer />
     </Layout>
   )

@@ -120,10 +120,10 @@ const codeBlocks = [
   { code: ecJsExampleCode, title: "ec.js" },
 ]
 
-const EnhancedEcommerce = () => {
+const EnhancedEcommerce = ({ location: { pathname } }) => {
   const classes = useStyles()
   return (
-    <Layout title="Enhanced Ecommerce">
+    <Layout title="Enhanced Ecommerce" pathname={pathname}>
       <Typography variant="h2">Overview</Typography>
       <Typography variant="body1">
         The {demoStore} is a sample ecommerce application with a complete

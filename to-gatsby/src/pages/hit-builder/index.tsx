@@ -124,16 +124,11 @@ export const HitBuilder: React.FC<HitBuilderProps> = ({ properties }) => {
     </>
   )
 }
-export default () => {
+export default ({ location: { pathname } }) => {
   const { properties } = hooks.useProperties()
   return (
-    <Layout title="Hit Builder" requireLogin>
+    <Layout title="Hit Builder" requireLogin pathname={pathname}>
       <HitBuilder properties={properties} />
     </Layout>
   )
 }
-
-// store.subscribe(() => {
-//   const state = store.getState()
-//   console.log({ state })
-// })

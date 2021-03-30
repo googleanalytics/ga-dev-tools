@@ -333,7 +333,6 @@ const getEventFromParams = (searchParams: URLSearchParams) => {
     try {
       const decoded = atob(eventDataString)
       const eventData = JSON.parse(decoded) as MPEventData
-      console.log({ decoded, eventData })
       const eventType = MPEvent.eventTypeFromString(eventData.type as string)
       if (eventType !== undefined) {
         let emptyEvent = MPEvent.empty(eventType)

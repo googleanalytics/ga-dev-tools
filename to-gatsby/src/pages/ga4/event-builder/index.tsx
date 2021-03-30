@@ -16,9 +16,9 @@ import * as React from "react"
 import EventBuilder from "./_EventBuilder"
 import Layout from "../../../components/layout"
 
-export default () => {
+export default ({ location: { pathname } }) => {
   return (
-    <Layout title="Event Builder" requireLogin>
+    <Layout title="Event Builder" requireLogin pathname={pathname}>
       <EventBuilder />
     </Layout>
   )

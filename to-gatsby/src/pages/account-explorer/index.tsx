@@ -189,9 +189,9 @@ export const AccountExplorer = () => {
   )
 }
 
-export default () => {
+export default ({ location: { pathname } }) => {
   return (
-    <Layout title="Account Explorer" requireLogin>
+    <Layout title="Account Explorer" requireLogin pathname={pathname}>
       <AccountExplorer />
     </Layout>
   )

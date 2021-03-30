@@ -91,9 +91,9 @@ const RequestComposer = () => {
   )
 }
 
-const Wrapper = () => {
+const Wrapper = ({ location: { pathname } }) => {
   return (
-    <Layout title="Request Composer" requireLogin>
+    <Layout title="Request Composer" requireLogin pathname={pathname}>
       <RequestComposer />
     </Layout>
   )

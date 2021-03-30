@@ -18,9 +18,9 @@ import { Url } from "../../constants"
 
 import Layout from "../../components/layout"
 
-const TagAssistant = () => {
+const TagAssistant = ({ location: { pathname } }) => {
   return (
-    <Layout title="Tag Assistant">
+    <Layout title="Tag Assistant" pathname={pathname}>
       <Typography variant="body1">
         Google <a href={Url.tagAssistantExternal}>Tag Assistant</a> is a Chrome
         Extension that helps you validate the tracking code on your website and

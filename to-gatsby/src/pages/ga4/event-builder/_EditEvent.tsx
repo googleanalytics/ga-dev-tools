@@ -24,7 +24,6 @@ const EditEvent: React.FC<EditEventProps> = ({ event, setEvent }) => {
 
   const updateParameters = React.useCallback(
     (update: (old: Parameters) => Parameters): void => {
-      console.log("update parameters")
       setEvent(event.updateParameters(update))
     },
     [parameters, setEvent, event]

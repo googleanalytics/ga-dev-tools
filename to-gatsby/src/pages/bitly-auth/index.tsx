@@ -32,11 +32,10 @@ const getToken = async (code: string) => {
   } else {
     throw new Error(`Error with auth endpoint: ${await response.text()}`)
   }
-
 }
 
 // TODO - Consider adding a settings page for revoking access_tokens.
-export default () => {
+export default ({ location: { pathname } }) => {
   const location = useLocation()
   const params = React.useMemo(() => {
     return new URLSearchParams(location.search)
@@ -63,21 +62,21 @@ export default () => {
 
   if (params.get("code") == null) {
     return (
-      <Layout disableNav title="Bitly Auth">
+      <Layout disableNav title="Bitly Auth" pathname={pathname}>
         <Typography variant="body1">Not found.</Typography>
       </Layout>
     )
   }
 
   return (
-    <Layout disableNav title="Bitly Auth">
+    <Layout disableNav title="Bitly Auth" pathname={pathname}>
       <Typography variant="body1">
         {(apiKey === undefined || apiKey === "") &&
           "Authenticating with bitly..."}
-  {apiKey !== undefined &&
-      apiKey !== "" &&
-      "You have been successfully authenticated with bitly. You may now close this page."}
-    </Typography>
-  </Layout>
-)
+        {apiKey !== undefined &&
+          apiKey !== "" &&
+          "You have been successfully authenticated with bitly. You may now close this page."}
+      </Typography>
+    </Layout>
+  )
 }

@@ -23,7 +23,11 @@ import { usePageView } from "../hooks"
 describe("Layout", () => {
   it("renders correctly", async () => {
     const { findByText } = renderer.render(
-      withProviders(<Layout title="Page Title">Content</Layout>).wrapped
+      withProviders(
+        <Layout title="Page Title" pathname={"/"}>
+          Content
+        </Layout>
+      ).wrapped
     )
     const content = await findByText("Content")
     expect(content).toBeVisible()

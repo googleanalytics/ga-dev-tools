@@ -667,9 +667,9 @@ export const CampaignUrlBuilder = () => {
   )
 }
 
-export default () => {
+export default ({ location: { pathname } }) => {
   return (
-    <Layout title="Campaign URL Builder">
+    <Layout title="Campaign URL Builder" pathname={pathname}>
       <CampaignUrlBuilder />
     </Layout>
   )

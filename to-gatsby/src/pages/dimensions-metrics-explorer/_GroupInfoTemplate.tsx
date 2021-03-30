@@ -114,12 +114,15 @@ const ColumnInfo: React.FC<ColumnProps> = ({
   )
 }
 
-const GroupInfoTemplate: React.FC<GroupInfoTemplateProps> = ({
+const GroupInfoTemplate: React.FC<
+  GroupInfoTemplateProps & { location: { pathname: string } }
+> = ({
   pageContext: { groupName, dimensions, metrics },
+  location: { pathname },
 }) => {
   const classes = useStyles()
   return (
-    <Layout title="Dimensions & Metrics Explorer">
+    <Layout title="Dimensions & Metrics Explorer" pathname={pathname}>
       <Typography variant="h2">
         {groupName} group
         <a href={`#${groupName.replace(" ", "-")}`}>

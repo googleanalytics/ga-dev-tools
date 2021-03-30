@@ -49,9 +49,9 @@ export const Prose = () => {
   )
 }
 
-const Wrapped = () => {
+const Wrapped = ({ location: { pathname } }) => {
   return (
-    <Layout title="Dimensions & Metrics Explorer">
+    <Layout title="Dimensions & Metrics Explorer" pathname={pathname}>
       <Prose />
     </Layout>
   )
