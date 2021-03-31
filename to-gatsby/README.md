@@ -23,13 +23,12 @@ Libraries. **[View the Site]**
 
 - [`Yarn`](https://classic.yarnpkg.com/en/docs/install)
 
-    This site is only tested and developed using yarn.
+  This site is only tested and developed using yarn.
 
 ### Running
 
 To run the site locally, first make sure you have all the dependencies
 installed:
-
 
 ```shell
 yarn
@@ -37,7 +36,7 @@ yarn
 
 Then run the following and answer all prompts:
 
->> All prompts can be skipped.
+> > All prompts can be skipped.
 
 ```shell
 yarn start
@@ -71,7 +70,7 @@ Of note, we use:
 
   Lets us pull in gtag only on the first render of the site. It's mentioned in
   the comment in the code, but we don't typically recommend loading gtag this
-  way.  You should instead use
+  way. You should instead use
   [gatsby-plugin-google-analytics](https://www.gatsbyjs.org/packages/gatsby-plugin-google-analytics/)
 
   The reason we use `onInitialClientRender` is so we can demonstrate how to

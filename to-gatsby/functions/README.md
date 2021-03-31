@@ -4,13 +4,14 @@
 
 1. From the top-level, run the following command:
 
-    ```
-    yarn check-config --all
-    ```
+   ```
+   yarn check-config --all
+   ```
 
-    This will make sure that all required values are deploy correctly. We use
-    [`functions.config()`] to get configuration values that are set from the
-    previous command.
+   This will make sure that all required values are deploy correctly. We use
+   [`functions.config()`] to get configuration values that are set from the
+   previous command.
+
 1. `nvm use 8`
 1. `npm install`
 1. `npm run deploy`
@@ -20,7 +21,7 @@
 ## Run locally
 
 1. `nvm use 8`
-    Use nvm to switch your current version of node to the same one in the
-    `engines` section of `package.json`.
+   Use nvm to switch your current version of node to the same one in the
+   `engines` section of `package.json`.
 1. `npm install`
 1. `npm run serve`
