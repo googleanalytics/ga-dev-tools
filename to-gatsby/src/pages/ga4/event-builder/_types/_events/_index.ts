@@ -1,4 +1,4 @@
-import { Parameters, SuggestedParameters, Parameter } from "./_parameters"
+import { SuggestedParameters, Parameter } from "./_parameters"
 import { AllAppsEvent } from "./_all-apps"
 import { RetailEcommerceEvent } from "./_retail-ecommerce"
 import { GamesEvent } from "./_games"

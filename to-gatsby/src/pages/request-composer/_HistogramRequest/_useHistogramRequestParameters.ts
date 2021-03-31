@@ -1,5 +1,5 @@
 import { HasView } from "../../../components/ViewSelector"
-import { useState, useEffect, useMemo } from "react"
+import { useState, useMemo } from "react"
 import { Column, Segment, SamplingLevel } from "../_api"
 import { StorageKey } from "../../../constants"
 import { usePersistentString } from "../../../hooks"

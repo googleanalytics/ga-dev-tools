@@ -48,7 +48,6 @@ interface EditItemProps {
 }
 
 const EditItem: React.FC<EditItemProps> = ({ item, updateItem }) => {
-  const classes = useStyles()
   const parameters = React.useMemo<Parameter[]>(() => item.parameters, [item])
   const updateParameters = React.useCallback(
     update => {

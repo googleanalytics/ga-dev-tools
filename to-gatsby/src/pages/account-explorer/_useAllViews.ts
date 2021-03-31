@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react"
-import { getAnalyticsApi } from "../../api"
 import { useSelector } from "react-redux"
 
 type AccountSummary = gapi.client.analytics.AccountSummary

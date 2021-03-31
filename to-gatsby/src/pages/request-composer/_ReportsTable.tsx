@@ -13,15 +13,11 @@ import {
   Tabs,
   Tab,
   Box,
-  Accordion,
-  AccordionSummary,
-  AccordionDetails,
 } from "@material-ui/core"
 
 import "react-loader-spinner/dist/loader/css/react-spinner-loader.css"
 import Loader from "react-loader-spinner"
 import PrettyJson, { shouldCollapseResponse } from "./_PrettyJson"
-import { ExpandMore } from "@material-ui/icons"
 
 const useStyles = makeStyles(theme => ({
   loadingIndicator: {

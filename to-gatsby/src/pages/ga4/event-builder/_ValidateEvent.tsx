@@ -12,10 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-/* global $ */
-
 import React, { useMemo } from "react"
-// import Textarea from "react-textarea-autosize"
 import {
   ValidationMessage,
   MPEvent,

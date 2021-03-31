@@ -1,5 +1,4 @@
 import * as React from "react"
-import { useSelector } from "react-redux"
 import { useLocation, useNavigate } from "@reach/router"
 import { StorageKey, GAVersion } from "./constants"
 import { useState, useEffect } from "react"

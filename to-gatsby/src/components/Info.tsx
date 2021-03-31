@@ -1,5 +1,5 @@
 import * as React from "react"
-import { Paper, useTheme, makeStyles } from "@material-ui/core"
+import { Paper, makeStyles } from "@material-ui/core"
 import classnames from "classnames"
 import { Info as InfoIcon } from "@material-ui/icons"
 import blue from "@material-ui/core/colors/lightBlue"
@@ -26,7 +26,6 @@ const useStyles = makeStyles(theme => ({
 
 const Info: React.FC<InfoProps> = ({ children, className }) => {
   const classes = useStyles()
-  const theme = useTheme()
 
   return (
     <Paper className={classnames(classes.info, className)}>

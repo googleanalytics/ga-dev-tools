@@ -467,7 +467,7 @@ export const parameterizedUrlFor = ({
   }
 
   const urlParams = params.toString()
-  const { protocol, host, pathname } = location
+  const { protocol, host, pathname } = window.location
 
   return `${protocol}//${host}${pathname}?${urlParams}`
 }

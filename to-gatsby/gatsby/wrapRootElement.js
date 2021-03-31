@@ -4,7 +4,6 @@ import { ThemeProvider } from "@material-ui/core"
 import { createMuiTheme, withStyles } from "@material-ui/core/styles"
 import orange from "@material-ui/core/colors/orange"
 import deepOrange from "@material-ui/core/colors/deepOrange"
-import blue from "@material-ui/core/colors/deepOrange"
 import { Provider as ReduxProvider } from "react-redux"
 import { createStore } from "redux"
 

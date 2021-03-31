@@ -22,7 +22,7 @@ import { CUBES_BY_COLUMN_NAME, CUBE_NAMES, CubesByColumnName } from "./_cubes"
 import Button from "@material-ui/core/Button"
 import Checkbox from "@material-ui/core/Checkbox"
 import FormControlLabel from "@material-ui/core/FormControlLabel"
-import { RemoveCircle, AddCircle, Info, Remove } from "@material-ui/icons"
+import { RemoveCircle, AddCircle, Info } from "@material-ui/icons"
 
 import { Typography, makeStyles, IconButton, Tooltip } from "@material-ui/core"
 import LinkIcon from "@material-ui/icons/Link"
