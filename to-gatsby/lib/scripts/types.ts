@@ -7,7 +7,6 @@ export const DotEnvDevelopmentPath = path.join(PWD, ".env.development")
 export const DotEnvProductionPath = path.join(PWD, ".env.production")
 
 interface CommonConfig {
-  gaMeasurementId: string
   firebaseProjectId: string
   firebaseProjectIdFunctions: string
   firebaseFunctionsBaseUrl: string
@@ -22,8 +21,6 @@ export interface DevelopmentConfig extends CommonConfig {}
 
 export interface ConfigAnswers {
   baseUriProd: string
-  gaMeasurementIdProd: string
-  gaMeasurementIdDev: string
   firebaseProjectIdProd: string
   firebaseProjectIdDev: string
   // TODO - This field should eventually be removed, but is currently in place

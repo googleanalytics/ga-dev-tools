@@ -18,7 +18,6 @@ import "@testing-library/jest-dom"
 import { withProviders } from "../test-utils"
 
 import Layout from "./layout"
-import { usePageView } from "../hooks"
 
 describe("Layout", () => {
   it("renders correctly", async () => {
@@ -31,63 +30,5 @@ describe("Layout", () => {
     )
     const content = await findByText("Content")
     expect(content).toBeVisible()
-  })
-})
-
-// TODO - move this to hooks.spec.ts
-describe("usePageView hook", () => {
-  const TestComponent: React.FC = () => {
-    usePageView()
-    return <>Hi</>
-  }
-
-  describe("when gtag is undefined", () => {
-    test("and stays that does nothing", () => {
-      const { wrapped, store } = withProviders(<TestComponent />)
-      store.dispatch({ type: "setGtag", gtag: undefined })
-      renderer.render(wrapped)
-    })
-    test("but is defined later makes a pageView", () => {
-      const gtag = jest.fn()
-      const pathOverride = "/hello"
-      const { wrapped, store } = withProviders(<TestComponent />, {
-        path: pathOverride,
-        measurementID: "abc",
-      })
-
-      renderer.render(wrapped)
-      renderer.act(() => {
-        store.dispatch({ type: "setGtag", gtag: gtag })
-      })
-
-      const gtagCalls = gtag.mock.calls
-      expect(gtagCalls).toHaveLength(1)
-      expect(gtagCalls[0]).toEqual([
-        "config",
-        "abc",
-        { page_path: pathOverride },
-      ])
-    })
-  })
-  describe("when gtag is defined", () => {
-    test("and user navigates to page", async () => {
-      const path1 = "/hello"
-      const path2 = "/second"
-      const gtag = jest.fn()
-      const { wrapped, store, history } = withProviders(<TestComponent />, {
-        path: path1,
-        measurementID: "abc",
-      })
-      store.dispatch({ type: "setGtag", gtag: gtag })
-      renderer.render(wrapped)
-      await renderer.act(async () => {
-        // Navigate to another page
-        await history.navigate(path2)
-      })
-      const gtagCalls = gtag.mock.calls
-      expect(gtagCalls).toHaveLength(2)
-      expect(gtagCalls[0]).toEqual(["config", "abc", { page_path: path1 }])
-      expect(gtagCalls[1]).toEqual(["config", "abc", { page_path: path2 }])
-    })
   })
 })

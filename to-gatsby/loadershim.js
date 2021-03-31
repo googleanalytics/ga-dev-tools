@@ -25,5 +25,3 @@ global.document.createRange = () => ({
     ownerDocument: document,
   },
 })
-
-process.env.GATSBY_GA_MEASUREMENT_ID = "test-ga-id"

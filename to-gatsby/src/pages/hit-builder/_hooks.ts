@@ -19,7 +19,6 @@ import * as hitUtils from "./_hit"
 import { useSelector } from "react-redux"
 import { getAnalyticsApi } from "../../api"
 import { useLocation, useNavigate } from "@reach/router"
-import { useSendEvent } from "../../hooks"
 
 const formatMessage = (message: {
   parameter: any
@@ -54,7 +53,6 @@ export type Validation = {
 }
 type UseValidationServer = (parameters: Params) => Validation
 export const useValidationServer: UseValidationServer = parameters => {
-  const sendEvent = useSendEvent()
   const [hitStatus, setHitStatus] = React.useState(HitStatus.Unvalidated)
 
   React.useEffect(() => {
@@ -82,25 +80,12 @@ export const useValidationServer: UseValidationServer = parameters => {
         setValidationMessages(validationMessages.map(formatMessage))
         if (result.valid) {
           setHitStatus(HitStatus.Valid)
-          sendEvent("validate", {
-            event_category: "Hit Builder",
-            event_label: "valid",
-          })
         } else {
           setHitStatus(HitStatus.Invalid)
-          sendEvent("validate", {
-            event_category: "Hit Builder",
-            event_label: "invalid",
-          })
         }
       })
-    } catch (e) {
-      sendEvent("validate", {
-        event_category: "Hit Builder",
-        event_label: "error",
-      })
-    }
-  }, [parameters, sendEvent])
+    } catch (e) {}
+  }, [parameters])
 
   const sendHit = React.useCallback(async () => {
     setHitStatus(HitStatus.Sending)
@@ -113,11 +98,7 @@ export const useValidationServer: UseValidationServer = parameters => {
       }),
     ])
     setHitStatus(HitStatus.Sent)
-    sendEvent("validate", {
-      event_category: "Hit Builder",
-      event_label: "sent hit through tool",
-    })
-  }, [parameters, sendEvent])
+  }, [parameters])
 
   return { validationMessages, validateHit, hitStatus, sendHit }
 }

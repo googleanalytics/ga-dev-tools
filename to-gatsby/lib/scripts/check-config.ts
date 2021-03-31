@@ -43,17 +43,11 @@ const writeEnvFile = async ({ file, config }: WriteEnvArgs) => {
     config.bitlyClientId === SKIP_QUESTION
       ? undefined
       : `BITLY_CLIENT_ID=${config.bitlyClientId}`
-  const measurementIdLine =
-    config.gaMeasurementId === SKIP_QUESTION
-      ? undefined
-      : `GA_MEASUREMENT_ID=${config.gaMeasurementId}`
   const firebaseFunctionsBaseUrlLine = `FUNCTIONS_BASE_URL=${config.firebaseFunctionsBaseUrl}`
 
   fs.writeFileSync(
     path,
-    [gapiLine, bitlyLine, measurementIdLine, firebaseFunctionsBaseUrlLine].join(
-      "\n"
-    ),
+    [gapiLine, bitlyLine, firebaseFunctionsBaseUrlLine].join("\n"),
     {
       encoding: Encoding,
     }
@@ -176,32 +170,6 @@ const configQuestions = (
       default: filter?.production?.baseUri || SKIP_QUESTION,
       when: () => {
         return filter.askAll || filter?.production?.baseUri === undefined
-      },
-    },
-    {
-      name: "gaMeasurementIdProd",
-      // TODO - Nice to have, list the user's available properties. Would
-      // require the user to authenticate first to make the request.
-      type: "input",
-      message: "Google Analytics measurement ID for production: ",
-      default: filter?.production?.gaMeasurementId || SKIP_QUESTION,
-      when: () => {
-        return (
-          filter.askAll || filter?.production?.gaMeasurementId === undefined
-        )
-      },
-    },
-    {
-      name: "gaMeasurementIdDev",
-      // TODO - Nice to have, list the user's available properties. Would
-      // require the user to authenticate first to make the request.
-      type: "input",
-      message: "Google Analytics measurement ID for development: ",
-      default: filter?.development?.gaMeasurementId || SKIP_QUESTION,
-      when: () => {
-        return (
-          filter.askAll || filter?.development?.gaMeasurementId === undefined
-        )
       },
     },
     {
@@ -360,9 +328,6 @@ const toRuntimeJson = (
       answers.baseUriProd ||
       currentConfig?.production?.baseUri ||
       "http://localhost:5000",
-    gaMeasurementId: throwIfUndefined(
-      answers.gaMeasurementIdProd || currentConfig?.production?.gaMeasurementId
-    ),
     firebaseProjectId: throwIfUndefined(
       answers.firebaseProjectIdProd ||
         currentConfig?.production?.firebaseProjectId
@@ -393,9 +358,6 @@ const toRuntimeJson = (
   const development: DevelopmentConfig = {
     // TODO - This could be a bit smarter. Especially if we support changing the port.
     baseUri: currentConfig?.development?.baseUri || "http://localhost:5000",
-    gaMeasurementId: throwIfUndefined(
-      answers.gaMeasurementIdDev || currentConfig?.development?.gaMeasurementId
-    ),
     firebaseProjectId: throwIfUndefined(
       answers.firebaseProjectIdDev ||
         currentConfig?.development?.firebaseProjectId
@@ -440,10 +402,6 @@ const assertAllValues = (runtimeJson: RuntimeJson): RuntimeJson => {
     throw new Error("Missing the development gapiClientId")
   }
 
-  if (runtimeJson.development.gaMeasurementId === undefined) {
-    throw new Error("Missing the development gaMeasurementId")
-  }
-
   if (runtimeJson.development.firebaseProjectId === undefined) {
     throw new Error("Missing the development firebaseProjectId")
   }
@@ -458,10 +416,6 @@ const assertAllValues = (runtimeJson: RuntimeJson): RuntimeJson => {
 
   if (runtimeJson.production.gapiClientId === undefined) {
     throw new Error("Missing the production gapiClientId")
-  }
-
-  if (runtimeJson.production.gaMeasurementId === undefined) {
-    throw new Error("Missing the production gaMeasurementId")
   }
 
   if (runtimeJson.production.firebaseProjectId === undefined) {

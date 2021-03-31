@@ -34,7 +34,7 @@ import { navigate } from "@reach/router"
 import MenuIcon from "@material-ui/icons/Menu"
 
 import Login, { useLogin, UserStatus } from "./Login"
-import { usePageView, useGAVersion } from "../hooks"
+import { useGAVersion } from "../hooks"
 import Loader from "react-loader-spinner"
 import { Switch, FormControlLabel } from "@material-ui/core"
 import { GAVersion } from "../constants"
@@ -319,7 +319,6 @@ const Layout: React.FC<LayoutProps> = ({
   requireLogin,
   pathname,
 }) => {
-  usePageView()
   const { gaVersion, setGAVersion } = useGAVersion(pathname)
   const theme = useTheme()
   const classes = useStyles({ disableNav })
