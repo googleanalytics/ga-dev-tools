@@ -88,7 +88,7 @@ const MetricExpression: React.FC<MetricExpressionRequestProps> = ({
 
   useEffect(() => {
     setRequestObject(requestObject)
-  }, [requestObject])
+  }, [requestObject, setRequestObject])
 
   return (
     <>

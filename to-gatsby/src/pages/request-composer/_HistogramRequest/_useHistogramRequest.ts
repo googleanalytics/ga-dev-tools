@@ -87,6 +87,7 @@ const useHistogramRequest = ({
     endDate,
     filtersExpression,
     selectedSegment,
+    samplingLevel,
   ])
 
   return histogramRequestObject

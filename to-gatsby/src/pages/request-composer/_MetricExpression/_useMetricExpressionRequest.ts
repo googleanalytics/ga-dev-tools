@@ -121,6 +121,7 @@ const useMetricExpressionRequest = ({
     selectedSegment,
     pageToken,
     pageSize,
+    metricAliases,
   ])
 
   return metricExpressionRequestObject

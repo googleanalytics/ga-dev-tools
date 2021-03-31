@@ -96,7 +96,7 @@ const EditArrayParameter: React.FC<EditItemArrayParameterProps> = ({
     if (localValues !== items.value) {
       updateParameter({ ...items, value: localValues })
     }
-  }, [localValues])
+  }, [localValues, items, updateParameter])
 
   const addItem = React.useCallback(() => {
     setLocalValues(old => {
@@ -104,7 +104,7 @@ const EditArrayParameter: React.FC<EditItemArrayParameterProps> = ({
       updateParameter({ ...items, value: nu })
       return nu
     })
-  }, [updateParameter])
+  }, [updateParameter, items])
 
   const removeItem = React.useCallback(
     (idx: number) => () => {

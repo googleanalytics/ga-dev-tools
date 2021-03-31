@@ -85,7 +85,7 @@ const HistogramRequest: React.FC<HistogramRequestProps> = ({
 
   useEffect(() => {
     setRequestObject(requestObject)
-  }, [requestObject])
+  }, [requestObject, setRequestObject])
 
   const { dimensions, metrics } = useDimensionsAndMetrics()
   const segments = useSegments()

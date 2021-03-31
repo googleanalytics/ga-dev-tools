@@ -19,7 +19,7 @@ const EditOptionalStringParameter: React.FC<EditOptionalStringParameterProps> = 
     if (localValue !== parameter.value) {
       updateParameter({ ...parameter, value: localValue })
     }
-  }, [localValue])
+  }, [localValue, parameter, updateParameter])
 
   return (
     <TextField

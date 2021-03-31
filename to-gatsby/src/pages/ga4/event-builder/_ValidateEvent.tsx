@@ -179,7 +179,7 @@ const ValidationStatus: React.FC<{
           </>,
         ]
     }
-  }, [validationStatus])
+  }, [validationStatus, validationMessages])
 
   return (
     <section className={className}>
@@ -231,7 +231,7 @@ const EventActions: React.FC<ValidateEventProps> = props => {
     }).then(() => {
       setEventSent(false)
     })
-  }, [payload])
+  }, [sendEvent])
 
   if (validationStatus !== ValidationStatusT.Valid) {
     return (

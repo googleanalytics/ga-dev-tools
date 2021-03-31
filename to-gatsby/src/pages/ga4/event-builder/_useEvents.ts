@@ -150,19 +150,15 @@ const useEvents: UseEvents = () => {
     client_id,
     user_id,
     app_instance_id,
-    measurement_id,
     event,
     timestamp_micros,
     non_personalized_ads,
     user_properties,
   ])
 
-  const updateCustomEventName = useCallback(
-    (name: string) => {
-      setEvent(event => event.updateName(name))
-    },
-    [event]
-  )
+  const updateCustomEventName = useCallback((name: string) => {
+    setEvent(event => event.updateName(name))
+  }, [])
 
   const updateEventCategory = useCallback(
     (value: MPEventCategory) => {

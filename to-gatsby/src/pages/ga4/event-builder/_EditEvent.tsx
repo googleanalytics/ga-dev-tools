@@ -1,11 +1,6 @@
 import React from "react"
 import ParameterList from "./_ParameterList"
-import {
-  MPEvent,
-  Parameter,
-  Parameters,
-  defaultStringParam,
-} from "./_types/_index"
+import { MPEvent, Parameters, defaultStringParam } from "./_types/_index"
 import { Typography } from "@material-ui/core"
 
 interface EditEventProps {
@@ -14,19 +9,17 @@ interface EditEventProps {
 }
 
 const EditEvent: React.FC<EditEventProps> = ({ event, setEvent }) => {
-  const parameters = React.useMemo<Parameter[]>(() => event.getParameters(), [
-    event.getParameters(),
-  ])
+  const parameters = event.getParameters()
 
   const defaultEventParameters = React.useMemo(() => {
     return MPEvent.empty(event.getEventType()).getParameters()
-  }, [event.getEventType()])
+  }, [event])
 
   const updateParameters = React.useCallback(
     (update: (old: Parameters) => Parameters): void => {
       setEvent(event.updateParameters(update))
     },
-    [parameters, setEvent, event]
+    [setEvent, event]
   )
 
   const addParameter = React.useCallback(() => {

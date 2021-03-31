@@ -98,7 +98,7 @@ const PivotRequest: React.FC<PivotRequestProps> = ({
 
   useEffect(() => {
     setRequestObject(requestObject)
-  }, [requestObject])
+  }, [requestObject, setRequestObject])
 
   return (
     <>

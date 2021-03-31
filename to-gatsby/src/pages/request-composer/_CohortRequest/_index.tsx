@@ -70,7 +70,7 @@ const CohortRequest: React.FC<CohortRequestProps> = ({
 
   useEffect(() => {
     setRequestObject(requestObject)
-  }, [requestObject])
+  }, [requestObject, setRequestObject])
 
   return (
     <>

@@ -42,7 +42,7 @@ const Parameters: React.FC<ParameterListProps> = ({
     (parameter: Parameter) => () => {
       updateParameters(old => old.filter(p => p.name !== parameter.name))
     },
-    [updateParameters, addParameter]
+    [updateParameters]
   )
 
   return (
