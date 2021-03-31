@@ -313,7 +313,7 @@ const getRedirectPath = (
 // TODO - Since SSR and client side render are different evaluations, this
 // could maybe just be a static bool? But this works and I don't want to try to
 // change this right now.
-const useIsSSR = () => {
+export const useIsSSR = () => {
   const isSSR = React.useMemo(() => {
     return typeof window === "undefined"
   }, [typeof window === "undefined"])

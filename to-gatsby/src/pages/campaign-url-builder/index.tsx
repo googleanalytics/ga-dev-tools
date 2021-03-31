@@ -34,7 +34,7 @@ import Layout from "../../components/layout"
 import CopyButton from "../../components/CopyButton"
 import useShortenLink from "./_useShortenLink"
 import { extractParamsFromWebsiteUrl, websiteUrlFor } from "./_params"
-import { usePersistentString, usePersistentBoolean } from "../../hooks"
+import { usePersistentString, usePersistentBoolean, useIsSSR } from "../../hooks"
 
 const iosCampaignTracking = (
   <a href={Url.iosCampaignTracking}>iOS Campaign Tracking URL Builder</a>
@@ -441,6 +441,7 @@ export const CampaignUrlBuilder = () => {
     },
     [setCampaign, setMedium, setSource, setTerm, setContent, setWebsiteUrl]
   )
+  const isSSR = useIsSSR();
 
   return (
     <>
@@ -451,32 +452,33 @@ export const CampaignUrlBuilder = () => {
       <Typography variant="h3">
         Enter the website URL and campaign information
       </Typography>
-      <section className={classes.inputs}>
-        <TextField
-          id="website-url"
-          required
-          value={websiteUrl || ""}
-          onChange={onWebsiteChange}
-          label="Website URL"
-          size="small"
-          variant="outlined"
-          helperText={
-            <span>
-              The full website URL (e.g.{" "}
-              <span className={classes.bold}>https://www.example.com</span>)
-            </span>
-          }
-        />
-        <TextField
-          id="campaign-source"
-          required
-          value={source || ""}
-          onChange={e => setSource(e.target.value)}
-          label="Campaign Source"
-          size="small"
-          variant="outlined"
-          helperText={
-            <span>
+      {isSSR ? null :
+        <section className={classes.inputs}>
+          <TextField
+            id="website-url"
+            required
+            value={websiteUrl || ""}
+            onChange={onWebsiteChange}
+            label="Website URL"
+            size="small"
+            variant="outlined"
+            helperText={
+              <span>
+                The full website URL (e.g.{" "}
+                <span className={classes.bold}>https://www.example.com</span>)
+              </span>
+            }
+          />
+          <TextField
+            id="campaign-source"
+            required
+            value={source || ""}
+            onChange={e => setSource(e.target.value)}
+            label="Campaign Source"
+            size="small"
+            variant="outlined"
+            helperText={
+              <span>
               The referrer (e.g. <span className={classes.bold}>google</span>,{" "}
               <span className={classes.bold}>newsletter</span>)
             </span>
@@ -492,8 +494,8 @@ export const CampaignUrlBuilder = () => {
           variant="outlined"
           helperText={
             <span>
-              Marketing medium (e.g. <span className={classes.bold}>cpc</span>,{" "}
-              <span className={classes.bold}>banner</span>,{" "}
+            Marketing medium (e.g. <span className={classes.bold}>cpc</span>,{" "}
+            <span className={classes.bold}>banner</span>,{" "}
               <span className={classes.bold}>email</span>)
             </span>
           }
@@ -532,6 +534,7 @@ export const CampaignUrlBuilder = () => {
           helperText="Use to differentiate ads"
         />
       </section>
+    }
 
       <GeneratedUrl
         source={source || ""}
