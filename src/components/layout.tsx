@@ -13,7 +13,7 @@
 // limitations under the License.
 
 import React, { useMemo } from "react"
-import { makeStyles, Theme, useTheme } from "@material-ui/core/styles"
+import { makeStyles, Theme } from "@material-ui/core/styles"
 import Typography from "@material-ui/core/Typography"
 import Button from "@material-ui/core/Button"
 import { Link } from "gatsby"
@@ -35,10 +35,10 @@ import MenuIcon from "@material-ui/icons/Menu"
 
 import Login, { useLogin, UserStatus } from "./Login"
 import { useGAVersion } from "../hooks"
-import Loader from "react-loader-spinner"
 import { Switch, FormControlLabel } from "@material-ui/core"
 import { GAVersion } from "../constants"
 import Info from "./Info"
+import Spinner from "./Spinner"
 
 const mobile = (theme: Theme) => theme.breakpoints.between(0, "sm")
 const notMobile = (theme: Theme) => theme.breakpoints.up("md")
@@ -320,7 +320,6 @@ const Layout: React.FC<LayoutProps> = ({
   pathname,
 }) => {
   const { gaVersion, setGAVersion } = useGAVersion(pathname)
-  const theme = useTheme()
   const classes = useStyles({ disableNav })
   const [open, setOpen] = React.useState(false)
   const { userStatus, loginLogout } = useLogin()
@@ -478,10 +477,9 @@ const Layout: React.FC<LayoutProps> = ({
                 </Button>
               </div>
             ) : (
-              <section className={classes.loadingIndicator}>
-                <Typography>Checking if you're logged in...</Typography>
-                <Loader type="Circles" color={theme.palette.primary.main} />
-              </section>
+              <Spinner>
+                <Typography>Checking if you're logged in&hellip;</Typography>
+              </Spinner>
             )}
           </section>
         </div>

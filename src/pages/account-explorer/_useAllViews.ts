@@ -13,42 +13,43 @@ export interface FlattenedView {
   view: View
 }
 
-const useAllViews = () => {
+export type Views = "pending" | "not-started" | FlattenedView[]
+
+const useAllViews = (): Views => {
   const gapi = useSelector((state: AppState) => state.gapi)
   const user = useSelector((state: AppState) => state.user)
 
-  const [flattenedViews, setFlattenedViews] = useState<FlattenedView[]>([])
+  const [flattenedViews, setFlattenedViews] = useState<Views>("not-started")
 
   useEffect(() => {
-    if (user === undefined) {
+    if (user === undefined || gapi === undefined) {
       return
     }
-    if (gapi !== undefined) {
-      ;(async () => {
-        const apiResponse = await gapi.client.analytics.management.accountSummaries.list(
-          {}
-        )
-        const summaries: AccountSummary[] = apiResponse.result.items || []
-        const flattenedViews: FlattenedView[] = summaries.flatMap(summary => {
-          const account = { ...summary }
-          delete account.webProperties
+    ;(async () => {
+      setFlattenedViews("pending")
+      const apiResponse = await gapi.client.analytics.management.accountSummaries.list(
+        {}
+      )
+      const summaries: AccountSummary[] = apiResponse.result.items || []
+      const flattenedViews: FlattenedView[] = summaries.flatMap(summary => {
+        const account = { ...summary }
+        delete account.webProperties
 
-          const properties = summary.webProperties || []
-          return properties.flatMap(propertySummary => {
-            const property = { ...propertySummary }
-            delete property.profiles
+        const properties = summary.webProperties || []
+        return properties.flatMap(propertySummary => {
+          const property = { ...propertySummary }
+          delete property.profiles
 
-            const profiles = propertySummary.profiles || []
-            return profiles.map(profile => ({
-              view: profile,
-              property,
-              account,
-            }))
-          })
+          const profiles = propertySummary.profiles || []
+          return profiles.map(profile => ({
+            view: profile,
+            property,
+            account,
+          }))
         })
-        setFlattenedViews(flattenedViews)
-      })()
-    }
+      })
+      setFlattenedViews(flattenedViews)
+    })()
   }, [user, gapi])
 
   return flattenedViews

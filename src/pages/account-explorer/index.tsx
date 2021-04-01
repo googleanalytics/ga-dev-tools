@@ -23,7 +23,7 @@ import ViewSelector, { HasView } from "../../components/ViewSelector"
 import { useDebounce } from "use-debounce"
 
 import ViewsTable from "./_ViewTable"
-import useAllViews from "./_useAllViews"
+import useAllViews, { Views } from "./_useAllViews"
 
 const useStyles = makeStyles(theme => ({
   viewSelector: {
@@ -103,40 +103,34 @@ export const AccountExplorer = () => {
   const [debouncedQuery] = useDebounce(searchQuery, 100, { trailing: true })
   const [selectedView, setSelectedView] = React.useState<Partial<HasView>>({})
   const allViews = useAllViews()
-  const [filteredViews, setFilteredViews] = React.useState<HasView[]>([])
 
-  // Whenever the selected view changes, if it is defined, the search should be
-  // cleared & the table views set to the newly selected view.
-  React.useEffect(() => {
+  const filteredViews = React.useMemo<Views>(() => {
     if (populatedView(selectedView) !== undefined) {
-      setFilteredViews([populatedView(selectedView)!])
-      setSearchQuery("")
+      return [populatedView(selectedView)!]
     }
-    // If account or property is selected filter out views to only views with that property and view.
-    const filtered = allViews
-      .filter(view =>
-        selectedView.account !== undefined
-          ? selectedView.account.id === view.account.id
-          : true
-      )
-      .filter(view =>
-        selectedView.property !== undefined
-          ? selectedView.property.id === view.property.id
-          : true
-      )
-    setFilteredViews(filtered)
-  }, [selectedView, allViews])
-
-  // When there is a search query, the views for the table should be the
-  // filtered list. When there is no query, the value should be reset to the value
-  // selected in the ViewSelector (if present)
-  React.useEffect(() => {
-    if (debouncedQuery !== "") {
-      setFilteredViews(viewsForSearch(debouncedQuery, allViews))
-    } else if (populatedView(selectedView) !== undefined) {
-      setFilteredViews([populatedView(selectedView)!])
+    // If allViews is defined
+    if (Array.isArray(allViews)) {
+      // If account or property is selected filter out views to only views with that property and view.
+      const filtered = allViews
+        .filter(view =>
+          selectedView.account !== undefined
+            ? selectedView.account.id === view.account.id
+            : true
+        )
+        .filter(view =>
+          selectedView.property !== undefined
+            ? selectedView.property.id === view.property.id
+            : true
+        )
+      // If there is a search, it should take priority
+      if (debouncedQuery !== "") {
+        return viewsForSearch(debouncedQuery, filtered)
+      }
+      return filtered
+    } else {
+      return allViews
     }
-  }, [debouncedQuery, allViews, selectedView])
+  }, [allViews, selectedView, debouncedQuery])
 
   const onViewChanged = React.useCallback(
     viewData => {

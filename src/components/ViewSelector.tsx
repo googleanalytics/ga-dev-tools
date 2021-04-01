@@ -155,7 +155,11 @@ const useViewSelector: UseViewSelector = () => {
         },
       }))
       setProperty(property)
-      setSelectedView(undefined)
+      if (property?.profiles?.length === 1) {
+        setSelectedView(property.profiles[0])
+      } else {
+        setSelectedView(undefined)
+      }
     },
     [user, setLocalData, setSelectedView]
   )
@@ -173,10 +177,12 @@ const useViewSelector: UseViewSelector = () => {
         },
       }))
       setAccount(account)
-      // Since this is only called from the controls, it is always good to
-      // clear the other options here.
-      setSelectedProperty(undefined)
-      setSelectedView(undefined)
+      if (account?.webProperties?.length === 1) {
+        setSelectedProperty(account.webProperties[0])
+      } else {
+        setSelectedProperty(undefined)
+        setSelectedView(undefined)
+      }
     },
     [user, setLocalData, setSelectedProperty, setSelectedView]
   )

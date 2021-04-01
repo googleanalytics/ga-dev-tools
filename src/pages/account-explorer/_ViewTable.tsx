@@ -6,9 +6,11 @@ import TableCell from "@material-ui/core/TableCell"
 import TableHead from "@material-ui/core/TableHead"
 import TableRow from "@material-ui/core/TableRow"
 
-import { HasView } from "../../components/ViewSelector"
 import { CopyIconButton } from "../../components/CopyButton"
 import HighlightText from "./_HighlightText"
+import { Views } from "./_useAllViews"
+import Spinner from "../../components/Spinner"
+import { Typography } from "@material-ui/core"
 
 const useStyles = makeStyles(theme => ({
   id: {
@@ -31,7 +33,7 @@ const useStyles = makeStyles(theme => ({
 }))
 
 interface ViewTableProps {
-  views: HasView[]
+  views: Views
   className?: string
   search?: string
 }
@@ -95,94 +97,104 @@ const ViewsTable: React.FC<ViewTableProps> = ({ views, className, search }) => {
         </TableRow>
       </TableHead>
       <TableBody>
+        {Array.isArray(views) ? (
+          views.map(populated => {
+            const { account, property, view } = populated
+            const viewUrl = `https://analytics.google.com/analytics/web/#/report/vistors-overview/a${account.id}w${property.internalWebPropertyId}p${view.id}`
+            return (
+              <TableRow
+                key={`${populated.account.name}-${populated.property.name}-${populated.view.name}`}
+              >
+                <ViewCell
+                  textToCopy={account.id || ""}
+                  copyToolTip="Copy account ID"
+                  firstRow={
+                    <HighlightText
+                      className={classes.mark}
+                      search={search}
+                      text={textClamp(account.name || "", maxCellWidth)}
+                    />
+                  }
+                  secondRow={
+                    <HighlightText
+                      className={classes.mark}
+                      search={search}
+                      text={account.id || ""}
+                    />
+                  }
+                />
+                <ViewCell
+                  textToCopy={property.id || ""}
+                  copyToolTip="Copy property ID"
+                  firstRow={
+                    <HighlightText
+                      className={classes.mark}
+                      search={search}
+                      text={textClamp(property.name || "", maxCellWidth)}
+                    />
+                  }
+                  secondRow={
+                    <HighlightText
+                      className={classes.mark}
+                      search={search}
+                      text={property.id || ""}
+                    />
+                  }
+                />
+                <ViewCell
+                  textToCopy={view.id || ""}
+                  copyToolTip="Copy view ID"
+                  firstRow={
+                    <a
+                      className={classes.link}
+                      href={viewUrl}
+                      title="Open this view in Google Analytics"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      <HighlightText
+                        className={classes.mark}
+                        search={search}
+                        text={textClamp(view.name || "", maxCellWidth)}
+                      />
+                    </a>
+                  }
+                  secondRow={
+                    <HighlightText
+                      className={classes.mark}
+                      search={search}
+                      text={view.id || ""}
+                    />
+                  }
+                />
+                <ViewCell
+                  textToCopy={`ga:${view.id}`}
+                  copyToolTip="Copy table ID"
+                  firstRow={
+                    <HighlightText
+                      className={classes.mark}
+                      search={search}
+                      text={`ga:${view.id}`}
+                    />
+                  }
+                />
+              </TableRow>
+            )
+          })
+        ) : (
+          <TableRow data-testid="components/ViewTable/no-results">
+            <TableCell colSpan={4}>
+              <Spinner>
+                <Typography>Loading views&hellip;</Typography>
+              </Spinner>
+            </TableCell>
+          </TableRow>
+        )}
         {views.length === 0 && (
           <TableRow data-testid="components/ViewTable/no-results">
             <TableCell colSpan={4}>No results</TableCell>
           </TableRow>
         )}
-        {views.map(populated => {
-          const { account, property, view } = populated
-          const viewUrl = `https://analytics.google.com/analytics/web/#/report/vistors-overview/a${account.id}w${property.internalWebPropertyId}p${view.id}`
-          return (
-            <TableRow
-              key={`${populated.account.name}-${populated.property.name}-${populated.view.name}`}
-            >
-              <ViewCell
-                textToCopy={account.id || ""}
-                copyToolTip="Copy account ID"
-                firstRow={
-                  <HighlightText
-                    className={classes.mark}
-                    search={search}
-                    text={textClamp(account.name || "", maxCellWidth)}
-                  />
-                }
-                secondRow={
-                  <HighlightText
-                    className={classes.mark}
-                    search={search}
-                    text={account.id || ""}
-                  />
-                }
-              />
-              <ViewCell
-                textToCopy={property.id || ""}
-                copyToolTip="Copy property ID"
-                firstRow={
-                  <HighlightText
-                    className={classes.mark}
-                    search={search}
-                    text={textClamp(property.name || "", maxCellWidth)}
-                  />
-                }
-                secondRow={
-                  <HighlightText
-                    className={classes.mark}
-                    search={search}
-                    text={property.id || ""}
-                  />
-                }
-              />
-              <ViewCell
-                textToCopy={view.id || ""}
-                copyToolTip="Copy view ID"
-                firstRow={
-                  <a
-                    className={classes.link}
-                    href={viewUrl}
-                    title="Open this view in Google Analytics"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    <HighlightText
-                      className={classes.mark}
-                      search={search}
-                      text={textClamp(view.name || "", maxCellWidth)}
-                    />
-                  </a>
-                }
-                secondRow={
-                  <HighlightText
-                    className={classes.mark}
-                    search={search}
-                    text={view.id || ""}
-                  />
-                }
-              />
-              <ViewCell
-                textToCopy={`ga:${view.id}`}
-                copyToolTip="Copy table ID"
-                firstRow={
-                  <HighlightText
-                    className={classes.mark}
-                    search={search}
-                    text={`ga:${view.id}`}
-                  />
-                }
-              />
-            </TableRow>
-          )
-        })}
       </TableBody>
     </Table>
   )
