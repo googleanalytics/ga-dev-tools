@@ -658,6 +658,34 @@ export const CampaignUrlBuilder = () => {
           </TableRow>
         </TableBody>
       </Table>
+
+      <Typography variant="h2">Related Resources</Typography>
+      <Typography variant="body1" component="ul">
+        <li>
+          <a href={Url.aboutCampaign}>About Campaigns</a>
+        </li>
+        <li>
+          <a href={Url.aboutCustomCampaigns}>About Custom Campaigns</a>
+        </li>
+        <li>
+          <a href={Url.bestPracticesForCreatingCustomCampaigns}>
+            Best Practices for creating Custom Campaigns
+          </a>
+        </li>
+        <li>
+          <a href={Url.aboutReferralTrafficReport}>
+            About the Refferal Traffic report
+          </a>
+        </li>
+        <li>
+          <a href={Url.aboutTrafficSourceDimensions}>
+            About traffic source dimensions
+          </a>
+        </li>
+        <li>
+          <a href={Url.googleAdsAutoTagging}>Google Ads Auto-Tagging</a>
+        </li>
+      </Typography>
     </>
   )
 }
