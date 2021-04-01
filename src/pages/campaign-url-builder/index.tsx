@@ -375,10 +375,10 @@ const GeneratedUrl: React.FC<GeneratedUrlProps> = ({
                   data-testid="shorten-button"
                 >
                   {authenticated === false
-                    ? "Convert URL to Short Link (authorization required)"
+                    ? "Shorten URL"
                     : showShort
-                    ? "Show full URL"
-                    : "Convert URL to Short Link"}
+                    ? "Show original"
+                    : "Shorten URL"}
                 </Button>
               )}
             </section>
