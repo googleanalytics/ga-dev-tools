@@ -23,8 +23,8 @@ const TagAssistant = ({ location: { pathname } }) => {
     <Layout title="Tag Assistant" pathname={pathname}>
       <Typography variant="body1">
         Google <a href={Url.tagAssistantExternal}>Tag Assistant</a> is a Chrome
-        Extension that helps you validate the tracking code on your website and
-        troubleshoot common problems. It's an ideal tool for debugging and
+        Extension that helps you validate the measurement code on your website
+        and troubleshoot common problems. It's an ideal tool for debugging and
         testing your analytics.js implementations locally and ensuring
         everything is correct before deploying your code to production.
       </Typography>
@@ -40,8 +40,8 @@ const TagAssistant = ({ location: { pathname } }) => {
         To see how Tag Assistant works, check out the video below. In it Philip
         Walton, Developer Programs Engineer on the Google Analytics team,
         demonstrates how you can use Tag Assistant to catch errors and check the
-        validity of advanced tracking implementations such as{" "}
-        <a href={Url.crossDomainTracking}>cross-domain tracking</a>.
+        validity of advanced measurement implementations such as{" "}
+        <a href={Url.crossDomainMeasurement}>cross-domain measurement</a>.
       </Typography>
 
       <iframe
@@ -54,7 +54,7 @@ const TagAssistant = ({ location: { pathname } }) => {
       ></iframe>
 
       <Typography variant="caption" paragraph>
-        Using Tag Assistant to validate your tracking implementations.
+        Using Tag Assistant to validate your measurement implementations.
       </Typography>
 
       <Typography variant="h3">Links mentioned in the video</Typography>
@@ -66,7 +66,7 @@ const TagAssistant = ({ location: { pathname } }) => {
           </a>
         </li>
         <li>
-          <a href={Url.crossDomainTracking}>Cross-domain Linker plugin</a>
+          <a href={Url.crossDomainMeasurement}>Cross-domain Linker plugin</a>
         </li>
       </Typography>
 

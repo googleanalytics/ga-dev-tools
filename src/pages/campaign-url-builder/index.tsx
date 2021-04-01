@@ -34,7 +34,11 @@ import Layout from "../../components/layout"
 import CopyButton from "../../components/CopyButton"
 import useShortenLink from "./_useShortenLink"
 import { extractParamsFromWebsiteUrl, websiteUrlFor } from "./_params"
-import { usePersistentString, usePersistentBoolean, useIsSSR } from "../../hooks"
+import {
+  usePersistentString,
+  usePersistentBoolean,
+  useIsSSR,
+} from "../../hooks"
 
 const iosCampaignTracking = (
   <a href={Url.iosCampaignTracking}>iOS Campaign Tracking URL Builder</a>
@@ -441,18 +445,18 @@ export const CampaignUrlBuilder = () => {
     },
     [setCampaign, setMedium, setSource, setTerm, setContent, setWebsiteUrl]
   )
-  const isSSR = useIsSSR();
+  const isSSR = useIsSSR()
 
   return (
     <>
       <Typography variant="body1">
         This tool allows you to easily add campaign parameters to URLs so you
-        can track {customCampaigns} in Google Analytics.
+        can measure {customCampaigns} in Google Analytics.
       </Typography>
       <Typography variant="h3">
         Enter the website URL and campaign information
       </Typography>
-      {isSSR ? null :
+      {isSSR ? null : (
         <section className={classes.inputs}>
           <TextField
             id="website-url"
@@ -479,62 +483,62 @@ export const CampaignUrlBuilder = () => {
             variant="outlined"
             helperText={
               <span>
-              The referrer (e.g. <span className={classes.bold}>google</span>,{" "}
-              <span className={classes.bold}>newsletter</span>)
-            </span>
-          }
-        />
-        <TextField
-          id="campaign-medium"
-          required
-          value={medium || ""}
-          onChange={e => setMedium(e.target.value)}
-          label="Campaign Medium"
-          size="small"
-          variant="outlined"
-          helperText={
-            <span>
-            Marketing medium (e.g. <span className={classes.bold}>cpc</span>,{" "}
-            <span className={classes.bold}>banner</span>,{" "}
-              <span className={classes.bold}>email</span>)
-            </span>
-          }
-        />
-        <TextField
-          id="campaign-name"
-          required
-          value={campaign || ""}
-          onChange={e => setCampaign(e.target.value)}
-          label="Campaign Name"
-          size="small"
-          variant="outlined"
-          helperText={
-            <span>
-              Product, promo code, or slogan (e.g.{" "}
-              <span className={classes.bold}>spring_sale</span>)
-            </span>
-          }
-        />
-        <TextField
-          id="campaign-term"
-          value={term || ""}
-          onChange={e => setTerm(e.target.value)}
-          label="Campaign Term"
-          size="small"
-          variant="outlined"
-          helperText="Identify the paid keywords"
-        />
-        <TextField
-          id="campaign-content"
-          value={content || ""}
-          onChange={e => setContent(e.target.value)}
-          label="Campaign Content"
-          size="small"
-          variant="outlined"
-          helperText="Use to differentiate ads"
-        />
-      </section>
-    }
+                The referrer (e.g. <span className={classes.bold}>google</span>,{" "}
+                <span className={classes.bold}>newsletter</span>)
+              </span>
+            }
+          />
+          <TextField
+            id="campaign-medium"
+            required
+            value={medium || ""}
+            onChange={e => setMedium(e.target.value)}
+            label="Campaign Medium"
+            size="small"
+            variant="outlined"
+            helperText={
+              <span>
+                Marketing medium (e.g. <span className={classes.bold}>cpc</span>
+                , <span className={classes.bold}>banner</span>,{" "}
+                <span className={classes.bold}>email</span>)
+              </span>
+            }
+          />
+          <TextField
+            id="campaign-name"
+            required
+            value={campaign || ""}
+            onChange={e => setCampaign(e.target.value)}
+            label="Campaign Name"
+            size="small"
+            variant="outlined"
+            helperText={
+              <span>
+                Product, promo code, or slogan (e.g.{" "}
+                <span className={classes.bold}>spring_sale</span>)
+              </span>
+            }
+          />
+          <TextField
+            id="campaign-term"
+            value={term || ""}
+            onChange={e => setTerm(e.target.value)}
+            label="Campaign Term"
+            size="small"
+            variant="outlined"
+            helperText="Identify the paid keywords"
+          />
+          <TextField
+            id="campaign-content"
+            value={content || ""}
+            onChange={e => setContent(e.target.value)}
+            label="Campaign Content"
+            size="small"
+            variant="outlined"
+            helperText="Use to differentiate ads"
+          />
+        </section>
+      )}
 
       <GeneratedUrl
         source={source || ""}

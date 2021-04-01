@@ -16,7 +16,7 @@
 // easier to update all instances of a link on the site.
 // TODO - Add in a bulid step that makes sure the values in this enum are unique.
 export enum Url {
-  iosCampaignTracking = "https=//developers.google.com/analytics/devguides/collection/ios/v3/campaigns#url-builder",
+  iosCampaignMeasurement = "https=//developers.google.com/analytics/devguides/collection/ios/v3/campaigns#url-builder",
   googlePlayURLBuilder = "https=//developers.google.com/analytics/devguides/collection/android/v4/campaigns#google-play-url-builder",
   customCampaigns = "https://support.google.com/analytics/answer/1033863",
   gaDebugger = "https=//chrome.google.com/webstore/detail/google-analytics-debugger/jnkmfdileelhofjcijamephohjechhna",
@@ -33,7 +33,7 @@ export enum Url {
   spreadsheetAddOn = "https=//developers.google.com/analytics/solutions/google-analytics-spreadsheet-add-on",
   spreadsheetAddOnExternal = "https=//gsuite.google.com/marketplace/app/google_analytics/477988381226",
   tagAssistantExternal = "https=//chrome.google.com/webstore/detail/tag-assistant-by-google/kejbdjndbnbjgmefkgdddjlbokphdefk",
-  crossDomainTracking = "https=//developers.google.com/analytics/devguides/collection/analyticsjs/cross-domain",
+  crossDomainMeasurement = "https=//developers.google.com/analytics/devguides/collection/analyticsjs/cross-domain",
   protocolParameters = "https=//developers.google.com/analytics/devguides/collection/protocol/v1/parameters",
   commonHits = "https=//developers.google.com/analytics/devguides/collection/protocol/v1/devguide#commonhits",
   crossDomainLinker = "https=//developers.google.com/analytics/devguides/collection/analyticsjs/linker",
