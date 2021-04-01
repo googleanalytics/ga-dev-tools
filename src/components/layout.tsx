@@ -94,15 +94,14 @@ const useStyles = makeStyles<any, { disableNav: true | undefined }>(theme => ({
     },
   },
   logoRow: {
-    display: "flex",
-    flexWrap: "wrap",
-    alignItems: "center",
-    [mobile(theme)]: props =>
-      props.disableNav
-        ? {}
-        : {
-            display: "none",
-          },
+    [mobile(theme)]: {
+      display: "none",
+    },
+    [notMobile(theme)]: {
+      display: "flex",
+      flexWrap: "wrap",
+      alignItems: "center",
+    },
   },
   logo: {
     flexGrow: 1,
