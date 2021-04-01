@@ -31,6 +31,7 @@ import { v4 as uuid } from "uuid"
 
 import { Url, StorageKey } from "../../constants"
 import Layout from "../../components/layout"
+import InlineCode from "../../components/InlineCode"
 import CopyButton from "../../components/CopyButton"
 import useShortenLink from "./_useShortenLink"
 import { extractParamsFromWebsiteUrl, websiteUrlFor } from "./_params"
@@ -41,7 +42,7 @@ import {
 } from "../../hooks"
 
 const iosCampaignTracking = (
-  <a href={Url.iosCampaignTracking}>iOS Campaign Tracking URL Builder</a>
+  <a href={Url.iosCampaignMeasurement}>iOS Campaign Tracking URL Builder</a>
 )
 
 const googlePlayUrlBuilder = (
@@ -84,8 +85,9 @@ const WarningsFor: React.FC<WarningsForProps> = ({ websiteUrl, onWarning }) => {
         old.concat([
           <>
             It appears that you are linking to this site,{" "}
-            <Code>ga-dev-tools.appspot.com</Code>, instead of your own. You
-            should put your own site's URL in the Website URL field, above.{" "}
+            <InlineCode>ga-dev-tools.appspot.com</InlineCode>, instead of your
+            own. You should put your own site's URL in the Website URL field,
+            above.
           </>,
         ])
       )
@@ -133,29 +135,9 @@ const WarningsFor: React.FC<WarningsForProps> = ({ websiteUrl, onWarning }) => {
   )
 }
 
-const Code: React.FC = ({ children }) => {
-  const classes = useStyles()
-  return (
-    <Typography className={classes.code} variant="body2" component="span">
-      {children}
-    </Typography>
-  )
-}
-
 const useStyles = makeStyles(theme => ({
-  bitlyIcon: {
-    height: theme.spacing(3),
-    width: theme.spacing(3),
-  },
   generatedInput: {
     wordBreak: "break-all",
-  },
-  code: {
-    backgroundColor: theme.palette.grey[300],
-    color: theme.palette.getContrastText(theme.palette.grey[300]),
-    padding: theme.spacing(0.25, 0.5),
-    borderRadius: theme.spacing(0.25),
-    fontFamily: "'Source Code Pro', monospace",
   },
   denseTableCell: {
     whiteSpace: "nowrap",
@@ -570,101 +552,102 @@ export const CampaignUrlBuilder = () => {
           <TableRow>
             <TableCell className={classes.denseTableCell}>
               <Typography variant="body1">Campaign Source</Typography>
-              <Code>utm_source</Code>
+              <InlineCode>utm_source</InlineCode>
             </TableCell>
             <TableCell>
               <Typography variant="body1">Yes</Typography>
             </TableCell>
             <TableCell>
               <Typography variant="body1">
-                <Code>google</Code>
+                <InlineCode>google</InlineCode>
               </Typography>
             </TableCell>
             <TableCell>
               <Typography variant="body1">
-                Use <Code>utm_source</Code> to identify a search engine,
-                newsletter name, or other source.
+                Use <InlineCode>utm_source</InlineCode> to identify a search
+                engine, newsletter name, or other source.
               </Typography>
             </TableCell>
           </TableRow>
           <TableRow>
             <TableCell className={classes.denseTableCell}>
               <Typography variant="body1">Campaign Medium</Typography>
-              <Code>utm_medium</Code>
+              <InlineCode>utm_medium</InlineCode>
             </TableCell>
             <TableCell>
               <Typography variant="body1">Yes</Typography>
             </TableCell>
             <TableCell>
               <Typography variant="body1">
-                <Code>cpc</Code>
+                <InlineCode>cpc</InlineCode>
               </Typography>
             </TableCell>
             <TableCell>
               <Typography variant="body1">
-                Use <Code>utm_medium</Code> to identify a medium such as email
-                or cost-per-click.
+                Use <InlineCode>utm_medium</InlineCode> to identify a medium
+                such as email or cost-per-click.
               </Typography>
             </TableCell>
           </TableRow>
           <TableRow>
             <TableCell className={classes.denseTableCell}>
               <Typography variant="body1">Campaign Name</Typography>
-              <Code>utm_campaign</Code>
+              <InlineCode>utm_campaign</InlineCode>
             </TableCell>
             <TableCell>
               <Typography variant="body1">Yes</Typography>
             </TableCell>
             <TableCell>
               <Typography variant="body1">
-                <Code>spring_sale</Code>
+                <InlineCode>spring_sale</InlineCode>
               </Typography>
             </TableCell>
             <TableCell>
               <Typography variant="body1">
-                Used for keyword analysis. Use <Code>utm_campaign</Code> to
-                identify a specific product promotion or strategic campaign.
+                Used for keyword analysis. Use{" "}
+                <InlineCode>utm_campaign</InlineCode> to identify a specific
+                product promotion or strategic campaign.
               </Typography>
             </TableCell>
           </TableRow>
           <TableRow>
             <TableCell className={classes.denseTableCell}>
               <Typography variant="body1">Campaign Term</Typography>
-              <Code>utm_term</Code>
+              <InlineCode>utm_term</InlineCode>
             </TableCell>
             <TableCell>
               <Typography variant="body1">No</Typography>
             </TableCell>
             <TableCell>
               <Typography variant="body1">
-                <Code>running+shoes</Code>
+                <InlineCode>running+shoes</InlineCode>
               </Typography>
             </TableCell>
             <TableCell>
               <Typography variant="body1">
-                Used for paid search. Use <Code>utm_term</Code> to note the
-                keywords for this ad.
+                Used for paid search. Use <InlineCode>utm_term</InlineCode> to
+                note the keywords for this ad.
               </Typography>
             </TableCell>
           </TableRow>
           <TableRow>
             <TableCell className={classes.denseTableCell}>
               <Typography variant="body1">Campaign Content</Typography>
-              <Code>utm_content</Code>
+              <InlineCode>utm_content</InlineCode>
             </TableCell>
             <TableCell>
               <Typography variant="body1">No</Typography>
             </TableCell>
             <TableCell>
               <Typography variant="body1">
-                <Code>logolink</Code>
+                <InlineCode>logolink</InlineCode>
               </Typography>
             </TableCell>
             <TableCell>
               <Typography variant="body1">
                 Used for A/B testing and content-targeted ads. Use{" "}
-                <Code>utm_content</Code> to differentiate ads or links that
-                point to the same URL.
+                <InlineCode>utm_content</InlineCode> to differentiate ads or
+                links that point to the same URL.
               </Typography>
             </TableCell>
           </TableRow>
