@@ -281,6 +281,7 @@ const GeneratedUrl: React.FC<GeneratedUrlProps> = ({
     term,
     content,
   ])
+  // TODO - this can probably be fixed with useMemo based on what past me said:
   // This is a bit of a hack, but I don't want to duplicate the code that sets
   // the generated url.
   React.useEffect(() => {
@@ -437,6 +438,10 @@ export const CampaignUrlBuilder = () => {
       </Typography>
       <Typography variant="h3">
         Enter the website URL and campaign information
+      </Typography>
+      <Typography>
+        Fill out all fields marked with an asterisk (*), and the campaign URL
+        will be generated for you.
       </Typography>
       {isSSR ? null : (
         <section className={classes.inputs}>
