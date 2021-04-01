@@ -80,7 +80,9 @@ const CopyButton: React.FC<CopyButtonProps> = props => {
         autoHideDuration={2000}
         onClose={() => setShowAlert(false)}
       >
-        <MuiAlert>Copied to clipboard.</MuiAlert>
+        <MuiAlert severity="success" variant="filled">
+          Copied to clipboard.
+        </MuiAlert>
       </Snackbar>
     </>
   )
@@ -117,7 +119,9 @@ export const CopyIconButton: React.FC<CopyIconButtonProps> = ({
         autoHideDuration={2000}
         onClose={() => setShowAlert(false)}
       >
-        <MuiAlert>Copied to clipboard.</MuiAlert>
+        <MuiAlert severity="success" variant="filled">
+          Copied to clipboard.
+        </MuiAlert>
       </Snackbar>
     </>
   )
