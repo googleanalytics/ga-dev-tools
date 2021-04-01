@@ -151,7 +151,7 @@ describe("for the Campaign URL Builder component", () => {
       await setUpValidUrl(findByLabelText)
 
       expect(await findByTestId("shorten-button")).toHaveTextContent(
-        "authorization required"
+        "Shorten URL"
       )
     })
 
