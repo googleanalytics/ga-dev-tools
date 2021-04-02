@@ -21,7 +21,6 @@ import {
   makeStyles,
   FormControlLabel,
   Checkbox,
-  Button,
   Tooltip,
 } from "@material-ui/core"
 import { Url, StorageKey } from "../../constants"
@@ -38,6 +37,7 @@ import {
   V3SamplingLevelPicker,
 } from "../../components/UAPickers"
 import { usePersistentBoolean } from "../../hooks"
+import { PAB } from "../../components/Buttons"
 
 const coreReportingApi = <a href={Url.coreReportingApi}>Core Reporting API</a>
 
@@ -45,6 +45,8 @@ const useStyles = makeStyles(theme => ({
   inputs: {
     maxWidth: "500px",
     marginBottom: theme.spacing(1),
+    display: "flex",
+    flexDirection: "column",
   },
   runButton: {
     alignSelf: "flex-start",
@@ -381,6 +383,13 @@ export const QueryExplorer = () => {
           value={maxResults || ""}
           onChange={e => setMaxResults(e.target.value)}
         />
+        <PAB
+          disabled={!requiredParameters}
+          className={classes.runButton}
+          onClick={runQuery}
+        >
+          Run Query
+        </PAB>
         <FormControlLabel
           className={classes.includeEmpty}
           control={
@@ -391,15 +400,6 @@ export const QueryExplorer = () => {
           }
           label="Include Empty Rows"
         />
-        <Button
-          disabled={!requiredParameters}
-          variant="outlined"
-          color="primary"
-          className={classes.runButton}
-          onClick={runQuery}
-        >
-          Run Query
-        </Button>
       </section>
       <Report queryResponse={queryResponse} />
     </>
