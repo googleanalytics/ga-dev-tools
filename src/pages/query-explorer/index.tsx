@@ -310,12 +310,12 @@ export const QueryExplorer = () => {
         <MetricsPicker
           required
           setMetrics={setSelectedMetrics}
-          helperText="metrics to include in the query."
+          helperText="Metrics to include in the query."
           storageKey={StorageKey.queryExplorerMetrics}
         />
         <DimensionsPicker
           setDimensions={setSelectedDimensions}
-          helperText="dimensions to include in the query."
+          helperText="Dimensions to include in the query."
           storageKey={StorageKey.queryExplorerDimensions}
         />
         <Sort
