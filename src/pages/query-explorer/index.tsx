@@ -275,7 +275,7 @@ export const QueryExplorer = () => {
           variant="outlined"
           fullWidth
           id="start-date"
-          label="start-date"
+          label="start date"
           value={startDate}
           onChange={e => setStartDate(e.target.value)}
           required
@@ -294,7 +294,7 @@ export const QueryExplorer = () => {
           size="small"
           variant="outlined"
           id="end-date"
-          label="end-date"
+          label="end date"
           value={endDate}
           onChange={e => setEndDate(e.target.value)}
           required
@@ -362,7 +362,7 @@ export const QueryExplorer = () => {
           size="small"
           variant="outlined"
           id="start-index"
-          label="start-index"
+          label="start index"
           fullWidth
           helperText="The start index for the result. Indices are 1-based."
           value={startIndex || ""}
@@ -375,7 +375,7 @@ export const QueryExplorer = () => {
           size="small"
           variant="outlined"
           id="max-results"
-          label="max-results"
+          label="max results"
           fullWidth
           helperText="Maximum number of rows to include in the response."
           value={maxResults || ""}
