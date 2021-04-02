@@ -1,14 +1,19 @@
 import { HasView } from "../../../components/ViewSelector"
 import { useState, useMemo } from "react"
-import { Column, Segment, SamplingLevel } from "../_api"
 import { StorageKey } from "../../../constants"
 import { usePersistentString } from "../../../hooks"
+import {
+  V4SamplingLevel,
+  UADimensions,
+  UAMetrics,
+  UASegment,
+} from "../../../components/UAPickers"
 
 const useHistogramRequestParameters = (view: HasView | undefined) => {
   const [viewId, setViewId] = useState("")
-  const [selectedDimensions, setSelectedDimensions] = useState<Column[]>([])
-  const [selectedMetrics, setSelectedMetrics] = useState<Column[]>([])
-  const [samplingLevel, setSamplingLevel] = useState<SamplingLevel>()
+  const [selectedDimensions, setSelectedDimensions] = useState<UADimensions>()
+  const [selectedMetrics, setSelectedMetrics] = useState<UAMetrics>()
+  const [samplingLevel, setSamplingLevel] = useState<V4SamplingLevel>()
 
   const [startDate, setStartDate] = usePersistentString(
     StorageKey.histogramStartDate,
@@ -23,7 +28,7 @@ const useHistogramRequestParameters = (view: HasView | undefined) => {
     StorageKey.histogramFiltersExpression,
     "ga:browser=~^Chrome"
   )
-  const [selectedSegment, setSelectedSegment] = useState<Segment>()
+  const [selectedSegment, setSelectedSegment] = useState<UASegment>()
 
   useMemo(() => {
     const id = view?.view.id

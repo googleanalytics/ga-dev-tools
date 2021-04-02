@@ -14,23 +14,20 @@
 
 import * as React from "react"
 import { HasView } from "../../../components/ViewSelector"
-import {
-  Column,
-  useDimensionsAndMetrics,
-  Segment,
-  SamplingLevel,
-} from "../_api"
 import { linkFor, titleFor } from "../_HistogramRequest/_index"
-import { Typography } from "@material-ui/core"
-import { FancyOption } from "../../../components/FancyOption"
 import { StorageKey } from "../../../constants"
-import SelectSingle from "../../../components/SelectSingle"
 import useCohortRequestParameters from "./_useCohortRequestParameters"
-import useCohortRequest, { CohortSize } from "./_useCohortRequest"
-import { useSegments } from "../../../api"
+import useCohortRequest from "./_useCohortRequest"
 import LinkedTextField from "../../../components/LinkedTextField"
 import { useEffect } from "react"
 import { ReportsRequest } from "../_RequestComposer"
+import {
+  MetricPicker,
+  SegmentPicker,
+  V4SamplingLevelPicker,
+  CohortSizePicker,
+  UAMetric,
+} from "../../../components/UAPickers"
 
 interface CohortRequestProps {
   view: HasView | undefined
@@ -56,10 +53,6 @@ const CohortRequest: React.FC<CohortRequestProps> = ({
     samplingLevel,
     setSamplingLevel,
   } = useCohortRequestParameters(view)
-  // TODO - perf improvement - this should probably be passed down from the
-  // parent instead of done for each one?
-  const { metrics } = useDimensionsAndMetrics()
-  const segments = useSegments()
   const requestObject = useCohortRequest({
     viewId,
     selectedMetric,
@@ -71,6 +64,12 @@ const CohortRequest: React.FC<CohortRequestProps> = ({
   useEffect(() => {
     setRequestObject(requestObject)
   }, [requestObject, setRequestObject])
+
+  const cohortFilter = React.useCallback(
+    (metric: NonNullable<UAMetric>): boolean =>
+      metric?.attributes?.group === "Lifetime Value and Cohorts",
+    []
+  )
 
   return (
     <>
@@ -84,112 +83,25 @@ const CohortRequest: React.FC<CohortRequestProps> = ({
           required
           helperText="The analytics view ID from which to retrieve data."
         />
-
-        <SelectSingle<Column>
-          options={metrics || []}
-          getOptionLabel={column => column.id!}
-          label="Cohort Metric"
+        <MetricPicker
+          setMetric={setSelectedMetric}
+          storageKey={StorageKey.cohortRequestMetric}
           helperText="The metrics to include in the request."
-          renderOption={column => (
-            <FancyOption
-              right={
-                <Typography variant="subtitle1" color="textSecondary">
-                  {column.attributes!.group}
-                </Typography>
-              }
-            >
-              <Typography variant="body1">
-                {column.attributes!.uiName}
-              </Typography>
-              <Typography variant="subtitle2" color="primary">
-                {column.id}
-              </Typography>
-            </FancyOption>
-          )}
-          onSelectedChanged={setSelectedMetric}
-          serializer={column => ({
-            key: StorageKey.cohortRequestMetric,
-            serialized: JSON.stringify(column),
-          })}
-          deserializer={(s: string) => {
-            if (s === "undefined" || s === "null") {
-              return undefined
-            }
-            return JSON.parse(s)
-          }}
+          filter={cohortFilter}
         />
-
-        <SelectSingle<CohortSize>
-          options={[CohortSize.Day, CohortSize.Week, CohortSize.Month]}
-          getOptionLabel={cohortSize => cohortSize}
-          label="Cohort Size"
+        <CohortSizePicker
+          setCohortSize={setCohortSize}
+          storageKey={StorageKey.cohortRequestCohortSize}
           helperText="The size of the cohort to use in the request."
-          renderOption={cohortSize => cohortSize}
-          onSelectedChanged={cohortSize =>
-            setCohortSize(cohortSize as CohortSize)
-          }
-          serializer={cohortSize => ({
-            key: StorageKey.cohortSize,
-            serialized: cohortSize === undefined ? "undefined" : cohortSize,
-          })}
-          deserializer={(s: string) => {
-            if (s === "undefined" || s === "null") {
-              return undefined
-            }
-            return s as CohortSize
-          }}
         />
-
-        <SelectSingle<Segment>
-          options={segments || []}
-          getOptionLabel={segment => segment.segmentId!}
-          label="Segment"
+        <SegmentPicker
+          setSegment={setSelectedSegment}
+          storageKey={StorageKey.cohortRequestSegment}
           helperText="The segment to use for the request."
-          renderOption={segment => (
-            <FancyOption
-              right={
-                <Typography variant="subtitle1" color="textSecondary">
-                  {segment.type === "CUSTOM"
-                    ? "Custom Segment"
-                    : "Built In Segment"}
-                </Typography>
-              }
-            >
-              <Typography variant="body1">{segment.name}</Typography>
-              <Typography variant="subtitle2" color="primary">
-                {segment.segmentId}
-              </Typography>
-            </FancyOption>
-          )}
-          onSelectedChanged={setSelectedSegment}
-          serializer={segment => ({
-            key: StorageKey.cohortRequestSegment,
-            serialized: JSON.stringify(segment),
-          })}
-          deserializer={(s: string) => {
-            if (s === "undefined") {
-              return undefined
-            }
-            return JSON.parse(s)
-          }}
         />
-        <SelectSingle<SamplingLevel>
-          options={Object.values(SamplingLevel)}
-          getOptionLabel={samplingLevel => samplingLevel}
-          label="samplingLevel"
-          helperText="The desired sample size for the report."
-          renderOption={samplingLevel => <>{samplingLevel}</>}
-          onSelectedChanged={setSamplingLevel}
-          serializer={s => ({
-            key: StorageKey.cohortSamplingLevel,
-            serialized: s?.toString() || "undefined",
-          })}
-          deserializer={s => {
-            if (s === "undefined") {
-              return undefined
-            }
-            return s as SamplingLevel
-          }}
+        <V4SamplingLevelPicker
+          setSamplingLevel={setSamplingLevel}
+          storageKey={StorageKey.cohortRequestSamplingLevel}
         />
         {children}
       </section>

@@ -1,15 +1,14 @@
 import { useMemo } from "react"
-import { Column, Segment, SamplingLevel } from "../_api"
 import moment from "moment"
 import { ReportsRequest, ReportRequest } from "../_RequestComposer"
+import {
+  CohortSize,
+  V4SamplingLevel,
+  UAMetric,
+  UASegment,
+} from "../../../components/UAPickers"
 
 type Cohort = gapi.client.analyticsreporting.Cohort
-
-export enum CohortSize {
-  Day = "DAY",
-  Week = "WEEK",
-  Month = "MONTH",
-}
 
 const dimensionFor = (cohortSize: CohortSize) => {
   let dimensionName: string
@@ -101,10 +100,10 @@ const useCohortRequest = ({
   samplingLevel,
 }: {
   viewId: string
-  selectedMetric: Column | undefined
-  selectedSegment: Segment | undefined
+  selectedMetric: UAMetric
+  selectedSegment: UASegment
   cohortSize: CohortSize | undefined
-  samplingLevel: SamplingLevel | undefined
+  samplingLevel: V4SamplingLevel | undefined
 }) => {
   const request = useMemo<ReportsRequest | undefined>(() => {
     if (
@@ -134,7 +133,7 @@ const useCohortRequest = ({
           segmentId: selectedSegment.segmentId,
         },
       ]
-      reportRequest.dimensions = reportRequest!.dimensions!.concat([
+      reportRequest.dimensions = reportRequest.dimensions!.concat([
         { name: "ga:segment" },
       ])
     }

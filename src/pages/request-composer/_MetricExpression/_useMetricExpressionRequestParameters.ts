@@ -1,8 +1,12 @@
 import { useState, useMemo } from "react"
 import { HasView } from "../../../components/ViewSelector"
-import { Column, Segment, SamplingLevel } from "../_api"
 import { usePersistentString } from "../../../hooks"
 import { StorageKey } from "../../../constants"
+import {
+  V4SamplingLevel,
+  UADimensions,
+  UASegment,
+} from "../../../components/UAPickers"
 
 const useMetricExpressionRequestParameters = (view: HasView | undefined) => {
   const [viewId, setViewId] = useState("")
@@ -22,13 +26,15 @@ const useMetricExpressionRequestParameters = (view: HasView | undefined) => {
     StorageKey.metricExpressionMetricAliases,
     ""
   )
-  const [selectedDimensions, setSelectedDimensions] = useState<Column[]>([])
+  const [selectedDimensions, setSelectedDimensions] = useState<UADimensions>()
   const [filtersExpression, setFiltersExpression] = usePersistentString(
     StorageKey.metricExpressionFiltersExpression,
     ""
   )
-  const [selectedSegment, setSelectedSegment] = useState<Segment>()
-  const [samplingLevel, setSamplingLevel] = useState(SamplingLevel.Default)
+  const [selectedSegment, setSelectedSegment] = useState<UASegment>()
+  const [samplingLevel, setSamplingLevel] = useState<
+    V4SamplingLevel | undefined
+  >(V4SamplingLevel.Default)
   const [pageToken, setPageToken] = usePersistentString(
     StorageKey.metricExpressionPageToken
   )

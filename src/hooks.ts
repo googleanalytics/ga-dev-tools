@@ -149,6 +149,30 @@ interface Stringable {
   toString(): string
 }
 
+export const usePersistantObject = <T extends {}>(
+  key: StorageKey
+): [T | undefined, React.Dispatch<React.SetStateAction<T | undefined>>] => {
+  const [value, setValue] = useState(() => {
+    if (isSSR) {
+      return undefined
+    }
+    let asString = window.localStorage.getItem(key)
+    if (asString === null || asString === "undefined") {
+      return undefined
+    }
+    return JSON.parse(asString)
+  })
+
+  useEffect(() => {
+    if (isSSR) {
+      return
+    }
+    window.localStorage.setItem(key, JSON.stringify(value))
+  }, [value, key])
+
+  return [value, setValue]
+}
+
 // TODO: remove this and replaced with a typed version using enums.
 //
 // Same as `useLocalStorage`, but typed. Uses `JSON.parse` and
@@ -269,6 +293,8 @@ const getRedirectPath = (
   }
   return undefined
 }
+
+const isSSR = typeof window === "undefined"
 
 // TODO - Since SSR and client side render are different evaluations, this
 // could maybe just be a static bool? But this works and I don't want to try to

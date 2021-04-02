@@ -59,6 +59,15 @@ export enum GAVersion {
 // TODO - Add in a build step that makes sure the values in this enum are unique.
 export enum StorageKey {
   gaVersion = "/ga-version",
+  uaDimensions = "//ua-dimensions",
+  uaSegments = "//ua-segments",
+
+  // Query Explorer
+  queryExplorerDimensions = "query-explorer/dimensions",
+  queryExplorerMetrics = "query-explorer/metrics",
+  queryExplorerSegment = "query-explorer/segment",
+  queyExplorerSamplingLevel = "query-explorer/sampling-level",
+
   campaignBuilderWebsiteUrl = "campaign-builder/website-url",
   campaignBuilderSource = "campaign-builder/source",
   campaignBuilderMedium = "campaign-builder/medium",
@@ -70,8 +79,8 @@ export enum StorageKey {
   bitlyCache = "bitly-auth/cache-storage",
   requestComposerTab = "request-composer/tab",
 
-  histogramRequestDimension = "request-composer/histogram-request-dimension",
-  histogramRequestMetric = "request-composer/histogram-request-metric",
+  histogramRequestDimensions = "request-composer/histogram-request-dimensions",
+  histogramRequestMetrics = "request-composer/histogram-request-metrics",
   histogramBuckets = "request-composer/histogram-buckets",
   histogramStartDate = "request-composer/histogram-start-date",
   histogramEndDate = "request-composer/histogram-end-date",
@@ -79,9 +88,9 @@ export enum StorageKey {
   histogramRequestSegment = "request-composer/histogram-request-segment",
   histogramSamplingLevel = "request-composer/histogram-sampling-level",
 
-  cohortSamplingLevel = "request-composer/cohort-sampling-level",
+  cohortRequestSamplingLevel = "request-composer/cohort-request-sampling-level",
   cohortRequestMetric = "request-composer/cohort-request-metric",
-  cohortSize = "request-composer/cohort-size",
+  cohortRequestCohortSize = "request-composer/cohort-request-cohort-size",
   cohortRequestSegment = "request-composer/cohort-request-segment",
 
   pivotRequestMetrics = "request-composer/pivot-request-metrics",

@@ -13,19 +13,9 @@
 // limitations under the License.
 
 import * as React from "react"
-import { Typography, FormControlLabel, Checkbox } from "@material-ui/core"
+import { FormControlLabel, Checkbox } from "@material-ui/core"
 import { linkFor, titleFor } from "../_HistogramRequest/_index"
 import usePivotRequestParameters from "./_usePivotRequestParameters"
-import SelectSingle from "../../../components/SelectSingle"
-import {
-  Column,
-  useDimensionsAndMetrics,
-  Segment,
-  useSegments,
-  SamplingLevel,
-} from "../_api"
-import { FancyOption } from "../../../components/FancyOption"
-import SelectMultiple from "../../../components/SelectMultiple"
 import { StorageKey } from "../../../constants"
 import { HasView } from "../../../components/ViewSelector"
 import usePivotRequest from "./_usePivotRequest"
@@ -33,6 +23,12 @@ import GADate from "../../../components/GADate"
 import LinkedTextField from "../../../components/LinkedTextField"
 import { useEffect } from "react"
 import { ReportsRequest } from "../_RequestComposer"
+import {
+  MetricsPicker,
+  DimensionsPicker,
+  SegmentPicker,
+  V4SamplingLevelPicker,
+} from "../../../components/UAPickers"
 
 interface PivotRequestProps {
   view: HasView | undefined
@@ -46,9 +42,6 @@ const PivotRequest: React.FC<PivotRequestProps> = ({
   setRequestObject,
   children,
 }) => {
-  const { metrics, dimensions } = useDimensionsAndMetrics()
-  const segments = useSegments()
-
   const {
     viewId,
     setViewId,
@@ -130,129 +123,31 @@ const PivotRequest: React.FC<PivotRequestProps> = ({
           label="endDate"
           helperText="The end of the date range for the data request. Format: YYYY-MM-DD."
         />
-        <SelectMultiple<Column>
+        <MetricsPicker
           required
-          options={metrics || []}
-          getOptionLabel={column => column.id!}
-          label="Metrics"
+          setMetrics={setSelectedMetrics}
+          storageKey={StorageKey.pivotRequestMetrics}
           helperText="The metrics to include in the request."
-          renderOption={column => (
-            <FancyOption
-              right={
-                <Typography variant="subtitle1" color="textSecondary">
-                  {column.attributes!.group}
-                </Typography>
-              }
-            >
-              <Typography variant="body1">
-                {column.attributes!.uiName}
-              </Typography>
-              <Typography variant="subtitle2" color="primary">
-                {column.id}
-              </Typography>
-            </FancyOption>
-          )}
-          onSelectedChanged={setSelectedMetrics}
-          serializer={column => ({
-            key: StorageKey.pivotRequestMetrics,
-            serialized: JSON.stringify(column),
-          })}
-          deserializer={(s: string) => {
-            return JSON.parse(s)
-          }}
         />
-        <SelectMultiple<Column>
+        <DimensionsPicker
           required
-          options={dimensions || []}
-          getOptionLabel={column => column.id!}
-          label="Dimensions"
+          setDimensions={setSelectedDimensions}
+          storageKey={StorageKey.pivotRequestDimensions}
           helperText="The dimensions to include in the request."
-          renderOption={column => (
-            <FancyOption
-              right={
-                <Typography variant="subtitle1" color="textSecondary">
-                  {column.attributes!.group}
-                </Typography>
-              }
-            >
-              <Typography variant="body1">
-                {column.attributes!.uiName}
-              </Typography>
-              <Typography variant="subtitle2" color="primary">
-                {column.id}
-              </Typography>
-            </FancyOption>
-          )}
-          onSelectedChanged={setSelectedDimensions}
-          serializer={column => ({
-            key: StorageKey.pivotRequestDimensions,
-            serialized: JSON.stringify(column),
-          })}
-          deserializer={(s: string) => {
-            return JSON.parse(s)
-          }}
         />
-        <SelectMultiple<Column>
+        <MetricsPicker
           required
-          options={metrics || []}
-          getOptionLabel={column => column.id!}
-          label="Pivot Metrics"
+          setMetrics={setPivotMetrics}
+          storageKey={StorageKey.pivotRequestPivotMetrics}
+          label="pivot metrics"
           helperText="The pivot metrics to include in the request."
-          renderOption={column => (
-            <FancyOption
-              right={
-                <Typography variant="subtitle1" color="textSecondary">
-                  {column.attributes!.group}
-                </Typography>
-              }
-            >
-              <Typography variant="body1">
-                {column.attributes!.uiName}
-              </Typography>
-              <Typography variant="subtitle2" color="primary">
-                {column.id}
-              </Typography>
-            </FancyOption>
-          )}
-          onSelectedChanged={setPivotMetrics}
-          serializer={column => ({
-            key: StorageKey.pivotRequestPivotMetrics,
-            serialized: JSON.stringify(column),
-          })}
-          deserializer={(s: string) => {
-            return JSON.parse(s)
-          }}
         />
-        <SelectMultiple<Column>
+        <DimensionsPicker
           required
-          options={dimensions || []}
-          getOptionLabel={column => column.id!}
-          label="Pivot Dimensions"
+          setDimensions={setPivotDimensions}
+          storageKey={StorageKey.pivotRequestPivotDimensions}
+          label="pivot dimensions"
           helperText="The pivot dimensions to include in the request."
-          renderOption={column => (
-            <FancyOption
-              right={
-                <Typography variant="subtitle1" color="textSecondary">
-                  {column.attributes!.group}
-                </Typography>
-              }
-            >
-              <Typography variant="body1">
-                {column.attributes!.uiName}
-              </Typography>
-              <Typography variant="subtitle2" color="primary">
-                {column.id}
-              </Typography>
-            </FancyOption>
-          )}
-          onSelectedChanged={setPivotDimensions}
-          serializer={column => ({
-            key: StorageKey.pivotRequestPivotDimensions,
-            serialized: JSON.stringify(column),
-          })}
-          deserializer={(s: string) => {
-            return JSON.parse(s)
-          }}
         />
         <LinkedTextField
           href={linkFor("Pivot.FIELDS.start_group")}
@@ -270,64 +165,16 @@ const PivotRequest: React.FC<PivotRequestProps> = ({
           onChange={setMaxGroupCount}
           helperText="The maximum number of groups to return."
         />
-        <SelectSingle<Segment>
-          options={segments || []}
-          getOptionLabel={segment => segment.segmentId!}
-          label="Segment"
+        <SegmentPicker
+          setSegment={setSelectedSegment}
+          storageKey={StorageKey.pivotRequestSegment}
           helperText="The segment to use for the request."
-          renderOption={segment => (
-            <FancyOption
-              right={
-                <Typography variant="subtitle1" color="textSecondary">
-                  {segment.type === "CUSTOM"
-                    ? "Custom Segment"
-                    : "Built In Segment"}
-                </Typography>
-              }
-            >
-              <Typography variant="body1">{segment.name}</Typography>
-              <Typography variant="subtitle2" color="primary">
-                {segment.segmentId}
-              </Typography>
-            </FancyOption>
-          )}
-          onSelectedChanged={setSelectedSegment}
-          serializer={segment => ({
-            key: StorageKey.pivotRequestSegment,
-            serialized: JSON.stringify(segment),
-          })}
-          deserializer={(s: string) => {
-            if (s === "undefined") {
-              return undefined
-            }
-            return JSON.parse(s)
-          }}
         />
-        <SelectSingle<SamplingLevel>
-          options={Object.values(SamplingLevel)}
-          getOptionLabel={samplingLevel => samplingLevel}
-          label="samplingLevel"
+        <V4SamplingLevelPicker
+          setSamplingLevel={setSamplingLevel}
+          storageKey={StorageKey.pivotSamplingLevel}
           helperText="The desired sample size for the report."
-          renderOption={samplingLevel => <>{samplingLevel}</>}
-          onSelectedChanged={samplingLevel => {
-            if (samplingLevel === undefined) {
-              setSamplingLevel(SamplingLevel.Default)
-            } else {
-              setSamplingLevel(samplingLevel)
-            }
-          }}
-          serializer={s => ({
-            key: StorageKey.pivotSamplingLevel,
-            serialized: s?.toString() || "undefined",
-          })}
-          deserializer={s => {
-            if (s === "undefined") {
-              return undefined
-            }
-            return s as SamplingLevel
-          }}
         />
-
         <LinkedTextField
           href={linkFor("ReportRequest.FIELDS.page_token")}
           linkTitle={titleFor("pageToken")}

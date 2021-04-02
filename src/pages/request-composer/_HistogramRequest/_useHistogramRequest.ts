@@ -1,17 +1,22 @@
-import { Column, Segment, SamplingLevel } from "../_api"
 import { useMemo } from "react"
 import { ReportsRequest, ReportRequest } from "../_RequestComposer"
+import {
+  UAMetrics,
+  UADimensions,
+  UASegment,
+  V4SamplingLevel,
+} from "../../../components/UAPickers"
 
 interface Parameters {
-  selectedMetrics: Column[]
-  selectedDimensions: Column[]
+  selectedMetrics: UAMetrics
+  selectedDimensions: UADimensions
   buckets: string | undefined
   viewId: string
   startDate: string | undefined
   endDate: string | undefined
   filtersExpression: string | undefined
-  selectedSegment: Segment | undefined
-  samplingLevel: SamplingLevel | undefined
+  selectedSegment: UASegment
+  samplingLevel: V4SamplingLevel | undefined
 }
 
 const useHistogramRequest = ({
@@ -46,12 +51,12 @@ const useHistogramRequest = ({
       ],
     }
 
-    if (selectedMetrics.length > 0) {
+    if (selectedMetrics !== undefined && selectedMetrics.length > 0) {
       reportRequest["metrics"] = selectedMetrics.map(column => ({
         expression: column.id,
       }))
     }
-    if (selectedDimensions.length > 0) {
+    if (selectedDimensions !== undefined && selectedDimensions.length > 0) {
       reportRequest["dimensions"] = selectedDimensions.map(column => ({
         // TODO - The types for this are incorrect. Might need to check the
         // client library code?

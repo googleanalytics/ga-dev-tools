@@ -13,26 +13,21 @@
 // limitations under the License.
 
 import * as React from "react"
-import { Typography } from "@material-ui/core"
 
 import { HasView } from "../../../components/ViewSelector"
-import {
-  Column,
-  useDimensionsAndMetrics,
-  Segment,
-  SamplingLevel,
-} from "../_api"
-import SelectMultiple from "../../../components/SelectMultiple"
 import { StorageKey } from "../../../constants"
-import { FancyOption } from "../../../components/FancyOption"
-import { useSegments } from "../../../api"
-import SelectSingle from "../../../components/SelectSingle"
 import LinkedTextField from "../../../components/LinkedTextField"
 import GADate from "../../../components/GADate"
 import useHistogramRequest from "./_useHistogramRequest"
 import useHistogramRequestParameters from "./_useHistogramRequestParameters"
 import { useEffect } from "react"
 import { ReportsRequest } from "../_RequestComposer"
+import {
+  MetricsPicker,
+  DimensionsPicker,
+  SegmentPicker,
+  V4SamplingLevelPicker,
+} from "../../../components/UAPickers"
 
 export const linkFor = (hash: string) =>
   `https://developers.google.com/analytics/devguides/reporting/core/v4/rest/v4/reports/batchGet#${hash}`
@@ -87,9 +82,6 @@ const HistogramRequest: React.FC<HistogramRequestProps> = ({
     setRequestObject(requestObject)
   }, [requestObject, setRequestObject])
 
-  const { dimensions, metrics } = useDimensionsAndMetrics()
-  const segments = useSegments()
-
   return (
     <>
       <section className={controlWidth}>
@@ -120,61 +112,15 @@ const HistogramRequest: React.FC<HistogramRequestProps> = ({
           label="endDate"
           helperText="The end of the date range for the data request. Format: YYYY-MM-DD."
         />
-        <SelectMultiple<Column>
-          options={metrics || []}
-          getOptionLabel={column => column.id!}
-          label="Metrics"
+        <MetricsPicker
+          setMetrics={setSelectedMetrics}
+          storageKey={StorageKey.histogramRequestMetrics}
           helperText="The metrics to include in the request."
-          renderOption={column => (
-            <FancyOption
-              right={
-                <Typography variant="subtitle1" color="textSecondary">
-                  {column.attributes!.group}
-                </Typography>
-              }
-            >
-              <Typography variant="body1">
-                {column.attributes!.uiName}
-              </Typography>
-              <Typography variant="subtitle2" color="primary">
-                {column.id}
-              </Typography>
-            </FancyOption>
-          )}
-          onSelectedChanged={setSelectedMetrics}
-          serializer={columns => ({
-            key: StorageKey.histogramRequestMetric,
-            serialized: JSON.stringify({ data: columns }),
-          })}
-          deserializer={(s: string) => JSON.parse(s).data}
         />
-        <SelectMultiple<Column>
-          options={dimensions || []}
-          getOptionLabel={column => column.id!}
-          label="Histogram Dimension"
+        <DimensionsPicker
+          setDimensions={setSelectedDimensions}
+          storageKey={StorageKey.histogramRequestDimensions}
           helperText="The dimensions to include in the request."
-          renderOption={column => (
-            <FancyOption
-              right={
-                <Typography variant="subtitle1" color="textSecondary">
-                  {column.attributes!.group}
-                </Typography>
-              }
-            >
-              <Typography variant="body1">
-                {column.attributes!.uiName}
-              </Typography>
-              <Typography variant="subtitle2" color="primary">
-                {column.id}
-              </Typography>
-            </FancyOption>
-          )}
-          onSelectedChanged={setSelectedDimensions}
-          serializer={columns => ({
-            key: StorageKey.histogramRequestDimension,
-            serialized: JSON.stringify({ data: columns }),
-          })}
-          deserializer={(s: string) => JSON.parse(s).data}
         />
         <LinkedTextField
           href={linkFor("Dimension.FIELDS.histogram_buckets")}
@@ -193,56 +139,15 @@ const HistogramRequest: React.FC<HistogramRequestProps> = ({
           onChange={setFiltersExpression}
           helperText="Filters that restrict the data returned for the histogram request."
         />
-        <SelectSingle<Segment>
-          options={segments || []}
-          getOptionLabel={segment => segment.segmentId!}
-          label="Segment"
+        <SegmentPicker
+          setSegment={setSelectedSegment}
+          storageKey={StorageKey.histogramRequestSegment}
           helperText="The segment to use for the request."
-          renderOption={segment => (
-            <FancyOption
-              right={
-                <Typography variant="subtitle1" color="textSecondary">
-                  {segment.type === "CUSTOM"
-                    ? "Custom Segment"
-                    : "Built In Segment"}
-                </Typography>
-              }
-            >
-              <Typography variant="body1">{segment.name}</Typography>
-              <Typography variant="subtitle2" color="primary">
-                {segment.segmentId}
-              </Typography>
-            </FancyOption>
-          )}
-          onSelectedChanged={setSelectedSegment}
-          serializer={segment => ({
-            key: StorageKey.histogramRequestSegment,
-            serialized: JSON.stringify(segment),
-          })}
-          deserializer={(s: string) => {
-            if (s === "undefined") {
-              return undefined
-            }
-            return JSON.parse(s)
-          }}
         />
-        <SelectSingle<SamplingLevel>
-          options={Object.values(SamplingLevel)}
-          getOptionLabel={samplingLevel => samplingLevel}
-          label="samplingLevel"
+        <V4SamplingLevelPicker
+          setSamplingLevel={setSamplingLevel}
+          storageKey={StorageKey.histogramSamplingLevel}
           helperText="The desired sample size for the report."
-          renderOption={samplingLevel => <>{samplingLevel}</>}
-          onSelectedChanged={setSamplingLevel}
-          serializer={s => ({
-            key: StorageKey.histogramSamplingLevel,
-            serialized: s?.toString() || "undefined",
-          })}
-          deserializer={s => {
-            if (s === "undefined") {
-              return undefined
-            }
-            return s as SamplingLevel
-          }}
         />
         {children}
       </section>

@@ -24,16 +24,19 @@ import {
   Button,
   Tooltip,
 } from "@material-ui/core"
-import { Url } from "../../constants"
+import { Url, StorageKey } from "../../constants"
 import ViewSelector, { HasView } from "../../components/ViewSelector"
 import { Launch } from "@material-ui/icons"
-import useQueryExplorer from "./_useQueryExplorer"
-import ConceptMultiSelect from "./_ConceptMultiSelect"
 import Sort from "./_Sort"
-import SegmentC from "./_Segment"
 import Report from "./_Report"
-import { Column, useApi, useSegments, Segment } from "../../api"
-import { SamplingLevelComponent, SamplingLevel } from "./_SamplingLevel"
+import { Column, useApi, Segment } from "../../api"
+import {
+  DimensionsPicker,
+  MetricsPicker,
+  SegmentPicker,
+  V3SamplingLevel,
+  V3SamplingLevelPicker,
+} from "../../components/UAPickers"
 
 const coreReportingApi = <a href={Url.coreReportingApi}>Core Reporting API</a>
 
@@ -57,9 +60,7 @@ const useStyles = makeStyles(theme => ({
   },
   showSegments: {
     marginLeft: theme.spacing(1),
-    marginTop: theme.spacing(-2),
     marginBottom: theme.spacing(1),
-    color: theme.palette.text.secondary,
   },
   includeEmpty: {
     marginTop: theme.spacing(2),
@@ -114,8 +115,6 @@ export const QueryExplorer = () => {
     undefined
   )
   const api = useApi()
-  const { metrics, dimensions } = useQueryExplorer(selectedView)
-  const segments = useSegments()
   const [view, setView] = React.useState("")
   const [startDate, setStartDate] = React.useState("7daysAgo")
   const [endDate, setEndDate] = React.useState("yesterday")
@@ -129,23 +128,22 @@ export const QueryExplorer = () => {
   // This doesn't work since sessionCount is a dimension.
   const [filters, setFilters] = React.useState<string>()
   const [selectedSegment, setSelectedSegment] = React.useState<Segment>()
-  const [selectedMetrics, setSelectedMetrics] = React.useState<Column[]>([])
-  const [selectedDimensions, setSelectedDimensions] = React.useState<Column[]>(
-    []
-  )
+  const [selectedMetrics, setSelectedMetrics] = React.useState<Column[]>()
+  const [selectedDimensions, setSelectedDimensions] = React.useState<Column[]>()
   const [includeEmptyRows, setIncludeEmptyRows] = React.useState(true)
   const [queryResponse, setQueryResponse] = React.useState<
     gapi.client.analytics.GaData
   >()
-  const [selectedSamplingValue, setSelectedSamplingValue] = React.useState(
-    SamplingLevel.Default
-  )
+  const [selectedSamplingValue, setSelectedSamplingValue] = React.useState<
+    V3SamplingLevel | undefined
+  >(V3SamplingLevel.Default)
 
   const requiredParameters = React.useMemo(() => {
     return (
       view !== "" &&
       startDate !== "" &&
       endDate !== "" &&
+      selectedMetrics !== undefined &&
       selectedMetrics.length !== 0
     )
   }, [view, startDate, endDate, selectedMetrics])
@@ -162,14 +160,18 @@ export const QueryExplorer = () => {
 
   // TODO - Add error handling and visual indication when an error happens.
   const runQuery = React.useCallback(() => {
-    if (api === undefined || selectedMetrics.length === 0) {
+    if (
+      api === undefined ||
+      selectedMetrics === undefined ||
+      selectedMetrics.length === 0
+    ) {
       return
     }
     const metrics = selectedMetrics.map(a => a.id).join(",")
     const dimensions =
-      selectedDimensions.length === 0
+      selectedDimensions?.length === 0
         ? undefined
-        : selectedDimensions.map(a => a.id).join(",")
+        : selectedDimensions?.map(a => a.id).join(",")
 
     const apiObject = {
       ids: view,
@@ -298,23 +300,19 @@ export const QueryExplorer = () => {
             </>
           }
         />
-        <ConceptMultiSelect
-          viewId={selectedView?.view.id}
-          label="Metrics"
-          helperText="Metrics to include in the query."
-          columns={metrics}
-          setSelectedColumns={setSelectedMetrics}
+        <MetricsPicker
           required
+          setMetrics={setSelectedMetrics}
+          helperText="metrics to include in the query."
+          storageKey={StorageKey.queryExplorerMetrics}
         />
-        <ConceptMultiSelect
-          viewId={selectedView?.view.id}
-          label="Dimensions"
+        <DimensionsPicker
+          setDimensions={setSelectedDimensions}
           helperText="dimensions to include in the query."
-          columns={dimensions}
-          setSelectedColumns={setSelectedDimensions}
+          storageKey={StorageKey.queryExplorerDimensions}
         />
         <Sort
-          columns={selectedDimensions.concat(selectedMetrics)}
+          columns={(selectedDimensions || []).concat(selectedMetrics || [])}
           setSort={setSort}
         />
         <TextField
@@ -330,14 +328,19 @@ export const QueryExplorer = () => {
           fullWidth
           helperText="The filters to apply to the query."
         />
-        <SegmentC segments={segments} setSelectedSegment={setSelectedSegment} />
+        <SegmentPicker
+          storageKey={StorageKey.queryExplorerSegment}
+          setSegment={setSelectedSegment}
+        />
         <FormControlLabel
           className={classes.showSegments}
           control={<Checkbox />}
           label="Show segment definitions instead of IDs."
         />
-        <SamplingLevelComponent
-          onSamplingLevelChanged={setSelectedSamplingValue}
+        <V3SamplingLevelPicker
+          storageKey={StorageKey.queyExplorerSamplingLevel}
+          setSamplingLevel={setSelectedSamplingValue}
+          helperText="The sampling level to use for the query."
         />
         <TextField
           InputProps={{

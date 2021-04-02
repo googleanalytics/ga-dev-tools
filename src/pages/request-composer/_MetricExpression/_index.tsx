@@ -17,22 +17,16 @@ import LinkedTextField from "../../../components/LinkedTextField"
 import { linkFor, titleFor } from "../_HistogramRequest/_index"
 import { HasView } from "../../../components/ViewSelector"
 import useMetricExpressionRequestParameters from "./_useMetricExpressionRequestParameters"
-import { Typography } from "@material-ui/core"
-import {
-  useDimensionsAndMetrics,
-  Column,
-  Segment,
-  SamplingLevel,
-} from "../_api"
 import useMetricExpressionRequest from "./_useMetricExpressionRequest"
 import GADate from "../../../components/GADate"
-import SelectMultiple from "../../../components/SelectMultiple"
-import { FancyOption } from "../../../components/FancyOption"
 import { StorageKey } from "../../../constants"
-import SelectSingle from "../../../components/SelectSingle"
-import { useSegments } from "../../../api"
 import { ReportsRequest } from "../_RequestComposer"
 import { useEffect } from "react"
+import {
+  DimensionsPicker,
+  SegmentPicker,
+  V4SamplingLevelPicker,
+} from "../../../components/UAPickers"
 
 interface MetricExpressionRequestProps {
   view: HasView | undefined
@@ -46,8 +40,6 @@ const MetricExpression: React.FC<MetricExpressionRequestProps> = ({
   setRequestObject,
   children,
 }) => {
-  const { dimensions } = useDimensionsAndMetrics()
-  const segments = useSegments()
   const {
     viewId,
     setViewId,
@@ -137,33 +129,10 @@ const MetricExpression: React.FC<MetricExpressionRequestProps> = ({
           onChange={setMetricAliases}
           helperText="Aliases to use for your expressions. Separate multiple aliases with a comma."
         />
-        <SelectMultiple<Column>
-          options={dimensions || []}
-          getOptionLabel={column => column.id!}
-          label="dimensions"
+        <DimensionsPicker
+          setDimensions={setSelectedDimensions}
+          storageKey={StorageKey.metricExpressionRequestDimensions}
           helperText="The dimensions to include in the request."
-          renderOption={column => (
-            <FancyOption
-              right={
-                <Typography variant="subtitle1" color="textSecondary">
-                  {column.attributes!.group}
-                </Typography>
-              }
-            >
-              <Typography variant="body1">
-                {column.attributes!.uiName}
-              </Typography>
-              <Typography variant="subtitle2" color="primary">
-                {column.id}
-              </Typography>
-            </FancyOption>
-          )}
-          onSelectedChanged={setSelectedDimensions}
-          serializer={columns => ({
-            key: StorageKey.metricExpressionRequestDimensions,
-            serialized: JSON.stringify({ data: columns }),
-          })}
-          deserializer={(s: string) => JSON.parse(s).data}
         />
         <LinkedTextField
           href={linkFor("ReportRequest.FIELDS.filters_expression")}
@@ -173,62 +142,15 @@ const MetricExpression: React.FC<MetricExpressionRequestProps> = ({
           onChange={setFiltersExpression}
           helperText="Filters that restrict the data returned for the metric expression request."
         />
-        <SelectSingle<Segment>
-          options={segments || []}
-          getOptionLabel={segment => segment.segmentId!}
-          label="Segment"
+        <SegmentPicker
+          setSegment={setSelectedSegment}
+          storageKey={StorageKey.metricExpressionRequestSegment}
           helperText="The segment to use for the request."
-          renderOption={segment => (
-            <FancyOption
-              right={
-                <Typography variant="subtitle1" color="textSecondary">
-                  {segment.type === "CUSTOM"
-                    ? "Custom Segment"
-                    : "Built In Segment"}
-                </Typography>
-              }
-            >
-              <Typography variant="body1">{segment.name}</Typography>
-              <Typography variant="subtitle2" color="primary">
-                {segment.segmentId}
-              </Typography>
-            </FancyOption>
-          )}
-          onSelectedChanged={setSelectedSegment}
-          serializer={segment => ({
-            key: StorageKey.metricExpressionRequestSegment,
-            serialized: JSON.stringify(segment),
-          })}
-          deserializer={(s: string) => {
-            if (s === "undefined") {
-              return undefined
-            }
-            return JSON.parse(s)
-          }}
         />
-        <SelectSingle<SamplingLevel>
-          options={Object.values(SamplingLevel)}
-          getOptionLabel={samplingLevel => samplingLevel}
-          label="samplingLevel"
+        <V4SamplingLevelPicker
+          setSamplingLevel={setSamplingLevel}
+          storageKey={StorageKey.metricExpressionSamplingLevel}
           helperText="The desired sample size for the report."
-          renderOption={samplingLevel => <>{samplingLevel}</>}
-          onSelectedChanged={samplingLevel => {
-            if (samplingLevel === undefined) {
-              setSamplingLevel(SamplingLevel.Default)
-            } else {
-              setSamplingLevel(samplingLevel)
-            }
-          }}
-          serializer={s => ({
-            key: StorageKey.metricExpressionSamplingLevel,
-            serialized: s?.toString() || SamplingLevel.Default,
-          })}
-          deserializer={s => {
-            if (s === "undefined") {
-              return undefined
-            }
-            return s as SamplingLevel
-          }}
         />
         <LinkedTextField
           href={linkFor("ReportRequest.FIELDS.page_token")}

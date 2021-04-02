@@ -1,5 +1,10 @@
 import { useMemo } from "react"
-import { Column, Segment, SamplingLevel } from "../_api"
+import {
+  V4SamplingLevel,
+  UAMetrics,
+  UADimensions,
+  UASegment,
+} from "../../../components/UAPickers"
 
 type ReportRequest = gapi.client.analyticsreporting.ReportRequest
 type Request = { reportRequests: Array<ReportRequest> }
@@ -8,14 +13,14 @@ interface Parameters {
   viewId: string | undefined
   startDate: string | undefined
   endDate: string | undefined
-  metrics: Column[]
-  pivotMetrics: Column[]
-  dimensions: Column[]
-  pivotDimensions: Column[]
+  metrics: UAMetrics
+  pivotMetrics: UAMetrics
+  dimensions: UADimensions
+  pivotDimensions: UADimensions
   startGroup: string | undefined
   maxGroupCount: string | undefined
-  selectedSegment: Segment | undefined
-  samplingLevel: SamplingLevel
+  selectedSegment: UASegment
+  samplingLevel: V4SamplingLevel | undefined
   pageToken: string | undefined
   pageSize: string | undefined
   includeEmptyRows: boolean
@@ -45,9 +50,13 @@ const usePivotRequest = ({
       startDate === "" ||
       endDate === undefined ||
       endDate === "" ||
+      metrics === undefined ||
       metrics.length === 0 ||
+      dimensions === undefined ||
       dimensions.length === 0 ||
+      pivotMetrics === undefined ||
       pivotMetrics.length === 0 ||
+      pivotDimensions === undefined ||
       pivotDimensions.length === 0
     ) {
       return undefined

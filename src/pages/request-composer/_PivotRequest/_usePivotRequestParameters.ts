@@ -1,8 +1,13 @@
 import { useState, useMemo } from "react"
 import { HasView } from "../../../components/ViewSelector"
-import { Column, Segment, SamplingLevel } from "../_api"
 import { usePersistentString, usePersistentBoolean } from "../../../hooks"
 import { StorageKey } from "../../../constants"
+import {
+  V4SamplingLevel,
+  UAMetrics,
+  UADimensions,
+  UASegment,
+} from "../../../components/UAPickers"
 
 const usePivotRequestParameters = (view: HasView | undefined) => {
   const [viewId, setViewId] = useState("")
@@ -14,19 +19,20 @@ const usePivotRequestParameters = (view: HasView | undefined) => {
     StorageKey.pivotRequestEndDate,
     "yesterday"
   )
-  const [selectedMetrics, setSelectedMetrics] = useState<Column[]>([])
-  const [selectedDimensions, setSelectedDimensions] = useState<Column[]>([])
-  const [pivotMetrics, setPivotMetrics] = useState<Column[]>([])
-  const [pivotDimensions, setPivotDimensions] = useState<Column[]>([])
+  const [selectedMetrics, setSelectedMetrics] = useState<UAMetrics>()
+  const [selectedDimensions, setSelectedDimensions] = useState<UADimensions>()
+  const [pivotMetrics, setPivotMetrics] = useState<UAMetrics>()
+  const [pivotDimensions, setPivotDimensions] = useState<UADimensions>()
   const [startGroup, setStartGroup] = usePersistentString(
     StorageKey.pivotRequestStartGroup
   )
   const [maxGroupCount, setMaxGroupCount] = usePersistentString(
     StorageKey.pivotRequestMaxGroupCount
   )
-  const [selectedSegment, setSelectedSegment] = useState<Segment>()
-  const [samplingLevel, setSamplingLevel] = useState(SamplingLevel.Default)
-  const [segment, setSegment] = useState<Segment>()
+  const [selectedSegment, setSelectedSegment] = useState<UASegment>()
+  const [samplingLevel, setSamplingLevel] = useState<
+    V4SamplingLevel | undefined
+  >(V4SamplingLevel.Default)
   const [pageToken, setPageToken] = usePersistentString(
     StorageKey.pivotRequestPageToken
   )
@@ -68,8 +74,6 @@ const usePivotRequestParameters = (view: HasView | undefined) => {
     setSelectedSegment,
     samplingLevel,
     setSamplingLevel,
-    segment,
-    setSegment,
     includeEmptyRows,
     setIncludeEmptyRows,
     pageToken,

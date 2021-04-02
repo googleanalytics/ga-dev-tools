@@ -1,17 +1,21 @@
-import { Column, Segment, SamplingLevel } from "../_api"
 import { useMemo } from "react"
 import { ReportsRequest, ReportRequest } from "../_RequestComposer"
+import {
+  V4SamplingLevel,
+  UADimensions,
+  UASegment,
+} from "../../../components/UAPickers"
 
 interface Parameters {
   viewId: string
-  samplingLevel: SamplingLevel | undefined
+  samplingLevel: V4SamplingLevel | undefined
   filtersExpression: string | undefined
   startDate: string | undefined
   endDate: string | undefined
   metricExpressions: string | undefined
   metricAliases: string | undefined
-  selectedDimensions: Column[]
-  selectedSegment: Segment | undefined
+  selectedDimensions: UADimensions
+  selectedSegment: UASegment
   pageToken: string | undefined
   pageSize: string | undefined
 }
@@ -73,7 +77,7 @@ const useMetricExpressionRequest = ({
       ],
     }
 
-    if (selectedDimensions.length > 0) {
+    if (selectedDimensions !== undefined && selectedDimensions.length > 0) {
       reportRequest["dimensions"] = selectedDimensions.map(column => ({
         name: column.id,
       }))
