@@ -303,7 +303,7 @@ const ViewSelector: React.FC<ViewSelector3Props> = props => {
         renderInput={params => (
           <TextField
             {...params}
-            label="Account"
+            label="account"
             size={size}
             variant={variant}
           />
@@ -325,7 +325,7 @@ const ViewSelector: React.FC<ViewSelector3Props> = props => {
         renderInput={params => (
           <TextField
             {...params}
-            label="Property"
+            label="property"
             size={size}
             variant={variant}
           />
@@ -345,7 +345,7 @@ const ViewSelector: React.FC<ViewSelector3Props> = props => {
         }}
         getOptionLabel={view => view.name || ""}
         renderInput={params => (
-          <TextField {...params} label="View" size={size} variant={variant} />
+          <TextField {...params} label="view" size={size} variant={variant} />
         )}
       />
     </div>
