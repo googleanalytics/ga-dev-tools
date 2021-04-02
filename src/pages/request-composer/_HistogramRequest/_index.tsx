@@ -28,6 +28,8 @@ import {
   SegmentPicker,
   V4SamplingLevelPicker,
 } from "../../../components/UAPickers"
+import { FormControlLabel, Checkbox, makeStyles } from "@material-ui/core"
+import { usePersistentBoolean } from "../../../hooks"
 
 export const linkFor = (hash: string) =>
   `https://developers.google.com/analytics/devguides/reporting/core/v4/rest/v4/reports/batchGet#${hash}`
@@ -40,12 +42,27 @@ interface HistogramRequestProps {
   setRequestObject: (request: ReportsRequest | undefined) => void
 }
 
+const useStyles = makeStyles(theme => ({
+  showSegments: {
+    marginLeft: theme.spacing(1),
+    marginBottom: theme.spacing(1),
+  },
+}))
+
 const HistogramRequest: React.FC<HistogramRequestProps> = ({
   view,
   controlWidth,
   setRequestObject,
   children,
 }) => {
+  const classes = useStyles()
+  const [
+    showSegmentDefinition,
+    setShowSegmentDefinition,
+  ] = usePersistentBoolean(
+    StorageKey.histogramRequestShowSegmentDefinition,
+    false
+  )
   const {
     viewId,
     setViewId,
@@ -142,7 +159,19 @@ const HistogramRequest: React.FC<HistogramRequestProps> = ({
         <SegmentPicker
           setSegment={setSelectedSegment}
           storageKey={StorageKey.histogramRequestSegment}
-          helperText="The segment to use for the request."
+          showSegmentDefinition={showSegmentDefinition}
+        />
+        <FormControlLabel
+          className={classes.showSegments}
+          control={
+            <Checkbox
+              checked={showSegmentDefinition}
+              onChange={e => {
+                setShowSegmentDefinition(e.target.checked)
+              }}
+            />
+          }
+          label="Show segment definitions instead of IDs."
         />
         <V4SamplingLevelPicker
           setSamplingLevel={setSamplingLevel}

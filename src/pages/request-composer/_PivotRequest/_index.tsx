@@ -13,7 +13,7 @@
 // limitations under the License.
 
 import * as React from "react"
-import { FormControlLabel, Checkbox } from "@material-ui/core"
+import { FormControlLabel, Checkbox, makeStyles } from "@material-ui/core"
 import { linkFor, titleFor } from "../_HistogramRequest/_index"
 import usePivotRequestParameters from "./_usePivotRequestParameters"
 import { StorageKey } from "../../../constants"
@@ -29,6 +29,7 @@ import {
   SegmentPicker,
   V4SamplingLevelPicker,
 } from "../../../components/UAPickers"
+import { usePersistentBoolean } from "../../../hooks"
 
 interface PivotRequestProps {
   view: HasView | undefined
@@ -36,12 +37,25 @@ interface PivotRequestProps {
   setRequestObject: (request: ReportsRequest | undefined) => void
 }
 
+const useStyles = makeStyles(theme => ({
+  showSegments: {
+    marginLeft: theme.spacing(1),
+    marginBottom: theme.spacing(1),
+  },
+}))
+
 const PivotRequest: React.FC<PivotRequestProps> = ({
   view,
   controlWidth,
   setRequestObject,
   children,
 }) => {
+  const classes = useStyles()
+  const [
+    showSegmentDefinition,
+    setShowSegmentDefinition,
+  ] = usePersistentBoolean(StorageKey.pivotRequestShowSegmentDefinition, false)
+
   const {
     viewId,
     setViewId,
@@ -168,7 +182,19 @@ const PivotRequest: React.FC<PivotRequestProps> = ({
         <SegmentPicker
           setSegment={setSelectedSegment}
           storageKey={StorageKey.pivotRequestSegment}
-          helperText="The segment to use for the request."
+          showSegmentDefinition={showSegmentDefinition}
+        />
+        <FormControlLabel
+          className={classes.showSegments}
+          control={
+            <Checkbox
+              checked={showSegmentDefinition}
+              onChange={e => {
+                setShowSegmentDefinition(e.target.checked)
+              }}
+            />
+          }
+          label="Show segment definitions instead of IDs."
         />
         <V4SamplingLevelPicker
           setSamplingLevel={setSamplingLevel}

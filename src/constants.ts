@@ -88,11 +88,13 @@ export enum StorageKey {
   histogramFiltersExpression = "request-composer/histogram-filters-expression",
   histogramRequestSegment = "request-composer/histogram-request-segment",
   histogramSamplingLevel = "request-composer/histogram-sampling-level",
+  histogramRequestShowSegmentDefinition = "request-composer/histogram-request-show-segment-definition",
 
   cohortRequestSamplingLevel = "request-composer/cohort-request-sampling-level",
   cohortRequestMetric = "request-composer/cohort-request-metric",
   cohortRequestCohortSize = "request-composer/cohort-request-cohort-size",
   cohortRequestSegment = "request-composer/cohort-request-segment",
+  cohortRequestShowSegmentDefinition = "request-composer/cohort-request-show-segment-definition",
 
   pivotRequestMetrics = "request-composer/pivot-request-metrics",
   pivotRequestPivotMetrics = "request-composer/pivot-request-pivot-metrics",
@@ -107,6 +109,7 @@ export enum StorageKey {
   pivotRequestPageToken = "request-composer/pivot-request-page-token",
   pivotRequestPageSize = "request-composer/pivot-request-page-size",
   pivotRequestIncludeEmptyRows = "request-composer/pivot-request-include-empty-rows",
+  pivotRequestShowSegmentDefinition = "request-composer/pivot-request-show-segment-definition",
 
   metricExpressionRequestDimensions = "request-composer/metric-expression-request-dimensions",
   metricExpressionRequestSegment = "request-composer/metric-expression-request-segment",
@@ -118,6 +121,7 @@ export enum StorageKey {
   metricExpressionFiltersExpression = "request-composer/metric-expression-filters-expression",
   metricExpressionPageToken = "request-composer/metric-expression-page-token",
   metricExpressionPageSize = "request-composer/metric-expression-page-size",
+  metricExpressionRequestShowSegmentDefinition = "request-composer/metric-expression-show-segment-definition",
 
   eventBuilderCategory = "ga4/event-builder/event-category",
   eventBuilderApiSecret = "ga4/event-builder/api-secret",

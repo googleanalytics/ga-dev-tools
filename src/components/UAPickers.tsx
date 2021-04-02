@@ -435,7 +435,8 @@ export const SegmentPicker: React.FC<{
       options={segments || []}
       getOptionLabel={segment =>
         (showSegmentDefinition
-          ? segment.definition || `${segment.name} has no segment definiton.`
+          ? segment.definition ||
+            (segment.name && `${segment.name} has no segment definiton.`)
           : segment.segmentId!) || ""
       }
       value={value || null}

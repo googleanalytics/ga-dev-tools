@@ -27,6 +27,8 @@ import {
   SegmentPicker,
   V4SamplingLevelPicker,
 } from "../../../components/UAPickers"
+import { FormControlLabel, Checkbox, makeStyles } from "@material-ui/core"
+import { usePersistentBoolean } from "../../../hooks"
 
 interface MetricExpressionRequestProps {
   view: HasView | undefined
@@ -34,12 +36,27 @@ interface MetricExpressionRequestProps {
   setRequestObject: (request: ReportsRequest | undefined) => void
 }
 
+const useStyles = makeStyles(theme => ({
+  showSegments: {
+    marginLeft: theme.spacing(1),
+    marginBottom: theme.spacing(1),
+  },
+}))
+
 const MetricExpression: React.FC<MetricExpressionRequestProps> = ({
   view,
   controlWidth,
   setRequestObject,
   children,
 }) => {
+  const classes = useStyles()
+  const [
+    showSegmentDefinition,
+    setShowSegmentDefinition,
+  ] = usePersistentBoolean(
+    StorageKey.metricExpressionRequestShowSegmentDefinition,
+    false
+  )
   const {
     viewId,
     setViewId,
@@ -145,7 +162,19 @@ const MetricExpression: React.FC<MetricExpressionRequestProps> = ({
         <SegmentPicker
           setSegment={setSelectedSegment}
           storageKey={StorageKey.metricExpressionRequestSegment}
-          helperText="The segment to use for the request."
+          showSegmentDefinition={showSegmentDefinition}
+        />
+        <FormControlLabel
+          className={classes.showSegments}
+          control={
+            <Checkbox
+              checked={showSegmentDefinition}
+              onChange={e => {
+                setShowSegmentDefinition(e.target.checked)
+              }}
+            />
+          }
+          label="Show segment definitions instead of IDs."
         />
         <V4SamplingLevelPicker
           setSamplingLevel={setSamplingLevel}

@@ -28,6 +28,8 @@ import {
   CohortSizePicker,
   UAMetric,
 } from "../../../components/UAPickers"
+import { makeStyles, FormControlLabel, Checkbox } from "@material-ui/core"
+import { usePersistentBoolean } from "../../../hooks"
 
 interface CohortRequestProps {
   view: HasView | undefined
@@ -35,12 +37,24 @@ interface CohortRequestProps {
   setRequestObject: (request: ReportsRequest | undefined) => void
 }
 
+const useStyles = makeStyles(theme => ({
+  showSegments: {
+    marginLeft: theme.spacing(1),
+    marginBottom: theme.spacing(1),
+  },
+}))
+
 const CohortRequest: React.FC<CohortRequestProps> = ({
   view,
   controlWidth,
   setRequestObject,
   children,
 }) => {
+  const classes = useStyles()
+  const [
+    showSegmentDefinition,
+    setShowSegmentDefinition,
+  ] = usePersistentBoolean(StorageKey.cohortRequestShowSegmentDefinition, false)
   const {
     viewId,
     setViewId,
@@ -97,7 +111,19 @@ const CohortRequest: React.FC<CohortRequestProps> = ({
         <SegmentPicker
           setSegment={setSelectedSegment}
           storageKey={StorageKey.cohortRequestSegment}
-          helperText="The segment to use for the request."
+          showSegmentDefinition={showSegmentDefinition}
+        />
+        <FormControlLabel
+          className={classes.showSegments}
+          control={
+            <Checkbox
+              checked={showSegmentDefinition}
+              onChange={e => {
+                setShowSegmentDefinition(e.target.checked)
+              }}
+            />
+          }
+          label="Show segment definitions instead of IDs."
         />
         <V4SamplingLevelPicker
           setSamplingLevel={setSamplingLevel}
