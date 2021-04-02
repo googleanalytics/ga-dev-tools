@@ -237,10 +237,10 @@ export const QueryExplorer = () => {
     <>
       <Typography variant="h2">Overview</Typography>
       <Typography variant="body1">
-        Sometimes you just need to explore. This tool lets you play with the{" "}
-        {coreReportingApi} by building queries to get data from your Google
-        Analytics views (profiles). You can use these queries in any of the
-        client libraries to build your own tools.
+        This tool lets you interact with the {coreReportingApi} by building
+        queries to get data from your Google Analytics views (profiles). You can
+        use these queries in any of the client libraries to build your own
+        tools.
       </Typography>
       <Typography variant="h3">Select View</Typography>
       <ViewSelector
