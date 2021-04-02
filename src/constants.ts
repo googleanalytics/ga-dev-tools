@@ -67,6 +67,7 @@ export enum StorageKey {
   queryExplorerMetrics = "query-explorer/metrics",
   queryExplorerSegment = "query-explorer/segment",
   queyExplorerSamplingLevel = "query-explorer/sampling-level",
+  queryExplorerShowSegmentDefinition = "query-explorer/show-segment-definition",
 
   campaignBuilderWebsiteUrl = "campaign-builder/website-url",
   campaignBuilderSource = "campaign-builder/source",

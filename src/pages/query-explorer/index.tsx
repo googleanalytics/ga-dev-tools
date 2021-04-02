@@ -37,6 +37,7 @@ import {
   V3SamplingLevel,
   V3SamplingLevelPicker,
 } from "../../components/UAPickers"
+import { usePersistentBoolean } from "../../hooks"
 
 const coreReportingApi = <a href={Url.coreReportingApi}>Core Reporting API</a>
 
@@ -131,6 +132,10 @@ export const QueryExplorer = () => {
   const [selectedMetrics, setSelectedMetrics] = React.useState<Column[]>()
   const [selectedDimensions, setSelectedDimensions] = React.useState<Column[]>()
   const [includeEmptyRows, setIncludeEmptyRows] = React.useState(true)
+  const [showSegmentDefinition, setShowSegmentDefiniton] = usePersistentBoolean(
+    StorageKey.queryExplorerShowSegmentDefinition,
+    false
+  )
   const [queryResponse, setQueryResponse] = React.useState<
     gapi.client.analytics.GaData
   >()
@@ -331,10 +336,18 @@ export const QueryExplorer = () => {
         <SegmentPicker
           storageKey={StorageKey.queryExplorerSegment}
           setSegment={setSelectedSegment}
+          showSegmentDefinition={showSegmentDefinition}
         />
         <FormControlLabel
           className={classes.showSegments}
-          control={<Checkbox />}
+          control={
+            <Checkbox
+              checked={showSegmentDefinition}
+              onChange={e => {
+                setShowSegmentDefiniton(e.target.checked)
+              }}
+            />
+          }
           label="Show segment definitions instead of IDs."
         />
         <V3SamplingLevelPicker

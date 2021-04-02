@@ -371,10 +371,18 @@ const useUASegments: UseUASegments = () => {
   return { segments }
 }
 
-const Segment: React.FC<{ segment: NonNullable<UASegment> }> = ({
-  segment,
-}) => {
+const Segment: React.FC<{
+  segment: NonNullable<UASegment>
+  showSegmentDefinition: boolean
+}> = ({ segment, showSegmentDefinition }) => {
   const classes = useColumnStyles()
+  const subtitleText = showSegmentDefinition
+    ? segment.definition || `${segment.name} has no segment definition.`
+    : segment!.segmentId!
+  const abbreviatedText =
+    subtitleText.length > 40
+      ? subtitleText.substring(0, 40) + "..."
+      : subtitleText
   return (
     <div className={classes.option}>
       <div className={classes.left}>
@@ -382,7 +390,7 @@ const Segment: React.FC<{ segment: NonNullable<UASegment> }> = ({
           {segment.name}
         </Typography>
         <Typography variant="subtitle2" color="primary">
-          {segment.segmentId}
+          {abbreviatedText}
         </Typography>
       </div>
       <Typography variant="subtitle1" color="textSecondary">
@@ -395,13 +403,24 @@ const Segment: React.FC<{ segment: NonNullable<UASegment> }> = ({
 export const SegmentPicker: React.FC<{
   storageKey: StorageKey
   setSegment: React.Dispatch<React.SetStateAction<UASegment>>
+  showSegmentDefinition: boolean
   required?: true | undefined
   helperText?: string
-}> = ({ helperText, setSegment, required, storageKey }) => {
+}> = ({
+  helperText,
+  setSegment,
+  required,
+  storageKey,
+  showSegmentDefinition,
+}) => {
   const [selected, setSelected] = usePersistantObject<NonNullable<UASegment>>(
     storageKey
   )
   const { segments } = useUASegments()
+  const value = React.useMemo(
+    () => (showSegmentDefinition ? { ...selected } : { ...selected }),
+    [selected, showSegmentDefinition]
+  )
 
   React.useEffect(() => {
     setSegment(selected)
@@ -414,12 +433,21 @@ export const SegmentPicker: React.FC<{
       autoHighlight
       freeSolo
       options={segments || []}
-      getOptionLabel={segment => segment.name!}
-      value={selected || null}
+      getOptionLabel={segment =>
+        (showSegmentDefinition
+          ? segment.definition || `${segment.name} has no segment definiton.`
+          : segment.segmentId!) || ""
+      }
+      value={value || null}
       onChange={(_event, value) =>
         setSelected(value === null ? undefined : (value as UASegment))
       }
-      renderOption={column => <Segment segment={column} />}
+      renderOption={column => (
+        <Segment
+          showSegmentDefinition={showSegmentDefinition}
+          segment={column}
+        />
+      )}
       renderInput={params => (
         <TextField
           {...params}
