@@ -290,7 +290,6 @@ const ViewSelector: React.FC<ViewSelector3Props> = props => {
       <Autocomplete<AccountSummary>
         blurOnSelect
         openOnFocus
-        autoSelect
         autoHighlight
         className={classes.formControl}
         options={accounts}
@@ -312,7 +311,6 @@ const ViewSelector: React.FC<ViewSelector3Props> = props => {
       <Autocomplete<WebPropertySummary>
         blurOnSelect
         openOnFocus
-        autoSelect
         autoHighlight
         className={classes.formControl}
         options={properties}
@@ -334,7 +332,6 @@ const ViewSelector: React.FC<ViewSelector3Props> = props => {
       <Autocomplete<ProfileSummary>
         blurOnSelect
         openOnFocus
-        autoSelect
         autoHighlight
         className={classes.formControl}
         options={views}
