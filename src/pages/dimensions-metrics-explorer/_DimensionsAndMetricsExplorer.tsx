@@ -28,8 +28,9 @@ import ColumnGroupList from "./_ColumnGroupList"
 import FormControlLabel from "@material-ui/core/FormControlLabel"
 import Checkbox from "@material-ui/core/Checkbox"
 import { useDebounce } from "use-debounce/lib"
-import { WithEtag } from "../../types"
+import { WithEtag, Dispatch } from "../../types"
 import { StorageKey } from "../../constants"
+import { makeStyles } from "@material-ui/core"
 
 type ColumnAPIResponse = WithEtag<Column[]>
 
@@ -56,33 +57,43 @@ const useColumns = (): Column[] | undefined => {
   return columns?.value
 }
 
-const Main: React.FC = () => {
-  const [searchText, setSearchText] = useLocalStorage("searchText", "")
-  const [allowDeprecated, setAllowDeprecated] = useTypedLocalStorage(
-    "allowDeprecated",
-    false
-  )
-  const [onlySegments, setOnlySegments] = useTypedLocalStorage(
-    "onlySegments",
-    false
-  )
+const useStyles = makeStyles(theme => ({
+  search: {
+    display: "flex",
+    flexDirection: "column",
+    "&> label": {
+      margin: theme.spacing(0),
+      marginTop: theme.spacing(-0.5),
+      marginBottom: theme.spacing(-1),
+    },
+  },
+  searchInput: {
+    maxWidth: theme.spacing(60),
+  },
+}))
 
-  const searchTerms = React.useMemo(
-    () =>
-      searchText
-        .toLowerCase()
-        .split(/\s+/)
-        .filter(term => term.length > 0),
-    [searchText]
-  )
-
-  const [throttledSearch] = useDebounce(searchTerms, 100, { trailing: true })
-
-  const columns = useColumns()
-
+const Search: React.FC<{
+  searchText: string
+  setSearchText: Dispatch<string>
+  onlySegments: boolean
+  setOnlySegments: Dispatch<boolean>
+  allowDeprecated: boolean
+  setAllowDeprecated: Dispatch<boolean>
+}> = ({
+  searchText,
+  setSearchText,
+  onlySegments,
+  setOnlySegments,
+  allowDeprecated,
+  setAllowDeprecated,
+}) => {
+  const classes = useStyles()
   return (
-    <div>
+    <section className={classes.search}>
       <TextField
+        className={classes.searchInput}
+        variant="outlined"
+        size="small"
         placeholder="Search"
         value={searchText}
         onChange={e => setSearchText(e.target.value)}
@@ -111,6 +122,44 @@ const Main: React.FC = () => {
           />
         }
         label="Include deprecated fields"
+      />
+    </section>
+  )
+}
+
+const Main: React.FC = () => {
+  const [searchText, setSearchText] = useLocalStorage("searchText", "")
+  const [allowDeprecated, setAllowDeprecated] = useTypedLocalStorage(
+    "allowDeprecated",
+    false
+  )
+  const [onlySegments, setOnlySegments] = useTypedLocalStorage(
+    "onlySegments",
+    false
+  )
+
+  const searchTerms = React.useMemo(
+    () =>
+      searchText
+        .toLowerCase()
+        .split(/\s+/)
+        .filter(term => term.length > 0),
+    [searchText]
+  )
+
+  const [throttledSearch] = useDebounce(searchTerms, 100, { trailing: true })
+
+  const columns = useColumns()
+
+  return (
+    <div>
+      <Search
+        searchText={searchText}
+        setSearchText={setSearchText}
+        allowDeprecated={allowDeprecated}
+        setAllowDeprecated={setAllowDeprecated}
+        onlySegments={onlySegments}
+        setOnlySegments={setOnlySegments}
       />
       {columns !== undefined ? (
         <ColumnGroupList
