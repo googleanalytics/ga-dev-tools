@@ -21,7 +21,7 @@ import { Link } from "gatsby"
 import { Typography, Chip, makeStyles } from "@material-ui/core"
 import { Link as LinkIcon, ArrowBack } from "@material-ui/icons"
 import { sortBy } from "lodash"
-import CopyButton from "../../components/CopyButton"
+import { CopyIconButton } from "../../components/CopyButton"
 
 type GroupInfoTemplateProps = {
   pageContext: {
@@ -50,7 +50,7 @@ const useStyles = makeStyles(theme => ({
     marginBottom: theme.spacing(1),
     display: "flex",
     alignItems: "baseline",
-    "& span": {
+    "&> span": {
       marginLeft: theme.spacing(1),
     },
   },
@@ -82,7 +82,13 @@ const ColumnInfo: React.FC<ColumnProps> = ({
           })}
         >
           {attributes?.uiName}{" "}
-          <Typography component="span">{column.id}</Typography>
+          <Typography component="span">
+            {column.id}{" "}
+            <CopyIconButton
+              toCopy={column.id || ""}
+              tooltipText="Copy API name"
+            />
+          </Typography>
         </Typography>
       </Link>
       <section className={classes.chips}>
@@ -104,12 +110,6 @@ const ColumnInfo: React.FC<ColumnProps> = ({
           This field is disallowed in segments.
         </Typography>
       )}
-      <CopyButton
-        text="Copy API Name"
-        toCopy={column.id || ""}
-        variant="outlined"
-        size="small"
-      />
     </section>
   )
 }
