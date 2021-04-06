@@ -19,11 +19,7 @@ import classnames from "classnames"
 import { Column } from "../../api"
 import { Link } from "gatsby"
 import { Typography, Chip, makeStyles } from "@material-ui/core"
-import {
-  Link as LinkIcon,
-  ArrowBack,
-  EditAttributesTwoTone,
-} from "@material-ui/icons"
+import { Link as LinkIcon, ArrowBack } from "@material-ui/icons"
 import { sortBy } from "lodash"
 import CopyButton from "../../components/CopyButton"
 
@@ -78,23 +74,22 @@ const ColumnInfo: React.FC<ColumnProps> = ({
   const classes = useStyles()
   return (
     <section id={column.id?.replace("ga:", "")}>
-      <Typography
-        variant="h4"
-        className={classnames(classes.columnHeading, {
-          [classes.deprecatedText]: attributes?.status === "DEPRECATED",
-        })}
-      >
-        {attributes?.uiName}{" "}
-        <Typography component="span">{column.id}</Typography>
-        <a href={`#${column.id?.replace("ga:", "")}`}>
-          <LinkIcon className={classes.linkIcon} />
-        </a>
-      </Typography>
+      <Link to={`#${column.id?.replace("ga:", "")}`}>
+        <Typography
+          variant="h4"
+          className={classnames(classes.columnHeading, {
+            [classes.deprecatedText]: attributes?.status === "DEPRECATED",
+          })}
+        >
+          {attributes?.uiName}{" "}
+          <Typography component="span">{column.id}</Typography>
+        </Typography>
+      </Link>
       <section className={classes.chips}>
         <Chip size="small" label={attributes?.dataType.toLowerCase()} />
         {attributes?.addedInApiVersion === "3" ? (
           <Chip size="small" label={`v3+`} />
-        ) : attributes.addedInApiVersion === "4" ? (
+        ) : attributes?.addedInApiVersion === "4" ? (
           <Chip size="small" label={`v4`} />
         ) : null}
       </section>
