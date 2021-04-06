@@ -19,7 +19,11 @@ import classnames from "classnames"
 import { Column } from "../../api"
 import { Link } from "gatsby"
 import { Typography, Chip, makeStyles } from "@material-ui/core"
-import { Link as LinkIcon, ArrowBack } from "@material-ui/icons"
+import {
+  Link as LinkIcon,
+  ArrowBack,
+  EditAttributesTwoTone,
+} from "@material-ui/icons"
 import { sortBy } from "lodash"
 import CopyButton from "../../components/CopyButton"
 
@@ -88,10 +92,11 @@ const ColumnInfo: React.FC<ColumnProps> = ({
       </Typography>
       <section className={classes.chips}>
         <Chip size="small" label={attributes?.dataType.toLowerCase()} />
-        <Chip size="small" label={`v${attributes?.addedInApiVersion}`} />
-        {attributes?.addedInApiVersion === "3" && (
+        {attributes?.addedInApiVersion === "3" ? (
+          <Chip size="small" label={`v3+`} />
+        ) : attributes.addedInApiVersion === "4" ? (
           <Chip size="small" label={`v4`} />
-        )}
+        ) : null}
       </section>
       {attributes?.status === "DEPRECATED" && (
         <Typography variant="body1" color="secondary">
