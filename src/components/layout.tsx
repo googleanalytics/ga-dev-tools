@@ -35,7 +35,7 @@ import MenuIcon from "@material-ui/icons/Menu"
 
 import Login, { useLogin, UserStatus } from "./Login"
 import { useGAVersion } from "../hooks"
-import { Switch, FormControlLabel } from "@material-ui/core"
+import { Switch, Grid } from "@material-ui/core"
 import { GAVersion } from "../constants"
 import Info from "./Info"
 import Spinner from "./Spinner"
@@ -44,6 +44,9 @@ const mobile = (theme: Theme) => theme.breakpoints.between(0, "sm")
 const notMobile = (theme: Theme) => theme.breakpoints.up("md")
 
 const useStyles = makeStyles<any, { disableNav: true | undefined }>(theme => ({
+  toggle: {
+    display: "flex",
+  },
   info: {
     maxWidth: 930,
   },
@@ -224,12 +227,21 @@ interface LinkT {
   href: string
 }
 
-type LinkData = LinkT | Heading
+interface ToggleT {
+  type: "ga4toggle"
+  versions: GAVersion[]
+}
+
+type LinkData = LinkT | Heading | ToggleT
 
 const linkData: LinkData[] = [
   {
     text: "Demos & Tools",
     type: "heading",
+    versions: [GAVersion.GoogleAnalytics4, GAVersion.UniversalAnalytics],
+  },
+  {
+    type: "ga4toggle",
     versions: [GAVersion.GoogleAnalytics4, GAVersion.UniversalAnalytics],
   },
   {
@@ -311,6 +323,32 @@ const linkData: LinkData[] = [
   },
 ]
 
+const GA4Toggle: React.FC<{
+  gaVersion: GAVersion
+  setGAVersion: (version: GAVersion) => void
+}> = ({ setGAVersion, gaVersion }) => {
+  return (
+    <Grid component="label" container alignItems="center" spacing={1}>
+      <Grid item>UA</Grid>
+      <Grid item>
+        <Switch
+          checked={gaVersion === GAVersion.GoogleAnalytics4}
+          onChange={e => {
+            if (e.target.checked === true) {
+              setGAVersion(GAVersion.GoogleAnalytics4)
+            } else {
+              setGAVersion(GAVersion.UniversalAnalytics)
+            }
+          }}
+          name="use GA4"
+          color="primary"
+        />
+      </Grid>
+      <Grid item>GA4</Grid>
+    </Grid>
+  )
+}
+
 const Layout: React.FC<LayoutProps> = ({
   children,
   title,
@@ -365,6 +403,16 @@ const Layout: React.FC<LayoutProps> = ({
                   </Typography>
                 )
               }
+              if (linkData.type === "ga4toggle") {
+                return (
+                  <li key={linkData.type} className={classes.innerNav}>
+                    <GA4Toggle
+                      setGAVersion={setGAVersion}
+                      gaVersion={gaVersion}
+                    />
+                  </li>
+                )
+              }
               return (
                 <ListItem
                   button
@@ -393,25 +441,6 @@ const Layout: React.FC<LayoutProps> = ({
                 <Home className={classes.homeIcon} /> Home
               </Typography>
             </Link>
-            {pathname === "/" ? null : (
-              <FormControlLabel
-                control={
-                  <Switch
-                    checked={gaVersion === GAVersion.GoogleAnalytics4}
-                    onChange={e => {
-                      if (e.target.checked === true) {
-                        setGAVersion(GAVersion.GoogleAnalytics4)
-                      } else {
-                        setGAVersion(GAVersion.UniversalAnalytics)
-                      }
-                    }}
-                    name="use GA4"
-                    color="primary"
-                  />
-                }
-                label="GA4"
-              />
-            )}
           </li>
           {links.map(linkData => {
             if (linkData.type === "heading") {
@@ -423,6 +452,16 @@ const Layout: React.FC<LayoutProps> = ({
                   >
                     {linkData.text}
                   </Typography>
+                </li>
+              )
+            }
+            if (linkData.type === "ga4toggle") {
+              return (
+                <li key={linkData.type} className={classes.innerNav}>
+                  <GA4Toggle
+                    setGAVersion={setGAVersion}
+                    gaVersion={gaVersion}
+                  />
                 </li>
               )
             }
