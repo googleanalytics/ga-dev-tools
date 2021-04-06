@@ -14,7 +14,11 @@
 
 import * as React from "react"
 
-import { useLocalStorage, useTypedLocalStorage } from "../../hooks"
+import {
+  useLocalStorage,
+  useTypedLocalStorage,
+  usePersistantObject,
+} from "../../hooks"
 import { Column, useApi } from "../../api"
 
 import TextField from "@material-ui/core/TextField"
@@ -24,13 +28,15 @@ import ColumnGroupList from "./_ColumnGroupList"
 import FormControlLabel from "@material-ui/core/FormControlLabel"
 import Checkbox from "@material-ui/core/Checkbox"
 import { useDebounce } from "use-debounce/lib"
+import { WithEtag } from "../../types"
+import { StorageKey } from "../../constants"
 
-const useColumns = (): Column[] => {
+type ColumnAPIResponse = WithEtag<Column[]>
+
+const useColumns = (): Column[] | undefined => {
   const api = useApi()
-  const [columns, setColumns] = useTypedLocalStorage<Column[]>(
-    "metadata.columns",
-    [],
-    false
+  const [columns, setColumns] = usePersistantObject<ColumnAPIResponse>(
+    StorageKey.dimensionsMetricsExplorerColumns
   )
 
   React.useEffect(() => {
@@ -39,14 +45,15 @@ const useColumns = (): Column[] => {
     }
 
     api.metadata.columns.list({ reportType: "ga" }).then(response => {
-      const nu = response.result.items!
-      // Since changing the columns will cause an expensive re-render, only
-      // update them if the API has a result different from the one that was
-      // in localStorage.
-      setColumns(old => (JSON.stringify(old) === JSON.stringify(nu) ? old : nu))
+      const nu = response.result
+      if (nu.etag === columns?.etag) {
+        return
+      }
+      setColumns({ etag: nu.etag!, value: nu.items! })
     })
-  }, [api, setColumns])
-  return columns
+  }, [api, setColumns, columns])
+
+  return columns?.value
 }
 
 const Main: React.FC = () => {
@@ -105,7 +112,7 @@ const Main: React.FC = () => {
         }
         label="Include deprecated fields"
       />
-      {columns.length !== 0 ? (
+      {columns !== undefined ? (
         <ColumnGroupList
           searchTerms={throttledSearch}
           allowDeprecated={allowDeprecated}

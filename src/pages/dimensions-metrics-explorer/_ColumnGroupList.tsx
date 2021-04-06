@@ -344,20 +344,44 @@ const ColumnGroup: React.FC<{
 
 const ColumnGroupList: React.FC<{
   allowDeprecated: boolean
-  searchTerms: string[]
   onlySegments: boolean
   columns: Column[]
-}> = ({ allowDeprecated, searchTerms, onlySegments, columns }) => {
+  searchTerms: string[]
+}> = ({ allowDeprecated, onlySegments, columns, searchTerms }) => {
   const classes = useStyles()
+  const filteredColumns = React.useMemo(() => {
+    let filtered: Column[] = columns
 
+    if (!allowDeprecated) {
+      filtered = filtered.filter(
+        column => column?.attributes?.status !== "DEPRECATED"
+      )
+    }
+
+    if (onlySegments) {
+      filtered = filtered.filter(
+        column => column?.attributes?.allowedInSegments === "true"
+      )
+    }
+
+    filtered = filtered.filter(column =>
+      searchTerms.every(
+        term =>
+          column?.id?.toLowerCase().indexOf(term) !== -1 ||
+          column?.attributes?.uiName.toLowerCase().indexOf(term) !== -1
+      )
+    )
+
+    return filtered
+  }, [columns, searchTerms, allowDeprecated, onlySegments])
   // Group all the columns by group
   const groupedColumns = React.useMemo(() =>
     // JS Sets guarantee insertion order is preserved, which is important
     // because the key order in this groupBy determines the order that
     // they appear in the UI.
     {
-      return groupBy(columns, column => column.attributes?.group)
-    }, [columns])
+      return groupBy(filteredColumns, column => column.attributes?.group)
+    }, [filteredColumns])
 
   // Set of column groups that are currently expanded.
   const [open, setOpen] = React.useState<Set<string>>(() => {
