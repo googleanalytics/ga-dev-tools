@@ -29,6 +29,7 @@ import green from "@material-ui/core/colors/green"
 import yellow from "@material-ui/core/colors/yellow"
 import red from "@material-ui/core/colors/red"
 import { ParametersAPI, Validation } from "./_hooks"
+import { PAB } from "../../components/Buttons"
 
 const useStyles = makeStyles(theme => ({
   hitElement: {
@@ -309,14 +310,14 @@ const HitActions: React.FC<HitActionsProps> = ({
     case HitStatus.Sent:
     case HitStatus.Valid: {
       const sendHitButton = (
-        <Button
+        <PAB
           startIcon={hitStatus === HitStatus.Sent ? <Check /> : <Send />}
           onClick={sendHit}
           className="Button Button--success Button-withIcon"
           variant="contained"
         >
-          Send hit to Google Analytics
-        </Button>
+          Send to GA
+        </PAB>
       )
 
       const sharableLinkToHit =
@@ -331,12 +332,12 @@ const HitActions: React.FC<HitActionsProps> = ({
           {sendHitButton}
           <CopyButton
             toCopy={hitPayload}
-            text="Copy hit payload"
+            text="Copy payload"
             variant="contained"
           />
           <CopyButton
             toCopy={sharableLinkToHit}
-            text="Copy sharable link to hit"
+            text="Copy link to this hit"
             variant="contained"
           />
         </div>
@@ -345,7 +346,7 @@ const HitActions: React.FC<HitActionsProps> = ({
     default: {
       return (
         <div className={classes.hitElementActions}>
-          <Button
+          <PAB
             variant="contained"
             disabled={hitStatus === "VALIDATING"}
             onClick={validateHit}
@@ -353,7 +354,7 @@ const HitActions: React.FC<HitActionsProps> = ({
             {hitStatus === HitStatus.Validating
               ? "Validating..."
               : "Validate hit"}
-          </Button>
+          </PAB>
         </div>
       )
     }

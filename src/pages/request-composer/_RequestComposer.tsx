@@ -13,14 +13,7 @@
 // limitations under the License.
 
 import * as React from "react"
-import {
-  makeStyles,
-  Typography,
-  Tabs,
-  Tab,
-  Box,
-  Button,
-} from "@material-ui/core"
+import { makeStyles, Typography, Tabs, Tab, Box } from "@material-ui/core"
 import ViewSelector, { HasView } from "../../components/ViewSelector"
 import HistogramRequest from "./_HistogramRequest/_index"
 import PivotRequest from "./_PivotRequest/_index"
@@ -31,6 +24,7 @@ import { useEffect, useState } from "react"
 import { useMakeReportsRequest } from "./_api"
 import PrettyJson, { shouldCollapseRequest } from "./_PrettyJson"
 import ReportsTable from "./_ReportsTable"
+import { PAB } from "../../components/Buttons"
 
 const useStyles = makeStyles(theme => ({
   viewSelector: {
@@ -110,7 +104,7 @@ const RequestComposer = () => {
 
   const button = React.useMemo(() => {
     return (
-      <Button
+      <PAB
         variant="contained"
         color="primary"
         disabled={!canMakeRequest}
@@ -118,7 +112,7 @@ const RequestComposer = () => {
         className={classes.makeRequest}
       >
         Make Request
-      </Button>
+      </PAB>
     )
   }, [classes, makeRequest, canMakeRequest])
 

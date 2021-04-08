@@ -32,6 +32,7 @@ import green from "@material-ui/core/colors/green"
 import red from "@material-ui/core/colors/red"
 import grey from "@material-ui/core/colors/grey"
 import CopyButton from "../../../components/CopyButton"
+import { PAB } from "../../../components/Buttons"
 
 interface ValidateEventProps {
   parameterizedUrl: string
@@ -246,14 +247,9 @@ const EventActions: React.FC<ValidateEventProps> = props => {
 
   return (
     <section className={classes.eventActions}>
-      <Button
-        color="primary"
-        variant="contained"
-        startIcon={eventSent ? <Check /> : <Send />}
-        onClick={onClick}
-      >
+      <PAB startIcon={eventSent ? <Check /> : <Send />} onClick={onClick}>
         Send to GA
-      </Button>
+      </PAB>
 
       <CopyButton
         text="Copy payload"
