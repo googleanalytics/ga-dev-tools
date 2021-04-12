@@ -17,8 +17,7 @@ export const usePersistentBoolean: UsePersistentBoolean = (
     if (overwrite !== undefined) {
       return overwrite
     }
-    const fromStorage =
-      typeof window === "undefined" ? null : window.localStorage.getItem(key)
+    const fromStorage = IS_SSR ? null : window.localStorage.getItem(key)
     if (fromStorage === null) {
       return initialValue
     }
@@ -26,7 +25,7 @@ export const usePersistentBoolean: UsePersistentBoolean = (
   })
 
   useEffect(() => {
-    if (typeof window === "undefined") {
+    if (IS_SSR) {
       return
     }
     window.localStorage.setItem(key, JSON.stringify({ value }))
@@ -53,8 +52,7 @@ export const usePersistentString: UsePersistentString = (
     if (overwrite !== undefined) {
       return overwrite
     }
-    const fromStorage =
-      typeof window === "undefined" ? null : window.localStorage.getItem(key)
+    const fromStorage = IS_SSR ? null : window.localStorage.getItem(key)
     if (fromStorage === null) {
       return undefined || initialValue
     }
@@ -65,7 +63,7 @@ export const usePersistentString: UsePersistentString = (
   })
 
   useEffect(() => {
-    if (typeof window === "undefined") {
+    if (IS_SSR) {
       return
     }
     if (value === undefined) {
@@ -85,7 +83,7 @@ export const usePersistantObject = <T extends {}>(
     if (IS_SSR) {
       return undefined
     }
-    let asString = window.localStorage.getItem(key)
+    let asString = IS_SSR ? null : window.localStorage.getItem(key)
     if (asString === null || asString === "undefined") {
       return undefined
     }
@@ -100,37 +98,6 @@ export const usePersistantObject = <T extends {}>(
   }, [value, key])
 
   return [value, setValue]
-}
-
-// TODO - This should probably be replaced with something from gatsby.
-export const useHash = () => {
-  const [hash, setHash] = React.useState(window.location.hash.replace(/^#/, ""))
-
-  React.useEffect(() => {
-    const listener = (ev: HashChangeEvent) => {
-      setHash(new URL(ev.newURL).hash.replace(/^#/, ""))
-    }
-
-    window.addEventListener("hashchange", listener, { passive: true })
-
-    return () => window.removeEventListener("hashchange", listener)
-  }, [])
-
-  return hash
-}
-
-// TODO - this probably dosn't need to be a hook, but adding now to get cubes to work.
-//
-// Convert a callback taking a string into a callback taking event.target.value
-export const useEventValue = (setValue: (value: string) => void) =>
-  React.useCallback(
-    (event: React.ChangeEvent<HTMLInputElement>) =>
-      setValue(event.target.value),
-    [setValue]
-  )
-
-export const isServerSide = () => {
-  return typeof window === "undefined"
 }
 
 const getRedirectPath = (
@@ -172,8 +139,6 @@ const getRedirectPath = (
 
 export const IS_SSR = typeof window === "undefined"
 
-// TODO - IT might be worth looking into creating a hook that only allows
-// values from an enum.
 export const useGAVersion = (
   pathname: string
 ): {
