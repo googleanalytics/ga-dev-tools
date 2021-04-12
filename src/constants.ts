@@ -14,7 +14,6 @@
 
 // All static links on the site should be put into this enum. This makes it
 // easier to update all instances of a link on the site.
-// TODO - Add in a bulid step that makes sure the values in this enum are unique.
 export enum Url {
   aboutCampaign = "https://support.google.com/analytics/answer/1033863?visit_id=637529082348651695-136101741&rd=1",
   aboutCustomCampaigns = "https://support.google.com/analytics/answer/1033863",
@@ -24,7 +23,6 @@ export enum Url {
   googleAdsAutoTagging = "https://support.google.com/google-ads/answer/1752125",
   iosCampaignMeasurement = "https://developers.google.com/analytics/devguides/collection/ios/v3/campaigns#url-builder",
   googlePlayURLBuilder = "https://developers.google.com/analytics/devguides/collection/android/v4/campaigns#google-play-url-builder",
-  customCampaigns = "https://support.google.com/analytics/answer/1033863",
   gaDebugger = "https://chrome.google.com/webstore/detail/google-analytics-debugger/jnkmfdileelhofjcijamephohjechhna",
   analyticsJSDevsite = "https://developers.google.com/analytics/devguides/collection/analyticsjs/",
   analyticsJSEnhancedEcommerce = "https://developers.google.com/analytics/devguides/collection/analyticsjs/enhanced-ecommerce",
@@ -56,7 +54,6 @@ export enum GAVersion {
 }
 
 // All data in localStorage should have its keys here.
-// TODO - Add in a build step that makes sure the values in this enum are unique.
 export enum StorageKey {
   gaVersion = "/ga-version",
   uaDimensions = "//ua-dimensions",

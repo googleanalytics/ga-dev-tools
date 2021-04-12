@@ -177,7 +177,7 @@ const useStyles = makeStyles(theme => ({
   },
 }))
 
-const customCampaigns = <a href={Url.customCampaigns}>Custom Campaigns</a>
+const customCampaigns = <a href={Url.aboutCustomCampaigns}>Custom Campaigns</a>
 
 interface GeneratedUrlProps {
   websiteUrl: string
