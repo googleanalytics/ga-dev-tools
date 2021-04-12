@@ -364,14 +364,24 @@ const testColumns: Column[] = [
 ]
 
 const listPromise = Promise.resolve({ result: { items: testAccounts } })
+// TODO - add in real type.
 const metadataColumnsPromise = Promise.resolve({
-  result: { items: testColumns },
+  result: {
+    items: testColumns,
+    etag: "abc123",
+  },
 })
 export const testGapi = () => ({
   client: {
     analytics: {
       management: { accountSummaries: { list: () => listPromise } },
-      metadata: { columns: { list: () => metadataColumnsPromise } },
+      metadata: {
+        columns: {
+          list: () => {
+            return metadataColumnsPromise
+          },
+        },
+      },
     },
   },
 })

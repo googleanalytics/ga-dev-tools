@@ -11,7 +11,8 @@ import {
   ProfileSummary,
   WebPropertySummary,
 } from "../api"
-import { useTypedLocalStorage } from "../hooks"
+import { usePersistantObject } from "../hooks"
+import { StorageKey } from "../constants"
 
 const useStyles = makeStyles<Theme, ViewSelector3Props>(theme => ({
   root: props => ({
@@ -50,9 +51,9 @@ interface ViewSelector3Props {
 }
 
 type UseViewSelector = () => {
-  accounts: AccountSummary[]
-  properties: WebPropertySummary[]
-  views: ProfileSummary[]
+  accounts: AccountSummary[] | undefined
+  properties: WebPropertySummary[] | undefined
+  views: ProfileSummary[] | undefined
   selectedAccount: AccountSummary | undefined
   setSelectedAccount: (account: AccountSummary | undefined) => void
   selectedProperty: WebPropertySummary | undefined
@@ -73,14 +74,22 @@ const useViewSelector: UseViewSelector = () => {
     selectedProperty: false,
     selectedView: false,
   })
-  const [localData, setLocalData] = useTypedLocalStorage<{
+  const [localData, setLocalData] = usePersistantObject<{
     [key: string]: {
-      apiResponse: AccountSummary[]
-      selectedAccount: AccountSummary | undefined
-      selectedProperty: WebPropertySummary | undefined
-      selectedView: AccountSummary | undefined
+      apiResponse?: AccountSummary[]
+      selectedAccount?: AccountSummary
+      selectedProperty?: WebPropertySummary
+      selectedView?: ProfileSummary
     }
-  }>("viewSelector - apiResponse", () => "{}" as any, false)
+  }>(StorageKey.viewSelectorData)
+  // const [localData, setLocalData] = useTypedLocalStorage<{
+  // [key: string]: {
+  //   apiResponse: AccountSummary[]
+  //   selectedAccount: AccountSummary | undefined
+  //   selectedProperty: WebPropertySummary | undefined
+  // selectedView: AccountSummary | undefined
+  // }
+  // }>("viewSelector - apiResponse", () => "{}" as any, false)
 
   const [account, setAccount] = React.useState<AccountSummary>()
   const [property, setProperty] = React.useState<WebPropertySummary>()
@@ -88,7 +97,11 @@ const useViewSelector: UseViewSelector = () => {
 
   // Use last selected account
   React.useEffect(() => {
-    if (user === undefined || hasRun.selectedAccount) {
+    if (
+      user === undefined ||
+      hasRun.selectedAccount ||
+      localData === undefined
+    ) {
       return
     }
     const forUser = localData[user.getId()]
@@ -101,7 +114,11 @@ const useViewSelector: UseViewSelector = () => {
 
   // Use last selected property
   React.useEffect(() => {
-    if (user === undefined || hasRun.selectedProperty) {
+    if (
+      user === undefined ||
+      hasRun.selectedProperty ||
+      localData === undefined
+    ) {
       return
     }
     const forUser = localData[user.getId()]
@@ -114,7 +131,7 @@ const useViewSelector: UseViewSelector = () => {
 
   // Use last selected property
   React.useEffect(() => {
-    if (user === undefined || hasRun.selectedView) {
+    if (user === undefined || hasRun.selectedView || localData === undefined) {
       return
     }
     const forUser = localData[user.getId()]
@@ -130,13 +147,22 @@ const useViewSelector: UseViewSelector = () => {
       if (user === undefined) {
         return
       }
-      setLocalData(old => ({
-        ...old,
-        [user.getId()]: {
-          ...old[user.getId()],
-          selectedView: view,
-        },
-      }))
+      setLocalData(old => {
+        if (old === undefined) {
+          return {
+            [user.getId()]: {
+              selectedView: view,
+            },
+          }
+        }
+        return {
+          ...old,
+          [user.getId()]: {
+            ...old[user.getId()],
+            selectedView: view,
+          },
+        }
+      })
       setView(view)
     },
     [user, setLocalData]
@@ -147,13 +173,22 @@ const useViewSelector: UseViewSelector = () => {
       if (user === undefined) {
         return
       }
-      setLocalData(old => ({
-        ...old,
-        [user.getId()]: {
-          ...old[user.getId()],
-          selectedProperty: property,
-        },
-      }))
+      setLocalData(old => {
+        if (old === undefined) {
+          return {
+            [user.getId()]: {
+              selectedProperty: property,
+            },
+          }
+        }
+        return {
+          ...old,
+          [user.getId()]: {
+            ...old[user.getId()],
+            selectedProperty: property,
+          },
+        }
+      })
       setProperty(property)
       if (property?.profiles?.length === 1) {
         setSelectedView(property.profiles[0])
@@ -169,13 +204,22 @@ const useViewSelector: UseViewSelector = () => {
       if (user === undefined) {
         return
       }
-      setLocalData(old => ({
-        ...old,
-        [user.getId()]: {
-          ...old[user.getId()],
-          selectedAccount: account,
-        },
-      }))
+      setLocalData(old => {
+        if (old === undefined) {
+          return {
+            [user.getId()]: {
+              selectedAccount: account,
+            },
+          }
+        }
+        return {
+          ...old,
+          [user.getId()]: {
+            ...old[user.getId()],
+            selectedAccount: account,
+          },
+        }
+      })
       setAccount(account)
       if (account?.webProperties?.length === 1) {
         setSelectedProperty(account.webProperties[0])
@@ -188,31 +232,31 @@ const useViewSelector: UseViewSelector = () => {
   )
 
   const accounts = React.useMemo(() => {
-    if (user === undefined) {
-      return []
+    if (user === undefined || localData === undefined) {
+      return undefined
     }
     if (localData[user.getId()] === undefined) {
-      return []
+      return undefined
     }
     const accountsForUser = localData[user.getId()].apiResponse
     return accountsForUser
   }, [localData, user])
 
   const properties = React.useMemo(() => {
-    if (account === undefined) {
-      return []
+    if (account === undefined || accounts === undefined) {
+      return undefined
     }
     // TODO - not sure if this is the right logic.
     const a = accounts.find(a => a.id === account.id)
     if (a === undefined) {
-      return []
+      return undefined
     }
     return a.webProperties || []
   }, [accounts, account])
 
   const views = React.useMemo(() => {
-    if (property === undefined) {
-      return []
+    if (property === undefined || properties === undefined) {
+      return undefined
     }
     // TODO - not sure if this is the right logic.
     const p = properties.find(p => p.id === property.id)
@@ -229,13 +273,22 @@ const useViewSelector: UseViewSelector = () => {
     if (gapi !== undefined) {
       const api = getAnalyticsApi(gapi)
       api.management.accountSummaries.list({}).then(response => {
-        setLocalData(old => ({
-          ...old,
-          [user.getId()]: {
-            ...old[user.getId()],
-            apiResponse: response.result.items!,
-          },
-        }))
+        setLocalData(old => {
+          if (old === undefined) {
+            return {
+              [user.getId()]: {
+                apiResponse: response.result.items!,
+              },
+            }
+          }
+          return {
+            ...old,
+            [user.getId()]: {
+              ...old[user.getId()],
+              apiResponse: response.result.items!,
+            },
+          }
+        })
       })
     }
   }, [gapi, user, setLocalData])
@@ -292,7 +345,7 @@ const ViewSelector: React.FC<ViewSelector3Props> = props => {
         openOnFocus
         autoHighlight
         className={classes.formControl}
-        options={accounts}
+        options={accounts || []}
         value={selectedAccount || null}
         onChange={(_, a: AccountSummary | null) => {
           setSelectedAccount(a || undefined)
@@ -313,7 +366,7 @@ const ViewSelector: React.FC<ViewSelector3Props> = props => {
         openOnFocus
         autoHighlight
         className={classes.formControl}
-        options={properties}
+        options={properties || []}
         value={selectedProperty || null}
         onChange={(_, p: WebPropertySummary | null) => {
           setSelectedProperty(p || undefined)
@@ -334,7 +387,7 @@ const ViewSelector: React.FC<ViewSelector3Props> = props => {
         openOnFocus
         autoHighlight
         className={classes.formControl}
-        options={views}
+        options={views || []}
         value={selectedView || null}
         getOptionSelected={(a, b) => a.id === b.id}
         onChange={(_, v: ProfileSummary | null) => {

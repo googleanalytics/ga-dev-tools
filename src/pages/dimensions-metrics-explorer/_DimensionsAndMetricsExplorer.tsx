@@ -15,9 +15,9 @@
 import * as React from "react"
 
 import {
-  useLocalStorage,
-  useTypedLocalStorage,
   usePersistantObject,
+  usePersistentBoolean,
+  usePersistentString,
 } from "../../hooks"
 import { Column, useApi } from "../../api"
 
@@ -73,8 +73,8 @@ const useStyles = makeStyles(theme => ({
 }))
 
 const Search: React.FC<{
-  searchText: string
-  setSearchText: Dispatch<string>
+  searchText: string | undefined
+  setSearchText: Dispatch<string | undefined>
   onlySegments: boolean
   setOnlySegments: Dispatch<boolean>
   allowDeprecated: boolean
@@ -128,20 +128,23 @@ const Search: React.FC<{
 }
 
 const Main: React.FC = () => {
-  const [searchText, setSearchText] = useLocalStorage("searchText", "")
-  const [allowDeprecated, setAllowDeprecated] = useTypedLocalStorage(
-    "allowDeprecated",
+  const [searchText, setSearchText] = usePersistentString(
+    StorageKey.dimensionsMetricsExplorerSearch,
+    ""
+  )
+  const [allowDeprecated, setAllowDeprecated] = usePersistentBoolean(
+    StorageKey.dimensionsMetricsExplorerAllowDeprecated,
     false
   )
-  const [onlySegments, setOnlySegments] = useTypedLocalStorage(
-    "onlySegments",
+  const [onlySegments, setOnlySegments] = usePersistentBoolean(
+    StorageKey.dimensionsMetricsExplorerOnlySegments,
     false
   )
 
   const searchTerms = React.useMemo(
     () =>
       searchText
-        .toLowerCase()
+        ?.toLowerCase()
         .split(/\s+/)
         .filter(term => term.length > 0),
     [searchText]
@@ -163,7 +166,7 @@ const Main: React.FC = () => {
       />
       {columns !== undefined ? (
         <ColumnGroupList
-          searchTerms={throttledSearch}
+          searchTerms={throttledSearch || []}
           allowDeprecated={allowDeprecated}
           onlySegments={onlySegments}
           columns={columns}

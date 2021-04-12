@@ -25,8 +25,6 @@ describe("Dimensions and Metrics Explorer", () => {
     const { wrapped, store } = withProviders(<Prose />)
     store.dispatch({ type: "setUser", user: undefined })
     const { container } = renderer.render(wrapped)
-    // Add timeout since cubes are "fetched"
-    await renderer.waitFor(() => {}, { timeout: 1000 })
     expect(container).toHaveTextContent("Metrics Explorer lists")
   })
   // This test may go out of date, but we want at least once instance of making
@@ -37,8 +35,13 @@ describe("Dimensions and Metrics Explorer", () => {
     store.dispatch({ type: "setUser", user: {} })
     store.dispatch({ type: "setGapi", gapi })
     const { getByText, findByLabelText } = renderer.render(wrapped)
-    // Add timeout since cubes are "fetched"
-    await renderer.waitFor(() => {}, { timeout: 1000 })
+
+    // Wait for api promise to resolve so it won't render "fetching".
+    await renderer.act(async () => {
+      // metadata: { columns: { list: () => metadataColumnsPromise } },
+      await gapi.client.analytics.metadata.columns.list()
+      // await gapi.client.analytics.management.accountSummaries.list()
+    })
 
     await renderer.act(async () => {
       userEvent.click(getByText("User"))

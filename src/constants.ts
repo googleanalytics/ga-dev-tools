@@ -61,6 +61,7 @@ export enum StorageKey {
   gaVersion = "/ga-version",
   uaDimensions = "//ua-dimensions",
   uaSegments = "//ua-segments",
+  viewSelectorData = "//view-selector/data",
 
   // Query Explorer
   queryExplorerDimensions = "query-explorer/dimensions",
@@ -71,6 +72,9 @@ export enum StorageKey {
 
   // Dimensions and metrics explorer
   dimensionsMetricsExplorerColumns = "dimensions-metrics-explorer/columns",
+  dimensionsMetricsExplorerSearch = "dimensions-metrics-explorer/search",
+  dimensionsMetricsExplorerAllowDeprecated = "dimensions-metrics-explorer/allow-deprecated",
+  dimensionsMetricsExplorerOnlySegments = "dimensions-metrics-explorer/only-segments",
 
   campaignBuilderWebsiteUrl = "campaign-builder/website-url",
   campaignBuilderSource = "campaign-builder/source",

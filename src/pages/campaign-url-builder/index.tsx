@@ -35,11 +35,7 @@ import InlineCode from "../../components/InlineCode"
 import CopyButton from "../../components/CopyButton"
 import useShortenLink from "./_useShortenLink"
 import { extractParamsFromWebsiteUrl, websiteUrlFor } from "./_params"
-import {
-  usePersistentString,
-  usePersistentBoolean,
-  useIsSSR,
-} from "../../hooks"
+import { usePersistentString, usePersistentBoolean, IS_SSR } from "../../hooks"
 
 const iosCampaignTracking = (
   <a href={Url.iosCampaignMeasurement}>iOS Campaign Tracking URL Builder</a>
@@ -428,7 +424,6 @@ export const CampaignUrlBuilder = () => {
     },
     [setCampaign, setMedium, setSource, setTerm, setContent, setWebsiteUrl]
   )
-  const isSSR = useIsSSR()
 
   return (
     <>
@@ -443,7 +438,7 @@ export const CampaignUrlBuilder = () => {
         Fill out all fields marked with an asterisk (*), and the campaign URL
         will be generated for you.
       </Typography>
-      {isSSR ? null : (
+      {IS_SSR ? null : (
         <section className={classes.inputs}>
           <TextField
             id="website-url"

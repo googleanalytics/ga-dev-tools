@@ -54,7 +54,7 @@ describe("AccountExplorer", () => {
         })
         await renderer.act(async () => {
           // Choose the second view in the list
-          const viewSelect = await findByLabelText("View")
+          const viewSelect = await findByLabelText("view")
           renderer.fireEvent.keyDown(viewSelect, { key: "ArrowDown" })
           renderer.fireEvent.keyDown(viewSelect, { key: "Return" })
         })

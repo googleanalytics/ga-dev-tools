@@ -78,82 +78,11 @@ export const usePersistentString: UsePersistentString = (
   return [value, setValue]
 }
 
-// TODO: remove this and replaced with a typed version using enums.
-//
-// Same as `useState`, but also store the value in `localStorage` with a
-// `key` whenever it is updated, and initialize the state from `localStorage`,
-// if present. If `subscribe` is true, also propogate changes from localStorage
-// from other tabs into the state.
-export const useLocalStorage = function (
-  key: string,
-  initialValue: string | (() => string),
-  subscribe: boolean = true
-): [string, React.Dispatch<React.SetStateAction<string>>] {
-  // Set up the state; initialize from localStorage if available.
-  const [currentValue, setValue] = React.useState(() => {
-    let storedValue: null | string = null
-    if (typeof window !== "undefined") {
-      storedValue = window.localStorage.getItem(key)
-    }
-    return storedValue !== null
-      ? storedValue
-      : initialValue instanceof Function
-      ? initialValue()
-      : initialValue
-  })
-
-  // Create a wrapper around setValue that also stores to localStorage
-  const setValueAndStore = React.useCallback(
-    (value: React.SetStateAction<string>) =>
-      setValue((oldValue: string) => {
-        let newValue = value instanceof Function ? value(oldValue) : value
-        window.localStorage.setItem(key, newValue)
-        return newValue
-      }),
-    [setValue, key]
-  )
-
-  // If subscribe is true, subscribe to localStorage events and call
-  // setValue when there are changes
-  React.useEffect(() => {
-    if (subscribe) {
-      const listener = (event: StorageEvent) => {
-        if (event.storageArea === window.localStorage) {
-          if (event.key === null) {
-            // null key key means that there was a global storage clear event
-            setValue(
-              initialValue instanceof Function ? initialValue() : initialValue
-            )
-          } else if (event.key === key) {
-            if (event.newValue === null) {
-              setValue(
-                initialValue instanceof Function ? initialValue() : initialValue
-              )
-            } else {
-              setValue(event.newValue)
-            }
-          }
-        }
-      }
-
-      window.addEventListener("storage", listener)
-
-      return () => window.removeEventListener("storage", listener)
-    }
-  }, [key, setValue, initialValue, subscribe])
-
-  return [currentValue, setValueAndStore]
-}
-
-interface Stringable {
-  toString(): string
-}
-
 export const usePersistantObject = <T extends {}>(
   key: StorageKey
 ): [T | undefined, React.Dispatch<React.SetStateAction<T | undefined>>] => {
   const [value, setValue] = useState(() => {
-    if (isSSR) {
+    if (IS_SSR) {
       return undefined
     }
     let asString = window.localStorage.getItem(key)
@@ -164,54 +93,13 @@ export const usePersistantObject = <T extends {}>(
   })
 
   useEffect(() => {
-    if (isSSR) {
+    if (IS_SSR) {
       return
     }
     window.localStorage.setItem(key, JSON.stringify(value))
   }, [value, key])
 
   return [value, setValue]
-}
-
-// TODO: remove this and replaced with a typed version using enums.
-//
-// Same as `useLocalStorage`, but typed. Uses `JSON.parse` and
-// `JSON.stringify`` to convert values back and forth between strings
-// in `localStorage`.
-export function useTypedLocalStorage<T extends Stringable>(
-  key: string,
-  initialValue: T | (() => T),
-  subscribe: boolean = true
-): [T, React.Dispatch<React.SetStateAction<T>>] {
-  const getInitialString = React.useCallback(
-    () =>
-      initialValue instanceof Function
-        ? initialValue().toString()
-        : initialValue instanceof Array
-        ? JSON.stringify(initialValue)
-        : initialValue.toString(),
-    [initialValue]
-  )
-
-  const [currentString, setString] = useLocalStorage(
-    key,
-    getInitialString,
-    subscribe
-  )
-
-  const setValue = React.useCallback(
-    (value: React.SetStateAction<T>) =>
-      setString((oldString: string) => {
-        if (value instanceof Function) {
-          return JSON.stringify(value(JSON.parse(oldString)))
-        } else {
-          return JSON.stringify(value)
-        }
-      }),
-    [setString]
-  )
-
-  return [JSON.parse(currentString), setValue]
 }
 
 // TODO - This probably isn't general and should be moved into place where it
@@ -294,17 +182,7 @@ const getRedirectPath = (
   return undefined
 }
 
-const isSSR = typeof window === "undefined"
-
-// TODO - Since SSR and client side render are different evaluations, this
-// could maybe just be a static bool? But this works and I don't want to try to
-// change this right now.
-export const useIsSSR = () => {
-  const isSSR = React.useMemo(() => {
-    return typeof window === "undefined"
-  }, [typeof window === "undefined"])
-  return isSSR
-}
+export const IS_SSR = typeof window === "undefined"
 
 // TODO - IT might be worth looking into creating a hook that only allows
 // values from an enum.
@@ -314,7 +192,6 @@ export const useGAVersion = (
   gaVersion: GAVersion
   setGAVersion: (version: GAVersion) => void
 } => {
-  const isSSR = useIsSSR()
   const location = useLocation()
   const navigate = useNavigate()
   const [string_, setString] = usePersistentString(
@@ -322,7 +199,7 @@ export const useGAVersion = (
     GAVersion.UniversalAnalytics
   )
   const gaVersion = React.useMemo(() => {
-    if (isSSR) {
+    if (IS_SSR) {
       if (pathname.includes("/ga4/")) {
         return GAVersion.GoogleAnalytics4
       } else {
@@ -337,7 +214,7 @@ export const useGAVersion = (
       default:
         throw new Error(`Value: ${string_} is not a valid GAVersion.`)
     }
-  }, [string_, isSSR, pathname])
+  }, [string_, pathname])
 
   const setGAVersion = React.useCallback(
     (version: GAVersion) => {
