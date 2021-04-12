@@ -24,8 +24,7 @@ const shortenUrl = async (
   token: string,
   longUrl: string,
   cache: BitlyStorageCache,
-  setCacheValue: typeof defaultCacheSetter,
-  gtag: any
+  setCacheValue: typeof defaultCacheSetter
 ): Promise<string> => {
   const user = await bitlyUser(token)
   const guid = user.default_group_guid
@@ -37,11 +36,6 @@ const shortenUrl = async (
 
   // If the link isn't in the local cache, create it.
   const shortned = await bitlyShorten(token, longUrl, guid)
-  if (gtag !== undefined) {
-    gtag("event", EventAction.bitlyShorten, {
-      event_category: EventCategory.campaignUrlBuilder,
-    })
-  }
   const link = shortned.link
 
   updateBitlyCache(guid, longUrl, link, cache, setCacheValue)
@@ -137,7 +131,6 @@ type UseShortLink = () => {
 }
 const useShortenLink: UseShortLink = () => {
   const clientId = process.env.BITLY_CLIENT_ID
-  const gtag = useSelector((a: AppState) => a.gtag)
   const [token, setToken] = useLocalStorage<string>(
     StorageKey.bitlyAccessToken,
     "",
@@ -153,11 +146,6 @@ const useShortenLink: UseShortLink = () => {
       return token
     }
     return new Promise(resolve => {
-      if (gtag !== undefined) {
-        gtag("event", EventAction.bitlyAuth, {
-          event_category: EventCategory.campaignUrlBuilder,
-        })
-      }
       const redirectUri = `${window.location.origin}/bitly-auth`
       const url = `https://bitly.com/oauth/authorize?client_id=${clientId}&redirect_uri=${redirectUri}`
       const name = "Login with Bit.ly"
@@ -172,7 +160,7 @@ const useShortenLink: UseShortLink = () => {
       }
       window.addEventListener("storage", storageListener)
     })
-  }, [token, setToken, clientId, gtag])
+  }, [token, setToken, clientId])
 
   const shorten = React.useCallback(
     async (longLink: string) => {
@@ -183,10 +171,10 @@ const useShortenLink: UseShortLink = () => {
         throw new Error("Cannot shortnen an empty string")
       }
       const token = await ensureAuth()
-      const shortLink = await shortenUrl(token, longLink, cache, setCache, gtag)
+      const shortLink = await shortenUrl(token, longLink, cache, setCache)
       return { shortLink, longLink }
     },
-    [ensureAuth, cache, setCache, gtag]
+    [ensureAuth, cache, setCache]
   )
 
   if (clientId === undefined) {
