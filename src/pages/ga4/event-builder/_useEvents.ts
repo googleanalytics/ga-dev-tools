@@ -67,9 +67,7 @@ const useEvents: UseEvents = () => {
     return unParameterizeUrl()
   }, [])
   // TODO - default this back to MPEvent.default()
-  const [event, setEvent] = useState(
-    urlParts.event || MPEvent.empty(MPEvent.default().getEventType())
-  )
+  const [event, setEvent] = useState(urlParts.event || MPEvent.default())
   const [api_secret, setAPISecret] = usePersistentString(
     StorageKey.eventBuilderApiSecret,
     "",

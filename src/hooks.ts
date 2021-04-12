@@ -102,18 +102,6 @@ export const usePersistantObject = <T extends {}>(
   return [value, setValue]
 }
 
-// TODO - This probably isn't general and should be moved into place where it
-// is used.
-//
-// Convert a callback taking a boolean into a callback taking
-// event.target.checked
-export const useEventChecked = (setChecked: (checked: boolean) => void) =>
-  React.useCallback(
-    (event: React.ChangeEvent<HTMLInputElement>) =>
-      setChecked(event.target.checked),
-    [setChecked]
-  )
-
 // TODO - This should probably be replaced with something from gatsby.
 export const useHash = () => {
   const [hash, setHash] = React.useState(window.location.hash.replace(/^#/, ""))

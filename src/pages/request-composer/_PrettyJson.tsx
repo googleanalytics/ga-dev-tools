@@ -1,5 +1,6 @@
 import React from "react"
 import { makeStyles, Paper } from "@material-ui/core"
+import { IS_SSR } from "../../hooks"
 // import ReactJson, { CollapsedFieldProps } from "react-json-view"
 
 interface PrettyJsonProps {
@@ -51,7 +52,7 @@ const PrettyJson: React.FC<PrettyJsonProps> = ({ object, shouldCollapse }) => {
     return null
   }
 
-  if (typeof window === "undefined") {
+  if (IS_SSR) {
     return null
   }
 
