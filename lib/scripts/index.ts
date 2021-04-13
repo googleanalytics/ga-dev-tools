@@ -43,6 +43,12 @@ const getParser = async (): Promise<argparse.ArgumentParser> => {
       "Builds the project and deploys it to `--environment`. Note that due to a limitation in `gatsby build`, this will always use the production environment variables. Only the firebase projectId will be changed",
   })
 
+  deployParser.addArgument("--no-localhost", {
+    defaultValue: false,
+    dest: "noLocalhost",
+    action: "storeTrue",
+  })
+
   subparsers.addParser(Command.Develop, {
     help:
       "Runs a local dev server. Runs any necessary validation before serving.",

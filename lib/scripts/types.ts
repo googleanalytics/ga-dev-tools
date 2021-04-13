@@ -65,6 +65,7 @@ export interface ServeArgs {
 export interface DeployArgs {
   cmd: Command.Deploy
   environment: Environment
+  noLocalhost: boolean
 }
 
 export enum Command {

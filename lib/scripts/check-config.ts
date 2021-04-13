@@ -54,11 +54,11 @@ const writeEnvFile = async ({ file, config }: WriteEnvArgs) => {
   )
 }
 
-// TODO - This probably shouldn't run unless we say --all. It maybe should only
-// run during deploy.
-const ensureFirebaseFunctionsConfig = async (
-  config: RuntimeJson
+export const ensureFirebaseFunctionsConfig = async (
+  config: RuntimeJson & { noLocalhost: boolean }
 ): Promise<void> => {
+  await ensureFirebaseLoginStatus({ noLocalhost: config.noLocalhost })
+
   const bitlyClientId =
     config.production.bitlyClientId === SKIP_QUESTION
       ? ""
@@ -258,15 +258,27 @@ const configQuestions = (
   ]
 }
 
-const ensureFirebaseLoginStatus = async () => {
-  console.log(`Ensuring that you're logged into to Firebase.`)
+const ensureFirebaseLoginStatus = async ({
+  noLocalhost,
+}: {
+  noLocalhost: boolean
+}) => {
+  console.log("Logging out of firebase since tokens are shortlived...")
+  await execa("yarn", ["run", "firebase", "logout"])
 
-  // TODO - --no-localhost might should be a flag to checkConfig.
-  return execa("yarn", ["run", "firebase", "login", "--no-localhost"], {
-    stderr: "inherit",
-    stdout: "inherit",
-    stdin: "inherit",
-  })
+  if (noLocalhost) {
+    return execa("yarn", ["run", "firebase", "login", "--no-localhost"], {
+      stderr: "inherit",
+      stdout: "inherit",
+      stdin: "inherit",
+    })
+  } else {
+    return execa("yarn", ["run", "firebase", "login"], {
+      stderr: "inherit",
+      stdout: "inherit",
+      stdin: "inherit",
+    })
+  }
 }
 
 // TODO - Check config should take a flag to force a reauth for firebase since
@@ -278,9 +290,6 @@ export const checkConfig = async (
   args: Omit<CheckConfigArgs, "cmd">
 ): Promise<RuntimeJson> => {
   console.log("Checking required configuration...")
-
-  // Make sure user is logged into Firebase.
-  await ensureFirebaseLoginStatus()
 
   const exists = fs.existsSync(RuntimeJsonPath)
 
@@ -305,8 +314,6 @@ export const checkConfig = async (
   const asRuntime = toRuntimeJson(answers, currentConfig)
 
   const config = await ensureNecessaryFiles(asRuntime)
-
-  await ensureFirebaseFunctionsConfig(config)
 
   return config
 }
