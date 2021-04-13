@@ -66,6 +66,13 @@ export enum StorageKey {
   queryExplorerSegment = "query-explorer/segment",
   queyExplorerSamplingLevel = "query-explorer/sampling-level",
   queryExplorerShowSegmentDefinition = "query-explorer/show-segment-definition",
+  queryExplorerStartDate = "query-explorer/start-date",
+  queryExplorerEndDate = "query-explorer/end-date",
+  queryExplorerStartIndex = "query-explorer/start-index",
+  queryExplorerMaxResults = "query-explorer/max-results",
+  queryExplorerFilters = "query-explorer/filters",
+  queryExplorerIncludeEmptyRows = "query-explorer/include-empty-rows",
+  queryExplorerSort = "query-explorer/sort",
 
   // Dimensions and metrics explorer
   dimensionsMetricsExplorerColumns = "dimensions-metrics-explorer/columns",

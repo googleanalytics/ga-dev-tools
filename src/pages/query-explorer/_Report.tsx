@@ -23,7 +23,11 @@ import {
   TableContainer,
   Paper,
   Typography,
+  TextField,
 } from "@material-ui/core"
+import Spinner from "../../components/Spinner"
+import { CopyIconButton } from "../../components/CopyButton"
+import { QueryResponse, APIStatus } from "./_hooks"
 
 const useStyles = makeStyles(theme => ({
   paper: {},
@@ -36,7 +40,9 @@ const useStyles = makeStyles(theme => ({
   },
 }))
 
-const ReportTable: React.FC<ReportProps> = ({ queryResponse }) => {
+const ReportTable: React.FC<{
+  queryResponse: gapi.client.analytics.GaData
+}> = ({ queryResponse }) => {
   const classes = useStyles()
 
   if (queryResponse === undefined) {
@@ -69,7 +75,7 @@ const ReportTable: React.FC<ReportProps> = ({ queryResponse }) => {
 }
 
 interface ReportProps {
-  queryResponse: gapi.client.analytics.GaData | undefined
+  queryResponse: QueryResponse
 }
 
 const Report: React.FC<ReportProps> = ({ queryResponse }) => {
@@ -77,26 +83,58 @@ const Report: React.FC<ReportProps> = ({ queryResponse }) => {
   if (queryResponse === undefined) {
     return null
   }
+
+  if (queryResponse.status === APIStatus.InProgress) {
+    return <Spinner>Loading results &hellip;</Spinner>
+  }
+
+  if (queryResponse.status === APIStatus.Error) {
+    return (
+      <Paper className={classes.paper}>
+        <Typography variant="h4" className={classes.preamble}>
+          An error has occured
+        </Typography>
+        <section className={classes.preamble}>
+          <Typography>Error code: {queryResponse.error.code}</Typography>
+          <Typography>Error message: {queryResponse.error.message}</Typography>
+        </section>
+      </Paper>
+    )
+  }
+
   return (
     <Paper className={classes.paper}>
       <Typography variant="h4" className={classes.preamble}>
-        {queryResponse.profileInfo?.profileName}
+        {queryResponse.response.profileInfo?.profileName}
       </Typography>
       <section className={classes.preamble}>
         <Typography>
-          Showing <strong>{queryResponse.rows?.length}</strong> out of{" "}
-          <strong>{queryResponse.totalResults}</strong> total results.
+          Showing <strong>{queryResponse.response.rows?.length}</strong> out of{" "}
+          <strong>{queryResponse.response.totalResults}</strong> total results.
         </Typography>
         <Typography>
-          {queryResponse.containsSampledData ? (
+          {queryResponse.response.containsSampledData ? (
             <>Contains sampled data.</>
           ) : (
             <>Does not contain sampled data.</>
           )}
         </Typography>
-        <Typography>{queryResponse.selfLink}</Typography>
+        <TextField
+          value={queryResponse.response.selfLink}
+          variant="outlined"
+          fullWidth
+          multiline
+          InputProps={{
+            endAdornment: (
+              <CopyIconButton
+                toCopy={queryResponse.response.selfLink || ""}
+                tooltipText="Copy API request."
+              />
+            ),
+          }}
+        />
       </section>
-      <ReportTable queryResponse={queryResponse} />
+      <ReportTable queryResponse={queryResponse.response} />
     </Paper>
   )
 }

@@ -10,7 +10,7 @@ const useStyles = makeStyles(() => ({
   },
 }))
 
-const Spinner = ({ children }) => {
+const Spinner: React.FC = ({ children }) => {
   const classes = useStyles()
   const theme = useTheme()
 

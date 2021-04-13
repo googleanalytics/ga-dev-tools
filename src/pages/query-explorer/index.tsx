@@ -24,20 +24,19 @@ import {
   Tooltip,
 } from "@material-ui/core"
 import { Url, StorageKey } from "../../constants"
-import ViewSelector, { HasView } from "../../components/ViewSelector"
+import ViewSelector from "../../components/ViewSelector"
 import { Launch } from "@material-ui/icons"
 import Sort from "./_Sort"
 import Report from "./_Report"
-import { Column, useApi, Segment } from "../../api"
+import { Column } from "../../api"
 import {
   DimensionsPicker,
   MetricsPicker,
   SegmentPicker,
-  V3SamplingLevel,
   V3SamplingLevelPicker,
 } from "../../components/UAPickers"
-import { usePersistentBoolean } from "../../hooks"
 import { PAB } from "../../components/Buttons"
+import { useInputs, useDataAPIRequest } from "./_hooks"
 
 const coreReportingApi = <a href={Url.coreReportingApi}>Core Reporting API</a>
 
@@ -111,129 +110,51 @@ const DevsiteLink: React.FC<{ hash: string }> = ({ hash }) => {
 
 export const QueryExplorer = () => {
   const classes = useStyles()
-  const [selectedView, setSelectedView] = React.useState<HasView | undefined>(
-    undefined
-  )
-  const [sort, setSort] = React.useState<SortableColumn[] | undefined>(
-    undefined
-  )
-  const api = useApi()
-  const [view, setView] = React.useState("")
-  const [startDate, setStartDate] = React.useState("7daysAgo")
-  const [endDate, setEndDate] = React.useState("yesterday")
-  const [startIndex, setStartIndex] = React.useState<string>()
-  const [maxResults, setMaxResults] = React.useState<string>()
-  // TODO - Improve filters with a filter builder that helps to create valid
-  // filters. It's currently very easy to create in invalid filter such as
-  //
-  // ga:sessionCount>10
-  //
-  // This doesn't work since sessionCount is a dimension.
-  const [filters, setFilters] = React.useState<string>()
-  const [selectedSegment, setSelectedSegment] = React.useState<Segment>()
-  const [selectedMetrics, setSelectedMetrics] = React.useState<Column[]>()
-  const [selectedDimensions, setSelectedDimensions] = React.useState<Column[]>()
-  const [includeEmptyRows, setIncludeEmptyRows] = React.useState(true)
-  const [showSegmentDefinition, setShowSegmentDefiniton] = usePersistentBoolean(
-    StorageKey.queryExplorerShowSegmentDefinition,
-    false
-  )
-  const [queryResponse, setQueryResponse] = React.useState<
-    gapi.client.analytics.GaData
-  >()
-  const [selectedSamplingValue, setSelectedSamplingValue] = React.useState<
-    V3SamplingLevel | undefined
-  >(V3SamplingLevel.Default)
 
-  const requiredParameters = React.useMemo(() => {
-    return (
-      view !== "" &&
-      startDate !== "" &&
-      endDate !== "" &&
-      selectedMetrics !== undefined &&
-      selectedMetrics.length !== 0
-    )
-  }, [view, startDate, endDate, selectedMetrics])
+  const {
+    onViewChanged,
+    view,
+    setView,
+    startDate,
+    setStartDate,
+    endDate,
+    setEndDate,
+    selectedMetrics,
+    setSelectedMetrics,
+    selectedDimensions,
+    setSelectedDimensions,
+    setSort,
+    filters,
+    setFilters,
+    setSelectedSegment,
+    showSegmentDefinition,
+    setShowSegmentDefiniton,
+    setSelectedSamplingValue,
+    startIndex,
+    setStartIndex,
+    maxResults,
+    setMaxResults,
+    includeEmptyRows,
+    setIncludeEmptyRows,
+    selectedSamplingValue,
+    selectedSegment,
+    sort,
+  } = useInputs()
 
-  // When the selected view is changed, update the text box for view with the
-  // id.
-  React.useEffect(() => {
-    if (selectedView === undefined) {
-      return
-    }
-    const viewId = `ga:${selectedView.view.id}`
-    setView(viewId)
-  }, [selectedView])
-
-  // TODO - Add error handling and visual indication when an error happens.
-  const runQuery = React.useCallback(() => {
-    if (
-      api === undefined ||
-      selectedMetrics === undefined ||
-      selectedMetrics.length === 0
-    ) {
-      return
-    }
-    const metrics = selectedMetrics.map(a => a.id).join(",")
-    const dimensions =
-      selectedDimensions?.length === 0
-        ? undefined
-        : selectedDimensions?.map(a => a.id).join(",")
-
-    const apiObject = {
-      ids: view,
-      "start-date": startDate,
-      "end-date": endDate,
-      "include-empty-rows": includeEmptyRows,
-      samplingLevel: selectedSamplingValue,
-      metrics,
-      dimensions,
-    }
-    if (selectedSegment !== undefined) {
-      apiObject["segment"] = selectedSegment.segmentId
-    }
-    if (startIndex !== undefined && startIndex !== "") {
-      apiObject["start-index"] = startIndex
-    }
-    if (maxResults !== undefined && maxResults !== "") {
-      apiObject["max-results"] = maxResults
-    }
-    if (filters !== undefined && filters !== "") {
-      apiObject["filters"] = encodeURI(filters)
-    }
-    if (sort !== undefined) {
-      apiObject["sort"] = sort
-        .map(a => `${a.sort === "ASCENDING" ? "" : "-"}${a.id}`)
-        .join(",")
-    }
-    // TODO - add in a loading indicator since this can take a while.
-    api.data.ga
-      .get(apiObject)
-      .then(response => {
-        setQueryResponse(response.result)
-      })
-      .catch(e => console.error(e))
-  }, [
+  const { runQuery, requiredParameters, queryResponse } = useDataAPIRequest({
     view,
     startDate,
     endDate,
-    selectedDimensions,
     selectedMetrics,
+    selectedDimensions,
+    includeEmptyRows,
+    selectedSamplingValue,
     selectedSegment,
-    sort,
     startIndex,
     maxResults,
     filters,
-    selectedSamplingValue,
-    includeEmptyRows,
-    api,
-  ])
-
-  const onViewChanged = React.useCallback(view => {
-    if ([view.view, view.account, view.property].every(a => a !== undefined)) {
-      setSelectedView(view as HasView)
-    }
-  }, [])
+    sort,
+  })
 
   return (
     <>
@@ -278,7 +199,7 @@ export const QueryExplorer = () => {
           fullWidth
           id="start-date"
           label="start date"
-          value={startDate}
+          value={startDate || ""}
           onChange={e => setStartDate(e.target.value)}
           required
           helperText={
@@ -297,7 +218,7 @@ export const QueryExplorer = () => {
           variant="outlined"
           id="end-date"
           label="end date"
-          value={endDate}
+          value={endDate || ""}
           onChange={e => setEndDate(e.target.value)}
           required
           helperText={
