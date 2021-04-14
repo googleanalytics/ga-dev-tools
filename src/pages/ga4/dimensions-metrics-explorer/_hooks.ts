@@ -31,7 +31,7 @@ type UseDimensionsAndMetrics = (
 export const useDimensionsAndMetrics: UseDimensionsAndMetrics = property => {
   const gapi = useSelector((state: AppState) => state.gapi)
   const dataAPI = useMemo(() => gapi?.client.analyticsdata, [gapi])
-  const [state, setState] = useState<State>(RequestState.NotStarted)
+  const [state, setState] = useState<RequestState>(RequestState.NotStarted)
   const [fields, setFields] = usePersistantObject<{
     [key: string]: {
       dimensions: Dimension[] | undefined
@@ -39,13 +39,20 @@ export const useDimensionsAndMetrics: UseDimensionsAndMetrics = property => {
     }
   }>(StorageKey.ga4DimensionsMetricsFields)
 
+  // Only set the state to loading if there wasn't a value in cache. This isn't
+  // _perfectly_ true, but is good enough for our purposes. The request will
+  // always happen when the property changes, but the dimensions and metrics
+  // values will only be updated if the response is different.
+  useEffect(() => {
+    if (fields === undefined || fields[property] === undefined) {
+      setState(RequestState.Loading)
+    }
+  }, [fields, property])
+
   useEffect(() => {
     if (dataAPI === undefined) {
       return
     }
-    // TODO this probably isn't ideal since it always shows loading even if
-    // there was something in cache.
-    setState(RequestState.Loading)
     dataAPI.properties
       .getMetadata({ name: `properties/${property}/metadata` })
       .then(response => {
@@ -57,7 +64,6 @@ export const useDimensionsAndMetrics: UseDimensionsAndMetrics = property => {
             existing !== undefined &&
             JSON.stringify(existing) === JSON.stringify(nu)
           ) {
-            console.log("values were the same")
             return old
           } else {
             return { ...(old || {}), [property]: { dimensions, metrics } }
