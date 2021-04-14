@@ -16,31 +16,34 @@ export const onInitialClientRender = () => {
 
     // TODO - Remove :analytics and replace it with the discovery document.
     window.gapi.load("client:auth2:analytics", () => {
-      window.gapi.client
-        .load(
+      Promise.all([
+        window.gapi.client.load(
           "https://analyticsreporting.googleapis.com/$discovery/rest?version=v4"
-        )
-        .then(() => {
-          window.gapi.client
-            .init({
-              scope: SCOPES.join(" "),
-              clientId,
+        ),
+        window.gapi.client.load(
+          "https://analyticsdata.googleapis.com/$discovery/rest"
+        ),
+      ]).then(() => {
+        window.gapi.client
+          .init({
+            scope: SCOPES.join(" "),
+            clientId,
+          })
+          .then(() => {
+            store.dispatch({ type: "setGapi", gapi: window.gapi })
+            const user = window.gapi.auth2.getAuthInstance().currentUser.get()
+            store.dispatch({
+              type: "setUser",
+              user: user.isSignedIn() ? user : undefined,
             })
-            .then(() => {
-              store.dispatch({ type: "setGapi", gapi: window.gapi })
-              const user = window.gapi.auth2.getAuthInstance().currentUser.get()
+            window.gapi.auth2.getAuthInstance().currentUser.listen(user => {
               store.dispatch({
                 type: "setUser",
                 user: user.isSignedIn() ? user : undefined,
               })
-              window.gapi.auth2.getAuthInstance().currentUser.listen(user => {
-                store.dispatch({
-                  type: "setUser",
-                  user: user.isSignedIn() ? user : undefined,
-                })
-              })
             })
-        }, console.error)
+          })
+      }, console.error)
     })
   })
 }
