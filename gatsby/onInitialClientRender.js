@@ -7,9 +7,7 @@ export const onInitialClientRender = () => {
       console.error("Could not load gapi")
       return
     }
-    // TODO - think about how the ui should handle not being authorized. The way
-    // we currently do it is to dim out the content, that probably still makes
-    // sense, but I want to think about it before blindly doing it.
+
     var SCOPES = ["https://www.googleapis.com/auth/analytics.readonly"]
 
     const clientId = process.env.GAPI_CLIENT_ID
@@ -22,6 +20,9 @@ export const onInitialClientRender = () => {
         ),
         window.gapi.client.load(
           "https://analyticsdata.googleapis.com/$discovery/rest"
+        ),
+        window.gapi.client.load(
+          "https://analyticsadmin.googleapis.com/$discovery/rest"
         ),
       ]).then(() => {
         window.gapi.client

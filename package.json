@@ -11,6 +11,7 @@
     "@material-ui/lab": "^4.0.0-alpha.57",
     "@material-ui/styles": "^4.11.3",
     "@types/gapi.analytics": "^0.0.3",
+    "@types/gapi.client.analyticsadmin": "^1.0.0",
     "@types/gapi.client.analyticsdata": "^1.0.1",
     "@types/gapi.client.analyticsreporting": "^4.0.3",
     "@types/gtag.js": "^0.0.3",

@@ -5,7 +5,7 @@ import { Info as InfoIcon } from "@material-ui/icons"
 import blue from "@material-ui/core/colors/lightBlue"
 
 interface InfoProps {
-  className: string
+  className?: string
 }
 
 const useStyles = makeStyles(theme => ({

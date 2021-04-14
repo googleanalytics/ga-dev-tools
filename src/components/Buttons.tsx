@@ -10,5 +10,6 @@ export const PAB: typeof Button = ({ ...props }) => {
 
 // Secondary Action Button
 export const SAB: typeof Button = ({ ...props }) => {
+  console.log(props)
   return <Button {...props} variant="outlined" color="secondary" />
 }
