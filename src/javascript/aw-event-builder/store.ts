@@ -3,7 +3,7 @@ import {
   applyMiddleware,
   Reducer,
   Middleware,
-  combineReducers
+  combineReducers,
 } from "redux";
 import thunkMuddliware, { ThunkDispatch } from "redux-thunk";
 import {
@@ -14,7 +14,7 @@ import {
   ValidationMessage,
   MPEventData,
   ValidationStatus,
-  Parameters
+  Parameters,
 } from "./types";
 import { unParameterizeUrl } from "./event";
 
@@ -88,6 +88,17 @@ const clientId: Reducer<string, EventBuilderAction> = (
       return state;
   }
 };
+const appInstanceId: Reducer<string, EventBuilderAction> = (
+  state = valuesFromUrlParameters.appInstanceId || "",
+  action
+) => {
+  switch (action.type) {
+    case ActionType.SetAppInstanceId:
+      return action.appInstanceId;
+    default:
+      return state;
+  }
+};
 
 const userId: Reducer<string, EventBuilderAction> = (
   state = valuesFromUrlParameters.userId || "",
@@ -149,17 +160,44 @@ const userProperties: Reducer<Parameters, EventBuilderAction> = (
   }
 };
 
+const timestampMicros: Reducer<number | null, EventBuilderAction> = (
+  state = valuesFromUrlParameters.timestampMicros || null,
+  action
+) => {
+  switch (action.type) {
+    case ActionType.SetTimestampMicros:
+      return action.timestampMicros;
+    default:
+      return state;
+  }
+};
+
+const nonPersonalizedAds: Reducer<boolean, EventBuilderAction> = (
+  state = valuesFromUrlParameters.nonPersonalizedAds || false,
+  action
+) => {
+  switch (action.type) {
+    case ActionType.SetNonPersonalizedAds:
+      return action.nonPersonalizedAds;
+    default:
+      return state;
+  }
+};
+
 const app: Reducer<State, EventBuilderAction> = combineReducers({
   userProperties,
+  timestampMicros,
+  nonPersonalizedAds,
   validationStatus,
   measurementId,
   firebaseAppId,
   userId,
   clientId,
+  appInstanceId,
   apiSecret,
   event,
   isAuthorized,
-  validationMessages
+  validationMessages,
 });
 
 const createStoreWithMiddleware = applyMiddleware<

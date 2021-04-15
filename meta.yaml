@@ -76,9 +76,9 @@ projects:
     action: View Demo
     url: https://enhancedecommerce.appspot.com
   status: updated
-- title: App+Web Event Builder
+- title: GA4 Event Builder
   type: tool
-  slug: aw-event-builder
+  slug: ga4-event-builder
   tech:
   - measurement_protocol_validation_server
 - title: Hit Builder
@@ -86,15 +86,6 @@ projects:
   slug: hit-builder
   tech:
   - measurement_protocol_validation_server
-- title: Polymer Elements
-  type: demo
-  slug: polymer-elements
-  tech:
-  - management_api
-  - metadata_api
-  external:
-    action: View Demo
-    url: https://elements.polymer-project.org/elements/google-analytics?view=demo:demo/index.html
 - title: Query Explorer
   type: tool
   slug: query-explorer

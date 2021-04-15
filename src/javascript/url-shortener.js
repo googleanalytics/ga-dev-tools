@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import {encodeQuery, cleanupingPromise} from './utils';
+import {encodeQuery, cleanupingPromise} from './utils-old';
 import {
   BehaviorSubject,
   fromEvent as rxFromEvent,
@@ -176,6 +176,9 @@ export const shortenUrl = async (longUrl, bitlyGuid) => {
   // design, but now that we have it, see if any of this cleanup stuff can be
   // more easily or cleanly expressed using that library.
   const {token} = await cleanupingPromise((resolve, reject, cleanup) => {
+    // NOTE: see https://stackoverflow.com/q/51250834/864406 for a discussion
+    // of the potential race condition here and why it isn't an issue.
+
     // Attach a listener that will await a message via postMessage
     const messageListener = event => {
       if (

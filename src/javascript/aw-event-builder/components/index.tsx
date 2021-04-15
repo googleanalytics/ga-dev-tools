@@ -17,6 +17,7 @@ import ValidateEvent from "./ValidateEvent";
 import EditEvent from "./EditEvent";
 import EditUserProperties from "./EditUserProperties";
 import ReduxManagedInput from "./ReduxManagedInput";
+import { ReduxManagedCheckbox } from "./ReduxManagedInput";
 import APISecret from "./APISecret";
 import actions from "../actions";
 import { State, MPEvent, MPEventType } from "../types";
@@ -27,10 +28,16 @@ import Icon from "../../components/icon";
 const HitBuilder: React.FC = () => {
   // TODO - The event picker should probably let you do a search to filter the dropdown.
   // TODO - make sure to focus on any new params.
-  const { event, clientId, userId, measurementId, firebaseAppId } = useSelector<
-    State,
-    State
-  >(a => a);
+  const {
+    event,
+    client_id,
+    user_id,
+    measurement_id,
+    firebase_app_id,
+    app_instance_id,
+    timestamp_micros,
+    non_personalized_ads,
+  } = useSelector<State, State>((a) => a);
   const dispatch = useDispatch();
   const [category, setCategory] = React.useState<MPEventCategory>(
     event.getCategories()[0]
@@ -47,7 +54,7 @@ const HitBuilder: React.FC = () => {
     // If the new category doesn't have the current eventType as an option,
     // update it to an empty one.
     const categoryHasEvent =
-      event.getCategories().find(c => c === category) !== undefined;
+      event.getCategories().find((c) => c === category) !== undefined;
     if (!categoryHasEvent) {
       const firstEventFromNewCategory = MPEvent.eventTypes(category)[0];
       updateEvent(MPEvent.empty(firstEventFromNewCategory));
@@ -57,6 +64,12 @@ const HitBuilder: React.FC = () => {
   const updateClientId = React.useCallback(
     (clientId: string) => {
       dispatch(actions.setClientId(clientId));
+    },
+    [dispatch]
+  );
+  const updateAppInstanceId = React.useCallback(
+    (appInstanceId: string) => {
+      dispatch(actions.setAppInstanceId(appInstanceId));
     },
     [dispatch]
   );
@@ -78,9 +91,30 @@ const HitBuilder: React.FC = () => {
     },
     [dispatch]
   );
+  const updateTimestampMicros = React.useCallback(
+    (timestampMicros: string) => {
+      try {
+        const asNumber = parseInt(timestampMicros, 10);
+        if (isNaN(asNumber)) {
+          dispatch(actions.setTimestampMicros(null));
+          return;
+        }
+        dispatch(actions.setTimestampMicros(asNumber));
+      } catch (e) {
+        console.error(e);
+      }
+    },
+    [dispatch]
+  );
+  const updateNonPersonalizedAds = React.useCallback(
+    (nonPersonalizedAds: boolean) => {
+      dispatch(actions.setNonPersonalizedAds(nonPersonalizedAds));
+    },
+    [dispatch]
+  );
 
   const updateCustomEventName = React.useCallback(
-    name => {
+    (name) => {
       updateEvent(event.updateName(name));
     },
     [event, updateEvent]
@@ -102,47 +136,62 @@ const HitBuilder: React.FC = () => {
           <APISecret />
           <div className="HitBuilderParam">
             <ReduxManagedInput
-              disabled={firebaseAppId !== ""}
-              labelText="Measurement ID"
-              update={updateMeasurementId}
-              initialValue={measurementId}
+              disabled={measurement_id !== "" || client_id !== ""}
+              labelText="firebase_app_id"
+              update={updateFirebaseAppId}
+              initialValue={firebase_app_id}
             />
             <ReduxManagedInput
-              disabled={measurementId !== ""}
-              labelText="Firebase App Id"
-              update={updateFirebaseAppId}
-              initialValue={firebaseAppId}
+              disabled={firebase_app_id !== "" || app_instance_id !== ""}
+              labelText="measurement_id"
+              update={updateMeasurementId}
+              initialValue={measurement_id}
+            />
+          </div>
+          <div className="HitBuilderParam">
+            <ReduxManagedInput
+              disabled={measurement_id !== "" || client_id !== ""}
+              labelText="app_instance_id"
+              update={updateAppInstanceId}
+              initialValue={app_instance_id}
+            />
+            <ReduxManagedInput
+              disabled={firebase_app_id !== "" || app_instance_id !== ""}
+              labelText="client_id"
+              update={updateClientId}
+              initialValue={client_id}
             />
           </div>
           <ReduxManagedInput
-            labelText={
-              <div>
-                clientId/
-                <br />
-                app_instance_id
-              </div>
-            }
-            update={updateClientId}
-            initialValue={clientId}
-          />
-          <ReduxManagedInput
-            labelText="userId"
+            labelText="user_id"
             update={updateUserId}
-            initialValue={userId}
+            initialValue={user_id}
           />
+          <div className="HitBuilderParam">
+            <ReduxManagedCheckbox
+              labelText="non_personalized_ads"
+              update={updateNonPersonalizedAds}
+              value={non_personalized_ads}
+            />
+            <ReduxManagedInput
+              labelText="timestamp_micros"
+              update={updateTimestampMicros}
+              initialValue={timestamp_micros?.toString()}
+            />
+          </div>
           <div className="HitBuilderParam">
             <div className="HitBuilderParam">
               <label className="HitBuilderParam-label">Category</label>
               <select
                 className="FormField"
                 value={category}
-                onChange={e => {
+                onChange={(e) => {
                   const newCategory: MPEventCategory = e.target
                     .value as MPEventCategory;
                   setCategory(newCategory);
                 }}
               >
-                {MPEvent.categories().map(option => (
+                {MPEvent.categories().map((option) => (
                   <option value={option} key={option}>
                     {option}
                   </option>
@@ -155,14 +204,14 @@ const HitBuilder: React.FC = () => {
                 <select
                   className="FormField"
                   value={event.getEventType()}
-                  onChange={e => {
+                  onChange={(e) => {
                     const newEventType: MPEventType = e.target
                       .value as MPEventType;
                     const newEvent = MPEvent.empty(newEventType);
                     dispatch(actions.setEvent(newEvent));
                   }}
                 >
-                  {MPEvent.eventTypes(category).map(option => (
+                  {MPEvent.eventTypes(category).map((option) => (
                     <option value={option} key={option}>
                       {option}
                     </option>

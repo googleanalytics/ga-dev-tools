@@ -5,33 +5,45 @@ import {
   MPEventData,
   MPEventType,
   Parameters,
-  UrlParam
+  UrlParam,
 } from "./types";
 
-export interface UserOrClientId {
-  userId?: string;
-  clientId?: string;
+interface WebIds {
+  type: "web";
+  client_id?: string;
+  user_id?: string;
 }
 
+interface MobileIds {
+  type: "mobile";
+  app_instance_id?: string;
+  user_id?: string;
+}
+
+export type ClientIds = WebIds | MobileIds;
+
 export interface InstanceId {
-  measurementId?: string;
-  firebaseAppId?: string;
+  measurement_id?: string;
+  firebase_app_id?: string;
 }
 
 export interface URLParts {
-  eventName?: string;
-  clientId?: string;
-  userId?: string;
+  timestamp_micros?: number | null;
+  non_personalized_ads?: boolean;
+  event_name?: string;
+  client_id?: string;
+  app_instance_id?: string;
+  user_id?: string;
   event?: MPEvent;
-  measurementId?: string;
-  firebaseAppId?: string;
-  apiSecret?: string;
-  userProperties?: Parameters;
+  measurement_id?: string;
+  firebase_app_id?: string;
+  api_secret?: string;
+  user_properties?: Parameters;
 }
 
 const getEventFromParams = (searchParams: URLSearchParams) => {
   if (searchParams.has("eventData")) {
-    const eventDataString = searchParams.get("eventData")!;
+    const eventDataString = searchParams.get(UrlParam.EventData)!;
     try {
       const decoded = atob(eventDataString);
       const eventData = JSON.parse(decoded) as MPEventData;
@@ -39,7 +51,7 @@ const getEventFromParams = (searchParams: URLSearchParams) => {
       if (eventType !== undefined) {
         let emptyEvent = MPEvent.empty(eventType);
         if (eventType === MPEventType.CustomEvent) {
-          const eventName = searchParams.get("eventName");
+          const eventName = searchParams.get(UrlParam.EventName);
           if (eventName !== null) {
             emptyEvent = emptyEvent.updateName(eventName);
           }
@@ -49,9 +61,9 @@ const getEventFromParams = (searchParams: URLSearchParams) => {
           emptyEvent = emptyEvent.updateParameters(() => parameters);
         }
         gaAll("send", "event", {
-          eventCategory: "App+Web Event Builder",
+          eventCategory: "GA4 Event Builder",
           eventAction: "hydrate",
-          eventLabel: "event-from-url"
+          eventLabel: "event-from-url",
         });
         return emptyEvent;
       }
@@ -59,9 +71,9 @@ const getEventFromParams = (searchParams: URLSearchParams) => {
       console.error(e);
       // ignore
     }
-  } else if (searchParams.has("eventType")) {
+  } else if (searchParams.has(UrlParam.EventType)) {
     const eventType = MPEvent.eventTypeFromString(
-      searchParams.get("eventType")!
+      searchParams.get(UrlParam.EventType)!
     );
     if (eventType !== undefined) {
       return MPEvent.empty(eventType);
@@ -95,58 +107,91 @@ const getUserPropertiesFromParams = (
 export const unParameterizeUrl = (): URLParts => {
   const search = window.location.search;
   const searchParams = new URLSearchParams(search);
-  const clientId = searchParams.get("clientId") || undefined;
-  const userId = searchParams.get("userId") || undefined;
+  const client_id = searchParams.get("client_id") || undefined;
+  const app_instance_id = searchParams.get("app_instance_id") || undefined;
+  const user_id = searchParams.get("user_id") || undefined;
   const event = getEventFromParams(searchParams);
-  const userProperties = getUserPropertiesFromParams(searchParams);
-  const measurementId = searchParams.get("measurementId") || undefined;
-  const firebaseAppId = searchParams.get("firebaseAppId") || undefined;
-  const apiSecret = searchParams.get("apiSecret") || undefined;
+  const user_properties = getUserPropertiesFromParams(searchParams);
+  const measurement_id = searchParams.get("measurement_id") || undefined;
+  const firebase_app_id = searchParams.get("firebase_app_id") || undefined;
+  const api_secret = searchParams.get("api_secret") || undefined;
+  const timestampMicrosString =
+    searchParams.get("timestamp_micros") || undefined;
+  const timestamp_micros = timestampMicrosString
+    ? parseInt(timestampMicrosString, 10)
+    : undefined;
+  const nonPersonalizedAdsString =
+    searchParams.get("non_personalized_ads") || undefined;
+  const non_personalized_ads =
+    nonPersonalizedAdsString === "true"
+      ? true
+      : nonPersonalizedAdsString === "false"
+      ? false
+      : undefined;
   return {
-    clientId,
-    userId,
+    timestamp_micros,
+    non_personalized_ads,
+    app_instance_id,
+    client_id,
+    user_id,
     event,
-    userProperties,
-    measurementId,
-    firebaseAppId,
-    apiSecret,
-    eventName: event.isCustomEvent() ? event.getEventName() : undefined
+    user_properties,
+    measurement_id,
+    firebase_app_id,
+    api_secret,
+    event_name: event.isCustomEvent() ? event.getEventName() : undefined,
   };
 };
 
 export const parameterizedUrl = ({
-  clientId,
-  userId,
+  client_id,
+  app_instance_id,
+  user_id,
   event,
-  measurementId,
-  firebaseAppId,
-  apiSecret,
-  userProperties
+  measurement_id,
+  firebase_app_id,
+  api_secret,
+  user_properties,
+  timestamp_micros,
+  non_personalized_ads,
 }: URLParts) => {
   const params = new URLSearchParams();
 
-  clientId && clientId !== "" && params.append("clientId", clientId);
-  userId && userId !== "" && params.append("userId", userId);
-  apiSecret && apiSecret !== "" && params.append("apiSecret", apiSecret);
+  client_id && client_id !== "" && params.append("client_id", client_id);
+  app_instance_id &&
+    app_instance_id !== "" &&
+    params.append("app_instance_id", app_instance_id);
+  user_id && user_id !== "" && params.append("user_id", user_id);
+  api_secret && api_secret !== "" && params.append("api_secret", api_secret);
   event &&
     event.getEventType() === MPEventType.CustomEvent &&
-    params.append("eventName", event.getEventName());
+    params.append("event_name", event.getEventName());
 
-  measurementId &&
-    measurementId !== "" &&
-    params.append("measurementId", measurementId);
+  measurement_id &&
+    measurement_id !== "" &&
+    params.append("measurement_id", measurement_id);
 
-  firebaseAppId &&
-    firebaseAppId !== "" &&
-    params.append("firebaseAppId", firebaseAppId);
+  firebase_app_id &&
+    firebase_app_id !== "" &&
+    params.append("firebase_app_id", firebase_app_id);
+
+  timestamp_micros !== undefined &&
+    timestamp_micros !== null &&
+    params.append("timestamp_micros", timestamp_micros.toString());
+
+  non_personalized_ads !== undefined &&
+    params.append("non_personalized_ads", non_personalized_ads.toString());
 
   // We base64 encode the JSON string to make the url a bit smaller.
   event &&
-    params.append("eventData", btoa(JSON.stringify(event.getEventData())));
+    params.append(
+      UrlParam.EventData,
+      btoa(JSON.stringify(event.getEventData()))
+    );
 
-  if (userProperties !== undefined) {
-    const filtered = userProperties.filter(
-      property => property.value !== undefined
+  if (user_properties !== undefined) {
+    const filtered = user_properties.filter(
+      (property) => property.value !== undefined
     );
     params.append(UrlParam.UserProperties, btoa(JSON.stringify(filtered)));
   }
@@ -160,11 +205,11 @@ export const parameterizedUrl = ({
 // Build the query param for the instance that should be used for the event.
 // Defaults to an empty measurement_id if neither one is set.
 const instanceQueryParamFor = (instanceId: InstanceId) => {
-  if (instanceId.firebaseAppId !== "") {
-    return `firebase_app_id=${instanceId.firebaseAppId}`;
+  if (instanceId.firebase_app_id !== "") {
+    return `firebase_app_id=${instanceId.firebase_app_id}`;
   }
-  if (instanceId.measurementId !== "") {
-    return `measurement_id=${instanceId.measurementId}`;
+  if (instanceId.measurement_id !== "") {
+    return `measurement_id=${instanceId.measurement_id}`;
   }
   return `measurement_id=`;
 };
@@ -172,37 +217,56 @@ const instanceQueryParamFor = (instanceId: InstanceId) => {
 // TODO add in type for MPPayload
 export const payloadFor = (
   events: MPEvent[],
-  requiredId: UserOrClientId,
-  userProperties: Parameters
+  clientIds: ClientIds,
+  user_properties: Parameters,
+  timestamp_micros: number | null,
+  non_personalized_ads: boolean
 ): {} => {
+  if (clientIds.type === "web" && clientIds.client_id === "") {
+    clientIds.client_id = undefined;
+  } else if (clientIds.type === "mobile" && clientIds.app_instance_id === "") {
+    clientIds.app_instance_id = undefined;
+  }
+  const { type, ...minusType } = clientIds;
   return {
-    userId: requiredId.userId || undefined,
-    clientId: requiredId.clientId || undefined,
-    events: events.map(event => event.asPayload()),
-    userProperties:
-      userProperties.length === 0
+    ...minusType,
+    user_id: clientIds.user_id || undefined,
+    timestamp_micros: timestamp_micros !== null ? timestamp_micros : undefined,
+    non_personalized_ads:
+      non_personalized_ads !== null ? non_personalized_ads : undefined,
+    events: events.map((event) => event.asPayload()),
+    user_properties:
+      user_properties.length === 0
         ? undefined
-        : MPEvent.parametersToPayload(userProperties)
+        : MPEvent.parametersToPayload(user_properties),
   };
 };
 
 export const validateHit = async (
   instanceId: InstanceId,
   api_secret: string,
-  requiredId: UserOrClientId,
+  requiredId: ClientIds,
   events: MPEvent[],
-  userProperties: Parameters
+  userProperties: Parameters,
+  timestampMicros: number | null,
+  nonPersonalizedAds: boolean
 ): Promise<ValidationMessage[]> => {
   const url = `https://www.google-analytics.com/debug/mp/collect?${instanceQueryParamFor(
     instanceId
   )}&api_secret=${api_secret}`;
-  const payload = payloadFor(events, requiredId, userProperties);
+  const payload = payloadFor(
+    events,
+    requiredId,
+    userProperties,
+    timestampMicros,
+    nonPersonalizedAds
+  );
   Object.assign(payload, {
-    validationBehavior: "ENFORCE_RECOMMENDATIONS"
+    validationBehavior: "ENFORCE_RECOMMENDATIONS",
   });
   const result = await fetch(url, {
     method: "POST",
-    body: JSON.stringify(payload)
+    body: JSON.stringify(payload),
   });
   const asJson = await result.json();
   return asJson.validationMessages as ValidationMessage[];
@@ -211,16 +275,26 @@ export const validateHit = async (
 export const sendEvent = async (
   instanceId: InstanceId,
   api_secret: string,
-  requiredId: UserOrClientId,
+  requiredId: ClientIds,
   events: MPEvent[],
-  userProperties: Parameters
+  userProperties: Parameters,
+  timestampMicros: number | null,
+  nonPersonalizedAds: boolean
 ): Promise<Response> => {
   const url = `https://www.google-analytics.com/mp/collect?${instanceQueryParamFor(
     instanceId
   )}&api_secret=${api_secret}`;
   const result = await fetch(url, {
     method: "POST",
-    body: JSON.stringify(payloadFor(events, requiredId, userProperties))
+    body: JSON.stringify(
+      payloadFor(
+        events,
+        requiredId,
+        userProperties,
+        timestampMicros,
+        nonPersonalizedAds
+      )
+    ),
   });
   return result;
 };

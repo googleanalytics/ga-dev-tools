@@ -2,37 +2,12 @@
 
 {% block content %}
 
-<section>
-  <h2>Overview</h2>
-  <p>Use this tool to search or browse through your accounts, properties, and views, See what
-    accounts you have access to, and find the IDs that you need for the API or
-    for another tool or service that integrates with Google Analytics.
-  </p>
-</section>
-
-<div class="Box">
-  <header class="Box-header">
-    <div class="AccountExplorerSearch">
-      <h3 class="AccountExplorerSearch-title">
-        Search for your account information&hellip;
-      </h3>
-      <input class="AccountExplorerSearch-field FormField" id="search-box" placeholder="Start typing to search...">
-      <h3 class="AccountExplorerSearch-title">
-        &hellip;or browse through all your accounts
-      </h3>
-      <div id="view-selector-container"></div>
-    </div>
-  </header>
-  <main class="AccountExplorerResults">
-    <h3 class="AccountExplorerResults-title" id="results-title"></h3>
-    <div id="results-container"></div>
-  </main>
-</div>
+<div id="account-explorer-react"></div>
 
 {% endblock %}
 
 {% block tech_content %}
-  The {{ project.title }} uses the <a href="{{ site.tech.embed_api.url }}"> {{ site.tech.embed_api.name }}</a> and the custom <code>ViewSelector2</code> component, which queries the <a href="{{ site.tech.management_api.url }}">{{ site.tech.management_api.name }}</a> under the hood to get a list of all accounts the current user can access.
+The {{ project.title }} uses the <a href="{{ site.tech.embed_api.url }}"> {{ site.tech.embed_api.name }}</a> and the custom <code>ViewSelector2</code> component, which queries the <a href="{{ site.tech.management_api.url }}">{{ site.tech.management_api.name }}</a> under the hood to get a list of all accounts the current user can access.
 {% endblock %}
 
 {% block foot_scripts %}

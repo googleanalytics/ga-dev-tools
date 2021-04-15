@@ -17,7 +17,7 @@
 
 import React, {Component} from 'react';
 import styles from './trend-chart.css';
-import {loadScript} from '../../../utils';
+import {loadScript} from '../../../utils-old';
 
 
 // The material charts color palette.

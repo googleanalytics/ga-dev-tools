@@ -10,30 +10,32 @@ import actions from "../actions";
 const useStyles = makeStyles({
   addUserProperty: {
     display: "flex",
-    "justify-content": "flex-end"
-  }
+    "justify-content": "flex-end",
+  },
 });
 
 interface EditUserPropertiesProps {}
 
 const EditUserProperties: React.FC<EditUserPropertiesProps> = () => {
   const classes = useStyles();
-  const userProperties = useSelector<State, Parameters>(a => a.userProperties);
+  const user_properties = useSelector<State, Parameters>(
+    (a) => a.user_properties
+  );
   const dispatch = useDispatch();
   const setUserProperties = React.useCallback(
     (cb: (old: Parameters) => Parameters) => {
-      dispatch(actions.setUserProperties(cb(userProperties)));
+      dispatch(actions.setUserProperties(cb(user_properties)));
     },
-    [userProperties, dispatch]
+    [user_properties, dispatch]
   );
 
   const addProperty = React.useCallback(() => {
-    setUserProperties(old => old.concat([defaultStringParam("", true)]));
+    setUserProperties((old) => old.concat([defaultStringParam("", true)]));
   }, [setUserProperties]);
 
   const updatePropertyName = React.useCallback(
     (idx: number) => (_oldName: string, nuName: string) => {
-      setUserProperties(old =>
+      setUserProperties((old) =>
         old.map((property, i) =>
           idx === i ? { ...property, name: nuName } : property
         )
@@ -43,13 +45,13 @@ const EditUserProperties: React.FC<EditUserPropertiesProps> = () => {
   );
   const removeProperty = React.useCallback(
     (idx: number) => () => {
-      setUserProperties(old => old.filter((_, i) => i !== idx));
+      setUserProperties((old) => old.filter((_, i) => i !== idx));
     },
     [setUserProperties]
   );
   const updateProperty = React.useCallback(
     (idx: number) => (nu: Parameter) => {
-      setUserProperties(old =>
+      setUserProperties((old) =>
         old.map((current, i) => (i === idx ? nu : current))
       );
     },
@@ -58,7 +60,7 @@ const EditUserProperties: React.FC<EditUserPropertiesProps> = () => {
   return (
     <>
       <h3>User Properties</h3>
-      {userProperties.length === 0 ? (
+      {user_properties.length === 0 ? (
         <div>
           <p>No user properties configured.</p>
           <div className={classes.addUserProperty}>
@@ -74,7 +76,7 @@ const EditUserProperties: React.FC<EditUserPropertiesProps> = () => {
       ) : (
         <>
           <div>
-            {userProperties.map((property, idx) => (
+            {user_properties.map((property, idx) => (
               <EditParameter
                 key={`userProperty-${idx}`}
                 updateParameter={updateProperty(idx)}

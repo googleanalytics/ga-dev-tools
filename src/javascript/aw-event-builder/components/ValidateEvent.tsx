@@ -28,24 +28,24 @@ import {
   State,
   MPEvent,
   ValidationStatus as ValidationStatusT,
-  Parameters
+  Parameters,
 } from "../types";
 import { useSelector, useDispatch } from "react-redux";
 import classnames from "classnames";
-import { parameterizedUrl, payloadFor } from "../event";
+import { parameterizedUrl, payloadFor, ClientIds } from "../event";
 
 const ACTION_TIMEOUT = 1500;
 
 const EventElement: React.FC = () => {
-  const measurement_id = useSelector<State, string>(a => a.measurementId);
-  const firebase_app_id = useSelector<State, string>(a => a.firebaseAppId);
-  const api_secret = useSelector<State, string>(a => a.apiSecret);
+  const measurement_id = useSelector<State, string>((a) => a.measurement_id);
+  const firebase_app_id = useSelector<State, string>((a) => a.firebase_app_id);
+  const api_secret = useSelector<State, string>((a) => a.api_secret);
   const validationStatus = useSelector<State, ValidationStatusT>(
-    a => a.validationStatus
+    (a) => a.validationStatus
   );
   const className = classnames("HitElement", {
     "HitElement--valid": validationStatus === ValidationStatusT.Valid,
-    "HitElement--invalid": validationStatus === ValidationStatusT.Invalid
+    "HitElement--invalid": validationStatus === ValidationStatusT.Invalid,
   });
 
   return (
@@ -81,9 +81,9 @@ export default EventElement;
 
 const ValidationStatus: React.FC = () => {
   const validationMessages = useSelector<State, ValidationMessage[]>(
-    a => a.validationMessages
+    (a) => a.validationMessages
   );
-  const validationStatus = useSelector<State>(a => a.validationStatus);
+  const validationStatus = useSelector<State>((a) => a.validationStatus);
   switch (validationStatus) {
     case ValidationStatusT.Valid:
       return (
@@ -112,7 +112,7 @@ const ValidationStatus: React.FC = () => {
           <div className="HitElement-statusBody">
             <h1 className="HitElement-statusHeading">Event is invalid!</h1>
             <ul className="HitElement-statusMessage">
-              {validationMessages.map(message => (
+              {validationMessages.map((message) => (
                 <li key={message.fieldPath}>{message.description}</li>
               ))}
             </ul>
@@ -142,43 +142,84 @@ const ValidationStatus: React.FC = () => {
 };
 
 const EventActions: React.FC = () => {
-  const event = useSelector<State, MPEvent>(a => a.event);
-  const clientId = useSelector<State, string>(a => a.clientId);
-  const userId = useSelector<State, string>(a => a.userId);
-  const measurementId = useSelector<State, string>(a => a.measurementId);
-  const apiSecret = useSelector<State, string>(a => a.apiSecret);
-  const firebaseAppId = useSelector<State, string>(a => a.firebaseAppId);
-  const validationStatus = useSelector<State, ValidationStatusT>(
-    a => a.validationStatus
+  const event = useSelector<State, MPEvent>((a) => a.event);
+  const client_id = useSelector<State, string>((a) => a.client_id);
+  const app_instance_id = useSelector<State, string>((a) => a.app_instance_id);
+  const user_id = useSelector<State, string>((a) => a.user_id);
+  const measurement_id = useSelector<State, string>((a) => a.measurement_id);
+  const timestamp_micros = useSelector<State, number | null>(
+    (a) => a.timestamp_micros
   );
-  const userProperties = useSelector<State, Parameters>(a => a.userProperties);
+  const non_personalized_ads = useSelector<State, boolean>(
+    (a) => a.non_personalized_ads
+  );
+  const api_secret = useSelector<State, string>((a) => a.api_secret);
+  const firebase_app_id = useSelector<State, string>((a) => a.firebase_app_id);
+  const validationStatus = useSelector<State, ValidationStatusT>(
+    (a) => a.validationStatus
+  );
+  const user_properties = useSelector<State, Parameters>(
+    (a) => a.user_properties
+  );
   const [payload, setPayload] = React.useState<any>({});
   const [linkToEvent, setLinkToEvent] = React.useState<string>("");
 
   React.useEffect(() => {
     const url = parameterizedUrl({
-      clientId,
-      userId,
+      client_id,
+      app_instance_id,
+      user_id,
       event,
-      measurementId,
-      firebaseAppId,
-      apiSecret,
-      userProperties
+      measurement_id,
+      firebase_app_id,
+      api_secret,
+      user_properties,
+      timestamp_micros,
+      non_personalized_ads,
     });
     setLinkToEvent(url);
   }, [
-    clientId,
-    userId,
+    app_instance_id,
+    client_id,
+    user_id,
     event,
-    measurementId,
-    firebaseAppId,
-    apiSecret,
-    userProperties
+    measurement_id,
+    firebase_app_id,
+    api_secret,
+    user_properties,
+    timestamp_micros,
+    non_personalized_ads,
   ]);
 
   React.useEffect(() => {
-    setPayload(payloadFor([event], { clientId, userId }, userProperties));
-  }, [event, clientId, userId, userProperties]);
+    let clientIds: ClientIds;
+    if (clientId !== "") {
+      clientIds = { client_id, user_id, type: "web" };
+    } else {
+      clientIds = {
+        app_instance_id,
+        user_id,
+        type: "mobile",
+      };
+    }
+    setPayload(
+      payloadFor(
+        [event],
+        clientIds,
+        user_properties,
+        timestamp_micros,
+        non_personalized_ads
+      )
+    );
+  }, [
+    event,
+    client_id,
+    app_instance_id,
+    user_id,
+    user_properties,
+    timestamp_micros,
+    non_personalized_ads,
+  ]);
   const [eventSent, setEventSent] = React.useState<boolean>(false);
   React.useEffect(() => {
     setEventSent(false);
@@ -193,9 +234,9 @@ const EventActions: React.FC = () => {
     dispatch(actions.sendEvent);
     setEventSent(true);
     gaAll("send", "event", {
-      eventCategory: "App+Web Event Builder",
+      eventCategory: "GA4 Event Builder",
       eventAction: "send",
-      eventLabel: "payload"
+      eventLabel: "payload",
     });
     await sleep(ACTION_TIMEOUT);
     setEventSent(false);
@@ -255,7 +296,7 @@ interface ValidateEventButtonProps {
 
 const ValidateEventButton: React.FC<ValidateEventButtonProps> = ({
   validationStatus,
-  validateEvent
+  validateEvent,
 }) => {
   let buttonText: string;
   switch (validationStatus) {
@@ -284,15 +325,50 @@ const ValidateEventButton: React.FC<ValidateEventButtonProps> = ({
 };
 
 const EventPayloadInput: React.FC = () => {
-  const event = useSelector<State, MPEvent>(a => a.event);
-  const clientId = useSelector<State, string>(a => a.clientId);
-  const userId = useSelector<State, string>(a => a.userId);
-  const userProperties = useSelector<State, Parameters>(a => a.userProperties);
+  const event = useSelector<State, MPEvent>((a) => a.event);
+  const client_id = useSelector<State, string>((a) => a.client_id);
+  const app_instance_id = useSelector<State, string>((a) => a.app_instance_id);
+  const user_id = useSelector<State, string>((a) => a.user_id);
+  const timestamp_micros = useSelector<State, number | null>(
+    (a) => a.timestamp_micros
+  );
+  const non_personalized_ads = useSelector<State, boolean>(
+    (a) => a.non_personalized_ads
+  );
+  const user_properties = useSelector<State, Parameters>(
+    (a) => a.user_properties
+  );
   const [payload, setPayload] = React.useState<any>({});
 
   React.useEffect(() => {
-    setPayload(payloadFor([event], { clientId, userId }, userProperties));
-  }, [event, clientId, userId, userProperties]);
+    let clientIds: ClientIds;
+    if (client_id !== "") {
+      clientIds = { client_id, user_id, type: "web" };
+    } else {
+      clientIds = {
+        app_instance_id,
+        user_id,
+        type: "mobile",
+      };
+    }
+    setPayload(
+      payloadFor(
+        [event],
+        clientIds,
+        user_properties,
+        timestamp_micros,
+        non_personalized_ads
+      )
+    );
+  }, [
+    event,
+    client_id,
+    user_id,
+    user_properties,
+    app_instance_id,
+    timestamp_micros,
+    non_personalized_ads,
+  ]);
 
   return (
     <Textarea

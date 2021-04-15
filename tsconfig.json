@@ -13,7 +13,8 @@
     "resolveJsonModule": true,
     "downlevelIteration": true,
     "noImplicitAny": false,
-    "lib": ["dom.iterable", "dom", "esnext"]
+    "lib": ["dom.iterable", "dom", "esnext"],
+    "types": ["gapi", "gapi.auth2", "gapi.client", "gapi.client.analytics"]
   },
   "include": [
     "./src/"
