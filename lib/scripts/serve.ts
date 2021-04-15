@@ -7,11 +7,11 @@ export const serve = async (args: ServeArgs) => {
   const config = await checkConfig({ all: false })
 
   let projectId: string
-  if (args.environment === Environment.Staging) {
-    console.error(
-      `Note: serving using the staging environment isn't fully supported. You should use "yarn start" instead to run locally.`
+  if (args.environment === Environment.Development) {
+    projectId = config.development.firebaseProjectId
+    console.warn(
+      `Note: serving using the development environment isn't fully supported. You should use "yarn start" instead to run locally.`
     )
-    process.exit(1)
   } else if (args.environment === Environment.Production) {
     projectId = config.production.firebaseProjectId
   } else {
