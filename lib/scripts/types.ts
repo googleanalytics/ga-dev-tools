@@ -3,10 +3,9 @@ import * as path from "path"
 export const PWD = process.cwd()
 export const Encoding = "utf8"
 export const RuntimeJsonPath = path.join(PWD, "runtime.json")
-export const DotEnvDevelopmentPath = path.join(PWD, ".env.development")
 export const DotEnvProductionPath = path.join(PWD, ".env.production")
 
-interface CommonConfig {
+export interface CommonConfig {
   firebaseProjectId: string
   firebaseProjectIdFunctions: string
   firebaseFunctionsBaseUrl: string
@@ -17,30 +16,34 @@ interface CommonConfig {
 }
 
 export interface ProductionConfig extends CommonConfig {}
-export interface DevelopmentConfig extends CommonConfig {}
+export interface StagingConfig extends CommonConfig {}
 
 export interface ConfigAnswers {
   baseUriProd: string
+  baseUriStaging: string
   firebaseProjectIdProd: string
-  firebaseProjectIdDev: string
+  firebaseProjectIdStaging: string
   // TODO - This field should eventually be removed, but is currently in place
   // because we're using a separate firebase project for cloud functions and
   // hosting.
-  firebaseProjectIdFunctions: string
+  firebaseProjectIdFunctionsProd: string
+  firebaseProjectIdFunctionsStaging: string
   gapiClientIdProd: string
-  gapiClientIdDev: string
-  bitlyClientId: string
-  bitlyClientSecret: string
+  gapiClientIdStaging: string
+  bitlyClientIdProd: string
+  bitlyClientIdStaging: string
+  bitlyClientSecretProd: string
+  bitlyClientSecretStaging: string
 }
 
 export interface RuntimeJson {
   production: ProductionConfig
-  development: DevelopmentConfig
+  staging: StagingConfig
 }
 
 export enum Environment {
   Production = "production",
-  Development = "development",
+  Staging = "staging",
 }
 
 export interface CheckConfigArgs {
