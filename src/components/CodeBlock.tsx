@@ -23,14 +23,13 @@ import CopyButton from "./CopyButton"
 
 const useStyles = makeStyles(theme => ({
   codeBlock: {
+    display: "flex",
     padding: theme.spacing(2),
     position: "relative",
+    alignItems: "flex-start",
   },
-  copyButton: {
-    position: "absolute",
-    top: theme.spacing(2),
-    right: theme.spacing(2),
-    cursor: "pointer",
+  code: {
+    "flex-grow": "1",
   },
 }))
 
@@ -67,11 +66,9 @@ const CodeBlock: React.FC<CodeBlockProps> = ({
       {codeBlocks.map(({ code, title }, idx) =>
         idx !== selectedTab ? null : (
           <Paper square key={title} className={classes.codeBlock}>
-            <div className={classes.copyButton}>
-              <CopyButton useIconButton toCopy={code} />
-            </div>
             <SyntaxHighlighter
               {...props}
+              className={classes.code}
               customStyle={{
                 background: "unset",
                 padding: "unset",
@@ -80,6 +77,7 @@ const CodeBlock: React.FC<CodeBlockProps> = ({
             >
               {code}
             </SyntaxHighlighter>
+            <CopyButton useIconButton toCopy={code} />
           </Paper>
         )
       )}

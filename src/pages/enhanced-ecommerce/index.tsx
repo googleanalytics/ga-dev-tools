@@ -151,12 +151,6 @@ const EnhancedEcommerce = ({ location: { pathname } }) => {
         codeBlocks={codeBlocks}
         className={classes.codeBlock}
       />
-
-      <Typography variant="body1">
-        The demo doesn't just show samples, it's actually sending real data to
-        Google Analytics. If you'd like to inspect the hits, just open up the
-        developer tools or use the {gaDebugger} to see what's going on.
-      </Typography>
     </Layout>
   )
 }
