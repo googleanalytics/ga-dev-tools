@@ -1,11 +1,8 @@
 import * as execa from "execa"
 import { build } from "./build"
-import {
-  checkConfig,
-  ensureFirebaseFunctionsConfig,
-  writeEnvFile,
-} from "./check-config"
+import { checkConfig, writeEnvFile } from "./check-config"
 import { DeployArgs, Environment } from "./types"
+import { ensureFirebaseLoginStatus } from "./deploy-functions"
 
 export const stage = async (args: DeployArgs) => {
   const config = await checkConfig({
@@ -20,10 +17,15 @@ export const stage = async (args: DeployArgs) => {
       : config.staging
   )
 
-  await ensureFirebaseFunctionsConfig({
-    ...config,
-    noLocalhost: args.noLocalhost,
-  })
+  await ensureFirebaseLoginStatus({ noLocalhost: args.noLocalhost })
+
+  // TODO - should stage also do functions, or should the be managed
+  // separately?
+  //
+  // await ensureFirebaseFunctionsConfig({
+  //   ...config,
+  //   noLocalhost: args.noLocalhost,
+  // })
 
   let projectId: string
   if (args.environment === Environment.Staging) {

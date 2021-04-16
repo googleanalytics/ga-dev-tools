@@ -13,14 +13,13 @@ type BitlyAuthResponse = {
 }
 
 const getToken = async (code: string) => {
-  const baseEndpoint = process.env.FUNCTIONS_BASE_URL
-  if (baseEndpoint === undefined) {
-    console.error(
-      "process.env.FUNCTIONS_BASE_URL must be set for this page to work."
+  const authEndpoint = process.env.AUTH_ENDPOINT
+  if (authEndpoint === undefined) {
+    throw new Error(
+      "process.env.AUTH_ENDPOINT must be set for this page to work."
     )
   }
-  const apiEndpoint = `${baseEndpoint}`
-  const response = await fetch(apiEndpoint, {
+  const response = await fetch(authEndpoint, {
     method: "POST",
     body: JSON.stringify({
       code,
