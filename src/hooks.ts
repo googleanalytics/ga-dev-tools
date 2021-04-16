@@ -127,7 +127,6 @@ const getRedirectPath = (
       }
     }
     case GAVersion.GoogleAnalytics4: {
-      console.log(path, "went down ga4 path")
       switch (path) {
         // If switching to GA4, and you're already on a GA4 demo, do nothing.
         case "/ga4/dimensions-metrics-explorer/":
@@ -179,7 +178,6 @@ export const useGAVersion = (
   const setGAVersion = React.useCallback(
     (version: GAVersion) => {
       const redirectPath = getRedirectPath(location.pathname, version)
-      console.log({ redirectPath, version })
       setString(version)
       if (redirectPath === undefined) {
         return
