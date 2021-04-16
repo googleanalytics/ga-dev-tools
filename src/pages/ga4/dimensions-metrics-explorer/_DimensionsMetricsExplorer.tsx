@@ -1,22 +1,26 @@
 import * as React from "react"
-import { useDimensionsAndMetrics, useInputs, RequestState } from "./_hooks"
+import {
+  useDimensionsAndMetrics,
+  useInputs,
+  RequestState,
+  useScrollTo,
+} from "./_hooks"
 import {
   Typography,
   TextField,
   IconButton,
   makeStyles,
 } from "@material-ui/core"
-import InlineCode from "../../../components/InlineCode"
 import { Clear } from "@material-ui/icons"
 import GA4PropertySelector, {
   SelectableProperty,
 } from "../../../components/GA4PropertySelector"
 import { StorageKey, Url } from "../../../constants"
-import { CopyIconButton } from "../../../components/CopyButton"
 import { SAB } from "../../../components/Buttons"
 import { useMemo, useState } from "react"
 import Info from "../../../components/Info"
 import Spinner from "../../../components/Spinner"
+import Field from "./_Field"
 
 const adminAPI = <a href={Url.ga4AdminAPI}>Admin API</a>
 
@@ -39,6 +43,7 @@ const DimensionsMetricsExplorer: React.FC = () => {
     }
   }, [selectedProperty])
   const { dimensions, metrics, state } = useDimensionsAndMetrics(propertyId)
+  useScrollTo(state)
 
   const visibleDimensions = React.useMemo(
     () =>
@@ -108,8 +113,7 @@ const DimensionsMetricsExplorer: React.FC = () => {
         </Typography>
         <Typography>
           This demo is a catalog of all dimensions and metrics available for a
-          given property. It includes linkable descriptions of all fields and
-          can optionally show custom dimensions and metrics if you login.
+          given property. It includes linkable descriptions of all fields.
         </Typography>
         <GA4PropertySelector
           setSelectedProperty={setSelectedProperty}
@@ -144,25 +148,11 @@ const DimensionsMetricsExplorer: React.FC = () => {
         <>
           <Typography variant="h2">Dimensions</Typography>
           {visibleDimensions?.map(dimension => (
-            <div key={dimension.apiName}>
-              <Typography variant="h3">
-                {dimension.uiName} <InlineCode>{dimension.apiName}</InlineCode>
-                <CopyIconButton
-                  tooltipText="Copy api name"
-                  toCopy={dimension.apiName || ""}
-                />
-              </Typography>
-              <Typography>{dimension.description}</Typography>
-            </div>
+            <Field field={{ type: "dimension", value: dimension }} />
           ))}
           <Typography variant="h2">Metrics</Typography>
           {visibleMetrics?.map(metric => (
-            <div key={metric.apiName}>
-              <Typography variant="h3">
-                {metric.uiName} <InlineCode>{metric.apiName}</InlineCode>
-              </Typography>
-              <Typography>{metric.description}</Typography>
-            </div>
+            <Field field={{ type: "metric", value: metric }} />
           ))}
         </>
       )}

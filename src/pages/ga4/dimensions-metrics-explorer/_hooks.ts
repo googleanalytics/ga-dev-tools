@@ -2,6 +2,7 @@ import { useSelector } from "react-redux"
 import { useMemo, useEffect, useState } from "react"
 import { usePersistantObject, usePersistentString } from "../../../hooks"
 import { StorageKey } from "../../../constants"
+import { useLocation } from "@reach/router"
 
 export const useInputs = () => {
   const [search, setSearch] = usePersistentString(
@@ -11,8 +12,8 @@ export const useInputs = () => {
   return { search, setSearch }
 }
 
-type Dimension = gapi.client.analyticsdata.DimensionMetadata
-type Metric = gapi.client.analyticsdata.MetricMetadata
+export type Dimension = gapi.client.analyticsdata.DimensionMetadata
+export type Metric = gapi.client.analyticsdata.MetricMetadata
 
 export enum RequestState {
   Loading = "loading",
@@ -80,4 +81,22 @@ export const useDimensionsAndMetrics: UseDimensionsAndMetrics = property => {
   const metrics = useMemo(() => fields?.[property]?.metrics, [fields, property])
 
   return { dimensions, metrics, state }
+}
+
+export const useScrollTo = (requestState: RequestState) => {
+  const [initialLoad, setInitialLoad] = useState(true)
+  const location = useLocation()
+  useEffect(() => {
+    if (
+      initialLoad &&
+      requestState === RequestState.Finished &&
+      location.hash.startsWith("#")
+    ) {
+      setInitialLoad(false)
+      const element = document.getElementById(location.hash.substr(1))
+      if (element) {
+        element.scrollIntoView()
+      }
+    }
+  }, [requestState, location.hash, initialLoad])
 }
