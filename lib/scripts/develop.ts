@@ -1,12 +1,13 @@
 // yarn check-types && gatsby develop --host=0.0.0.0"
-import { checkConfig } from "./check-config"
+import { checkConfig, writeEnvFile } from "./check-config"
 import * as execa from "execa"
+import { configForEnvironment } from "."
+import { DevelopArgs } from "./types"
 
-export const develop = async () => {
-  // TODO - update check config to take an argument for which command it is
-  // running. All commands don't require all config to be set and this would
-  // make it easier to get started.
-  await checkConfig({ all: false })
+export const develop = async (args: DevelopArgs) => {
+  const config = await checkConfig({ all: false })
+
+  await writeEnvFile(configForEnvironment(args.environment, config))
 
   // We use port 5000 because the generated oauth client for a firebase allows
   // port 5000 by default on localhost. The developer can change this value, but

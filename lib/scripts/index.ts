@@ -4,7 +4,34 @@ import { build } from "./build"
 import { develop } from "./develop"
 import { serve } from "./serve"
 import { stage } from "./stage"
-import { Command, Args, Environment } from "./types"
+import {
+  Command,
+  Args,
+  Environment,
+  RuntimeJson,
+  StagingConfig,
+  ProductionConfig,
+} from "./types"
+import { deployFunctions } from "./deploy-functions"
+
+export const configForEnvironment = (
+  environment: Environment,
+  config: RuntimeJson
+) => {
+  let environmentConfig: StagingConfig | ProductionConfig
+  switch (environment) {
+    case Environment.Staging:
+      environmentConfig = config.staging
+      break
+    case Environment.Production:
+      environmentConfig = config.production
+      break
+    default:
+      console.error(`Environment: ${environment} is not supported.`)
+      process.exit(1)
+  }
+  return environmentConfig
+}
 
 // TODO - We should add some tests for pure functions in here for a bit more
 // confidence.
@@ -39,17 +66,22 @@ const getParser = async (): Promise<argparse.ArgumentParser> => {
   // using the development environment variables. Right now, this works great
   // for local development, but it's less useful for the staging site.
   const deployParser = subparsers.addParser(Command.Deploy, {
-    help:
-      "Builds the project and deploys it to `--environment`. Note that due to a limitation in `gatsby build`, this will always use the production environment variables. Only the firebase projectId will be changed",
+    help: "Builds the project and deploys it to `--environment`.",
   })
 
-  deployParser.addArgument("--no-localhost", {
-    defaultValue: false,
-    dest: "noLocalhost",
-    action: "storeTrue",
+  const deployFunctionsParser = subparsers.addParser(Command.DeployFunctions, {
+    help: "Builds ./functions project and deploys it to `--environment`.",
   })
 
-  subparsers.addParser(Command.Develop, {
+  ;[deployParser, deployFunctionsParser].map(parser =>
+    parser.addArgument("--no-localhost", {
+      defaultValue: false,
+      dest: "noLocalhost",
+      action: "storeTrue",
+    })
+  )
+
+  const developParser = subparsers.addParser(Command.Develop, {
     help:
       "Runs a local dev server. Runs any necessary validation before serving.",
   })
@@ -65,7 +97,13 @@ const getParser = async (): Promise<argparse.ArgumentParser> => {
   })
 
   // Add the environment argument to all commands that support it.
-  ;[buildParser, serveParser, deployParser].forEach(parser => {
+  ;[
+    buildParser,
+    serveParser,
+    deployParser,
+    deployFunctionsParser,
+    developParser,
+  ].forEach(parser => {
     parser.addArgument("--environment", {
       required: true,
       dest: "environment",
@@ -90,7 +128,7 @@ const scripts = async () => {
       break
     }
     case Command.Develop: {
-      await develop()
+      await develop(args)
       break
     }
     case Command.Serve: {
@@ -99,6 +137,10 @@ const scripts = async () => {
     }
     case Command.Deploy: {
       await stage(args)
+      break
+    }
+    case Command.DeployFunctions: {
+      await deployFunctions(args)
       break
     }
   }

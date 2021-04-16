@@ -10,8 +10,9 @@ import {
   CheckConfigArgs,
   StagingConfig,
   CommonConfig,
+  AnswerNames,
+  DotEnvDevelopmentPath,
 } from "./types"
-import * as execa from "execa"
 
 type ConfigQuestionFilter = {
   askAll?: true | undefined
@@ -28,78 +29,14 @@ export const writeEnvFile = async (config: CommonConfig) => {
     config.bitlyClientId === SKIP_QUESTION
       ? undefined
       : `BITLY_CLIENT_ID=${config.bitlyClientId}`
-  const firebaseFunctionsBaseUrlLine = `FUNCTIONS_BASE_URL=${config.firebaseFunctionsBaseUrl}`
 
-  fs.writeFileSync(
-    DotEnvProductionPath,
-    [gapiLine, bitlyLine, firebaseFunctionsBaseUrlLine].join("\n"),
-    {
+  const authEndpointLine = `AUTH_ENDPOINT=https://us-central1-${config.firebaseProjectId}.cloudfunctions.net/bitly_auth`
+
+  ;[DotEnvProductionPath, DotEnvDevelopmentPath].map(path =>
+    fs.writeFileSync(path, [gapiLine, bitlyLine, authEndpointLine].join("\n"), {
       encoding: Encoding,
-    }
+    })
   )
-}
-
-export const ensureFirebaseFunctionsConfig = async (
-  config: RuntimeJson & { noLocalhost: boolean }
-): Promise<void> => {
-  await ensureFirebaseLoginStatus({ noLocalhost: config.noLocalhost })
-
-  const bitlyClientId =
-    config.production.bitlyClientId === SKIP_QUESTION
-      ? ""
-      : `bitly.client_id=${config.production.bitlyClientId}`
-  const bitlyClientSecret =
-    config.production.bitlyClientSecret === SKIP_QUESTION
-      ? ""
-      : `bitly.client_secret=${config.production.bitlyClientSecret}`
-
-  const bitlyBaseUriProd = `bitly.base_uri=${config.production.baseUri}`
-  const bitlyBaseUriDev = `bitly.base_uri=${config.staging.baseUri}`
-
-  // Don't call the command at all if all of these values were unset.
-  if ([bitlyClientSecret, bitlyClientId].every(a => a === "")) {
-    console.log(
-      "Skipping Firebase functions environment configuration because no values were provided."
-    )
-    return
-  }
-
-  console.log("Updating Firebase functions environment configuration...")
-
-  try {
-    await execa(
-      "yarn",
-      [
-        "run",
-        "firebase",
-        "--project",
-        config.staging.firebaseProjectIdFunctions,
-        "functions:config:set",
-        bitlyClientId,
-        bitlyClientSecret,
-        bitlyBaseUriDev,
-      ],
-      {}
-    )
-    await execa(
-      "yarn",
-      [
-        "run",
-        "firebase",
-        "--project",
-        config.production.firebaseProjectIdFunctions,
-        "functions:config:set",
-        bitlyClientId,
-        bitlyClientSecret,
-        bitlyBaseUriProd,
-      ],
-      {}
-    )
-  } catch (e) {
-    console.error("Couldn't update firebase functions config.")
-    process.exit(1)
-  }
-  return
 }
 
 const ensureNecessaryFiles = async (
@@ -124,7 +61,7 @@ const ensureNecessaryFiles = async (
 
 // TODO - Make sure to account for these values in the code and log an
 // appropriate error for pages where they are required.
-const SKIP_QUESTION = "Leave blank to skip"
+export const SKIP_QUESTION = "Leave blank to skip"
 
 // Given a filter, returns an array of questions to be asked to make sure all
 // required configuration data is present. The filter allows some questions to
@@ -136,7 +73,7 @@ const configQuestions = (
   // be friendly as the runtimeJson type evolves.
   return [
     {
-      name: "baseUriProd",
+      name: AnswerNames.BaseUriProd,
       type: "input",
       message: "Domain of production service including https:// (production):",
       default: filter?.production?.baseUri || SKIP_QUESTION,
@@ -149,7 +86,7 @@ const configQuestions = (
       // firebase project if they don't already have one. The firebase cli
       // supports this so it shouldn't bee too tricky. This should probably use
       // the --json flag for the cli so the data comes back in a useful format.
-      name: "firebaseProjectIdProd",
+      name: AnswerNames.FirebaseProjectIdProd,
       type: "input",
       message: "Firebase project ID (production):",
       // TODO - See if listing is useful. Probably should only do it if there's not a ton.
@@ -161,20 +98,7 @@ const configQuestions = (
       },
     },
     {
-      name: "firebaseProjectIdFunctionsProd",
-      type: "input",
-      message: "Firebase project ID to use for cloud functions (production):",
-      // TODO - See if listing is useful. Probably should only do it if there's not a ton.
-      default: filter?.production?.firebaseProjectIdFunctions || SKIP_QUESTION,
-      when: () => {
-        return (
-          filter.askAll ||
-          filter?.production?.firebaseProjectIdFunctions === undefined
-        )
-      },
-    },
-    {
-      name: "gapiClientIdProd",
+      name: AnswerNames.GapiClientIdProd,
       type: "input",
       // TODO - Check to see if there a way to make getting this value easier.
       // (or at least provide a link to where the user can find this value)
@@ -185,7 +109,7 @@ const configQuestions = (
       },
     },
     {
-      name: "bitlyClientIdProd",
+      name: AnswerNames.BitlyClientIdProd,
       type: "input",
       message: "Bit.ly client ID (production):",
       default: filter?.production?.bitlyClientId || SKIP_QUESTION,
@@ -194,7 +118,7 @@ const configQuestions = (
       },
     },
     {
-      name: "bitlyClientSecretProd",
+      name: AnswerNames.BitlyClientSecretProd,
       type: "input",
       message: "Bit.ly client secret (production):",
       default: filter?.production?.bitlyClientSecret || SKIP_QUESTION,
@@ -206,7 +130,7 @@ const configQuestions = (
     },
     // Staging questions
     {
-      name: "baseUriStaging",
+      name: AnswerNames.BaseUriStaging,
       type: "input",
       message: "Domain of service including https:// (staging):",
       default: filter?.staging?.baseUri || SKIP_QUESTION,
@@ -215,7 +139,7 @@ const configQuestions = (
       },
     },
     {
-      name: "firebaseProjectIdStaging",
+      name: AnswerNames.FirebaseProjectIdStaging,
       type: "input",
       message: "Firebase project ID (staging):",
       // TODO - See if listing is useful. Probably should only do it if there's not a ton.
@@ -225,20 +149,7 @@ const configQuestions = (
       },
     },
     {
-      name: "firebaseProjectIdFunctionsStaging",
-      type: "input",
-      message: "Firebase project ID to use for cloud functions (staging):",
-      // TODO - See if listing is useful. Probably should only do it if there's not a ton.
-      default: filter?.staging?.firebaseProjectIdFunctions || SKIP_QUESTION,
-      when: () => {
-        return (
-          filter.askAll ||
-          filter?.staging?.firebaseProjectIdFunctions === undefined
-        )
-      },
-    },
-    {
-      name: "gapiClientIdStaging",
+      name: AnswerNames.GapiClientIdStaging,
       type: "input",
       // TODO - Check to see if there a way to make getting this value easier.
       // (or at least provide a link to where the user can find this value)
@@ -249,7 +160,7 @@ const configQuestions = (
       },
     },
     {
-      name: "bitlyClientIdStaging",
+      name: AnswerNames.BitlyClientIdStaging,
       type: "input",
       message: "Bit.ly client ID (staging):",
       default: filter?.staging?.bitlyClientId || SKIP_QUESTION,
@@ -258,7 +169,7 @@ const configQuestions = (
       },
     },
     {
-      name: "bitlyClientSecretStaging",
+      name: AnswerNames.BitlyClientSecretStaging,
       type: "input",
       message: "Bit.ly client secret (staging):",
       default: filter?.staging?.bitlyClientSecret || SKIP_QUESTION,
@@ -267,29 +178,6 @@ const configQuestions = (
       },
     },
   ]
-}
-
-const ensureFirebaseLoginStatus = async ({
-  noLocalhost,
-}: {
-  noLocalhost: boolean
-}) => {
-  console.log("Logging out of firebase since tokens are shortlived...")
-  await execa("yarn", ["run", "firebase", "logout"])
-
-  if (noLocalhost) {
-    return execa("yarn", ["run", "firebase", "login", "--no-localhost"], {
-      stderr: "inherit",
-      stdout: "inherit",
-      stdin: "inherit",
-    })
-  } else {
-    return execa("yarn", ["run", "firebase", "login"], {
-      stderr: "inherit",
-      stdout: "inherit",
-      stdin: "inherit",
-    })
-  }
 }
 
 // TODO - Check config should take a flag to force a reauth for firebase since
@@ -350,10 +238,6 @@ const toRuntimeJson = (
       answers.firebaseProjectIdProd ||
         currentConfig?.production?.firebaseProjectId
     ),
-    firebaseProjectIdFunctions: throwIfUndefined(
-      answers.firebaseProjectIdFunctionsProd ||
-        currentConfig?.production?.firebaseProjectIdFunctions
-    ),
     gapiClientId: throwIfUndefined(
       answers.gapiClientIdProd || currentConfig?.production?.gapiClientId
     ),
@@ -364,14 +248,6 @@ const toRuntimeJson = (
       answers.bitlyClientSecretProd ||
         currentConfig?.production?.bitlyClientSecret
     ),
-    // TODO - This is pretty messy. It should probably just ask you what the
-    // bitly_auth url is.
-    firebaseFunctionsBaseUrl:
-      currentConfig?.production?.firebaseFunctionsBaseUrl ||
-      `https://us-central1-${throwIfUndefined(
-        answers.firebaseProjectIdFunctionsProd ||
-          currentConfig?.production.firebaseProjectIdFunctions
-      )}.cloudfunctions.net/bitly_auth`,
   }
 
   const staging: StagingConfig = {
@@ -384,10 +260,6 @@ const toRuntimeJson = (
       answers.firebaseProjectIdStaging ||
         currentConfig?.staging?.firebaseProjectId
     ),
-    firebaseProjectIdFunctions: throwIfUndefined(
-      answers.firebaseProjectIdFunctionsStaging ||
-        currentConfig?.staging.firebaseProjectIdFunctions
-    ),
     gapiClientId: throwIfUndefined(
       answers.gapiClientIdStaging || currentConfig?.staging?.gapiClientId
     ),
@@ -398,12 +270,6 @@ const toRuntimeJson = (
       answers.bitlyClientSecretStaging ||
         currentConfig?.staging?.bitlyClientSecret
     ),
-    firebaseFunctionsBaseUrl:
-      currentConfig?.staging?.firebaseFunctionsBaseUrl ||
-      `https://us-central1-${throwIfUndefined(
-        answers.firebaseProjectIdFunctionsStaging ||
-          currentConfig?.staging.firebaseProjectIdFunctions
-      )}.cloudfunctions.net/bitly_auth`,
   }
 
   const fullConfig = { production, staging }
@@ -427,10 +293,6 @@ const assertAllValues = (runtimeJson: RuntimeJson): RuntimeJson => {
     throw new Error("Missing the staging firebaseProjectId")
   }
 
-  if (runtimeJson.staging.firebaseFunctionsBaseUrl === undefined) {
-    throw new Error("Missing the staging firebase functions base url")
-  }
-
   if (runtimeJson.staging.bitlyClientSecret === undefined) {
     throw new Error("Missing the staging bitly client secret")
   }
@@ -443,28 +305,12 @@ const assertAllValues = (runtimeJson: RuntimeJson): RuntimeJson => {
     throw new Error("Missing the staging base url")
   }
 
-  if (runtimeJson.staging.firebaseProjectIdFunctions === undefined) {
-    throw new Error("Missing the staging firebaseProjectId for functions")
-  }
-
-  if (runtimeJson.staging.firebaseFunctionsBaseUrl === undefined) {
-    throw new Error("Missing the staging firebase functions base url")
-  }
-
   if (runtimeJson.production.gapiClientId === undefined) {
     throw new Error("Missing the production gapiClientId")
   }
 
   if (runtimeJson.production.firebaseProjectId === undefined) {
     throw new Error("Missing the production firebaseProjectId")
-  }
-
-  if (runtimeJson.production.firebaseProjectIdFunctions === undefined) {
-    throw new Error("Missing the firebaseProjectId for functions")
-  }
-
-  if (runtimeJson.production.firebaseFunctionsBaseUrl === undefined) {
-    throw new Error("Missing the production firebase functions base url")
   }
 
   if (runtimeJson.production.bitlyClientId === undefined) {
