@@ -15,6 +15,7 @@
 // All static links on the site should be put into this enum. This makes it
 // easier to update all instances of a link on the site.
 export enum Url {
+  ga4AdminAPI = "https://developers.google.com/analytics/devguides/config/admin/v1",
   aboutCampaign = "https://support.google.com/analytics/answer/1033863?visit_id=637529082348651695-136101741&rd=1",
   aboutCustomCampaigns = "https://support.google.com/analytics/answer/1033863",
   bestPracticesForCreatingCustomCampaigns = "https://support.google.com/analytics/answer/1037445",
@@ -59,6 +60,13 @@ export enum StorageKey {
   uaDimensions = "//ua-dimensions",
   uaSegments = "//ua-segments",
   viewSelectorData = "//view-selector/data",
+
+  // GA4 Dimensions and metrics explorer
+  ga4DimensionsMetricsSearch = "/ga4/dimensions-metrics-explorer/search",
+  ga4DimensionsMetricsFields = "/ga4/dimensions-metrics-explorer/fields",
+  ga4DimensionsMetricsAccountSummaries = "/ga4/dimensions-metrics-explorer/account-summaries",
+  ga4DimensionsMetricsSelectedAccount = "/ga4/dimensions-metrics-explorer/selected-account",
+  ga4DimensionsMetricsSelectedProperty = "/ga4/dimensions-metrics-explorer/selected-property",
 
   // Query Explorer
   queryExplorerDimensions = "query-explorer/dimensions",

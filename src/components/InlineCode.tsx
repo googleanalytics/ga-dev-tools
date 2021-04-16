@@ -1,5 +1,6 @@
 import * as React from "react"
 import { makeStyles, Typography } from "@material-ui/core"
+import classnames from "classnames"
 
 const useStyles = makeStyles(theme => ({
   code: {
@@ -11,10 +12,17 @@ const useStyles = makeStyles(theme => ({
   },
 }))
 
-const InlineCode: React.FC = ({ children }) => {
+const InlineCode: React.FC<{ className?: string }> = ({
+  children,
+  className,
+}) => {
   const classes = useStyles()
   return (
-    <Typography className={classes.code} variant="body2" component="span">
+    <Typography
+      className={classnames(classes.code, className)}
+      variant="body2"
+      component="span"
+    >
       {children}
     </Typography>
   )

@@ -108,18 +108,20 @@ const getRedirectPath = (
     case GAVersion.UniversalAnalytics: {
       switch (path) {
         // If switching to UA, and you're already on a UA demo, do nothing.
-        case "/account-explorer":
-        case "/campaign-url-builder":
-        case "/dimensions-metrics-explorer":
-        case "/enhanced-ecommerce":
-        case "/hit-builder":
-        case "/query-explorer":
-        case "/request-composer":
-        case "/spreadsheet-add-on":
-        case "/tag-assistant":
+        case "/account-explorer/":
+        case "/campaign-url-builder/":
+        case "/enhanced-ecommerce/":
+        case "/hit-builder/":
+        case "/query-explorer/":
+        case "/request-composer/":
+        case "/spreadsheet-add-on/":
+        case "/tag-assistant/":
+        case "/dimensions-metrics-explorer/":
           return undefined
-        case "/ga4/event-builder":
-          return "/hit-builder"
+        case "/ga4/event-builder/":
+          return "/hit-builder/"
+        case "/ga4/dimensions-metrics-explorer/":
+          return "/dimensions-metrics-explorer/"
         default:
           return undefined
       }
@@ -127,14 +129,18 @@ const getRedirectPath = (
     case GAVersion.GoogleAnalytics4: {
       switch (path) {
         // If switching to GA4, and you're already on a GA4 demo, do nothing.
-        case "/ga4/event-builder":
+        case "/ga4/dimensions-metrics-explorer/":
+        case "/ga4/event-builder/":
           return undefined
-        case "/hit-builder":
-          return "/ga4/event-builder"
+        case "/hit-builder/":
+          return "/ga4/event-builder/"
+        case "/dimensions-metrics-explorer/":
+          return "/ga4/dimensions-metrics-explorer/"
+        default:
+          return undefined
       }
     }
   }
-  return undefined
 }
 
 export const IS_SSR = typeof window === "undefined"

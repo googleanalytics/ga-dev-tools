@@ -234,6 +234,7 @@ interface ToggleT {
 
 type LinkData = LinkT | Heading | ToggleT
 
+// TODO - Add an enum for the slugs so they aren't magic strings.
 const linkData: LinkData[] = [
   {
     text: "Demos & Tools",
@@ -252,55 +253,61 @@ const linkData: LinkData[] = [
   },
   {
     text: "Campaign URL Builder",
-    href: "/campaign-url-builder",
+    href: "/campaign-url-builder/",
     type: "link",
     versions: [GAVersion.UniversalAnalytics],
   },
   {
     text: "Dimensions & Metrics Explorer",
-    href: "/dimensions-metrics-explorer",
+    href: "/dimensions-metrics-explorer/",
     type: "link",
     versions: [GAVersion.UniversalAnalytics],
   },
   {
     text: "Enhanced Ecommerce",
-    href: "/enhanced-ecommerce",
+    href: "/enhanced-ecommerce/",
     type: "link",
     versions: [GAVersion.UniversalAnalytics],
   },
   {
     text: "Hit Builder",
-    href: "/hit-builder",
+    href: "/hit-builder/",
     type: "link",
     versions: [GAVersion.UniversalAnalytics],
   },
   {
     text: "Event Builder",
-    href: "/ga4/event-builder",
+    href: "/ga4/event-builder/",
+    type: "link",
+    versions: [GAVersion.GoogleAnalytics4],
+  },
+  {
+    text: "Dimensions & Metrics Explorer",
+    href: "/ga4/dimensions-metrics-explorer/",
     type: "link",
     versions: [GAVersion.GoogleAnalytics4],
   },
   {
     text: "Query Explorer",
-    href: "/query-explorer",
+    href: "/query-explorer/",
     type: "link",
     versions: [GAVersion.UniversalAnalytics],
   },
   {
     text: "Request Composer",
-    href: "/request-composer",
+    href: "/request-composer/",
     type: "link",
     versions: [GAVersion.UniversalAnalytics],
   },
   {
     text: "Spreadsheet Add-on",
-    href: "/spreadsheet-add-on",
+    href: "/spreadsheet-add-on/",
     type: "link",
     versions: [GAVersion.UniversalAnalytics],
   },
   {
     text: "Tag Assistant",
-    href: "/tag-assistant",
+    href: "/tag-assistant/",
     type: "link",
     versions: [GAVersion.UniversalAnalytics],
   },

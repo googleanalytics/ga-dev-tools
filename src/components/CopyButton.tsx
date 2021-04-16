@@ -90,6 +90,7 @@ const CopyButton: React.FC<CopyButtonProps> = props => {
 
 interface CopyIconButtonProps {
   toCopy: string
+  icon?: JSX.Element
   tooltipText?: string
   className?: string
   size?: IconButtonProps["size"]
@@ -99,6 +100,7 @@ export const CopyIconButton: React.FC<CopyIconButtonProps> = ({
   size,
   className,
   tooltipText = "Copy",
+  icon = <FileCopyIcon />,
 }) => {
   const [showAlert, setShowAlert] = React.useState(false)
 
@@ -111,7 +113,7 @@ export const CopyIconButton: React.FC<CopyIconButtonProps> = ({
     <>
       <Tooltip title={tooltipText}>
         <IconButton onClick={copyCode} size={size} className={className}>
-          <FileCopyIcon />
+          {icon}
         </IconButton>
       </Tooltip>
       <Snackbar
