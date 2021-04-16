@@ -98,19 +98,19 @@
     "prettier": "prettier --write \"**/*.{js,jsx,json,md}\"",
     "check-types": "tsc",
     "test": "yarn check-types && jest",
-    "start:staging": "yarn run develop --environment=staging",
-    "start:production": "yarn run develop --environment=production",
     "clean": "gatsby clean",
     "firebase": "firebase",
     "generate-scripts": "cd lib && yarn build",
-    "serve:production": "yarn generate-scripts && node lib/build/index.js serve --environment=production",
     "check-config": "yarn generate-scripts && node lib/build/index.js check-config",
-    "build:production": "yarn generate-scripts && node lib/build/index.js build --environment=production",
-    "build:staging": "yarn generate-scripts && node lib/build/index.js build --environment=production",
     "develop": "yarn generate-scripts && node lib/build/index.js develop",
-    "deploy:production": "yarn generate-scripts && node lib/build/index.js deploy --environment=production",
-    "deploy:staging": "yarn generate-scripts && node lib/build/index.js deploy --environment=staging",
+    "start:app:production": "yarn run develop --environment=production",
+    "deploy:app:production": "yarn generate-scripts && node lib/build/index.js deploy --environment=production",
+    "build:app:production": "yarn generate-scripts && node lib/build/index.js build --environment=production",
+    "serve:app:production": "yarn generate-scripts && node lib/build/index.js serve --environment=production",
     "deploy:functions:production": "yarn generate-scripts && node lib/build/index.js deploy-functions --environment=production",
-    "deploy:functions:staging": "yarn generate-scripts && node lib/build/index.js deploy-functions --environment=staging"
+    "start:app:staging": "yarn run develop --environment=staging",
+    "deploy:app:staging": "yarn generate-scripts && node lib/build/index.js deploy --environment=staging",
+    "deploy:functions:staging": "yarn generate-scripts && node lib/build/index.js deploy-functions --environment=staging",
+    "build:app:staging": "yarn generate-scripts && node lib/build/index.js build --environment=production"
   }
 }
