@@ -1,26 +1,35 @@
 import * as execa from "execa"
 import { build } from "./build"
-import { checkConfig, ensureFirebaseFunctionsConfig } from "./check-config"
+import { checkConfig, writeEnvFile } from "./check-config"
 import { DeployArgs, Environment } from "./types"
+import { ensureFirebaseLoginStatus } from "./deploy-functions"
 
 export const stage = async (args: DeployArgs) => {
   const config = await checkConfig({
     all: false,
   })
 
-  await ensureFirebaseFunctionsConfig({
-    ...config,
-    noLocalhost: args.noLocalhost,
-  })
+  // Always create the .env.production file, but re-write it based on
+  // environment.
+  await writeEnvFile(
+    args.environment === Environment.Production
+      ? config.production
+      : config.staging
+  )
+
+  await ensureFirebaseLoginStatus({ noLocalhost: args.noLocalhost })
+
+  // TODO - should stage also do functions, or should the be managed
+  // separately?
+  //
+  // await ensureFirebaseFunctionsConfig({
+  //   ...config,
+  //   noLocalhost: args.noLocalhost,
+  // })
 
   let projectId: string
-  if (args.environment === Environment.Development) {
-    // TODO - support development deployments.
-    projectId = config.development.firebaseProjectId
-    console.error(
-      `Note: deploying using the development environment is not supported.`
-    )
-    process.exit(1)
+  if (args.environment === Environment.Staging) {
+    projectId = config.staging.firebaseProjectId
   } else if (args.environment === Environment.Production) {
     projectId = config.production.firebaseProjectId
   } else {
