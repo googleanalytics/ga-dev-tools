@@ -15,9 +15,9 @@
 import * as React from "react"
 import * as renderer from "@testing-library/react"
 import "@testing-library/jest-dom"
-import { withProviders } from "../test-utils"
+import { withProviders } from "../../test-utils"
 
-import Layout from "./layout"
+import Layout from "../layout"
 
 describe("Layout", () => {
   it("renders correctly", async () => {

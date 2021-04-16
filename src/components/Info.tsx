@@ -17,6 +17,7 @@ const useStyles = makeStyles(theme => ({
     minHeight: theme.spacing(10),
     alignItems: "center",
     backgroundColor: blue[100],
+    maxWidth: 930,
   },
   infoIcon: {
     marginRight: theme.spacing(2),

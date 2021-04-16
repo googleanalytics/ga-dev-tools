@@ -13,8 +13,6 @@
 // limitations under the License.
 
 import React, { useMemo } from "react"
-import { makeStyles, Theme } from "@material-ui/core/styles"
-import Typography from "@material-ui/core/Typography"
 import Button from "@material-ui/core/Button"
 import { Link } from "gatsby"
 import { Home } from "@material-ui/icons"
@@ -24,7 +22,7 @@ import classnames from "classnames"
 // https://github.com/benmosher/eslint-plugin-import/blob/master/docs/rules/no-webpack-loader-syntax.md
 //
 // eslint-disable-next-line import/no-webpack-loader-syntax
-import Logo from "-!svg-react-loader!../images/ga-developer-logo.svg"
+import Logo from "-!svg-react-loader!../../images/ga-developer-logo.svg"
 import AppBar from "@material-ui/core/AppBar"
 import IconButton from "@material-ui/core/IconButton"
 import Drawer from "@material-ui/core/Drawer"
@@ -32,180 +30,15 @@ import List from "@material-ui/core/List"
 import ListItem from "@material-ui/core/ListItem"
 import { navigate } from "@reach/router"
 import MenuIcon from "@material-ui/icons/Menu"
+import { Switch, Grid, Typography } from "@material-ui/core"
 
-import Login, { useLogin, UserStatus } from "./Login"
-import { useGAVersion } from "../hooks"
-import { Switch, Grid } from "@material-ui/core"
-import { GAVersion } from "../constants"
-import Info from "./Info"
-import Spinner from "./Spinner"
-
-const mobile = (theme: Theme) => theme.breakpoints.between(0, "sm")
-const notMobile = (theme: Theme) => theme.breakpoints.up("md")
-
-const useStyles = makeStyles<any, { disableNav: true | undefined }>(theme => ({
-  toggle: {
-    display: "flex",
-  },
-  info: {
-    maxWidth: 930,
-  },
-  loadingIndicator: {
-    display: "flex",
-    flexDirection: "column",
-    alignItems: "center",
-  },
-  root: {
-    display: "flex",
-    minHeight: "100%",
-    [notMobile(theme)]: {
-      flexDirection: "row",
-    },
-    [mobile(theme)]: {
-      flexDirection: "column",
-    },
-  },
-  main: {
-    display: "flex",
-    flexDirection: "column",
-    flexGrow: 1,
-    minHeight: "100%",
-  },
-  contentWrapper: {
-    flexGrow: 1,
-    color: theme.palette.getContrastText(theme.palette.grey[200]),
-    backgroundColor: theme.palette.grey[200],
-  },
-  content: {
-    flexGrow: 1,
-    padding: theme.spacing(4),
-    maxWidth: theme.breakpoints.width("md"),
-    [mobile(theme)]: {
-      maxWidth: "unset",
-      width: "100%",
-      padding: theme.spacing(2),
-    },
-  },
-  header: {
-    padding: theme.spacing(4),
-    position: "relative",
-    maxWidth: theme.breakpoints.width("md"),
-    [mobile(theme)]: {
-      maxWidth: "unset",
-      width: "100%",
-      padding: theme.spacing(2),
-    },
-  },
-  logoRow: {
-    [mobile(theme)]: {
-      display: "none",
-    },
-    [notMobile(theme)]: {
-      display: "flex",
-      flexWrap: "wrap",
-      alignItems: "center",
-    },
-  },
-  logo: {
-    flexGrow: 1,
-    height: "50px",
-  },
-  appBarNav: props =>
-    props.disableNav
-      ? { display: "none" }
-      : {
-          [notMobile(theme)]: {
-            display: "none",
-          },
-          flexDirection: "row",
-          alignItems: "center",
-          paddingLeft: theme.spacing(1),
-        },
-  mobileNav: {
-    color: theme.palette.getContrastText(theme.palette.grey[800]),
-    backgroundColor: theme.palette.grey[800],
-    minHeight: "100%",
-  },
-  nav: {
-    [mobile(theme)]: {
-      display: "none",
-    },
-    minWidth: "260px",
-    borderRight: `1px solid ${theme.palette.grey[200]}`,
-    color: theme.palette.getContrastText(theme.palette.grey[800]),
-    backgroundColor: theme.palette.grey[800],
-    "& ol": {
-      margin: 0,
-      padding: 0,
-      paddingTop: theme.spacing(1),
-      listStyle: "none",
-      width: "100%",
-      "& li": {
-        width: "100%",
-        display: "flex",
-        "& a": {
-          color: "unset",
-          width: "100%",
-          textDecoration: "none",
-        },
-      },
-    },
-  },
-  noColor: {
-    color: "unset",
-  },
-  innerNav: {
-    padding: theme.spacing(1),
-    paddingLeft: theme.spacing(4),
-    [mobile(theme)]: {
-      paddingLeft: theme.spacing(2),
-      paddingRight: theme.spacing(2),
-    },
-  },
-  navLinkBackgroundHover: {
-    "&:hover": {
-      backgroundColor: theme.palette.grey[100],
-      color: theme.palette.getContrastText(theme.palette.grey[100]),
-    },
-  },
-  home: {
-    margin: "unset",
-    color: "unset",
-    display: "flex",
-    alignItems: "center",
-    paddingLeft: theme.spacing(2),
-    [notMobile(theme)]: {
-      "&:hover": {
-        color: theme.palette.primary.main,
-      },
-    },
-  },
-  subHeading: {
-    width: "100%",
-    borderTop: `1px solid ${theme.palette.grey[600]}`,
-    marginTop: theme.spacing(2),
-    paddingTop: theme.spacing(2),
-    marginBottom: theme.spacing(1),
-    paddingLeft: theme.spacing(4),
-    [mobile(theme)]: {
-      paddingLeft: theme.spacing(2),
-    },
-  },
-  homeIcon: {
-    marginLeft: theme.spacing(-0.5),
-    paddingRight: theme.spacing(1),
-    fontSize: "1.5em",
-  },
-  mobileHeading: {
-    color: theme.palette.getContrastText(theme.palette.primary.main),
-    marginLeft: theme.spacing(1),
-  },
-  mobileMenu: {
-    display: "flex",
-    justifyContent: "flex-start",
-    flexGrow: 1,
-  },
-}))
+import Login, { useLogin, UserStatus } from "../Login"
+import { useGAVersion } from "../../hooks"
+import { GAVersion } from "../../constants"
+import Spinner from "../Spinner"
+import { linkData } from "./links"
+import { useStyles } from "./use-styles"
+import UADemo from "./UADemo"
 
 interface LayoutProps {
   requireLogin?: true
@@ -213,122 +46,6 @@ interface LayoutProps {
   title: string
   pathname: string
 }
-
-interface Heading {
-  type: "heading"
-  text: string
-  versions: GAVersion[]
-}
-
-interface LinkT {
-  type: "link"
-  versions: GAVersion[]
-  text: string
-  href: string
-}
-
-interface ToggleT {
-  type: "ga4toggle"
-  versions: GAVersion[]
-}
-
-type LinkData = LinkT | Heading | ToggleT
-
-// TODO - Add an enum for the slugs so they aren't magic strings.
-const linkData: LinkData[] = [
-  {
-    text: "Demos & Tools",
-    type: "heading",
-    versions: [GAVersion.GoogleAnalytics4, GAVersion.UniversalAnalytics],
-  },
-  {
-    type: "ga4toggle",
-    versions: [GAVersion.GoogleAnalytics4, GAVersion.UniversalAnalytics],
-  },
-  {
-    text: "Account Explorer",
-    href: "/account-explorer/",
-    type: "link",
-    versions: [GAVersion.UniversalAnalytics],
-  },
-  {
-    text: "Campaign URL Builder",
-    href: "/campaign-url-builder/",
-    type: "link",
-    versions: [GAVersion.UniversalAnalytics],
-  },
-  {
-    text: "Dimensions & Metrics Explorer",
-    href: "/dimensions-metrics-explorer/",
-    type: "link",
-    versions: [GAVersion.UniversalAnalytics],
-  },
-  {
-    text: "Enhanced Ecommerce",
-    href: "/enhanced-ecommerce/",
-    type: "link",
-    versions: [GAVersion.UniversalAnalytics],
-  },
-  {
-    text: "Hit Builder",
-    href: "/hit-builder/",
-    type: "link",
-    versions: [GAVersion.UniversalAnalytics],
-  },
-  {
-    text: "Event Builder",
-    href: "/ga4/event-builder/",
-    type: "link",
-    versions: [GAVersion.GoogleAnalytics4],
-  },
-  {
-    text: "Dimensions & Metrics Explorer",
-    href: "/ga4/dimensions-metrics-explorer/",
-    type: "link",
-    versions: [GAVersion.GoogleAnalytics4],
-  },
-  {
-    text: "Query Explorer",
-    href: "/query-explorer/",
-    type: "link",
-    versions: [GAVersion.UniversalAnalytics],
-  },
-  {
-    text: "Request Composer",
-    href: "/request-composer/",
-    type: "link",
-    versions: [GAVersion.UniversalAnalytics],
-  },
-  {
-    text: "Spreadsheet Add-on",
-    href: "/spreadsheet-add-on/",
-    type: "link",
-    versions: [GAVersion.UniversalAnalytics],
-  },
-  {
-    text: "Tag Assistant",
-    href: "/tag-assistant/",
-    type: "link",
-    versions: [GAVersion.UniversalAnalytics],
-  },
-  {
-    text: "Resources",
-    type: "heading",
-    versions: [GAVersion.UniversalAnalytics, GAVersion.GoogleAnalytics4],
-  },
-  {
-    text: "About this Site",
-    href: "/#about",
-    type: "link",
-    versions: [GAVersion.UniversalAnalytics, GAVersion.GoogleAnalytics4],
-  },
-  {
-    text: "Help & feedback",
-    href: "/#help",
-    type: "link",
-    versions: [GAVersion.UniversalAnalytics, GAVersion.GoogleAnalytics4],
-  },
-]
 
 const GA4Toggle: React.FC<{
   gaVersion: GAVersion
@@ -490,7 +207,6 @@ const Layout: React.FC<LayoutProps> = ({
       </nav>
       <main className={classes.main}>
         <header className={classes.header}>
-          {/* TODO - Figure out how to size the logo correctly. I probably want to use media queries with useStyles() */}
           <div className={classes.logoRow}>
             <Logo className={classes.logo} />
             {!disableNav && <Login />}
@@ -498,13 +214,7 @@ const Layout: React.FC<LayoutProps> = ({
           <Typography variant="h1">{title}</Typography>
         </header>
         <div className={classes.contentWrapper}>
-          {gaVersion === GAVersion.GoogleAnalytics4 &&
-            pathname.indexOf("ga4") === -1 &&
-            pathname !== "/" && (
-              <Info className={classes.info}>
-                You're viewing a demo for Universal Analytics.
-              </Info>
-            )}
+          <UADemo pathname={pathname} />
           <section className={classes.content}>
             {!requireLogin || userStatus === UserStatus.SignedIn ? (
               children
