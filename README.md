@@ -36,14 +36,31 @@ yarn
 
 Then run the following and answer all prompts:
 
-> > All prompts can be skipped.
 
 ```shell
-yarn start
+yarn start:app:production
 ```
 
-This will set up a local hot-reloading instance of the app that you'll be able
-to navigate to by going to `http://localhost:5000`
+> All prompts can be skipped, but certain demos rely on prompt answers to fully
+> function. Notably, any demo that requries authentication will require you to
+> put in a valid Google client ID.
+
+This will set up a local hot-reloading instance of the app that can try out at
+`http://localhost:5000`
+
+### Testing
+
+To run tests, first make sure you have all the dependencies installed:
+
+```shell
+yarn
+```
+
+Then run the following:
+
+```shell
+yarn test
+```
 
 ## Whats in this repo
 
@@ -68,16 +85,11 @@ Of note, we use:
 
 - [`onInitialClientRender`](https://www.gatsbyjs.org/docs/browser-apis/#onInitialClientRender)
 
-  Lets us pull in gtag only on the first render of the site. It's mentioned in
-  the comment in the code, but we don't typically recommend loading gtag this
-  way. You should instead use
-  [gatsby-plugin-google-analytics](https://www.gatsbyjs.org/packages/gatsby-plugin-google-analytics/)
+  Any code that should run once after the client renders goes here. 
 
-  The reason we use `onInitialClientRender` is so we can demonstrate how to
-  use GA technologies in our demos.
-
-  This code additionally pulls in gapi, a Google library that makes calling
-  Google APIs much easier.
+  This code pulls in and configures
+  [gapi](https://github.com/google/google-api-javascript-client), a Google
+  library that makes calling Google APIs from javascript a breeze.
 
 Also see [Gatsby browser APIs](https://www.gatsbyjs.org/docs/browser-apis/).
 
@@ -103,8 +115,8 @@ plugins are configured here.
 - [gatsby-plugin-typescript](https://www.gatsbyjs.org/packages/gatsby-plugin-typescript/)
 
   Provides drop-in support for Typescript and TSX. `<opinion>`For a site like
-  this, with demos that will live over many years, typescript is a very handy
-  way to make it easier to jump back in the code.`</opinion>`
+  this, with demos that will live over many years, typescript is a handy way to
+  make it easier to jump back in the code.`</opinion>`
 
 - [gatsby-source-filesystem](https://www.gatsbyjs.org/packages/gatsby-source-filesystem/)
 
@@ -114,11 +126,6 @@ plugins are configured here.
 
 Also see [Gatsby Config API](https://www.gatsbyjs.org/docs/gatsby-config/).
 
-### .prettierrc
-
-This is used to configure [prettier], an opinionated code formatter that helps
-keep the code looking consistent.
-
 [view the site]: https://ga-dev-tools.appspot.com
 [submitting an issue]: https://github.com/googleanalytics/ga-dev-tools/issues/new
 [request a new demo or tool]: https://github.com/googleanalytics/ga-dev-tools/issues/new
@@ -127,4 +134,3 @@ keep the code looking consistent.
 [gatsby-broweser.js]: #gatsby-browser.js
 [gatsby-transformer-sharp]: https://www.gatsbyjs.org/packages/gatsby-transformer-sharp/
 [gatsby-plugin-sharp]: https://www.gatsbyjs.org/packages/gatsby-plugin-sharp/
-[prettier]: https://prettier.io/
