@@ -1,5 +1,5 @@
 import * as React from "react"
-import { Button } from "@material-ui/core"
+import { Button, Tooltip, IconButton } from "@material-ui/core"
 
 // TODO - PAB shouldn't allow you to provide variant or color so it's more
 // obvious how it works.
@@ -11,4 +11,25 @@ export const PAB: typeof Button = ({ ...props }) => {
 // Secondary Action Button
 export const SAB: typeof Button = ({ ...props }) => {
   return <Button {...props} variant="outlined" color="secondary" />
+}
+
+export const TooltipIconButton: React.FC<{
+  tooltip: string
+  size?: "small" | "medium"
+  className?: string
+  disabled?: boolean
+  onClick?: () => void
+}> = ({ tooltip, children, onClick, className, disabled, size = "small" }) => {
+  return (
+    <Tooltip title={tooltip}>
+      <IconButton
+        onClick={onClick}
+        size={size}
+        disabled={disabled}
+        className={className}
+      >
+        {children}
+      </IconButton>
+    </Tooltip>
+  )
 }

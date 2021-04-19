@@ -15,6 +15,7 @@
 // All static links on the site should be put into this enum. This makes it
 // easier to update all instances of a link on the site.
 export enum Url {
+  ga4DataAPI = "https://developers.google.com/analytics/devguides/reporting/data/v1",
   ga4AdminAPI = "https://developers.google.com/analytics/devguides/config/admin/v1",
   aboutCampaign = "https://support.google.com/analytics/answer/1033863?visit_id=637529082348651695-136101741&rd=1",
   aboutCustomCampaigns = "https://support.google.com/analytics/answer/1033863",
@@ -67,6 +68,14 @@ export enum StorageKey {
   ga4DimensionsMetricsAccountSummaries = "/ga4/dimensions-metrics-explorer/account-summaries",
   ga4DimensionsMetricsSelectedAccount = "/ga4/dimensions-metrics-explorer/selected-account",
   ga4DimensionsMetricsSelectedProperty = "/ga4/dimensions-metrics-explorer/selected-property",
+
+  // GA4 Request Composer
+  ga4RequestComposerTab = "/ga4/request-composer/tab",
+  ga4RequestComposerBasicAccountSummaries = "/ga4/request-composer/basic-report/account-summaries",
+  ga4RequestComposerBasicSelectedAccount = "/ga4/request-composer/basic-report/selected-account",
+  ga4RequestComposerBasicSelectedProperty = "/ga4/request-composer/basic-report/selected-property",
+  ga4RequestComposerBasicSelectedPropertyString = "/ga4/request-composer/basic-report/selected-property-string",
+  ga4RequestComposerBasicResponse = "/ga4/request-composer/basic-report/response",
 
   // Query Explorer
   queryExplorerDimensions = "query-explorer/dimensions",

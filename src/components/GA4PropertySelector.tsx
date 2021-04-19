@@ -113,6 +113,7 @@ const GA4PropertySelector: React.FC<GA4PropertySelectorProps> = ({
         options={accounts || []}
         value={selectedAccount || null}
         getOptionLabel={account => account.displayName}
+        getOptionSelected={(a, b) => a.name === b.name}
         onChange={(_event, value) =>
           onAccountChange(
             value === null ? undefined : (value as SelectableAccount)
@@ -139,6 +140,7 @@ const GA4PropertySelector: React.FC<GA4PropertySelectorProps> = ({
         value={localProperty || null}
         noOptionsText="Choose an account first."
         getOptionLabel={property => property.displayName}
+        getOptionSelected={(a, b) => a.property === b.property}
         onChange={(_event, value) =>
           setLocalProperty(
             value === null ? undefined : (value as SelectableProperty)

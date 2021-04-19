@@ -22,9 +22,9 @@ import MetricExpression from "./_MetricExpression/_index"
 import { StorageKey } from "../../constants"
 import { useEffect, useState } from "react"
 import { useMakeReportsRequest } from "./_api"
-import PrettyJson, { shouldCollapseRequest } from "./_PrettyJson"
 import ReportsTable from "./_ReportsTable"
 import { PAB } from "../../components/Buttons"
+import PrettyJson, { shouldCollapseRequest } from "../../components/PrettyJson"
 
 const useStyles = makeStyles(theme => ({
   viewSelector: {

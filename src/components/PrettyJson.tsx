@@ -1,7 +1,6 @@
 import React from "react"
 import { makeStyles, Paper } from "@material-ui/core"
-import { IS_SSR } from "../../hooks"
-// import ReactJson, { CollapsedFieldProps } from "react-json-view"
+import { IS_SSR } from "../hooks"
 
 interface PrettyJsonProps {
   object: object | undefined

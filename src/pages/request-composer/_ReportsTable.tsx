@@ -17,7 +17,7 @@ import {
 
 import "react-loader-spinner/dist/loader/css/react-spinner-loader.css"
 import Loader from "react-loader-spinner"
-import PrettyJson, { shouldCollapseResponse } from "./_PrettyJson"
+import PrettyJson, { shouldCollapseResponse } from "../../components/PrettyJson"
 
 const useStyles = makeStyles(theme => ({
   loadingIndicator: {
