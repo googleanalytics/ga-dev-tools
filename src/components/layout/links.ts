@@ -73,6 +73,12 @@ export const linkData: LinkData[] = [
     versions: [GAVersion.GoogleAnalytics4],
   },
   {
+    text: "Request Composer",
+    href: "/ga4/request-composer/",
+    type: "link",
+    versions: [GAVersion.GoogleAnalytics4],
+  },
+  {
     text: "Query Explorer",
     href: "/query-explorer/",
     type: "link",
