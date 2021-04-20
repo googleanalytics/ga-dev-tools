@@ -83,6 +83,7 @@ const BasicReport = () => {
         selectedPropertyKey={StorageKey.ga4RequestComposerBasicSelectedProperty}
         setSelectedProperty={setSelectedProperty}
       />
+      <br />
       <LinkedTextField
         value={inputPropertyString || ""}
         onChange={setInputPropertyString}

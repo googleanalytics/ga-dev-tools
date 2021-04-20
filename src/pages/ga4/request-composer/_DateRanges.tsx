@@ -68,14 +68,21 @@ const useDateRanges = (): {
 }
 
 const useStyles = makeStyles(theme => ({
-  heading: { marginTop: theme.spacing(1) },
+  heading: {
+    margin: theme.spacing(1, 0),
+    marginTop: theme.spacing(0),
+  },
+  pabContainer: {
+    display: "flex",
+    marginBottom: theme.spacing(1),
+  },
   dateRanges: {
     display: "flex",
     flexDirection: "column",
     marginBottom: theme.spacing(1),
   },
   dateRange: {
-    marginLeft: theme.spacing(2),
+    // marginLeft: theme.spacing(2),
     marginBottom: theme.spacing(1),
     display: "flex",
   },
@@ -111,14 +118,8 @@ const DateRanges: React.FC<{ onChange: Dispatch<DateRange[]> }> = ({
 
   return (
     <section className={classes.dateRanges}>
-      <Typography variant="h5" className={classes.heading}>
+      <Typography variant="subtitle2" className={classes.heading}>
         Date Ranges
-      </Typography>
-      <Typography>
-        The date ranges to use for the request. Format should be either{" "}
-        <InlineCode>YYYY-MM-DD</InlineCode>, <InlineCode>yesterday</InlineCode>,{" "}
-        <InlineCode>today</InlineCode>, or <InlineCode>NdaysAgo</InlineCode>{" "}
-        where N is a positive integer. See {dateRange} on devsite.
       </Typography>
       {dateRanges.map(dateRange => (
         <section key={dateRange.id} className={classes.dateRange}>
@@ -152,14 +153,24 @@ const DateRanges: React.FC<{ onChange: Dispatch<DateRange[]> }> = ({
           </TooltipIconButton>
         </section>
       ))}
-      <SAB
-        className={classes.add}
-        size="medium"
-        onClick={addDateRange}
-        startIcon={<Add />}
-      >
-        Add
-      </SAB>
+
+      <section className={classes.pabContainer}>
+        <Typography variant="caption" color="textSecondary">
+          The date ranges to use for the request. Format should be either{" "}
+          <InlineCode>YYYY-MM-DD</InlineCode>,{" "}
+          <InlineCode>yesterday</InlineCode>, <InlineCode>today</InlineCode>, or{" "}
+          <InlineCode>NdaysAgo</InlineCode> where N is a positive integer. See{" "}
+          {dateRange} on devsite.
+        </Typography>
+        <SAB
+          className={classes.add}
+          size="medium"
+          onClick={addDateRange}
+          startIcon={<Add />}
+        >
+          Add
+        </SAB>
+      </section>
     </section>
   )
 }
