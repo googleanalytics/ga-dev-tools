@@ -28,8 +28,9 @@ import {
   CohortSizePicker,
   UAMetric,
 } from "../../../components/UAPickers"
-import { makeStyles, FormControlLabel, Checkbox } from "@material-ui/core"
+import { makeStyles } from "@material-ui/core"
 import { usePersistentBoolean } from "../../../hooks"
+import LabeledCheckbox from "../../../components/LabeledCheckbox"
 
 interface CohortRequestProps {
   view: HasView | undefined
@@ -113,18 +114,13 @@ const CohortRequest: React.FC<CohortRequestProps> = ({
           storageKey={StorageKey.cohortRequestSegment}
           showSegmentDefinition={showSegmentDefinition}
         />
-        <FormControlLabel
+        <LabeledCheckbox
           className={classes.showSegments}
-          control={
-            <Checkbox
-              checked={showSegmentDefinition}
-              onChange={e => {
-                setShowSegmentDefinition(e.target.checked)
-              }}
-            />
-          }
-          label="Show segment definitions instead of IDs."
-        />
+          checked={showSegmentDefinition}
+          setChecked={setShowSegmentDefinition}
+        >
+          Show segment definitions instead of IDs.
+        </LabeledCheckbox>
         <V4SamplingLevelPicker
           setSamplingLevel={setSamplingLevel}
           storageKey={StorageKey.cohortRequestSamplingLevel}

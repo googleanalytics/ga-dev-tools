@@ -13,7 +13,7 @@
 // limitations under the License.
 
 import * as React from "react"
-import { FormControlLabel, Checkbox, makeStyles } from "@material-ui/core"
+import { makeStyles } from "@material-ui/core"
 import { linkFor, titleFor } from "../_HistogramRequest/_index"
 import usePivotRequestParameters from "./_usePivotRequestParameters"
 import { StorageKey } from "../../../constants"
@@ -30,6 +30,7 @@ import {
   V4SamplingLevelPicker,
 } from "../../../components/UAPickers"
 import { usePersistentBoolean } from "../../../hooks"
+import LabeledCheckbox from "../../../components/LabeledCheckbox"
 
 interface PivotRequestProps {
   view: HasView | undefined
@@ -184,18 +185,13 @@ const PivotRequest: React.FC<PivotRequestProps> = ({
           storageKey={StorageKey.pivotRequestSegment}
           showSegmentDefinition={showSegmentDefinition}
         />
-        <FormControlLabel
+        <LabeledCheckbox
           className={classes.showSegments}
-          control={
-            <Checkbox
-              checked={showSegmentDefinition}
-              onChange={e => {
-                setShowSegmentDefinition(e.target.checked)
-              }}
-            />
-          }
-          label="Show segment definitions instead of IDs."
-        />
+          checked={showSegmentDefinition}
+          setChecked={setShowSegmentDefinition}
+        >
+          Show segment definitions instead of IDs.
+        </LabeledCheckbox>
         <V4SamplingLevelPicker
           setSamplingLevel={setSamplingLevel}
           storageKey={StorageKey.pivotSamplingLevel}
@@ -217,15 +213,14 @@ const PivotRequest: React.FC<PivotRequestProps> = ({
           onChange={setPageSize}
           helperText="The maximum number of rows to include in the response. Maximum of 100,000"
         />
-        <FormControlLabel
-          control={
-            <Checkbox
-              checked={includeEmptyRows}
-              onChange={e => setIncludeEmptyRows(e.target.checked)}
-            />
-          }
-          label="Include Empty Rows"
-        />
+        <LabeledCheckbox
+          checked={includeEmptyRows}
+          setChecked={setIncludeEmptyRows}
+          className={classes.showSegments}
+        >
+          Include Empty Rows
+        </LabeledCheckbox>
+        <br />
         {children}
       </section>
     </>

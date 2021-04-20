@@ -15,18 +15,13 @@
 import React from "react"
 import useEvents from "./_useEvents"
 import LinkedTextField from "../../../components/LinkedTextField"
-import {
-  Typography,
-  TextField,
-  makeStyles,
-  FormControlLabel,
-  Checkbox,
-} from "@material-ui/core"
+import { Typography, TextField, makeStyles } from "@material-ui/core"
 import { MPEventCategory, MPEventType, MPEvent } from "./_types/_index"
 import Autocomplete from "@material-ui/lab/Autocomplete"
 import EditEvent from "./_EditEvent"
 import EditUserProperties from "./_EditUserProperties"
 import ValidateEvent from "./_ValidateEvent"
+import LabeledCheckbox from "../../../components/LabeledCheckbox"
 
 const useStyles = makeStyles(theme => ({
   unifiedParameters: {
@@ -233,17 +228,12 @@ const EventBuilder: React.FC = () => {
               setTimestampMicros(e.target.value)
             }}
           />
-          <FormControlLabel
-            control={
-              <Checkbox
-                checked={non_personalized_ads}
-                onChange={e => {
-                  setNonPersonalizedAds(e.target.checked)
-                }}
-              />
-            }
-            label="non_personalized_ads"
-          />
+          <LabeledCheckbox
+            checked={non_personalized_ads}
+            setChecked={setNonPersonalizedAds}
+          >
+            non_personalized_ads
+          </LabeledCheckbox>
         </section>
       </div>
       <EditEvent event={event} setEvent={setEvent} />

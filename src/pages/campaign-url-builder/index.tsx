@@ -16,8 +16,6 @@ import * as React from "react"
 import Typography from "@material-ui/core/Typography"
 import TextField from "@material-ui/core/TextField"
 import Paper from "@material-ui/core/Paper"
-import Checkbox from "@material-ui/core/Checkbox"
-import FormControlLabel from "@material-ui/core/FormControlLabel"
 import { makeStyles } from "@material-ui/core/styles"
 import Error from "@material-ui/icons/ErrorOutline"
 import Warning from "@material-ui/icons/Warning"
@@ -36,6 +34,7 @@ import CopyButton from "../../components/CopyButton"
 import useShortenLink from "./_useShortenLink"
 import { extractParamsFromWebsiteUrl, websiteUrlFor } from "./_params"
 import { usePersistentString, usePersistentBoolean, IS_SSR } from "../../hooks"
+import LabeledCheckbox from "../../components/LabeledCheckbox"
 
 const iosCampaignTracking = (
   <a href={Url.iosCampaignMeasurement}>iOS Campaign Tracking URL Builder</a>
@@ -323,23 +322,15 @@ const GeneratedUrl: React.FC<GeneratedUrlProps> = ({
               variant="outlined"
               className={classes.generatedInput}
             />
-            <FormControlLabel
-              control={
-                <Checkbox
-                  checked={useFragment}
-                  onChange={e => setUseFragment(e.target.checked)}
-                />
-              }
-              label={
-                <Typography variant="body2" component="span">
-                  Set campaign parameters in the fragment protion of the URL (
-                  <Typography component="span" color="error" variant="inherit">
-                    not recommended
-                  </Typography>
-                  )
+            <LabeledCheckbox checked={useFragment} setChecked={setUseFragment}>
+              <Typography variant="body2" component="span">
+                Set campaign parameters in the fragment protion of the URL (
+                <Typography component="span" color="error" variant="inherit">
+                  not recommended
                 </Typography>
-              }
-            />
+                )
+              </Typography>
+            </LabeledCheckbox>
             <section className={classes.buttons}>
               <CopyButton
                 variant="contained"

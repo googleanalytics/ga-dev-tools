@@ -15,14 +15,7 @@
 import * as React from "react"
 
 import Layout from "../../components/layout"
-import {
-  Typography,
-  TextField,
-  makeStyles,
-  FormControlLabel,
-  Checkbox,
-  Tooltip,
-} from "@material-ui/core"
+import { Typography, TextField, makeStyles, Tooltip } from "@material-ui/core"
 import { Url, StorageKey } from "../../constants"
 import ViewSelector from "../../components/ViewSelector"
 import { Launch } from "@material-ui/icons"
@@ -37,6 +30,7 @@ import {
 } from "../../components/UAPickers"
 import { PAB } from "../../components/Buttons"
 import { useInputs, useDataAPIRequest } from "./_hooks"
+import LabeledCheckbox from "../../components/LabeledCheckbox"
 
 const coreReportingApi = <a href={Url.coreReportingApi}>Core Reporting API</a>
 
@@ -261,18 +255,13 @@ export const QueryExplorer = () => {
           setSegment={setSelectedSegment}
           showSegmentDefinition={showSegmentDefinition}
         />
-        <FormControlLabel
+        <LabeledCheckbox
+          checked={showSegmentDefinition}
+          setChecked={setShowSegmentDefiniton}
           className={classes.showSegments}
-          control={
-            <Checkbox
-              checked={showSegmentDefinition}
-              onChange={e => {
-                setShowSegmentDefiniton(e.target.checked)
-              }}
-            />
-          }
-          label="Show segment definitions instead of IDs."
-        />
+        >
+          Show segment definitions instead of IDs.
+        </LabeledCheckbox>
         <V3SamplingLevelPicker
           storageKey={StorageKey.queyExplorerSamplingLevel}
           setSamplingLevel={setSelectedSamplingValue}
@@ -311,16 +300,13 @@ export const QueryExplorer = () => {
         >
           Run Query
         </PAB>
-        <FormControlLabel
+        <LabeledCheckbox
+          checked={includeEmptyRows}
+          setChecked={setIncludeEmptyRows}
           className={classes.includeEmpty}
-          control={
-            <Checkbox
-              checked={includeEmptyRows}
-              onChange={e => setIncludeEmptyRows(e.target.checked)}
-            />
-          }
-          label="Include Empty Rows"
-        />
+        >
+          include empty rows
+        </LabeledCheckbox>
       </section>
       <Report queryResponse={queryResponse} />
     </>

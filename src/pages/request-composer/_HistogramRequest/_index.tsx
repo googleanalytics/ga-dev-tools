@@ -28,8 +28,9 @@ import {
   SegmentPicker,
   V4SamplingLevelPicker,
 } from "../../../components/UAPickers"
-import { FormControlLabel, Checkbox, makeStyles } from "@material-ui/core"
+import { makeStyles } from "@material-ui/core"
 import { usePersistentBoolean } from "../../../hooks"
+import LabeledCheckbox from "../../../components/LabeledCheckbox"
 
 export const linkFor = (hash: string) =>
   `https://developers.google.com/analytics/devguides/reporting/core/v4/rest/v4/reports/batchGet#${hash}`
@@ -161,18 +162,13 @@ const HistogramRequest: React.FC<HistogramRequestProps> = ({
           storageKey={StorageKey.histogramRequestSegment}
           showSegmentDefinition={showSegmentDefinition}
         />
-        <FormControlLabel
+        <LabeledCheckbox
           className={classes.showSegments}
-          control={
-            <Checkbox
-              checked={showSegmentDefinition}
-              onChange={e => {
-                setShowSegmentDefinition(e.target.checked)
-              }}
-            />
-          }
-          label="Show segment definitions instead of IDs."
-        />
+          checked={showSegmentDefinition}
+          setChecked={setShowSegmentDefinition}
+        >
+          Show segment definitions instead of IDs.
+        </LabeledCheckbox>
         <V4SamplingLevelPicker
           setSamplingLevel={setSamplingLevel}
           storageKey={StorageKey.histogramSamplingLevel}

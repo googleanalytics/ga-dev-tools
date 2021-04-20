@@ -25,12 +25,11 @@ import TextField from "@material-ui/core/TextField"
 import IconButton from "@material-ui/core/IconButton"
 import Clear from "@material-ui/icons/Clear"
 import ColumnGroupList from "./_ColumnGroupList"
-import FormControlLabel from "@material-ui/core/FormControlLabel"
-import Checkbox from "@material-ui/core/Checkbox"
 import { useDebounce } from "use-debounce/lib"
 import { WithEtag, Dispatch } from "../../types"
 import { StorageKey } from "../../constants"
 import { makeStyles } from "@material-ui/core"
+import LabeledCheckbox from "../../components/LabeledCheckbox"
 
 type ColumnAPIResponse = WithEtag<Column[]>
 
@@ -105,24 +104,15 @@ const Search: React.FC<{
           ),
         }}
       />
-      <FormControlLabel
-        control={
-          <Checkbox
-            checked={onlySegments}
-            onChange={e => setOnlySegments(e.target.checked)}
-          />
-        }
-        label="Only show fields that are allowed in segments"
-      />
-      <FormControlLabel
-        control={
-          <Checkbox
-            checked={allowDeprecated}
-            onChange={e => setAllowDeprecated(e.target.checked)}
-          />
-        }
-        label="Include deprecated fields"
-      />
+      <LabeledCheckbox checked={onlySegments} setChecked={setOnlySegments}>
+        Only show fields that are allowed in segments
+      </LabeledCheckbox>
+      <LabeledCheckbox
+        checked={allowDeprecated}
+        setChecked={setAllowDeprecated}
+      >
+        Include deprecated fields
+      </LabeledCheckbox>
     </section>
   )
 }

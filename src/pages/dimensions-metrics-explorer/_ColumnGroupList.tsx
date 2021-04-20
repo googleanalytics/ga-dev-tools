@@ -20,8 +20,6 @@ import { navigate } from "gatsby"
 import { CUBES_BY_COLUMN_NAME, CUBE_NAMES, CubesByColumnName } from "./_cubes"
 
 import Button from "@material-ui/core/Button"
-import Checkbox from "@material-ui/core/Checkbox"
-import FormControlLabel from "@material-ui/core/FormControlLabel"
 import { RemoveCircle, AddCircle, Info } from "@material-ui/icons"
 
 import { Typography, makeStyles, IconButton, Tooltip } from "@material-ui/core"
@@ -29,6 +27,7 @@ import LinkIcon from "@material-ui/icons/Link"
 import { Column } from "../../api"
 import classnames from "classnames"
 import { CopyIconButton } from "../../components/CopyButton"
+import LabeledCheckbox from "../../components/LabeledCheckbox"
 
 const useStyles = makeStyles(theme => ({
   accordionTitle: { margin: 0 },
@@ -170,21 +169,18 @@ const SelectableColumn: React.FC<{
     [column.attributes]
   )
   return (
-    <FormControlLabel
+    <LabeledCheckbox
+      checked={selected}
+      disabled={disabled}
+      setChecked={setSelected}
       className={classes.column}
-      control={
-        <Checkbox
-          className={classnames({
-            [classes.deprecatedCheckbox]: isDeprecated,
-            [classes.checkbox]: !isDeprecated,
-          })}
-          checked={selected}
-          disabled={disabled}
-          onChange={event => setSelected(event.target.checked)}
-        />
-      }
-      label={<ColumnLabel column={column} isDeprecated={isDeprecated} />}
-    />
+      checkboxClassName={classnames({
+        [classes.deprecatedCheckbox]: isDeprecated,
+        [classes.checkbox]: !isDeprecated,
+      })}
+    >
+      <ColumnLabel column={column} isDeprecated={isDeprecated} />
+    </LabeledCheckbox>
   )
 }
 

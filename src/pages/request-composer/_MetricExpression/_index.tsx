@@ -27,8 +27,9 @@ import {
   SegmentPicker,
   V4SamplingLevelPicker,
 } from "../../../components/UAPickers"
-import { FormControlLabel, Checkbox, makeStyles } from "@material-ui/core"
+import { makeStyles } from "@material-ui/core"
 import { usePersistentBoolean } from "../../../hooks"
+import LabeledCheckbox from "../../../components/LabeledCheckbox"
 
 interface MetricExpressionRequestProps {
   view: HasView | undefined
@@ -164,18 +165,13 @@ const MetricExpression: React.FC<MetricExpressionRequestProps> = ({
           storageKey={StorageKey.metricExpressionRequestSegment}
           showSegmentDefinition={showSegmentDefinition}
         />
-        <FormControlLabel
+        <LabeledCheckbox
           className={classes.showSegments}
-          control={
-            <Checkbox
-              checked={showSegmentDefinition}
-              onChange={e => {
-                setShowSegmentDefinition(e.target.checked)
-              }}
-            />
-          }
-          label="Show segment definitions instead of IDs."
-        />
+          checked={showSegmentDefinition}
+          setChecked={setShowSegmentDefinition}
+        >
+          Show segment definitions instead of IDs.
+        </LabeledCheckbox>
         <V4SamplingLevelPicker
           setSamplingLevel={setSamplingLevel}
           storageKey={StorageKey.metricExpressionSamplingLevel}
