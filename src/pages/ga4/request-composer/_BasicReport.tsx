@@ -3,7 +3,7 @@ import { Typography } from "@material-ui/core"
 import GA4PropertySelector, {
   SelectableProperty,
 } from "../../../components/GA4PropertySelector"
-import { StorageKey } from "../../../constants"
+import { StorageKey, Url } from "../../../constants"
 import { usePersistentString, usePersistantObject } from "../../../hooks"
 import LinkedTextField from "../../../components/LinkedTextField"
 import { useState, useCallback, useEffect, useMemo } from "react"
@@ -11,10 +11,12 @@ import { useSelector } from "react-redux"
 import { PAB } from "../../../components/Buttons"
 import DateRanges, { DateRange } from "./_DateRanges"
 import PrettyJson from "../../../components/PrettyJson"
+import { DimensionsPicker, GA4Dimensions } from "../../../components/GA4Pickers"
 
 const useInputs = () => {
   const [selectedProperty, setSelectedProperty] = useState<SelectableProperty>()
   const [dateRanges, setDateRanges] = useState<DateRange[]>([])
+  const [dimensions, setDimensions] = useState<GA4Dimensions>()
 
   const [propertyString, setPropertyStringLocal] = usePersistentString(
     StorageKey.ga4RequestComposerBasicSelectedPropertyString
@@ -40,6 +42,8 @@ const useInputs = () => {
     setPropertyString,
     dateRanges,
     setDateRanges,
+    dimensions,
+    setDimensions,
   }
 }
 
@@ -55,6 +59,7 @@ type RunReportResponse = gapi.client.analyticsdata.RunReportResponse
 type UseMakeRequestArgs = {
   property: string
   dateRanges: DateRange[]
+  dimensions: GA4Dimensions
 }
 type UseMakeRequest = (
   args: UseMakeRequestArgs
@@ -72,7 +77,11 @@ type UseMakeRequest = (
       response: undefined
     }
 )
-const useMakeRequest: UseMakeRequest = ({ property, dateRanges }) => {
+const useMakeRequest: UseMakeRequest = ({
+  property,
+  dateRanges,
+  dimensions,
+}) => {
   const gapi = useSelector((state: AppState) => state.gapi)
   const dataAPI = useMemo(() => gapi?.client.analyticsdata, [gapi])
   const [requestStatus, setRequestStatus] = useState(RequestStatus.NotStarted)
@@ -81,13 +90,20 @@ const useMakeRequest: UseMakeRequest = ({ property, dateRanges }) => {
   )
 
   const request = useMemo<RunReportRequest | undefined>(() => {
-    return {
+    if (dimensions === undefined) {
+      return undefined
+    }
+    const r: RunReportRequest = {
+      dimensions: dimensions.map(dimension => ({
+        name: dimension.apiName!,
+      })),
       dateRanges: dateRanges.map(({ from, to }) => ({
         startDate: from,
         endDate: to,
       })),
     }
-  }, [dateRanges])
+    return r
+  }, [dateRanges, dimensions])
 
   const validRequest = useMemo(() => {
     return true
@@ -138,6 +154,10 @@ const shouldCollapseRequest = ({ namespace }: any) => {
   return true
 }
 
+const dimensionsLink = (
+  <a href={Url.ga4RequestComposerBasicDimensions}>dimensions</a>
+)
+
 const BasicReport = () => {
   const {
     setSelectedProperty,
@@ -145,11 +165,16 @@ const BasicReport = () => {
     propertyString,
     dateRanges,
     setDateRanges,
+    dimensions,
+    setDimensions,
   } = useInputs()
-  const { validRequest, makeRequest, request } = useMakeRequest({
+  const { validRequest, makeRequest, request, response } = useMakeRequest({
     property: propertyString || "",
     dateRanges,
+    dimensions,
   })
+
+  console.log({ response })
 
   return (
     <>
@@ -173,6 +198,18 @@ const BasicReport = () => {
         helperText="The property to use for the request."
       />
       <DateRanges onChange={setDateRanges} />
+      <DimensionsPicker
+        required
+        storageKey={StorageKey.ga4RequestComposerBasicSelectedDimensions}
+        property={propertyString}
+        setDimensions={setDimensions}
+        helperText={
+          <>
+            The dimensions to include in the request. See {dimensionsLink} on
+            devsite.
+          </>
+        }
+      />
       <PrettyJson object={request} shouldCollapse={shouldCollapseRequest} />
       <PAB onClick={makeRequest} disabled={!validRequest}>
         Make Request

@@ -72,6 +72,7 @@ const useStyles = makeStyles(theme => ({
   dateRanges: {
     display: "flex",
     flexDirection: "column",
+    marginBottom: theme.spacing(1),
   },
   dateRange: {
     marginLeft: theme.spacing(2),

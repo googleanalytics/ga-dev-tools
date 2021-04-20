@@ -20,14 +20,21 @@ export const TooltipIconButton: React.FC<{
   disabled?: boolean
   onClick?: () => void
 }> = ({ tooltip, children, onClick, className, disabled, size = "small" }) => {
-  return (
-    <Tooltip title={tooltip}>
+  if (disabled) {
+    return (
       <IconButton
         onClick={onClick}
         size={size}
         disabled={disabled}
         className={className}
       >
+        {children}
+      </IconButton>
+    )
+  }
+  return (
+    <Tooltip title={tooltip}>
+      <IconButton onClick={onClick} size={size} className={className}>
         {children}
       </IconButton>
     </Tooltip>

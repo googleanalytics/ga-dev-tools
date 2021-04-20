@@ -1,6 +1,7 @@
 import React from "react"
 import { makeStyles, Paper } from "@material-ui/core"
 import { IS_SSR } from "../hooks"
+import { CopyIconButton } from "./CopyButton"
 
 interface PrettyJsonProps {
   object: object | undefined
@@ -41,6 +42,11 @@ export const shouldCollapseResponse = ({ namespace }: any) => {
 const useStyles = makeStyles(theme => ({
   jsonPaper: {
     padding: theme.spacing(2),
+    display: "flex",
+    alignItems: "flex-start",
+  },
+  json: {
+    "flex-grow": "1",
   },
 }))
 
@@ -62,17 +68,23 @@ const PrettyJson: React.FC<PrettyJsonProps> = ({ object, shouldCollapse }) => {
 
   return (
     <Paper className={classes.jsonPaper}>
-      <ReactJson
-        src={object}
-        name={false}
-        indentWidth={2}
-        enableClipboard={false}
-        displayObjectSize={false}
-        displayDataTypes={false}
-        // The types are just out of date with the component :'(
-        // @ts-ignore
-        displayArrayKey={false}
-        shouldCollapse={shouldCollapse || false}
+      <span className={classes.json}>
+        <ReactJson
+          src={object}
+          name={false}
+          indentWidth={2}
+          enableClipboard={false}
+          displayObjectSize={false}
+          displayDataTypes={false}
+          // The types are just out of date with the component :'(
+          // @ts-ignore
+          displayArrayKey={false}
+          shouldCollapse={shouldCollapse || false}
+        />
+      </span>
+      <CopyIconButton
+        toCopy={JSON.stringify(object)}
+        tooltipText="Copy request JSON"
       />
     </Paper>
   )
