@@ -1,5 +1,5 @@
 import * as React from "react"
-import { Typography } from "@material-ui/core"
+import { Typography, makeStyles } from "@material-ui/core"
 import GA4PropertySelector from "../../../../components/GA4PropertySelector"
 import { StorageKey, Url } from "../../../../constants"
 import LinkedTextField from "../../../../components/LinkedTextField"
@@ -14,6 +14,12 @@ import useInputs from "./_useInputs"
 import useMakeRequest from "./_useMakeRequest"
 import Response from "../_Response"
 import LabeledCheckbox from "../../../../components/LabeledCheckbox"
+
+const useStyles = makeStyles(theme => ({
+  dateRanges: {
+    marginTop: theme.spacing(-1),
+  },
+}))
 
 const shouldCollapseRequest = ({ namespace }: any) => {
   // The number 4 refers to the number of levels to show by default, this value
@@ -43,6 +49,7 @@ const dimensionsLink = (
 const metricsLink = <a href={Url.ga4RequestComposerBasicMetrics}>metrics</a>
 
 const BasicReport = () => {
+  const classes = useStyles()
   const {
     setSelectedProperty,
     setInputPropertyString,
@@ -92,7 +99,6 @@ const BasicReport = () => {
         label="Property"
         helperText="The property to use for the request."
       />
-      <DateRanges onChange={setDateRanges} />
       <DimensionsPicker
         required
         storageKey={StorageKey.ga4RequestComposerBasicSelectedDimensions}
@@ -115,6 +121,7 @@ const BasicReport = () => {
           </>
         }
       />
+      <DateRanges className={classes.dateRanges} onChange={setDateRanges} />
       <div>
         <LabeledCheckbox
           checked={showRequestJSON}

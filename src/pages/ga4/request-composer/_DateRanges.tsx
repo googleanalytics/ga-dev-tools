@@ -5,6 +5,7 @@ import { TooltipIconButton, SAB } from "../../../components/Buttons"
 import { Delete, Add } from "@material-ui/icons"
 import { Dispatch } from "../../../types"
 import InlineCode from "../../../components/InlineCode"
+import clx from "classnames"
 
 export interface DateRange {
   id: string
@@ -100,9 +101,10 @@ const dateRange = (
   </a>
 )
 
-const DateRanges: React.FC<{ onChange: Dispatch<DateRange[]> }> = ({
-  onChange,
-}) => {
+const DateRanges: React.FC<{
+  onChange: Dispatch<DateRange[]>
+  className?: string
+}> = ({ onChange, className }) => {
   const classes = useStyles()
   const {
     dateRanges,
@@ -117,7 +119,7 @@ const DateRanges: React.FC<{ onChange: Dispatch<DateRange[]> }> = ({
   }, [dateRanges, onChange])
 
   return (
-    <section className={classes.dateRanges}>
+    <section className={clx(classes.dateRanges, className)}>
       <Typography variant="subtitle2" className={classes.heading}>
         Date Ranges
       </Typography>
