@@ -106,7 +106,6 @@ const BasicReport = () => {
         }
       />
       <MetricsPicker
-        required
         storageKey={StorageKey.ga4RequestComposerBasicSelectedMetrics}
         property={propertyString}
         setMetrics={setMetrics}
