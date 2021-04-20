@@ -13,6 +13,7 @@ import {
 import useInputs from "./_useInputs"
 import useMakeRequest from "./_useMakeRequest"
 import Response from "../_Response"
+import LabeledCheckbox from "../../../../components/LabeledCheckbox"
 
 const shouldCollapseRequest = ({ namespace }: any) => {
   // The number 4 refers to the number of levels to show by default, this value
@@ -53,6 +54,8 @@ const BasicReport = () => {
     setDimensions,
     metrics,
     setMetrics,
+    showRequestJSON,
+    setShowRequestJSON,
   } = useInputs()
   const {
     validRequest,
@@ -112,7 +115,17 @@ const BasicReport = () => {
           </>
         }
       />
-      <PrettyJson object={request} shouldCollapse={shouldCollapseRequest} />
+      <div>
+        <LabeledCheckbox
+          checked={showRequestJSON}
+          setChecked={setShowRequestJSON}
+        >
+          Show request JSON
+        </LabeledCheckbox>
+      </div>
+      {showRequestJSON && (
+        <PrettyJson object={request} shouldCollapse={shouldCollapseRequest} />
+      )}
       <PAB onClick={makeRequest} disabled={!validRequest}>
         Make Request
       </PAB>

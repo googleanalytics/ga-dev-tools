@@ -80,6 +80,7 @@ export enum StorageKey {
   ga4RequestComposerBasicResponse = "/ga4/request-composer/basic-report/response",
   ga4RequestComposerBasicSelectedDimensions = "/ga4/request-composer/basic-report/selected-dimensions",
   ga4RequestComposerBasicSelectedMetrics = "/ga4/request-composer/basic-report/selected-metrics",
+  ga4RequestComposerBasicShowRequestJSON = "/ga4/request-composer/basic-report/show-request-json",
 
   // Query Explorer
   queryExplorerDimensions = "query-explorer/dimensions",

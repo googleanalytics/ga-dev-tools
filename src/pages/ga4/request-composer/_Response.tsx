@@ -58,6 +58,14 @@ const Response: React.FC<ReportsTableProps> = ({
     [requestStatus]
   )
 
+  const pending = useMemo(
+    () =>
+      requestStatus === RequestStatus.NotStarted ? (
+        <section>Enter all required inputs, then press make request.</section>
+      ) : null,
+    [requestStatus]
+  )
+
   // TODO: Add button to save table response as a CSV & saving json response as
   // a json file.
   return (
@@ -74,10 +82,12 @@ const Response: React.FC<ReportsTableProps> = ({
       </Tabs>
       <TabPanel value={tab} index={0}>
         {loading}
+        {pending}
         {response !== undefined && <ResponseTable response={response} />}
       </TabPanel>
       <TabPanel value={tab} index={1}>
         {loading}
+        {pending}
         <PrettyJson object={response} shouldCollapse={shouldCollapse} />
       </TabPanel>
     </section>

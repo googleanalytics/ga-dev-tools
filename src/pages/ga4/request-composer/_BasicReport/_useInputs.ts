@@ -2,10 +2,14 @@ import { useState, useEffect, useMemo } from "react"
 import { SelectableProperty } from "../../../../components/GA4PropertySelector"
 import { DateRange } from "../_DateRanges"
 import { GA4Dimensions, GA4Metrics } from "../../../../components/GA4Pickers"
-import { usePersistentString } from "../../../../hooks"
+import { usePersistentString, usePersistentBoolean } from "../../../../hooks"
 import { StorageKey } from "../../../../constants"
 
 const useInputs = () => {
+  const [showRequestJSON, setShowRequestJSON] = usePersistentBoolean(
+    StorageKey.ga4RequestComposerBasicShowRequestJSON,
+    true
+  )
   const [selectedProperty, setSelectedProperty] = useState<SelectableProperty>()
   const [dateRanges, setDateRanges] = useState<DateRange[]>([])
   const [dimensions, setDimensions] = useState<GA4Dimensions>()
@@ -39,6 +43,8 @@ const useInputs = () => {
     setDimensions,
     metrics,
     setMetrics,
+    showRequestJSON,
+    setShowRequestJSON,
   }
 }
 export default useInputs
