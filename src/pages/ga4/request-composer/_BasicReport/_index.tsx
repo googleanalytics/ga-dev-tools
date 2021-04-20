@@ -6,7 +6,10 @@ import LinkedTextField from "../../../../components/LinkedTextField"
 import { PAB } from "../../../../components/Buttons"
 import DateRanges from "../_DateRanges"
 import PrettyJson from "../../../../components/PrettyJson"
-import { DimensionsPicker } from "../../../../components/GA4Pickers"
+import {
+  DimensionsPicker,
+  MetricsPicker,
+} from "../../../../components/GA4Pickers"
 import useInputs from "./_useInputs"
 import useMakeRequest from "./_useMakeRequest"
 import Response from "../_Response"
@@ -36,6 +39,8 @@ const dimensionsLink = (
   <a href={Url.ga4RequestComposerBasicDimensions}>dimensions</a>
 )
 
+const metricsLink = <a href={Url.ga4RequestComposerBasicMetrics}>metrics</a>
+
 const BasicReport = () => {
   const {
     setSelectedProperty,
@@ -46,6 +51,8 @@ const BasicReport = () => {
     setDateRanges,
     dimensions,
     setDimensions,
+    metrics,
+    setMetrics,
   } = useInputs()
   const {
     validRequest,
@@ -57,9 +64,8 @@ const BasicReport = () => {
     property: propertyString,
     dateRanges,
     dimensions,
+    metrics,
   })
-
-  console.log({ response, requestStatus })
 
   return (
     <>
@@ -92,6 +98,17 @@ const BasicReport = () => {
           <>
             The dimensions to include in the request. See {dimensionsLink} on
             devsite.
+          </>
+        }
+      />
+      <MetricsPicker
+        required
+        storageKey={StorageKey.ga4RequestComposerBasicSelectedMetrics}
+        property={propertyString}
+        setMetrics={setMetrics}
+        helperText={
+          <>
+            The metrics to include in the request. See {metricsLink} on devsite.
           </>
         }
       />

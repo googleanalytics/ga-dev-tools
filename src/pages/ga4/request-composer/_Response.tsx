@@ -1,17 +1,6 @@
 import React, { useState, useMemo } from "react"
-import {
-  makeStyles,
-  Typography,
-  TableContainer,
-  Table,
-  TableHead,
-  TableRow,
-  TableCell,
-  TableBody,
-  Tabs,
-  Tab,
-  Box,
-} from "@material-ui/core"
+import { makeStyles, Typography, Tabs, Tab, Box } from "@material-ui/core"
+import { DataGrid, GridColumns } from "@material-ui/data-grid"
 import PrettyJson from "../../../components/PrettyJson"
 import { RunReportResponse } from "./_BasicReport/_useMakeRequest"
 import { RequestStatus } from "../../../types"
@@ -98,38 +87,37 @@ const Response: React.FC<ReportsTableProps> = ({
 const ResponseTable: React.FC<{ response: RunReportResponse }> = ({
   response,
 }) => {
-  const classes = useStyles()
+  const columns = useMemo<GridColumns>(
+    () =>
+      (response.dimensionHeaders || [])
+        .concat(response.metricHeaders || [])
+        .map(a => ({
+          field: a.name || "",
+          headerName: a.name || "",
+          flex: 1,
+        })),
+    [response]
+  )
+  const rows = useMemo(
+    () =>
+      (response.rows || [])
+        .map(row => (row.dimensionValues || []).concat(row.metricValues || []))
+        .map((row, idx) =>
+          row.reduce(
+            (acc, cell, idx) => {
+              acc[columns[idx].field] = cell.value
+              return acc
+            },
+            { id: idx }
+          )
+        ),
+    [response, columns]
+  )
+
   return (
-    <TableContainer className={classes.container}>
-      <Table stickyHeader>
-        <TableHead>
-          <TableRow>
-            {response.dimensionHeaders?.map(header => (
-              <TableCell key={header.name}>{header.name}</TableCell>
-            ))}
-            {response.metricHeaders?.map(header => (
-              <TableCell key={header.name}>{header.name}</TableCell>
-            ))}
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {response.rows?.map((row, idx) => (
-            <TableRow key={`row-${idx}`}>
-              {row.dimensionValues?.map((dim, innerIdx) => (
-                <TableCell key={`row-${idx} column-${innerIdx}`}>
-                  {dim.value}
-                </TableCell>
-              ))}
-              {row.metricValues?.map((dim, innerIdx) => (
-                <TableCell key={`row-${idx} column-${innerIdx}`}>
-                  {dim.value}
-                </TableCell>
-              ))}
-            </TableRow>
-          ))}
-        </TableBody>
-      </Table>
-    </TableContainer>
+    <div style={{ height: 700, width: "100%" }}>
+      <DataGrid rows={rows} columns={columns} autoPageSize />
+    </div>
   )
 }
 

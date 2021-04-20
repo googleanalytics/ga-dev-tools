@@ -167,3 +167,61 @@ export const DimensionsPicker: React.FC<{
     />
   )
 }
+
+export const MetricsPicker: React.FC<{
+  storageKey: StorageKey
+  setMetrics: React.Dispatch<React.SetStateAction<GA4Metrics>>
+  property?: string
+  required?: true | undefined
+  helperText?: string | JSX.Element
+  label?: string
+}> = ({
+  helperText,
+  setMetrics,
+  required,
+  storageKey,
+  property,
+  label = "metrics",
+}) => {
+  const [selected, setSelected] = usePersistantObject<NonNullable<GA4Metrics>>(
+    storageKey
+  )
+  const { metricOptions } = useAvailableColumns({
+    selectedMetrics: selected,
+    selectedDimensions: [],
+    property,
+  })
+
+  React.useEffect(() => {
+    setMetrics(selected)
+  }, [selected, setMetrics])
+
+  return (
+    <Autocomplete<NonNullable<GA4Metric>, true, undefined, true>
+      fullWidth
+      autoComplete
+      autoHighlight
+      freeSolo
+      multiple
+      options={metricOptions || []}
+      getOptionLabel={metric => metric.apiName!}
+      value={selected || []}
+      onChange={(_event, value) =>
+        value.length === 0
+          ? setSelected(undefined)
+          : setSelected(value as GA4Metrics)
+      }
+      renderOption={column => <Column column={column} />}
+      renderInput={params => (
+        <TextField
+          {...params}
+          required={required}
+          label={label}
+          helperText={helperText}
+          size="small"
+          variant="outlined"
+        />
+      )}
+    />
+  )
+}

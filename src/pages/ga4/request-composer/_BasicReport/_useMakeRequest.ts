@@ -1,5 +1,5 @@
 import { DateRange } from "../_DateRanges"
-import { GA4Dimensions } from "../../../../components/GA4Pickers"
+import { GA4Dimensions, GA4Metrics } from "../../../../components/GA4Pickers"
 import { Requestable, RequestStatus } from "../../../../types"
 import { useSelector } from "react-redux"
 import { useMemo, useState, useCallback } from "react"
@@ -12,12 +12,14 @@ type UseMakeRequestArgs = {
   property: string | undefined
   dateRanges: DateRange[]
   dimensions: GA4Dimensions
+  metrics: GA4Metrics
 }
 
 const useMakeRequest = ({
   property,
   dateRanges,
   dimensions,
+  metrics,
 }: UseMakeRequestArgs): Requestable<
   { response: RunReportResponse },
   { response: undefined },
@@ -47,12 +49,15 @@ const useMakeRequest = ({
         endDate: to,
       })),
     }
+    if (metrics !== undefined) {
+      r.metrics = metrics.map(metric => ({ name: metric.apiName }))
+    }
     return r
-  }, [dateRanges, dimensions])
+  }, [dateRanges, dimensions, metrics])
 
   const validRequest = useMemo(() => {
-    return true
-  }, [])
+    return request !== undefined
+  }, [request])
 
   const makeRequest = useCallback(() => {
     if (
