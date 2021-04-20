@@ -2,7 +2,7 @@ import * as React from "react"
 import { Typography, Tabs, Tab, Box } from "@material-ui/core"
 import { Url, StorageKey } from "../../../constants"
 import { useEffect } from "react"
-import BasicReport from "./_BasicReport"
+import BasicReport from "./_BasicReport/_index"
 
 const dataAPI = <a href={Url.ga4DataAPI}>Analytics Data API</a>
 
