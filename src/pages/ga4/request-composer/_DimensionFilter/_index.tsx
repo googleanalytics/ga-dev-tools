@@ -37,9 +37,11 @@ const useDimensionFilter = (_: GA4Dimensions) => {
         const butLast = [...path]
         let last = butLast.pop()
 
-        // Do an extra pop for 'andGroup' ond 'orGroup' since they have an
-        // extra layer of nesting.
-        if (last === "andGroup" || last === "orGroup") {
+        if (
+          last === "andGroup" ||
+          last === "orGroup" ||
+          last === "notExpression"
+        ) {
           last = butLast.pop()
         }
 

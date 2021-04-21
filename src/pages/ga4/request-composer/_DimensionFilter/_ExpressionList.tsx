@@ -1,9 +1,11 @@
 import * as React from "react"
 import { makeStyles } from "@material-ui/core"
 import { FilterExpressionList } from "./_index"
-import Expression, { AddExpression, ExpressionType } from "./_Expression"
-import { SAB } from "../../../../components/Buttons"
-import { Delete } from "@material-ui/icons"
+import Expression, {
+  AddExpression,
+  ExpressionType,
+  RemoveExpression,
+} from "./_Expression"
 
 const useStyles = makeStyles(theme => ({
   buttons: {
@@ -30,9 +32,6 @@ const ExpressionList: React.FC<{
   removeExpression,
 }) => {
   const classes = useStyles()
-  const onClick = React.useCallback(() => {
-    removeExpression(path)
-  }, [removeExpression, path])
 
   return (
     <>
@@ -54,9 +53,11 @@ const ExpressionList: React.FC<{
           ])}
           addExpression={addExpression}
         />
-        <SAB onClick={onClick} startIcon={<Delete />}>
-          remove {variant}
-        </SAB>
+        <RemoveExpression
+          path={path}
+          removeExpression={removeExpression}
+          label={variant}
+        />
       </section>
     </>
   )

@@ -3,9 +3,8 @@ import Filter from "./_Filter"
 import { FilterExpression } from "./_index"
 import { makeStyles, Typography } from "@material-ui/core"
 import ExpressionList from "./_ExpressionList"
-import Select, { SelectOption } from "../../../../components/Select"
-import { SAB } from "../../../../components/Buttons"
-import { Add } from "@material-ui/icons"
+import { SAB, PlainButton } from "../../../../components/Buttons"
+import { Delete } from "@material-ui/icons"
 
 const useStyles = makeStyles(theme => ({
   label: {
@@ -43,6 +42,9 @@ const useStyles = makeStyles(theme => ({
   addSelect: {
     minWidth: "12ch",
   },
+  removeNot: {
+    marginLeft: theme.spacing(1),
+  },
 }))
 
 const LabeledSection: React.FC<{
@@ -62,18 +64,29 @@ const LabeledSection: React.FC<{
   )
 }
 
+export const RemoveExpression: React.FC<{
+  removeExpression: (path: (string | number)[]) => void
+  path: (string | number)[]
+  label: string
+  className: string
+}> = ({ removeExpression, path, label, className }) => {
+  const onClick = React.useCallback(() => {
+    removeExpression(path)
+  }, [removeExpression, path])
+
+  return (
+    <SAB onClick={onClick} startIcon={<Delete />} className={className}>
+      remove {label}
+    </SAB>
+  )
+}
+
 export enum ExpressionType {
   And = "and",
   Or = "or",
   Not = "not",
   Filter = "filter",
 }
-const expressionOptions = [
-  { value: ExpressionType.And, displayName: "and" },
-  { value: ExpressionType.Or, displayName: "or" },
-  { value: ExpressionType.Not, displayName: "not" },
-  { value: ExpressionType.Filter, displayName: "filter" },
-]
 
 interface AddExpressionProps {
   path: (string | number)[]
@@ -84,29 +97,28 @@ export const AddExpression: React.FC<AddExpressionProps> = ({
   path,
 }) => {
   const classes = useStyles()
-  const [value, setValue] = React.useState<SelectOption | undefined>(
-    expressionOptions[0]
-  )
 
-  const onClick = React.useCallback(() => {
-    if (value === undefined) {
-      return
-    }
-    addExpression(path, value.value as ExpressionType)
-  }, [value, path, addExpression])
+  const onClick = React.useCallback(
+    (type: ExpressionType) => () => {
+      addExpression(path, type)
+    },
+    [path, addExpression]
+  )
 
   return (
     <section className={classes.addExpression}>
-      <Select
-        className={classes.addSelect}
-        options={expressionOptions}
-        value={value}
-        setValue={setValue}
-        label="type"
-      />
-      <SAB onClick={onClick} startIcon={<Add />}>
-        expression
-      </SAB>
+      <PlainButton onClick={onClick(ExpressionType.Filter)} add>
+        filter
+      </PlainButton>
+      <PlainButton onClick={onClick(ExpressionType.Not)} add>
+        not
+      </PlainButton>
+      <PlainButton onClick={onClick(ExpressionType.And)} add>
+        and
+      </PlainButton>
+      <PlainButton onClick={onClick(ExpressionType.Or)} add>
+        or
+      </PlainButton>
     </section>
   )
 }
@@ -118,6 +130,7 @@ const Expression: React.FC<{
   addExpression: (path: (string | number)[], type: ExpressionType) => void
   removeExpression: (path: (string | number)[]) => void
 }> = ({ expression, nesting, path, addExpression, removeExpression }) => {
+  const classes = useStyles()
   if (expression.filter) {
     return <Filter nesting={nesting + 1} filter={expression.filter} />
   }
@@ -158,6 +171,12 @@ const Expression: React.FC<{
           path={path.concat(["notExpression"])}
           nesting={nesting + 1}
           expression={expression.notExpression}
+        />
+        <RemoveExpression
+          className={classes.removeNot}
+          path={path.concat("notExpression")}
+          removeExpression={removeExpression}
+          label="not"
         />
       </LabeledSection>
     )

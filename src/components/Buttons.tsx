@@ -24,6 +24,16 @@ export const SAB: React.FC<SABProps> = ({ add, ...props }) => {
   )
 }
 
+interface PlainButtonProps extends ButtonProps {
+  add?: true | undefined
+}
+
+export const PlainButton: React.FC<PlainButtonProps> = ({ add, ...props }) => {
+  return (
+    <Button startIcon={add ? <Add /> : null} {...props} variant="outlined" />
+  )
+}
+
 export const TooltipIconButton: React.FC<{
   tooltip: string
   size?: "small" | "medium"
