@@ -14,7 +14,7 @@ import useInputs from "./_useInputs"
 import useMakeRequest from "./_useMakeRequest"
 import Response from "../_Response"
 import LabeledCheckbox from "../../../../components/LabeledCheckbox"
-import DimensionFilter from "../_DimensionFilter"
+import DimensionFilter from "../_DimensionFilter/_index"
 
 const useStyles = makeStyles(theme => ({
   dateRanges: {

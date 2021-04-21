@@ -245,7 +245,7 @@ export const DimensionPicker: React.FC<{
   property,
   dimensionFilter,
   className,
-  label = "dimensions",
+  label = "dimension",
 }) => {
   const [selected, setSelected] = useState<GA4Dimension>()
   const { dimensionOptions } = useAvailableColumns({

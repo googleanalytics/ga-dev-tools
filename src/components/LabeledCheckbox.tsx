@@ -24,6 +24,7 @@ const LabeledCheckbox: React.FC<LabeledCheckboxProps> = ({
       control={
         <Checkbox
           className={checkboxClassName}
+          size="small"
           checked={checked}
           disabled={disabled}
           onChange={e => {
