@@ -1,7 +1,7 @@
 import * as React from "react"
 import { GA4Dimensions } from "../../../../components/GA4Pickers"
-import { useState } from "react"
-import Expression from "./_Expression"
+import { useState, useCallback } from "react"
+import Expression, { ExpressionType } from "./_Expression"
 import { Typography } from "@material-ui/core"
 
 interface DimensionFilterProps {
@@ -12,82 +12,107 @@ export type FilterExpression = gapi.client.analyticsdata.FilterExpression
 export type FilterExpressionList = gapi.client.analyticsdata.FilterExpressionList
 export type BaseFilter = NonNullable<FilterExpression["filter"]>
 
-const useDimensionFilter = (
-  _: GA4Dimensions
-): { expression: FilterExpression } => {
-  const [expression] = useState<FilterExpression>({
-    andGroup: {
-      expressions: [
-        {
-          filter: {
-            betweenFilter: {
-              toValue: { int64Value: "10" },
-              fromValue: { int64Value: "3" },
-            },
-            fieldName: "",
-          },
-        },
-        {
-          filter: {
-            inListFilter: { values: ["abc", "def"], caseSensitive: true },
-            fieldName: "",
-          },
-        },
-        {
-          orGroup: {
-            expressions: [
-              {
-                filter: {
-                  inListFilter: { values: ["abc", "def"], caseSensitive: true },
-                  fieldName: "",
-                },
-              },
-              {
-                notExpression: {
-                  filter: {
-                    numericFilter: {
-                      operation: ">=",
-                      value: { int64Value: "13" },
-                    },
-                    fieldName: "",
-                  },
-                },
-              },
-            ],
-          },
-        },
-        {
-          filter: {
-            numericFilter: { operation: ">=", value: { int64Value: "13" } },
-            fieldName: "",
-          },
-        },
-        {
-          filter: {
-            stringFilter: {
-              caseSensitive: true,
-              matchType: "abc",
-              value: "abc",
-            },
-            fieldName: "",
-          },
-        },
-      ],
-    },
-  })
+const subFor = (type: ExpressionType): FilterExpression => {
+  switch (type) {
+    case ExpressionType.And:
+      return { andGroup: { expressions: [] } }
+    case ExpressionType.Or:
+      return { orGroup: { expressions: [] } }
+    case ExpressionType.Not:
+      return { notExpression: {} }
+    case ExpressionType.Filter:
+      return { filter: {} }
+  }
+}
 
-  return { expression }
+const useDimensionFilter = (_: GA4Dimensions) => {
+  const [expression, setExpression] = useState<FilterExpression>({})
+
+  const removeExpression = useCallback(
+    (path: (string | number)[]) => {
+      setExpression(old => {
+        console.log(JSON.stringify(old, undefined, " "))
+        console.log("path", path)
+        const cloned = { ...old }
+        const butLast = [...path]
+        let last = butLast.pop()
+
+        // Do an extra pop for 'andGroup' ond 'orGroup' since they have an
+        // extra layer of nesting.
+        if (last === "andGroup" || last === "orGroup") {
+          last = butLast.pop()
+        }
+
+        // If there is no last, that means we're at the top level
+        if (last === undefined) {
+          return {}
+        }
+
+        const navigated = butLast.reduce(
+          (ref, pathEntry) => ref[pathEntry],
+          cloned
+        )
+
+        if (Array.isArray(navigated)) {
+          navigated.splice(last as number, 1)
+        }
+
+        navigated[last] = {}
+
+        return cloned
+      })
+    },
+    [setExpression]
+  )
+
+  const addExpression = useCallback(
+    (path: (string | number)[], type: ExpressionType) => {
+      setExpression(old => {
+        console.log(JSON.stringify(old, undefined, " "))
+        console.log("path", path)
+        const cloned = { ...old }
+        const butLast = [...path]
+        const last = butLast.pop()
+
+        const sub = subFor(type)
+
+        // If there is no last, that means we're at the top level
+        if (last === undefined) {
+          return sub
+        }
+
+        const navigated = butLast.reduce(
+          (ref, pathEntry) => ref[pathEntry],
+          cloned
+        )
+        navigated[last] = sub
+
+        return cloned
+      })
+    },
+    [setExpression]
+  )
+
+  return { expression, addExpression, removeExpression }
 }
 
 const DimensionFilter: React.FC<DimensionFilterProps> = ({ dimensions }) => {
-  const { expression } = useDimensionFilter(dimensions)
+  const { expression, addExpression, removeExpression } = useDimensionFilter(
+    dimensions
+  )
 
   return (
     <section>
       <Typography variant="subtitle2" style={{ marginTop: "unset" }}>
         dimension filters
       </Typography>
-      <Expression expression={expression} nesting={-1} />
+      <Expression
+        removeExpression={removeExpression}
+        addExpression={addExpression}
+        path={[]}
+        expression={expression}
+        nesting={-1}
+      />
     </section>
   )
 }

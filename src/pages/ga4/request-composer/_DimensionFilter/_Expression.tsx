@@ -3,6 +3,9 @@ import Filter from "./_Filter"
 import { FilterExpression } from "./_index"
 import { makeStyles, Typography } from "@material-ui/core"
 import ExpressionList from "./_ExpressionList"
+import Select, { SelectOption } from "../../../../components/Select"
+import { SAB } from "../../../../components/Buttons"
+import { Add } from "@material-ui/icons"
 
 const useStyles = makeStyles(theme => ({
   label: {
@@ -31,6 +34,15 @@ const useStyles = makeStyles(theme => ({
       marginLeft: theme.spacing(1),
     },
   },
+  addExpression: {
+    display: "flex",
+    "& > *:not(:first-child)": {
+      marginLeft: theme.spacing(1),
+    },
+  },
+  addSelect: {
+    minWidth: "12ch",
+  },
 }))
 
 const LabeledSection: React.FC<{
@@ -50,10 +62,62 @@ const LabeledSection: React.FC<{
   )
 }
 
+export enum ExpressionType {
+  And = "and",
+  Or = "or",
+  Not = "not",
+  Filter = "filter",
+}
+const expressionOptions = [
+  { value: ExpressionType.And, displayName: "and" },
+  { value: ExpressionType.Or, displayName: "or" },
+  { value: ExpressionType.Not, displayName: "not" },
+  { value: ExpressionType.Filter, displayName: "filter" },
+]
+
+interface AddExpressionProps {
+  path: (string | number)[]
+  addExpression: (path: (string | number)[], type: ExpressionType) => void
+}
+export const AddExpression: React.FC<AddExpressionProps> = ({
+  addExpression,
+  path,
+}) => {
+  const classes = useStyles()
+  const [value, setValue] = React.useState<SelectOption | undefined>(
+    expressionOptions[0]
+  )
+
+  const onClick = React.useCallback(() => {
+    if (value === undefined) {
+      return
+    }
+    addExpression(path, value.value as ExpressionType)
+  }, [value, path, addExpression])
+
+  return (
+    <section className={classes.addExpression}>
+      <Select
+        className={classes.addSelect}
+        options={expressionOptions}
+        value={value}
+        setValue={setValue}
+        label="type"
+      />
+      <SAB onClick={onClick} startIcon={<Add />}>
+        expression
+      </SAB>
+    </section>
+  )
+}
+
 const Expression: React.FC<{
   expression: FilterExpression
   nesting: number
-}> = ({ expression, nesting }) => {
+  path: (string | number)[]
+  addExpression: (path: (string | number)[], type: ExpressionType) => void
+  removeExpression: (path: (string | number)[]) => void
+}> = ({ expression, nesting, path, addExpression, removeExpression }) => {
   if (expression.filter) {
     return <Filter nesting={nesting + 1} filter={expression.filter} />
   }
@@ -61,6 +125,9 @@ const Expression: React.FC<{
     return (
       <LabeledSection label="and">
         <ExpressionList
+          addExpression={addExpression}
+          removeExpression={removeExpression}
+          path={path.concat(["andGroup"])}
           nesting={nesting + 1}
           variant="and"
           expressionList={expression.andGroup}
@@ -72,6 +139,9 @@ const Expression: React.FC<{
     return (
       <LabeledSection label="or">
         <ExpressionList
+          addExpression={addExpression}
+          removeExpression={removeExpression}
+          path={path.concat(["orGroup"])}
           nesting={nesting + 1}
           variant="or"
           expressionList={expression.orGroup}
@@ -83,13 +153,16 @@ const Expression: React.FC<{
     return (
       <LabeledSection label="not">
         <Expression
+          addExpression={addExpression}
+          removeExpression={removeExpression}
+          path={path.concat(["notExpression"])}
           nesting={nesting + 1}
           expression={expression.notExpression}
         />
       </LabeledSection>
     )
   }
-  return null
+  return <AddExpression path={path} addExpression={addExpression} />
 }
 
 export default Expression

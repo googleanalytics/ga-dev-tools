@@ -1,5 +1,5 @@
 import * as React from "react"
-import { makeStyles, TextField } from "@material-ui/core"
+import { makeStyles, TextField, IconButton } from "@material-ui/core"
 import { BaseFilter } from "./_index"
 import { useState, useMemo } from "react"
 import {
@@ -10,6 +10,7 @@ import Select, { SelectOption } from "../../../../components/Select"
 import LabeledCheckbox from "../../../../components/LabeledCheckbox"
 import clsx from "classnames"
 import SeparatedInput from "../../../../components/SeparatedInput"
+import { Delete } from "@material-ui/icons"
 
 const useStyles = makeStyles(theme => ({
   indented: {
@@ -32,6 +33,7 @@ const useStyles = makeStyles(theme => ({
   },
   filter: {
     display: "flex",
+    alignItems: "center",
     "& > *:not(:first-child)": {
       marginLeft: theme.spacing(1),
     },
@@ -159,12 +161,15 @@ const Filter: React.FC<{ filter: BaseFilter; nesting: number }> = ({
       )
     }
     return [inner, filterOption]
-  }, [filter, classes.shortWidth, classes.bigWidth])
+  }, [filter, classes.shortWidth, classes.bigWidth, classes.mediumWidth])
 
   return (
     <section
       className={clsx(classes.filter, { [classes.indented]: nesting > 0 })}
     >
+      <IconButton>
+        <Delete />
+      </IconButton>
       <DimensionPicker
         setDimension={setDimension}
         className={classes.orDimension}

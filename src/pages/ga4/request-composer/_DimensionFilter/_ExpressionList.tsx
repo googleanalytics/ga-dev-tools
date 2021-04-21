@@ -1,65 +1,63 @@
 import * as React from "react"
-// import { makeStyles } from "@material-ui/core"
+import { makeStyles } from "@material-ui/core"
 import { FilterExpressionList } from "./_index"
-import Expression from "./_Expression"
+import Expression, { AddExpression, ExpressionType } from "./_Expression"
+import { SAB } from "../../../../components/Buttons"
+import { Delete } from "@material-ui/icons"
 
-// const useStyles = makeStyles(theme => ({
-//   splitAnds: {
-//     width: "80%",
-//     marginBottom: theme.spacing(1),
-//   },
-// }))
+const useStyles = makeStyles(theme => ({
+  buttons: {
+    display: "flex",
+    "& > *:not(:first-child)": {
+      marginLeft: theme.spacing(1),
+    },
+  },
+}))
 
 const ExpressionList: React.FC<{
   expressionList: FilterExpressionList
   nesting: number
   variant: "and" | "or"
-}> = ({ expressionList, nesting, variant }) => {
-  // const classes = useStyles()
-  // const expressions = expressionList.expressions || []
+  path: (string | number)[]
+  addExpression: (path: (string | number)[], type: ExpressionType) => void
+  removeExpression: (path: (string | number)[]) => void
+}> = ({
+  expressionList,
+  nesting,
+  variant,
+  path,
+  addExpression,
+  removeExpression,
+}) => {
+  const classes = useStyles()
+  const onClick = React.useCallback(() => {
+    removeExpression(path)
+  }, [removeExpression, path])
+
   return (
     <>
-      {expressionList.expressions?.map((expression, idx) => {
-        // const isLast = idx + 1 === expressionList.expressions?.length
-
-        // const before = expressions[idx - 1]
-        // const after = expressions[idx + 1]
-
-        // const beforeIsAnd = before?.andGroup !== undefined
-        // const isAnd = expression.andGroup !== undefined
-        // const afterIsAnd = after?.andGroup !== undefined
-
-        // const beforeIsOr = before?.orGroup !== undefined
-        // const isOr = expression.orGroup !== undefined
-        // const afterIsOr = after?.orGroup !== undefined
-
-        // const showHR =
-        //   !isLast &&
-        //   !beforeIsAnd &&
-        //   !afterIsAnd &&
-        //   !isAnd &&
-        //   !beforeIsOr &&
-        //   !afterIsOr &&
-        //   !isOr
-
-        return (
-          <>
-            <Expression
-              key={`${variant}-${nesting}-${idx}`}
-              expression={expression}
-              nesting={nesting + 1}
-            />
-            {/*
-            showHR ? (
-              <hr
-                key={`${variant}-${nesting}-${idx}-hr`}
-                className={classes.splitAnds}
-              />
-            ) : null
-              */}
-          </>
-        )
-      })}
+      {expressionList.expressions?.map((expression, idx) => (
+        <Expression
+          path={path.concat(["expressions", idx])}
+          addExpression={addExpression}
+          removeExpression={removeExpression}
+          key={`${variant}-${nesting}-${idx}`}
+          expression={expression}
+          nesting={nesting + 1}
+        />
+      ))}
+      <section className={classes.buttons}>
+        <AddExpression
+          path={path.concat([
+            "expressions",
+            expressionList.expressions!.length,
+          ])}
+          addExpression={addExpression}
+        />
+        <SAB onClick={onClick} startIcon={<Delete />}>
+          remove {variant}
+        </SAB>
+      </section>
     </>
   )
 }
