@@ -14,6 +14,7 @@ import useInputs from "./_useInputs"
 import useMakeRequest from "./_useMakeRequest"
 import Response from "../_Response"
 import LabeledCheckbox from "../../../../components/LabeledCheckbox"
+import DimensionFilter from "../_DimensionFilter"
 
 const useStyles = makeStyles(theme => ({
   dateRanges: {
@@ -122,6 +123,7 @@ const BasicReport = () => {
         }
       />
       <DateRanges className={classes.dateRanges} onChange={setDateRanges} />
+      <DimensionFilter dimensions={dimensions} />
       <div>
         <LabeledCheckbox
           checked={showRequestJSON}

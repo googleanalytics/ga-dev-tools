@@ -19,7 +19,9 @@ import Autocomplete from "@material-ui/lab/Autocomplete"
 import { usePersistantObject } from "../hooks"
 import { StorageKey } from "../constants"
 import { useSelector } from "react-redux"
-import { useMemo, useEffect } from "react"
+import { useMemo, useEffect, useState } from "react"
+import { Dispatch } from "../types"
+import { Dimension } from "../pages/ga4/dimensions-metrics-explorer/_hooks"
 
 const useColumnStyles = makeStyles(() => ({
   option: {
@@ -36,6 +38,7 @@ const useColumnStyles = makeStyles(() => ({
 type UseAvailableColumns = (arg: {
   selectedMetrics: GA4Metrics
   selectedDimensions: GA4Dimensions
+  dimensionFilter?: (dimension: Dimension) => boolean
   property?: string
 }) => {
   metricOptions: GA4Metrics
@@ -44,6 +47,7 @@ type UseAvailableColumns = (arg: {
 const useAvailableColumns: UseAvailableColumns = ({
   selectedMetrics,
   selectedDimensions,
+  dimensionFilter,
   property = "properties/0",
 }) => {
   const gapi = useSelector((state: AppState) => state.gapi)
@@ -79,15 +83,15 @@ const useAvailableColumns: UseAvailableColumns = ({
   }, [selectedDimensions])
 
   const dimensionOptions = React.useMemo(() => {
-    return dimensions?.filter(
-      dimension => !selectedDimensionIds.has(dimension.apiName)
-    )
-  }, [dimensions, selectedDimensionIds])
+    return dimensions
+      ?.filter(dimension => !selectedDimensionIds.has(dimension.apiName))
+      .filter(dimensionFilter || (() => true))
+  }, [dimensions, selectedDimensionIds, dimensionFilter])
 
   return { metricOptions, dimensionOptions }
 }
 
-type GA4Dimension = gapi.client.analyticsdata.DimensionMetadata
+export type GA4Dimension = gapi.client.analyticsdata.DimensionMetadata
 export type GA4Dimensions = GA4Dimension[] | undefined
 type GA4Metric = gapi.client.analyticsdata.MetricMetadata
 export type GA4Metrics = GA4Metric[] | undefined
@@ -210,6 +214,63 @@ export const MetricsPicker: React.FC<{
         value.length === 0
           ? setSelected(undefined)
           : setSelected(value as GA4Metrics)
+      }
+      renderOption={column => <Column column={column} />}
+      renderInput={params => (
+        <TextField
+          {...params}
+          required={required}
+          label={label}
+          helperText={helperText}
+          size="small"
+          variant="outlined"
+        />
+      )}
+    />
+  )
+}
+
+export const DimensionPicker: React.FC<{
+  setDimension: Dispatch<GA4Dimension | undefined>
+  dimensionFilter?: (dimension: GA4Dimension) => boolean
+  property?: string
+  required?: true | undefined
+  helperText?: string | JSX.Element
+  label?: string
+  className?: string
+}> = ({
+  helperText,
+  setDimension,
+  required,
+  property,
+  dimensionFilter,
+  className,
+  label = "dimensions",
+}) => {
+  const [selected, setSelected] = useState<GA4Dimension>()
+  const { dimensionOptions } = useAvailableColumns({
+    selectedDimensions: selected === undefined ? [] : [selected],
+    selectedMetrics: [],
+    property,
+    dimensionFilter,
+  })
+
+  React.useEffect(() => {
+    setDimension(selected)
+  }, [selected, setDimension])
+
+  return (
+    <Autocomplete<NonNullable<GA4Dimension>, false, undefined, true>
+      className={className}
+      fullWidth
+      autoComplete
+      autoHighlight
+      freeSolo
+      options={dimensionOptions || []}
+      getOptionLabel={dimension => dimension.apiName!}
+      value={selected === undefined ? null : selected}
+      onChange={(_event, value) =>
+        setSelected(value === null ? undefined : (value as GA4Dimension))
       }
       renderOption={column => <Column column={column} />}
       renderInput={params => (

@@ -1,5 +1,6 @@
 import * as React from "react"
-import { Button, Tooltip, IconButton } from "@material-ui/core"
+import { Button, Tooltip, IconButton, ButtonProps } from "@material-ui/core"
+import { Add } from "@material-ui/icons"
 
 // TODO - PAB shouldn't allow you to provide variant or color so it's more
 // obvious how it works.
@@ -9,8 +10,18 @@ export const PAB: typeof Button = ({ ...props }) => {
 }
 
 // Secondary Action Button
-export const SAB: typeof Button = ({ ...props }) => {
-  return <Button {...props} variant="outlined" color="secondary" />
+interface SABProps extends ButtonProps {
+  add?: true | undefined
+}
+export const SAB: React.FC<SABProps> = ({ add, ...props }) => {
+  return (
+    <Button
+      startIcon={add ? <Add /> : null}
+      {...props}
+      variant="outlined"
+      color="secondary"
+    />
+  )
 }
 
 export const TooltipIconButton: React.FC<{
