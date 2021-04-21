@@ -18,7 +18,8 @@ export interface SelectOption {
 interface SelectProps {
   options: SelectOption[]
   value: SelectOption | undefined
-  setValue: Dispatch<SelectOption | undefined>
+  setValue?: Dispatch<SelectOption | undefined>
+  onChange?: (nu: SelectOption | undefined) => void
   label: JSX.Element | string
   className?: string
   required?: boolean
@@ -33,6 +34,7 @@ const Select: React.FC<SelectProps> = ({
   label,
   className,
   required,
+  onChange,
   helperText,
   fullWidth = false,
 }) => {
@@ -48,10 +50,15 @@ const Select: React.FC<SelectProps> = ({
       options={options}
       getOptionLabel={option => option.displayName}
       getOptionSelected={(a, b) => a.value === b.value}
-      value={value}
-      onChange={(_event, value) =>
-        setValue(value === null ? undefined : (value as SelectOption))
-      }
+      value={value || null}
+      onChange={(_event, value) => {
+        if (onChange !== undefined) {
+          onChange(value === null ? undefined : (value as SelectOption))
+        }
+        if (setValue !== undefined) {
+          setValue(value === null ? undefined : (value as SelectOption))
+        }
+      }}
       renderOption={option => option.displayName}
       renderInput={params => (
         <TextField

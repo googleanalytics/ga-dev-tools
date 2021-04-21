@@ -1,6 +1,6 @@
 import * as React from "react"
 import Filter from "./_Filter"
-import { FilterExpression } from "./_index"
+import { FilterExpression, UpdateFilter } from "./_index"
 import { makeStyles, Typography } from "@material-ui/core"
 import ExpressionList from "./_ExpressionList"
 import { SAB, PlainButton } from "../../../../components/Buttons"
@@ -131,6 +131,7 @@ const Expression: React.FC<{
   addExpression: (path: (string | number)[], type: ExpressionType) => void
   removeExpression: (path: (string | number)[]) => void
   dimensionFilter: (dim: GA4Dimension) => boolean
+  updateFilter: UpdateFilter
 }> = ({
   expression,
   nesting,
@@ -138,11 +139,14 @@ const Expression: React.FC<{
   addExpression,
   removeExpression,
   dimensionFilter,
+  updateFilter,
 }) => {
   const classes = useStyles()
   if (expression.filter) {
     return (
       <Filter
+        path={path.concat(["filter"])}
+        updateFilter={updateFilter}
         nesting={nesting + 1}
         filter={expression.filter}
         dimensionFilter={dimensionFilter}
@@ -153,6 +157,8 @@ const Expression: React.FC<{
     return (
       <LabeledSection label="and">
         <ExpressionList
+          updateFilter={updateFilter}
+          dimensionFilter={dimensionFilter}
           addExpression={addExpression}
           removeExpression={removeExpression}
           path={path.concat(["andGroup"])}
@@ -167,6 +173,7 @@ const Expression: React.FC<{
     return (
       <LabeledSection label="or">
         <ExpressionList
+          updateFilter={updateFilter}
           addExpression={addExpression}
           removeExpression={removeExpression}
           dimensionFilter={dimensionFilter}
@@ -182,6 +189,7 @@ const Expression: React.FC<{
     return (
       <LabeledSection label="not">
         <Expression
+          updateFilter={updateFilter}
           addExpression={addExpression}
           removeExpression={removeExpression}
           path={path.concat(["notExpression"])}

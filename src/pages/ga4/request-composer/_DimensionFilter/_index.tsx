@@ -25,14 +25,45 @@ const subFor = (type: ExpressionType): FilterExpression => {
   }
 }
 
+export type UpdateFilter = (
+  path: (string | number)[],
+  update: (old: BaseFilter) => BaseFilter
+) => void
+
 const useDimensionFilter = (_: GA4Dimensions) => {
   const [expression, setExpression] = useState<FilterExpression>({})
+
+  const updateFilter = useCallback<UpdateFilter>(
+    (path, update) => {
+      setExpression(old => {
+        console.log(JSON.stringify(old, undefined, " "))
+        console.log("path", path)
+        const cloned = { ...old }
+        const butLast = [...path]
+        let last = butLast.pop()
+
+        const navigated = butLast.reduce(
+          (ref, pathEntry) => ref[pathEntry],
+          cloned
+        )
+
+        console.log({ last, butLast, navigated })
+
+        navigated[last as any] = update(navigated[last as any])
+
+        console.log({ last, butLast, navigated })
+
+        return cloned
+      })
+    },
+    [setExpression]
+  )
 
   const removeExpression = useCallback(
     (path: (string | number)[]) => {
       setExpression(old => {
-        console.log(JSON.stringify(old, undefined, " "))
-        console.log("path", path)
+        // console.log(JSON.stringify(old, undefined, " "))
+        // console.log("path", path)
         const cloned = { ...old }
         const butLast = [...path]
         let last = butLast.pop()
@@ -95,13 +126,16 @@ const useDimensionFilter = (_: GA4Dimensions) => {
     [setExpression]
   )
 
-  return { expression, addExpression, removeExpression }
+  return { expression, addExpression, removeExpression, updateFilter }
 }
 
 const DimensionFilter: React.FC<DimensionFilterProps> = ({ dimensions }) => {
-  const { expression, addExpression, removeExpression } = useDimensionFilter(
-    dimensions
-  )
+  const {
+    expression,
+    addExpression,
+    removeExpression,
+    updateFilter,
+  } = useDimensionFilter(dimensions)
 
   const selectedDimensionIds = React.useMemo(
     () => new Set((dimensions || []).map(d => d.apiName)),
@@ -115,12 +149,16 @@ const DimensionFilter: React.FC<DimensionFilterProps> = ({ dimensions }) => {
     [selectedDimensionIds]
   )
 
+  // TODO - look into use context to see if I can make these updateFilter,
+  // dimensionFilter, etc things a bit cleaner.
+
   return (
     <section>
       <Typography variant="subtitle2" style={{ marginTop: "unset" }}>
         dimension filters
       </Typography>
       <Expression
+        updateFilter={updateFilter}
         dimensionFilter={dimensionFilter}
         removeExpression={removeExpression}
         addExpression={addExpression}

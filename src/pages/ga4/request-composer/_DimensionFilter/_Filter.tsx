@@ -1,6 +1,6 @@
 import * as React from "react"
 import { makeStyles, TextField, IconButton } from "@material-ui/core"
-import { BaseFilter } from "./_index"
+import { BaseFilter, UpdateFilter } from "./_index"
 import { useState, useMemo } from "react"
 import {
   GA4Dimension,
@@ -53,11 +53,22 @@ const Filter: React.FC<{
   filter: BaseFilter
   nesting: number
   dimensionFilter: (dim: GA4Dimension) => boolean
-}> = ({ filter, nesting, dimensionFilter }) => {
+  updateFilter: UpdateFilter
+  path: (string | number)[]
+}> = ({ filter, nesting, dimensionFilter, updateFilter, path }) => {
   const classes = useStyles()
-  const [, setDimension] = useState<GA4Dimension>()
+  const [dimension, setDimension] = useState<GA4Dimension>()
   const [, setOption] = useState<SelectOption>()
   const [, setOption2] = useState<SelectOption>()
+
+  React.useEffect(() => {
+    if (filter.fieldName !== dimension?.apiName) {
+      updateFilter(path, old => {
+        return { ...old, fieldName: dimension?.apiName }
+      })
+    }
+  }, [path, dimension, updateFilter, filter.fieldName])
+
   const [inner, filterOption] = useMemo(() => {
     let filterOption: SelectOption | undefined = undefined
     let inner: JSX.Element | null = null
@@ -143,6 +154,17 @@ const Filter: React.FC<{
             size="small"
             variant="outlined"
             label={"From"}
+            onChange={e => {
+              const val = e.target.value
+              const nuVal =
+                val.indexOf(".") === -1
+                  ? { int64Value: val }
+                  : { doubleValue: val }
+              updateFilter(path.concat(["betweenFilter"]), old => ({
+                ...old,
+                fromValue: nuVal,
+              }))
+            }}
             value={
               between.fromValue?.int64Value ||
               between.fromValue?.doubleValue ||
@@ -154,6 +176,17 @@ const Filter: React.FC<{
             size="small"
             variant="outlined"
             label={"To"}
+            onChange={e => {
+              const val = e.target.value
+              const nuVal =
+                val.indexOf(".") === -1
+                  ? { int64Value: val }
+                  : { doubleValue: val }
+              updateFilter(path.concat(["betweenFilter"]), old => ({
+                ...old,
+                toValue: nuVal,
+              }))
+            }}
             value={
               between.toValue?.int64Value || between.toValue?.doubleValue || ""
             }
@@ -162,7 +195,14 @@ const Filter: React.FC<{
       )
     }
     return [inner, filterOption]
-  }, [filter, classes.shortWidth, classes.bigWidth, classes.mediumWidth])
+  }, [
+    filter,
+    classes.shortWidth,
+    classes.bigWidth,
+    classes.mediumWidth,
+    updateFilter,
+    path,
+  ])
 
   return (
     <section
@@ -179,7 +219,15 @@ const Filter: React.FC<{
       <Select
         value={filterOption}
         label="filter type"
-        setValue={() => {}}
+        onChange={nu => {
+          if (nu === undefined) {
+            return
+          }
+          updateFilter(path, old => ({
+            fieldName: old.fieldName,
+            [nu.value]: {},
+          }))
+        }}
         className={classes.filterType}
         options={[
           { value: "stringFilter", displayName: "string" },
