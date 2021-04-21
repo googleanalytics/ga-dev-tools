@@ -6,6 +6,7 @@ import Expression, {
   ExpressionType,
   RemoveExpression,
 } from "./_Expression"
+import { GA4Dimension } from "../../../../components/GA4Pickers"
 
 const useStyles = makeStyles(theme => ({
   buttons: {
@@ -23,6 +24,7 @@ const ExpressionList: React.FC<{
   path: (string | number)[]
   addExpression: (path: (string | number)[], type: ExpressionType) => void
   removeExpression: (path: (string | number)[]) => void
+  dimensionFilter: (dim: GA4Dimension) => boolean
 }> = ({
   expressionList,
   nesting,
@@ -30,6 +32,7 @@ const ExpressionList: React.FC<{
   path,
   addExpression,
   removeExpression,
+  dimensionFilter,
 }) => {
   const classes = useStyles()
 
@@ -37,6 +40,7 @@ const ExpressionList: React.FC<{
     <>
       {expressionList.expressions?.map((expression, idx) => (
         <Expression
+          dimensionFilter={dimensionFilter}
           path={path.concat(["expressions", idx])}
           addExpression={addExpression}
           removeExpression={removeExpression}

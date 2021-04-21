@@ -1,5 +1,5 @@
 import * as React from "react"
-import { GA4Dimensions } from "../../../../components/GA4Pickers"
+import { GA4Dimensions, GA4Dimension } from "../../../../components/GA4Pickers"
 import { useState, useCallback } from "react"
 import Expression, { ExpressionType } from "./_Expression"
 import { Typography } from "@material-ui/core"
@@ -103,12 +103,25 @@ const DimensionFilter: React.FC<DimensionFilterProps> = ({ dimensions }) => {
     dimensions
   )
 
+  const selectedDimensionIds = React.useMemo(
+    () => new Set((dimensions || []).map(d => d.apiName)),
+    [dimensions]
+  )
+
+  const dimensionFilter = useCallback(
+    (dimension: GA4Dimension) => {
+      return selectedDimensionIds.has(dimension.apiName)
+    },
+    [selectedDimensionIds]
+  )
+
   return (
     <section>
       <Typography variant="subtitle2" style={{ marginTop: "unset" }}>
         dimension filters
       </Typography>
       <Expression
+        dimensionFilter={dimensionFilter}
         removeExpression={removeExpression}
         addExpression={addExpression}
         path={[]}

@@ -49,10 +49,11 @@ enum StringFilterMatchType {
   PartialRegexp = "PARTIAL_REGEXP",
 }
 
-const Filter: React.FC<{ filter: BaseFilter; nesting: number }> = ({
-  filter,
-  nesting,
-}) => {
+const Filter: React.FC<{
+  filter: BaseFilter
+  nesting: number
+  dimensionFilter: (dim: GA4Dimension) => boolean
+}> = ({ filter, nesting, dimensionFilter }) => {
   const classes = useStyles()
   const [, setDimension] = useState<GA4Dimension>()
   const [, setOption] = useState<SelectOption>()
@@ -171,6 +172,7 @@ const Filter: React.FC<{ filter: BaseFilter; nesting: number }> = ({
         <Delete />
       </IconButton>
       <DimensionPicker
+        dimensionFilter={dimensionFilter}
         setDimension={setDimension}
         className={classes.orDimension}
       />

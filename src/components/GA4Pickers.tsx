@@ -231,7 +231,7 @@ export const MetricsPicker: React.FC<{
 }
 
 export const DimensionPicker: React.FC<{
-  setDimension: Dispatch<GA4Dimension | undefined>
+  setDimension?: Dispatch<GA4Dimension | undefined>
   dimensionFilter?: (dimension: GA4Dimension) => boolean
   property?: string
   required?: true | undefined
@@ -256,7 +256,9 @@ export const DimensionPicker: React.FC<{
   })
 
   React.useEffect(() => {
-    setDimension(selected)
+    if (setDimension !== undefined) {
+      setDimension(selected)
+    }
   }, [selected, setDimension])
 
   return (

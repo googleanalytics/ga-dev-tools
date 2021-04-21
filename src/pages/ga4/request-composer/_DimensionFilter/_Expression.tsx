@@ -5,6 +5,7 @@ import { makeStyles, Typography } from "@material-ui/core"
 import ExpressionList from "./_ExpressionList"
 import { SAB, PlainButton } from "../../../../components/Buttons"
 import { Delete } from "@material-ui/icons"
+import { GA4Dimension } from "../../../../components/GA4Pickers"
 
 const useStyles = makeStyles(theme => ({
   label: {
@@ -68,7 +69,7 @@ export const RemoveExpression: React.FC<{
   removeExpression: (path: (string | number)[]) => void
   path: (string | number)[]
   label: string
-  className: string
+  className?: string
 }> = ({ removeExpression, path, label, className }) => {
   const onClick = React.useCallback(() => {
     removeExpression(path)
@@ -129,10 +130,24 @@ const Expression: React.FC<{
   path: (string | number)[]
   addExpression: (path: (string | number)[], type: ExpressionType) => void
   removeExpression: (path: (string | number)[]) => void
-}> = ({ expression, nesting, path, addExpression, removeExpression }) => {
+  dimensionFilter: (dim: GA4Dimension) => boolean
+}> = ({
+  expression,
+  nesting,
+  path,
+  addExpression,
+  removeExpression,
+  dimensionFilter,
+}) => {
   const classes = useStyles()
   if (expression.filter) {
-    return <Filter nesting={nesting + 1} filter={expression.filter} />
+    return (
+      <Filter
+        nesting={nesting + 1}
+        filter={expression.filter}
+        dimensionFilter={dimensionFilter}
+      />
+    )
   }
   if (expression.andGroup) {
     return (
@@ -154,6 +169,7 @@ const Expression: React.FC<{
         <ExpressionList
           addExpression={addExpression}
           removeExpression={removeExpression}
+          dimensionFilter={dimensionFilter}
           path={path.concat(["orGroup"])}
           nesting={nesting + 1}
           variant="or"
@@ -171,6 +187,7 @@ const Expression: React.FC<{
           path={path.concat(["notExpression"])}
           nesting={nesting + 1}
           expression={expression.notExpression}
+          dimensionFilter={dimensionFilter}
         />
         <RemoveExpression
           className={classes.removeNot}
