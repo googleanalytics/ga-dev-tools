@@ -15,6 +15,7 @@ import useMakeRequest from "./_useMakeRequest"
 import Response from "../_Response"
 import LabeledCheckbox from "../../../../components/LabeledCheckbox"
 import Filter, { FilterType } from "../_Filter/_index"
+import { RequestStatus } from "../../../../types"
 
 const useStyles = makeStyles(theme => ({
   dateRanges: {
@@ -69,13 +70,7 @@ const BasicReport = () => {
     metricFilter,
     setMetricFilter,
   } = useInputs()
-  const {
-    validRequest,
-    makeRequest,
-    request,
-    response,
-    requestStatus,
-  } = useMakeRequest({
+  const useMake = useMakeRequest({
     property: propertyString,
     dimensionFilter,
     metricFilter,
@@ -83,6 +78,13 @@ const BasicReport = () => {
     dimensions,
     metrics,
   })
+  const {
+    validRequest,
+    makeRequest,
+    request,
+    response,
+    requestStatus,
+  } = useMake
 
   return (
     <>
@@ -130,11 +132,13 @@ const BasicReport = () => {
       />
       <DateRanges className={classes.dateRanges} onChange={setDateRanges} />
       <Filter
+        storageKey={StorageKey.ga4RequestComposerBasicDimensionFilter}
         type={FilterType.Dimension}
         fields={dimensions}
         setFilterExpression={setDimensionFilter}
       />
       <Filter
+        storageKey={StorageKey.ga4RequestComposerBasicMetricFilter}
         type={FilterType.Metric}
         fields={metrics}
         setFilterExpression={setMetricFilter}
@@ -155,6 +159,11 @@ const BasicReport = () => {
       </PAB>
       <Response
         response={response}
+        error={
+          useMake.requestStatus === RequestStatus.Failed
+            ? useMake.error
+            : undefined
+        }
         requestStatus={requestStatus}
         shouldCollapse={shouldCollapseRequest}
       />

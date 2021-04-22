@@ -1,4 +1,4 @@
-import { useState, useCallback } from "react"
+import { useCallback } from "react"
 import {
   FilterExpression,
   UpdateFilterFn,
@@ -6,9 +6,13 @@ import {
   AddExpressionFn,
 } from "./_index"
 import { ExpressionType } from "./_Expression"
+import { StorageKey } from "../../../../constants"
+import { usePersistantObject } from "../../../../hooks"
 
-const useFilter = () => {
-  const [expression, setExpression] = useState<FilterExpression>({})
+const useFilter = (storageKey: StorageKey) => {
+  const [expression, setExpression] = usePersistantObject<FilterExpression>(
+    storageKey
+  )
 
   const updateFilter = useCallback<UpdateFilterFn>(
     (path, update) => {
@@ -33,15 +37,14 @@ const useFilter = () => {
   const removeExpression = useCallback<RemoveExpressionFn>(
     path => {
       setExpression(old => {
+        if (path.length <= 1) {
+          return {}
+        }
+
         const cloned = { ...old }
         const butLast = [...path]
         let last = butLast.pop()
         last = butLast.pop()
-
-        // If there is no last, that means we're at the top level
-        if (last === undefined) {
-          return {}
-        }
 
         let navigated = butLast.reduce(
           (ref, pathEntry) => ref[pathEntry],
@@ -59,7 +62,7 @@ const useFilter = () => {
           return cloned
         }
 
-        navigated[last] = {}
+        navigated[last as any] = {}
 
         return cloned
       })

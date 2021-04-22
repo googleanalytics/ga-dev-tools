@@ -9,6 +9,7 @@ import Expression, { ExpressionType } from "./_Expression"
 import { Typography, makeStyles } from "@material-ui/core"
 import { Dispatch } from "../../../../types"
 import useFilter from "./_useFilter"
+import { StorageKey } from "../../../../constants"
 
 const useStyles = makeStyles(theme => ({
   filter: {
@@ -28,6 +29,7 @@ interface FilterProps {
   fields: GA4Dimensions | GA4Metrics
   setFilterExpression: Dispatch<FilterExpression | undefined>
   type: FilterType
+  storageKey: StorageKey
 }
 
 export type FilterExpression = gapi.client.analyticsdata.FilterExpression
@@ -50,6 +52,7 @@ const Filter: React.FC<FilterProps> = ({
   fields,
   setFilterExpression,
   type,
+  storageKey,
 }) => {
   const classes = useStyles()
   const {
@@ -57,7 +60,7 @@ const Filter: React.FC<FilterProps> = ({
     addExpression,
     removeExpression,
     updateFilter,
-  } = useFilter()
+  } = useFilter(storageKey)
 
   const selectedFieldIds = React.useMemo(
     () => new Set((fields || []).map(d => d.apiName)),
@@ -72,8 +75,10 @@ const Filter: React.FC<FilterProps> = ({
   )
 
   React.useEffect(() => {
-    if (Object.values(expression).length !== 0) {
+    if (expression !== undefined && Object.values(expression).length !== 0) {
       setFilterExpression(expression)
+    } else {
+      setFilterExpression(undefined)
     }
   }, [expression, setFilterExpression])
 
@@ -90,7 +95,7 @@ const Filter: React.FC<FilterProps> = ({
         removeExpression={removeExpression}
         addExpression={addExpression}
         path={[]}
-        expression={expression}
+        expression={expression || {}}
         nesting={-1}
       />
     </section>

@@ -24,6 +24,11 @@ type Common = {
   request: RunReportRequest | undefined
   response: RunReportResponse | undefined
 }
+export type RunReportError = {
+  code: number
+  message: string
+  status: string
+}
 const useMakeRequest = ({
   property,
   dateRanges,
@@ -35,7 +40,7 @@ const useMakeRequest = ({
   Common,
   Common,
   { response: RunReportResponse } & Common,
-  { error: any } & Common
+  { error: RunReportError } & Common
 > => {
   const gapi = useSelector((state: AppState) => state.gapi)
   const dataAPI = useMemo(() => gapi?.client.analyticsdata, [gapi])
@@ -93,7 +98,11 @@ const useMakeRequest = ({
         setResponse(result)
         setRequestStatus(RequestStatus.Complete)
       })
-      .catch(setError)
+      .catch(e => {
+        console.log(e.result.error)
+        setError(e.result.error)
+        setRequestStatus(RequestStatus.Failed)
+      })
   }, [property, dataAPI, request, setResponse])
 
   if (requestStatus === RequestStatus.Complete) {

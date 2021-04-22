@@ -66,16 +66,23 @@ const NumericFilter: React.FC<NumericFilterProps> = ({
       int64Value: undefined,
       doubleValue: undefined,
     }
+    const parsed = parseFloat(value)
+    if (value === "" || isNaN(parsed)) {
+      if (
+        numericFilter.value?.int64Value === undefined &&
+        numericFilter.value?.doubleValue === undefined
+      ) {
+        return
+      }
+      updateNumericFilter(old => ({ ...old, value: nuVal }))
+      return
+    }
     if (value.indexOf(".") === -1) {
       if (numericFilter.value?.int64Value === value) {
         return
       }
       nuVal.int64Value = value
     } else {
-      const parsed = parseFloat(value)
-      if (isNaN(parsed)) {
-        return
-      }
       nuVal.doubleValue = parseFloat(value)
       if (numericFilter.value?.doubleValue === parsed) {
         return

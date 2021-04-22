@@ -2,7 +2,10 @@ import React, { useState, useMemo } from "react"
 import { makeStyles, Typography, Tabs, Tab, Box } from "@material-ui/core"
 import { DataGrid, GridColumns } from "@material-ui/data-grid"
 import PrettyJson from "../../../components/PrettyJson"
-import { RunReportResponse } from "./_BasicReport/_useMakeRequest"
+import {
+  RunReportResponse,
+  RunReportError,
+} from "./_BasicReport/_useMakeRequest"
 import { RequestStatus } from "../../../types"
 import Spinner from "../../../components/Spinner"
 
@@ -40,12 +43,14 @@ interface ReportsTableProps {
   response: RunReportResponse | undefined
   requestStatus: RequestStatus
   shouldCollapse: (props: any) => boolean
+  error: RunReportError | undefined
 }
 
 const Response: React.FC<ReportsTableProps> = ({
   response,
   requestStatus,
   shouldCollapse,
+  error,
 }) => {
   const classes = useStyles()
   const [tab, setTab] = useState(0)
@@ -56,6 +61,17 @@ const Response: React.FC<ReportsTableProps> = ({
         <Spinner>Loading response &hellip;</Spinner>
       ) : null,
     [requestStatus]
+  )
+
+  const errorDetail = useMemo(
+    () =>
+      requestStatus === RequestStatus.Failed && error !== undefined ? (
+        <section>
+          <Typography variant="h4">Error: {error.code}</Typography>
+          <Typography>{error.message}</Typography>
+        </section>
+      ) : null,
+    [requestStatus, error]
   )
 
   const pending = useMemo(
@@ -81,11 +97,13 @@ const Response: React.FC<ReportsTableProps> = ({
         <Tab label="JSON" />
       </Tabs>
       <TabPanel value={tab} index={0}>
+        {errorDetail}
         {loading}
         {pending}
         {response !== undefined && <ResponseTable response={response} />}
       </TabPanel>
       <TabPanel value={tab} index={1}>
+        {errorDetail}
         {loading}
         {pending}
         <PrettyJson object={response} shouldCollapse={shouldCollapse} />
