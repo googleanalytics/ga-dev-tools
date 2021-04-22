@@ -6,18 +6,18 @@ import {
   FilterType,
   ExpressionPath,
   RemoveExpressionFn,
-} from "./_index"
+} from "../_index"
 import { useState, useMemo } from "react"
 import {
   GA4Dimension,
   DimensionPicker,
   GA4Metric,
   MetricPicker,
-} from "../../../../components/GA4Pickers"
-import Select, { SelectOption } from "../../../../components/Select"
-import LabeledCheckbox from "../../../../components/LabeledCheckbox"
+} from "../../../../../components/GA4Pickers"
+import Select, { SelectOption } from "../../../../../components/Select"
+import LabeledCheckbox from "../../../../../components/LabeledCheckbox"
 import clsx from "classnames"
-import SeparatedInput from "../../../../components/SeparatedInput"
+import SeparatedInput from "../../../../../components/SeparatedInput"
 import { Delete } from "@material-ui/icons"
 
 const useStyles = makeStyles(theme => ({

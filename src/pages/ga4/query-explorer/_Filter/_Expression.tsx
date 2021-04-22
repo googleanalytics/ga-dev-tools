@@ -1,5 +1,5 @@
 import * as React from "react"
-import Filter from "./_Filter"
+import Filter from "./_Filter/_index"
 import {
   FilterExpression,
   UpdateFilterFn,
