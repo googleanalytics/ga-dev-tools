@@ -12,14 +12,8 @@ export enum RequestStatus {
   Failed,
 }
 
-export type Requestable<
-  Complete,
-  NotStarted,
-  Failed,
-  All = {},
-  Pending = NotStarted
-> =
-  | (Complete & All & { requestStatus: RequestStatus.Complete })
-  | (NotStarted & All & { requestStatus: RequestStatus.NotStarted })
-  | (Failed & All & { requestStatus: RequestStatus.Failed })
-  | (Pending & All & { requestStatus: RequestStatus.Pending })
+export type Requestable<NotStarted, Pending, Successful, Failed> =
+  | (Successful & { requestStatus: RequestStatus.Complete })
+  | (NotStarted & { requestStatus: RequestStatus.NotStarted })
+  | (Failed & { requestStatus: RequestStatus.Failed })
+  | (Pending & { requestStatus: RequestStatus.Pending })

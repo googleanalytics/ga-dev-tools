@@ -18,6 +18,12 @@ type UseMakeRequestArgs = {
   metrics: GA4Metrics
 }
 
+type Common = {
+  makeRequest: () => void
+  validRequest: boolean
+  request: RunReportRequest | undefined
+  response: RunReportResponse | undefined
+}
 const useMakeRequest = ({
   property,
   dateRanges,
@@ -26,14 +32,10 @@ const useMakeRequest = ({
   dimensionFilter,
   metricFilter,
 }: UseMakeRequestArgs): Requestable<
-  { response: RunReportResponse },
-  { response: undefined },
-  { response: undefined; error: any },
-  {
-    makeRequest: () => void
-    validRequest: boolean
-    request: RunReportRequest | undefined
-  }
+  Common,
+  Common,
+  { response: RunReportResponse } & Common,
+  { error: any } & Common
 > => {
   const gapi = useSelector((state: AppState) => state.gapi)
   const dataAPI = useMemo(() => gapi?.client.analyticsdata, [gapi])
@@ -103,28 +105,28 @@ const useMakeRequest = ({
     return {
       requestStatus,
       makeRequest,
-      response,
       validRequest,
       request,
+      response,
     }
   }
 
   if (requestStatus === RequestStatus.Failed) {
     return {
       requestStatus,
-      error,
       makeRequest,
-      response: undefined,
       validRequest,
       request,
+      error,
+      response: undefined,
     }
   }
   return {
     requestStatus,
     makeRequest,
-    response: undefined,
     validRequest,
     request,
+    response: undefined,
   }
 }
 
