@@ -24,8 +24,6 @@ const useFilter = () => {
 
         navigated[last as any] = update(navigated[last as any])
 
-        console.log({ last, butLast, navigated })
-
         return cloned
       })
     },
@@ -38,27 +36,27 @@ const useFilter = () => {
         const cloned = { ...old }
         const butLast = [...path]
         let last = butLast.pop()
-
-        if (
-          last === "andGroup" ||
-          last === "orGroup" ||
-          last === "notExpression"
-        ) {
-          last = butLast.pop()
-        }
+        last = butLast.pop()
 
         // If there is no last, that means we're at the top level
         if (last === undefined) {
           return {}
         }
 
-        const navigated = butLast.reduce(
+        let navigated = butLast.reduce(
           (ref, pathEntry) => ref[pathEntry],
           cloned
         )
 
+        //... my apologies.
         if (Array.isArray(navigated)) {
-          navigated.splice(last as number, 1)
+          const index = last
+          last = butLast.pop()
+          navigated = butLast.reduce((ref, pathEntry) => ref[pathEntry], cloned)
+          navigated[last as any] = navigated[last as any].filter(
+            (_: any, idx: number) => idx !== index
+          )
+          return cloned
         }
 
         navigated[last] = {}

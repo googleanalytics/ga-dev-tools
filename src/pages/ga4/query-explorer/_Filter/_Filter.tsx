@@ -228,6 +228,7 @@ const Filter: React.FC<{
   ])
 
   const onClick = React.useCallback(() => {
+    console.log(path)
     removeExpression(path)
   }, [removeExpression, path])
 
