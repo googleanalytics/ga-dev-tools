@@ -9,9 +9,17 @@ export enum RequestStatus {
   Complete,
   NotStarted,
   Pending,
+  Failed,
 }
 
-export type Requestable<Complete, NotStarted, All = {}, Pending = NotStarted> =
+export type Requestable<
+  Complete,
+  NotStarted,
+  Failed,
+  All = {},
+  Pending = NotStarted
+> =
   | (Complete & All & { requestStatus: RequestStatus.Complete })
   | (NotStarted & All & { requestStatus: RequestStatus.NotStarted })
+  | (Failed & All & { requestStatus: RequestStatus.Failed })
   | (Pending & All & { requestStatus: RequestStatus.Pending })

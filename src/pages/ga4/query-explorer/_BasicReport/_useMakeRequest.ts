@@ -28,6 +28,7 @@ const useMakeRequest = ({
 }: UseMakeRequestArgs): Requestable<
   { response: RunReportResponse },
   { response: undefined },
+  { response: undefined; error: any },
   {
     makeRequest: () => void
     validRequest: boolean
@@ -40,6 +41,7 @@ const useMakeRequest = ({
   const [response, setResponse] = usePersistantObject<object>(
     StorageKey.ga4RequestComposerBasicResponse
   )
+  const [error, setError] = useState<any>()
 
   const request = useMemo<RunReportRequest | undefined>(() => {
     if (dimensions === undefined) {
@@ -89,6 +91,7 @@ const useMakeRequest = ({
         setResponse(result)
         setRequestStatus(RequestStatus.Complete)
       })
+      .catch(setError)
   }, [property, dataAPI, request, setResponse])
 
   if (requestStatus === RequestStatus.Complete) {
@@ -101,6 +104,17 @@ const useMakeRequest = ({
       requestStatus,
       makeRequest,
       response,
+      validRequest,
+      request,
+    }
+  }
+
+  if (requestStatus === RequestStatus.Failed) {
+    return {
+      requestStatus,
+      error,
+      makeRequest,
+      response: undefined,
       validRequest,
       request,
     }

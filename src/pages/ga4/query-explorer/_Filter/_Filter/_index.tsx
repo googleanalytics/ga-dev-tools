@@ -20,6 +20,7 @@ import clsx from "classnames"
 import SeparatedInput from "../../../../../components/SeparatedInput"
 import { Delete } from "@material-ui/icons"
 import StringFilter from "./_StringFilter"
+import NumericFilter from "./_NumericFilter"
 
 export const useStyles = makeStyles(theme => ({
   indented: {
@@ -71,7 +72,6 @@ const Filter: React.FC<{
   const classes = useStyles()
   const [dimension, setDimension] = useState<GA4Dimension>()
   const [metric, setMetric] = useState<GA4Metric>()
-  const [, setOption] = useState<SelectOption>()
 
   // When the dimension/metric name changes, update the filter.
   React.useEffect(() => {
@@ -97,28 +97,13 @@ const Filter: React.FC<{
       )
     }
     if (filter.numericFilter !== undefined) {
-      const numeric = filter.numericFilter
       filterOption = { value: "numericFilter", displayName: "numeric" }
       inner = (
-        <>
-          <Select
-            value={{ value: ">", displayName: ">" }}
-            label="operation"
-            setValue={setOption}
-            options={[">", ">=", "==", "<=", "<"].map(a => ({
-              value: a,
-              displayName: a,
-            }))}
-          />
-          <TextField
-            className={classes.shortWidth}
-            size="small"
-            variant="outlined"
-            value={
-              numeric.value?.int64Value || numeric.value?.doubleValue || ""
-            }
-          />
-        </>
+        <NumericFilter
+          numericFilter={filter.numericFilter}
+          updateFilter={updateFilter}
+          path={path}
+        />
       )
     }
     if (filter.inListFilter !== undefined) {
