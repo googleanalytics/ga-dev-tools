@@ -19,8 +19,9 @@ import LabeledCheckbox from "../../../../../components/LabeledCheckbox"
 import clsx from "classnames"
 import SeparatedInput from "../../../../../components/SeparatedInput"
 import { Delete } from "@material-ui/icons"
+import StringFilter from "./_StringFilter"
 
-const useStyles = makeStyles(theme => ({
+export const useStyles = makeStyles(theme => ({
   indented: {
     marginLeft: theme.spacing(1),
   },
@@ -48,15 +49,6 @@ const useStyles = makeStyles(theme => ({
   },
 }))
 
-enum StringFilterMatchType {
-  Exact = "EXACT",
-  BeginsWith = "BEGINS_WITH",
-  EndsWith = "ENDS_WITH",
-  Contains = "CONTAINS",
-  FullRegexp = "FULL_REGEXP",
-  PartialRegexp = "PARTIAL_REGEXP",
-}
-
 const Filter: React.FC<{
   filter: BaseFilter
   nesting: number
@@ -80,7 +72,6 @@ const Filter: React.FC<{
   const [dimension, setDimension] = useState<GA4Dimension>()
   const [metric, setMetric] = useState<GA4Metric>()
   const [, setOption] = useState<SelectOption>()
-  const [, setOption2] = useState<SelectOption>()
 
   // When the dimension/metric name changes, update the filter.
   React.useEffect(() => {
@@ -97,30 +88,12 @@ const Filter: React.FC<{
     let inner: JSX.Element | null = null
     if (filter.stringFilter !== undefined) {
       filterOption = { value: "stringFilter", displayName: "string" }
-      const str = filter.stringFilter
       inner = (
-        <>
-          <Select
-            label="match type"
-            className={classes.mediumWidth}
-            value={{
-              value: StringFilterMatchType.Contains,
-              displayName: StringFilterMatchType.Contains,
-            }}
-            setValue={setOption2}
-            options={Object.values(StringFilterMatchType).map(option => ({
-              value: option,
-              displayName: option,
-            }))}
-          />
-          <TextField size="small" variant="outlined" value={str.value || ""} />
-          <LabeledCheckbox
-            checked={str.caseSensitive || false}
-            setChecked={(_: boolean) => {}}
-          >
-            case sensitive
-          </LabeledCheckbox>
-        </>
+        <StringFilter
+          stringFilter={filter.stringFilter}
+          updateFilter={updateFilter}
+          path={path}
+        />
       )
     }
     if (filter.numericFilter !== undefined) {
@@ -218,14 +191,7 @@ const Filter: React.FC<{
       )
     }
     return [inner, filterOption]
-  }, [
-    filter,
-    classes.shortWidth,
-    classes.bigWidth,
-    classes.mediumWidth,
-    updateFilter,
-    path,
-  ])
+  }, [filter, classes.shortWidth, classes.bigWidth, updateFilter, path])
 
   const onClick = React.useCallback(() => {
     console.log(path)
