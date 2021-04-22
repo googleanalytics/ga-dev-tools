@@ -5,7 +5,7 @@ import {
   GA4Metrics,
 } from "../../../../components/GA4Pickers"
 import { useCallback } from "react"
-import Expression from "./_Expression"
+import Expression, { ExpressionType } from "./_Expression"
 import { Typography, makeStyles } from "@material-ui/core"
 import { Dispatch } from "../../../../types"
 import useFilter from "./_useFilter"
@@ -34,9 +34,16 @@ export type FilterExpression = gapi.client.analyticsdata.FilterExpression
 export type FilterExpressionList = gapi.client.analyticsdata.FilterExpressionList
 export type BaseFilter = NonNullable<FilterExpression["filter"]>
 
-export type UpdateFilter = (
-  path: (string | number)[],
+export type ExpressionPath = (string | number)[]
+
+export type UpdateFilterFn = (
+  path: ExpressionPath,
   update: (old: BaseFilter) => BaseFilter
+) => void
+export type RemoveExpressionFn = (path: ExpressionPath) => void
+export type AddExpressionFn = (
+  path: ExpressionPath,
+  type: ExpressionType
 ) => void
 
 const Filter: React.FC<FilterProps> = ({

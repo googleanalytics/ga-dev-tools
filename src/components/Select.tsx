@@ -41,9 +41,8 @@ const Select: React.FC<SelectProps> = ({
   const classes = useStyles()
 
   return (
-    <Autocomplete<SelectOption, false, true, false>
+    <Autocomplete<SelectOption, false, undefined, false>
       className={clsx(classes.formControl, className)}
-      disableClearable
       fullWidth={fullWidth}
       autoComplete
       autoHighlight

@@ -1,11 +1,16 @@
 import { useState, useCallback } from "react"
-import { FilterExpression, UpdateFilter } from "./_index"
+import {
+  FilterExpression,
+  UpdateFilterFn,
+  RemoveExpressionFn,
+  AddExpressionFn,
+} from "./_index"
 import { ExpressionType } from "./_Expression"
 
 const useFilter = () => {
   const [expression, setExpression] = useState<FilterExpression>({})
 
-  const updateFilter = useCallback<UpdateFilter>(
+  const updateFilter = useCallback<UpdateFilterFn>(
     (path, update) => {
       setExpression(old => {
         const cloned = { ...old }
@@ -27,8 +32,8 @@ const useFilter = () => {
     [setExpression]
   )
 
-  const removeExpression = useCallback(
-    (path: (string | number)[]) => {
+  const removeExpression = useCallback<RemoveExpressionFn>(
+    path => {
       setExpression(old => {
         const cloned = { ...old }
         const butLast = [...path]
@@ -64,8 +69,8 @@ const useFilter = () => {
     [setExpression]
   )
 
-  const addExpression = useCallback(
-    (path: (string | number)[], type: ExpressionType) => {
+  const addExpression = useCallback<AddExpressionFn>(
+    (path, type) => {
       setExpression(old => {
         const cloned = { ...old }
         const butLast = [...path]

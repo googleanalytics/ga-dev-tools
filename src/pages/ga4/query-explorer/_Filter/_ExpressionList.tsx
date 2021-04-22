@@ -1,12 +1,15 @@
 import * as React from "react"
 import { makeStyles } from "@material-ui/core"
-import { FilterExpressionList, UpdateFilter, FilterType } from "./_index"
-import Expression, {
-  AddExpression,
-  ExpressionType,
-  RemoveExpression,
-} from "./_Expression"
-import { GA4Dimension } from "../../../../components/GA4Pickers"
+import {
+  FilterExpressionList,
+  UpdateFilterFn,
+  FilterType,
+  AddExpressionFn,
+  RemoveExpressionFn,
+  ExpressionPath,
+} from "./_index"
+import Expression, { AddExpression, RemoveExpression } from "./_Expression"
+import { GA4Dimension, GA4Metric } from "../../../../components/GA4Pickers"
 
 const useStyles = makeStyles(theme => ({
   buttons: {
@@ -22,11 +25,12 @@ const ExpressionList: React.FC<{
   expressionList: FilterExpressionList
   nesting: number
   variant: "and" | "or"
-  path: (string | number)[]
-  addExpression: (path: (string | number)[], type: ExpressionType) => void
-  removeExpression: (path: (string | number)[]) => void
+  path: ExpressionPath
+  addExpression: AddExpressionFn
+  removeExpression: RemoveExpressionFn
+  updateFilter: UpdateFilterFn
   dimensionFilter: (dim: GA4Dimension) => boolean
-  updateFilter: UpdateFilter
+  metricFilter: (dim: GA4Metric) => boolean
 }> = ({
   type,
   expressionList,

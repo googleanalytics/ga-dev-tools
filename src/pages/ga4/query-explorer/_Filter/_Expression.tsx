@@ -1,6 +1,13 @@
 import * as React from "react"
 import Filter from "./_Filter"
-import { FilterExpression, UpdateFilter, FilterType } from "./_index"
+import {
+  FilterExpression,
+  UpdateFilterFn,
+  FilterType,
+  ExpressionPath,
+  AddExpressionFn,
+  RemoveExpressionFn,
+} from "./_index"
 import { makeStyles, Typography } from "@material-ui/core"
 import ExpressionList from "./_ExpressionList"
 import { SAB, PlainButton } from "../../../../components/Buttons"
@@ -66,8 +73,8 @@ const LabeledSection: React.FC<{
 }
 
 export const RemoveExpression: React.FC<{
-  removeExpression: (path: (string | number)[]) => void
-  path: (string | number)[]
+  removeExpression: RemoveExpressionFn
+  path: ExpressionPath
   label: string
   className?: string
 }> = ({ removeExpression, path, label, className }) => {
@@ -90,8 +97,8 @@ export enum ExpressionType {
 }
 
 interface AddExpressionProps {
-  path: (string | number)[]
-  addExpression: (path: (string | number)[], type: ExpressionType) => void
+  path: ExpressionPath
+  addExpression: AddExpressionFn
 }
 export const AddExpression: React.FC<AddExpressionProps> = ({
   addExpression,
@@ -129,11 +136,11 @@ const Expression: React.FC<{
   expression: FilterExpression
   nesting: number
   path: (string | number)[]
-  addExpression: (path: (string | number)[], type: ExpressionType) => void
-  removeExpression: (path: (string | number)[]) => void
+  addExpression: AddExpressionFn
+  removeExpression: RemoveExpressionFn
   dimensionFilter: (dim: GA4Dimension) => boolean
   metricFilter: (dim: GA4Metric) => boolean
-  updateFilter: UpdateFilter
+  updateFilter: UpdateFilterFn
 }> = ({
   type,
   expression,
@@ -149,6 +156,7 @@ const Expression: React.FC<{
   if (expression.filter) {
     return (
       <Filter
+        removeExpression={removeExpression}
         type={type}
         path={path.concat(["filter"])}
         updateFilter={updateFilter}
@@ -181,10 +189,12 @@ const Expression: React.FC<{
     return (
       <LabeledSection label="or">
         <ExpressionList
+          type={type}
           updateFilter={updateFilter}
           addExpression={addExpression}
           removeExpression={removeExpression}
           dimensionFilter={dimensionFilter}
+          metricFilter={metricFilter}
           path={path.concat(["orGroup"])}
           nesting={nesting + 1}
           variant="or"
@@ -197,6 +207,7 @@ const Expression: React.FC<{
     return (
       <LabeledSection label="not">
         <Expression
+          type={type}
           metricFilter={metricFilter}
           updateFilter={updateFilter}
           addExpression={addExpression}

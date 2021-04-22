@@ -1,6 +1,12 @@
 import * as React from "react"
 import { makeStyles, TextField, IconButton } from "@material-ui/core"
-import { BaseFilter, UpdateFilter, FilterType } from "./_index"
+import {
+  BaseFilter,
+  UpdateFilterFn,
+  FilterType,
+  ExpressionPath,
+  RemoveExpressionFn,
+} from "./_index"
 import { useState, useMemo } from "react"
 import {
   GA4Dimension,
@@ -56,8 +62,9 @@ const Filter: React.FC<{
   nesting: number
   dimensionFilter: (dim: GA4Dimension) => boolean
   metricFilter: (met: GA4Metric) => boolean
-  updateFilter: UpdateFilter
-  path: (string | number)[]
+  updateFilter: UpdateFilterFn
+  removeExpression: RemoveExpressionFn
+  path: ExpressionPath
   type: FilterType
 }> = ({
   filter,
@@ -65,6 +72,7 @@ const Filter: React.FC<{
   dimensionFilter,
   metricFilter,
   updateFilter,
+  removeExpression,
   path,
   type,
 }) => {
@@ -219,11 +227,15 @@ const Filter: React.FC<{
     path,
   ])
 
+  const onClick = React.useCallback(() => {
+    removeExpression(path)
+  }, [removeExpression, path])
+
   return (
     <section
       className={clsx(classes.filter, { [classes.indented]: nesting > 0 })}
     >
-      <IconButton>
+      <IconButton onClick={onClick}>
         <Delete />
       </IconButton>
       {type === "metric" ? (
