@@ -64,6 +64,8 @@ const BasicReport = () => {
     setMetrics,
     showRequestJSON,
     setShowRequestJSON,
+    dimensionFilter,
+    setDimensionFilter,
   } = useInputs()
   const {
     validRequest,
@@ -73,6 +75,7 @@ const BasicReport = () => {
     requestStatus,
   } = useMakeRequest({
     property: propertyString,
+    dimensionFilter,
     dateRanges,
     dimensions,
     metrics,
@@ -123,7 +126,10 @@ const BasicReport = () => {
         }
       />
       <DateRanges className={classes.dateRanges} onChange={setDateRanges} />
-      <DimensionFilter dimensions={dimensions} />
+      <DimensionFilter
+        dimensions={dimensions}
+        setDimensionFilter={setDimensionFilter}
+      />
       <div>
         <LabeledCheckbox
           checked={showRequestJSON}

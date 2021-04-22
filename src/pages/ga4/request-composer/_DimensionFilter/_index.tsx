@@ -3,9 +3,11 @@ import { GA4Dimensions, GA4Dimension } from "../../../../components/GA4Pickers"
 import { useState, useCallback } from "react"
 import Expression, { ExpressionType } from "./_Expression"
 import { Typography } from "@material-ui/core"
+import { Dispatch } from "../../../../types"
 
 interface DimensionFilterProps {
   dimensions: GA4Dimensions
+  setDimensionFilter: Dispatch<FilterExpression | undefined>
 }
 
 export type FilterExpression = gapi.client.analyticsdata.FilterExpression
@@ -129,7 +131,10 @@ const useDimensionFilter = (_: GA4Dimensions) => {
   return { expression, addExpression, removeExpression, updateFilter }
 }
 
-const DimensionFilter: React.FC<DimensionFilterProps> = ({ dimensions }) => {
+const DimensionFilter: React.FC<DimensionFilterProps> = ({
+  dimensions,
+  setDimensionFilter,
+}) => {
   const {
     expression,
     addExpression,
@@ -142,12 +147,21 @@ const DimensionFilter: React.FC<DimensionFilterProps> = ({ dimensions }) => {
     [dimensions]
   )
 
+  // TODO - between filter is invalid for dimensions so we need a way to filter
+  // which filters (ha) you can build.
+
   const dimensionFilter = useCallback(
     (dimension: GA4Dimension) => {
       return selectedDimensionIds.has(dimension.apiName)
     },
     [selectedDimensionIds]
   )
+
+  React.useEffect(() => {
+    if (Object.values(expression).length !== 0) {
+      setDimensionFilter(expression)
+    }
+  }, [expression, setDimensionFilter])
 
   // TODO - look into use context to see if I can make these updateFilter,
   // dimensionFilter, etc things a bit cleaner.

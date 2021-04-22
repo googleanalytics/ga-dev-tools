@@ -4,6 +4,7 @@ import { DateRange } from "../_DateRanges"
 import { GA4Dimensions, GA4Metrics } from "../../../../components/GA4Pickers"
 import { usePersistentString, usePersistentBoolean } from "../../../../hooks"
 import { StorageKey } from "../../../../constants"
+import { FilterExpression } from "../_DimensionFilter/_index"
 
 const useInputs = () => {
   const [showRequestJSON, setShowRequestJSON] = usePersistentBoolean(
@@ -13,6 +14,7 @@ const useInputs = () => {
   const [selectedProperty, setSelectedProperty] = useState<SelectableProperty>()
   const [dateRanges, setDateRanges] = useState<DateRange[]>([])
   const [dimensions, setDimensions] = useState<GA4Dimensions>()
+  const [dimensionFilter, setDimensionFilter] = useState<FilterExpression>()
   const [metrics, setMetrics] = useState<GA4Metrics>()
 
   const [inputPropertyString, setInputPropertyString] = usePersistentString(
@@ -45,6 +47,8 @@ const useInputs = () => {
     setMetrics,
     showRequestJSON,
     setShowRequestJSON,
+    dimensionFilter,
+    setDimensionFilter,
   }
 }
 export default useInputs
