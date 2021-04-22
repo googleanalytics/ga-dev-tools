@@ -1,11 +1,11 @@
 import * as React from "react"
-import Select from "../../../../../components/Select"
+import Select, { SelectOption } from "../../../../../components/Select"
 import { useStyles } from "./_index"
 import TextField from "@material-ui/core/TextField"
 import LabeledCheckbox from "../../../../../components/LabeledCheckbox"
 import { UpdateFilterFn, ExpressionPath } from "../_index"
 
-enum StringFilterMatchType {
+export enum MatchType {
   Exact = "EXACT",
   BeginsWith = "BEGINS_WITH",
   EndsWith = "ENDS_WITH",
@@ -22,10 +22,26 @@ interface StringFilterProps {
   path: ExpressionPath
 }
 
-const matchOptions = Object.values(StringFilterMatchType).map(option => ({
-  value: option,
-  displayName: option,
-}))
+const optionFor = (type: MatchType | undefined): SelectOption => {
+  switch (type) {
+    case MatchType.Exact:
+      return { value: type, displayName: "exact" }
+    case MatchType.BeginsWith:
+      return { value: type, displayName: "begins with" }
+    case MatchType.EndsWith:
+      return { value: type, displayName: "ends with" }
+    case MatchType.Contains:
+      return { value: type, displayName: "contains" }
+    case MatchType.FullRegexp:
+      return { value: type, displayName: "regexp" }
+    case MatchType.PartialRegexp:
+      return { value: type, displayName: "partial regexp" }
+    default:
+      return { value: "", displayName: "" }
+  }
+}
+
+const matchOptions = Object.values(MatchType).map(optionFor)
 
 const StringFilter: React.FC<StringFilterProps> = ({
   stringFilter,
@@ -34,10 +50,7 @@ const StringFilter: React.FC<StringFilterProps> = ({
 }) => {
   const classes = useStyles()
 
-  const matchValue = {
-    value: stringFilter.matchType || "",
-    displayName: stringFilter.matchType || "",
-  }
+  const matchValue = optionFor(stringFilter.matchType as MatchType)
 
   const updateStringFilter = React.useCallback(
     (update: (old: SFilter) => SFilter) => {
@@ -71,7 +84,7 @@ const StringFilter: React.FC<StringFilterProps> = ({
       />
       <LabeledCheckbox
         checked={stringFilter.caseSensitive || false}
-        setChecked={(checked: boolean) => {
+        onChange={(checked: boolean) => {
           updateStringFilter(old => ({ ...old, caseSensitive: checked }))
         }}
       >

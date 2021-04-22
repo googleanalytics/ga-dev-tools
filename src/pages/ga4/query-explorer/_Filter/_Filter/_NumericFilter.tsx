@@ -12,7 +12,7 @@ interface NumericFilterProps {
   path: ExpressionPath
 }
 
-enum OperationType {
+export enum OperationType {
   Equal = "EQUAL",
   LessThan = "LESS_THAN",
   LessThanOrEqual = "LESS_THAN_OR_EQUAL",
@@ -35,6 +35,35 @@ const optionFor = (type: OperationType | undefined): SelectOption => {
     default:
       return { value: "", displayName: "" }
   }
+}
+
+type NumericValue = gapi.client.analyticsdata.NumericValue
+
+export const numericValueEquals = (
+  a: NumericValue,
+  b: NumericValue | undefined
+) => {
+  if (b === undefined) {
+    return false
+  }
+  return a.int64Value === b.int64Value && a.doubleValue === b.doubleValue
+}
+
+export const toNumericValue = (s: string) => {
+  const nuVal: NumericValue = {
+    int64Value: undefined,
+    doubleValue: undefined,
+  }
+  const parsed = parseFloat(s)
+  if (s === "" || isNaN(parsed)) {
+    return nuVal
+  }
+  if (s.indexOf(".") === -1) {
+    nuVal.int64Value = s
+  } else {
+    nuVal.doubleValue = parsed
+  }
+  return nuVal
 }
 
 const operationOptions = Object.values(OperationType).map(optionFor)
@@ -62,31 +91,9 @@ const NumericFilter: React.FC<NumericFilterProps> = ({
   )
 
   React.useEffect(() => {
-    const nuVal: NFilter["value"] = {
-      int64Value: undefined,
-      doubleValue: undefined,
-    }
-    const parsed = parseFloat(value)
-    if (value === "" || isNaN(parsed)) {
-      if (
-        numericFilter.value?.int64Value === undefined &&
-        numericFilter.value?.doubleValue === undefined
-      ) {
-        return
-      }
-      updateNumericFilter(old => ({ ...old, value: nuVal }))
+    const nuVal = toNumericValue(value)
+    if (numericValueEquals(nuVal, numericFilter.value)) {
       return
-    }
-    if (value.indexOf(".") === -1) {
-      if (numericFilter.value?.int64Value === value) {
-        return
-      }
-      nuVal.int64Value = value
-    } else {
-      nuVal.doubleValue = parseFloat(value)
-      if (numericFilter.value?.doubleValue === parsed) {
-        return
-      }
     }
     updateNumericFilter(old => ({ ...old, value: nuVal }))
   }, [value, updateNumericFilter, numericFilter.value])

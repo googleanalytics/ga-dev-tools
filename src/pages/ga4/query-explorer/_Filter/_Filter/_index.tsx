@@ -1,5 +1,5 @@
 import * as React from "react"
-import { makeStyles, TextField, IconButton } from "@material-ui/core"
+import { makeStyles, IconButton } from "@material-ui/core"
 import {
   BaseFilter,
   UpdateFilterFn,
@@ -17,9 +17,10 @@ import {
 import Select, { SelectOption } from "../../../../../components/Select"
 import clsx from "classnames"
 import { Delete } from "@material-ui/icons"
-import StringFilter from "./_StringFilter"
-import NumericFilter from "./_NumericFilter"
+import StringFilter, { MatchType } from "./_StringFilter"
+import NumericFilter, { OperationType } from "./_NumericFilter"
 import InListFilter from "./_InListFilter"
+import BetweenFilter from "./_BetweenFilter"
 
 export const useStyles = makeStyles(theme => ({
   indented: {
@@ -116,57 +117,17 @@ const Filter: React.FC<{
       )
     }
     if (filter.betweenFilter !== undefined) {
-      const between = filter.betweenFilter
       filterOption = { value: "betweenFilter", displayName: "between" }
       inner = (
-        <>
-          <TextField
-            className={classes.shortWidth}
-            size="small"
-            variant="outlined"
-            label={"From"}
-            onChange={e => {
-              const val = e.target.value
-              const nuVal =
-                val.indexOf(".") === -1
-                  ? { int64Value: val }
-                  : { doubleValue: val }
-              updateFilter(path.concat(["betweenFilter"]), old => ({
-                ...old,
-                fromValue: nuVal,
-              }))
-            }}
-            value={
-              between.fromValue?.int64Value ||
-              between.fromValue?.doubleValue ||
-              ""
-            }
-          />
-          <TextField
-            className={classes.shortWidth}
-            size="small"
-            variant="outlined"
-            label={"To"}
-            onChange={e => {
-              const val = e.target.value
-              const nuVal =
-                val.indexOf(".") === -1
-                  ? { int64Value: val }
-                  : { doubleValue: val }
-              updateFilter(path.concat(["betweenFilter"]), old => ({
-                ...old,
-                toValue: nuVal,
-              }))
-            }}
-            value={
-              between.toValue?.int64Value || between.toValue?.doubleValue || ""
-            }
-          />
-        </>
+        <BetweenFilter
+          betweenFilter={filter.betweenFilter}
+          updateFilter={updateFilter}
+          path={path}
+        />
       )
     }
     return [inner, filterOption]
-  }, [filter, classes.shortWidth, updateFilter, path])
+  }, [filter, updateFilter, path])
 
   const onClick = React.useCallback(() => {
     console.log(path)
@@ -202,9 +163,16 @@ const Filter: React.FC<{
           if (nu === undefined) {
             return
           }
+          const value = {}
+          if (nu.value === "numericFilter") {
+            value["operation"] = OperationType.Equal
+          }
+          if (nu.value === "stringFilter") {
+            value["matchType"] = MatchType.Exact
+          }
           updateFilter(path, old => ({
             fieldName: old.fieldName,
-            [nu.value]: {},
+            [nu.value]: value,
           }))
         }}
         className={classes.filterType}
