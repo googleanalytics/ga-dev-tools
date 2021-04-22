@@ -1,11 +1,11 @@
 import * as React from "react"
 import Filter from "./_Filter"
-import { FilterExpression, UpdateFilter } from "./_index"
+import { FilterExpression, UpdateFilter, FilterType } from "./_index"
 import { makeStyles, Typography } from "@material-ui/core"
 import ExpressionList from "./_ExpressionList"
 import { SAB, PlainButton } from "../../../../components/Buttons"
 import { Delete } from "@material-ui/icons"
-import { GA4Dimension } from "../../../../components/GA4Pickers"
+import { GA4Dimension, GA4Metric } from "../../../../components/GA4Pickers"
 
 const useStyles = makeStyles(theme => ({
   label: {
@@ -125,31 +125,37 @@ export const AddExpression: React.FC<AddExpressionProps> = ({
 }
 
 const Expression: React.FC<{
+  type: FilterType
   expression: FilterExpression
   nesting: number
   path: (string | number)[]
   addExpression: (path: (string | number)[], type: ExpressionType) => void
   removeExpression: (path: (string | number)[]) => void
   dimensionFilter: (dim: GA4Dimension) => boolean
+  metricFilter: (dim: GA4Metric) => boolean
   updateFilter: UpdateFilter
 }> = ({
+  type,
   expression,
   nesting,
   path,
   addExpression,
   removeExpression,
   dimensionFilter,
+  metricFilter,
   updateFilter,
 }) => {
   const classes = useStyles()
   if (expression.filter) {
     return (
       <Filter
+        type={type}
         path={path.concat(["filter"])}
         updateFilter={updateFilter}
         nesting={nesting + 1}
         filter={expression.filter}
         dimensionFilter={dimensionFilter}
+        metricFilter={metricFilter}
       />
     )
   }
@@ -157,8 +163,10 @@ const Expression: React.FC<{
     return (
       <LabeledSection label="and">
         <ExpressionList
+          type={type}
           updateFilter={updateFilter}
           dimensionFilter={dimensionFilter}
+          metricFilter={metricFilter}
           addExpression={addExpression}
           removeExpression={removeExpression}
           path={path.concat(["andGroup"])}
@@ -189,6 +197,7 @@ const Expression: React.FC<{
     return (
       <LabeledSection label="not">
         <Expression
+          metricFilter={metricFilter}
           updateFilter={updateFilter}
           addExpression={addExpression}
           removeExpression={removeExpression}

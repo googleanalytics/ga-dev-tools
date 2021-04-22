@@ -120,7 +120,7 @@ const useAvailableColumns: UseAvailableColumns = ({
 
 export type GA4Dimension = gapi.client.analyticsdata.DimensionMetadata
 export type GA4Dimensions = GA4Dimension[] | undefined
-type GA4Metric = gapi.client.analyticsdata.MetricMetadata
+export type GA4Metric = gapi.client.analyticsdata.MetricMetadata
 export type GA4Metrics = GA4Metric[] | undefined
 type GA4Column = GA4Dimension | GA4Dimension
 
@@ -331,6 +331,93 @@ export const DimensionPicker: React.FC<{
       value={selected === undefined ? null : selected}
       onChange={(_event, value) =>
         setSelected(value === null ? undefined : (value as GA4Dimension))
+      }
+      renderOption={column => <Column column={column} />}
+      renderInput={params => (
+        <TextField
+          {...params}
+          required={required}
+          label={label}
+          helperText={helperText}
+          size="small"
+          variant="outlined"
+        />
+      )}
+    />
+  )
+}
+
+export const MetricPicker: React.FC<{
+  autoSelectIfOne?: true | undefined
+  setMetric?: Dispatch<GA4Metric | undefined>
+  metricFilter?: (metric: GA4Metric) => boolean
+  property?: string
+  required?: true | undefined
+  helperText?: string | JSX.Element
+  label?: string
+  className?: string
+}> = ({
+  autoSelectIfOne,
+  helperText,
+  setMetric,
+  required,
+  property,
+  metricFilter,
+  className,
+  label = "metric",
+}) => {
+  const [selected, setSelected] = useState<GA4Metric>()
+  const { metricOptions, metricOptionsLessSelected } = useAvailableColumns({
+    selectedMetrics: selected === undefined ? [] : [selected],
+    selectedDimensions: [],
+    property,
+    metricFilter,
+  })
+
+  React.useEffect(() => {
+    if (setMetric !== undefined) {
+      setMetric(selected)
+    }
+  }, [selected, setMetric])
+
+  // If there is only one option, and autoSelectIfOne is choosen and nothing
+  // has been selected yet.
+  React.useEffect(() => {
+    if (
+      autoSelectIfOne &&
+      selected === undefined &&
+      metricOptions?.length === 1
+    ) {
+      setSelected(metricOptions[0])
+    }
+  }, [metricOptions, selected, autoSelectIfOne])
+
+  // Unchoose the selected option if it is not in the options.
+  React.useEffect(() => {
+    if (selected === undefined || metricOptions === undefined) {
+      return
+    }
+    const inOption = metricOptions.find(
+      option => option.apiName === selected.apiName
+    )
+    if (inOption === undefined) {
+      console.log("was not in options", { selected, metricOptions })
+      setSelected(undefined)
+    }
+  }, [selected, metricOptions, setSelected])
+
+  return (
+    <Autocomplete<NonNullable<GA4Metric>, false, undefined, true>
+      className={className}
+      fullWidth
+      autoComplete
+      autoHighlight
+      freeSolo
+      options={metricOptionsLessSelected || []}
+      getOptionLabel={metric => metric.apiName!}
+      value={selected === undefined ? null : selected}
+      onChange={(_event, value) =>
+        setSelected(value === null ? undefined : (value as GA4Metric))
       }
       renderOption={column => <Column column={column} />}
       renderInput={params => (

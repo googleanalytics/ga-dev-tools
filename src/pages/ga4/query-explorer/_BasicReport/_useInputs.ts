@@ -4,7 +4,7 @@ import { DateRange } from "../_DateRanges"
 import { GA4Dimensions, GA4Metrics } from "../../../../components/GA4Pickers"
 import { usePersistentString, usePersistentBoolean } from "../../../../hooks"
 import { StorageKey } from "../../../../constants"
-import { FilterExpression } from "../_DimensionFilter/_index"
+import { FilterExpression } from "../_Filter/_index"
 
 const useInputs = () => {
   const [showRequestJSON, setShowRequestJSON] = usePersistentBoolean(
@@ -16,6 +16,7 @@ const useInputs = () => {
   const [dimensions, setDimensions] = useState<GA4Dimensions>()
   const [dimensionFilter, setDimensionFilter] = useState<FilterExpression>()
   const [metrics, setMetrics] = useState<GA4Metrics>()
+  const [metricFilter, setMetricFilter] = useState<FilterExpression>()
 
   const [inputPropertyString, setInputPropertyString] = usePersistentString(
     StorageKey.ga4RequestComposerBasicSelectedPropertyString
@@ -49,6 +50,8 @@ const useInputs = () => {
     setShowRequestJSON,
     dimensionFilter,
     setDimensionFilter,
+    metricFilter,
+    setMetricFilter,
   }
 }
 export default useInputs

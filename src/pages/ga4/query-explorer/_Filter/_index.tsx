@@ -1,13 +1,32 @@
 import * as React from "react"
-import { GA4Dimensions, GA4Dimension } from "../../../../components/GA4Pickers"
+import {
+  GA4Dimensions,
+  GA4Dimension,
+  GA4Metrics,
+} from "../../../../components/GA4Pickers"
 import { useState, useCallback } from "react"
 import Expression, { ExpressionType } from "./_Expression"
-import { Typography } from "@material-ui/core"
+import { Typography, makeStyles } from "@material-ui/core"
 import { Dispatch } from "../../../../types"
 
-interface DimensionFilterProps {
-  dimensions: GA4Dimensions
-  setDimensionFilter: Dispatch<FilterExpression | undefined>
+const useStyles = makeStyles(theme => ({
+  filter: {
+    margin: theme.spacing(1, 0),
+  },
+  title: {
+    margin: theme.spacing(1, 0),
+  },
+}))
+
+export enum FilterType {
+  Metric = "metric",
+  Dimension = "dimension",
+}
+
+interface FilterProps {
+  fields: GA4Dimensions | GA4Metrics
+  setFilterExpression: Dispatch<FilterExpression | undefined>
+  type: FilterType
 }
 
 export type FilterExpression = gapi.client.analyticsdata.FilterExpression
@@ -32,14 +51,12 @@ export type UpdateFilter = (
   update: (old: BaseFilter) => BaseFilter
 ) => void
 
-const useDimensionFilter = (_: GA4Dimensions) => {
+const useFilter = () => {
   const [expression, setExpression] = useState<FilterExpression>({})
 
   const updateFilter = useCallback<UpdateFilter>(
     (path, update) => {
       setExpression(old => {
-        console.log(JSON.stringify(old, undefined, " "))
-        console.log("path", path)
         const cloned = { ...old }
         const butLast = [...path]
         let last = butLast.pop()
@@ -48,8 +65,6 @@ const useDimensionFilter = (_: GA4Dimensions) => {
           (ref, pathEntry) => ref[pathEntry],
           cloned
         )
-
-        console.log({ last, butLast, navigated })
 
         navigated[last as any] = update(navigated[last as any])
 
@@ -64,8 +79,6 @@ const useDimensionFilter = (_: GA4Dimensions) => {
   const removeExpression = useCallback(
     (path: (string | number)[]) => {
       setExpression(old => {
-        // console.log(JSON.stringify(old, undefined, " "))
-        // console.log("path", path)
         const cloned = { ...old }
         const butLast = [...path]
         let last = butLast.pop()
@@ -131,49 +144,53 @@ const useDimensionFilter = (_: GA4Dimensions) => {
   return { expression, addExpression, removeExpression, updateFilter }
 }
 
-const DimensionFilter: React.FC<DimensionFilterProps> = ({
-  dimensions,
-  setDimensionFilter,
+const Filter: React.FC<FilterProps> = ({
+  fields,
+  setFilterExpression,
+  type,
 }) => {
+  const classes = useStyles()
   const {
     expression,
     addExpression,
     removeExpression,
     updateFilter,
-  } = useDimensionFilter(dimensions)
+  } = useFilter()
 
-  const selectedDimensionIds = React.useMemo(
-    () => new Set((dimensions || []).map(d => d.apiName)),
-    [dimensions]
+  const selectedFieldIds = React.useMemo(
+    () => new Set((fields || []).map(d => d.apiName)),
+    [fields]
   )
 
   // TODO - between filter is invalid for dimensions so we need a way to filter
   // which filters (ha) you can build.
 
-  const dimensionFilter = useCallback(
+  const fieldsFilter = useCallback(
     (dimension: GA4Dimension) => {
-      return selectedDimensionIds.has(dimension.apiName)
+      return selectedFieldIds.has(dimension.apiName)
     },
-    [selectedDimensionIds]
+    [selectedFieldIds]
   )
 
   React.useEffect(() => {
     if (Object.values(expression).length !== 0) {
-      setDimensionFilter(expression)
+      setFilterExpression(expression)
     }
-  }, [expression, setDimensionFilter])
+  }, [expression, setFilterExpression])
 
   // TODO - look into use context to see if I can make these updateFilter,
   // dimensionFilter, etc things a bit cleaner.
 
   return (
-    <section>
-      <Typography variant="subtitle2" style={{ marginTop: "unset" }}>
-        dimension filters
+    <section className={classes.filter}>
+      <Typography variant="subtitle2" className={classes.title}>
+        {type} filters
       </Typography>
       <Expression
+        type={type}
         updateFilter={updateFilter}
-        dimensionFilter={dimensionFilter}
+        dimensionFilter={fieldsFilter}
+        metricFilter={fieldsFilter}
         removeExpression={removeExpression}
         addExpression={addExpression}
         path={[]}
@@ -184,4 +201,4 @@ const DimensionFilter: React.FC<DimensionFilterProps> = ({
   )
 }
 
-export default DimensionFilter
+export default Filter

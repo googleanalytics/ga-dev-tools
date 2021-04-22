@@ -1,6 +1,6 @@
 import * as React from "react"
 import { makeStyles } from "@material-ui/core"
-import { FilterExpressionList, UpdateFilter } from "./_index"
+import { FilterExpressionList, UpdateFilter, FilterType } from "./_index"
 import Expression, {
   AddExpression,
   ExpressionType,
@@ -18,6 +18,7 @@ const useStyles = makeStyles(theme => ({
 }))
 
 const ExpressionList: React.FC<{
+  type: FilterType
   expressionList: FilterExpressionList
   nesting: number
   variant: "and" | "or"
@@ -27,6 +28,7 @@ const ExpressionList: React.FC<{
   dimensionFilter: (dim: GA4Dimension) => boolean
   updateFilter: UpdateFilter
 }> = ({
+  type,
   expressionList,
   nesting,
   variant,
@@ -34,6 +36,7 @@ const ExpressionList: React.FC<{
   addExpression,
   removeExpression,
   dimensionFilter,
+  metricFilter,
   updateFilter,
 }) => {
   const classes = useStyles()
@@ -42,7 +45,9 @@ const ExpressionList: React.FC<{
     <>
       {expressionList.expressions?.map((expression, idx) => (
         <Expression
+          type={type}
           updateFilter={updateFilter}
+          metricFilter={metricFilter}
           dimensionFilter={dimensionFilter}
           path={path.concat(["expressions", idx])}
           addExpression={addExpression}

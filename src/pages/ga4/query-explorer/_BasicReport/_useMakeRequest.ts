@@ -5,13 +5,14 @@ import { useSelector } from "react-redux"
 import { useMemo, useState, useCallback } from "react"
 import { usePersistantObject } from "../../../../hooks"
 import { StorageKey } from "../../../../constants"
-import { FilterExpression } from "../_DimensionFilter/_index"
+import { FilterExpression } from "../_Filter/_index"
 
 type RunReportRequest = gapi.client.analyticsdata.RunReportRequest
 export type RunReportResponse = gapi.client.analyticsdata.RunReportResponse
 type UseMakeRequestArgs = {
   property: string | undefined
   dimensionFilter: FilterExpression | undefined
+  metricFilter: FilterExpression | undefined
   dateRanges: DateRange[]
   dimensions: GA4Dimensions
   metrics: GA4Metrics
@@ -23,6 +24,7 @@ const useMakeRequest = ({
   dimensions,
   metrics,
   dimensionFilter,
+  metricFilter,
 }: UseMakeRequestArgs): Requestable<
   { response: RunReportResponse },
   { response: undefined },
@@ -58,8 +60,11 @@ const useMakeRequest = ({
     if (dimensionFilter !== undefined) {
       r.dimensionFilter = dimensionFilter
     }
+    if (metricFilter !== undefined) {
+      r.metricFilter = metricFilter
+    }
     return r
-  }, [dateRanges, dimensions, metrics, dimensionFilter])
+  }, [dateRanges, dimensions, metrics, dimensionFilter, metricFilter])
 
   const validRequest = useMemo(() => {
     return request !== undefined
