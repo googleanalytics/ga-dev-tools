@@ -21,7 +21,10 @@ import { StorageKey } from "../constants"
 import { useSelector } from "react-redux"
 import { useMemo, useEffect, useState } from "react"
 import { Dispatch } from "../types"
-import { Dimension } from "../pages/ga4/dimensions-metrics-explorer/_hooks"
+import {
+  Dimension,
+  Metric,
+} from "../pages/ga4/dimensions-metrics-explorer/_hooks"
 
 const useColumnStyles = makeStyles(() => ({
   option: {
@@ -39,15 +42,19 @@ type UseAvailableColumns = (arg: {
   selectedMetrics: GA4Metrics
   selectedDimensions: GA4Dimensions
   dimensionFilter?: (dimension: Dimension) => boolean
+  metricFilter?: (metric: Metric) => boolean
   property?: string
 }) => {
   metricOptions: GA4Metrics
+  metricOptionsLessSelected: GA4Metrics
   dimensionOptions: GA4Dimensions
+  dimensionOptionsLessSelected: GA4Dimensions
 }
 const useAvailableColumns: UseAvailableColumns = ({
   selectedMetrics,
   selectedDimensions,
   dimensionFilter,
+  metricFilter,
   property = "properties/0",
 }) => {
   const gapi = useSelector((state: AppState) => state.gapi)
@@ -68,27 +75,47 @@ const useAvailableColumns: UseAvailableColumns = ({
       })
   }, [dataAPI, property])
 
-  const selectedMetricIds = React.useMemo(() => {
-    return new Set((selectedMetrics || []).map(metric => metric.apiName))
-  }, [selectedMetrics])
+  const selectedMetricIds = React.useMemo(
+    () => new Set((selectedMetrics || []).map(dimension => dimension.apiName)),
+    [selectedMetrics]
+  )
 
-  const metricOptions = React.useMemo(() => {
-    return metrics?.filter(metric => !selectedMetricIds.has(metric.apiName))
-  }, [metrics, selectedMetricIds])
+  const metricOptions = React.useMemo(
+    () => metrics?.filter(metricFilter || (() => true)),
+    [metrics, metricFilter]
+  )
 
-  const selectedDimensionIds = React.useMemo(() => {
-    return new Set(
-      (selectedDimensions || []).map(dimension => dimension.apiName)
-    )
-  }, [selectedDimensions])
+  const metricOptionsLessSelected = React.useMemo(
+    () =>
+      metricOptions?.filter(metric => !selectedMetricIds.has(metric.apiName)),
+    [metricOptions, selectedMetricIds]
+  )
 
-  const dimensionOptions = React.useMemo(() => {
-    return dimensions
-      ?.filter(dimension => !selectedDimensionIds.has(dimension.apiName))
-      .filter(dimensionFilter || (() => true))
-  }, [dimensions, selectedDimensionIds, dimensionFilter])
+  const selectedDimensionIds = React.useMemo(
+    () =>
+      new Set((selectedDimensions || []).map(dimension => dimension.apiName)),
+    [selectedDimensions]
+  )
 
-  return { metricOptions, dimensionOptions }
+  const dimensionOptions = React.useMemo(
+    () => dimensions?.filter(dimensionFilter || (() => true)),
+    [dimensions, dimensionFilter]
+  )
+
+  const dimensionOptionsLessSelected = React.useMemo(
+    () =>
+      dimensionOptions?.filter(
+        dimension => !selectedDimensionIds.has(dimension.apiName)
+      ),
+    [dimensionOptions, selectedDimensionIds]
+  )
+
+  return {
+    metricOptions,
+    metricOptionsLessSelected,
+    dimensionOptions,
+    dimensionOptionsLessSelected,
+  }
 }
 
 export type GA4Dimension = gapi.client.analyticsdata.DimensionMetadata
@@ -132,7 +159,7 @@ export const DimensionsPicker: React.FC<{
   const [selected, setSelected] = usePersistantObject<
     NonNullable<GA4Dimensions>
   >(storageKey)
-  const { dimensionOptions } = useAvailableColumns({
+  const { dimensionOptionsLessSelected } = useAvailableColumns({
     selectedDimensions: selected,
     selectedMetrics: [],
     property,
@@ -149,7 +176,7 @@ export const DimensionsPicker: React.FC<{
       autoHighlight
       freeSolo
       multiple
-      options={dimensionOptions || []}
+      options={dimensionOptionsLessSelected || []}
       getOptionLabel={dimension => dimension.apiName!}
       value={selected || []}
       onChange={(_event, value) =>
@@ -190,7 +217,7 @@ export const MetricsPicker: React.FC<{
   const [selected, setSelected] = usePersistantObject<NonNullable<GA4Metrics>>(
     storageKey
   )
-  const { metricOptions } = useAvailableColumns({
+  const { metricOptionsLessSelected } = useAvailableColumns({
     selectedMetrics: selected,
     selectedDimensions: [],
     property,
@@ -207,7 +234,7 @@ export const MetricsPicker: React.FC<{
       autoHighlight
       freeSolo
       multiple
-      options={metricOptions || []}
+      options={metricOptionsLessSelected || []}
       getOptionLabel={metric => metric.apiName!}
       value={selected || []}
       onChange={(_event, value) =>
@@ -231,6 +258,7 @@ export const MetricsPicker: React.FC<{
 }
 
 export const DimensionPicker: React.FC<{
+  autoSelectIfOne?: true | undefined
   setDimension?: Dispatch<GA4Dimension | undefined>
   dimensionFilter?: (dimension: GA4Dimension) => boolean
   property?: string
@@ -239,6 +267,7 @@ export const DimensionPicker: React.FC<{
   label?: string
   className?: string
 }> = ({
+  autoSelectIfOne,
   helperText,
   setDimension,
   required,
@@ -248,7 +277,10 @@ export const DimensionPicker: React.FC<{
   label = "dimension",
 }) => {
   const [selected, setSelected] = useState<GA4Dimension>()
-  const { dimensionOptions } = useAvailableColumns({
+  const {
+    dimensionOptions,
+    dimensionOptionsLessSelected,
+  } = useAvailableColumns({
     selectedDimensions: selected === undefined ? [] : [selected],
     selectedMetrics: [],
     property,
@@ -261,6 +293,32 @@ export const DimensionPicker: React.FC<{
     }
   }, [selected, setDimension])
 
+  // If there is only one option, and autoSelectIfOne is choosen and nothing
+  // has been selected yet.
+  React.useEffect(() => {
+    if (
+      autoSelectIfOne &&
+      selected === undefined &&
+      dimensionOptions?.length === 1
+    ) {
+      setSelected(dimensionOptions[0])
+    }
+  }, [dimensionOptions, selected, autoSelectIfOne])
+
+  // Unchoose the selected option if it is not in the options.
+  React.useEffect(() => {
+    if (selected === undefined || dimensionOptions === undefined) {
+      return
+    }
+    const inOption = dimensionOptions.find(
+      option => option.apiName === selected.apiName
+    )
+    if (inOption === undefined) {
+      console.log("was not in options", { selected, dimensionOptions })
+      setSelected(undefined)
+    }
+  }, [selected, dimensionOptions, setSelected])
+
   return (
     <Autocomplete<NonNullable<GA4Dimension>, false, undefined, true>
       className={className}
@@ -268,7 +326,7 @@ export const DimensionPicker: React.FC<{
       autoComplete
       autoHighlight
       freeSolo
-      options={dimensionOptions || []}
+      options={dimensionOptionsLessSelected || []}
       getOptionLabel={dimension => dimension.apiName!}
       value={selected === undefined ? null : selected}
       onChange={(_event, value) =>

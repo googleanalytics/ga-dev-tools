@@ -61,6 +61,8 @@ const Filter: React.FC<{
   const [, setOption] = useState<SelectOption>()
   const [, setOption2] = useState<SelectOption>()
 
+  // TODO rename this to the query explorer instead of request composer.
+
   React.useEffect(() => {
     if (filter.fieldName !== dimension?.apiName) {
       updateFilter(path, old => {
@@ -212,6 +214,7 @@ const Filter: React.FC<{
         <Delete />
       </IconButton>
       <DimensionPicker
+        autoSelectIfOne
         dimensionFilter={dimensionFilter}
         setDimension={setDimension}
         className={classes.orDimension}

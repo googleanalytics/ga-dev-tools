@@ -128,7 +128,7 @@ const GA4PropertySelector: React.FC<GA4PropertySelectorProps> = ({
         renderInput={params => (
           <TextField
             {...params}
-            label="Account"
+            label="account"
             size="small"
             variant="outlined"
           />
@@ -155,7 +155,7 @@ const GA4PropertySelector: React.FC<GA4PropertySelectorProps> = ({
         renderInput={params => (
           <TextField
             {...params}
-            label="Property"
+            label="property"
             size="small"
             variant="outlined"
           />

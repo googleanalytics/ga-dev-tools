@@ -14,12 +14,12 @@
 
 import * as React from "react"
 import Layout from "../../../components/layout"
-import RequestComposer from "./_RequestComposer"
+import QueryExplorer from "./_QueryExplorer"
 
 export default ({ location: { pathname } }) => {
   return (
-    <Layout title="Request Composer" requireLogin pathname={pathname}>
-      <RequestComposer />
+    <Layout title="Query Explorer" requireLogin pathname={pathname}>
+      <QueryExplorer />
     </Layout>
   )
 }
