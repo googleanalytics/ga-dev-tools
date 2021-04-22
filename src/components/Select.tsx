@@ -42,10 +42,11 @@ const Select: React.FC<SelectProps> = ({
 
   return (
     <Autocomplete<SelectOption, false, undefined, false>
+      disableClearable
       className={clsx(classes.formControl, className)}
       fullWidth={fullWidth}
-      autoComplete
       autoHighlight
+      autoSelect
       options={options}
       getOptionLabel={option => option.displayName}
       getOptionSelected={(a, b) => a.value === b.value}

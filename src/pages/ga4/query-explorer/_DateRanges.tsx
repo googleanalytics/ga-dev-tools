@@ -121,7 +121,7 @@ const DateRanges: React.FC<{
   return (
     <section className={clx(classes.dateRanges, className)}>
       <Typography variant="subtitle2" className={classes.heading}>
-        Date Ranges
+        date ranges
       </Typography>
       {dateRanges.map(dateRange => (
         <section key={dateRange.id} className={classes.dateRange}>

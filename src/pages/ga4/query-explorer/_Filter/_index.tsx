@@ -13,7 +13,8 @@ import { StorageKey } from "../../../../constants"
 
 const useStyles = makeStyles(theme => ({
   filter: {
-    margin: theme.spacing(1, 0),
+    marginTop: theme.spacing(1),
+    marginBottom: theme.spacing(2),
   },
   title: {
     margin: theme.spacing(1, 0),
@@ -75,18 +76,30 @@ const Filter: React.FC<FilterProps> = ({
   )
 
   React.useEffect(() => {
-    if (expression !== undefined && Object.values(expression).length !== 0) {
+    if (expression !== undefined && Object.keys(expression).length !== 0) {
       setFilterExpression(expression)
     } else {
       setFilterExpression(undefined)
     }
   }, [expression, setFilterExpression])
 
+  const noFiltersConfigured = React.useMemo(() => {
+    if (expression === undefined || Object.keys(expression).length === 0) {
+      return (
+        <Typography>
+          No filter is configured. Use the buttons below to create a filter.
+        </Typography>
+      )
+    }
+    return null
+  }, [expression])
+
   return (
     <section className={classes.filter}>
       <Typography variant="subtitle2" className={classes.title}>
         {type} filters
       </Typography>
+      {noFiltersConfigured}
       <Expression
         type={type}
         updateFilter={updateFilter}
