@@ -15,12 +15,11 @@ import {
   MetricPicker,
 } from "../../../../../components/GA4Pickers"
 import Select, { SelectOption } from "../../../../../components/Select"
-import LabeledCheckbox from "../../../../../components/LabeledCheckbox"
 import clsx from "classnames"
-import SeparatedInput from "../../../../../components/SeparatedInput"
 import { Delete } from "@material-ui/icons"
 import StringFilter from "./_StringFilter"
 import NumericFilter from "./_NumericFilter"
+import InListFilter from "./_InListFilter"
 
 export const useStyles = makeStyles(theme => ({
   indented: {
@@ -107,22 +106,13 @@ const Filter: React.FC<{
       )
     }
     if (filter.inListFilter !== undefined) {
-      const inList = filter.inListFilter
       filterOption = { value: "inListFilter", displayName: "in list" }
       inner = (
-        <>
-          <SeparatedInput
-            className={classes.bigWidth}
-            label="values"
-            initialValues={inList.values || []}
-          />
-          <LabeledCheckbox
-            checked={inList.caseSensitive || false}
-            setChecked={(_: boolean) => {}}
-          >
-            case sensitive
-          </LabeledCheckbox>
-        </>
+        <InListFilter
+          inListFilter={filter.inListFilter}
+          updateFilter={updateFilter}
+          path={path}
+        />
       )
     }
     if (filter.betweenFilter !== undefined) {
@@ -176,7 +166,7 @@ const Filter: React.FC<{
       )
     }
     return [inner, filterOption]
-  }, [filter, classes.shortWidth, classes.bigWidth, updateFilter, path])
+  }, [filter, classes.shortWidth, updateFilter, path])
 
   const onClick = React.useCallback(() => {
     console.log(path)

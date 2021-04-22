@@ -41,7 +41,7 @@ const Select: React.FC<SelectProps> = ({
   const classes = useStyles()
 
   return (
-    <Autocomplete<SelectOption, false, undefined, false>
+    <Autocomplete<SelectOption, false, true, false>
       disableClearable
       className={clsx(classes.formControl, className)}
       fullWidth={fullWidth}
@@ -50,7 +50,7 @@ const Select: React.FC<SelectProps> = ({
       options={options}
       getOptionLabel={option => option.displayName}
       getOptionSelected={(a, b) => a.value === b.value}
-      value={value || null}
+      value={(value || null) as any}
       onChange={(_event, value) => {
         if (onChange !== undefined) {
           onChange(value === null ? undefined : (value as SelectOption))

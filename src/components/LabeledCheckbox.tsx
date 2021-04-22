@@ -4,7 +4,8 @@ import { Dispatch } from "../types"
 
 interface LabeledCheckboxProps {
   checked: boolean
-  setChecked: Dispatch<boolean> | ((checked: boolean) => void)
+  setChecked?: Dispatch<boolean>
+  onChange?: (c: boolean) => void
   disabled?: boolean
   className?: string
   checkboxClassName?: string
@@ -13,6 +14,7 @@ interface LabeledCheckboxProps {
 const LabeledCheckbox: React.FC<LabeledCheckboxProps> = ({
   checked,
   setChecked,
+  onChange,
   children,
   className,
   checkboxClassName,
@@ -28,7 +30,12 @@ const LabeledCheckbox: React.FC<LabeledCheckboxProps> = ({
           checked={checked}
           disabled={disabled}
           onChange={e => {
-            setChecked(e.target.checked)
+            if (setChecked !== undefined) {
+              setChecked(e.target.checked)
+            }
+            if (onChange !== undefined) {
+              onChange(e.target.checked)
+            }
           }}
         />
       }

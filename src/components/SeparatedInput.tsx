@@ -2,21 +2,26 @@ import * as React from "react"
 import { useState } from "react"
 import Autocomplete from "@material-ui/lab/Autocomplete"
 import TextField from "@material-ui/core/TextField"
+import { Dispatch } from "../types"
 
 interface SeparatedInputProps {
   label: string
-  initialValues: string[]
   options?: string[]
   className?: string
+  values: string[]
+  setValues?: Dispatch<string[]>
+  onChange?: (values: string[]) => void
 }
 const SeparatedInput: React.FC<SeparatedInputProps> = ({
   label,
-  initialValues,
   options,
   className,
+  values,
+  setValues,
+  onChange,
 }) => {
-  const [value, setValue] = useState<string[]>(initialValues)
   const [inputValue, setInputValue] = useState("")
+
   return (
     <Autocomplete
       className={className}
@@ -24,20 +29,21 @@ const SeparatedInput: React.FC<SeparatedInputProps> = ({
       multiple
       freeSolo
       options={options || []}
-      value={value}
+      value={values}
       inputValue={inputValue}
       onChange={(_event, newValue) => {
-        setValue(newValue)
+        setValues && setValues(newValue)
+        onChange && onChange(newValue)
       }}
       onInputChange={(_event, newInputValue) => {
         const options = newInputValue.split(",")
         if (options.length > 1) {
-          setValue(
-            value
-              .concat(options)
-              .map(x => x.trim())
-              .filter(x => x)
-          )
+          const nu = values
+            .concat(options)
+            .map(x => x.trim())
+            .filter(x => x)
+          setValues && setValues(nu)
+          onChange && onChange(nu)
         } else {
           setInputValue(newInputValue)
         }
@@ -47,7 +53,7 @@ const SeparatedInput: React.FC<SeparatedInputProps> = ({
           {...params}
           label={label}
           variant="outlined"
-          placeholder={value.length === 0 ? "comma separated" : undefined}
+          placeholder={values.length === 0 ? "comma separated" : undefined}
         />
       )}
     />
