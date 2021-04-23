@@ -20,6 +20,9 @@ const useInputs = () => {
   const [offset, setOffset] = usePersistentString(
     StorageKey.ga4RequestComposerBasicSelectedOffset
   )
+  const [limit, setLimit] = usePersistentString(
+    StorageKey.ga4RequestComposerBasicSelectedLimit
+  )
 
   const [inputPropertyString, setInputPropertyString] = usePersistentString(
     StorageKey.ga4RequestComposerBasicSelectedPropertyString
@@ -57,6 +60,8 @@ const useInputs = () => {
     setMetricFilter,
     offset,
     setOffset,
+    limit,
+    setLimit,
   }
 }
 export default useInputs

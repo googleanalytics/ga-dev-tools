@@ -15,6 +15,7 @@
 // All static links on the site should be put into this enum. This makes it
 // easier to update all instances of a link on the site.
 export enum Url {
+  runReportLimit = "https://developers.google.com/analytics/devguides/reporting/data/v1/rest/v1beta/properties/runReport#body.request_body.FIELDS.limit",
   runReportOffset = "https://developers.google.com/analytics/devguides/reporting/data/v1/rest/v1beta/properties/runReport#body.request_body.FIELDS.offset",
   ga4RequestComposerBasicMetrics = "https://developers.google.com/analytics/devguides/reporting/data/v1/rest/v1beta/properties/runReport#body.request_body.FIELDS.metrics",
   ga4RequestComposerBasicDimensions = "https://developers.google.com/analytics/devguides/reporting/data/v1/rest/v1beta/properties/runReport#body.request_body.FIELDS.dimensions",
@@ -85,6 +86,7 @@ export enum StorageKey {
   ga4RequestComposerBasicDimensionFilter = "/ga4/request-composer/basic-report/dimension-filter",
   ga4RequestComposerBasicMetricFilter = "/ga4/request-composer/basic-report/metric-filter",
   ga4RequestComposerBasicSelectedOffset = "/ga4/request-composer/basic-report/offset",
+  ga4RequestComposerBasicSelectedLimit = "/ga4/request-composer/basic-report/limit",
 
   // Query Explorer
   queryExplorerDimensions = "query-explorer/dimensions",

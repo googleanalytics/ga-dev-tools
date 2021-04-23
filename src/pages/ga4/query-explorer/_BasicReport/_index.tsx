@@ -71,11 +71,14 @@ const BasicReport = () => {
     setMetricFilter,
     offset,
     setOffset,
+    limit,
+    setLimit,
   } = useInputs()
   const useMake = useMakeRequest({
     property: propertyString,
     dimensionFilter,
     offset,
+    limit,
     metricFilter,
     dateRanges,
     dimensions,
@@ -153,6 +156,14 @@ const BasicReport = () => {
         value={offset}
         helperText="The row count of the start row. The first row is row 0."
         onChange={setOffset}
+      />
+      <LinkedTextField
+        href={Url.runReportLimit}
+        linkTitle="See limit on devsite."
+        label="limit"
+        value={limit}
+        helperText="The maximum number of rows to return."
+        onChange={setLimit}
       />
       <div>
         <LabeledCheckbox
