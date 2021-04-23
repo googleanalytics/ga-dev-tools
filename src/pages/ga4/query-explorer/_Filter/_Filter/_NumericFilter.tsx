@@ -68,6 +68,8 @@ export const toNumericValue = (s: string) => {
 
 const operationOptions = Object.values(OperationType).map(optionFor)
 
+// TODO instead of having a filter type drop down, include `between` here and do
+// the smarts to choose the right subtype correctly.
 const NumericFilter: React.FC<NumericFilterProps> = ({
   numericFilter,
   updateFilter,

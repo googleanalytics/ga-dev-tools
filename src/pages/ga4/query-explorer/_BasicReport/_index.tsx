@@ -16,6 +16,7 @@ import Response from "../_Response"
 import LabeledCheckbox from "../../../../components/LabeledCheckbox"
 import Filter, { FilterType } from "../_Filter/_index"
 import { RequestStatus } from "../../../../types"
+import OrderBys from "../_OrderBys"
 
 const useStyles = makeStyles(theme => ({
   dateRanges: {
@@ -73,6 +74,8 @@ const BasicReport = () => {
     setOffset,
     limit,
     setLimit,
+    orderBys,
+    setOrderBys,
   } = useInputs()
   const useMake = useMakeRequest({
     property: propertyString,
@@ -83,6 +86,7 @@ const BasicReport = () => {
     dateRanges,
     dimensions,
     metrics,
+    orderBys,
   })
   const {
     validRequest,
@@ -168,6 +172,14 @@ const BasicReport = () => {
         value={limit}
         helperText="The maximum number of rows to return."
         onChange={setLimit}
+      />
+      <OrderBys
+        metric
+        metricOptions={metrics}
+        dimension
+        dimensionOptions={dimensions}
+        orderBys={orderBys}
+        setOrderBys={setOrderBys}
       />
       <div>
         <LabeledCheckbox

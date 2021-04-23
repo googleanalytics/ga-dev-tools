@@ -88,6 +88,7 @@ export enum StorageKey {
   ga4RequestComposerBasicSelectedOffset = "/ga4/request-composer/basic-report/offset",
   ga4RequestComposerBasicSelectedLimit = "/ga4/request-composer/basic-report/limit",
   ga4RequestComposerBasicDateRanges = "/ga4/request-composer/basic-report/date-ranges",
+  ga4RequestComposerBasicOrderBys = "/ga4/request-composer/basic-report/order-bys",
 
   // Query Explorer
   queryExplorerDimensions = "query-explorer/dimensions",

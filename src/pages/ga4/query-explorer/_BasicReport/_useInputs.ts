@@ -10,6 +10,8 @@ import {
 import { StorageKey } from "../../../../constants"
 import { FilterExpression } from "../_Filter/_index"
 
+type OrderBy = gapi.client.analyticsdata.OrderBy
+
 const useInputs = () => {
   const [showRequestJSON, setShowRequestJSON] = usePersistentBoolean(
     StorageKey.ga4RequestComposerBasicShowRequestJSON,
@@ -28,6 +30,10 @@ const useInputs = () => {
   )
   const [limit, setLimit] = usePersistentString(
     StorageKey.ga4RequestComposerBasicSelectedLimit
+  )
+
+  const [orderBys, setOrderBys] = usePersistantObject<OrderBy[]>(
+    StorageKey.ga4RequestComposerBasicOrderBys
   )
 
   const [inputPropertyString, setInputPropertyString] = usePersistentString(
@@ -68,6 +74,8 @@ const useInputs = () => {
     setOffset,
     limit,
     setLimit,
+    orderBys,
+    setOrderBys,
   }
 }
 export default useInputs

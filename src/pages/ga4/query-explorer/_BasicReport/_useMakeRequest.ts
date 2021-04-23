@@ -8,7 +8,9 @@ import { StorageKey } from "../../../../constants"
 import { FilterExpression } from "../_Filter/_index"
 
 type RunReportRequest = gapi.client.analyticsdata.RunReportRequest
+type OrderBy = gapi.client.analyticsdata.OrderBy
 export type RunReportResponse = gapi.client.analyticsdata.RunReportResponse
+
 type UseMakeRequestArgs = {
   property: string | undefined
   dimensionFilter: FilterExpression | undefined
@@ -18,6 +20,7 @@ type UseMakeRequestArgs = {
   metrics: GA4Metrics
   offset: string | undefined
   limit: string | undefined
+  orderBys: OrderBy[] | undefined
 }
 
 type Common = {
@@ -40,6 +43,7 @@ const useMakeRequest = ({
   metricFilter,
   offset,
   limit,
+  orderBys,
 }: UseMakeRequestArgs): Requestable<
   Common,
   Common,
@@ -85,6 +89,9 @@ const useMakeRequest = ({
     if (limit !== undefined && limit !== "") {
       r.limit = limit
     }
+    if (orderBys !== undefined && orderBys.length !== 0) {
+      r.orderBys = orderBys
+    }
     return r
   }, [
     dateRanges,
@@ -94,6 +101,7 @@ const useMakeRequest = ({
     metricFilter,
     offset,
     limit,
+    orderBys,
   ])
 
   const validRequest = useMemo(() => {
