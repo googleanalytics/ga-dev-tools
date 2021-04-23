@@ -17,6 +17,9 @@ const useInputs = () => {
   const [dimensionFilter, setDimensionFilter] = useState<FilterExpression>()
   const [metrics, setMetrics] = useState<GA4Metrics>()
   const [metricFilter, setMetricFilter] = useState<FilterExpression>()
+  const [offset, setOffset] = usePersistentString(
+    StorageKey.ga4RequestComposerBasicSelectedOffset
+  )
 
   const [inputPropertyString, setInputPropertyString] = usePersistentString(
     StorageKey.ga4RequestComposerBasicSelectedPropertyString
@@ -52,6 +55,8 @@ const useInputs = () => {
     setDimensionFilter,
     metricFilter,
     setMetricFilter,
+    offset,
+    setOffset,
   }
 }
 export default useInputs

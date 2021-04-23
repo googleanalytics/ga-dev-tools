@@ -16,6 +16,7 @@ type UseMakeRequestArgs = {
   dateRanges: DateRange[]
   dimensions: GA4Dimensions
   metrics: GA4Metrics
+  offset: string | undefined
 }
 
 type Common = {
@@ -36,6 +37,7 @@ const useMakeRequest = ({
   metrics,
   dimensionFilter,
   metricFilter,
+  offset,
 }: UseMakeRequestArgs): Requestable<
   Common,
   Common,
@@ -72,8 +74,11 @@ const useMakeRequest = ({
     if (metricFilter !== undefined) {
       r.metricFilter = metricFilter
     }
+    if (offset !== undefined && offset !== "") {
+      r.offset = offset
+    }
     return r
-  }, [dateRanges, dimensions, metrics, dimensionFilter, metricFilter])
+  }, [dateRanges, dimensions, metrics, dimensionFilter, metricFilter, offset])
 
   const validRequest = useMemo(() => {
     return request !== undefined

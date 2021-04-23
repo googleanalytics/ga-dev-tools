@@ -69,10 +69,13 @@ const BasicReport = () => {
     setDimensionFilter,
     metricFilter,
     setMetricFilter,
+    offset,
+    setOffset,
   } = useInputs()
   const useMake = useMakeRequest({
     property: propertyString,
     dimensionFilter,
+    offset,
     metricFilter,
     dateRanges,
     dimensions,
@@ -142,6 +145,14 @@ const BasicReport = () => {
         type={FilterType.Metric}
         fields={metrics}
         setFilterExpression={setMetricFilter}
+      />
+      <LinkedTextField
+        href={Url.runReportOffset}
+        linkTitle="See offset on devsite."
+        label="offset"
+        value={offset}
+        helperText="The row count of the start row. The first row is row 0."
+        onChange={setOffset}
       />
       <div>
         <LabeledCheckbox

@@ -5,7 +5,7 @@ import ExternalLink from "./ExternalLink"
 export interface LinkedTextFieldProps {
   href: string
   linkTitle: string
-  value: string
+  value: string | undefined
   label: string
   onChange: (e: string) => void
   helperText: string
@@ -32,7 +32,7 @@ const LinkedTextField: React.FC<LinkedTextFieldProps> = ({
       variant="outlined"
       fullWidth
       label={label}
-      value={value}
+      value={value === undefined ? null : value}
       onChange={e => onChange(e.target.value)}
       required={required}
       helperText={helperText}
