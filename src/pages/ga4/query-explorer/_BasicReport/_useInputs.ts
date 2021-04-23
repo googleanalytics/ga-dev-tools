@@ -2,7 +2,11 @@ import { useState, useEffect, useMemo } from "react"
 import { SelectableProperty } from "../../../../components/GA4PropertySelector"
 import { DateRange } from "../_DateRanges"
 import { GA4Dimensions, GA4Metrics } from "../../../../components/GA4Pickers"
-import { usePersistentString, usePersistentBoolean } from "../../../../hooks"
+import {
+  usePersistentString,
+  usePersistentBoolean,
+  usePersistantObject,
+} from "../../../../hooks"
 import { StorageKey } from "../../../../constants"
 import { FilterExpression } from "../_Filter/_index"
 
@@ -12,7 +16,9 @@ const useInputs = () => {
     true
   )
   const [selectedProperty, setSelectedProperty] = useState<SelectableProperty>()
-  const [dateRanges, setDateRanges] = useState<DateRange[]>([])
+  const [dateRanges, setDateRanges] = usePersistantObject<DateRange[]>(
+    StorageKey.ga4RequestComposerBasicDateRanges
+  )
   const [dimensions, setDimensions] = useState<GA4Dimensions>()
   const [dimensionFilter, setDimensionFilter] = useState<FilterExpression>()
   const [metrics, setMetrics] = useState<GA4Metrics>()

@@ -1,71 +1,82 @@
 import * as React from "react"
-import { useState } from "react"
 import { TextField, makeStyles, Typography } from "@material-ui/core"
 import { TooltipIconButton, SAB } from "../../../components/Buttons"
 import { Delete, Add } from "@material-ui/icons"
 import { Dispatch } from "../../../types"
 import InlineCode from "../../../components/InlineCode"
-import clx from "classnames"
+import clsx from "classnames"
+import uuid from "uuid/v4"
 
 export interface DateRange {
+  name?: string
   id: string
   from: string
   to: string
 }
 
-let id = 0
-const nextId = () => {
-  id++
-  return id
-}
-const useDateRanges = (): {
-  dateRanges: DateRange[]
+type UseDateRanges = (arg: {
+  setDateRanges: Dispatch<DateRange[] | undefined>
+}) => {
   addDateRange: () => void
   removeDateRange: (id: string) => void
   updateFrom: (id: string, newFrom: string) => void
   updateTo: (id: string, newTo: string) => void
-} => {
-  const [dateRanges, setDateRanges] = useState<DateRange[]>([
-    {
-      from: "7daysAgo",
-      to: "today",
-      id: `dateRange${nextId()}`,
-    },
-  ])
-
+  updateName: (id: string, newName: string) => void
+}
+const useDateRanges: UseDateRanges = ({ setDateRanges }) => {
   const addDateRange = React.useCallback(() => {
-    setDateRanges(old => {
+    setDateRanges((old = []) => {
       return old.concat([
         {
           from: "",
           to: "",
-          id: `dateRange${nextId()}`,
+          id: uuid(),
         },
       ])
     })
-  }, [])
+  }, [setDateRanges])
 
-  const removeDateRange = React.useCallback((id: string) => {
-    setDateRanges(old => old.filter(dateRange => dateRange.id !== id))
-  }, [])
+  const removeDateRange = React.useCallback(
+    (id: string) => {
+      setDateRanges((old = []) => old.filter(dateRange => dateRange.id !== id))
+    },
+    [setDateRanges]
+  )
 
-  const updateFrom = React.useCallback((id: string, newValue: string) => {
-    setDateRanges(old =>
-      old.map(dateRange =>
-        dateRange.id !== id ? dateRange : { ...dateRange, from: newValue }
+  const updateFrom = React.useCallback(
+    (id: string, newValue: string) => {
+      setDateRanges((old = []) =>
+        old.map(dateRange =>
+          dateRange.id !== id ? dateRange : { ...dateRange, from: newValue }
+        )
       )
-    )
-  }, [])
+    },
+    [setDateRanges]
+  )
 
-  const updateTo = React.useCallback((id: string, newValue: string) => {
-    setDateRanges(old =>
-      old.map(dateRange =>
-        dateRange.id !== id ? dateRange : { ...dateRange, to: newValue }
+  const updateTo = React.useCallback(
+    (id: string, newValue: string) => {
+      setDateRanges((old = []) =>
+        old.map(dateRange =>
+          dateRange.id !== id ? dateRange : { ...dateRange, to: newValue }
+        )
       )
-    )
-  }, [])
+    },
+    [setDateRanges]
+  )
 
-  return { dateRanges, addDateRange, removeDateRange, updateFrom, updateTo }
+  const updateName = React.useCallback(
+    (id: string, newValue: string) => {
+      setDateRanges((old = []) =>
+        old.map(dateRange =>
+          dateRange.id !== id ? dateRange : { ...dateRange, name: newValue }
+        )
+      )
+    },
+    [setDateRanges]
+  )
+
+  return { addDateRange, removeDateRange, updateFrom, updateTo, updateName }
 }
 
 const useStyles = makeStyles(theme => ({
@@ -87,6 +98,9 @@ const useStyles = makeStyles(theme => ({
     marginBottom: theme.spacing(1),
     display: "flex",
   },
+  name: {
+    width: "45ch",
+  },
   from: {
     marginRight: theme.spacing(1),
   },
@@ -102,29 +116,37 @@ const dateRange = (
 )
 
 const DateRanges: React.FC<{
-  onChange: Dispatch<DateRange[]>
+  dateRanges: DateRange[] | undefined
+  setDateRanges: Dispatch<DateRange[] | undefined>
   className?: string
-}> = ({ onChange, className }) => {
+}> = ({ dateRanges, setDateRanges, className }) => {
   const classes = useStyles()
   const {
-    dateRanges,
     addDateRange,
     removeDateRange,
     updateFrom,
     updateTo,
-  } = useDateRanges()
-
-  React.useEffect(() => {
-    onChange(dateRanges)
-  }, [dateRanges, onChange])
+    updateName,
+  } = useDateRanges({ setDateRanges })
 
   return (
-    <section className={clx(classes.dateRanges, className)}>
+    <section className={clsx(classes.dateRanges, className)}>
       <Typography variant="subtitle2" className={classes.heading}>
         date ranges
       </Typography>
-      {dateRanges.map(dateRange => (
+      {dateRanges?.map(dateRange => (
         <section key={dateRange.id} className={classes.dateRange}>
+          <TextField
+            fullWidth
+            variant="outlined"
+            size="small"
+            label="name"
+            value={dateRange.name}
+            className={clsx(classes.from, classes.name)}
+            onChange={e => {
+              updateName(dateRange.id, e.target.value)
+            }}
+          />
           <TextField
             fullWidth
             variant="outlined"

@@ -13,7 +13,7 @@ type UseMakeRequestArgs = {
   property: string | undefined
   dimensionFilter: FilterExpression | undefined
   metricFilter: FilterExpression | undefined
-  dateRanges: DateRange[]
+  dateRanges: DateRange[] | undefined
   dimensions: GA4Dimensions
   metrics: GA4Metrics
   offset: string | undefined
@@ -62,10 +62,13 @@ const useMakeRequest = ({
       dimensions: dimensions.map(dimension => ({
         name: dimension.apiName!,
       })),
-      dateRanges: dateRanges.map(({ from, to }) => ({
+    }
+    if (dateRanges !== undefined) {
+      r.dateRanges = dateRanges.map(({ from, to, name }) => ({
         startDate: from,
         endDate: to,
-      })),
+        name: name,
+      }))
     }
     if (metrics !== undefined) {
       r.metrics = metrics.map(metric => ({ name: metric.apiName }))

@@ -136,7 +136,11 @@ const BasicReport = () => {
           </>
         }
       />
-      <DateRanges className={classes.dateRanges} onChange={setDateRanges} />
+      <DateRanges
+        className={classes.dateRanges}
+        setDateRanges={setDateRanges}
+        dateRanges={dateRanges}
+      />
       <Filter
         storageKey={StorageKey.ga4RequestComposerBasicDimensionFilter}
         type={FilterType.Dimension}
