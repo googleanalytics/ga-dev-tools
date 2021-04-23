@@ -46,12 +46,12 @@ const useTab = (): [number, React.Dispatch<React.SetStateAction<number>>] => {
   return [tab, setTab]
 }
 
-const RequestComposer = () => {
+const QueryExplorer = () => {
   const [tab, setTab] = useTab()
   return (
     <>
       <Typography>
-        The GA4 Request Composer helps you to create valid requests for the{" "}
+        The GA4 Query Explorer helps you to create valid requests for the{" "}
         {dataAPI}.
       </Typography>
 
@@ -72,4 +72,4 @@ const RequestComposer = () => {
   )
 }
 
-export default RequestComposer
+export default QueryExplorer
