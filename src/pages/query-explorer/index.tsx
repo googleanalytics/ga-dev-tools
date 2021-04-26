@@ -31,8 +31,11 @@ import {
 import { PAB } from "../../components/Buttons"
 import { useInputs, useDataAPIRequest } from "./_hooks"
 import LabeledCheckbox from "../../components/LabeledCheckbox"
+import ExternalLink from "../../components/ExternalLink"
 
-const coreReportingApi = <a href={Url.coreReportingApi}>Core Reporting API</a>
+const coreReportingApi = (
+  <ExternalLink href={Url.coreReportingApi}>Core Reporting API</ExternalLink>
+)
 
 const useStyles = makeStyles(theme => ({
   inputs: {
@@ -73,15 +76,15 @@ const useStyles = makeStyles(theme => ({
 }))
 
 const startDateLink = (
-  <a href="https://developers.google.com/analytics/devguides/reporting/core/v3/reference#startDate">
+  <ExternalLink href="https://developers.google.com/analytics/devguides/reporting/core/v3/reference#startDate">
     start-date
-  </a>
+  </ExternalLink>
 )
 
 const endDateLink = (
-  <a href="https://developers.google.com/analytics/devguides/reporting/core/v3/reference#endDate">
+  <ExternalLink href="https://developers.google.com/analytics/devguides/reporting/core/v3/reference#endDate">
     end-date
-  </a>
+  </ExternalLink>
 )
 
 export type SortableColumn = Column & { sort: "ASCENDING" | "DESCENDING" }

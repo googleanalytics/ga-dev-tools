@@ -19,6 +19,7 @@ import Layout from "../../components/layout"
 import { makeStyles } from "@material-ui/core/styles"
 import Img from "gatsby-image"
 import { Url } from "../../constants"
+import ExternalLink from "../../components/ExternalLink"
 
 const useStyles = makeStyles({ spreadsheetImage: { maxWidth: "726px" } })
 
@@ -53,13 +54,15 @@ const SpreadsheetAddOn = ({ location: { pathname } }) => {
 
       <Typography variant="body1">
         The{" "}
-        <a href={Url.spreadsheetAddOn}>Google Analytics Spreadsheet Add-on</a>{" "}
+        <ExternalLink href={Url.spreadsheetAddOn}>
+          Google Analytics Spreadsheet Add-on
+        </ExternalLink>{" "}
         makes it easier for Google Analytics users to access, visualize, share,
         and manipulate their data in Google Spreadsheets. The add-on gives you
         the full power of the Google Analytics{" "}
-        <a href={Url.reportingApis}>
+        <ExternalLink href={Url.reportingApis}>
           Core and Multi-Channel Funnels Reporting APIs
-        </a>{" "}
+        </ExternalLink>{" "}
         without requiring you to know or write any code.
       </Typography>
 
@@ -92,14 +95,17 @@ const SpreadsheetAddOn = ({ location: { pathname } }) => {
       <Typography variant="body1">
         To start using the Google Analytics Spreadsheet add-on you can simply
         download it from the{" "}
-        <a href={Url.spreadsheetAddOnExternal}>Chrome Web Store</a> and try
-        adding it to one of your spreadsheets today.
+        <ExternalLink href={Url.spreadsheetAddOnExternal}>
+          Chrome Web Store
+        </ExternalLink>{" "}
+        and try adding it to one of your spreadsheets today.
       </Typography>
 
       <Typography variant="body1">
         If you have questions, check out the{" "}
-        <a href={Url.spreadsheetAddOn}>solution guide</a> which explains how to
-        install and use the add-on and goes over each option in detail.
+        <ExternalLink href={Url.spreadsheetAddOn}>solution guide</ExternalLink>{" "}
+        which explains how to install and use the add-on and goes over each
+        option in detail.
       </Typography>
     </Layout>
   )

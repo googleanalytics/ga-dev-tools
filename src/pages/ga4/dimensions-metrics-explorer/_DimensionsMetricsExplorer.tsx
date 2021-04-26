@@ -21,8 +21,9 @@ import { useMemo, useState } from "react"
 import Info from "../../../components/Info"
 import Spinner from "../../../components/Spinner"
 import Field from "./_Field"
+import ExternalLink from "../../../components/ExternalLink"
 
-const adminAPI = <a href={Url.ga4AdminAPI}>Admin API</a>
+const adminAPI = <ExternalLink href={Url.ga4AdminAPI}>Admin API</ExternalLink>
 
 const useStyles = makeStyles(theme => ({
   clearSearchButton: {

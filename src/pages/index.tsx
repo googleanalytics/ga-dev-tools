@@ -19,6 +19,7 @@ import Img from "gatsby-image"
 import Typography from "@material-ui/core/Typography"
 import { makeStyles } from "@material-ui/core/styles"
 import { Url } from "../constants"
+import ExternalLink from "../components/ExternalLink"
 
 const useStyles = makeStyles({ partnersImage: { maxWidth: "600px" } })
 
@@ -58,8 +59,11 @@ const IndexPage = ({ location: { pathname } }) => (
     </Typography>
     <Typography variant="body1">
       The code for this entire site is open source and{" "}
-      <a href={Url.gaDevToolsGitHub}>available on GitHub</a>. We encourage you
-      to take a look if you'd like to see how anything is done.
+      <ExternalLink href={Url.gaDevToolsGitHub}>
+        available on GitHub
+      </ExternalLink>
+      . We encourage you to take a look if you'd like to see how anything is
+      done.
     </Typography>
     <Typography variant="h3">Demos</Typography>
     <Typography variant="body1">
@@ -91,24 +95,34 @@ const IndexPage = ({ location: { pathname } }) => (
     <Typography variant="body1" component="ul">
       <li>
         You may report bugs by{" "}
-        <a href={Url.gaDevToolsGitHubNewIssue}>submitting an issue</a> on
-        GitHub.
+        <ExternalLink href={Url.gaDevToolsGitHubNewIssue}>
+          submitting an issue
+        </ExternalLink>{" "}
+        on GitHub.
       </li>
       <li>
         You may also use GitHub to{" "}
-        <a href={Url.gaDevToolsGitHubNewIssue}>request a new demo or tool</a>.
+        <ExternalLink href={Url.gaDevToolsGitHubNewIssue}>
+          request a new demo or tool
+        </ExternalLink>
+        .
       </li>
     </Typography>
     <Typography variant="h3">For the Google Analytics platform</Typography>
     <Typography component="ul" variant="body1">
       <li>
         Documentation for all Google Analytics API, libraries and SDKs can be
-        found on <a href={Url.gaDevsite}>Google Analytics Developers</a>.
+        found on{" "}
+        <ExternalLink href={Url.gaDevsite}>
+          Google Analytics Developers
+        </ExternalLink>
+        .
       </li>
       <li>
         If you have questions, please refer to the{" "}
-        <a href={Url.gaDevsiteHelp}>getting help</a> section of the developers
-        site to find the best place to get your questions answered.
+        <ExternalLink href={Url.gaDevsiteHelp}>getting help</ExternalLink>{" "}
+        section of the developers site to find the best place to get your
+        questions answered.
       </li>
     </Typography>
   </Layout>

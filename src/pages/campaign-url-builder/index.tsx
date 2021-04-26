@@ -35,13 +35,18 @@ import useShortenLink from "./_useShortenLink"
 import { extractParamsFromWebsiteUrl, websiteUrlFor } from "./_params"
 import { usePersistentString, usePersistentBoolean, IS_SSR } from "../../hooks"
 import LabeledCheckbox from "../../components/LabeledCheckbox"
+import ExternalLink from "../../components/ExternalLink"
 
 const iosCampaignTracking = (
-  <a href={Url.iosCampaignMeasurement}>iOS Campaign Tracking URL Builder</a>
+  <ExternalLink href={Url.iosCampaignMeasurement}>
+    iOS Campaign Tracking URL Builder
+  </ExternalLink>
 )
 
 const googlePlayUrlBuilder = (
-  <a href={Url.googlePlayURLBuilder}>Google Play URL Builder</a>
+  <ExternalLink href={Url.googlePlayURLBuilder}>
+    Google Play URL Builder
+  </ExternalLink>
 )
 
 interface WarningsForProps {
@@ -176,7 +181,9 @@ const useStyles = makeStyles(theme => ({
   },
 }))
 
-const customCampaigns = <a href={Url.aboutCustomCampaigns}>Custom Campaigns</a>
+const customCampaigns = (
+  <ExternalLink href={Url.aboutCustomCampaigns}>Custom Campaigns</ExternalLink>
+)
 
 interface GeneratedUrlProps {
   websiteUrl: string
@@ -648,28 +655,32 @@ export const CampaignUrlBuilder = () => {
       <Typography variant="h2">Related Resources</Typography>
       <Typography variant="body1" component="ul">
         <li>
-          <a href={Url.aboutCampaign}>About Campaigns</a>
+          <ExternalLink href={Url.aboutCampaign}>About Campaigns</ExternalLink>
         </li>
         <li>
-          <a href={Url.aboutCustomCampaigns}>About Custom Campaigns</a>
+          <ExternalLink href={Url.aboutCustomCampaigns}>
+            About Custom Campaigns
+          </ExternalLink>
         </li>
         <li>
-          <a href={Url.bestPracticesForCreatingCustomCampaigns}>
+          <ExternalLink href={Url.bestPracticesForCreatingCustomCampaigns}>
             Best Practices for creating Custom Campaigns
-          </a>
+          </ExternalLink>
         </li>
         <li>
-          <a href={Url.aboutReferralTrafficReport}>
+          <ExternalLink href={Url.aboutReferralTrafficReport}>
             About the Refferal Traffic report
-          </a>
+          </ExternalLink>
         </li>
         <li>
-          <a href={Url.aboutTrafficSourceDimensions}>
+          <ExternalLink href={Url.aboutTrafficSourceDimensions}>
             About traffic source dimensions
-          </a>
+          </ExternalLink>
         </li>
         <li>
-          <a href={Url.googleAdsAutoTagging}>Google Ads Auto-Tagging</a>
+          <ExternalLink href={Url.googleAdsAutoTagging}>
+            Google Ads Auto-Tagging
+          </ExternalLink>
         </li>
       </Typography>
     </>

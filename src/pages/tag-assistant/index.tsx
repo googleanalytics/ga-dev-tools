@@ -17,16 +17,20 @@ import Typography from "@material-ui/core/Typography"
 import { Url } from "../../constants"
 
 import Layout from "../../components/layout"
+import ExternalLink from "../../components/ExternalLink"
 
 const TagAssistant = ({ location: { pathname } }) => {
   return (
     <Layout title="Tag Assistant" pathname={pathname}>
       <Typography variant="body1">
-        Google <a href={Url.tagAssistantExternal}>Tag Assistant</a> is a Chrome
-        Extension that helps you validate the measurement code on your website
-        and troubleshoot common problems. It's an ideal tool for debugging and
-        testing your analytics.js implementations locally and ensuring
-        everything is correct before deploying your code to production.
+        Google{" "}
+        <ExternalLink href={Url.tagAssistantExternal}>
+          Tag Assistant
+        </ExternalLink>{" "}
+        is a Chrome Extension that helps you validate the measurement code on
+        your website and troubleshoot common problems. It's an ideal tool for
+        debugging and testing your analytics.js implementations locally and
+        ensuring everything is correct before deploying your code to production.
       </Typography>
 
       <Typography variant="body1">
@@ -41,7 +45,10 @@ const TagAssistant = ({ location: { pathname } }) => {
         Walton, Developer Programs Engineer on the Google Analytics team,
         demonstrates how you can use Tag Assistant to catch errors and check the
         validity of advanced measurement implementations such as{" "}
-        <a href={Url.crossDomainMeasurement}>cross-domain measurement</a>.
+        <ExternalLink href={Url.crossDomainMeasurement}>
+          cross-domain measurement
+        </ExternalLink>
+        .
       </Typography>
 
       <iframe
@@ -61,12 +68,14 @@ const TagAssistant = ({ location: { pathname } }) => {
 
       <Typography variant="body1" component="ul">
         <li>
-          <a href={Url.protocolParameters}>
+          <ExternalLink href={Url.protocolParameters}>
             Measurement Protocol parameter reference
-          </a>
+          </ExternalLink>
         </li>
         <li>
-          <a href={Url.crossDomainMeasurement}>Cross-domain Linker plugin</a>
+          <ExternalLink href={Url.crossDomainMeasurement}>
+            Cross-domain Linker plugin
+          </ExternalLink>
         </li>
       </Typography>
 
@@ -79,12 +88,14 @@ const TagAssistant = ({ location: { pathname } }) => {
 
       <Typography variant="body1" component="ul">
         <li>
-          <a href={Url.aboutTagAssistant}>About Tag Assistant</a>
+          <ExternalLink href={Url.aboutTagAssistant}>
+            About Tag Assistant
+          </ExternalLink>
         </li>
         <li>
-          <a href={Url.aboutTagAssistantRecordings}>
+          <ExternalLink href={Url.aboutTagAssistantRecordings}>
             About Tag Assistant Recordings
-          </a>
+          </ExternalLink>
         </li>
       </Typography>
     </Layout>

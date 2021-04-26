@@ -22,6 +22,7 @@ import { Url } from "../../constants"
 import { Property } from "./_types"
 import * as hitUtils from "./_hit"
 import * as hooks from "./_hooks"
+import ExternalLink from "../../components/ExternalLink"
 
 interface HitBuilderProps {
   properties: Property[]
@@ -57,11 +58,13 @@ export const HitBuilder: React.FC<HitBuilderProps> = ({ properties }) => {
     <>
       <Typography variant="body1">
         This tools allows you to construct and validate{" "}
-        <a href={Url.measurementProtocol}>Measurement Protocol</a> hits using
-        the{" "}
-        <a href={Url.validatingMeasurement}>
+        <ExternalLink href={Url.measurementProtocol}>
+          Measurement Protocol
+        </ExternalLink>{" "}
+        hits using the{" "}
+        <ExternalLink href={Url.validatingMeasurement}>
           Measurement Protocol Validation Server
-        </a>
+        </ExternalLink>
         .
       </Typography>
 
@@ -115,10 +118,14 @@ export const HitBuilder: React.FC<HitBuilderProps> = ({ properties }) => {
 
       <Typography variant="body1" component="ul">
         <li>
-          <a href={Url.protocolParameters}>Parameter reference</a>
+          <ExternalLink href={Url.protocolParameters}>
+            Parameter reference
+          </ExternalLink>
         </li>
         <li>
-          <a href={Url.commonHits}>Examples of common hits</a>
+          <ExternalLink href={Url.commonHits}>
+            Examples of common hits
+          </ExternalLink>
         </li>
       </Typography>
     </>

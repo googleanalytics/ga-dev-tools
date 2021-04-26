@@ -17,6 +17,7 @@ import * as React from "react"
 import Layout from "../../components/layout"
 import { Typography, makeStyles } from "@material-ui/core"
 import Tool from "./_RequestComposer"
+import ExternalLink from "../../components/ExternalLink"
 
 const useStyles = makeStyles(theme => ({
   list: {
@@ -35,24 +36,24 @@ const RequestComposer = () => {
       </Typography>
       <ul className={classes.list}>
         <li>
-          <a href="https://developers.google.com/analytics/devguides/reporting/core/v4/basics#histogram_buckets">
+          <ExternalLink href="https://developers.google.com/analytics/devguides/reporting/core/v4/basics#histogram_buckets">
             Histogram request
-          </a>
+          </ExternalLink>
         </li>
         <li>
-          <a href="https://developers.google.com/analytics/devguides/reporting/core/v4/advanced#pivots">
+          <ExternalLink href="https://developers.google.com/analytics/devguides/reporting/core/v4/advanced#pivots">
             Pivot request
-          </a>
+          </ExternalLink>
         </li>
         <li>
-          <a href="https://developers.google.com/analytics/devguides/reporting/core/v4/advanced#cohorts">
+          <ExternalLink href="https://developers.google.com/analytics/devguides/reporting/core/v4/advanced#cohorts">
             Cohort request
-          </a>
+          </ExternalLink>
         </li>
         <li>
-          <a href="https://developers.google.com/analytics/devguides/reporting/core/v4/basics#expressions">
+          <ExternalLink href="https://developers.google.com/analytics/devguides/reporting/core/v4/basics#expressions">
             metric expressions
-          </a>
+          </ExternalLink>
         </li>
       </ul>
 
@@ -62,19 +63,19 @@ const RequestComposer = () => {
       </Typography>
       <ul className={classes.list}>
         <li>
-          <a href="https://developers.google.com/analytics/devguides/reporting/core/v4/basics#multiple_date_ranges">
+          <ExternalLink href="https://developers.google.com/analytics/devguides/reporting/core/v4/basics#multiple_date_ranges">
             multiple date ranges
-          </a>
+          </ExternalLink>
         </li>
         <li>
-          <a href="https://developers.google.com/analytics/devguides/reporting/core/v4/basics#segments">
+          <ExternalLink href="https://developers.google.com/analytics/devguides/reporting/core/v4/basics#segments">
             advanced segment configuration
-          </a>
+          </ExternalLink>
         </li>
         <li>
-          <a href="https://developers.google.com/analytics/devguides/reporting/core/v4/basics#filtering_1">
+          <ExternalLink href="https://developers.google.com/analytics/devguides/reporting/core/v4/basics#filtering_1">
             advanced filter configuration
-          </a>
+          </ExternalLink>
         </li>
       </ul>
 

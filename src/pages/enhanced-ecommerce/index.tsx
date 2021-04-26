@@ -21,6 +21,7 @@ import Img from "gatsby-image"
 
 import Layout from "../../components/layout"
 import CodeBlock from "../../components/CodeBlock"
+import ExternalLink from "../../components/ExternalLink"
 
 const useStyles = makeStyles(theme => ({
   demoScreenshot: {
@@ -58,24 +59,36 @@ const DemoScreenshot = () => {
 }
 
 const demoStore = (
-  <a href={Url.enhancedEcommerceDemo}>Enhanced Ecommerce Demo Store</a>
+  <ExternalLink href={Url.enhancedEcommerceDemo}>
+    Enhanced Ecommerce Demo Store
+  </ExternalLink>
 )
 
 const enhancedEcommerceHelp = (
-  <a href={Url.enhancedEcommerceHelpCenter}>Enhanced Ecommerce</a>
+  <ExternalLink href={Url.enhancedEcommerceHelpCenter}>
+    Enhanced Ecommerce
+  </ExternalLink>
 )
 
 const googleTagManager = (
-  <a href={Url.googleTagManagerEnhancedEcommerce}>Google Tag Manager</a>
+  <ExternalLink href={Url.googleTagManagerEnhancedEcommerce}>
+    Google Tag Manager
+  </ExternalLink>
 )
 
 const enhancedEcommerceAnalyticsJs = (
-  <a href={Url.analyticsJSEnhancedEcommerce}>Enhanced Ecommerce (ec.js)</a>
+  <ExternalLink href={Url.analyticsJSEnhancedEcommerce}>
+    Enhanced Ecommerce (ec.js)
+  </ExternalLink>
 )
 
-const gaDebugger = <a href={Url.gaDebugger}>Google Analytics Debugger</a>
+const gaDebugger = (
+  <ExternalLink href={Url.gaDebugger}>Google Analytics Debugger</ExternalLink>
+)
 
-const analyticsJs = <a href={Url.analyticsJSDevsite}>analytics.js</a>
+const analyticsJs = (
+  <ExternalLink href={Url.analyticsJSDevsite}>analytics.js</ExternalLink>
+)
 
 const gtmExampleCode = `
 dataLayer.push({
