@@ -26,7 +26,7 @@ const LinkedTextField: React.FC<LinkedTextFieldProps> = ({
   return (
     <TextField
       InputProps={{
-        endAdornment: <ExternalLink href={href} title={linkTitle} />,
+        endAdornment: <ExternalLink href={href} title={linkTitle} hover />,
       }}
       size="small"
       variant="outlined"

@@ -3,8 +3,11 @@ import { Typography, Tabs, Tab, Box } from "@material-ui/core"
 import { Url, StorageKey } from "../../../constants"
 import { useEffect } from "react"
 import BasicReport from "./_BasicReport/_index"
+import ExternalLink from "../../../components/ExternalLink"
 
-const dataAPI = <a href={Url.ga4DataAPI}>Analytics Data API</a>
+const dataAPI = (
+  <ExternalLink href={Url.ga4DataAPI}>Analytics Data API</ExternalLink>
+)
 
 const TabPanel: React.FC<{ value: number; index: number }> = ({
   value,

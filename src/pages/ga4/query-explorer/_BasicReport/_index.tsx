@@ -17,6 +17,7 @@ import LabeledCheckbox from "../../../../components/LabeledCheckbox"
 import Filter, { FilterType } from "../_Filter/_index"
 import { RequestStatus } from "../../../../types"
 import OrderBys from "../_OrderBys"
+import ExternalLink from "../../../../components/ExternalLink"
 
 const useStyles = makeStyles(theme => ({
   dateRanges: {
@@ -46,12 +47,16 @@ const shouldCollapseRequest = ({ namespace }: any) => {
 }
 
 const dimensionsLink = (
-  <a href={Url.ga4RequestComposerBasicDimensions}>dimensions</a>
+  <ExternalLink href={Url.ga4RequestComposerBasicDimensions}>
+    dimensions
+  </ExternalLink>
 )
 
-const iso4217 = <a href={Url.iso4217Wiki}>ISO 4217</a>
+const iso4217 = <ExternalLink href={Url.iso4217Wiki}>ISO 4217</ExternalLink>
 
-const metricsLink = <a href={Url.ga4RequestComposerBasicMetrics}>metrics</a>
+const metricsLink = (
+  <ExternalLink href={Url.ga4RequestComposerBasicMetrics}>metrics</ExternalLink>
+)
 
 const BasicReport = () => {
   const classes = useStyles()

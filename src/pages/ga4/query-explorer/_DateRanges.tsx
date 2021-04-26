@@ -6,6 +6,7 @@ import { Dispatch } from "../../../types"
 import InlineCode from "../../../components/InlineCode"
 import clsx from "classnames"
 import uuid from "uuid/v4"
+import ExternalLink from "../../../components/ExternalLink"
 
 export interface DateRange {
   name?: string
@@ -113,9 +114,9 @@ const useStyles = makeStyles(theme => ({
 }))
 
 const dateRange = (
-  <a href="https://developers.google.com/analytics/devguides/reporting/data/v1/rest/v1beta/DateRange">
+  <ExternalLink href="https://developers.google.com/analytics/devguides/reporting/data/v1/rest/v1beta/DateRange">
     DateRange
-  </a>
+  </ExternalLink>
 )
 
 const DateRanges: React.FC<{

@@ -13,11 +13,12 @@ import {
   GA4Dimensions,
   GA4Metrics,
 } from "../../../components/GA4Pickers"
+import ExternalLink from "../../../components/ExternalLink"
 
 const orderBysLink = (
-  <a href="https://developers.google.com/analytics/devguides/reporting/data/v1/rest/v1beta/properties/runReport#body.request_body.FIELDS.order_bys">
+  <ExternalLink href="https://developers.google.com/analytics/devguides/reporting/data/v1/rest/v1beta/properties/runReport#body.request_body.FIELDS.order_bys">
     orderBys
-  </a>
+  </ExternalLink>
 )
 
 type OrderBy = gapi.client.analyticsdata.OrderBy
