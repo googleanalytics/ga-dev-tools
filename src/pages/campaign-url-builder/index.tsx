@@ -272,7 +272,7 @@ export const CampaignUrlBuilder = () => {
             </TableCell>
             <TableCell>
               <Typography variant="body1">
-                Used to identify which Google Ads campaign this referall link
+                Used to identify which Google Ads campaign this referral
                 references. Use <InlineCode>utm_id</InlineCode> to identify a
                 specific Google Ads campaign.
                 <br />
