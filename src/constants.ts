@@ -19,6 +19,9 @@ export enum Url {
   runReportOffset = "https://developers.google.com/analytics/devguides/reporting/data/v1/rest/v1beta/properties/runReport#body.request_body.FIELDS.offset",
   ga4RequestComposerBasicMetrics = "https://developers.google.com/analytics/devguides/reporting/data/v1/rest/v1beta/properties/runReport#body.request_body.FIELDS.metrics",
   ga4RequestComposerBasicDimensions = "https://developers.google.com/analytics/devguides/reporting/data/v1/rest/v1beta/properties/runReport#body.request_body.FIELDS.dimensions",
+  ga4RequestComposerBasicProperty = "https://developers.google.com/analytics/devguides/reporting/data/v1/rest/v1beta/properties/runReport#body.PATH_PARAMETERS.property",
+  ga4RequestComposerBasicCurrencyCode = "https://developers.google.com/analytics/devguides/reporting/data/v1/rest/v1beta/properties/runReport#body.request_body.FIELDS.currency_code",
+  iso4217Wiki = "https://en.wikipedia.org/wiki/ISO_4217",
   ga4DataAPI = "https://developers.google.com/analytics/devguides/reporting/data/v1",
   ga4AdminAPI = "https://developers.google.com/analytics/devguides/config/admin/v1",
   aboutCampaign = "https://support.google.com/analytics/answer/1033863?visit_id=637529082348651695-136101741&rd=1",
@@ -89,6 +92,7 @@ export enum StorageKey {
   ga4RequestComposerBasicSelectedLimit = "/ga4/request-composer/basic-report/limit",
   ga4RequestComposerBasicDateRanges = "/ga4/request-composer/basic-report/date-ranges",
   ga4RequestComposerBasicOrderBys = "/ga4/request-composer/basic-report/order-bys",
+  ga4RequestComposerBasicSelectedCurrencyCode = "/ga4/request-composer/basic-report/currency-code",
 
   // Query Explorer
   queryExplorerDimensions = "query-explorer/dimensions",

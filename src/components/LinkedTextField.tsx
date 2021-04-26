@@ -1,5 +1,5 @@
 import React from "react"
-import { TextField, InputAdornment } from "@material-ui/core"
+import { TextField } from "@material-ui/core"
 import ExternalLink from "./ExternalLink"
 
 export interface LinkedTextFieldProps {
@@ -8,7 +8,7 @@ export interface LinkedTextFieldProps {
   value: string | undefined
   label: string
   onChange: (e: string) => void
-  helperText: string
+  helperText: string | JSX.Element
   required?: true
   disabled?: boolean
 }

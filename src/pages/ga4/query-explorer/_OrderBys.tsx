@@ -184,6 +184,7 @@ const useStyles = makeStyles(theme => ({
     "& > *:not(:first-child)": {
       marginLeft: theme.spacing(1),
     },
+    marginBottom: theme.spacing(1),
   },
   add: {},
 }))
@@ -394,7 +395,7 @@ const OrderBys: React.FC<OrderBysProps> = ({
         </section>
       </section>
       <section className={classes.pabContainer}>
-        <Typography variant="caption" color="textSecondary">
+        <Typography variant="caption" color="textSecondark">
           The ordering to use for the request. See {orderBysLink} on devsite.
         </Typography>
         {props.metric ? (

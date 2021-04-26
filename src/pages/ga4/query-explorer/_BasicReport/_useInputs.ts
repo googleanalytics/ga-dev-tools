@@ -40,6 +40,10 @@ const useInputs = () => {
     StorageKey.ga4RequestComposerBasicSelectedPropertyString
   )
 
+  const [currencyCode, setCurrencyCode] = usePersistentString(
+    StorageKey.ga4RequestComposerBasicSelectedCurrencyCode
+  )
+
   const propertyString = useMemo(() => `properties/${inputPropertyString}`, [
     inputPropertyString,
   ])
@@ -76,6 +80,8 @@ const useInputs = () => {
     setLimit,
     orderBys,
     setOrderBys,
+    currencyCode,
+    setCurrencyCode,
   }
 }
 export default useInputs

@@ -49,6 +49,8 @@ const dimensionsLink = (
   <a href={Url.ga4RequestComposerBasicDimensions}>dimensions</a>
 )
 
+const iso4217 = <a href={Url.iso4217Wiki}>ISO 4217</a>
+
 const metricsLink = <a href={Url.ga4RequestComposerBasicMetrics}>metrics</a>
 
 const BasicReport = () => {
@@ -76,6 +78,8 @@ const BasicReport = () => {
     setLimit,
     orderBys,
     setOrderBys,
+    currencyCode,
+    setCurrencyCode,
   } = useInputs()
   const useMake = useMakeRequest({
     property: propertyString,
@@ -87,6 +91,7 @@ const BasicReport = () => {
     dimensions,
     metrics,
     orderBys,
+    currencyCode,
   })
   const {
     validRequest,
@@ -113,9 +118,9 @@ const BasicReport = () => {
       <LinkedTextField
         value={inputPropertyString || ""}
         onChange={setInputPropertyString}
-        href="https://developers.google.com/analytics/devguides/reporting/data/v1/rest/v1beta/properties/runReport#body.PATH_PARAMETERS.property"
+        href={Url.ga4RequestComposerBasicProperty}
         linkTitle="See property on devsite."
-        label="Property"
+        label="property"
         helperText="The property to use for the request."
       />
       <DimensionsPicker
@@ -180,6 +185,14 @@ const BasicReport = () => {
         dimensionOptions={dimensions}
         orderBys={orderBys}
         setOrderBys={setOrderBys}
+      />
+      <LinkedTextField
+        value={currencyCode || ""}
+        onChange={setCurrencyCode}
+        href={Url.ga4RequestComposerBasicCurrencyCode}
+        linkTitle="See currencyCode on devsite."
+        label="currency code"
+        helperText={<>The {iso4217} currency code to use for the request.</>}
       />
       <div>
         <LabeledCheckbox
