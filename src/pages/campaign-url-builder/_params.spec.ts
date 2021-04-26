@@ -166,26 +166,28 @@ describe("for campaign url builder param parsing", () => {
     })
     test("all parameters (query params) can be parsed correctly", () => {
       const url =
-        "https://example.com?utm_source=google&utm_medium=cpc&utm_campaign=spring_sale&utm_term=running+shoes&utm_content=logolink"
+        "https://example.com?utm_source=google&utm_medium=cpc&utm_campaign=spring_sale&utm_term=running+shoes&utm_id=abcdef&utm_content=logolink"
 
       const actual = sut.extractParamsFromWebsiteUrl(url)!
 
       expect(actual.utm_source).toBe("google")
       expect(actual.utm_medium).toBe("cpc")
       expect(actual.utm_campaign).toBe("spring_sale")
+      expect(actual.utm_id).toBe("abcdef")
       expect(actual.utm_term).toBe("running shoes")
       expect(actual.utm_content).toBe("logolink")
     })
 
     test("all parameters (fragment) can be parsed correctly", () => {
       const url =
-        "https://example.com#utm_source=google&utm_medium=cpc&utm_campaign=spring_sale&utm_term=running+shoes&utm_content=logolink"
+        "https://example.com#utm_source=google&utm_medium=cpc&utm_campaign=spring_sale&utm_id=abcdef&utm_term=running+shoes&utm_content=logolink"
 
       const actual = sut.extractParamsFromWebsiteUrl(url)!
 
       expect(actual.utm_source).toBe("google")
       expect(actual.utm_medium).toBe("cpc")
       expect(actual.utm_campaign).toBe("spring_sale")
+      expect(actual.utm_id).toBe("abcdef")
       expect(actual.utm_term).toBe("running shoes")
       expect(actual.utm_content).toBe("logolink")
     })

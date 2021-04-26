@@ -28,6 +28,7 @@ import { IS_SSR } from "../../hooks"
 import GeneratedURL from "./_GeneratedURL/_index"
 import useStyles from "./_useStyles"
 import useInputs from "./_useInputs"
+import { InsertDriveFile } from "@material-ui/icons"
 
 const customCampaigns = <a href={Url.aboutCustomCampaigns}>Custom Campaigns</a>
 
@@ -42,6 +43,8 @@ export const CampaignUrlBuilder = () => {
     setMedium,
     campaign,
     setCampaign,
+    id,
+    setId,
     term,
     setTerm,
     content,
@@ -69,7 +72,7 @@ export const CampaignUrlBuilder = () => {
             required
             value={websiteUrl || ""}
             onChange={onWebsiteChange}
-            label="Website URL"
+            label="website URL"
             size="small"
             variant="outlined"
             helperText={
@@ -84,7 +87,7 @@ export const CampaignUrlBuilder = () => {
             required
             value={source || ""}
             onChange={e => setSource(e.target.value)}
-            label="Campaign Source"
+            label="campaign source"
             size="small"
             variant="outlined"
             helperText={
@@ -99,7 +102,7 @@ export const CampaignUrlBuilder = () => {
             required
             value={medium || ""}
             onChange={e => setMedium(e.target.value)}
-            label="Campaign Medium"
+            label="campaign medium"
             size="small"
             variant="outlined"
             helperText={
@@ -112,16 +115,32 @@ export const CampaignUrlBuilder = () => {
           />
           <TextField
             id="campaign-name"
-            required
+            required={(id === "" && campaign === "") || campaign !== ""}
             value={campaign || ""}
             onChange={e => setCampaign(e.target.value)}
-            label="Campaign Name"
+            label="campaign name"
             size="small"
             variant="outlined"
             helperText={
               <span>
                 Product, promo code, or slogan (e.g.{" "}
-                <span className={classes.bold}>spring_sale</span>)
+                <span className={classes.bold}>spring_sale</span>) One of
+                campaign name or campaign id are required.
+              </span>
+            }
+          />
+          <TextField
+            id="campaign-id"
+            required={(id === "" && campaign === "") || id !== ""}
+            value={id || ""}
+            onChange={e => setId(e.target.value)}
+            label="campaign ID"
+            size="small"
+            variant="outlined"
+            helperText={
+              <span>
+                The Google Ads campaign id. One of campaign name or campaign id
+                are required.{" "}
               </span>
             }
           />
@@ -129,7 +148,7 @@ export const CampaignUrlBuilder = () => {
             id="campaign-term"
             value={term || ""}
             onChange={e => setTerm(e.target.value)}
-            label="Campaign Term"
+            label="campaign term"
             size="small"
             variant="outlined"
             helperText="Identify the paid keywords"
@@ -138,7 +157,7 @@ export const CampaignUrlBuilder = () => {
             id="campaign-content"
             value={content || ""}
             onChange={e => setContent(e.target.value)}
-            label="Campaign Content"
+            label="campaign content"
             size="small"
             variant="outlined"
             helperText="Use to differentiate ads"
@@ -151,6 +170,7 @@ export const CampaignUrlBuilder = () => {
         websiteUrl={websiteUrl || ""}
         medium={medium || ""}
         campaign={campaign || ""}
+        id={id || ""}
         term={term || ""}
         content={content || ""}
       />
@@ -219,7 +239,7 @@ export const CampaignUrlBuilder = () => {
               <InlineCode>utm_campaign</InlineCode>
             </TableCell>
             <TableCell>
-              <Typography variant="body1">Yes</Typography>
+              <Typography variant="body1">Yes*</Typography>
             </TableCell>
             <TableCell>
               <Typography variant="body1">
@@ -231,6 +251,33 @@ export const CampaignUrlBuilder = () => {
                 Used for keyword analysis. Use{" "}
                 <InlineCode>utm_campaign</InlineCode> to identify a specific
                 product promotion or strategic campaign.
+                <br />
+                *One of <InlineCode>utm_campaign</InlineCode> or{" "}
+                <InlineCode>utm_id</InlineCode> is required.
+              </Typography>
+            </TableCell>
+          </TableRow>
+          <TableRow>
+            <TableCell className={classes.denseTableCell}>
+              <Typography variant="body1">Campaign Id</Typography>
+              <InlineCode>utm_id</InlineCode>
+            </TableCell>
+            <TableCell>
+              <Typography variant="body1">Yes*</Typography>
+            </TableCell>
+            <TableCell>
+              <Typography variant="body1">
+                <InlineCode>abc.123</InlineCode>
+              </Typography>
+            </TableCell>
+            <TableCell>
+              <Typography variant="body1">
+                Used to identify which Google Ads campaign this referall link
+                references. Use <InlineCode>utm_id</InlineCode> to identify a
+                specific Google Ads campaign.
+                <br />
+                *One of <InlineCode>utm_campaign</InlineCode> or{" "}
+                <InlineCode>utm_id</InlineCode> is required.
               </Typography>
             </TableCell>
           </TableRow>

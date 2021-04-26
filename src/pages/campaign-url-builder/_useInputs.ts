@@ -20,6 +20,7 @@ const useInputs = () => {
     StorageKey.campaignBuilderName,
     ""
   )
+  const [id, setId] = usePersistentString(StorageKey.campaignBuilderId, "")
   const [term, setTerm] = usePersistentString(
     StorageKey.campaignBuilderTerm,
     ""
@@ -59,6 +60,8 @@ const useInputs = () => {
     setMedium,
     campaign,
     setCampaign,
+    id,
+    setId,
     term,
     setTerm,
     content,

@@ -11,6 +11,7 @@ type UseWarningsFor = (arg: {
   source: string
   medium: string
   campaign: string
+  id: string
   content: string | undefined
   term: string | undefined
   shorten: ReturnType<typeof useShortenLink>["shorten"]
@@ -31,6 +32,7 @@ const useWarningsFor: UseWarningsFor = ({
   source,
   medium,
   campaign,
+  id,
   content,
   term,
   shorten,
@@ -50,12 +52,12 @@ const useWarningsFor: UseWarningsFor = ({
       websiteUrl === "" ||
       source === "" ||
       medium === "" ||
-      campaign === ""
+      !(campaign !== "" || id !== "")
     ) {
       return false
     }
     return true
-  }, [websiteUrl, source, medium, campaign])
+  }, [websiteUrl, source, medium, campaign, id])
 
   const shortenLinkGui = useCallback(() => {
     if (showShort === true) {
@@ -87,6 +89,7 @@ const useWarningsFor: UseWarningsFor = ({
         utm_source: source || undefined,
         utm_medium: medium || undefined,
         utm_campaign: campaign || undefined,
+        utm_id: id || undefined,
         utm_term: term || undefined,
         utm_content: content || undefined,
       },
@@ -101,6 +104,7 @@ const useWarningsFor: UseWarningsFor = ({
     source,
     medium,
     campaign,
+    id,
     term,
     content,
   ])

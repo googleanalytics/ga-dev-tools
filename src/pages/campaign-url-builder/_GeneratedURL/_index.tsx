@@ -17,6 +17,7 @@ interface GeneratedUrlProps {
   source: string
   medium: string
   campaign: string
+  id: string
   term: string
   content: string
 }
@@ -26,6 +27,7 @@ const GeneratedURL: React.FC<GeneratedUrlProps> = ({
   source,
   medium,
   campaign,
+  id,
   term,
   content,
 }) => {
@@ -47,6 +49,7 @@ const GeneratedURL: React.FC<GeneratedUrlProps> = ({
     source,
     medium,
     campaign,
+    id,
     shorten,
     content,
     term,
