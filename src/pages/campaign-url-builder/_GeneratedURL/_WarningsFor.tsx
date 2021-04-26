@@ -4,9 +4,9 @@ import { Warning } from "@material-ui/icons"
 import Typography from "@material-ui/core/Typography"
 import { v4 as uuid } from "uuid"
 
-import InlineCode from "../../components/InlineCode"
-import { Url } from "../../constants"
-import useStyles from "./_useStyles"
+import InlineCode from "../../../components/InlineCode"
+import { Url } from "../../../constants"
+import useStyles from "../_useStyles"
 
 const iosCampaignTracking = (
   <a href={Url.iosCampaignMeasurement}>iOS Campaign Tracking URL Builder</a>

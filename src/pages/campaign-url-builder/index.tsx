@@ -25,7 +25,7 @@ import { Url } from "../../constants"
 import Layout from "../../components/layout"
 import InlineCode from "../../components/InlineCode"
 import { IS_SSR } from "../../hooks"
-import GeneratedURL from "./_GeneratedURL"
+import GeneratedURL from "./_GeneratedURL/_index"
 import useStyles from "./_useStyles"
 import useInputs from "./_useInputs"
 
