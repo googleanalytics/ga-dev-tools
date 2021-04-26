@@ -83,6 +83,16 @@ export const CampaignUrlBuilder = () => {
             }
           />
           <TextField
+            id="campaign-id"
+            required
+            value={id || ""}
+            onChange={e => setId(e.target.value)}
+            label="campaign ID"
+            size="small"
+            variant="outlined"
+            helperText={<span>The ads campaign id.</span>}
+          />
+          <TextField
             id="campaign-source"
             required
             value={source || ""}
@@ -115,7 +125,6 @@ export const CampaignUrlBuilder = () => {
           />
           <TextField
             id="campaign-name"
-            required={(id === "" && campaign === "") || campaign !== ""}
             value={campaign || ""}
             onChange={e => setCampaign(e.target.value)}
             label="campaign name"
@@ -126,21 +135,6 @@ export const CampaignUrlBuilder = () => {
                 Product, promo code, or slogan (e.g.{" "}
                 <span className={classes.bold}>spring_sale</span>) One of
                 campaign name or campaign id are required.
-              </span>
-            }
-          />
-          <TextField
-            id="campaign-id"
-            required={(id === "" && campaign === "") || id !== ""}
-            value={id || ""}
-            onChange={e => setId(e.target.value)}
-            label="campaign ID"
-            size="small"
-            variant="outlined"
-            helperText={
-              <span>
-                The Google Ads campaign id. One of campaign name or campaign id
-                are required.{" "}
               </span>
             }
           />
@@ -195,6 +189,27 @@ export const CampaignUrlBuilder = () => {
         <TableBody>
           <TableRow>
             <TableCell className={classes.denseTableCell}>
+              <Typography variant="body1">Campaign Id</Typography>
+              <InlineCode>utm_id</InlineCode>
+            </TableCell>
+            <TableCell>
+              <Typography variant="body1">Yes</Typography>
+            </TableCell>
+            <TableCell>
+              <Typography variant="body1">
+                <InlineCode>abc.123</InlineCode>
+              </Typography>
+            </TableCell>
+            <TableCell>
+              <Typography variant="body1">
+                Used to identify which ads campaign this referral references.
+                Use <InlineCode>utm_id</InlineCode> to identify a specific ads
+                campaign.
+              </Typography>
+            </TableCell>
+          </TableRow>
+          <TableRow>
+            <TableCell className={classes.denseTableCell}>
               <Typography variant="body1">Campaign Source</Typography>
               <InlineCode>utm_source</InlineCode>
             </TableCell>
@@ -239,7 +254,7 @@ export const CampaignUrlBuilder = () => {
               <InlineCode>utm_campaign</InlineCode>
             </TableCell>
             <TableCell>
-              <Typography variant="body1">Yes*</Typography>
+              <Typography variant="body1">No</Typography>
             </TableCell>
             <TableCell>
               <Typography variant="body1">
@@ -251,33 +266,6 @@ export const CampaignUrlBuilder = () => {
                 Used for keyword analysis. Use{" "}
                 <InlineCode>utm_campaign</InlineCode> to identify a specific
                 product promotion or strategic campaign.
-                <br />
-                *One of <InlineCode>utm_campaign</InlineCode> or{" "}
-                <InlineCode>utm_id</InlineCode> is required.
-              </Typography>
-            </TableCell>
-          </TableRow>
-          <TableRow>
-            <TableCell className={classes.denseTableCell}>
-              <Typography variant="body1">Campaign Id</Typography>
-              <InlineCode>utm_id</InlineCode>
-            </TableCell>
-            <TableCell>
-              <Typography variant="body1">Yes*</Typography>
-            </TableCell>
-            <TableCell>
-              <Typography variant="body1">
-                <InlineCode>abc.123</InlineCode>
-              </Typography>
-            </TableCell>
-            <TableCell>
-              <Typography variant="body1">
-                Used to identify which Google Ads campaign this referral
-                references. Use <InlineCode>utm_id</InlineCode> to identify a
-                specific Google Ads campaign.
-                <br />
-                *One of <InlineCode>utm_campaign</InlineCode> or{" "}
-                <InlineCode>utm_id</InlineCode> is required.
               </Typography>
             </TableCell>
           </TableRow>

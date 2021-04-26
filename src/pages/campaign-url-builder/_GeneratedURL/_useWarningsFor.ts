@@ -48,12 +48,7 @@ const useWarningsFor: UseWarningsFor = ({
   )
 
   const hasAllRequired = useMemo(() => {
-    if (
-      websiteUrl === "" ||
-      source === "" ||
-      medium === "" ||
-      !(campaign !== "" || id !== "")
-    ) {
+    if (websiteUrl === "" || source === "" || medium === "" || id === "") {
       return false
     }
     return true
