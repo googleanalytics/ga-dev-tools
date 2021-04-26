@@ -15,8 +15,11 @@
 // All static links on the site should be put into this enum. This makes it
 // easier to update all instances of a link on the site.
 export enum Url {
-  runReportLimit = "https://developers.google.com/analytics/devguides/reporting/data/v1/rest/v1beta/properties/runReport#body.request_body.FIELDS.limit",
-  runReportOffset = "https://developers.google.com/analytics/devguides/reporting/data/v1/rest/v1beta/properties/runReport#body.request_body.FIELDS.offset",
+  ga4RequestComposerBasicRunReport = "https://developers.google.com/analytics/devguides/reporting/data/v1/rest/v1beta/properties/runReport",
+  ga4RequestComposerBasicRunReportLimit = "https://developers.google.com/analytics/devguides/reporting/data/v1/rest/v1beta/properties/runReport#body.request_body.FIELDS.limit",
+  ga4RequestComposerBasicRunReportDimensionFilter = "https://developers.google.com/analytics/devguides/reporting/data/v1/rest/v1beta/properties/runReport#body.request_body.FIELDS.dimension_filter",
+  ga4RequestComposerBasicRunReportMetricFilter = "https://developers.google.com/analytics/devguides/reporting/data/v1/rest/v1beta/properties/runReport#body.request_body.FIELDS.metric_filter",
+  ga4RequestComposerBasicRunReportOffset = "https://developers.google.com/analytics/devguides/reporting/data/v1/rest/v1beta/properties/runReport#body.request_body.FIELDS.offset",
   ga4RequestComposerBasicMetrics = "https://developers.google.com/analytics/devguides/reporting/data/v1/rest/v1beta/properties/runReport#body.request_body.FIELDS.metrics",
   ga4RequestComposerBasicKeepEmptyRows = "https://developers.google.com/analytics/devguides/reporting/data/v1/rest/v1beta/properties/runReport#body.request_body.FIELDS.keep_empty_rows",
   ga4RequestComposerBasicDimensions = "https://developers.google.com/analytics/devguides/reporting/data/v1/rest/v1beta/properties/runReport#body.request_body.FIELDS.dimensions",

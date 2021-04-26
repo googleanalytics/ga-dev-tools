@@ -96,9 +96,6 @@ const Filter: React.FC<FilterProps> = ({
 
   return (
     <section className={classes.filter}>
-      <Typography variant="subtitle2" className={classes.title}>
-        {type} filters
-      </Typography>
       {noFiltersConfigured}
       <Expression
         type={type}

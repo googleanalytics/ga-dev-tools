@@ -2,9 +2,11 @@ import React from "react"
 import { makeStyles, Paper } from "@material-ui/core"
 import { IS_SSR } from "../hooks"
 import { CopyIconButton } from "./CopyButton"
+import clsx from "classnames"
 
 interface PrettyJsonProps {
   object: object | undefined
+  className?: string | undefined
   // shouldCollapse?: (props: CollapsedFieldProps) => boolean
   // TODO - This is a workaround because react-json-view doesn't work with
   // gatsby ssr.
@@ -50,7 +52,11 @@ const useStyles = makeStyles(theme => ({
   },
 }))
 
-const PrettyJson: React.FC<PrettyJsonProps> = ({ object, shouldCollapse }) => {
+const PrettyJson: React.FC<PrettyJsonProps> = ({
+  object,
+  shouldCollapse,
+  className,
+}) => {
   const classes = useStyles()
 
   if (object === undefined) {
@@ -67,7 +73,7 @@ const PrettyJson: React.FC<PrettyJsonProps> = ({ object, shouldCollapse }) => {
   const ReactJson = require("react-json-view").default
 
   return (
-    <Paper className={classes.jsonPaper}>
+    <Paper className={clsx(classes.jsonPaper, className)}>
       <span className={classes.json}>
         <ReactJson
           src={object}

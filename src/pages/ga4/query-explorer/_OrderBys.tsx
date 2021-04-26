@@ -1,5 +1,4 @@
 import * as React from "react"
-import clsx from "classnames"
 import { Dispatch } from "../../../types"
 import { Typography, makeStyles } from "@material-ui/core"
 import { SAB, TooltipIconButton } from "../../../components/Buttons"
@@ -14,6 +13,7 @@ import {
   GA4Metrics,
 } from "../../../components/GA4Pickers"
 import ExternalLink from "../../../components/ExternalLink"
+import WithHelpText from "../../../components/WithHelpText"
 
 const orderBysLink = (
   <ExternalLink href="https://developers.google.com/analytics/devguides/reporting/data/v1/rest/v1beta/properties/runReport#body.request_body.FIELDS.order_bys">
@@ -344,10 +344,37 @@ const OrderBys: React.FC<OrderBysProps> = ({
   )
 
   return (
-    <section className={clsx(className)}>
-      <Typography variant="subtitle2" className={classes.heading}>
-        order by
-      </Typography>
+    <WithHelpText
+      label="order by"
+      className={className}
+      helpText={
+        <>
+          <Typography variant="caption" color="textSecondary">
+            The ordering to use for the request. See {orderBysLink} on devsite.
+          </Typography>
+          {props.metric ? (
+            <SAB
+              add
+              small
+              className={classes.add}
+              onClick={() => addOrderBy("metric")}
+            >
+              metric
+            </SAB>
+          ) : null}
+          {props.dimension ? (
+            <SAB
+              add
+              small
+              className={classes.add}
+              onClick={() => addOrderBy("dimension")}
+            >
+              dimension
+            </SAB>
+          ) : null}
+        </>
+      }
+    >
       <section className={classes.orderBys}>
         <hr />
         <section className={classes.grouped}>
@@ -395,32 +422,8 @@ const OrderBys: React.FC<OrderBysProps> = ({
           })}
         </section>
       </section>
-      <section className={classes.pabContainer}>
-        <Typography variant="caption" color="textSecondary">
-          The ordering to use for the request. See {orderBysLink} on devsite.
-        </Typography>
-        {props.metric ? (
-          <SAB
-            add
-            small
-            className={classes.add}
-            onClick={() => addOrderBy("metric")}
-          >
-            metric
-          </SAB>
-        ) : null}
-        {props.dimension ? (
-          <SAB
-            add
-            small
-            className={classes.add}
-            onClick={() => addOrderBy("dimension")}
-          >
-            dimension
-          </SAB>
-        ) : null}
-      </section>
-    </section>
+      <section className={classes.pabContainer}></section>
+    </WithHelpText>
   )
 }
 

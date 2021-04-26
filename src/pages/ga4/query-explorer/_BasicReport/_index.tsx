@@ -18,14 +18,14 @@ import Filter, { FilterType } from "../_Filter/_index"
 import { RequestStatus } from "../../../../types"
 import OrderBys from "../_OrderBys"
 import ExternalLink from "../../../../components/ExternalLink"
+import WithHelpText from "../../../../components/WithHelpText"
 
 const useStyles = makeStyles(theme => ({
-  dateRanges: {
-    marginTop: theme.spacing(-1),
+  showRequestJSON: {
+    marginLeft: theme.spacing(1),
   },
-  checkboxRow: {
-    display: "flex",
-    margin: theme.spacing(-1, 0, 1, 0),
+  requestJSON: {
+    marginTop: theme.spacing(2),
   },
 }))
 
@@ -64,6 +64,24 @@ const metricsLink = (
 const keepEmptyRowsLink = (
   <ExternalLink href={Url.ga4RequestComposerBasicKeepEmptyRows}>
     keepEmptyRows
+  </ExternalLink>
+)
+
+const runReportLink = (
+  <ExternalLink href={Url.ga4RequestComposerBasicRunReport}>
+    properties.runReport
+  </ExternalLink>
+)
+
+const dimensionFiltersLink = (
+  <ExternalLink href={Url.ga4RequestComposerBasicRunReportDimensionFilter}>
+    dimensionFilter
+  </ExternalLink>
+)
+
+const metricFiltersLink = (
+  <ExternalLink href={Url.ga4RequestComposerBasicRunReportMetricFilter}>
+    metricFilter
   </ExternalLink>
 )
 
@@ -123,7 +141,7 @@ const BasicReport = () => {
       <Typography>
         Returns a customized report of your Google Analytics event data. Reports
         contain statistics derived from data collected by the Google Analytics
-        tracking code.
+        tracking code. Basic Report uses the {runReportLink} API endpoint.
       </Typography>
       <GA4PropertySelector
         accountSummariesKey={StorageKey.ga4RequestComposerBasicAccountSummaries}
@@ -163,7 +181,7 @@ const BasicReport = () => {
         }
       />
       <LinkedTextField
-        href={Url.runReportOffset}
+        href={Url.ga4RequestComposerBasicRunReportOffset}
         linkTitle="See offset on devsite."
         label="offset"
         value={offset}
@@ -171,7 +189,7 @@ const BasicReport = () => {
         onChange={setOffset}
       />
       <LinkedTextField
-        href={Url.runReportLimit}
+        href={Url.ga4RequestComposerBasicRunReportLimit}
         linkTitle="See limit on devsite."
         label="limit"
         value={limit}
@@ -186,30 +204,39 @@ const BasicReport = () => {
         label="currency code"
         helperText={<>The {iso4217} currency code to use for the request.</>}
       />
-      <LabeledCheckbox
-        className={classes.checkboxRow}
-        checked={keepEmptyRows}
-        setChecked={setKeepEmptyRows}
+      <DateRanges setDateRanges={setDateRanges} dateRanges={dateRanges} />
+      <WithHelpText
+        label="dimension filters"
+        helpText={
+          <Typography>
+            The filters to use for the dimensions in the request. See{" "}
+            {dimensionFiltersLink} on devsite.
+          </Typography>
+        }
       >
-        keep empty rows. See {keepEmptyRowsLink} on devsite.
-      </LabeledCheckbox>
-      <DateRanges
-        className={classes.dateRanges}
-        setDateRanges={setDateRanges}
-        dateRanges={dateRanges}
-      />
-      <Filter
-        storageKey={StorageKey.ga4RequestComposerBasicDimensionFilter}
-        type={FilterType.Dimension}
-        fields={dimensions}
-        setFilterExpression={setDimensionFilter}
-      />
-      <Filter
-        storageKey={StorageKey.ga4RequestComposerBasicMetricFilter}
-        type={FilterType.Metric}
-        fields={metrics}
-        setFilterExpression={setMetricFilter}
-      />
+        <Filter
+          storageKey={StorageKey.ga4RequestComposerBasicDimensionFilter}
+          type={FilterType.Dimension}
+          fields={dimensions}
+          setFilterExpression={setDimensionFilter}
+        />
+      </WithHelpText>
+      <WithHelpText
+        label="metric filters"
+        helpText={
+          <Typography>
+            The filters to use for the metrics in the request. See{" "}
+            {metricFiltersLink} on devsite.
+          </Typography>
+        }
+      >
+        <Filter
+          storageKey={StorageKey.ga4RequestComposerBasicMetricFilter}
+          type={FilterType.Metric}
+          fields={metrics}
+          setFilterExpression={setMetricFilter}
+        />
+      </WithHelpText>
       <OrderBys
         metric
         metricOptions={metrics}
@@ -218,22 +245,37 @@ const BasicReport = () => {
         orderBys={orderBys}
         setOrderBys={setOrderBys}
       />
-
-      <div>
-        <LabeledCheckbox
-          checked={showRequestJSON}
-          setChecked={setShowRequestJSON}
-        >
-          Show request JSON
+      <WithHelpText
+        helpText={
+          <Typography>
+            Return rows with all metrics equal to 0 separately. See{" "}
+            {keepEmptyRowsLink} on devsite.
+          </Typography>
+        }
+      >
+        <LabeledCheckbox checked={keepEmptyRows} setChecked={setKeepEmptyRows}>
+          keep empty rows.
         </LabeledCheckbox>
-      </div>
+      </WithHelpText>
 
-      {showRequestJSON && (
-        <PrettyJson object={request} shouldCollapse={shouldCollapseRequest} />
-      )}
       <PAB onClick={makeRequest} disabled={!validRequest}>
         Make Request
       </PAB>
+      <LabeledCheckbox
+        className={classes.showRequestJSON}
+        checked={showRequestJSON}
+        setChecked={setShowRequestJSON}
+      >
+        Show request JSON
+      </LabeledCheckbox>
+
+      {showRequestJSON && (
+        <PrettyJson
+          className={classes.requestJSON}
+          object={request}
+          shouldCollapse={shouldCollapseRequest}
+        />
+      )}
       <Response
         response={response}
         error={
