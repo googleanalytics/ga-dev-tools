@@ -23,6 +23,10 @@ const useStyles = makeStyles(theme => ({
   dateRanges: {
     marginTop: theme.spacing(-1),
   },
+  checkboxRow: {
+    display: "flex",
+    margin: theme.spacing(-1, 0, 1, 0),
+  },
 }))
 
 const shouldCollapseRequest = ({ namespace }: any) => {
@@ -57,6 +61,11 @@ const iso4217 = <ExternalLink href={Url.iso4217Wiki}>ISO 4217</ExternalLink>
 const metricsLink = (
   <ExternalLink href={Url.ga4RequestComposerBasicMetrics}>metrics</ExternalLink>
 )
+const keepEmptyRowsLink = (
+  <ExternalLink href={Url.ga4RequestComposerBasicKeepEmptyRows}>
+    keepEmptyRows
+  </ExternalLink>
+)
 
 const BasicReport = () => {
   const classes = useStyles()
@@ -85,6 +94,8 @@ const BasicReport = () => {
     setOrderBys,
     currencyCode,
     setCurrencyCode,
+    keepEmptyRows,
+    setKeepEmptyRows,
   } = useInputs()
   const useMake = useMakeRequest({
     property: propertyString,
@@ -97,6 +108,7 @@ const BasicReport = () => {
     metrics,
     orderBys,
     currencyCode,
+    keepEmptyRows,
   })
   const {
     validRequest,
@@ -150,6 +162,37 @@ const BasicReport = () => {
           </>
         }
       />
+      <LinkedTextField
+        href={Url.runReportOffset}
+        linkTitle="See offset on devsite."
+        label="offset"
+        value={offset}
+        helperText="The row count of the start row. The first row is row 0."
+        onChange={setOffset}
+      />
+      <LinkedTextField
+        href={Url.runReportLimit}
+        linkTitle="See limit on devsite."
+        label="limit"
+        value={limit}
+        helperText="The maximum number of rows to return."
+        onChange={setLimit}
+      />
+      <LinkedTextField
+        value={currencyCode || ""}
+        onChange={setCurrencyCode}
+        href={Url.ga4RequestComposerBasicCurrencyCode}
+        linkTitle="See currencyCode on devsite."
+        label="currency code"
+        helperText={<>The {iso4217} currency code to use for the request.</>}
+      />
+      <LabeledCheckbox
+        className={classes.checkboxRow}
+        checked={keepEmptyRows}
+        setChecked={setKeepEmptyRows}
+      >
+        keep empty rows. See {keepEmptyRowsLink} on devsite.
+      </LabeledCheckbox>
       <DateRanges
         className={classes.dateRanges}
         setDateRanges={setDateRanges}
@@ -167,22 +210,6 @@ const BasicReport = () => {
         fields={metrics}
         setFilterExpression={setMetricFilter}
       />
-      <LinkedTextField
-        href={Url.runReportOffset}
-        linkTitle="See offset on devsite."
-        label="offset"
-        value={offset}
-        helperText="The row count of the start row. The first row is row 0."
-        onChange={setOffset}
-      />
-      <LinkedTextField
-        href={Url.runReportLimit}
-        linkTitle="See limit on devsite."
-        label="limit"
-        value={limit}
-        helperText="The maximum number of rows to return."
-        onChange={setLimit}
-      />
       <OrderBys
         metric
         metricOptions={metrics}
@@ -191,14 +218,7 @@ const BasicReport = () => {
         orderBys={orderBys}
         setOrderBys={setOrderBys}
       />
-      <LinkedTextField
-        value={currencyCode || ""}
-        onChange={setCurrencyCode}
-        href={Url.ga4RequestComposerBasicCurrencyCode}
-        linkTitle="See currencyCode on devsite."
-        label="currency code"
-        helperText={<>The {iso4217} currency code to use for the request.</>}
-      />
+
       <div>
         <LabeledCheckbox
           checked={showRequestJSON}
@@ -207,6 +227,7 @@ const BasicReport = () => {
           Show request JSON
         </LabeledCheckbox>
       </div>
+
       {showRequestJSON && (
         <PrettyJson object={request} shouldCollapse={shouldCollapseRequest} />
       )}

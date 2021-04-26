@@ -48,6 +48,11 @@ const useInputs = () => {
     inputPropertyString,
   ])
 
+  const [keepEmptyRows, setKeepEmptyRows] = usePersistentBoolean(
+    StorageKey.ga4RequestComposerBasicKeepEmptyRows,
+    false
+  )
+
   useEffect(() => {
     if (selectedProperty !== undefined) {
       setInputPropertyString(
@@ -82,6 +87,8 @@ const useInputs = () => {
     setOrderBys,
     currencyCode,
     setCurrencyCode,
+    keepEmptyRows,
+    setKeepEmptyRows,
   }
 }
 export default useInputs

@@ -22,6 +22,7 @@ type UseMakeRequestArgs = {
   limit: string | undefined
   orderBys: OrderBy[] | undefined
   currencyCode: string | undefined
+  keepEmptyRows: boolean
 }
 
 type Common = {
@@ -46,6 +47,7 @@ const useMakeRequest = ({
   limit,
   orderBys,
   currencyCode,
+  keepEmptyRows,
 }: UseMakeRequestArgs): Requestable<
   Common,
   Common,
@@ -97,6 +99,9 @@ const useMakeRequest = ({
     if (currencyCode !== undefined && currencyCode !== "") {
       r.currencyCode = currencyCode
     }
+    if (keepEmptyRows === true) {
+      r.keepEmptyRows = keepEmptyRows
+    }
     return r
   }, [
     dateRanges,
@@ -108,6 +113,7 @@ const useMakeRequest = ({
     limit,
     orderBys,
     currencyCode,
+    keepEmptyRows,
   ])
 
   const validRequest = useMemo(() => {
