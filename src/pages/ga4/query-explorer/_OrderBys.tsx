@@ -14,6 +14,12 @@ import {
   GA4Metrics,
 } from "../../../components/GA4Pickers"
 
+const orderBysLink = (
+  <a href="https://developers.google.com/analytics/devguides/reporting/data/v1/rest/v1beta/properties/runReport#body.request_body.FIELDS.order_bys">
+    orderBys
+  </a>
+)
+
 type OrderBy = gapi.client.analyticsdata.OrderBy
 enum OrderType {
   Alphanumeric = "ALPHANUMERIC",
@@ -171,6 +177,10 @@ const useStyles = makeStyles(theme => ({
     width: "30ch",
   },
   pabContainer: {
+    display: "flex",
+    "& > *:first-child": {
+      flexGrow: 1,
+    },
     "& > *:not(:first-child)": {
       marginLeft: theme.spacing(1),
     },
@@ -384,6 +394,9 @@ const OrderBys: React.FC<OrderBysProps> = ({
         </section>
       </section>
       <section className={classes.pabContainer}>
+        <Typography variant="caption" color="textSecondary">
+          The ordering to use for the request. See {orderBysLink} on devsite.
+        </Typography>
         {props.metric ? (
           <SAB
             add

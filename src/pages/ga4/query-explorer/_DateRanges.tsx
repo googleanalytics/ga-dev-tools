@@ -86,6 +86,9 @@ const useStyles = makeStyles(theme => ({
   },
   pabContainer: {
     display: "flex",
+    "& > *:first-child": {
+      flexGrow: 1,
+    },
     marginBottom: theme.spacing(1),
   },
   dateRanges: {
