@@ -19,7 +19,7 @@ import "@testing-library/jest-dom"
 import userEvent from "@testing-library/user-event"
 import { CampaignUrlBuilder } from "./index"
 import { StorageKey } from "../../constants"
-import { ShortenResponse } from "./_useShortenLink"
+import { ShortenResponse } from "./_GeneratedURL/_useShortenLink"
 
 // Capture original error global so it's easier to replace after a mock.
 const originalError = console.error
