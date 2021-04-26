@@ -15,6 +15,11 @@ import {
 } from "../../../components/GA4Pickers"
 
 type OrderBy = gapi.client.analyticsdata.OrderBy
+enum OrderType {
+  Alphanumeric = "ALPHANUMERIC",
+  CaseInsensitiveAlphanumeric = "CASE_INSENSITIVE_ALPHANUMERIC",
+  Numeric = "NUMERIC",
+}
 
 enum Direction {
   Ascending = "ascending",
@@ -29,6 +34,7 @@ type UseOrderBys = (arg: {
   setDirection: (id: number, direction: Direction) => void
   setMetric: (id: number, m: GA4Metric | undefined) => void
   setDimension: (id: number, d: GA4Dimension | undefined) => void
+  setDimensionOrderType: (id: number, orderType: OrderType | undefined) => void
 }
 const useOrderBys: UseOrderBys = ({ setOrderBys }) => {
   const removeOrderBy: ReturnType<
@@ -42,7 +48,15 @@ const useOrderBys: UseOrderBys = ({ setOrderBys }) => {
 
   const addOrderBy: ReturnType<UseOrderBys>["addOrderBy"] = React.useCallback(
     type => {
-      setOrderBys((old = []) => old.concat([{ [type]: {} }]))
+      setOrderBys((old = []) => {
+        let nu: OrderBy = {
+          [type]: {},
+        }
+        if (type === "dimension") {
+          nu[type]!.orderType = OrderType.Alphanumeric
+        }
+        return old.concat([nu])
+      })
     },
     [setOrderBys]
   )
@@ -57,7 +71,6 @@ const useOrderBys: UseOrderBys = ({ setOrderBys }) => {
           return { ...orderBy, metric: { metricName: metric?.apiName } }
         })
       )
-      console.log(id, metric)
     },
     [setOrderBys]
   )
@@ -73,11 +86,32 @@ const useOrderBys: UseOrderBys = ({ setOrderBys }) => {
           }
           return {
             ...orderBy,
-            dimension: { dimensionName: dimension?.apiName },
+            dimension: {
+              ...orderBy.dimension,
+              dimensionName: dimension?.apiName,
+            },
           }
         })
       )
-      console.log(id, dimension)
+    },
+    [setOrderBys]
+  )
+
+  const setDimensionOrderType: ReturnType<
+    UseOrderBys
+  >["setDimensionOrderType"] = React.useCallback(
+    (id, orderType) => {
+      setOrderBys((old = []) =>
+        old.map((orderBy, idx) => {
+          if (idx !== id) {
+            return orderBy
+          }
+          return {
+            ...orderBy,
+            dimension: { ...orderBy.dimension, orderType },
+          }
+        })
+      )
     },
     [setOrderBys]
   )
@@ -99,11 +133,22 @@ const useOrderBys: UseOrderBys = ({ setOrderBys }) => {
     [setOrderBys]
   )
 
-  return { addOrderBy, removeOrderBy, setDirection, setMetric, setDimension }
+  return {
+    addOrderBy,
+    removeOrderBy,
+    setDirection,
+    setMetric,
+    setDimension,
+    setDimensionOrderType,
+  }
 }
 
 const useStyles = makeStyles(theme => ({
   heading: {},
+  orderType: {
+    width: "30ch",
+    marginRight: theme.spacing(1),
+  },
   grouped: {
     flexGrow: 1,
     margin: theme.spacing(1, 0, 1, 1),
@@ -148,6 +193,21 @@ const descOption = {
 
 const directionOptions: SelectOption[] = [ascOption, descOption]
 
+const orderTypeOptions: SelectOption[] = [
+  {
+    value: OrderType.Alphanumeric,
+    displayName: "alpha",
+  },
+  {
+    value: OrderType.Numeric,
+    displayName: "numeric",
+  },
+  {
+    value: OrderType.CaseInsensitiveAlphanumeric,
+    displayName: "alpha (ignore case)",
+  },
+]
+
 const MetricSort: React.FC<{
   metricFilter: (m: GA4Metric) => boolean
   setMetric: ReturnType<UseOrderBys>["setMetric"]
@@ -173,9 +233,19 @@ const MetricSort: React.FC<{
 const DimensionSort: React.FC<{
   dimensionFilter: (m: GA4Dimension) => boolean
   setDimension: ReturnType<UseOrderBys>["setDimension"]
+  setDimensionOrderType: ReturnType<UseOrderBys>["setDimensionOrderType"]
   className: string
   id: number
-}> = ({ dimensionFilter, className, setDimension, id }) => {
+  orderType: SelectOption | undefined
+}> = ({
+  dimensionFilter,
+  className,
+  setDimension,
+  setDimensionOrderType,
+  id,
+  orderType,
+}) => {
+  const classes = useStyles()
   const [dimension, setDimensionLocal] = React.useState<GA4Dimension>()
 
   React.useEffect(() => {
@@ -183,12 +253,21 @@ const DimensionSort: React.FC<{
   }, [dimension, setDimension, id])
 
   return (
-    <DimensionPicker
-      autoSelectIfOne
-      setDimension={setDimensionLocal}
-      className={className}
-      dimensionFilter={dimensionFilter}
-    />
+    <>
+      <DimensionPicker
+        autoSelectIfOne
+        setDimension={setDimensionLocal}
+        className={className}
+        dimensionFilter={dimensionFilter}
+      />
+      <Select
+        onChange={e => setDimensionOrderType(id, e?.value as OrderType)}
+        className={classes.orderType}
+        value={orderType}
+        options={orderTypeOptions}
+        label="order type"
+      />
+    </>
   )
 }
 
@@ -226,6 +305,7 @@ const OrderBys: React.FC<OrderBysProps> = ({
     setDirection,
     setMetric,
     setDimension,
+    setDimensionOrderType,
   } = useOrderBys({
     setOrderBys,
   })
@@ -262,6 +342,7 @@ const OrderBys: React.FC<OrderBysProps> = ({
           {orderBys?.map((orderBy, idx) => {
             const selectedType = optionFor(orderBy)
             const selectedDirection = directionFor(orderBy)
+            const selectedOrderType = orderTypeFor(orderBy)
             return (
               <section key={idx} className={classes.orderBy}>
                 {selectedType?.value === "metric" && props.metric ? (
@@ -277,7 +358,9 @@ const OrderBys: React.FC<OrderBysProps> = ({
                     className={classes.column}
                     dimensionFilter={dimensionFilter}
                     setDimension={setDimension}
+                    setDimensionOrderType={setDimensionOrderType}
                     id={idx}
+                    orderType={selectedOrderType}
                   />
                 ) : null}
                 {selectedType?.value !== undefined ? (
@@ -286,7 +369,7 @@ const OrderBys: React.FC<OrderBysProps> = ({
                     options={directionOptions}
                     value={selectedDirection}
                     label="direction"
-                    onChange={e => setDirection(idx, e?.value as any)}
+                    onChange={e => setDirection(idx, e?.value as Direction)}
                   />
                 ) : null}
                 <TooltipIconButton
@@ -344,6 +427,14 @@ const directionFor = (orderBy: OrderBy): SelectOption => {
     return descOption
   }
   return ascOption
+}
+
+const orderTypeFor = (orderBy: OrderBy): SelectOption | undefined => {
+  const type = orderBy.dimension?.orderType
+  if (type === undefined) {
+    return undefined
+  }
+  return orderTypeOptions.find(option => option.value === type)
 }
 
 export default OrderBys
