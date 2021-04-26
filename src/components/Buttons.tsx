@@ -12,12 +12,14 @@ export const PAB: typeof Button = ({ ...props }) => {
 // Secondary Action Button
 interface SABProps extends ButtonProps {
   add?: true | undefined
+  small?: true | undefined
 }
-export const SAB: React.FC<SABProps> = ({ add, ...props }) => {
+export const SAB: React.FC<SABProps> = ({ add, small, ...props }) => {
   return (
     <Button
       startIcon={add ? <Add /> : null}
       {...props}
+      size={small ? "small" : props.size}
       variant="outlined"
       color="secondary"
     />
@@ -26,11 +28,21 @@ export const SAB: React.FC<SABProps> = ({ add, ...props }) => {
 
 interface PlainButtonProps extends ButtonProps {
   add?: true | undefined
+  small?: true | undefined
 }
 
-export const PlainButton: React.FC<PlainButtonProps> = ({ add, ...props }) => {
+export const PlainButton: React.FC<PlainButtonProps> = ({
+  add,
+  small,
+  ...props
+}) => {
   return (
-    <Button startIcon={add ? <Add /> : null} {...props} variant="outlined" />
+    <Button
+      startIcon={add ? <Add /> : null}
+      {...props}
+      size={small ? "small" : props.size}
+      variant="outlined"
+    />
   )
 }
 

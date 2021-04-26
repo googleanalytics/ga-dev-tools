@@ -130,7 +130,6 @@ const Filter: React.FC<{
   }, [filter, updateFilter, path])
 
   const onClick = React.useCallback(() => {
-    console.log(path)
     removeExpression(path)
   }, [removeExpression, path])
 

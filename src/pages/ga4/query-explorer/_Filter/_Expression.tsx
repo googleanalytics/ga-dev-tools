@@ -115,16 +115,16 @@ export const AddExpression: React.FC<AddExpressionProps> = ({
 
   return (
     <section className={classes.addExpression}>
-      <PlainButton onClick={onClick(ExpressionType.Filter)} add>
+      <PlainButton onClick={onClick(ExpressionType.Filter)} add small>
         filter
       </PlainButton>
-      <PlainButton onClick={onClick(ExpressionType.Not)} add>
+      <PlainButton onClick={onClick(ExpressionType.Not)} add small>
         not
       </PlainButton>
-      <PlainButton onClick={onClick(ExpressionType.And)} add>
+      <PlainButton onClick={onClick(ExpressionType.And)} add small>
         and
       </PlainButton>
-      <PlainButton onClick={onClick(ExpressionType.Or)} add>
+      <PlainButton onClick={onClick(ExpressionType.Or)} add small>
         or
       </PlainButton>
     </section>

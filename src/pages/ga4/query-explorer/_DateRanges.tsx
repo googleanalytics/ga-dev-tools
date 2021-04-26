@@ -190,12 +190,7 @@ const DateRanges: React.FC<{
           <InlineCode>NdaysAgo</InlineCode> where N is a positive integer. See{" "}
           {dateRange} on devsite.
         </Typography>
-        <SAB
-          className={classes.add}
-          size="medium"
-          onClick={addDateRange}
-          startIcon={<Add />}
-        >
+        <SAB add small className={classes.add} onClick={addDateRange}>
           Add
         </SAB>
       </section>

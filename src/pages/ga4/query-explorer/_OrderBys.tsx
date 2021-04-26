@@ -396,14 +396,14 @@ const OrderBys: React.FC<OrderBysProps> = ({
         </section>
       </section>
       <section className={classes.pabContainer}>
-        <Typography variant="caption" color="textSecondark">
+        <Typography variant="caption" color="textSecondary">
           The ordering to use for the request. See {orderBysLink} on devsite.
         </Typography>
         {props.metric ? (
           <SAB
             add
+            small
             className={classes.add}
-            size="medium"
             onClick={() => addOrderBy("metric")}
           >
             metric
@@ -412,8 +412,8 @@ const OrderBys: React.FC<OrderBysProps> = ({
         {props.dimension ? (
           <SAB
             add
+            small
             className={classes.add}
-            size="medium"
             onClick={() => addOrderBy("dimension")}
           >
             dimension
