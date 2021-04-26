@@ -21,6 +21,7 @@ import StringFilter, { MatchType } from "./_StringFilter"
 import NumericFilter, { OperationType } from "./_NumericFilter"
 import InListFilter from "./_InListFilter"
 import BetweenFilter from "./_BetweenFilter"
+import { TooltipIconButton } from "../../../../../components/Buttons"
 
 export const useStyles = makeStyles(theme => ({
   indented: {
@@ -137,9 +138,9 @@ const Filter: React.FC<{
     <section
       className={clsx(classes.filter, { [classes.indented]: nesting > 0 })}
     >
-      <IconButton onClick={onClick}>
+      <TooltipIconButton onClick={onClick} tooltip="Remove filter">
         <Delete />
-      </IconButton>
+      </TooltipIconButton>
       {type === "metric" ? (
         <MetricPicker
           autoSelectIfOne

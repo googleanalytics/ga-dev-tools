@@ -166,6 +166,9 @@ const useStyles = makeStyles(theme => ({
   orderBy: {
     display: "flex",
     margin: theme.spacing(1, 0),
+    "& > *:not(:first-child)": {
+      marginLeft: theme.spacing(1),
+    },
   },
   type: {
     width: "20ch",
@@ -384,6 +387,12 @@ const OrderBys: React.FC<OrderBysProps> = ({
             const selectedOrderType = orderTypeFor(orderBy)
             return (
               <section key={idx} className={classes.orderBy}>
+                <TooltipIconButton
+                  tooltip="remove ordering clause"
+                  onClick={() => removeOrderBy(idx)}
+                >
+                  <Delete />
+                </TooltipIconButton>
                 {selectedType?.value === "metric" && props.metric ? (
                   <MetricSort
                     className={classes.column}
@@ -411,12 +420,6 @@ const OrderBys: React.FC<OrderBysProps> = ({
                     onChange={e => setDirection(idx, e?.value as Direction)}
                   />
                 ) : null}
-                <TooltipIconButton
-                  tooltip="remove"
-                  onClick={() => removeOrderBy(idx)}
-                >
-                  <Delete />
-                </TooltipIconButton>
               </section>
             )
           })}
