@@ -11,6 +11,7 @@ interface WithHelpTextProps {
 const useStyles = makeStyles(theme => ({
   helpText: {
     display: "flex",
+    marginLeft: theme.spacing(1.75),
     alignItems: "flex-start",
     "& > :first-child": {
       flexGrow: 1,

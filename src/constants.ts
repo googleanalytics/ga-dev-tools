@@ -28,6 +28,7 @@ export enum Url {
   ga4RequestComposerBasicProperty = "https://developers.google.com/analytics/devguides/reporting/data/v1/rest/v1beta/properties/runReport#body.PATH_PARAMETERS.property",
   ga4RequestComposerBasicCurrencyCode = "https://developers.google.com/analytics/devguides/reporting/data/v1/rest/v1beta/properties/runReport#body.request_body.FIELDS.currency_code",
   ga4RequestComposerBasicCohortSpec = "https://developers.google.com/analytics/devguides/reporting/data/v1/rest/v1beta/properties/runReport#body.request_body.FIELDS.cohort_spec",
+  ga4RequestComposerBasicMetricAggregations = "https://developers.google.com/analytics/devguides/reporting/data/v1/rest/v1beta/properties/runReport#body.request_body.FIELDS.metric_aggregations",
   iso4217Wiki = "https://en.wikipedia.org/wiki/ISO_4217",
   ga4DataAPI = "https://developers.google.com/analytics/devguides/reporting/data/v1",
   ga4AdminAPI = "https://developers.google.com/analytics/devguides/config/admin/v1",
@@ -101,6 +102,7 @@ export enum StorageKey {
   ga4RequestComposerBasicSelectedLimit = "/ga4/request-composer/basic-report/limit",
   ga4RequestComposerBasicDateRanges = "/ga4/request-composer/basic-report/date-ranges",
   ga4RequestComposerBasicOrderBys = "/ga4/request-composer/basic-report/order-bys",
+  ga4RequestComposerBasicMetricAggregations = "/ga4/request-composer/basic-report/metric-aggregations",
   ga4RequestComposerBasicSelectedCurrencyCode = "/ga4/request-composer/basic-report/currency-code",
 
   // Query Explorer

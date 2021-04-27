@@ -20,6 +20,9 @@ import OrderBys from "../_OrderBys"
 import ExternalLink from "../../../../components/ExternalLink"
 import WithHelpText from "../../../../components/WithHelpText"
 import CohortSpec from "../_CohortSpec"
+import { max } from "moment"
+import { SelectOption } from "../../../../components/Select"
+import MetricAggregations from "../_MetricAggregations"
 
 const useStyles = makeStyles(theme => ({
   showRequestJSON: {
@@ -117,9 +120,12 @@ const BasicReport = () => {
     setCohortSpec,
     keepEmptyRows,
     setKeepEmptyRows,
+    metricAggregations,
+    setMetricAggregations,
     addFirstSessionDate,
   } = useInputs()
   const useMake = useMakeRequest({
+    metricAggregations,
     property: propertyString,
     dimensionFilter,
     offset,
@@ -184,6 +190,10 @@ const BasicReport = () => {
             The metrics to include in the request. See {metricsLink} on devsite.
           </>
         }
+      />
+      <MetricAggregations
+        metricAggregations={metricAggregations}
+        setMetricAggregations={setMetricAggregations}
       />
       <LinkedTextField
         href={Url.ga4RequestComposerBasicRunReportOffset}

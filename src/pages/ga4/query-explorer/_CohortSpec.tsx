@@ -285,7 +285,7 @@ const CohortSpec: React.FC<CohortSpecProps> = ({
         </>
       }
     >
-      {!hasRequiredDimension && (
+      {!hasRequiredDimension && cohortSpec?.cohorts?.length > 0 && (
         <Typography>
           <Warning /> To use cohorts, include the{" "}
           <InlineCode>firstSessionDate</InlineCode>

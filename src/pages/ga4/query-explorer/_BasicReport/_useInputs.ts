@@ -13,6 +13,7 @@ import {
 } from "../../../../hooks"
 import { StorageKey } from "../../../../constants"
 import { FilterExpression } from "../_Filter/_index"
+import { MetricAggregation } from "../_MetricAggregations"
 
 type OrderBy = gapi.client.analyticsdata.OrderBy
 type CohortSpec = gapi.client.analyticsdata.CohortSpec
@@ -44,6 +45,10 @@ const useInputs = () => {
   const [orderBys, setOrderBys] = usePersistantObject<OrderBy[]>(
     StorageKey.ga4RequestComposerBasicOrderBys
   )
+
+  const [metricAggregations, setMetricAggregations] = usePersistantObject<
+    MetricAggregation[]
+  >(StorageKey.ga4RequestComposerBasicMetricAggregations)
 
   const [inputPropertyString, setInputPropertyString] = usePersistentString(
     StorageKey.ga4RequestComposerBasicSelectedPropertyString
@@ -91,6 +96,8 @@ const useInputs = () => {
   }, [selectedProperty, setInputPropertyString])
 
   return {
+    metricAggregations,
+    setMetricAggregations,
     addFirstSessionDate,
     selectedProperty,
     setSelectedProperty,

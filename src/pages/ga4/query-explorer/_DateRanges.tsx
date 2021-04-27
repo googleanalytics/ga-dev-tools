@@ -158,6 +158,12 @@ const DateRanges: React.FC<{
       <section className={classes.dateRanges}>
         {dateRanges?.map(dateRange => (
           <section key={dateRange.id} className={classes.dateRange}>
+            <TooltipIconButton
+              tooltip="remove daterange"
+              onClick={() => removeDateRange(dateRange.id)}
+            >
+              <Delete />
+            </TooltipIconButton>
             <TextField
               fullWidth
               variant="outlined"
@@ -190,12 +196,6 @@ const DateRanges: React.FC<{
                 updateTo(dateRange.id, e.target.value)
               }}
             />
-            <TooltipIconButton
-              tooltip="remove daterange"
-              onClick={() => removeDateRange(dateRange.id)}
-            >
-              <Delete />
-            </TooltipIconButton>
           </section>
         ))}
       </section>

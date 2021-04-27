@@ -6,6 +6,7 @@ import { useMemo, useState, useCallback } from "react"
 import { usePersistantObject } from "../../../../hooks"
 import { StorageKey } from "../../../../constants"
 import { FilterExpression } from "../_Filter/_index"
+import { MetricAggregation } from "../_MetricAggregations"
 
 type RunReportRequest = gapi.client.analyticsdata.RunReportRequest
 type OrderBy = gapi.client.analyticsdata.OrderBy
@@ -24,6 +25,7 @@ type UseMakeRequestArgs = {
   orderBys: OrderBy[] | undefined
   currencyCode: string | undefined
   cohortSpec: CohortSpec | undefined
+  metricAggregations: MetricAggregation[] | undefined
   keepEmptyRows: boolean
 }
 
@@ -50,6 +52,7 @@ const useMakeRequest = ({
   orderBys,
   currencyCode,
   cohortSpec,
+  metricAggregations,
   keepEmptyRows,
 }: UseMakeRequestArgs): Requestable<
   Common,
@@ -75,11 +78,13 @@ const useMakeRequest = ({
       })),
     }
     if (dateRanges !== undefined) {
-      r.dateRanges = dateRanges.map(({ from, to, name }) => ({
-        startDate: from,
-        endDate: to,
-        name: name,
-      }))
+      r.dateRanges = dateRanges.map(({ from, to, name }) => {
+        const newRange = { startDate: from, endDate: to, name }
+        if (name === "" || name === undefined) {
+          delete newRange.name
+        }
+        return newRange
+      })
     }
     if (metrics !== undefined) {
       r.metrics = metrics.map(metric => ({ name: metric.apiName }))
@@ -102,16 +107,20 @@ const useMakeRequest = ({
     if (currencyCode !== undefined && currencyCode !== "") {
       r.currencyCode = currencyCode
     }
-    if (cohortSpec !== undefined) {
+    if (cohortSpec !== undefined && cohortSpec.cohorts?.length > 0) {
       r.cohortSpec = cohortSpec
     }
     if (keepEmptyRows === true) {
       r.keepEmptyRows = keepEmptyRows
     }
+    if (metricAggregations !== undefined && metricAggregations.length !== 0) {
+      r.metricAggregations = metricAggregations
+    }
     return r
   }, [
     dateRanges,
     dimensions,
+    metricAggregations,
     metrics,
     dimensionFilter,
     metricFilter,

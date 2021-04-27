@@ -112,6 +112,108 @@ const Response: React.FC<ReportsTableProps> = ({
   )
 }
 
+const toColumn = (type: string) => (row: gapi.client.analyticsdata.Row) => {
+  const dateRangeName = row?.dimensionValues[1]?.value || ""
+  const name = `${dateRangeName} ${type}`
+  return {
+    field: name,
+    headerName: name,
+    flex: 1,
+  }
+}
+
+const Aggregations: React.FC<{ response: RunReportResponse }> = ({
+  response,
+}) => {
+  const hasDateRange = useMemo(
+    () =>
+      response.totals?.length > 1 ||
+      response.minimums?.length > 1 ||
+      response.maximums?.length > 1,
+    [response]
+  )
+  const columns = useMemo(() => {
+    const metrics = [{ field: "metric", headerName: "metric", flex: 1 }]
+    const dateRange = hasDateRange
+      ? [{ field: "dateRange", headerName: "dateRange", flex: 1 }]
+      : []
+    const totals =
+      response.totals === undefined
+        ? []
+        : [{ field: "total", headerName: "total", flex: 1 }]
+    const mins =
+      response.minimums === undefined
+        ? []
+        : [{ field: "min", headerName: "min", flex: 1 }]
+    const maxs =
+      response.maximums === undefined
+        ? []
+        : [{ field: "max", headerName: "max", flex: 1 }]
+    const aggregations = metrics
+      .concat(dateRange)
+      .concat(totals)
+      .concat(mins)
+      .concat(maxs)
+    return aggregations
+  }, [hasDateRange])
+
+  const rows = useMemo(() => {
+    const mins = response.minimums?.flatMap((row, idx) => {
+      const dateRange = hasDateRange ? row.dimensionValues[1].value : undefined
+      return response.metricHeaders?.map((header, innerIdx) => {
+        const min = row.metricValues[innerIdx].value
+        return {
+          metric: header.name,
+          dateRange,
+          min,
+        }
+      })
+    })
+    const maxs = response.maximums?.flatMap((row, idx) => {
+      const dateRange = hasDateRange ? row.dimensionValues[1].value : undefined
+      return response.metricHeaders?.map((header, innerIdx) => {
+        const max = row.metricValues[innerIdx].value
+        return {
+          metric: header.name,
+          dateRange,
+          max,
+        }
+      })
+    })
+    const totals = response.totals?.flatMap((row, idx) => {
+      const dateRange = hasDateRange ? row.dimensionValues[1].value : undefined
+      return response.metricHeaders?.map((header, innerIdx) => {
+        const total = row.metricValues[innerIdx].value
+        return {
+          metric: header.name,
+          dateRange,
+          total,
+        }
+      })
+    })
+    const longerThan1 = [mins, totals, maxs].filter(group => group?.length > 0)
+    return longerThan1
+      .reduce((zipped, group) => {
+        return group.map((entry, idx) => ({ ...entry, ...zipped[idx] }))
+      }, [])
+      .map((a, idx) => ({ ...a, id: idx }))
+  }, [response, hasDateRange])
+  console.log(rows)
+
+  if (columns.length === 1) {
+    return null
+  }
+
+  return (
+    <>
+      <Typography variant="h4">Metric aggregations</Typography>
+      <div style={{ height: 600, width: "100%" }}>
+        <DataGrid rows={rows} columns={columns} autoPageSize />
+      </div>
+    </>
+  )
+}
+
 const ResponseTable: React.FC<{ response: RunReportResponse }> = ({
   response,
 }) => {
@@ -126,6 +228,7 @@ const ResponseTable: React.FC<{ response: RunReportResponse }> = ({
         })),
     [response]
   )
+
   const rows = useMemo(
     () =>
       (response.rows || [])
@@ -143,9 +246,12 @@ const ResponseTable: React.FC<{ response: RunReportResponse }> = ({
   )
 
   return (
-    <div style={{ height: 700, width: "100%" }}>
-      <DataGrid rows={rows} columns={columns} autoPageSize />
-    </div>
+    <>
+      <div style={{ height: 600, width: "100%" }}>
+        <DataGrid rows={rows} columns={columns} autoPageSize />
+      </div>
+      <Aggregations response={response} />
+    </>
   )
 }
 
