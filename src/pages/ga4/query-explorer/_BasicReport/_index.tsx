@@ -19,6 +19,7 @@ import { RequestStatus } from "../../../../types"
 import OrderBys from "../_OrderBys"
 import ExternalLink from "../../../../components/ExternalLink"
 import WithHelpText from "../../../../components/WithHelpText"
+import CohortSpec from "../_CohortSpec"
 
 const useStyles = makeStyles(theme => ({
   showRequestJSON: {
@@ -112,8 +113,11 @@ const BasicReport = () => {
     setOrderBys,
     currencyCode,
     setCurrencyCode,
+    cohortSpec,
+    setCohortSpec,
     keepEmptyRows,
     setKeepEmptyRows,
+    addFirstSessionDate,
   } = useInputs()
   const useMake = useMakeRequest({
     property: propertyString,
@@ -126,6 +130,7 @@ const BasicReport = () => {
     metrics,
     orderBys,
     currencyCode,
+    cohortSpec,
     keepEmptyRows,
   })
   const {
@@ -160,9 +165,9 @@ const BasicReport = () => {
       />
       <DimensionsPicker
         required
-        storageKey={StorageKey.ga4RequestComposerBasicSelectedDimensions}
         property={propertyString}
         setDimensions={setDimensions}
+        dimensions={dimensions}
         helperText={
           <>
             The dimensions to include in the request. See {dimensionsLink} on
@@ -171,9 +176,9 @@ const BasicReport = () => {
         }
       />
       <MetricsPicker
-        storageKey={StorageKey.ga4RequestComposerBasicSelectedMetrics}
         property={propertyString}
         setMetrics={setMetrics}
+        metrics={metrics}
         helperText={
           <>
             The metrics to include in the request. See {metricsLink} on devsite.
@@ -244,6 +249,12 @@ const BasicReport = () => {
         dimensionOptions={dimensions}
         orderBys={orderBys}
         setOrderBys={setOrderBys}
+      />
+      <CohortSpec
+        cohortSpec={cohortSpec}
+        setCohortSpec={setCohortSpec}
+        dimensions={dimensions}
+        addFirstSessionDate={addFirstSessionDate}
       />
       <WithHelpText
         helpText={

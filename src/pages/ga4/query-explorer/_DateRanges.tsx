@@ -40,7 +40,12 @@ const useDateRanges: UseDateRanges = ({ setDateRanges }) => {
 
   const removeDateRange = React.useCallback(
     (id: string) => {
-      setDateRanges((old = []) => old.filter(dateRange => dateRange.id !== id))
+      setDateRanges((old = []) => {
+        if (old.length === 1) {
+          return undefined
+        }
+        return old.filter(dateRange => dateRange.id !== id)
+      })
     },
     [setDateRanges]
   )
@@ -188,7 +193,6 @@ const DateRanges: React.FC<{
             <TooltipIconButton
               tooltip="remove daterange"
               onClick={() => removeDateRange(dateRange.id)}
-              disabled={dateRanges.length === 1}
             >
               <Delete />
             </TooltipIconButton>

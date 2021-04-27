@@ -15,6 +15,8 @@
 // All static links on the site should be put into this enum. This makes it
 // easier to update all instances of a link on the site.
 export enum Url {
+  cohortsRangeStartOffset = "https://developers.google.com/analytics/devguides/reporting/data/v1/rest/v1beta/CohortSpec#CohortsRange.FIELDS.start_offset",
+  cohortsRangeEndOffset = "https://developers.google.com/analytics/devguides/reporting/data/v1/rest/v1beta/CohortSpec#CohortsRange.FIELDS.end_offset",
   ga4RequestComposerBasicRunReport = "https://developers.google.com/analytics/devguides/reporting/data/v1/rest/v1beta/properties/runReport",
   ga4RequestComposerBasicRunReportLimit = "https://developers.google.com/analytics/devguides/reporting/data/v1/rest/v1beta/properties/runReport#body.request_body.FIELDS.limit",
   ga4RequestComposerBasicRunReportDimensionFilter = "https://developers.google.com/analytics/devguides/reporting/data/v1/rest/v1beta/properties/runReport#body.request_body.FIELDS.dimension_filter",
@@ -25,6 +27,7 @@ export enum Url {
   ga4RequestComposerBasicDimensions = "https://developers.google.com/analytics/devguides/reporting/data/v1/rest/v1beta/properties/runReport#body.request_body.FIELDS.dimensions",
   ga4RequestComposerBasicProperty = "https://developers.google.com/analytics/devguides/reporting/data/v1/rest/v1beta/properties/runReport#body.PATH_PARAMETERS.property",
   ga4RequestComposerBasicCurrencyCode = "https://developers.google.com/analytics/devguides/reporting/data/v1/rest/v1beta/properties/runReport#body.request_body.FIELDS.currency_code",
+  ga4RequestComposerBasicCohortSpec = "https://developers.google.com/analytics/devguides/reporting/data/v1/rest/v1beta/properties/runReport#body.request_body.FIELDS.cohort_spec",
   iso4217Wiki = "https://en.wikipedia.org/wiki/ISO_4217",
   ga4DataAPI = "https://developers.google.com/analytics/devguides/reporting/data/v1",
   ga4AdminAPI = "https://developers.google.com/analytics/devguides/config/admin/v1",
@@ -90,6 +93,7 @@ export enum StorageKey {
   ga4RequestComposerBasicSelectedDimensions = "/ga4/request-composer/basic-report/selected-dimensions",
   ga4RequestComposerBasicSelectedMetrics = "/ga4/request-composer/basic-report/selected-metrics",
   ga4RequestComposerBasicShowRequestJSON = "/ga4/request-composer/basic-report/show-request-json",
+  ga4RequestComposerBasicCohortSpec = "/ga4/request-composer/basic-report/cohort-spec",
   ga4RequestComposerBasicKeepEmptyRows = "/ga4/request-composer/basic-report/keep-empty-rows",
   ga4RequestComposerBasicDimensionFilter = "/ga4/request-composer/basic-report/dimension-filter",
   ga4RequestComposerBasicMetricFilter = "/ga4/request-composer/basic-report/metric-filter",

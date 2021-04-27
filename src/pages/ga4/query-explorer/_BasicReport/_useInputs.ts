@@ -1,7 +1,11 @@
-import { useState, useEffect, useMemo } from "react"
+import { useState, useEffect, useMemo, useCallback } from "react"
 import { SelectableProperty } from "../../../../components/GA4PropertySelector"
 import { DateRange } from "../_DateRanges"
-import { GA4Dimensions, GA4Metrics } from "../../../../components/GA4Pickers"
+import {
+  GA4Dimensions,
+  GA4Metrics,
+  useAvailableColumns,
+} from "../../../../components/GA4Pickers"
 import {
   usePersistentString,
   usePersistentBoolean,
@@ -11,6 +15,7 @@ import { StorageKey } from "../../../../constants"
 import { FilterExpression } from "../_Filter/_index"
 
 type OrderBy = gapi.client.analyticsdata.OrderBy
+type CohortSpec = gapi.client.analyticsdata.CohortSpec
 
 const useInputs = () => {
   const [showRequestJSON, setShowRequestJSON] = usePersistentBoolean(
@@ -21,9 +26,13 @@ const useInputs = () => {
   const [dateRanges, setDateRanges] = usePersistantObject<DateRange[]>(
     StorageKey.ga4RequestComposerBasicDateRanges
   )
-  const [dimensions, setDimensions] = useState<GA4Dimensions>()
+  const [dimensions, setDimensions] = usePersistantObject<
+    NonNullable<GA4Dimensions>
+  >(StorageKey.ga4RequestComposerBasicSelectedDimensions)
   const [dimensionFilter, setDimensionFilter] = useState<FilterExpression>()
-  const [metrics, setMetrics] = useState<GA4Metrics>()
+  const [metrics, setMetrics] = usePersistantObject<NonNullable<GA4Metrics>>(
+    StorageKey.ga4RequestComposerBasicSelectedMetrics
+  )
   const [metricFilter, setMetricFilter] = useState<FilterExpression>()
   const [offset, setOffset] = usePersistentString(
     StorageKey.ga4RequestComposerBasicSelectedOffset
@@ -48,10 +57,30 @@ const useInputs = () => {
     inputPropertyString,
   ])
 
+  const { dimensionOptions } = useAvailableColumns({
+    selectedMetrics: metrics,
+    selectedDimensions: dimensions,
+    property: propertyString,
+  })
+
+  const [cohortSpec, setCohortSpec] = usePersistantObject<CohortSpec>(
+    StorageKey.ga4RequestComposerBasicCohortSpec
+  )
+
   const [keepEmptyRows, setKeepEmptyRows] = usePersistentBoolean(
     StorageKey.ga4RequestComposerBasicKeepEmptyRows,
     false
   )
+
+  const addFirstSessionDate = useCallback(() => {
+    const firstSessionDate = dimensionOptions?.find(
+      dim => dim.apiName === "firstSessionDate"
+    )
+    if (firstSessionDate === undefined) {
+      return
+    }
+    setDimensions((old = []) => old.concat([firstSessionDate]))
+  }, [setDimensions, dimensionOptions])
 
   useEffect(() => {
     if (selectedProperty !== undefined) {
@@ -62,6 +91,7 @@ const useInputs = () => {
   }, [selectedProperty, setInputPropertyString])
 
   return {
+    addFirstSessionDate,
     selectedProperty,
     setSelectedProperty,
     inputPropertyString,
@@ -89,6 +119,8 @@ const useInputs = () => {
     setCurrencyCode,
     keepEmptyRows,
     setKeepEmptyRows,
+    cohortSpec,
+    setCohortSpec,
   }
 }
 export default useInputs

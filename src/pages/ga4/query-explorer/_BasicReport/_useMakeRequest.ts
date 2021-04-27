@@ -9,6 +9,7 @@ import { FilterExpression } from "../_Filter/_index"
 
 type RunReportRequest = gapi.client.analyticsdata.RunReportRequest
 type OrderBy = gapi.client.analyticsdata.OrderBy
+type CohortSpec = gapi.client.analyticsdata.CohortSpec
 export type RunReportResponse = gapi.client.analyticsdata.RunReportResponse
 
 type UseMakeRequestArgs = {
@@ -22,6 +23,7 @@ type UseMakeRequestArgs = {
   limit: string | undefined
   orderBys: OrderBy[] | undefined
   currencyCode: string | undefined
+  cohortSpec: CohortSpec | undefined
   keepEmptyRows: boolean
 }
 
@@ -47,6 +49,7 @@ const useMakeRequest = ({
   limit,
   orderBys,
   currencyCode,
+  cohortSpec,
   keepEmptyRows,
 }: UseMakeRequestArgs): Requestable<
   Common,
@@ -99,6 +102,9 @@ const useMakeRequest = ({
     if (currencyCode !== undefined && currencyCode !== "") {
       r.currencyCode = currencyCode
     }
+    if (cohortSpec !== undefined) {
+      r.cohortSpec = cohortSpec
+    }
     if (keepEmptyRows === true) {
       r.keepEmptyRows = keepEmptyRows
     }
@@ -113,6 +119,7 @@ const useMakeRequest = ({
     limit,
     orderBys,
     currencyCode,
+    cohortSpec,
     keepEmptyRows,
   ])
 

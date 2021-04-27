@@ -6,7 +6,7 @@ import Autocomplete from "@material-ui/lab/Autocomplete"
 
 const useStyles = makeStyles(() => ({
   formControl: {
-    minWidth: "10ch",
+    minWidth: "15ch",
   },
 }))
 
@@ -44,7 +44,6 @@ const Select: React.FC<SelectProps> = ({
     <Autocomplete<SelectOption, false, true, false>
       disableClearable
       className={clsx(classes.formControl, className)}
-      fullWidth={fullWidth}
       autoHighlight
       autoSelect
       options={options}
