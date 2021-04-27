@@ -146,7 +146,7 @@ const BasicReport = () => {
       <Typography>
         Returns a customized report of your Google Analytics event data. Reports
         contain statistics derived from data collected by the Google Analytics
-        tracking code. Basic Report uses the {runReportLink} API endpoint.
+        measurement code. Basic Report uses the {runReportLink} API endpoint.
       </Typography>
       <GA4PropertySelector
         accountSummariesKey={StorageKey.ga4RequestComposerBasicAccountSummaries}
