@@ -23,7 +23,6 @@ type UseMakeRequestArgs = {
   offset: string | undefined
   limit: string | undefined
   orderBys: OrderBy[] | undefined
-  currencyCode: string | undefined
   cohortSpec: CohortSpec | undefined
   metricAggregations: MetricAggregation[] | undefined
   keepEmptyRows: boolean
@@ -50,7 +49,6 @@ const useMakeRequest = ({
   offset,
   limit,
   orderBys,
-  currencyCode,
   cohortSpec,
   metricAggregations,
   keepEmptyRows,
@@ -104,9 +102,6 @@ const useMakeRequest = ({
     if (orderBys !== undefined && orderBys.length !== 0) {
       r.orderBys = orderBys
     }
-    if (currencyCode !== undefined && currencyCode !== "") {
-      r.currencyCode = currencyCode
-    }
     if (cohortSpec !== undefined && (cohortSpec.cohorts?.length || 0) > 0) {
       r.cohortSpec = cohortSpec
     }
@@ -127,7 +122,6 @@ const useMakeRequest = ({
     offset,
     limit,
     orderBys,
-    currencyCode,
     cohortSpec,
     keepEmptyRows,
   ])

@@ -4,7 +4,6 @@ import { TooltipIconButton, SAB } from "../../../components/Buttons"
 import { Delete } from "@material-ui/icons"
 import { Dispatch } from "../../../types"
 import InlineCode from "../../../components/InlineCode"
-import clsx from "classnames"
 import uuid from "uuid/v4"
 import ExternalLink from "../../../components/ExternalLink"
 import WithHelpText from "../../../components/WithHelpText"
@@ -133,7 +132,6 @@ const DateRanges: React.FC<{
     removeDateRange,
     updateFrom,
     updateTo,
-    updateName,
   } = useDateRanges({ setDateRanges })
 
   return (
@@ -164,17 +162,6 @@ const DateRanges: React.FC<{
             >
               <Delete />
             </TooltipIconButton>
-            <TextField
-              fullWidth
-              variant="outlined"
-              size="small"
-              label="name"
-              value={dateRange.name}
-              className={clsx(classes.from, classes.name)}
-              onChange={e => {
-                updateName(dateRange.id, e.target.value)
-              }}
-            />
             <TextField
               fullWidth
               variant="outlined"

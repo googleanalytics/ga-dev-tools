@@ -35,12 +35,14 @@ const useInputs = () => {
       const extractedParams = extractParamsFromWebsiteUrl(e.target.value)
       if (extractedParams !== undefined) {
         const {
+          utm_id,
           utm_source,
           utm_medium,
           utm_campaign,
           utm_term,
           utm_content,
         } = extractedParams
+        utm_id !== undefined && setId(utm_id)
         utm_source !== undefined && setSource(utm_source)
         utm_medium !== undefined && setMedium(utm_medium)
         utm_campaign !== undefined && setCampaign(utm_campaign)

@@ -20,8 +20,6 @@ import OrderBys from "../_OrderBys"
 import ExternalLink from "../../../../components/ExternalLink"
 import WithHelpText from "../../../../components/WithHelpText"
 import CohortSpec from "../_CohortSpec"
-import { max } from "moment"
-import { SelectOption } from "../../../../components/Select"
 import MetricAggregations from "../_MetricAggregations"
 
 const useStyles = makeStyles(theme => ({
@@ -59,8 +57,6 @@ const dimensionsLink = (
     dimensions
   </ExternalLink>
 )
-
-const iso4217 = <ExternalLink href={Url.iso4217Wiki}>ISO 4217</ExternalLink>
 
 const metricsLink = (
   <ExternalLink href={Url.ga4RequestComposerBasicMetrics}>metrics</ExternalLink>
@@ -114,8 +110,6 @@ const BasicReport = () => {
     setLimit,
     orderBys,
     setOrderBys,
-    currencyCode,
-    setCurrencyCode,
     cohortSpec,
     setCohortSpec,
     keepEmptyRows,
@@ -135,7 +129,6 @@ const BasicReport = () => {
     dimensions,
     metrics,
     orderBys,
-    currencyCode,
     cohortSpec,
     keepEmptyRows,
   })
@@ -210,14 +203,6 @@ const BasicReport = () => {
         value={limit}
         helperText="The maximum number of rows to return."
         onChange={setLimit}
-      />
-      <LinkedTextField
-        value={currencyCode || ""}
-        onChange={setCurrencyCode}
-        href={Url.ga4RequestComposerBasicCurrencyCode}
-        linkTitle="See currencyCode on devsite."
-        label="currency code"
-        helperText={<>The {iso4217} currency code to use for the request.</>}
       />
       <DateRanges setDateRanges={setDateRanges} dateRanges={dateRanges} />
       <WithHelpText

@@ -71,7 +71,7 @@ const GeneratedURL: React.FC<GeneratedUrlProps> = ({
             </Typography>
             <TextField
               id="generated-url"
-              label="Generated URL"
+              label="generated URL"
               multiline
               value={showShort ? shortLink : longLink}
               variant="outlined"
