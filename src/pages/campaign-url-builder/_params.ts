@@ -17,12 +17,8 @@ export interface CampaignParams {
   utm_medium: string
   utm_campaign: string
   utm_term: string
+  utm_id: string
   utm_content: string
-}
-
-interface ParsedCampaignUrl {
-  campaignParams: Partial<CampaignParams>
-  cleanedWebsiteUrl: string
 }
 
 export const CampiagnParams: (keyof CampaignParams)[] = [
@@ -30,6 +26,7 @@ export const CampiagnParams: (keyof CampaignParams)[] = [
   "utm_medium",
   "utm_campaign",
   "utm_term",
+  "utm_id",
   "utm_content",
 ]
 

@@ -92,6 +92,7 @@ export enum StorageKey {
   campaignBuilderSource = "campaign-builder/source",
   campaignBuilderMedium = "campaign-builder/medium",
   campaignBuilderName = "campaign-builder/name",
+  campaignBuilderId = "campaign-builder/id",
   campaignBuilderTerm = "campaign-builder/term",
   campaignBuilderContent = "campaign-builder/content",
   campaignBuilderUseFragment = "campaign-builder/use-fragment",
