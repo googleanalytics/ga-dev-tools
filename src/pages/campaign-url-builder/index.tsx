@@ -15,413 +15,44 @@
 import * as React from "react"
 import Typography from "@material-ui/core/Typography"
 import TextField from "@material-ui/core/TextField"
-import Paper from "@material-ui/core/Paper"
-import { makeStyles } from "@material-ui/core/styles"
-import Error from "@material-ui/icons/ErrorOutline"
-import Warning from "@material-ui/icons/Warning"
 import Table from "@material-ui/core/Table"
 import TableBody from "@material-ui/core/TableBody"
 import TableCell from "@material-ui/core/TableCell"
 import TableHead from "@material-ui/core/TableHead"
 import TableRow from "@material-ui/core/TableRow"
-import Button from "@material-ui/core/Button"
-import { v4 as uuid } from "uuid"
 
-import { Url, StorageKey } from "../../constants"
+import { Url } from "../../constants"
 import Layout from "../../components/layout"
 import InlineCode from "../../components/InlineCode"
-import CopyButton from "../../components/CopyButton"
-import useShortenLink from "./_useShortenLink"
-import { extractParamsFromWebsiteUrl, websiteUrlFor } from "./_params"
-import { usePersistentString, usePersistentBoolean, IS_SSR } from "../../hooks"
-import LabeledCheckbox from "../../components/LabeledCheckbox"
+import { IS_SSR } from "../../hooks"
+import GeneratedURL from "./_GeneratedURL/_index"
+import useStyles from "./_useStyles"
+import useInputs from "./_useInputs"
 import ExternalLink from "../../components/ExternalLink"
-
-const iosCampaignTracking = (
-  <ExternalLink href={Url.iosCampaignMeasurement}>
-    iOS Campaign Tracking URL Builder
-  </ExternalLink>
-)
-
-const googlePlayUrlBuilder = (
-  <ExternalLink href={Url.googlePlayURLBuilder}>
-    Google Play URL Builder
-  </ExternalLink>
-)
-
-interface WarningsForProps {
-  websiteUrl: string
-  onWarning: (warningPresent: boolean) => void
-}
-const WarningsFor: React.FC<WarningsForProps> = ({ websiteUrl, onWarning }) => {
-  const classes = useStyles()
-  const asUrl = React.useMemo<URL | undefined>(() => {
-    try {
-      return new URL(websiteUrl)
-    } catch (e) {
-      return undefined
-    }
-  }, [websiteUrl])
-
-  const BaseWarning: React.FC = ({ children }) => {
-    return (
-      <section className={classes.shareInvalid}>
-        <Warning />
-        <Typography variant="body1">{children}</Typography>
-      </section>
-    )
-  }
-
-  const [warnings, setWarnings] = React.useState<JSX.Element[]>([])
-
-  React.useEffect(() => {
-    if (asUrl === undefined) {
-      return
-    }
-    // Clear out the old value.
-    setWarnings([])
-    if (asUrl.hostname === "ga-dev-tools.appspot.com") {
-      setWarnings(old =>
-        old.concat([
-          <>
-            It appears that you are linking to this site,{" "}
-            <InlineCode>ga-dev-tools.appspot.com</InlineCode>, instead of your
-            own. You should put your own site's URL in the Website URL field,
-            above.
-          </>,
-        ])
-      )
-    }
-
-    if (asUrl.hostname === "play.google.com") {
-      setWarnings(old =>
-        old.concat([
-          <>
-            It appears that you are creating a Google Play Store url. You should
-            use the {googlePlayUrlBuilder} instead for creating campaign links
-            for Play Store apps.
-          </>,
-        ])
-      )
-    }
-
-    if (asUrl.hostname === "itunes.apple.com") {
-      setWarnings(old =>
-        old.concat([
-          <>
-            It appears you are creating an iOS App Store URL. You should use the{" "}
-            {iosCampaignTracking} instead for creating campaign links for Play
-            Store apps.
-          </>,
-        ])
-      )
-    }
-  }, [asUrl])
-
-  React.useEffect(() => {
-    onWarning(warnings.length !== 0)
-  }, [warnings, onWarning])
-
-  if (asUrl === undefined) {
-    return null
-  }
-
-  return (
-    <section data-testid="bad-url-warnings">
-      {warnings.map(childElement => (
-        <BaseWarning key={uuid()}>{childElement}</BaseWarning>
-      ))}
-    </section>
-  )
-}
-
-const useStyles = makeStyles(theme => ({
-  generatedInput: {
-    wordBreak: "break-all",
-  },
-  denseTableCell: {
-    whiteSpace: "nowrap",
-    "& p": {
-      paddingBottom: theme.spacing(0.5),
-    },
-  },
-  buttons: {
-    display: "flex",
-    "& > button": {
-      margin: theme.spacing(1),
-    },
-  },
-  inputs: {
-    display: "flex",
-    flexDirection: "column",
-    marginBottom: theme.spacing(1),
-    maxWidth: "600px",
-  },
-  bold: {
-    fontWeight: "bold",
-  },
-  share: {
-    maxWidth: "600px",
-    padding: theme.spacing(3),
-    paddingTop: "unset",
-    display: "flex",
-    flexDirection: "column",
-  },
-  shareInvalid: {
-    display: "flex",
-    flexDirection: "row",
-    paddingTop: theme.spacing(3),
-    alignItems: "center",
-    "& svg": {
-      marginRight: theme.spacing(2),
-    },
-    "& p": {
-      paddingBottom: "unset",
-    },
-  },
-}))
 
 const customCampaigns = (
   <ExternalLink href={Url.aboutCustomCampaigns}>Custom Campaigns</ExternalLink>
 )
 
-interface GeneratedUrlProps {
-  websiteUrl: string
-  source: string
-  medium: string
-  campaign: string
-  term: string
-  content: string
-}
-
-const GeneratedUrl: React.FC<GeneratedUrlProps> = ({
-  websiteUrl,
-  source,
-  medium,
-  campaign,
-  term,
-  content,
-}) => {
-  const classes = useStyles()
-
-  const [generatedUrl, setGeneratedUrl] = React.useState("")
-  const [hasAllRequired, setHasAllRequired] = React.useState(false)
-  const [problematicUrl, setProblematicUrl] = React.useState(false)
-  const [longLink, setLongLink] = React.useState<string>(generatedUrl)
-  const [shortLink, setShortLink] = React.useState<undefined | string>()
-  const [showShort, setShowShort] = React.useState(false)
-  const [useFragment, setUseFragment] = usePersistentBoolean(
-    StorageKey.campaignBuilderUseFragment,
-    false
-  )
-  const { authenticated, shorten, canShorten } = useShortenLink()
-
-  const shortenLinkGui = React.useCallback(() => {
-    if (showShort === true) {
-      // We're currently showing the short url and the user clicked "Show full
-      // URL". Set show short to false and return.
-      setShowShort(false)
-      return
-    }
-    // We can't shorten bit.ly links or links that are empty.
-    if (longLink === "" || longLink?.startsWith("https://bit.ly")) {
-      return
-    }
-    shorten(longLink).then(({ longLink, shortLink }) => {
-      setLongLink(longLink)
-      setShortLink(shortLink)
-      setShowShort(true)
-    })
-  }, [longLink, shorten, showShort])
-
-  React.useEffect(() => {
-    if (websiteUrl === "") {
-      setHasAllRequired(false)
-      return
-    }
-    if (source === "") {
-      setHasAllRequired(false)
-      return
-    }
-    if (medium === "") {
-      setHasAllRequired(false)
-      return
-    }
-    if (campaign === "") {
-      setHasAllRequired(false)
-      return
-    }
-    setHasAllRequired(true)
-  }, [websiteUrl, source, medium, campaign])
-
-  const setGeneratedFromInput = React.useCallback(() => {
-    if (!hasAllRequired) {
-      setGeneratedUrl("")
-      setLongLink("")
-      return
-    }
-    const generated = websiteUrlFor(
-      websiteUrl,
-      {
-        utm_source: source || undefined,
-        utm_medium: medium || undefined,
-        utm_campaign: campaign || undefined,
-        utm_term: term || undefined,
-        utm_content: content || undefined,
-      },
-      useFragment
-    )
-    setGeneratedUrl(generated)
-    setLongLink(generated)
-  }, [
-    hasAllRequired,
-    useFragment,
-    websiteUrl,
-    source,
-    medium,
-    campaign,
-    term,
-    content,
-  ])
-  // TODO - this can probably be fixed with useMemo based on what past me said:
-  // This is a bit of a hack, but I don't want to duplicate the code that sets
-  // the generated url.
-  React.useEffect(() => {
-    setGeneratedFromInput()
-    setShortLink(undefined)
-    setShowShort(false)
-  }, [
-    hasAllRequired,
-    setGeneratedFromInput,
-    useFragment,
-    websiteUrl,
-    source,
-    medium,
-    campaign,
-    term,
-    content,
-  ])
-
-  const onWarning = React.useCallback(
-    warningPresent => setProblematicUrl(warningPresent),
-    [setProblematicUrl]
-  )
-
-  return (
-    <Paper className={classes.share}>
-      <WarningsFor websiteUrl={websiteUrl} onWarning={onWarning} />
-      {!problematicUrl &&
-        (hasAllRequired ? (
-          <>
-            <Typography variant="h2">
-              Share the generated campaign URL
-            </Typography>
-
-            <Typography variant="body1">
-              Use this URL in any promotional channels you want to be associated
-              with this custom campaign.
-            </Typography>
-            <TextField
-              id="generated-url"
-              label="Generated URL"
-              multiline
-              value={showShort ? shortLink : longLink}
-              variant="outlined"
-              className={classes.generatedInput}
-            />
-            <LabeledCheckbox checked={useFragment} setChecked={setUseFragment}>
-              <Typography variant="body2" component="span">
-                Set campaign parameters in the fragment protion of the URL (
-                <Typography component="span" color="error" variant="inherit">
-                  not recommended
-                </Typography>
-                )
-              </Typography>
-            </LabeledCheckbox>
-            <section className={classes.buttons}>
-              <CopyButton
-                variant="contained"
-                color="primary"
-                toCopy={showShort ? shortLink || "" : longLink}
-                text="Copy URL"
-              />
-              {canShorten && (
-                <Button
-                  variant="contained"
-                  onClick={shortenLinkGui}
-                  data-testid="shorten-button"
-                >
-                  {authenticated === false
-                    ? "Shorten URL"
-                    : showShort
-                    ? "Show original"
-                    : "Shorten URL"}
-                </Button>
-              )}
-            </section>
-          </>
-        ) : (
-          <section className={classes.shareInvalid}>
-            <Error />
-            <Typography variant="body1">
-              Fill out all the required fields above and a URL will be
-              automatically generated for you here.
-            </Typography>
-          </section>
-        ))}
-    </Paper>
-  )
-}
-
 export const CampaignUrlBuilder = () => {
   const classes = useStyles()
 
-  const [websiteUrl, setWebsiteUrl] = usePersistentString(
-    StorageKey.campaignBuilderWebsiteUrl,
-    ""
-  )
-  const [source, setSource] = usePersistentString(
-    StorageKey.campaignBuilderSource,
-    ""
-  )
-  const [medium, setMedium] = usePersistentString(
-    StorageKey.campaignBuilderMedium,
-    ""
-  )
-  const [campaign, setCampaign] = usePersistentString(
-    StorageKey.campaignBuilderName,
-    ""
-  )
-  const [term, setTerm] = usePersistentString(
-    StorageKey.campaignBuilderTerm,
-    ""
-  )
-  const [content, setContent] = usePersistentString(
-    StorageKey.campaignBuilderContent,
-    ""
-  )
-
-  const onWebsiteChange = React.useCallback(
-    e => {
-      const extractedParams = extractParamsFromWebsiteUrl(e.target.value)
-      if (extractedParams !== undefined) {
-        const {
-          utm_source,
-          utm_medium,
-          utm_campaign,
-          utm_term,
-          utm_content,
-        } = extractedParams
-        utm_source !== undefined && setSource(utm_source)
-        utm_medium !== undefined && setMedium(utm_medium)
-        utm_campaign !== undefined && setCampaign(utm_campaign)
-        utm_term !== undefined && setTerm(utm_term)
-        utm_content !== undefined && setContent(utm_content)
-      }
-      setWebsiteUrl(e.target.value)
-    },
-    [setCampaign, setMedium, setSource, setTerm, setContent, setWebsiteUrl]
-  )
+  const {
+    websiteUrl,
+    source,
+    setSource,
+    medium,
+    setMedium,
+    campaign,
+    setCampaign,
+    id,
+    setId,
+    term,
+    setTerm,
+    content,
+    setContent,
+    onWebsiteChange,
+  } = useInputs()
 
   return (
     <>
@@ -443,7 +74,7 @@ export const CampaignUrlBuilder = () => {
             required
             value={websiteUrl || ""}
             onChange={onWebsiteChange}
-            label="Website URL"
+            label="website URL"
             size="small"
             variant="outlined"
             helperText={
@@ -454,11 +85,21 @@ export const CampaignUrlBuilder = () => {
             }
           />
           <TextField
+            id="campaign-id"
+            required
+            value={id || ""}
+            onChange={e => setId(e.target.value)}
+            label="campaign ID"
+            size="small"
+            variant="outlined"
+            helperText={<span>The ads campaign id.</span>}
+          />
+          <TextField
             id="campaign-source"
             required
             value={source || ""}
             onChange={e => setSource(e.target.value)}
-            label="Campaign Source"
+            label="campaign source"
             size="small"
             variant="outlined"
             helperText={
@@ -473,7 +114,7 @@ export const CampaignUrlBuilder = () => {
             required
             value={medium || ""}
             onChange={e => setMedium(e.target.value)}
-            label="Campaign Medium"
+            label="campaign medium"
             size="small"
             variant="outlined"
             helperText={
@@ -486,16 +127,16 @@ export const CampaignUrlBuilder = () => {
           />
           <TextField
             id="campaign-name"
-            required
             value={campaign || ""}
             onChange={e => setCampaign(e.target.value)}
-            label="Campaign Name"
+            label="campaign name"
             size="small"
             variant="outlined"
             helperText={
               <span>
                 Product, promo code, or slogan (e.g.{" "}
-                <span className={classes.bold}>spring_sale</span>)
+                <span className={classes.bold}>spring_sale</span>) One of
+                campaign name or campaign id are required.
               </span>
             }
           />
@@ -503,7 +144,7 @@ export const CampaignUrlBuilder = () => {
             id="campaign-term"
             value={term || ""}
             onChange={e => setTerm(e.target.value)}
-            label="Campaign Term"
+            label="campaign term"
             size="small"
             variant="outlined"
             helperText="Identify the paid keywords"
@@ -512,7 +153,7 @@ export const CampaignUrlBuilder = () => {
             id="campaign-content"
             value={content || ""}
             onChange={e => setContent(e.target.value)}
-            label="Campaign Content"
+            label="campaign content"
             size="small"
             variant="outlined"
             helperText="Use to differentiate ads"
@@ -520,11 +161,12 @@ export const CampaignUrlBuilder = () => {
         </section>
       )}
 
-      <GeneratedUrl
+      <GeneratedURL
         source={source || ""}
         websiteUrl={websiteUrl || ""}
         medium={medium || ""}
         campaign={campaign || ""}
+        id={id || ""}
         term={term || ""}
         content={content || ""}
       />
@@ -547,6 +189,27 @@ export const CampaignUrlBuilder = () => {
           </TableRow>
         </TableHead>
         <TableBody>
+          <TableRow>
+            <TableCell className={classes.denseTableCell}>
+              <Typography variant="body1">Campaign Id</Typography>
+              <InlineCode>utm_id</InlineCode>
+            </TableCell>
+            <TableCell>
+              <Typography variant="body1">Yes</Typography>
+            </TableCell>
+            <TableCell>
+              <Typography variant="body1">
+                <InlineCode>abc.123</InlineCode>
+              </Typography>
+            </TableCell>
+            <TableCell>
+              <Typography variant="body1">
+                Used to identify which ads campaign this referral references.
+                Use <InlineCode>utm_id</InlineCode> to identify a specific ads
+                campaign.
+              </Typography>
+            </TableCell>
+          </TableRow>
           <TableRow>
             <TableCell className={classes.denseTableCell}>
               <Typography variant="body1">Campaign Source</Typography>
@@ -593,7 +256,7 @@ export const CampaignUrlBuilder = () => {
               <InlineCode>utm_campaign</InlineCode>
             </TableCell>
             <TableCell>
-              <Typography variant="body1">Yes</Typography>
+              <Typography variant="body1">No</Typography>
             </TableCell>
             <TableCell>
               <Typography variant="body1">

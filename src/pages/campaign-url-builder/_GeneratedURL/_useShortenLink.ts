@@ -1,7 +1,6 @@
 import React from "react"
-import { StorageKey, EventAction, EventCategory } from "../../constants"
+import { StorageKey } from "../../../constants"
 import { useLocalStorage } from "react-use"
-import { useSelector } from "react-redux"
 
 type BitlyStorageCache = {
   // Cache starts at guid level.
