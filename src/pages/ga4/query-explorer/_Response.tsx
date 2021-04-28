@@ -112,14 +112,37 @@ const Response: React.FC<ReportsTableProps> = ({
   )
 }
 
-const toColumn = (type: string) => (row: gapi.client.analyticsdata.Row) => {
-  const dateRangeName = row?.dimensionValues[1]?.value || ""
-  const name = `${dateRangeName} ${type}`
-  return {
-    field: name,
-    headerName: name,
-    flex: 1,
+const aggregationToColumn = (
+  response: RunReportResponse,
+  hasDateRange: boolean,
+  key: "totals" | "minimums" | "maximums"
+) => {
+  const aggregations = response[key]
+  if (aggregations === undefined) {
+    return []
   }
+  return aggregations.flatMap(row => {
+    let dateRange: string | undefined = undefined
+    if (hasDateRange) {
+      const dimensionValues = row.dimensionValues
+      if (dimensionValues !== undefined) {
+        const first = dimensionValues[1]
+        dateRange = first.value
+      }
+    }
+    const metricValues = row.metricValues
+    if (metricValues === undefined) {
+      return []
+    }
+    return response.metricHeaders!.map((header, innerIdx) => {
+      const aggregation = metricValues[innerIdx].value!
+      return {
+        metric: header.name!,
+        dateRange,
+        [key]: aggregation,
+      }
+    })
+  })
 }
 
 const Aggregations: React.FC<{ response: RunReportResponse }> = ({
@@ -127,9 +150,9 @@ const Aggregations: React.FC<{ response: RunReportResponse }> = ({
 }) => {
   const hasDateRange = useMemo(
     () =>
-      response.totals?.length > 1 ||
-      response.minimums?.length > 1 ||
-      response.maximums?.length > 1,
+      (response.totals?.length || 0) > 1 ||
+      (response.minimums?.length || 0) > 1 ||
+      (response.maximums?.length || 0) > 1,
     [response]
   )
   const columns = useMemo(() => {
@@ -140,61 +163,33 @@ const Aggregations: React.FC<{ response: RunReportResponse }> = ({
     const totals =
       response.totals === undefined
         ? []
-        : [{ field: "total", headerName: "total", flex: 1 }]
+        : [{ field: "totals", headerName: "total", flex: 1 }]
     const mins =
       response.minimums === undefined
         ? []
-        : [{ field: "min", headerName: "min", flex: 1 }]
+        : [{ field: "minimums", headerName: "min", flex: 1 }]
     const maxs =
       response.maximums === undefined
         ? []
-        : [{ field: "max", headerName: "max", flex: 1 }]
+        : [{ field: "maximums", headerName: "max", flex: 1 }]
     const aggregations = metrics
       .concat(dateRange)
       .concat(totals)
       .concat(mins)
       .concat(maxs)
     return aggregations
-  }, [hasDateRange])
+  }, [hasDateRange, response])
 
   const rows = useMemo(() => {
-    const mins = response.minimums?.flatMap((row, idx) => {
-      const dateRange = hasDateRange ? row.dimensionValues[1].value : undefined
-      return response.metricHeaders?.map((header, innerIdx) => {
-        const min = row.metricValues[innerIdx].value
-        return {
-          metric: header.name,
-          dateRange,
-          min,
-        }
-      })
-    })
-    const maxs = response.maximums?.flatMap((row, idx) => {
-      const dateRange = hasDateRange ? row.dimensionValues[1].value : undefined
-      return response.metricHeaders?.map((header, innerIdx) => {
-        const max = row.metricValues[innerIdx].value
-        return {
-          metric: header.name,
-          dateRange,
-          max,
-        }
-      })
-    })
-    const totals = response.totals?.flatMap((row, idx) => {
-      const dateRange = hasDateRange ? row.dimensionValues[1].value : undefined
-      return response.metricHeaders?.map((header, innerIdx) => {
-        const total = row.metricValues[innerIdx].value
-        return {
-          metric: header.name,
-          dateRange,
-          total,
-        }
-      })
-    })
-    const longerThan1 = [mins, totals, maxs].filter(group => group?.length > 0)
+    const aggregations = [
+      aggregationToColumn(response, hasDateRange, "totals"),
+      aggregationToColumn(response, hasDateRange, "minimums"),
+      aggregationToColumn(response, hasDateRange, "maximums"),
+    ]
+    const longerThan1 = aggregations.filter(group => group.length > 0)
     return longerThan1
       .reduce((zipped, group) => {
-        return group.map((entry, idx) => ({ ...entry, ...zipped[idx] }))
+        return group?.map((entry, idx) => ({ ...entry, ...zipped[idx] }))
       }, [])
       .map((a, idx) => ({ ...a, id: idx }))
   }, [response, hasDateRange])

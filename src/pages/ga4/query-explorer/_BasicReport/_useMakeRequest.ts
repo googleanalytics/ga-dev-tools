@@ -107,7 +107,7 @@ const useMakeRequest = ({
     if (currencyCode !== undefined && currencyCode !== "") {
       r.currencyCode = currencyCode
     }
-    if (cohortSpec !== undefined && cohortSpec.cohorts?.length > 0) {
+    if (cohortSpec !== undefined && (cohortSpec.cohorts?.length || 0) > 0) {
       r.cohortSpec = cohortSpec
     }
     if (keepEmptyRows === true) {

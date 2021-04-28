@@ -285,7 +285,7 @@ const CohortSpec: React.FC<CohortSpecProps> = ({
         </>
       }
     >
-      {!hasRequiredDimension && cohortSpec?.cohorts?.length > 0 && (
+      {!hasRequiredDimension && (cohortSpec?.cohorts?.length || 0) > 0 && (
         <Typography>
           <Warning /> To use cohorts, include the{" "}
           <InlineCode>firstSessionDate</InlineCode>
@@ -295,7 +295,7 @@ const CohortSpec: React.FC<CohortSpecProps> = ({
           </SAB>
         </Typography>
       )}
-      {cohortSpec?.cohorts?.length > 0 && (
+      {(cohortSpec?.cohorts?.length || 0) > 0 && (
         <div className={classes.cohortRange}>
           <Select
             label="granularity"

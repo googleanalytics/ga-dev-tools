@@ -172,7 +172,7 @@ const SelectableColumn: React.FC<{
     <LabeledCheckbox
       checked={selected}
       disabled={disabled}
-      setChecked={setSelected}
+      onChange={setSelected}
       className={classes.column}
       checkboxClassName={classnames({
         [classes.deprecatedCheckbox]: isDeprecated,
