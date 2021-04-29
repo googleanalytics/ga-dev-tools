@@ -106,7 +106,10 @@ const Layout: React.FC<LayoutProps> = ({
         <Login />
         <Drawer open={open} onClose={() => setOpen(false)}>
           <List className={classes.mobileNav}>
-            <Link to="/" className={classes.noColor}>
+            <Link
+              to={gaVersion === GAVersion.UniversalAnalytics ? "/" : "/ga4/"}
+              className={classes.noColor}
+            >
               <Typography
                 className={clsx(classes.innerNav, classes.home)}
                 variant="h2"
@@ -156,7 +159,9 @@ const Layout: React.FC<LayoutProps> = ({
       <nav className={classes.nav}>
         <ol>
           <li>
-            <Link to="/">
+            <Link
+              to={gaVersion === GAVersion.UniversalAnalytics ? "/" : "/ga4/"}
+            >
               <Typography
                 className={clsx(classes.innerNav, classes.home)}
                 variant="h2"
