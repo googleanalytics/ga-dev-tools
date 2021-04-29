@@ -4,7 +4,6 @@ import { Url, StorageKey } from "../../../constants"
 import { useEffect } from "react"
 import BasicReport from "./_BasicReport/_index"
 import ExternalLink from "../../../components/ExternalLink"
-import { useSetToast } from "../../../hooks"
 
 const dataAPI = (
   <ExternalLink href={Url.ga4DataAPI}>Analytics Data API</ExternalLink>
@@ -52,10 +51,7 @@ const useTab = (): [number, React.Dispatch<React.SetStateAction<number>>] => {
 
 const QueryExplorer = () => {
   const [tab, setTab] = useTab()
-  const setToast = useSetToast()
-  React.useEffect(() => {
-    setToast("hi from toast")
-  }, [setToast])
+
   return (
     <>
       <Typography>
