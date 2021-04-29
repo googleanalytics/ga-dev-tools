@@ -27,13 +27,15 @@ import useStyles from "./useStyles"
 import useInputs from "./useInputs"
 import ExternalLink from "../ExternalLink"
 import InlineCode from "../InlineCode"
-import { Url } from "../../constants"
+import { Url, GAVersion } from "../../constants"
 
 const customCampaigns = (
   <ExternalLink href={Url.aboutCustomCampaigns}>Custom Campaigns</ExternalLink>
 )
 
-export const CampaignUrlBuilder = () => {
+export const CampaignUrlBuilder: React.FC<{ version: GAVersion }> = ({
+  version,
+}) => {
   const classes = useStyles()
 
   const {
@@ -85,7 +87,7 @@ export const CampaignUrlBuilder = () => {
           />
           <TextField
             id="campaign-id"
-            required
+            required={version === GAVersion.GoogleAnalytics4}
             value={id || ""}
             onChange={e => setId(e.target.value)}
             label="campaign ID"
@@ -126,6 +128,7 @@ export const CampaignUrlBuilder = () => {
           />
           <TextField
             id="campaign-name"
+            required={version === GAVersion.UniversalAnalytics}
             value={campaign || ""}
             onChange={e => setCampaign(e.target.value)}
             label="campaign name"
@@ -161,6 +164,7 @@ export const CampaignUrlBuilder = () => {
       )}
 
       <GeneratedURL
+        version={version}
         source={source || ""}
         websiteUrl={websiteUrl || ""}
         medium={medium || ""}

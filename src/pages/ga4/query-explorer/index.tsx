@@ -16,19 +16,6 @@ import * as React from "react"
 import Layout from "../../../components/layout"
 import QueryExplorer from "./_QueryExplorer"
 
-// TODO - the UA/GA4 toggle should always reflect the type of the demo you are
-// on.
-//
-// TODO - when programically navigated, users should see a toast that let's
-// them know what just happened.
-//
-// TODO - extract out the campaign url tool and make a new page for
-// /ga4/campaign-url-builder
-//
-// TODO - make the campaign id optional for UA demo.
-//
-// TODO - make the campaign builder match current demo even though the required
-// stuff doesn't make sense. You can make the GA4 one be less dumb.
 export default ({ location: { pathname } }) => {
   return (
     <Layout title="Query Explorer" requireLogin pathname={pathname}>

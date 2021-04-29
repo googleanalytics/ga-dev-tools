@@ -1,12 +1,13 @@
 import { useState, useMemo, useCallback, useEffect } from "react"
 
 import { usePersistentBoolean } from "../../../hooks"
-import { StorageKey } from "../../../constants"
-import useShortenLink from "./_useShortenLink"
+import { StorageKey, GAVersion } from "../../../constants"
 import { websiteUrlFor } from "../params"
 import { Dispatch } from "../../../types"
+import useShortenLink from "./useShortenLink"
 
 type UseWarningsFor = (arg: {
+  version: GAVersion
   websiteUrl: string
   source: string
   medium: string
@@ -28,6 +29,7 @@ type UseWarningsFor = (arg: {
   shortenLinkGui: () => void
 }
 const useWarningsFor: UseWarningsFor = ({
+  version,
   websiteUrl,
   source,
   medium,
@@ -48,6 +50,12 @@ const useWarningsFor: UseWarningsFor = ({
   )
 
   const hasAllRequired = useMemo(() => {
+    if (version === GAVersion.UniversalAnalytics) {
+      if (websiteUrl === "" || source === "") {
+        return false
+      }
+      return true
+    }
     if (websiteUrl === "" || source === "" || medium === "" || id === "") {
       return false
     }

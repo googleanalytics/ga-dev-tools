@@ -15,11 +15,12 @@
 import * as React from "react"
 import Layout from "../../components/layout"
 import CampaignUrlBuilder from "../../components/CampaignUrlBuilder"
+import { GAVersion } from "../../constants"
 
 export default ({ location: { pathname } }) => {
   return (
     <Layout title="Campaign URL Builder" pathname={pathname}>
-      <CampaignUrlBuilder />
+      <CampaignUrlBuilder version={GAVersion.GoogleAnalytics4} />
     </Layout>
   )
 }
