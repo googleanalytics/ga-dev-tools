@@ -242,11 +242,11 @@ export const MetricsPicker: React.FC<{
 }
 
 export const DimensionPicker: React.FC<{
-  autoSelectIfOne?: true | undefined
+  autoSelectIfOne?: boolean
   setDimension?: Dispatch<GA4Dimension | undefined>
   dimensionFilter?: (dimension: GA4Dimension) => boolean
   property?: string
-  required?: true | undefined
+  required?: boolean
   helperText?: string | JSX.Element
   label?: string
   className?: string
@@ -332,7 +332,7 @@ export const DimensionPicker: React.FC<{
 }
 
 export const MetricPicker: React.FC<{
-  autoSelectIfOne?: true | undefined
+  autoSelectIfOne?: boolean
   setMetric?: Dispatch<GA4Metric | undefined>
   metricFilter?: (metric: GA4Metric) => boolean
   property?: string

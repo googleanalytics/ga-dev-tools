@@ -45,7 +45,8 @@ const useInputs = () => {
   )
 
   const [showAdvanced, setShowAdvanced] = usePersistentBoolean(
-    StorageKey.ga4RequestComposerBasicShowAdvanced
+    StorageKey.ga4RequestComposerBasicShowAdvanced,
+    false
   )
 
   const [metricAggregations, setMetricAggregations] = usePersistantObject<

@@ -1,5 +1,5 @@
 import * as React from "react"
-import { makeStyles, IconButton } from "@material-ui/core"
+import { makeStyles } from "@material-ui/core"
 import {
   BaseFilter,
   UpdateFilterFn,
@@ -135,7 +135,7 @@ const Filter: React.FC<{
     removeExpression(path)
   }, [removeExpression, path])
 
-  const { showAdvanced } = React.useContext(UseFilterContext)
+  const { showAdvanced } = React.useContext(UseFilterContext)!
 
   return (
     <section
