@@ -1,7 +1,7 @@
 import { usePersistentString } from "../../hooks"
 import { StorageKey } from "../../constants"
 import { useCallback } from "react"
-import { extractParamsFromWebsiteUrl } from "./_params"
+import { extractParamsFromWebsiteUrl } from "./params"
 
 const useInputs = () => {
   const [websiteUrl, setWebsiteUrl] = usePersistentString(

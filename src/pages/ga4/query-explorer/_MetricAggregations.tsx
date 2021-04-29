@@ -4,7 +4,7 @@ import SelectMultiple, {
 } from "../../../components/SelectMultiple"
 import { Dispatch } from "../../../types"
 import WithHelpText from "../../../components/WithHelpText"
-import { Typography } from "@material-ui/core"
+import { Typography, makeStyles } from "@material-ui/core"
 import ExternalLink from "../../../components/ExternalLink"
 import { Url } from "../../../constants"
 
@@ -45,11 +45,18 @@ const metricAggregationsLink = (
   </ExternalLink>
 )
 
+const useStyles = makeStyles(theme => ({
+  aggregations: {
+    marginTop: theme.spacing(1),
+  },
+}))
+
 const MetricAggregations: React.FC<{
   metricAggregations: MetricAggregation[] | undefined
   setMetricAggregations: Dispatch<MetricAggregation[] | undefined>
   count?: true | undefined
 }> = ({ metricAggregations, setMetricAggregations, count }) => {
+  const classes = useStyles()
   const metricAggregationOptions = [
     totalOption,
     minimumOption,
@@ -57,6 +64,7 @@ const MetricAggregations: React.FC<{
   ].concat(count ? [countOption] : [])
   return (
     <WithHelpText
+      className={classes.aggregations}
       helpText={
         <Typography>
           The aggregations to use for the metrics. See {metricAggregationsLink}{" "}

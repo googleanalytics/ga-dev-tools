@@ -143,7 +143,7 @@ export const DimensionsPicker: React.FC<{
   dimensions: GA4Dimensions
   setDimensions: React.Dispatch<React.SetStateAction<GA4Dimensions>>
   property?: string
-  required?: true | undefined
+  required?: boolean
   helperText?: string | JSX.Element
   label?: string
 }> = ({
@@ -194,7 +194,7 @@ export const MetricsPicker: React.FC<{
   metrics: GA4Metrics
   setMetrics: React.Dispatch<React.SetStateAction<GA4Metrics>>
   property?: string
-  required?: true | undefined
+  required?: boolean
   helperText?: string | JSX.Element
   label?: string
 }> = ({

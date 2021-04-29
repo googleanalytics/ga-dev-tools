@@ -22,6 +22,7 @@ import NumericFilter, { OperationType } from "./_NumericFilter"
 import InListFilter from "./_InListFilter"
 import BetweenFilter from "./_BetweenFilter"
 import { TooltipIconButton } from "../../../../../components/Buttons"
+import { UseFilterContext } from "../_useFilter"
 
 export const useStyles = makeStyles(theme => ({
   indented: {
@@ -134,23 +135,27 @@ const Filter: React.FC<{
     removeExpression(path)
   }, [removeExpression, path])
 
+  const { showAdvanced } = React.useContext(UseFilterContext)
+
   return (
     <section
       className={clsx(classes.filter, { [classes.indented]: nesting > 0 })}
     >
-      <TooltipIconButton onClick={onClick} tooltip="Remove filter">
-        <Delete />
-      </TooltipIconButton>
+      {showAdvanced && (
+        <TooltipIconButton onClick={onClick} tooltip="Remove filter">
+          <Delete />
+        </TooltipIconButton>
+      )}
       {type === "metric" ? (
         <MetricPicker
-          autoSelectIfOne
+          autoSelectIfOne={showAdvanced}
           metricFilter={metricFilter}
           setMetric={setMetric}
           className={classes.orField}
         />
       ) : (
         <DimensionPicker
-          autoSelectIfOne
+          autoSelectIfOne={showAdvanced}
           dimensionFilter={dimensionFilter}
           setDimension={setDimension}
           className={classes.orField}

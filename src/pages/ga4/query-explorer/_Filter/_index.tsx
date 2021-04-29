@@ -8,7 +8,7 @@ import { useCallback } from "react"
 import Expression, { ExpressionType } from "./_Expression"
 import { Typography, makeStyles } from "@material-ui/core"
 import { Dispatch } from "../../../../types"
-import useFilter from "./_useFilter"
+import useFilter, { UseFilterContext } from "./_useFilter"
 import { StorageKey } from "../../../../constants"
 
 const useStyles = makeStyles(theme => ({
@@ -27,6 +27,7 @@ export enum FilterType {
 }
 
 interface FilterProps {
+  showAdvanced: boolean
   fields: GA4Dimensions | GA4Metrics
   setFilterExpression: Dispatch<FilterExpression | undefined>
   type: FilterType
@@ -50,18 +51,20 @@ export type AddExpressionFn = (
 ) => void
 
 const Filter: React.FC<FilterProps> = ({
+  showAdvanced,
   fields,
   setFilterExpression,
   type,
   storageKey,
 }) => {
   const classes = useStyles()
+  const useFilterValue = useFilter(storageKey, showAdvanced)
   const {
     expression,
     addExpression,
     removeExpression,
     updateFilter,
-  } = useFilter(storageKey)
+  } = useFilterValue
 
   const selectedFieldIds = React.useMemo(
     () => new Set((fields || []).map(d => d.apiName)),
@@ -95,20 +98,22 @@ const Filter: React.FC<FilterProps> = ({
   }, [expression])
 
   return (
-    <section className={classes.filter}>
-      {noFiltersConfigured}
-      <Expression
-        type={type}
-        updateFilter={updateFilter}
-        dimensionFilter={fieldsFilter}
-        metricFilter={fieldsFilter}
-        removeExpression={removeExpression}
-        addExpression={addExpression}
-        path={[]}
-        expression={expression || {}}
-        nesting={-1}
-      />
-    </section>
+    <UseFilterContext.Provider value={useFilterValue}>
+      <section className={classes.filter}>
+        {noFiltersConfigured}
+        <Expression
+          type={type}
+          updateFilter={updateFilter}
+          dimensionFilter={fieldsFilter}
+          metricFilter={fieldsFilter}
+          removeExpression={removeExpression}
+          addExpression={addExpression}
+          path={[]}
+          expression={expression || {}}
+          nesting={-1}
+        />
+      </section>
+    </UseFilterContext.Provider>
   )
 }
 

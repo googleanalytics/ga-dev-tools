@@ -104,6 +104,7 @@ export enum StorageKey {
   ga4RequestComposerBasicOrderBys = "/ga4/request-composer/basic-report/order-bys",
   ga4RequestComposerBasicMetricAggregations = "/ga4/request-composer/basic-report/metric-aggregations",
   ga4RequestComposerBasicSelectedCurrencyCode = "/ga4/request-composer/basic-report/currency-code",
+  ga4RequestComposerBasicShowAdvanced = "/ga4/request-composer/basic-report/show-advanced",
 
   // Query Explorer
   queryExplorerDimensions = "query-explorer/dimensions",

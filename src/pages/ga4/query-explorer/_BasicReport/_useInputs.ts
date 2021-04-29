@@ -1,5 +1,4 @@
-import { useState, useEffect, useMemo, useCallback } from "react"
-import { SelectableProperty } from "../../../../components/GA4PropertySelector"
+import { useState, useCallback } from "react"
 import { DateRange } from "../_DateRanges"
 import {
   GA4Dimensions,
@@ -23,7 +22,6 @@ const useInputs = () => {
     StorageKey.ga4RequestComposerBasicShowRequestJSON,
     true
   )
-  const [selectedProperty, setSelectedProperty] = useState<SelectableProperty>()
   const [dateRanges, setDateRanges] = usePersistantObject<DateRange[]>(
     StorageKey.ga4RequestComposerBasicDateRanges
   )
@@ -46,22 +44,22 @@ const useInputs = () => {
     StorageKey.ga4RequestComposerBasicOrderBys
   )
 
+  const [showAdvanced, setShowAdvanced] = usePersistentBoolean(
+    StorageKey.ga4RequestComposerBasicShowAdvanced
+  )
+
   const [metricAggregations, setMetricAggregations] = usePersistantObject<
     MetricAggregation[]
   >(StorageKey.ga4RequestComposerBasicMetricAggregations)
 
-  const [inputPropertyString, setInputPropertyString] = usePersistentString(
+  const [propertyId, setPropertyId] = usePersistentString(
     StorageKey.ga4RequestComposerBasicSelectedPropertyString
   )
-
-  const propertyString = useMemo(() => `properties/${inputPropertyString}`, [
-    inputPropertyString,
-  ])
 
   const { dimensionOptions } = useAvailableColumns({
     selectedMetrics: metrics,
     selectedDimensions: dimensions,
-    property: propertyString,
+    property: propertyId,
   })
 
   const [cohortSpec, setCohortSpec] = usePersistantObject<CohortSpec>(
@@ -83,23 +81,16 @@ const useInputs = () => {
     setDimensions((old = []) => old.concat([firstSessionDate]))
   }, [setDimensions, dimensionOptions])
 
-  useEffect(() => {
-    if (selectedProperty !== undefined) {
-      setInputPropertyString(
-        selectedProperty.property.replace(/^properties\//, "")
-      )
-    }
-  }, [selectedProperty, setInputPropertyString])
+  const removeDateRanges = useCallback(() => {
+    setDateRanges(undefined)
+  }, [setDateRanges])
 
   return {
     metricAggregations,
+    showAdvanced,
+    setShowAdvanced,
     setMetricAggregations,
     addFirstSessionDate,
-    selectedProperty,
-    setSelectedProperty,
-    inputPropertyString,
-    propertyString,
-    setInputPropertyString,
     dateRanges,
     setDateRanges,
     dimensions,
@@ -116,12 +107,15 @@ const useInputs = () => {
     setOffset,
     limit,
     setLimit,
+    removeDateRanges,
     orderBys,
     setOrderBys,
     keepEmptyRows,
     setKeepEmptyRows,
     cohortSpec,
     setCohortSpec,
+    propertyId,
+    setPropertyId,
   }
 }
 export default useInputs

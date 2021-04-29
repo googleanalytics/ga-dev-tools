@@ -6,14 +6,19 @@ export interface WithEtag<T> {
 export type Dispatch<T> = React.Dispatch<React.SetStateAction<T>>
 
 export enum RequestStatus {
-  Complete,
+  Successful,
   NotStarted,
-  Pending,
+  InProgress,
   Failed,
 }
 
-export type Requestable<NotStarted, Pending, Successful, Failed> =
-  | (Successful & { requestStatus: RequestStatus.Complete })
-  | (NotStarted & { requestStatus: RequestStatus.NotStarted })
-  | (Failed & { requestStatus: RequestStatus.Failed })
-  | (Pending & { requestStatus: RequestStatus.Pending })
+export type Requestable<
+  Successful = { status: RequestStatus.Successful },
+  NotStarted = { status: RequestStatus.NotStarted },
+  InProgress = { status: RequestStatus.InProgress },
+  Failed = { status: RequestStatus.Failed }
+> =
+  | (Successful & { status: RequestStatus.Successful })
+  | (NotStarted & { status: RequestStatus.NotStarted })
+  | (Failed & { status: RequestStatus.Failed })
+  | (InProgress & { status: RequestStatus.InProgress })

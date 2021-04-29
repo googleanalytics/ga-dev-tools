@@ -12,8 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import * as sut from "./_params"
-import { CampaignParams } from "./_params"
+import * as sut from "./params"
+import { CampaignParams } from "./params"
 
 describe("for campaign url builder param parsing", () => {
   describe("for websiteUrlFor with", () => {

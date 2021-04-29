@@ -1,6 +1,5 @@
 import * as React from "react"
 import { Typography, makeStyles } from "@material-ui/core"
-import GA4PropertySelector from "../../../../components/GA4PropertySelector"
 import { StorageKey, Url } from "../../../../constants"
 import LinkedTextField from "../../../../components/LinkedTextField"
 import { PAB } from "../../../../components/Buttons"
@@ -21,6 +20,7 @@ import ExternalLink from "../../../../components/ExternalLink"
 import WithHelpText from "../../../../components/WithHelpText"
 import CohortSpec from "../_CohortSpec"
 import MetricAggregations from "../_MetricAggregations"
+import PropertyPicker from "../../../../components/ga4/PropertyPicker"
 
 const useStyles = makeStyles(theme => ({
   showRequestJSON: {
@@ -88,10 +88,7 @@ const metricFiltersLink = (
 const BasicReport = () => {
   const classes = useStyles()
   const {
-    setSelectedProperty,
-    setInputPropertyString,
-    inputPropertyString,
-    propertyString,
+    setPropertyId,
     dateRanges,
     setDateRanges,
     dimensions,
@@ -117,10 +114,14 @@ const BasicReport = () => {
     metricAggregations,
     setMetricAggregations,
     addFirstSessionDate,
+    propertyId,
+    removeDateRanges,
+    showAdvanced,
+    setShowAdvanced,
   } = useInputs()
   const useMake = useMakeRequest({
     metricAggregations,
-    property: propertyString,
+    property: propertyId,
     dimensionFilter,
     offset,
     limit,
@@ -131,14 +132,22 @@ const BasicReport = () => {
     orderBys,
     cohortSpec,
     keepEmptyRows,
+    showAdvanced,
   })
   const {
     validRequest,
     makeRequest,
     request,
     response,
-    requestStatus,
+    status: requestStatus,
   } = useMake
+
+  const metricOrDimensionSelected = React.useMemo(() => {
+    return !!(
+      (metrics !== undefined && metrics.length > 0) ||
+      (dimensions !== undefined && dimensions.length > 0)
+    )
+  }, [metrics, dimensions])
 
   return (
     <>
@@ -147,24 +156,31 @@ const BasicReport = () => {
         contain statistics derived from data collected by the Google Analytics
         measurement code. Basic Report uses the {runReportLink} API endpoint.
       </Typography>
-      <GA4PropertySelector
-        accountSummariesKey={StorageKey.ga4RequestComposerBasicAccountSummaries}
-        selectedAccountKey={StorageKey.ga4RequestComposerBasicSelectedAccount}
-        selectedPropertyKey={StorageKey.ga4RequestComposerBasicSelectedProperty}
-        setSelectedProperty={setSelectedProperty}
+      <Typography variant="h3">Select property</Typography>
+      <PropertyPicker setPropertyId={setPropertyId} propertyId={propertyId} />
+      <Typography variant="h3">Set parameters</Typography>
+      <LabeledCheckbox checked={showAdvanced} setChecked={setShowAdvanced}>
+        Show advanced options
+      </LabeledCheckbox>
+      <DateRanges
+        setDateRanges={setDateRanges}
+        dateRanges={dateRanges}
+        showAdvanced={showAdvanced}
       />
-      <br />
-      <LinkedTextField
-        value={inputPropertyString || ""}
-        onChange={setInputPropertyString}
-        href={Url.ga4RequestComposerBasicProperty}
-        linkTitle="See property on devsite."
-        label="property"
-        helperText="The property to use for the request."
+      <MetricsPicker
+        required={!metricOrDimensionSelected}
+        property={propertyId}
+        setMetrics={setMetrics}
+        metrics={metrics}
+        helperText={
+          <>
+            The metrics to include in the request. See {metricsLink} on devsite.
+          </>
+        }
       />
       <DimensionsPicker
-        required
-        property={propertyString}
+        required={!metricOrDimensionSelected}
+        property={propertyId}
         setDimensions={setDimensions}
         dimensions={dimensions}
         helperText={
@@ -174,69 +190,7 @@ const BasicReport = () => {
           </>
         }
       />
-      <MetricsPicker
-        property={propertyString}
-        setMetrics={setMetrics}
-        metrics={metrics}
-        helperText={
-          <>
-            The metrics to include in the request. See {metricsLink} on devsite.
-          </>
-        }
-      />
-      <MetricAggregations
-        metricAggregations={metricAggregations}
-        setMetricAggregations={setMetricAggregations}
-      />
-      <LinkedTextField
-        href={Url.ga4RequestComposerBasicRunReportOffset}
-        linkTitle="See offset on devsite."
-        label="offset"
-        value={offset}
-        helperText="The row count of the start row. The first row is row 0."
-        onChange={setOffset}
-      />
-      <LinkedTextField
-        href={Url.ga4RequestComposerBasicRunReportLimit}
-        linkTitle="See limit on devsite."
-        label="limit"
-        value={limit}
-        helperText="The maximum number of rows to return."
-        onChange={setLimit}
-      />
-      <DateRanges setDateRanges={setDateRanges} dateRanges={dateRanges} />
-      <WithHelpText
-        label="dimension filters"
-        helpText={
-          <Typography>
-            The filters to use for the dimensions in the request. See{" "}
-            {dimensionFiltersLink} on devsite.
-          </Typography>
-        }
-      >
-        <Filter
-          storageKey={StorageKey.ga4RequestComposerBasicDimensionFilter}
-          type={FilterType.Dimension}
-          fields={dimensions}
-          setFilterExpression={setDimensionFilter}
-        />
-      </WithHelpText>
-      <WithHelpText
-        label="metric filters"
-        helpText={
-          <Typography>
-            The filters to use for the metrics in the request. See{" "}
-            {metricFiltersLink} on devsite.
-          </Typography>
-        }
-      >
-        <Filter
-          storageKey={StorageKey.ga4RequestComposerBasicMetricFilter}
-          type={FilterType.Metric}
-          fields={metrics}
-          setFilterExpression={setMetricFilter}
-        />
-      </WithHelpText>
+
       <OrderBys
         metric
         metricOptions={metrics}
@@ -245,12 +199,72 @@ const BasicReport = () => {
         orderBys={orderBys}
         setOrderBys={setOrderBys}
       />
-      <CohortSpec
-        cohortSpec={cohortSpec}
-        setCohortSpec={setCohortSpec}
-        dimensions={dimensions}
-        addFirstSessionDate={addFirstSessionDate}
+      <MetricAggregations
+        metricAggregations={metricAggregations}
+        setMetricAggregations={setMetricAggregations}
       />
+      <WithHelpText
+        label={showAdvanced ? "dimension filters" : "dimension filter"}
+        helpText={
+          <Typography>
+            The {showAdvanced ? "filters" : "filter"} to use for the dimensions
+            in the request. See {dimensionFiltersLink} on devsite.
+          </Typography>
+        }
+      >
+        <Filter
+          showAdvanced={showAdvanced}
+          storageKey={StorageKey.ga4RequestComposerBasicDimensionFilter}
+          type={FilterType.Dimension}
+          fields={dimensions}
+          setFilterExpression={setDimensionFilter}
+        />
+      </WithHelpText>
+      <WithHelpText
+        label={showAdvanced ? "metric filters" : "metric filter"}
+        helpText={
+          <Typography>
+            The {showAdvanced ? "filters" : "filter"} to use for the metrics in
+            the request. See {metricFiltersLink} on devsite.
+          </Typography>
+        }
+      >
+        <Filter
+          showAdvanced={showAdvanced}
+          storageKey={StorageKey.ga4RequestComposerBasicMetricFilter}
+          type={FilterType.Metric}
+          fields={metrics}
+          setFilterExpression={setMetricFilter}
+        />
+      </WithHelpText>
+      <LinkedTextField
+        href={Url.ga4RequestComposerBasicRunReportLimit}
+        linkTitle="See limit on devsite."
+        label="limit"
+        value={limit}
+        helperText="The maximum number of rows to return."
+        onChange={setLimit}
+      />
+      {showAdvanced && (
+        <LinkedTextField
+          href={Url.ga4RequestComposerBasicRunReportOffset}
+          linkTitle="See offset on devsite."
+          label="offset"
+          value={offset}
+          helperText="The row count of the start row. The first row is row 0."
+          onChange={setOffset}
+        />
+      )}
+      {showAdvanced && (
+        <CohortSpec
+          cohortSpec={cohortSpec}
+          setCohortSpec={setCohortSpec}
+          dimensions={dimensions}
+          addFirstSessionDate={addFirstSessionDate}
+          dateRanges={dateRanges}
+          removeDateRanges={removeDateRanges}
+        />
+      )}
       <WithHelpText
         helpText={
           <Typography>
@@ -285,9 +299,7 @@ const BasicReport = () => {
       <Response
         response={response}
         error={
-          useMake.requestStatus === RequestStatus.Failed
-            ? useMake.error
-            : undefined
+          useMake.status === RequestStatus.Failed ? useMake.error : undefined
         }
         requestStatus={requestStatus}
         shouldCollapse={shouldCollapseRequest}

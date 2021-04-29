@@ -21,14 +21,13 @@ import TableCell from "@material-ui/core/TableCell"
 import TableHead from "@material-ui/core/TableHead"
 import TableRow from "@material-ui/core/TableRow"
 
-import { Url } from "../../constants"
-import Layout from "../../components/layout"
-import InlineCode from "../../components/InlineCode"
 import { IS_SSR } from "../../hooks"
-import GeneratedURL from "./_GeneratedURL/_index"
-import useStyles from "./_useStyles"
-import useInputs from "./_useInputs"
-import ExternalLink from "../../components/ExternalLink"
+import GeneratedURL from "./GeneratedURL"
+import useStyles from "./useStyles"
+import useInputs from "./useInputs"
+import ExternalLink from "../ExternalLink"
+import InlineCode from "../InlineCode"
+import { Url } from "../../constants"
 
 const customCampaigns = (
   <ExternalLink href={Url.aboutCustomCampaigns}>Custom Campaigns</ExternalLink>
@@ -350,10 +349,4 @@ export const CampaignUrlBuilder = () => {
   )
 }
 
-export default ({ location: { pathname } }) => {
-  return (
-    <Layout title="Campaign URL Builder" pathname={pathname}>
-      <CampaignUrlBuilder />
-    </Layout>
-  )
-}
+export default CampaignUrlBuilder

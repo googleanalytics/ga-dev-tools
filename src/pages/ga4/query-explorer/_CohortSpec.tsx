@@ -237,6 +237,16 @@ const useStyles = makeStyles(theme => ({
     },
     marginBottom: theme.spacing(1),
   },
+  warnings: {
+    // display: "flex",
+    // alignContent: "center",
+    "&> svg": {
+      marginRight: theme.spacing(1),
+    },
+    "&> *:last-child": {
+      marginBottom: theme.spacing(1),
+    },
+  },
 }))
 
 type CohortSpecType = gapi.client.analyticsdata.CohortSpec
@@ -246,12 +256,16 @@ interface CohortSpecProps {
   setCohortSpec: Dispatch<CohortSpecType | undefined>
   dimensions: GA4Dimensions
   addFirstSessionDate: () => void
+  dateRanges: DateRange[] | undefined
+  removeDateRanges: () => void
 }
 const CohortSpec: React.FC<CohortSpecProps> = ({
   cohortSpec,
   setCohortSpec,
   dimensions,
   addFirstSessionDate,
+  dateRanges,
+  removeDateRanges,
 }) => {
   const classes = useStyles()
   const {
@@ -271,6 +285,21 @@ const CohortSpec: React.FC<CohortSpecProps> = ({
     dimensions,
   })
 
+  const warnings = React.useMemo(() => {
+    const missingRequiredDimension = !hasRequiredDimension
+    const hasDateRanges = dateRanges !== undefined && dateRanges.length > 0
+    return { missingRequiredDimension, hasDateRanges }
+  }, [hasRequiredDimension, dateRanges])
+
+  const fixWarnings = React.useCallback(() => {
+    if (warnings.hasDateRanges) {
+      removeDateRanges()
+    }
+    if (warnings.missingRequiredDimension) {
+      addFirstSessionDate()
+    }
+  }, [warnings, addFirstSessionDate, removeDateRanges])
+
   return (
     <WithHelpText
       label="cohort"
@@ -285,16 +314,26 @@ const CohortSpec: React.FC<CohortSpecProps> = ({
         </>
       }
     >
-      {!hasRequiredDimension && (cohortSpec?.cohorts?.length || 0) > 0 && (
-        <Typography>
-          <Warning /> To use cohorts, include the{" "}
-          <InlineCode>firstSessionDate</InlineCode>
-          dimension.
-          <SAB add small onClick={addFirstSessionDate}>
-            add
-          </SAB>
-        </Typography>
-      )}
+      {Object.values(warnings).find(a => a) &&
+        (cohortSpec?.cohorts?.length || 0) > 0 && (
+          <section className={classes.warnings}>
+            {warnings.missingRequiredDimension && (
+              <Typography>
+                Cohorts must include the{" "}
+                <InlineCode>firstSessionDate</InlineCode>
+                dimension.
+              </Typography>
+            )}
+            {warnings.hasDateRanges && (
+              <Typography>
+                Cohort requests cannot include dateRanges.
+              </Typography>
+            )}
+            <SAB add small onClick={fixWarnings}>
+              fix
+            </SAB>
+          </section>
+        )}
       {(cohortSpec?.cohorts?.length || 0) > 0 && (
         <div className={classes.cohortRange}>
           <Select

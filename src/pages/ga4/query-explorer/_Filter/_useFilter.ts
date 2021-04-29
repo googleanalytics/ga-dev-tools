@@ -1,4 +1,4 @@
-import { useCallback } from "react"
+import { useCallback, useEffect, createContext } from "react"
 import {
   FilterExpression,
   UpdateFilterFn,
@@ -9,10 +9,33 @@ import { ExpressionType } from "./_Expression"
 import { StorageKey } from "../../../../constants"
 import { usePersistantObject } from "../../../../hooks"
 
-const useFilter = (storageKey: StorageKey) => {
+export const UseFilterContext = createContext<
+  ReturnType<UseFilter> | undefined
+>(undefined)
+
+type UseFilter = (
+  storageKey: StorageKey,
+  showAdanced: boolean
+) => {
+  expression: FilterExpression | undefined
+  addExpression: AddExpressionFn
+  removeExpression: RemoveExpressionFn
+  updateFilter: UpdateFilterFn
+  showAdanced: boolean
+}
+const useFilter: UseFilter = (storageKey, showAdanced) => {
   const [expression, setExpression] = usePersistantObject<FilterExpression>(
     storageKey
   )
+
+  useEffect(() => {
+    console.log({ showAdanced })
+    if (showAdanced !== true) {
+      if (expression === undefined || expression.filter === undefined) {
+        setExpression(subFor(ExpressionType.Filter))
+      }
+    }
+  }, [expression, showAdanced, setExpression])
 
   const updateFilter = useCallback<UpdateFilterFn>(
     (path, update) => {
@@ -96,7 +119,13 @@ const useFilter = (storageKey: StorageKey) => {
     [setExpression]
   )
 
-  return { expression, addExpression, removeExpression, updateFilter }
+  return {
+    expression,
+    addExpression,
+    removeExpression,
+    updateFilter,
+    showAdanced,
+  }
 }
 
 const subFor = (type: ExpressionType): FilterExpression => {

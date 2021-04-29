@@ -23,14 +23,16 @@ type UseDateRanges = (arg: {
   updateFrom: (id: string, newFrom: string) => void
   updateTo: (id: string, newTo: string) => void
   updateName: (id: string, newName: string) => void
+  setToOneDateRange: () => void
 }
+
 const useDateRanges: UseDateRanges = ({ setDateRanges }) => {
   const addDateRange = React.useCallback(() => {
     setDateRanges((old = []) => {
       return old.concat([
         {
-          from: "",
-          to: "",
+          from: "30daysAgo",
+          to: "yesterday",
           id: uuid(),
         },
       ])
@@ -48,6 +50,20 @@ const useDateRanges: UseDateRanges = ({ setDateRanges }) => {
     },
     [setDateRanges]
   )
+
+  const setToOneDateRange = React.useCallback(() => {
+    setDateRanges((old = []) =>
+      old.length > 0
+        ? old.length[0]
+        : [
+            {
+              from: "30daysAgo",
+              to: "yesterday",
+              id: uuid(),
+            },
+          ]
+    )
+  }, [setDateRanges])
 
   const updateFrom = React.useCallback(
     (id: string, newValue: string) => {
@@ -82,7 +98,14 @@ const useDateRanges: UseDateRanges = ({ setDateRanges }) => {
     [setDateRanges]
   )
 
-  return { addDateRange, removeDateRange, updateFrom, updateTo, updateName }
+  return {
+    addDateRange,
+    removeDateRange,
+    updateFrom,
+    updateTo,
+    updateName,
+    setToOneDateRange,
+  }
 }
 
 const useStyles = makeStyles(theme => ({
@@ -125,43 +148,57 @@ const DateRanges: React.FC<{
   dateRanges: DateRange[] | undefined
   setDateRanges: Dispatch<DateRange[] | undefined>
   className?: string
-}> = ({ dateRanges, setDateRanges, className }) => {
+  showAdvanced: boolean
+}> = ({ dateRanges, setDateRanges, className, showAdvanced }) => {
   const classes = useStyles()
   const {
     addDateRange,
     removeDateRange,
     updateFrom,
     updateTo,
+    setToOneDateRange,
   } = useDateRanges({ setDateRanges })
+
+  React.useEffect(() => {
+    if (showAdvanced !== true) {
+      if (dateRanges === undefined || dateRanges.length !== 1) {
+        setToOneDateRange()
+      }
+    }
+  }, [dateRanges, showAdvanced, setToOneDateRange])
 
   return (
     <WithHelpText
-      label="date ranges"
+      label={showAdvanced ? "date ranges" : undefined}
       className={className}
       helpText={
         <>
           <Typography>
-            The date ranges to use for the request. Format should be either{" "}
-            <InlineCode>YYYY-MM-DD</InlineCode>,{" "}
+            The date {showAdvanced ? "ranges" : "range"} to use for the request.
+            Format should be either <InlineCode>YYYY-MM-DD</InlineCode>,{" "}
             <InlineCode>yesterday</InlineCode>, <InlineCode>today</InlineCode>,
             or <InlineCode>NdaysAgo</InlineCode> where N is a positive integer.
             See {dateRange} on devsite.
           </Typography>
-          <SAB add small onClick={addDateRange}>
-            Add
-          </SAB>
+          {showAdvanced && (
+            <SAB add small onClick={addDateRange}>
+              Add
+            </SAB>
+          )}
         </>
       }
     >
       <section className={classes.dateRanges}>
         {dateRanges?.map(dateRange => (
           <section key={dateRange.id} className={classes.dateRange}>
-            <TooltipIconButton
-              tooltip="remove daterange"
-              onClick={() => removeDateRange(dateRange.id)}
-            >
-              <Delete />
-            </TooltipIconButton>
+            {showAdvanced && (
+              <TooltipIconButton
+                tooltip="remove daterange"
+                onClick={() => removeDateRange(dateRange.id)}
+              >
+                <Delete />
+              </TooltipIconButton>
+            )}
             <TextField
               fullWidth
               variant="outlined"

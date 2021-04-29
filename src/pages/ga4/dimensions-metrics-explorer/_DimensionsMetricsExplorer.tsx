@@ -12,16 +12,14 @@ import {
   makeStyles,
 } from "@material-ui/core"
 import { Clear } from "@material-ui/icons"
-import GA4PropertySelector, {
-  SelectableProperty,
-} from "../../../components/GA4PropertySelector"
-import { StorageKey, Url } from "../../../constants"
+import { Url } from "../../../constants"
 import { SAB } from "../../../components/Buttons"
-import { useMemo, useState } from "react"
+import { useMemo } from "react"
 import Info from "../../../components/Info"
 import Spinner from "../../../components/Spinner"
 import Field from "./_Field"
 import ExternalLink from "../../../components/ExternalLink"
+import PropertyPicker from "../../../components/ga4/PropertyPicker"
 
 const adminAPI = <ExternalLink href={Url.ga4AdminAPI}>Admin API</ExternalLink>
 
@@ -35,12 +33,13 @@ const useStyles = makeStyles(theme => ({
 const DimensionsMetricsExplorer: React.FC = () => {
   const classes = useStyles()
   const { search, setSearch } = useInputs()
-  const [selectedProperty, setSelectedProperty] = useState<SelectableProperty>()
+  const [selectedProperty, setSelectedProperty] = React.useState<string>()
+  console.log({ setSelectedProperty })
   const propertyId = useMemo(() => {
     if (selectedProperty === undefined) {
       return "0"
     } else {
-      return selectedProperty.property.substring("properties/".length)
+      return selectedProperty.substring("properties/".length)
     }
   }, [selectedProperty])
   const { dimensions, metrics, state } = useDimensionsAndMetrics(propertyId)
@@ -116,11 +115,9 @@ const DimensionsMetricsExplorer: React.FC = () => {
           This demo is a catalog of all dimensions and metrics available for a
           given property. It includes linkable descriptions of all fields.
         </Typography>
-        <GA4PropertySelector
-          setSelectedProperty={setSelectedProperty}
-          accountSummariesKey={StorageKey.ga4DimensionsMetricsAccountSummaries}
-          selectedAccountKey={StorageKey.ga4DimensionsMetricsSelectedAccount}
-          selectedPropertyKey={StorageKey.ga4DimensionsMetricsSelectedProperty}
+        <PropertyPicker
+          setPropertyId={setSelectedProperty}
+          propertyId={selectedProperty}
         />
         <TextField
           label="Search for a dimension or metric"

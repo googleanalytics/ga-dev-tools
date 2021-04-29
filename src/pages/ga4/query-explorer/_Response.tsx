@@ -57,7 +57,7 @@ const Response: React.FC<ReportsTableProps> = ({
 
   const loading = useMemo(
     () =>
-      requestStatus === RequestStatus.Pending ? (
+      requestStatus === RequestStatus.InProgress ? (
         <Spinner>Loading response &hellip;</Spinner>
       ) : null,
     [requestStatus]

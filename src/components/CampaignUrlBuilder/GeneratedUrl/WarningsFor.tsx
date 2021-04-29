@@ -6,7 +6,7 @@ import { v4 as uuid } from "uuid"
 
 import InlineCode from "../../../components/InlineCode"
 import { Url } from "../../../constants"
-import useStyles from "../_useStyles"
+import useStyles from "../useStyles"
 
 const iosCampaignTracking = (
   <a href={Url.iosCampaignMeasurement}>iOS Campaign Tracking URL Builder</a>

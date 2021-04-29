@@ -3,7 +3,7 @@ import { useState, useMemo, useCallback, useEffect } from "react"
 import { usePersistentBoolean } from "../../../hooks"
 import { StorageKey } from "../../../constants"
 import useShortenLink from "./_useShortenLink"
-import { websiteUrlFor } from "../_params"
+import { websiteUrlFor } from "../params"
 import { Dispatch } from "../../../types"
 
 type UseWarningsFor = (arg: {

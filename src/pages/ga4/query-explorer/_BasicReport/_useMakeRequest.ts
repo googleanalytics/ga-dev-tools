@@ -26,6 +26,7 @@ type UseMakeRequestArgs = {
   cohortSpec: CohortSpec | undefined
   metricAggregations: MetricAggregation[] | undefined
   keepEmptyRows: boolean
+  showAdvanced: boolean
 }
 
 type Common = {
@@ -52,10 +53,11 @@ const useMakeRequest = ({
   cohortSpec,
   metricAggregations,
   keepEmptyRows,
+  showAdvanced,
 }: UseMakeRequestArgs): Requestable<
-  Common,
-  Common,
   { response: RunReportResponse } & Common,
+  Common,
+  Common,
   { error: RunReportError } & Common
 > => {
   const gapi = useSelector((state: AppState) => state.gapi)
@@ -67,13 +69,20 @@ const useMakeRequest = ({
   const [error, setError] = useState<any>()
 
   const request = useMemo<RunReportRequest | undefined>(() => {
-    if (dimensions === undefined) {
+    if (
+      (dimensions === undefined || dimensions.length === 0) &&
+      (metrics === undefined || metrics.length === 0)
+    ) {
       return undefined
     }
-    const r: RunReportRequest = {
-      dimensions: dimensions.map(dimension => ({
+    const r: RunReportRequest = {}
+    if (dimensions !== undefined) {
+      r.dimensions = dimensions.map(dimension => ({
         name: dimension.apiName!,
-      })),
+      }))
+    }
+    if (metrics !== undefined) {
+      r.metrics = metrics.map(metric => ({ name: metric.apiName }))
     }
     if (dateRanges !== undefined) {
       r.dateRanges = dateRanges.map(({ from, to, name }) => {
@@ -84,14 +93,13 @@ const useMakeRequest = ({
         return newRange
       })
     }
-    if (metrics !== undefined) {
-      r.metrics = metrics.map(metric => ({ name: metric.apiName }))
-    }
     if (dimensionFilter !== undefined) {
-      r.dimensionFilter = dimensionFilter
+      if (showAdvanced || (!showAdvanced && dimensionFilter.filter?.fieldName))
+        r.dimensionFilter = dimensionFilter
     }
     if (metricFilter !== undefined) {
-      r.metricFilter = metricFilter
+      if (showAdvanced || (!showAdvanced && metricFilter.filter?.fieldName))
+        r.metricFilter = metricFilter
     }
     if (offset !== undefined && offset !== "") {
       r.offset = offset
@@ -102,7 +110,11 @@ const useMakeRequest = ({
     if (orderBys !== undefined && orderBys.length !== 0) {
       r.orderBys = orderBys
     }
-    if (cohortSpec !== undefined && (cohortSpec.cohorts?.length || 0) > 0) {
+    if (
+      showAdvanced &&
+      cohortSpec !== undefined &&
+      (cohortSpec.cohorts?.length || 0) > 0
+    ) {
       r.cohortSpec = cohortSpec
     }
     if (keepEmptyRows === true) {
@@ -124,6 +136,7 @@ const useMakeRequest = ({
     orderBys,
     cohortSpec,
     keepEmptyRows,
+    showAdvanced,
   ])
 
   const validRequest = useMemo(() => {
@@ -138,7 +151,7 @@ const useMakeRequest = ({
     ) {
       return
     }
-    setRequestStatus(RequestStatus.Pending)
+    setRequestStatus(RequestStatus.InProgress)
     const propertyString = property.startsWith("properties/")
       ? property
       : `properties/${property}`
@@ -147,7 +160,7 @@ const useMakeRequest = ({
       .then(response => {
         const result = response.result
         setResponse(result)
-        setRequestStatus(RequestStatus.Complete)
+        setRequestStatus(RequestStatus.Successful)
       })
       .catch(e => {
         console.log(e.result.error)
@@ -156,14 +169,14 @@ const useMakeRequest = ({
       })
   }, [property, dataAPI, request, setResponse])
 
-  if (requestStatus === RequestStatus.Complete) {
+  if (requestStatus === RequestStatus.Successful) {
     if (response === undefined) {
       throw new Error(
         "Invalid invariant. Response should always be defined here."
       )
     }
     return {
-      requestStatus,
+      status: requestStatus,
       makeRequest,
       validRequest,
       request,
@@ -173,7 +186,7 @@ const useMakeRequest = ({
 
   if (requestStatus === RequestStatus.Failed) {
     return {
-      requestStatus,
+      status: requestStatus,
       makeRequest,
       validRequest,
       request,
@@ -182,7 +195,7 @@ const useMakeRequest = ({
     }
   }
   return {
-    requestStatus,
+    status: requestStatus,
     makeRequest,
     validRequest,
     request,

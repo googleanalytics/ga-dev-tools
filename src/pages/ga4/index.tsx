@@ -13,8 +13,8 @@
 // limitations under the License.
 
 import * as React from "react"
-import Layout from "../components/layout"
-import Home from "../components/home"
+import Layout from "../../components/layout"
+import Home from "../../components/home"
 
 const IndexPage = ({ location: { pathname } }) => (
   <Layout title="Discover the Gooogle Analytics platform" pathname={pathname}>
