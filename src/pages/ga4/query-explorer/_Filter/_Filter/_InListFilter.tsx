@@ -39,7 +39,12 @@ const InListFilter: React.FC<InListFilterProps> = ({
           updateInListFilter(old => ({ ...old, values }))
         }}
       />
-      <LabeledCheckbox checked={inListFilter.caseSensitive || false}>
+      <LabeledCheckbox
+        checked={inListFilter.caseSensitive || false}
+        onChange={e => {
+          updateInListFilter(old => ({ ...old, caseSensitive: e }))
+        }}
+      >
         case sensitive
       </LabeledCheckbox>
     </>
