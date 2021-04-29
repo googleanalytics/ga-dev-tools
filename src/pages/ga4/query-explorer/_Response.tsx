@@ -193,7 +193,6 @@ const Aggregations: React.FC<{ response: RunReportResponse }> = ({
       }, [])
       .map((a, idx) => ({ ...a, id: idx }))
   }, [response, hasDateRange])
-  console.log(rows)
 
   if (columns.length === 1) {
     return null

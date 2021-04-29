@@ -12,7 +12,7 @@ import {
   makeStyles,
 } from "@material-ui/core"
 import { Clear } from "@material-ui/icons"
-import { Url } from "../../../constants"
+import { Url, StorageKey } from "../../../constants"
 import { SAB } from "../../../components/Buttons"
 import { useMemo } from "react"
 import Info from "../../../components/Info"
@@ -20,6 +20,7 @@ import Spinner from "../../../components/Spinner"
 import Field from "./_Field"
 import ExternalLink from "../../../components/ExternalLink"
 import PropertyPicker from "../../../components/ga4/PropertyPicker"
+import { usePersistentString } from "../../../hooks"
 
 const adminAPI = <ExternalLink href={Url.ga4AdminAPI}>Admin API</ExternalLink>
 
@@ -33,8 +34,9 @@ const useStyles = makeStyles(theme => ({
 const DimensionsMetricsExplorer: React.FC = () => {
   const classes = useStyles()
   const { search, setSearch } = useInputs()
-  const [selectedProperty, setSelectedProperty] = React.useState<string>()
-  console.log({ setSelectedProperty })
+  const [selectedProperty, setSelectedProperty] = usePersistentString(
+    StorageKey.ga4DimensionsMetricsSelectedProperty
+  )
   const propertyId = useMemo(() => {
     if (selectedProperty === undefined) {
       return "0"

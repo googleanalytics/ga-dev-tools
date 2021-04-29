@@ -298,7 +298,6 @@ export const DimensionPicker: React.FC<{
       option => option.apiName === selected.apiName
     )
     if (inOption === undefined) {
-      console.log("was not in options", { selected, dimensionOptions })
       setSelected(undefined)
     }
   }, [selected, dimensionOptions, setSelected])
@@ -385,7 +384,6 @@ export const MetricPicker: React.FC<{
       option => option.apiName === selected.apiName
     )
     if (inOption === undefined) {
-      console.log("was not in options", { selected, metricOptions })
       setSelected(undefined)
     }
   }, [selected, metricOptions, setSelected])

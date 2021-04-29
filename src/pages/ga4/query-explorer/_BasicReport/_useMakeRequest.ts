@@ -163,7 +163,7 @@ const useMakeRequest = ({
         setRequestStatus(RequestStatus.Successful)
       })
       .catch(e => {
-        console.log(e.result.error)
+        console.error({ e })
         setError(e.result.error)
         setRequestStatus(RequestStatus.Failed)
       })
