@@ -15,27 +15,26 @@ export const UseFilterContext = createContext<
 
 type UseFilter = (
   storageKey: StorageKey,
-  showAdanced: boolean
+  showAdvanced: boolean
 ) => {
   expression: FilterExpression | undefined
   addExpression: AddExpressionFn
   removeExpression: RemoveExpressionFn
   updateFilter: UpdateFilterFn
-  showAdanced: boolean
+  showAdvanced: boolean
 }
-const useFilter: UseFilter = (storageKey, showAdanced) => {
+const useFilter: UseFilter = (storageKey, showAdvanced) => {
   const [expression, setExpression] = usePersistantObject<FilterExpression>(
     storageKey
   )
 
   useEffect(() => {
-    console.log({ showAdanced })
-    if (showAdanced !== true) {
+    if (showAdvanced !== true) {
       if (expression === undefined || expression.filter === undefined) {
         setExpression(subFor(ExpressionType.Filter))
       }
     }
-  }, [expression, showAdanced, setExpression])
+  }, [expression, showAdvanced, setExpression])
 
   const updateFilter = useCallback<UpdateFilterFn>(
     (path, update) => {
@@ -124,7 +123,7 @@ const useFilter: UseFilter = (storageKey, showAdanced) => {
     addExpression,
     removeExpression,
     updateFilter,
-    showAdanced,
+    showAdvanced,
   }
 }
 
