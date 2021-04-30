@@ -1,4 +1,4 @@
-// Copyright 2016 Google Inc. All rights reserved.
+// Copyright 2020 Google Inc. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -13,15 +13,19 @@
 // limitations under the License.
 
 import React from "react"
-import useEvents from "./_useEvents"
-import LinkedTextField from "../../../components/LinkedTextField"
-import { Typography, TextField, makeStyles } from "@material-ui/core"
-import { MPEventCategory, MPEventType, MPEvent } from "./_types/_index"
+
 import Autocomplete from "@material-ui/lab/Autocomplete"
-import EditEvent from "./_EditEvent"
-import EditUserProperties from "./_EditUserProperties"
-import ValidateEvent from "./_ValidateEvent"
-import LabeledCheckbox from "../../../components/LabeledCheckbox"
+
+import LinkedTextField from "@/components/LinkedTextField"
+import LabeledCheckbox from "@/components/LabeledCheckbox"
+import EditEvent from "./EditEvent"
+import EditUserProperties from "./EditUserProperties"
+import ValidateEvent from "./ValidateEvent"
+import { MPEventCategory, MPEventType, MPEvent } from "./types"
+import makeStyles from "@material-ui/core/styles/makeStyles"
+import useEvents from "./useEvents"
+import Typography from "@material-ui/core/Typography"
+import TextField from "@material-ui/core/TextField"
 
 const useStyles = makeStyles(theme => ({
   unifiedParameters: {
@@ -71,8 +75,6 @@ const EventBuilder: React.FC = () => {
     setUserProperties,
     payload,
   } = useEvents()
-
-  // const eventReferenceUrl = `https://developers.google.com/analytics/devguides/collection/protocol/app-web/reference/events?tech=aw_measurement_protocol#${event.getEventName()}`
 
   return (
     <div>

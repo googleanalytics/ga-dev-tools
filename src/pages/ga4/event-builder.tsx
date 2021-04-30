@@ -1,4 +1,4 @@
-// Copyright 2016 Google Inc. All rights reserved.
+// Copyright 2020 Google Inc. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,7 +15,7 @@
 import * as React from "react"
 
 import Layout from "@/components/Layout"
-import EventBuilder from "./_EventBuilder"
+import EventBuilder from "@/components/ga4/EventBuilder"
 
 export default ({ location: { pathname } }) => {
   return (

@@ -1,20 +1,34 @@
+// Copyright 2020 Google Inc. All rights reserved.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
 import React from "react"
-import EditParameterValue from "./_EditParameterValue"
-import { RemoveCircle } from "@material-ui/icons"
-import {
-  IconButton,
-  TextField,
-  Select,
-  MenuItem,
-  Tooltip,
-  makeStyles,
-} from "@material-ui/core"
+
+import RemoveCircle from "@material-ui/icons/RemoveCircle"
+import makeStyles from "@material-ui/core/styles/makeStyles"
+import TextField from "@material-ui/core/TextField"
+import Tooltip from "@material-ui/core/Tooltip"
+import IconButton from "@material-ui/core/IconButton"
+import Select from "@material-ui/core/Select"
+import MenuItem from "@material-ui/core/MenuItem"
+
+import EditParameterValue from "./EditParameterValue"
 import {
   Parameter,
   ParameterType,
   defaultParameterFor,
   MPEvent,
-} from "../_types/_index"
+} from "../types"
 
 const useStyles = makeStyles(theme => ({
   parameter: {

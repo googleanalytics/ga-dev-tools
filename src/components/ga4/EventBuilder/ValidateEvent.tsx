@@ -1,4 +1,4 @@
-// Copyright 2016 Google Inc. All rights reserved.
+// Copyright 2020 Google Inc. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -13,26 +13,28 @@
 // limitations under the License.
 
 import React, { useMemo } from "react"
+
+import green from "@material-ui/core/colors/green"
+import red from "@material-ui/core/colors/red"
+import grey from "@material-ui/core/colors/grey"
+import { makeStyles } from "@material-ui/core/styles"
+import Paper from "@material-ui/core/Paper"
+import Typography from "@material-ui/core/Typography"
+import Button from "@material-ui/core/Button"
+import Check from "@material-ui/icons/Check"
+import ErrorIcon from "@material-ui/icons/Error"
+import Warning from "@material-ui/icons/Warning"
+import Send from "@material-ui/icons/Send"
+import TextareaAutosize from "@material-ui/core/TextareaAutosize"
+
+import CopyButton from "@/components/CopyButton"
+import { PAB } from "@/components/Buttons"
 import {
   ValidationMessage,
   MPEvent,
   ValidationStatus as ValidationStatusT,
   Parameters,
-} from "./_types/_index"
-import {
-  makeStyles,
-  Theme,
-  Typography,
-  Button,
-  Paper,
-  TextareaAutosize,
-} from "@material-ui/core"
-import { Check, Error as ErrorIcon, Warning, Send } from "@material-ui/icons"
-import green from "@material-ui/core/colors/green"
-import red from "@material-ui/core/colors/red"
-import grey from "@material-ui/core/colors/grey"
-import CopyButton from "../../../components/CopyButton"
-import { PAB } from "../../../components/Buttons"
+} from "./types"
 
 interface ValidateEventProps {
   parameterizedUrl: string
@@ -51,9 +53,7 @@ interface ValidateEventProps {
   validationMessages: ValidationMessage[]
 }
 
-// const ACTION_TIMEOUT = 1500
-
-const useStyles = makeStyles<Theme, ValidateEventProps>(theme => ({
+const useStyles = makeStyles(theme => ({
   payloadTitle: {
     margin: theme.spacing(1, 0),
   },
@@ -62,7 +62,7 @@ const useStyles = makeStyles<Theme, ValidateEventProps>(theme => ({
       padding: theme.spacing(1, 2),
     },
   },
-  validationStatus: ({ validationStatus }) => {
+  validationStatus: ({ validationStatus }: ValidateEventProps) => {
     const baseColor =
       validationStatus === ValidationStatusT.Invalid
         ? red
