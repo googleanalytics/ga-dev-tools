@@ -2,10 +2,9 @@ import React from "react"
 
 import Typography from "@material-ui/core/Typography"
 import Layout from "@/components/Layout"
-import { StorageKey } from "../../constants"
-import { useLocalStorage } from "react-use"
-
 import { useLocation } from "@reach/router"
+import { useLocalStorage } from "react-use"
+import { StorageKey } from "@/constants"
 
 type BitlyAuthResponse = {
   access_token: string
