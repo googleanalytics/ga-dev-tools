@@ -14,7 +14,7 @@
 
 import * as React from "react"
 import Layout from "@/components/Layout"
-import DimensionsMetricsExplorer from "./_DimensionsMetricsExplorer"
+import DimensionsMetricsExplorer from "@/components/ga4/DimensionsMetricsExplorer"
 
 export default ({ location: { pathname } }) => {
   return (

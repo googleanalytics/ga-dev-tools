@@ -1,8 +1,8 @@
 import { useSelector } from "react-redux"
 import { useMemo, useEffect, useState } from "react"
-import { usePersistantObject, usePersistentString } from "../../../hooks"
-import { StorageKey } from "../../../constants"
 import { useLocation } from "@reach/router"
+import { usePersistentString, usePersistantObject } from "@/hooks"
+import { StorageKey } from "@/constants"
 
 export const useInputs = () => {
   const [search, setSearch] = usePersistentString(

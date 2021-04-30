@@ -19,10 +19,7 @@ import Autocomplete from "@material-ui/lab/Autocomplete"
 import { useSelector } from "react-redux"
 import { useMemo, useEffect, useState } from "react"
 import { Dispatch } from "../types"
-import {
-  Dimension,
-  Metric,
-} from "../pages/ga4/dimensions-metrics-explorer/_hooks"
+import { Dimension, Metric } from "./ga4/DimensionsMetricsExplorer/hooks"
 
 const useColumnStyles = makeStyles(() => ({
   option: {

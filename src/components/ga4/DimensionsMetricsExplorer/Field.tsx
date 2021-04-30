@@ -1,9 +1,12 @@
 import * as React from "react"
-import { Dimension, Metric } from "./_hooks"
-import { Typography, makeStyles } from "@material-ui/core"
-import { Link as IconLink } from "@material-ui/icons"
-import InlineCode from "../../../components/InlineCode"
-import { CopyIconButton } from "../../../components/CopyButton"
+
+import IconLink from "@material-ui/icons/Link"
+import makeStyles from "@material-ui/core/styles/makeStyles"
+import Typography from "@material-ui/core/Typography"
+
+import InlineCode from "@/components/InlineCode"
+import { CopyIconButton } from "@/components/CopyButton"
+import { Dimension, Metric } from "./hooks"
 
 const useStyles = makeStyles(theme => ({
   heading: {

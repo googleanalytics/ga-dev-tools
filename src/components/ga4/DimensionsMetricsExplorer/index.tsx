@@ -1,26 +1,26 @@
 import * as React from "react"
-import {
-  useDimensionsAndMetrics,
-  useInputs,
-  RequestState,
-  useScrollTo,
-} from "./_hooks"
-import {
-  Typography,
-  TextField,
-  IconButton,
-  makeStyles,
-} from "@material-ui/core"
-import { Clear } from "@material-ui/icons"
-import { Url, StorageKey } from "../../../constants"
-import { SAB } from "../../../components/Buttons"
 import { useMemo } from "react"
-import Info from "../../../components/Info"
-import Spinner from "../../../components/Spinner"
-import Field from "./_Field"
-import ExternalLink from "../../../components/ExternalLink"
-import PropertyPicker from "../../../components/ga4/PropertyPicker"
-import { usePersistentString } from "../../../hooks"
+
+import { Clear } from "@material-ui/icons"
+import ExternalLink from "@/components/ExternalLink"
+import makeStyles from "@material-ui/core/styles/makeStyles"
+import Typography from "@material-ui/core/Typography"
+import TextField from "@material-ui/core/TextField"
+import IconButton from "@material-ui/core/IconButton"
+
+import { Url, StorageKey } from "@/constants"
+import { usePersistentString } from "@/hooks"
+import Info from "@/components/Info"
+import { SAB } from "@/components/Buttons"
+import Spinner from "@/components/Spinner"
+import PropertyPicker from "@/components/ga4/PropertyPicker"
+import Field from "./Field"
+import {
+  useInputs,
+  useDimensionsAndMetrics,
+  useScrollTo,
+  RequestState,
+} from "./hooks"
 
 const adminAPI = <ExternalLink href={Url.ga4AdminAPI}>Admin API</ExternalLink>
 
@@ -131,7 +131,7 @@ const DimensionsMetricsExplorer: React.FC = () => {
           InputProps={{
             endAdornment: (
               <IconButton size="small" onClick={() => setSearch("")}>
-                <Clear />{" "}
+                <Clear />
               </IconButton>
             ),
           }}
