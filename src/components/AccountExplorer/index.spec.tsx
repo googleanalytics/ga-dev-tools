@@ -17,7 +17,7 @@ import * as renderer from "@testing-library/react"
 import { withProviders, testGapi } from "../../test-utils"
 import "@testing-library/jest-dom"
 
-import { AccountExplorer } from "./index"
+import AccountExplorer from "./index"
 
 describe("AccountExplorer", () => {
   it("renders without error for an unauthorized user", async () => {

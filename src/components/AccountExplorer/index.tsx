@@ -17,13 +17,12 @@ import { makeStyles } from "@material-ui/core/styles"
 import TextField from "@material-ui/core/TextField"
 import Typography from "@material-ui/core/Typography"
 import Paper from "@material-ui/core/Paper"
-
-import Layout from "@/components/Layout"
-import ViewSelector, { HasView } from "../../components/ViewSelector"
 import { useDebounce } from "use-debounce"
 
-import ViewsTable from "./_ViewTable"
-import useAllViews, { Views } from "./_useAllViews"
+import Layout from "@/components/Layout"
+import ViewSelector, { HasView } from "@/components/ViewSelector"
+import ViewsTable from "./ViewTable"
+import useAllViews, { Views } from "./useAllViews"
 
 const useStyles = makeStyles(theme => ({
   viewSelector: {
@@ -96,7 +95,7 @@ const populatedView = (view: Partial<HasView>): HasView | undefined => {
   return undefined
 }
 
-export const AccountExplorer = () => {
+const AccountExplorer = () => {
   const classes = useStyles()
 
   const [searchQuery, setSearchQuery] = React.useState("")
@@ -183,10 +182,4 @@ export const AccountExplorer = () => {
   )
 }
 
-export default ({ location: { pathname } }) => {
-  return (
-    <Layout title="Account Explorer" requireLogin pathname={pathname}>
-      <AccountExplorer />
-    </Layout>
-  )
-}
+export default AccountExplorer

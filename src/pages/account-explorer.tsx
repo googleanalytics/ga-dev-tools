@@ -12,19 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-module.exports = {
-  transform: {
-    "^.+\\.[jt]sx?$": "<rootDir>/jest-preprocess.js",
-  },
-  moduleNameMapper: {
-    "@/(.*)": "<rootDir>/src/$1",
-    ".+\\.(css|styl|less|sass|scss)$": `identity-obj-proxy`,
-    ".+\\.(jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$": `<rootDir>/__mocks__/file-mock.js`,
-  },
-  testPathIgnorePatterns: [`node_modules`, `\\.cache`, `<rootDir>.*/public`],
-  transformIgnorePatterns: [`node_modules/(?!(gatsby)/)`],
-  globals: {
-    __PATH_PREFIX__: ``,
-  },
-  setupFiles: [`<rootDir>/loadershim.js`],
+import * as React from "react"
+import Layout from "@/components/Layout"
+import AccountExplorer from "@/components/AccountExplorer"
+
+export default ({ location: { pathname } }) => {
+  return (
+    <Layout title="Account Explorer" requireLogin pathname={pathname}>
+      <AccountExplorer />
+    </Layout>
+  )
 }

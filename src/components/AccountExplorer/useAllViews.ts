@@ -2,7 +2,6 @@ import { useEffect, useState } from "react"
 import { useSelector } from "react-redux"
 
 type AccountSummary = gapi.client.analytics.AccountSummary
-
 type Account = Omit<AccountSummary, "webProperties">
 type Property = Omit<gapi.client.analytics.WebPropertySummary, "profiles">
 type View = gapi.client.analytics.ProfileSummary

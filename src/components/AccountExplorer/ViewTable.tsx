@@ -1,16 +1,17 @@
 import * as React from "react"
-import { makeStyles } from "@material-ui/core/styles"
+
+import makeStyles from "@material-ui/core/styles/makeStyles"
 import Table from "@material-ui/core/Table"
 import TableBody from "@material-ui/core/TableBody"
 import TableCell from "@material-ui/core/TableCell"
 import TableHead from "@material-ui/core/TableHead"
 import TableRow from "@material-ui/core/TableRow"
+import Typography from "@material-ui/core/Typography"
 
-import { CopyIconButton } from "../../components/CopyButton"
-import HighlightText from "./_HighlightText"
-import { Views } from "./_useAllViews"
-import Spinner from "../../components/Spinner"
-import { Typography } from "@material-ui/core"
+import { Views } from "./useAllViews"
+import { CopyIconButton } from "@/components/CopyButton"
+import HighlightText from "./HighlightText"
+import Spinner from "@/components/Spinner"
 
 const useStyles = makeStyles(theme => ({
   id: {
