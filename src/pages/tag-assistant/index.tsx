@@ -14,10 +14,10 @@
 
 import * as React from "react"
 import Typography from "@material-ui/core/Typography"
-import { Url } from "../../constants"
 
-import Layout from "../../components/layout"
-import ExternalLink from "../../components/ExternalLink"
+import Layout from "@/components/Layout"
+import { Url } from "@/constants"
+import ExternalLink from "@/components/ExternalLink"
 
 const TagAssistant = ({ location: { pathname } }) => {
   return (

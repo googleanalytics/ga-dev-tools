@@ -13,9 +13,10 @@
 // limitations under the License.
 
 import * as React from "react"
-import Layout from "../../components/layout"
-import CampaignUrlBuilder from "../../components/CampaignUrlBuilder"
-import { GAVersion } from "../../constants"
+
+import Layout from "@/components/Layout"
+import CampaignUrlBuilder from "@/components/CampaignUrlBuilder"
+import { GAVersion } from "@/constants"
 
 export default ({ location: { pathname } }) => {
   return (

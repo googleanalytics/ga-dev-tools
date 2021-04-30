@@ -13,7 +13,7 @@
 // limitations under the License.
 
 import * as React from "react"
-import Layout from "@/components/layout"
+import Layout from "@/components/Layout"
 import Home from "@/components/Home"
 
 const IndexPage = ({ location: { pathname } }) => (

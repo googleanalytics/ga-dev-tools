@@ -13,7 +13,7 @@
 // limitations under the License.
 
 import * as React from "react"
-import Layout from "../../../components/layout"
+import Layout from "@/components/Layout"
 import DimensionsMetricsExplorer from "./_DimensionsMetricsExplorer"
 
 export default ({ location: { pathname } }) => {

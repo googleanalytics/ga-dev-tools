@@ -13,13 +13,15 @@
 // limitations under the License.
 
 import * as React from "react"
+
 import Typography from "@material-ui/core/Typography"
-import { useStaticQuery, graphql } from "gatsby"
-import Layout from "../../components/layout"
 import { makeStyles } from "@material-ui/core/styles"
+import { useStaticQuery, graphql } from "gatsby"
 import Img from "gatsby-image"
-import { Url } from "../../constants"
-import ExternalLink from "../../components/ExternalLink"
+
+import Layout from "@/components/Layout"
+import { Url } from "@/constants"
+import ExternalLink from "@/components/ExternalLink"
 
 const useStyles = makeStyles({ spreadsheetImage: { maxWidth: "726px" } })
 

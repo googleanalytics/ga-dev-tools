@@ -14,7 +14,7 @@
 
 import * as React from "react"
 
-import Layout from "../../components/layout"
+import Layout from "@/components/Layout"
 import DimensionsAndMetricsExplorer from "./_DimensionsAndMetricsExplorer"
 import { Typography } from "@material-ui/core"
 

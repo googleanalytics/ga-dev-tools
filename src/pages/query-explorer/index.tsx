@@ -14,7 +14,7 @@
 
 import * as React from "react"
 
-import Layout from "../../components/layout"
+import Layout from "@/components/Layout"
 import { Typography, TextField, makeStyles, Tooltip } from "@material-ui/core"
 import { Url, StorageKey } from "../../constants"
 import ViewSelector from "../../components/ViewSelector"

@@ -14,10 +14,11 @@
 
 import * as React from "react"
 
-import Layout from "../../components/layout"
 import { Typography, makeStyles } from "@material-ui/core"
+
+import Layout from "@/components/Layout"
 import Tool from "./_RequestComposer"
-import ExternalLink from "../../components/ExternalLink"
+import ExternalLink from "@/components/ExternalLink"
 
 const useStyles = makeStyles(theme => ({
   list: {

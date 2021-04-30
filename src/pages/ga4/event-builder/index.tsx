@@ -13,8 +13,9 @@
 // limitations under the License.
 
 import * as React from "react"
+
+import Layout from "@/components/Layout"
 import EventBuilder from "./_EventBuilder"
-import Layout from "../../../components/layout"
 
 export default ({ location: { pathname } }) => {
   return (

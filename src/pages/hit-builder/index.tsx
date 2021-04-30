@@ -14,7 +14,7 @@
 
 import * as React from "react"
 
-import Layout from "../../components/layout"
+import Layout from "@/components/Layout"
 import Parameters from "./_Parameters"
 import HitCard from "./_HitCard"
 import { Typography } from "@material-ui/core"

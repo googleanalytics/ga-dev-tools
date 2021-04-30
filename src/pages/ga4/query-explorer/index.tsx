@@ -13,7 +13,8 @@
 // limitations under the License.
 
 import * as React from "react"
-import Layout from "../../../components/layout"
+
+import Layout from "@/components/Layout"
 import QueryExplorer from "./_QueryExplorer"
 
 export default ({ location: { pathname } }) => {
