@@ -1,9 +1,14 @@
 import * as React from "react"
-import { Typography, Tabs, Tab, Box } from "@material-ui/core"
-import { Url, StorageKey } from "../../../constants"
 import { useEffect } from "react"
-import BasicReport from "./_BasicReport/_index"
-import ExternalLink from "../../../components/ExternalLink"
+
+import Box from "@material-ui/core/Box"
+import Typography from "@material-ui/core/Typography"
+import Tabs from "@material-ui/core/Tabs"
+import Tab from "@material-ui/core/Tab"
+
+import { Url, StorageKey } from "@/constants"
+import ExternalLink from "@/components/ExternalLink"
+import BasicReport from "./BasicReport"
 
 const dataAPI = (
   <ExternalLink href={Url.ga4DataAPI}>Analytics Data API</ExternalLink>

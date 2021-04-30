@@ -1,28 +1,30 @@
 import * as React from "react"
+import { useState, useMemo } from "react"
+
+import clsx from "classnames"
 import { makeStyles } from "@material-ui/core"
+import Delete from "@material-ui/icons/Delete"
+
+import {
+  GA4Dimension,
+  DimensionPicker,
+  GA4Metric,
+  MetricPicker,
+} from "@/components/GA4Pickers"
+import Select, { SelectOption } from "@/components/Select"
+import { TooltipIconButton } from "@/components/Buttons"
+import { UseFilterContext } from "../useFilter"
 import {
   BaseFilter,
   UpdateFilterFn,
   FilterType,
   ExpressionPath,
   RemoveExpressionFn,
-} from "../_index"
-import { useState, useMemo } from "react"
-import {
-  GA4Dimension,
-  DimensionPicker,
-  GA4Metric,
-  MetricPicker,
-} from "../../../../../components/GA4Pickers"
-import Select, { SelectOption } from "../../../../../components/Select"
-import clsx from "classnames"
-import { Delete } from "@material-ui/icons"
-import StringFilter, { MatchType } from "./_StringFilter"
-import NumericFilter, { OperationType } from "./_NumericFilter"
-import InListFilter from "./_InListFilter"
-import BetweenFilter from "./_BetweenFilter"
-import { TooltipIconButton } from "../../../../../components/Buttons"
-import { UseFilterContext } from "../_useFilter"
+} from "../index"
+import StringFilter, { MatchType } from "./StringFilter"
+import NumericFilter, { OperationType } from "./NumericFilter"
+import InListFilter from "./InListFilter"
+import BetweenFilter from "./BetweenFilter"
 
 export const useStyles = makeStyles(theme => ({
   indented: {

@@ -1,8 +1,10 @@
 import * as React from "react"
-import { UpdateFilterFn, ExpressionPath } from "../_index"
-import Select, { SelectOption } from "../../../../../components/Select"
+
 import TextField from "@material-ui/core/TextField"
-import { useStyles } from "./_index"
+
+import Select, { SelectOption } from "@/components/Select"
+import { UpdateFilterFn, ExpressionPath } from "../index"
+import { useStyles } from "./index"
 
 type NFilter = gapi.client.analyticsdata.NumericFilter
 

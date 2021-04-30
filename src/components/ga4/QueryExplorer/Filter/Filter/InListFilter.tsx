@@ -1,8 +1,9 @@
 import * as React from "react"
-import { UpdateFilterFn, ExpressionPath } from "../_index"
-import { useStyles } from "./_index"
-import SeparatedInput from "../../../../../components/SeparatedInput"
-import LabeledCheckbox from "../../../../../components/LabeledCheckbox"
+
+import SeparatedInput from "@/components/SeparatedInput"
+import LabeledCheckbox from "@/components/LabeledCheckbox"
+import { UpdateFilterFn, ExpressionPath } from "../index"
+import { useStyles } from "./index"
 
 type ILFilter = gapi.client.analyticsdata.InListFilter
 

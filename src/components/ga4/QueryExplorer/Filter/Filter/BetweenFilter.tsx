@@ -1,8 +1,10 @@
 import * as React from "react"
-import { UpdateFilterFn, ExpressionPath } from "../_index"
-import { useStyles } from "./_index"
+
 import TextField from "@material-ui/core/TextField"
-import { toNumericValue, numericValueEquals } from "./_NumericFilter"
+
+import { UpdateFilterFn, ExpressionPath } from "../index"
+import { useStyles } from "./index"
+import { toNumericValue, numericValueEquals } from "./NumericFilter"
 
 type BFilter = gapi.client.analyticsdata.BetweenFilter
 

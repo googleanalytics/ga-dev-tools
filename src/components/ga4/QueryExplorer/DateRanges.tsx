@@ -1,12 +1,16 @@
 import * as React from "react"
-import { TextField, makeStyles, Typography } from "@material-ui/core"
-import { TooltipIconButton, SAB } from "../../../components/Buttons"
-import { Delete } from "@material-ui/icons"
-import { Dispatch } from "../../../types"
-import InlineCode from "../../../components/InlineCode"
+
 import uuid from "uuid/v4"
-import ExternalLink from "../../../components/ExternalLink"
-import WithHelpText from "../../../components/WithHelpText"
+import makeStyles from "@material-ui/core/styles/makeStyles"
+import Typography from "@material-ui/core/Typography"
+import TextField from "@material-ui/core/TextField"
+import Delete from "@material-ui/icons/Delete"
+
+import { Dispatch } from "@/types"
+import ExternalLink from "@/components/ExternalLink"
+import WithHelpText from "@/components/WithHelpText"
+import InlineCode from "@/components/InlineCode"
+import { SAB, TooltipIconButton } from "@/components/Buttons"
 
 export interface DateRange {
   name?: string

@@ -1,13 +1,14 @@
 import { useCallback, useEffect, createContext } from "react"
+
+import { StorageKey } from "@/constants"
+import { usePersistantObject } from "@/hooks"
 import {
   FilterExpression,
   UpdateFilterFn,
   RemoveExpressionFn,
   AddExpressionFn,
-} from "./_index"
-import { ExpressionType } from "./_Expression"
-import { StorageKey } from "../../../../constants"
-import { usePersistantObject } from "../../../../hooks"
+} from "./index"
+import { ExpressionType } from "./Expression"
 
 export const UseFilterContext = createContext<
   ReturnType<UseFilter> | undefined

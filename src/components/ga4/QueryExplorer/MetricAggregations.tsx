@@ -1,12 +1,13 @@
 import * as React from "react"
-import SelectMultiple, {
-  SelectOption,
-} from "../../../components/SelectMultiple"
-import { Dispatch } from "../../../types"
-import WithHelpText from "../../../components/WithHelpText"
-import { Typography, makeStyles } from "@material-ui/core"
-import ExternalLink from "../../../components/ExternalLink"
-import { Url } from "../../../constants"
+
+import Typography from "@material-ui/core/Typography"
+import makeStyles from "@material-ui/core/styles/makeStyles"
+
+import { Dispatch } from "@/types"
+import { Url } from "@/constants"
+import SelectMultiple, { SelectOption } from "@/components/SelectMultiple"
+import ExternalLink from "@/components/ExternalLink"
+import WithHelpText from "@/components/WithHelpText"
 
 export enum MetricAggregation {
   Total = "TOTAL",

@@ -1,13 +1,16 @@
 import React, { useState, useMemo } from "react"
-import { makeStyles, Typography, Tabs, Tab, Box } from "@material-ui/core"
+
 import { DataGrid, GridColumns } from "@material-ui/data-grid"
-import PrettyJson from "../../../components/PrettyJson"
-import {
-  RunReportResponse,
-  RunReportError,
-} from "./_BasicReport/_useMakeRequest"
-import { RequestStatus } from "../../../types"
-import Spinner from "../../../components/Spinner"
+import makeStyles from "@material-ui/core/styles/makeStyles"
+import Box from "@material-ui/core/Box"
+import Typography from "@material-ui/core/Typography"
+import Tabs from "@material-ui/core/Tabs"
+import Tab from "@material-ui/core/Tab"
+
+import { RequestStatus } from "@/types"
+import PrettyJson from "@/components/PrettyJson"
+import Spinner from "@/components/Spinner"
+import { RunReportResponse, RunReportError } from "./BasicReport/useMakeRequest"
 
 const useStyles = makeStyles(theme => ({
   container: {

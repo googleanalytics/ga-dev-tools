@@ -1,18 +1,19 @@
 import { useState, useCallback } from "react"
-import { DateRange } from "../_DateRanges"
-import {
-  GA4Dimensions,
-  GA4Metrics,
-  useAvailableColumns,
-} from "../../../../components/GA4Pickers"
+
 import {
   usePersistentString,
   usePersistentBoolean,
   usePersistantObject,
-} from "../../../../hooks"
-import { StorageKey } from "../../../../constants"
-import { FilterExpression } from "../_Filter/_index"
-import { MetricAggregation } from "../_MetricAggregations"
+} from "@/hooks"
+import { StorageKey } from "@/constants"
+import {
+  GA4Dimensions,
+  GA4Metrics,
+  useAvailableColumns,
+} from "@/components/GA4Pickers"
+import { DateRange } from "../DateRanges"
+import { FilterExpression } from "../Filter"
+import { MetricAggregation } from "../MetricAggregations"
 
 type OrderBy = gapi.client.analyticsdata.OrderBy
 type CohortSpec = gapi.client.analyticsdata.CohortSpec

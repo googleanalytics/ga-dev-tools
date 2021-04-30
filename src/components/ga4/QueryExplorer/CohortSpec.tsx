@@ -1,20 +1,23 @@
 import * as React from "react"
-import { Dispatch } from "../../../types"
-import WithHelpText from "../../../components/WithHelpText"
-import ExternalLink from "../../../components/ExternalLink"
-import { Url } from "../../../constants"
-import { Typography, makeStyles } from "@material-ui/core"
-import { SAB, TooltipIconButton } from "../../../components/Buttons"
-import { Delete, Warning } from "@material-ui/icons"
-import { GADateRange } from "../../../components/GADate"
+
+import Typography from "@material-ui/core/Typography"
+import Delete from "@material-ui/icons/Delete"
+
+import { Url } from "@/constants"
+import ExternalLink from "@/components/ExternalLink"
+import Select, { SelectOption } from "@/components/Select"
 import {
-  DimensionPicker,
-  GA4Dimension,
   GA4Dimensions,
-} from "../../../components/GA4Pickers"
-import InlineCode from "../../../components/InlineCode"
-import Select, { SelectOption } from "../../../components/Select"
-import LinkedTextField from "../../../components/LinkedTextField"
+  GA4Dimension,
+  DimensionPicker,
+} from "@/components/GA4Pickers"
+import WithHelpText from "@/components/WithHelpText"
+import { SAB, TooltipIconButton } from "@/components/Buttons"
+import InlineCode from "@/components/InlineCode"
+import LinkedTextField from "@/components/LinkedTextField"
+import { GADateRange } from "@/components/GADate"
+import { Dispatch } from "@/types"
+import makeStyles from "@material-ui/core/styles/makeStyles"
 
 type DateRange = gapi.client.analyticsdata.DateRange
 type CohortsRange = gapi.client.analyticsdata.CohortsRange
@@ -63,9 +66,9 @@ type UseCohortSpec = (arg: {
   dimensionFilter: (d: GA4Dimension) => boolean
   hasRequiredDimension: boolean
   startOffset: string
-  setStartOffset: Dispatch<string>
+  setStartOffset: React.Dispatch<string>
   endOffset: string
-  setEndOffset: Dispatch<string>
+  setEndOffset: React.Dispatch<string>
 }
 
 const useCohortSpec: UseCohortSpec = ({

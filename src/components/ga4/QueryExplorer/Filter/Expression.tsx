@@ -1,5 +1,12 @@
 import * as React from "react"
-import Filter from "./_Filter/_index"
+
+import makeStyles from "@material-ui/core/styles/makeStyles"
+import Typography from "@material-ui/core/Typography"
+import Delete from "@material-ui/icons/Delete"
+
+import { SAB, PlainButton } from "@/components/Buttons"
+import { GA4Dimension, GA4Metric } from "@/components/GA4Pickers"
+import Filter from "./Filter"
 import {
   FilterExpression,
   UpdateFilterFn,
@@ -7,12 +14,8 @@ import {
   ExpressionPath,
   AddExpressionFn,
   RemoveExpressionFn,
-} from "./_index"
-import { makeStyles, Typography } from "@material-ui/core"
-import ExpressionList from "./_ExpressionList"
-import { SAB, PlainButton } from "../../../../components/Buttons"
-import { Delete } from "@material-ui/icons"
-import { GA4Dimension, GA4Metric } from "../../../../components/GA4Pickers"
+} from "./index"
+import ExpressionList from "./ExpressionList"
 
 const useStyles = makeStyles(theme => ({
   label: {

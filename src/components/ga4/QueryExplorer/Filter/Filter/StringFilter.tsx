@@ -1,9 +1,11 @@
 import * as React from "react"
-import Select, { SelectOption } from "../../../../../components/Select"
-import { useStyles } from "./_index"
+
 import TextField from "@material-ui/core/TextField"
-import LabeledCheckbox from "../../../../../components/LabeledCheckbox"
-import { UpdateFilterFn, ExpressionPath } from "../_index"
+
+import Select, { SelectOption } from "@/components/Select"
+import LabeledCheckbox from "@/components/LabeledCheckbox"
+import { useStyles } from "./index"
+import { UpdateFilterFn, ExpressionPath } from "../index"
 
 export enum MatchType {
   Exact = "EXACT",

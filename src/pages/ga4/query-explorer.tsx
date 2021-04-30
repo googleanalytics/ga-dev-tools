@@ -15,7 +15,7 @@
 import * as React from "react"
 
 import Layout from "@/components/Layout"
-import QueryExplorer from "./_QueryExplorer"
+import QueryExplorer from "@/components/ga4/QueryExplorer"
 
 export default ({ location: { pathname } }) => {
   return (

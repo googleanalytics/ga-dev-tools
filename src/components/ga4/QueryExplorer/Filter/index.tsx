@@ -1,15 +1,18 @@
 import * as React from "react"
+import { useCallback } from "react"
+
+import Typography from "@material-ui/core/Typography"
+import makeStyles from "@material-ui/core/styles/makeStyles"
+
+import { Dispatch } from "@/types"
+import { StorageKey } from "@/constants"
 import {
   GA4Dimensions,
   GA4Dimension,
   GA4Metrics,
-} from "../../../../components/GA4Pickers"
-import { useCallback } from "react"
-import Expression, { ExpressionType } from "./_Expression"
-import { Typography, makeStyles } from "@material-ui/core"
-import { Dispatch } from "../../../../types"
-import useFilter, { UseFilterContext } from "./_useFilter"
-import { StorageKey } from "../../../../constants"
+} from "@/components/GA4Pickers"
+import Expression, { ExpressionType } from "./Expression"
+import useFilter, { UseFilterContext } from "./useFilter"
 
 const useStyles = makeStyles(theme => ({
   filter: {

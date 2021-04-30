@@ -1,5 +1,8 @@
 import * as React from "react"
-import { makeStyles } from "@material-ui/core"
+
+import makeStyles from "@material-ui/core/styles/makeStyles"
+
+import { GA4Dimension, GA4Metric } from "@/components/GA4Pickers"
 import {
   FilterExpressionList,
   UpdateFilterFn,
@@ -7,9 +10,8 @@ import {
   AddExpressionFn,
   RemoveExpressionFn,
   ExpressionPath,
-} from "./_index"
-import Expression, { AddExpression, RemoveExpression } from "./_Expression"
-import { GA4Dimension, GA4Metric } from "../../../../components/GA4Pickers"
+} from "./index"
+import Expression, { AddExpression, RemoveExpression } from "./Expression"
 
 const useStyles = makeStyles(theme => ({
   buttons: {

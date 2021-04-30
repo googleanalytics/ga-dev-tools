@@ -1,9 +1,12 @@
 import * as React from "react"
-import { Dispatch } from "../../../types"
-import { Typography, makeStyles } from "@material-ui/core"
-import { SAB, TooltipIconButton } from "../../../components/Buttons"
-import { Delete } from "@material-ui/icons"
-import Select, { SelectOption } from "../../../components/Select"
+
+import Typography from "@material-ui/core/Typography"
+import Delete from "@material-ui/icons/Delete"
+import makeStyles from "@material-ui/core/styles/makeStyles"
+
+import { Dispatch } from "@/types"
+import { SAB, TooltipIconButton } from "@/components/Buttons"
+import Select, { SelectOption } from "@/components/Select"
 import {
   MetricPicker,
   GA4Metric,
@@ -11,9 +14,9 @@ import {
   DimensionPicker,
   GA4Dimensions,
   GA4Metrics,
-} from "../../../components/GA4Pickers"
-import ExternalLink from "../../../components/ExternalLink"
-import WithHelpText from "../../../components/WithHelpText"
+} from "@/components/GA4Pickers"
+import ExternalLink from "@/components/ExternalLink"
+import WithHelpText from "@/components/WithHelpText"
 
 const orderBysLink = (
   <ExternalLink href="https://developers.google.com/analytics/devguides/reporting/data/v1/rest/v1beta/properties/runReport#body.request_body.FIELDS.order_bys">
