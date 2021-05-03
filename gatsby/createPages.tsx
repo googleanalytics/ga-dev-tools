@@ -82,7 +82,7 @@ export const createPages = async ({ actions }) => {
     createPage({
       path: slug,
       component: path.resolve(
-        `${__dirname}/../src/pages/dimensions-metrics-explorer/_GroupInfoTemplate.tsx`
+        `${__dirname}/../src/components/DimensionsMetricsExplorer/GroupInfoTemplate.tsx`
       ),
       context: {
         groupName,

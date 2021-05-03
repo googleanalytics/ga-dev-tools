@@ -18,11 +18,11 @@ import { withProviders, testGapi } from "../../test-utils"
 import userEvent from "@testing-library/user-event"
 import "@testing-library/jest-dom"
 
-import { Prose } from "./index"
+import DimensionMetricsExplorer from "./index"
 
 describe("Dimensions and Metrics Explorer", () => {
   it("renders without error", async () => {
-    const { wrapped, store } = withProviders(<Prose />)
+    const { wrapped, store } = withProviders(<DimensionMetricsExplorer />)
     store.dispatch({ type: "setUser", user: undefined })
     const { container } = renderer.render(wrapped)
     expect(container).toHaveTextContent("Metrics Explorer lists")
@@ -31,7 +31,7 @@ describe("Dimensions and Metrics Explorer", () => {
   // sure the intersection logic works for compatable dimensions.
   it("disables incompatable metric when 'User Type' dimension is selected", async () => {
     const gapi = testGapi()
-    const { wrapped, store } = withProviders(<Prose />)
+    const { wrapped, store } = withProviders(<DimensionMetricsExplorer />)
     store.dispatch({ type: "setUser", user: {} })
     store.dispatch({ type: "setGapi", gapi })
     const { getByText, findByLabelText } = renderer.render(wrapped)

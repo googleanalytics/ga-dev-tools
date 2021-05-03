@@ -14,11 +14,10 @@
 
 import * as React from "react"
 
-import Layout from "@/components/Layout"
-import DimensionsAndMetricsExplorer from "./_DimensionsAndMetricsExplorer"
-import { Typography } from "@material-ui/core"
+import Typography from "@material-ui/core/Typography"
+import Explorer from "./Explorer"
 
-export const Prose = () => {
+export const DimensionsMetricsExplorer = () => {
   return (
     <>
       <Typography variant="body1">
@@ -44,16 +43,9 @@ export const Prose = () => {
         same query.
       </Typography>
 
-      <DimensionsAndMetricsExplorer />
+      <Explorer />
     </>
   )
 }
 
-const Wrapped = ({ location: { pathname } }) => {
-  return (
-    <Layout title="Dimensions & Metrics Explorer" pathname={pathname}>
-      <Prose />
-    </Layout>
-  )
-}
-export default Wrapped
+export default DimensionsMetricsExplorer

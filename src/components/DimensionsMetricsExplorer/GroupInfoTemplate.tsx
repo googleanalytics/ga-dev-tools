@@ -14,14 +14,18 @@
 
 import * as React from "react"
 
-import Layout from "@/components/Layout"
+import makeStyles from "@material-ui/core/styles/makeStyles"
+import Typography from "@material-ui/core/Typography"
+import Chip from "@material-ui/core/Chip"
+import ArrowBack from "@material-ui/icons/ArrowBack"
+import LinkIcon from "@material-ui/icons/Link"
 import classnames from "classnames"
-import { Column } from "../../api"
 import { Link } from "gatsby"
-import { Typography, Chip, makeStyles } from "@material-ui/core"
-import { Link as LinkIcon, ArrowBack } from "@material-ui/icons"
 import { sortBy } from "lodash"
-import { CopyIconButton } from "../../components/CopyButton"
+
+import Layout from "@/components/Layout"
+import { Column } from "@/api"
+import { CopyIconButton } from "@/components/CopyButton"
 
 type GroupInfoTemplateProps = {
   pageContext: {

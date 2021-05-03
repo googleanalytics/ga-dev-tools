@@ -16,7 +16,7 @@ import { reduce } from "lodash"
 import { Set, Map } from "immutable"
 // TODO - If time allows, this file should be processed at build time instead
 // of runtime.
-import CUBES from "./_ga_cubes.json"
+import CUBES from "./ga_cubes.json"
 
 // The ga_cubes.json file is a mapping of cubes to column names. The
 // format looks like this:

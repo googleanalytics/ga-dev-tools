@@ -14,22 +14,22 @@
 
 import * as React from "react"
 
+import TextField from "@material-ui/core/TextField"
+import IconButton from "@material-ui/core/IconButton"
+import Clear from "@material-ui/icons/Clear"
+import makeStyles from "@material-ui/core/styles/makeStyles"
+import { useDebounce } from "use-debounce/lib"
+
+import { StorageKey } from "@/constants"
+import { WithEtag, Dispatch } from "@/types"
+import LabeledCheckbox from "@/components/LabeledCheckbox"
 import {
   usePersistantObject,
   usePersistentBoolean,
   usePersistentString,
 } from "../../hooks"
 import { Column, useApi } from "../../api"
-
-import TextField from "@material-ui/core/TextField"
-import IconButton from "@material-ui/core/IconButton"
-import Clear from "@material-ui/icons/Clear"
-import ColumnGroupList from "./_ColumnGroupList"
-import { useDebounce } from "use-debounce/lib"
-import { WithEtag, Dispatch } from "../../types"
-import { StorageKey } from "../../constants"
-import { makeStyles } from "@material-ui/core"
-import LabeledCheckbox from "../../components/LabeledCheckbox"
+import ColumnGroupList from "./ColumnGroupList"
 
 type ColumnAPIResponse = WithEtag<Column[]>
 
@@ -117,7 +117,7 @@ const Search: React.FC<{
   )
 }
 
-const Main: React.FC = () => {
+const Explorer: React.FC = () => {
   const [searchText, setSearchText] = usePersistentString(
     StorageKey.dimensionsMetricsExplorerSearch,
     ""
@@ -168,4 +168,4 @@ const Main: React.FC = () => {
   )
 }
 
-export default Main
+export default Explorer

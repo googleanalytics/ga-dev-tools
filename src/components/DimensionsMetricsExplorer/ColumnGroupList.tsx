@@ -13,21 +13,25 @@
 // limitations under the License.
 
 import * as React from "react"
+
+import Typography from "@material-ui/core/Typography"
+import IconButton from "@material-ui/core/IconButton"
+import Tooltip from "@material-ui/core/Tooltip"
+import LinkIcon from "@material-ui/icons/Link"
+import Button from "@material-ui/core/Button"
+import RemoveCircle from "@material-ui/icons/RemoveCircle"
+import AddCircle from "@material-ui/icons/AddCircle"
+import Info from "@material-ui/icons/Info"
+import makeStyles from "@material-ui/core/styles/makeStyles"
 import { groupBy, map, sortBy } from "lodash"
 import { Set } from "immutable"
 import { navigate } from "gatsby"
-
-import { CUBES_BY_COLUMN_NAME, CUBE_NAMES, CubesByColumnName } from "./_cubes"
-
-import Button from "@material-ui/core/Button"
-import { RemoveCircle, AddCircle, Info } from "@material-ui/icons"
-
-import { Typography, makeStyles, IconButton, Tooltip } from "@material-ui/core"
-import LinkIcon from "@material-ui/icons/Link"
-import { Column } from "../../api"
 import classnames from "classnames"
-import { CopyIconButton } from "../../components/CopyButton"
-import LabeledCheckbox from "../../components/LabeledCheckbox"
+
+import { Column } from "@/api"
+import { CopyIconButton } from "@/components/CopyButton"
+import LabeledCheckbox from "@/components/LabeledCheckbox"
+import { CUBES_BY_COLUMN_NAME, CUBE_NAMES, CubesByColumnName } from "./cubes"
 
 const useStyles = makeStyles(theme => ({
   accordionTitle: { margin: 0 },
