@@ -1,13 +1,14 @@
 import * as React from "react"
-import { Segment, Column, useApi } from "../../api"
+
+import { Segment, Column, useApi } from "@/api"
 import {
   usePersistentBoolean,
   usePersistentString,
   usePersistantObject,
-} from "../../hooks"
-import { StorageKey } from "../../constants"
-import { V3SamplingLevel } from "../../components/UAPickers"
-import { HasView } from "../../components/ViewSelector"
+} from "@/hooks"
+import { StorageKey } from "@/constants"
+import { V3SamplingLevel } from "@/components/UAPickers"
+import { HasView } from "@/components/ViewSelector"
 import { SortableColumn } from "."
 
 export const useInputs = () => {

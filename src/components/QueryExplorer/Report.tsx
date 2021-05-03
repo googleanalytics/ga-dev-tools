@@ -13,6 +13,7 @@
 // limitations under the License.
 
 import * as React from "react"
+
 import {
   makeStyles,
   Table,
@@ -27,7 +28,7 @@ import {
 } from "@material-ui/core"
 import Spinner from "../../components/Spinner"
 import { CopyIconButton } from "../../components/CopyButton"
-import { QueryResponse, APIStatus } from "./_hooks"
+import { QueryResponse, APIStatus } from "./hooks"
 
 const useStyles = makeStyles(theme => ({
   paper: {},

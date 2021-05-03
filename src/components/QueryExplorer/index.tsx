@@ -14,24 +14,27 @@
 
 import * as React from "react"
 
-import Layout from "@/components/Layout"
-import { Typography, TextField, makeStyles, Tooltip } from "@material-ui/core"
-import { Url, StorageKey } from "../../constants"
-import ViewSelector from "../../components/ViewSelector"
-import { Launch } from "@material-ui/icons"
-import Sort from "./_Sort"
-import Report from "./_Report"
-import { Column } from "../../api"
+import Tooltip from "@material-ui/core/Tooltip"
+import Typography from "@material-ui/core/Typography"
+import TextField from "@material-ui/core/TextField"
+import makeStyles from "@material-ui/core/styles/makeStyles"
+import Launch from "@material-ui/icons/Launch"
+
+import { Column } from "@/api"
+import { useInputs, useDataAPIRequest } from "./hooks"
+import { Url, StorageKey } from "@/constants"
+import ViewSelector from "@/components/ViewSelector"
 import {
   DimensionsPicker,
   MetricsPicker,
   SegmentPicker,
   V3SamplingLevelPicker,
-} from "../../components/UAPickers"
-import { PAB } from "../../components/Buttons"
-import { useInputs, useDataAPIRequest } from "./_hooks"
-import LabeledCheckbox from "../../components/LabeledCheckbox"
-import ExternalLink from "../../components/ExternalLink"
+} from "@/components/UAPickers"
+import { PAB } from "@/components/Buttons"
+import LabeledCheckbox from "@/components/LabeledCheckbox"
+import ExternalLink from "@/components/ExternalLink"
+import Sort from "./Sort"
+import Report from "./Report"
 
 const coreReportingApi = (
   <ExternalLink href={Url.coreReportingApi}>Core Reporting API</ExternalLink>
@@ -76,13 +79,13 @@ const useStyles = makeStyles(theme => ({
 }))
 
 const startDateLink = (
-  <ExternalLink href="https://developers.google.com/analytics/devguides/reporting/core/v3/reference#startDate">
+  <ExternalLink href="https://developers.google.com/analytics/devguides/reporting/co@/reference#startDate">
     start-date
   </ExternalLink>
 )
 
 const endDateLink = (
-  <ExternalLink href="https://developers.google.com/analytics/devguides/reporting/core/v3/reference#endDate">
+  <ExternalLink href="https://developers.google.com/analytics/devguides/reporting/co@/reference#endDate">
     end-date
   </ExternalLink>
 )
@@ -95,7 +98,7 @@ const DevsiteLink: React.FC<{ hash: string }> = ({ hash }) => {
     <Tooltip title={`See ${hash} on devsite.`}>
       <a
         className={classes.externalReference}
-        href={`https://developers.google.com/analytics/devguides/reporting/core/v3/reference#${hash}`}
+        href={`https://developers.google.com/analytics/devguides/reporting/co@/reference#${hash}`}
         target="_blank"
         rel="noreferrer"
       >
@@ -316,11 +319,4 @@ export const QueryExplorer = () => {
   )
 }
 
-const Wrapped = ({ location: { pathname } }) => {
-  return (
-    <Layout title="Query Explorer" requireLogin pathname={pathname}>
-      <QueryExplorer />
-    </Layout>
-  )
-}
-export default Wrapped
+export default QueryExplorer
