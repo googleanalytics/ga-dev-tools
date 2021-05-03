@@ -13,23 +13,27 @@
 // limitations under the License.
 
 import React from "react"
-import { HitStatus } from "./_types"
+
 import Warning from "@material-ui/icons/Warning"
 import ErrorIcon from "@material-ui/icons/Error"
 import Button from "@material-ui/core/Button"
 import TextField from "@material-ui/core/TextField"
-import CopyButton from "../../components/CopyButton"
 import Check from "@material-ui/icons/Check"
 import Send from "@material-ui/icons/Send"
 import Cached from "@material-ui/icons/Cached"
-import { Paper, makeStyles, Typography } from "@material-ui/core"
-import classnames from "classnames"
+import Paper from "@material-ui/core/Paper"
+import Typography from "@material-ui/core/Typography"
+import makeStyles from "@material-ui/core/styles/makeStyles"
 import orange from "@material-ui/core/colors/orange"
 import green from "@material-ui/core/colors/green"
 import yellow from "@material-ui/core/colors/yellow"
 import red from "@material-ui/core/colors/red"
-import { ParametersAPI, Validation } from "./_hooks"
-import { PAB } from "../../components/Buttons"
+import classnames from "classnames"
+
+import { PAB } from "@/components/Buttons"
+import CopyButton from "@/components/CopyButton"
+import { ParametersAPI, Validation } from "./hooks"
+import { HitStatus } from "./types"
 
 const useStyles = makeStyles(theme => ({
   hitElement: {

@@ -1,24 +1,23 @@
 import * as React from "react"
 
-import { v4 as uuid } from "uuid"
+import { Delete, Refresh } from "@material-ui/icons"
+import makeStyles from "@material-ui/core/styles/makeStyles"
+import FormControl from "@material-ui/core/FormControl"
+import InputLabel from "@material-ui/core/InputLabel"
+import MenuItem from "@material-ui/core/MenuItem"
+import Select from "@material-ui/core/Select"
+import TextField from "@material-ui/core/TextField"
+import Typography from "@material-ui/core/Typography"
+import InputAdornment from "@material-ui/core/InputAdornment"
+import Tooltip from "@material-ui/core/Tooltip"
+import IconButton from "@material-ui/core/IconButton"
+import Autocomplete from "@material-ui/lab/Autocomplete"
 import Add from "@material-ui/icons/Add"
 import Button from "@material-ui/core/Button"
-import {
-  FormControl,
-  InputLabel,
-  Select,
-  MenuItem,
-  TextField,
-  InputAdornment,
-  IconButton,
-  Tooltip,
-  makeStyles,
-  Typography,
-} from "@material-ui/core"
-import Autocomplete from "@material-ui/lab/Autocomplete"
-import { Delete, Refresh } from "@material-ui/icons"
-import { HIT_TYPES, Property } from "./_types"
-import { Validation, ParametersAPI } from "./_hooks"
+import { v4 as uuid } from "uuid"
+
+import { HIT_TYPES, Property } from "./types"
+import { Validation, ParametersAPI } from "./hooks"
 
 const useStyles = makeStyles(theme => ({
   subdued: {

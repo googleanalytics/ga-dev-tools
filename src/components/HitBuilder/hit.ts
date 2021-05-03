@@ -1,4 +1,4 @@
-// Copyright 2016 Google Inc. All rights reserved.
+// Copyright 2020 Google Inc. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,7 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+import { WindowLocation, NavigateFn } from "@reach/router"
 import querystring from "querystring"
+
 import {
   Param,
   Params,
@@ -23,8 +25,7 @@ import {
   ParamCId,
   ParamOptional,
   HIT_TYPES,
-} from "./_types"
-import { WindowLocation, NavigateFn } from "@reach/router"
+} from "./types"
 
 const DEFAULT_HIT = "v=1&t=pageview"
 

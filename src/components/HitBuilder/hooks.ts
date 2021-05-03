@@ -14,11 +14,12 @@
 
 import * as React from "react"
 
-import { Params, Param, ValidationMessage, HitStatus, Property } from "./_types"
-import * as hitUtils from "./_hit"
 import { useSelector } from "react-redux"
-import { getAnalyticsApi } from "../../api"
 import { useLocation, useNavigate } from "@reach/router"
+
+import { getAnalyticsApi } from "@/api"
+import { Params, Param, ValidationMessage, HitStatus, Property } from "./types"
+import * as hitUtils from "./hit"
 
 const formatMessage = (message: {
   parameter: any

@@ -14,21 +14,17 @@
 
 import * as React from "react"
 
-import Layout from "@/components/Layout"
-import Parameters from "./_Parameters"
-import HitCard from "./_HitCard"
-import { Typography } from "@material-ui/core"
-import { Url } from "../../constants"
-import { Property } from "./_types"
-import * as hitUtils from "./_hit"
-import * as hooks from "./_hooks"
-import ExternalLink from "../../components/ExternalLink"
+import Typography from "@material-ui/core/Typography"
 
-interface HitBuilderProps {
-  properties: Property[]
-}
+import { Url } from "@/constants"
+import ExternalLink from "@/components/ExternalLink"
+import Parameters from "./Parameters"
+import HitCard from "./HitCard"
+import * as hitUtils from "./hit"
+import * as hooks from "./hooks"
 
-export const HitBuilder: React.FC<HitBuilderProps> = ({ properties }) => {
+const HitBuilder: React.FC = () => {
+  const { properties } = hooks.useProperties()
   const [hitPayload, setHitPayload] = React.useState("")
 
   const {
@@ -131,11 +127,5 @@ export const HitBuilder: React.FC<HitBuilderProps> = ({ properties }) => {
     </>
   )
 }
-export default ({ location: { pathname } }) => {
-  const { properties } = hooks.useProperties()
-  return (
-    <Layout title="Hit Builder" requireLogin pathname={pathname}>
-      <HitBuilder properties={properties} />
-    </Layout>
-  )
-}
+
+export default HitBuilder

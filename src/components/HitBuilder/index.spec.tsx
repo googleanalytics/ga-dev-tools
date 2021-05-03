@@ -13,13 +13,13 @@
 // limitations under the License.
 
 import * as React from "react"
+
 import * as renderer from "@testing-library/react"
-import { withProviders } from "../../test-utils"
 import userEvent from "@testing-library/user-event"
 import "@testing-library/jest-dom"
 
-import { HitBuilder } from "./index"
-import { Property } from "./_types"
+import { withProviders } from "@/test-utils"
+import HitBuilder from "./index"
 
 const getInputs = async (
   findByLabelText: (label: string) => Promise<HTMLElement>
@@ -34,10 +34,8 @@ const getInputs = async (
 }
 
 describe("HitBuilder", () => {
-  const properties: Property[] = []
-
   test("can render page without error", () => {
-    const { wrapped } = withProviders(<HitBuilder properties={properties} />)
+    const { wrapped } = withProviders(<HitBuilder />)
     renderer.render(wrapped)
   })
 
@@ -47,9 +45,7 @@ describe("HitBuilder", () => {
   describe("When authorized", () => {
     describe("Initial parameter values are right", () => {
       test("with no query parameters", async () => {
-        const { wrapped } = withProviders(
-          <HitBuilder properties={properties} />
-        )
+        const { wrapped } = withProviders(<HitBuilder />)
         const { findByLabelText } = renderer.render(wrapped)
 
         const { hitPayload } = await getInputs(findByLabelText)
@@ -59,10 +55,9 @@ describe("HitBuilder", () => {
       test("with query parameters for a non-default t parameter", async () => {
         const queryParams = "v=1&t=screenview&tid=UA-fake&cid=abc&an=def&cd=ghi"
 
-        const { wrapped, history } = withProviders(
-          <HitBuilder properties={properties} />,
-          { path: `/hit-builder?${queryParams}` }
-        )
+        const { wrapped, history } = withProviders(<HitBuilder />, {
+          path: `/hit-builder?${queryParams}`,
+        })
         const { findByLabelText, findAllByLabelText } = renderer.render(wrapped)
 
         const { v, t, tid, cid, hitPayload } = await getInputs(findByLabelText)
@@ -93,7 +88,7 @@ describe("HitBuilder", () => {
     })
 
     test("adding a parameter gives its name label focus", async () => {
-      const { wrapped } = withProviders(<HitBuilder properties={properties} />)
+      const { wrapped } = withProviders(<HitBuilder />)
       const { findAllByLabelText, findByText } = renderer.render(wrapped)
 
       const addParameter = await findByText("Add parameter")
@@ -110,9 +105,7 @@ describe("HitBuilder", () => {
 
     describe("updates the hit payload", () => {
       test("when t parameter is changed", async () => {
-        const { wrapped } = withProviders(
-          <HitBuilder properties={properties} />
-        )
+        const { wrapped } = withProviders(<HitBuilder />)
         const { findByLabelText } = renderer.render(wrapped)
 
         const t = await findByLabelText("t")
@@ -126,9 +119,7 @@ describe("HitBuilder", () => {
       })
 
       test("when cid parameter is changed", async () => {
-        const { wrapped } = withProviders(
-          <HitBuilder properties={properties} />
-        )
+        const { wrapped } = withProviders(<HitBuilder />)
         const { findByLabelText } = renderer.render(wrapped)
         const { cid, hitPayload } = await getInputs(findByLabelText)
 
@@ -142,9 +133,7 @@ describe("HitBuilder", () => {
       })
 
       test("when tid parameter is changed", async () => {
-        const { wrapped } = withProviders(
-          <HitBuilder properties={properties} />
-        )
+        const { wrapped } = withProviders(<HitBuilder />)
         const { findByLabelText } = renderer.render(wrapped)
         const { tid, hitPayload } = await getInputs(findByLabelText)
 
@@ -158,9 +147,7 @@ describe("HitBuilder", () => {
       })
 
       test("clicking 'generate uuid' generates a... uuid???", async () => {
-        const { wrapped } = withProviders(
-          <HitBuilder properties={properties} />
-        )
+        const { wrapped } = withProviders(<HitBuilder />)
         const { findByLabelText, findByTestId } = renderer.render(wrapped)
         const { cid, hitPayload } = await getInputs(findByLabelText)
 
@@ -176,9 +163,7 @@ describe("HitBuilder", () => {
 
     describe("when adding a parameter", () => {
       test("updates hit payload when adding or changing parameter name & value", async () => {
-        const { wrapped } = withProviders(
-          <HitBuilder properties={properties} />
-        )
+        const { wrapped } = withProviders(<HitBuilder />)
         const { findByLabelText, findByText } = renderer.render(wrapped)
         const { hitPayload } = await getInputs(findByLabelText)
         const addParameter = await findByText("Add parameter")
@@ -217,9 +202,7 @@ describe("HitBuilder", () => {
       })
 
       test("updates hit payload when removing parameter", async () => {
-        const { wrapped } = withProviders(
-          <HitBuilder properties={properties} />
-        )
+        const { wrapped } = withProviders(<HitBuilder />)
         const { findByLabelText, findByText, findByTestId } = renderer.render(
           wrapped
         )
@@ -258,10 +241,9 @@ describe("HitBuilder", () => {
         const queryParams =
           "v=1&t=pageview&tid=UA-54516992-1&cid=555&dh=mydemo.com&dp=%2Fhome&dt=homepage"
 
-        const { wrapped } = withProviders(
-          <HitBuilder properties={properties} />,
-          { path: `/hit-builder?${queryParams}` }
-        )
+        const { wrapped } = withProviders(<HitBuilder />, {
+          path: `/hit-builder?${queryParams}`,
+        })
 
         const { findByText, findByLabelText } = renderer.render(wrapped)
 
