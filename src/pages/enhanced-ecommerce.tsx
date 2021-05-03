@@ -13,15 +13,16 @@
 // limitations under the License.
 
 import * as React from "react"
+
 import Typography from "@material-ui/core/Typography"
-import { makeStyles } from "@material-ui/core/styles"
-import { Url } from "../../constants"
+import makeStyles from "@material-ui/core/styles/makeStyles"
 import { useStaticQuery, graphql } from "gatsby"
 import Img from "gatsby-image"
 
+import { Url } from "@/constants"
 import Layout from "@/components/Layout"
-import CodeBlock from "../../components/CodeBlock"
-import ExternalLink from "../../components/ExternalLink"
+import CodeBlock from "@/components/CodeBlock"
+import ExternalLink from "@/components/ExternalLink"
 
 const useStyles = makeStyles(theme => ({
   demoScreenshot: {
@@ -80,10 +81,6 @@ const enhancedEcommerceAnalyticsJs = (
   <ExternalLink href={Url.analyticsJSEnhancedEcommerce}>
     Enhanced Ecommerce (ec.js)
   </ExternalLink>
-)
-
-const gaDebugger = (
-  <ExternalLink href={Url.gaDebugger}>Google Analytics Debugger</ExternalLink>
 )
 
 const analyticsJs = (

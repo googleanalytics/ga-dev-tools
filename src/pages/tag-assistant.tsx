@@ -13,10 +13,11 @@
 // limitations under the License.
 
 import * as React from "react"
+
 import Typography from "@material-ui/core/Typography"
 
-import Layout from "@/components/Layout"
 import { Url } from "@/constants"
+import Layout from "@/components/Layout"
 import ExternalLink from "@/components/ExternalLink"
 
 const TagAssistant = ({ location: { pathname } }) => {

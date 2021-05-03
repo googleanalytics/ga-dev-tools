@@ -15,12 +15,12 @@
 import * as React from "react"
 
 import Typography from "@material-ui/core/Typography"
-import { makeStyles } from "@material-ui/core/styles"
+import makeStyles from "@material-ui/core/styles/makeStyles"
 import { useStaticQuery, graphql } from "gatsby"
 import Img from "gatsby-image"
 
-import Layout from "@/components/Layout"
 import { Url } from "@/constants"
+import Layout from "@/components/Layout"
 import ExternalLink from "@/components/ExternalLink"
 
 const useStyles = makeStyles({ spreadsheetImage: { maxWidth: "726px" } })
