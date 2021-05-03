@@ -1,23 +1,20 @@
 import React, { useState } from "react"
-import { GetReportsResponse } from "./_api"
-import {
-  makeStyles,
-  useTheme,
-  Typography,
-  TableContainer,
-  Table,
-  TableHead,
-  TableRow,
-  TableCell,
-  TableBody,
-  Tabs,
-  Tab,
-  Box,
-} from "@material-ui/core"
 
-import "react-loader-spinner/dist/loader/css/react-spinner-loader.css"
-import Loader from "react-loader-spinner"
-import PrettyJson, { shouldCollapseResponse } from "../../components/PrettyJson"
+import Typography from "@material-ui/core/Typography"
+import TableContainer from "@material-ui/core/TableContainer"
+import Table from "@material-ui/core/Table"
+import TableHead from "@material-ui/core/TableHead"
+import TableRow from "@material-ui/core/TableRow"
+import TableCell from "@material-ui/core/TableCell"
+import TableBody from "@material-ui/core/TableBody"
+import Tabs from "@material-ui/core/Tabs"
+import Tab from "@material-ui/core/Tab"
+import Box from "@material-ui/core/Box"
+import makeStyles from "@material-ui/core/styles/makeStyles"
+
+import PrettyJson, { shouldCollapseResponse } from "@/components/PrettyJson"
+import { GetReportsResponse } from "./api"
+import Spinner from "@/components/Spinner"
 
 const useStyles = makeStyles(theme => ({
   loadingIndicator: {
@@ -65,18 +62,12 @@ const ReportsTable: React.FC<ReportsTableProps> = ({
   longRequest,
 }) => {
   const classes = useStyles()
-  const theme = useTheme()
   const [tab, setTab] = useState(0)
   // TODO - Add in functionality so this works right with cohort requests (or
   // just make a cohortRequest Table which might be clearer.)
   //
   if (longRequest) {
-    return (
-      <section className={classes.loadingIndicator}>
-        <Loader type="Circles" color={theme.palette.primary.main} />
-        <Typography>Loading...</Typography>
-      </section>
-    )
+    return <Spinner ellipses>Loading</Spinner>
   }
 
   if (response === undefined) {

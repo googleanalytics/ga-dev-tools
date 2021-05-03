@@ -14,11 +14,11 @@
 
 import * as React from "react"
 
-import { Typography, makeStyles } from "@material-ui/core"
+import Typography from "@material-ui/core/Typography"
+import makeStyles from "@material-ui/core/styles/makeStyles"
 
-import Layout from "@/components/Layout"
-import Tool from "./_RequestComposer"
 import ExternalLink from "@/components/ExternalLink"
+import Tool from "./RequestComposer"
 
 const useStyles = makeStyles(theme => ({
   list: {
@@ -93,11 +93,4 @@ const RequestComposer = () => {
   )
 }
 
-const Wrapper = ({ location: { pathname } }) => {
-  return (
-    <Layout title="Request Composer" requireLogin pathname={pathname}>
-      <RequestComposer />
-    </Layout>
-  )
-}
-export default Wrapper
+export default RequestComposer

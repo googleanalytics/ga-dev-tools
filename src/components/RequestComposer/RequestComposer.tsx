@@ -13,18 +13,24 @@
 // limitations under the License.
 
 import * as React from "react"
-import { makeStyles, Typography, Tabs, Tab, Box } from "@material-ui/core"
-import ViewSelector, { HasView } from "../../components/ViewSelector"
-import HistogramRequest from "./_HistogramRequest/_index"
-import PivotRequest from "./_PivotRequest/_index"
-import CohortRequest from "./_CohortRequest/_index"
-import MetricExpression from "./_MetricExpression/_index"
-import { StorageKey } from "../../constants"
 import { useEffect, useState } from "react"
-import { useMakeReportsRequest } from "./_api"
-import ReportsTable from "./_ReportsTable"
-import { PAB } from "../../components/Buttons"
-import PrettyJson, { shouldCollapseRequest } from "../../components/PrettyJson"
+
+import Typography from "@material-ui/core/Typography"
+import Tabs from "@material-ui/core/Tabs"
+import Tab from "@material-ui/core/Tab"
+import Box from "@material-ui/core/Box"
+import makeStyles from "@material-ui/core/styles/makeStyles"
+
+import { StorageKey } from "@/constants"
+import ViewSelector, { HasView } from "@/components/ViewSelector"
+import { PAB } from "@/components/Buttons"
+import PrettyJson, { shouldCollapseRequest } from "@/components/PrettyJson"
+import HistogramRequest from "./HistogramRequest"
+import PivotRequest from "./PivotRequest"
+import CohortRequest from "./CohortRequest"
+import MetricExpression from "./MetricExpression"
+import ReportsTable from "./ReportsTable"
+import { useMakeReportsRequest } from "./api"
 
 const useStyles = makeStyles(theme => ({
   viewSelector: {

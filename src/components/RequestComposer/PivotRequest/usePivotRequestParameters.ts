@@ -1,13 +1,14 @@
 import { useState, useMemo } from "react"
-import { HasView } from "../../../components/ViewSelector"
-import { usePersistentString, usePersistentBoolean } from "../../../hooks"
-import { StorageKey } from "../../../constants"
+
+import { usePersistentString, usePersistentBoolean } from "@/hooks"
+import { StorageKey } from "@/constants"
+import { HasView } from "@/components/ViewSelector"
 import {
   V4SamplingLevel,
   UAMetrics,
   UADimensions,
   UASegment,
-} from "../../../components/UAPickers"
+} from "@/components/UAPickers"
 
 const usePivotRequestParameters = (view: HasView | undefined) => {
   const [viewId, setViewId] = useState("")

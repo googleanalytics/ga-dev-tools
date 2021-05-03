@@ -1,12 +1,13 @@
 import { useState, useMemo } from "react"
-import { HasView } from "../../../components/ViewSelector"
-import { usePersistentString } from "../../../hooks"
-import { StorageKey } from "../../../constants"
+
+import { usePersistentString } from "@/hooks"
+import { StorageKey } from "@/constants"
+import { HasView } from "@/components/ViewSelector"
 import {
   V4SamplingLevel,
   UADimensions,
   UASegment,
-} from "../../../components/UAPickers"
+} from "@/components/UAPickers"
 
 const useMetricExpressionRequestParameters = (view: HasView | undefined) => {
   const [viewId, setViewId] = useState("")

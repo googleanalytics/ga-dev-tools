@@ -1,12 +1,13 @@
 import { useMemo } from "react"
 import moment from "moment"
-import { ReportsRequest, ReportRequest } from "../_RequestComposer"
+
 import {
   CohortSize,
   V4SamplingLevel,
   UAMetric,
   UASegment,
-} from "../../../components/UAPickers"
+} from "@/components/UAPickers"
+import { ReportsRequest, ReportRequest } from "../RequestComposer"
 
 type Cohort = gapi.client.analyticsreporting.Cohort
 

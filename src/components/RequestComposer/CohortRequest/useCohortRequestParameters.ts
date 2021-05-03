@@ -1,11 +1,12 @@
 import { useState, useMemo } from "react"
-import { HasView } from "../../../components/ViewSelector"
+
+import { HasView } from "@/components/ViewSelector"
 import {
   V4SamplingLevel,
   CohortSize,
   UAMetric,
   UASegment,
-} from "../../../components/UAPickers"
+} from "@/components/UAPickers"
 
 const useCohortRequestParameters = (view: HasView | undefined) => {
   const [viewId, setViewId] = useState("")

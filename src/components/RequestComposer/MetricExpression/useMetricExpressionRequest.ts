@@ -1,10 +1,11 @@
 import { useMemo } from "react"
-import { ReportsRequest, ReportRequest } from "../_RequestComposer"
+
 import {
   V4SamplingLevel,
   UADimensions,
   UASegment,
-} from "../../../components/UAPickers"
+} from "@/components/UAPickers"
+import { ReportsRequest, ReportRequest } from "../RequestComposer"
 
 interface Parameters {
   viewId: string

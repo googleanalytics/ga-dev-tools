@@ -1,10 +1,11 @@
 import { useMemo } from "react"
+
 import {
   V4SamplingLevel,
   UAMetrics,
   UADimensions,
   UASegment,
-} from "../../../components/UAPickers"
+} from "@/components/UAPickers"
 
 type ReportRequest = gapi.client.analyticsreporting.ReportRequest
 type Request = { reportRequests: Array<ReportRequest> }

@@ -13,24 +13,26 @@
 // limitations under the License.
 
 import * as React from "react"
-import { HasView } from "../../../components/ViewSelector"
-import { linkFor, titleFor } from "../_HistogramRequest/_index"
-import { StorageKey } from "../../../constants"
-import useCohortRequestParameters from "./_useCohortRequestParameters"
-import useCohortRequest from "./_useCohortRequest"
-import LinkedTextField from "../../../components/LinkedTextField"
 import { useEffect } from "react"
-import { ReportsRequest } from "../_RequestComposer"
+
+import makeStyles from "@material-ui/core/styles/makeStyles"
+
+import { usePersistentBoolean } from "@/hooks"
+import { StorageKey } from "@/constants"
+import { HasView } from "@/components/ViewSelector"
 import {
   MetricPicker,
   SegmentPicker,
   V4SamplingLevelPicker,
   CohortSizePicker,
   UAMetric,
-} from "../../../components/UAPickers"
-import { makeStyles } from "@material-ui/core"
-import { usePersistentBoolean } from "../../../hooks"
-import LabeledCheckbox from "../../../components/LabeledCheckbox"
+} from "@/components/UAPickers"
+import LinkedTextField from "@/components/LinkedTextField"
+import LabeledCheckbox from "@/components/LabeledCheckbox"
+import { linkFor, titleFor } from "../HistogramRequest"
+import useCohortRequestParameters from "./useCohortRequestParameters"
+import useCohortRequest from "./useCohortRequest"
+import { ReportsRequest } from "../RequestComposer"
 
 interface CohortRequestProps {
   view: HasView | undefined

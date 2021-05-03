@@ -1,13 +1,14 @@
-import { HasView } from "../../../components/ViewSelector"
 import { useState, useMemo } from "react"
-import { StorageKey } from "../../../constants"
-import { usePersistentString } from "../../../hooks"
+
+import { usePersistentString } from "@/hooks"
+import { StorageKey } from "@/constants"
+import { HasView } from "@/components/ViewSelector"
 import {
   V4SamplingLevel,
   UADimensions,
   UAMetrics,
   UASegment,
-} from "../../../components/UAPickers"
+} from "@/components/UAPickers"
 
 const useHistogramRequestParameters = (view: HasView | undefined) => {
   const [viewId, setViewId] = useState("")

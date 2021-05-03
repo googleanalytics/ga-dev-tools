@@ -13,26 +13,27 @@
 // limitations under the License.
 
 import * as React from "react"
-import { makeStyles } from "@material-ui/core"
-import { linkFor, titleFor } from "../_HistogramRequest/_index"
-import usePivotRequestParameters from "./_usePivotRequestParameters"
-import { StorageKey } from "../../../constants"
-import { HasView } from "../../../components/ViewSelector"
-import usePivotRequest from "./_usePivotRequest"
-import GADate from "../../../components/GADate"
-import LinkedTextField from "../../../components/LinkedTextField"
 import { useEffect } from "react"
-import { ReportsRequest } from "../_RequestComposer"
+
+import makeStyles from "@material-ui/core/styles/makeStyles"
+
+import { usePersistentBoolean } from "@/hooks"
+import { StorageKey } from "@/constants"
+import LinkedTextField from "@/components/LinkedTextField"
+import { HasView } from "@/components/ViewSelector"
+import GADate from "@/components/GADate"
+import LabeledCheckbox from "@/components/LabeledCheckbox"
 import {
-  MetricsPicker,
   DimensionsPicker,
   SegmentPicker,
   V4SamplingLevelPicker,
-} from "../../../components/UAPickers"
-import { usePersistentBoolean } from "../../../hooks"
-import LabeledCheckbox from "../../../components/LabeledCheckbox"
+} from "@/components/UAPickers"
+import { linkFor, titleFor } from "../HistogramRequest/"
+import useMetricExpressionRequestParameters from "./useMetricExpressionRequestParameters"
+import useMetricExpressionRequest from "./useMetricExpressionRequest"
+import { ReportsRequest } from "../RequestComposer"
 
-interface PivotRequestProps {
+interface MetricExpressionRequestProps {
   view: HasView | undefined
   controlWidth: string
   setRequestObject: (request: ReportsRequest | undefined) => void
@@ -45,7 +46,7 @@ const useStyles = makeStyles(theme => ({
   },
 }))
 
-const PivotRequest: React.FC<PivotRequestProps> = ({
+const MetricExpression: React.FC<MetricExpressionRequestProps> = ({
   view,
   controlWidth,
   setRequestObject,
@@ -55,8 +56,10 @@ const PivotRequest: React.FC<PivotRequestProps> = ({
   const [
     showSegmentDefinition,
     setShowSegmentDefinition,
-  ] = usePersistentBoolean(StorageKey.pivotRequestShowSegmentDefinition, false)
-
+  ] = usePersistentBoolean(
+    StorageKey.metricExpressionRequestShowSegmentDefinition,
+    false
+  )
   const {
     viewId,
     setViewId,
@@ -64,42 +67,33 @@ const PivotRequest: React.FC<PivotRequestProps> = ({
     setStartDate,
     endDate,
     setEndDate,
-    selectedMetrics,
-    setSelectedMetrics,
+    metricExpressions,
+    setMetricExpressions,
+    metricAliases,
+    setMetricAliases,
     selectedDimensions,
     setSelectedDimensions,
-    pivotMetrics,
-    setPivotMetrics,
-    pivotDimensions,
-    setPivotDimensions,
-    startGroup,
-    setStartGroup,
+    filtersExpression,
+    setFiltersExpression,
     selectedSegment,
     setSelectedSegment,
     samplingLevel,
     setSamplingLevel,
-    maxGroupCount,
-    setMaxGroupCount,
-    includeEmptyRows,
-    setIncludeEmptyRows,
-    pageToken,
-    setPageToken,
     pageSize,
     setPageSize,
-  } = usePivotRequestParameters(view)
-  const requestObject = usePivotRequest({
+    pageToken,
+    setPageToken,
+  } = useMetricExpressionRequestParameters(view)
+  const requestObject = useMetricExpressionRequest({
     viewId,
+    samplingLevel,
+    filtersExpression,
     startDate,
     endDate,
-    metrics: selectedMetrics,
-    dimensions: selectedDimensions,
-    pivotMetrics,
-    pivotDimensions,
+    metricExpressions,
+    metricAliases,
+    selectedDimensions,
     selectedSegment,
-    startGroup,
-    samplingLevel,
-    maxGroupCount,
-    includeEmptyRows,
     pageToken,
     pageSize,
   })
@@ -138,51 +132,39 @@ const PivotRequest: React.FC<PivotRequestProps> = ({
           label="endDate"
           helperText="The end of the date range for the data request. Format: YYYY-MM-DD."
         />
-        <MetricsPicker
+        <LinkedTextField
+          href={linkFor("Metric.FIELDS.expression")}
+          linkTitle={titleFor("Metric.expression")}
+          label="metric expressions"
+          value={metricExpressions || ""}
+          onChange={setMetricExpressions}
           required
-          setMetrics={setSelectedMetrics}
-          storageKey={StorageKey.pivotRequestMetrics}
-          helperText="The metrics to include in the request."
+          helperText="The metric expressions to include in the request. Separate multiple expressions with a comma."
+        />
+        <LinkedTextField
+          href={linkFor("Metric.FIELDS.alias")}
+          linkTitle={titleFor("Metric.alias")}
+          label="metric aliases"
+          value={metricAliases || ""}
+          onChange={setMetricAliases}
+          helperText="Aliases to use for your expressions. Separate multiple aliases with a comma."
         />
         <DimensionsPicker
-          required
           setDimensions={setSelectedDimensions}
-          storageKey={StorageKey.pivotRequestDimensions}
+          storageKey={StorageKey.metricExpressionRequestDimensions}
           helperText="The dimensions to include in the request."
         />
-        <MetricsPicker
-          required
-          setMetrics={setPivotMetrics}
-          storageKey={StorageKey.pivotRequestPivotMetrics}
-          label="pivot metrics"
-          helperText="The pivot metrics to include in the request."
-        />
-        <DimensionsPicker
-          required
-          setDimensions={setPivotDimensions}
-          storageKey={StorageKey.pivotRequestPivotDimensions}
-          label="pivot dimensions"
-          helperText="The pivot dimensions to include in the request."
-        />
         <LinkedTextField
-          href={linkFor("Pivot.FIELDS.start_group")}
-          linkTitle={titleFor("startGroup")}
-          label="Pivot startGroup"
-          value={startGroup || ""}
-          onChange={setStartGroup}
-          helperText="The pivot start group"
-        />
-        <LinkedTextField
-          href={linkFor("Pivot.FIELDS.max_group_count")}
-          linkTitle={titleFor("maxGroupCount")}
-          label="Pivot maxGroupCount"
-          value={maxGroupCount || ""}
-          onChange={setMaxGroupCount}
-          helperText="The maximum number of groups to return."
+          href={linkFor("ReportRequest.FIELDS.filters_expression")}
+          linkTitle={titleFor("filtersExpression")}
+          label="Filters Expression"
+          value={filtersExpression || ""}
+          onChange={setFiltersExpression}
+          helperText="Filters that restrict the data returned for the metric expression request."
         />
         <SegmentPicker
           setSegment={setSelectedSegment}
-          storageKey={StorageKey.pivotRequestSegment}
+          storageKey={StorageKey.metricExpressionRequestSegment}
           showSegmentDefinition={showSegmentDefinition}
         />
         <LabeledCheckbox
@@ -194,7 +176,7 @@ const PivotRequest: React.FC<PivotRequestProps> = ({
         </LabeledCheckbox>
         <V4SamplingLevelPicker
           setSamplingLevel={setSamplingLevel}
-          storageKey={StorageKey.pivotSamplingLevel}
+          storageKey={StorageKey.metricExpressionSamplingLevel}
           helperText="The desired sample size for the report."
         />
         <LinkedTextField
@@ -213,18 +195,10 @@ const PivotRequest: React.FC<PivotRequestProps> = ({
           onChange={setPageSize}
           helperText="The maximum number of rows to include in the response. Maximum of 100,000"
         />
-        <LabeledCheckbox
-          checked={includeEmptyRows}
-          setChecked={setIncludeEmptyRows}
-          className={classes.showSegments}
-        >
-          Include Empty Rows
-        </LabeledCheckbox>
-        <br />
         {children}
       </section>
     </>
   )
 }
 
-export default PivotRequest
+export default MetricExpression

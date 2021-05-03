@@ -13,24 +13,25 @@
 // limitations under the License.
 
 import * as React from "react"
-
-import { HasView } from "../../../components/ViewSelector"
-import { StorageKey } from "../../../constants"
-import LinkedTextField from "../../../components/LinkedTextField"
-import GADate from "../../../components/GADate"
-import useHistogramRequest from "./_useHistogramRequest"
-import useHistogramRequestParameters from "./_useHistogramRequestParameters"
 import { useEffect } from "react"
-import { ReportsRequest } from "../_RequestComposer"
+
+import makeStyles from "@material-ui/core/styles/makeStyles"
+
+import { usePersistentBoolean } from "@/hooks"
+import { StorageKey } from "@/constants"
+import { HasView } from "@/components/ViewSelector"
+import LinkedTextField from "@/components/LinkedTextField"
+import GADate from "@/components/GADate"
 import {
   MetricsPicker,
   DimensionsPicker,
   SegmentPicker,
   V4SamplingLevelPicker,
-} from "../../../components/UAPickers"
-import { makeStyles } from "@material-ui/core"
-import { usePersistentBoolean } from "../../../hooks"
-import LabeledCheckbox from "../../../components/LabeledCheckbox"
+} from "@/components/UAPickers"
+import useHistogramRequest from "./useHistogramRequest"
+import useHistogramRequestParameters from "./useHistogramRequestParameters"
+import { ReportsRequest } from "../RequestComposer"
+import LabeledCheckbox from "@/components/LabeledCheckbox"
 
 export const linkFor = (hash: string) =>
   `https://developers.google.com/analytics/devguides/reporting/core/v4/rest/v4/reports/batchGet#${hash}`
