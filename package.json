@@ -7,6 +7,7 @@
   "license": "Apache-2.0",
   "dependencies": {
     "@material-ui/core": "^4.11.3",
+    "@material-ui/data-grid": "^4.0.0-alpha.25",
     "@material-ui/icons": "^4.11.2",
     "@material-ui/lab": "^4.0.0-alpha.57",
     "@material-ui/styles": "^4.11.3",
@@ -46,6 +47,7 @@
     "react-use": "^14.1.1",
     "redux": "^4.0.5",
     "redux-thunk": "^2.3.0",
+    "tsconfig-paths-webpack-plugin": "^3.5.1",
     "use-debounce": "^6.0.0",
     "uuid": "^7.0.3"
   },

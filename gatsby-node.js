@@ -11,6 +11,7 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
+const TsconfigPathsPlugin = require("tsconfig-paths-webpack-plugin")
 
 require("ts-node").register({
   compilerOptions: {
@@ -21,3 +22,11 @@ require("ts-node").register({
 
 // typescript files
 exports.createPages = require("./gatsby/createPages").createPages
+
+exports.onCreateWebpackConfig = ({ actions }) => {
+  actions.setWebpackConfig({
+    resolve: {
+      plugins: [new TsconfigPathsPlugin()],
+    },
+  })
+}

@@ -40,7 +40,13 @@ export const linkData: LinkData[] = [
     text: "Campaign URL Builder",
     href: "/campaign-url-builder/",
     type: "link",
-    versions: [GAVersion.UniversalAnalytics, GAVersion.GoogleAnalytics4],
+    versions: [GAVersion.UniversalAnalytics],
+  },
+  {
+    text: "Campaign URL Builder",
+    href: "/ga4/campaign-url-builder/",
+    type: "link",
+    versions: [GAVersion.GoogleAnalytics4],
   },
   {
     text: "Dimensions & Metrics Explorer",
@@ -69,6 +75,12 @@ export const linkData: LinkData[] = [
   {
     text: "Dimensions & Metrics Explorer",
     href: "/ga4/dimensions-metrics-explorer/",
+    type: "link",
+    versions: [GAVersion.GoogleAnalytics4],
+  },
+  {
+    text: "Query Explorer",
+    href: "/ga4/query-explorer/",
     type: "link",
     versions: [GAVersion.GoogleAnalytics4],
   },
@@ -105,12 +117,24 @@ export const linkData: LinkData[] = [
     text: "About this Site",
     href: "/#about",
     type: "link",
-    versions: [GAVersion.UniversalAnalytics, GAVersion.GoogleAnalytics4],
+    versions: [GAVersion.UniversalAnalytics],
   },
   {
     text: "Help & feedback",
     href: "/#help",
     type: "link",
-    versions: [GAVersion.UniversalAnalytics, GAVersion.GoogleAnalytics4],
+    versions: [GAVersion.UniversalAnalytics],
+  },
+  {
+    text: "About this Site",
+    href: "/ga4/#about",
+    type: "link",
+    versions: [GAVersion.GoogleAnalytics4],
+  },
+  {
+    text: "Help & feedback",
+    href: "/ga4/#help",
+    type: "link",
+    versions: [GAVersion.GoogleAnalytics4],
   },
 ]

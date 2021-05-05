@@ -10,18 +10,17 @@ interface InfoProps {
 
 const useStyles = makeStyles(theme => ({
   info: {
-    margin: theme.spacing(2),
+    margin: theme.spacing(2, 0),
     padding: theme.spacing(1),
     display: "flex",
     flexDirection: "row",
     minHeight: theme.spacing(10),
     alignItems: "center",
     backgroundColor: blue[100],
-    maxWidth: 930,
+    // maxWidth: 930,
   },
   infoIcon: {
-    marginRight: theme.spacing(2),
-    marginLeft: theme.spacing(2),
+    margin: theme.spacing(0, 2),
   },
 }))
 

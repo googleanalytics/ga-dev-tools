@@ -2,6 +2,7 @@ import * as React from "react"
 import { useLocation, useNavigate } from "@reach/router"
 import { StorageKey, GAVersion } from "./constants"
 import { useState, useEffect } from "react"
+import { useDispatch } from "react-redux"
 
 type UsePersistentBoolean = (
   key: StorageKey,
@@ -107,40 +108,46 @@ const getRedirectPath = (
   switch (version) {
     case GAVersion.UniversalAnalytics: {
       switch (path) {
-        // If switching to UA, and you're already on a UA demo, do nothing.
-        case "/account-explorer/":
-        case "/campaign-url-builder/":
-        case "/enhanced-ecommerce/":
-        case "/hit-builder/":
-        case "/query-explorer/":
-        case "/request-composer/":
-        case "/spreadsheet-add-on/":
-        case "/tag-assistant/":
-        case "/dimensions-metrics-explorer/":
-          return undefined
+        case "/ga4/query-explorer/":
+          return "/query-explorer/"
         case "/ga4/event-builder/":
           return "/hit-builder/"
         case "/ga4/dimensions-metrics-explorer/":
           return "/dimensions-metrics-explorer/"
+        case "/ga4/campaign-url-builder/":
+          return "/campaign-url-builder/"
         default:
-          return undefined
+          return "/"
       }
     }
     case GAVersion.GoogleAnalytics4: {
       switch (path) {
-        // If switching to GA4, and you're already on a GA4 demo, do nothing.
-        case "/ga4/dimensions-metrics-explorer/":
-        case "/ga4/event-builder/":
-          return undefined
         case "/hit-builder/":
           return "/ga4/event-builder/"
         case "/dimensions-metrics-explorer/":
           return "/ga4/dimensions-metrics-explorer/"
+        case "/query-explorer/":
+          return "/ga4/query-explorer/"
+        case "/request-composer/":
+          return "/ga4/query-explorer/"
+        case "/campaign-url-builder/":
+          return "/ga4/campaign-url-builder/"
         default:
-          return undefined
+          return "/ga4/"
       }
     }
   }
+}
+
+export const useSetToast = () => {
+  const dispatch = useDispatch()
+  const setToast = React.useCallback(
+    (toast: string) => {
+      dispatch({ type: "setToast", toast })
+    },
+    [dispatch]
+  )
+  return setToast
 }
 
 export const IS_SSR = typeof window === "undefined"
@@ -153,39 +160,40 @@ export const useGAVersion = (
 } => {
   const location = useLocation()
   const navigate = useNavigate()
-  const [string_, setString] = usePersistentString(
-    StorageKey.gaVersion,
-    GAVersion.UniversalAnalytics
-  )
+  const setToast = useSetToast()
   const gaVersion = React.useMemo(() => {
-    if (IS_SSR) {
-      if (pathname.includes("/ga4/")) {
-        return GAVersion.GoogleAnalytics4
-      } else {
-        return GAVersion.UniversalAnalytics
-      }
+    if (pathname.includes("/ga4/")) {
+      return GAVersion.GoogleAnalytics4
+    } else {
+      return GAVersion.UniversalAnalytics
     }
-    switch (string_) {
-      case GAVersion.UniversalAnalytics:
-        return GAVersion.UniversalAnalytics
-      case GAVersion.GoogleAnalytics4:
-        return GAVersion.GoogleAnalytics4
-      default:
-        throw new Error(`Value: ${string_} is not a valid GAVersion.`)
-    }
-  }, [string_, pathname])
+  }, [pathname])
 
   const setGAVersion = React.useCallback(
     (version: GAVersion) => {
       const redirectPath = getRedirectPath(location.pathname, version)
-      setString(version)
       if (redirectPath === undefined) {
         return
       }
+      setToast(`redirecting to ${redirectPath}`)
       navigate(redirectPath)
     },
-    [setString, location.pathname, navigate]
+    [location.pathname, navigate, setToast]
   )
 
   return { gaVersion, setGAVersion }
+}
+
+export const useScrollTo = () => {
+  const [initialLoad, setInitialLoad] = useState(true)
+  const location = useLocation()
+  useEffect(() => {
+    if (initialLoad && location.hash.startsWith("#")) {
+      setInitialLoad(false)
+      const element = document.getElementById(location.hash.substr(1))
+      if (element) {
+        element.scrollIntoView()
+      }
+    }
+  }, [location.hash, initialLoad])
 }

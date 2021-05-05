@@ -16,11 +16,15 @@ import { useTheme } from "@material-ui/core"
 //   },
 // }))
 
-const InlineCode: React.FC<{ className?: string }> = ({ children }) => {
+const InlineCode: React.FC<{ className?: string }> = ({
+  children,
+  className,
+}) => {
   const theme = useTheme()
   // const classes = useStyles()
   return (
     <span
+      className={className}
       style={{
         backgroundColor: theme.palette.grey[300],
         color: theme.palette.getContrastText(theme.palette.grey[300]),

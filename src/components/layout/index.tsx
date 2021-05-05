@@ -16,7 +16,7 @@ import React, { useMemo } from "react"
 import Button from "@material-ui/core/Button"
 import { Link } from "gatsby"
 import { Home } from "@material-ui/icons"
-import classnames from "classnames"
+import clsx from "classnames"
 // TODO - Look into whether or not we can fix this.
 // See
 // https://github.com/benmosher/eslint-plugin-import/blob/master/docs/rules/no-webpack-loader-syntax.md
@@ -38,7 +38,6 @@ import { GAVersion } from "../../constants"
 import Spinner from "../Spinner"
 import { linkData } from "./links"
 import { useStyles } from "./use-styles"
-import UADemo from "./UADemo"
 
 interface LayoutProps {
   requireLogin?: true
@@ -107,9 +106,12 @@ const Layout: React.FC<LayoutProps> = ({
         <Login />
         <Drawer open={open} onClose={() => setOpen(false)}>
           <List className={classes.mobileNav}>
-            <Link to="/" className={classes.noColor}>
+            <Link
+              to={gaVersion === GAVersion.UniversalAnalytics ? "/" : "/ga4/"}
+              className={classes.noColor}
+            >
               <Typography
-                className={classnames(classes.innerNav, classes.home)}
+                className={clsx(classes.innerNav, classes.home)}
                 variant="h2"
               >
                 <Home className={classes.homeIcon} /> Home
@@ -120,7 +122,7 @@ const Layout: React.FC<LayoutProps> = ({
                 return (
                   <Typography
                     key={linkData.text}
-                    className={classnames(classes.subHeading, classes.innerNav)}
+                    className={clsx(classes.subHeading, classes.innerNav)}
                     variant="h6"
                   >
                     {linkData.text}
@@ -157,9 +159,11 @@ const Layout: React.FC<LayoutProps> = ({
       <nav className={classes.nav}>
         <ol>
           <li>
-            <Link to="/">
+            <Link
+              to={gaVersion === GAVersion.UniversalAnalytics ? "/" : "/ga4/"}
+            >
               <Typography
-                className={classnames(classes.innerNav, classes.home)}
+                className={clsx(classes.innerNav, classes.home)}
                 variant="h2"
               >
                 <Home className={classes.homeIcon} /> Home
@@ -170,10 +174,7 @@ const Layout: React.FC<LayoutProps> = ({
             if (linkData.type === "heading") {
               return (
                 <li key={linkData.text}>
-                  <Typography
-                    className={classnames(classes.subHeading)}
-                    variant="h6"
-                  >
+                  <Typography className={clsx(classes.subHeading)} variant="h6">
                     {linkData.text}
                   </Typography>
                 </li>
@@ -192,9 +193,12 @@ const Layout: React.FC<LayoutProps> = ({
             return (
               <li key={linkData.text}>
                 <Link
-                  className={classnames(
+                  className={clsx(
                     classes.innerNav,
-                    classes.navLinkBackgroundHover
+                    classes.navLinkBackgroundHover,
+                    {
+                      [classes.activeLink]: pathname === linkData.href,
+                    }
                   )}
                   to={linkData.href}
                 >
@@ -214,7 +218,6 @@ const Layout: React.FC<LayoutProps> = ({
           <Typography variant="h1">{title}</Typography>
         </header>
         <div className={classes.contentWrapper}>
-          <UADemo pathname={pathname} />
           <section className={classes.content}>
             {!requireLogin || userStatus === UserStatus.SignedIn ? (
               children
