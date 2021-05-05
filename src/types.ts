@@ -13,10 +13,10 @@ export enum RequestStatus {
 }
 
 export type Requestable<
-  Successful = { status: RequestStatus.Successful },
-  NotStarted = { status: RequestStatus.NotStarted },
-  InProgress = { status: RequestStatus.InProgress },
-  Failed = { status: RequestStatus.Failed }
+  Successful = {},
+  NotStarted = {},
+  InProgress = {},
+  Failed = {}
 > =
   | (Successful & { status: RequestStatus.Successful })
   | (NotStarted & { status: RequestStatus.NotStarted })

@@ -183,3 +183,17 @@ export const useGAVersion = (
 
   return { gaVersion, setGAVersion }
 }
+
+export const useScrollTo = () => {
+  const [initialLoad, setInitialLoad] = useState(true)
+  const location = useLocation()
+  useEffect(() => {
+    if (initialLoad && location.hash.startsWith("#")) {
+      setInitialLoad(false)
+      const element = document.getElementById(location.hash.substr(1))
+      if (element) {
+        element.scrollIntoView()
+      }
+    }
+  }, [location.hash, initialLoad])
+}
