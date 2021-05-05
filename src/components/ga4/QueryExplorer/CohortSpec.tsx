@@ -226,6 +226,7 @@ const useCohortSpec: UseCohortSpec = ({
 const useStyles = makeStyles(theme => ({
   cohortRange: {
     display: "flex",
+    marginTop: theme.spacing(1),
     "&> :not(:first-child)": {
       marginLeft: theme.spacing(1),
       flexGrow: 1,
@@ -243,11 +244,9 @@ const useStyles = makeStyles(theme => ({
   warnings: {
     // display: "flex",
     // alignContent: "center",
-    "&> svg": {
-      marginRight: theme.spacing(1),
-    },
+    marginTop: theme.spacing(1),
     "&> *:last-child": {
-      marginBottom: theme.spacing(1),
+      marginBottom: theme.spacing(2),
     },
   },
 }))
@@ -322,9 +321,7 @@ const CohortSpec: React.FC<CohortSpecProps> = ({
           <section className={classes.warnings}>
             {warnings.missingRequiredDimension && (
               <Typography>
-                Cohorts must include the{" "}
-                <InlineCode>firstSessionDate</InlineCode>
-                dimension.
+                Cohorts must include <InlineCode>firstSessionDate</InlineCode>
               </Typography>
             )}
             {warnings.hasDateRanges && (
@@ -332,7 +329,7 @@ const CohortSpec: React.FC<CohortSpecProps> = ({
                 Cohort requests cannot include dateRanges.
               </Typography>
             )}
-            <SAB add small onClick={fixWarnings}>
+            <SAB small onClick={fixWarnings}>
               fix
             </SAB>
           </section>

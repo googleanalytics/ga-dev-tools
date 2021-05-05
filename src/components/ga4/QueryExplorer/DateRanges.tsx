@@ -1,6 +1,6 @@
 import * as React from "react"
 
-import uuid from "uuid/v4"
+import { v4 as uuid } from "uuid"
 import makeStyles from "@material-ui/core/styles/makeStyles"
 import Typography from "@material-ui/core/Typography"
 import TextField from "@material-ui/core/TextField"
@@ -176,20 +176,13 @@ const DateRanges: React.FC<{
       label={showAdvanced ? "date ranges" : undefined}
       className={className}
       helpText={
-        <>
-          <Typography>
-            The date {showAdvanced ? "ranges" : "range"} to use for the request.
-            Format should be either <InlineCode>YYYY-MM-DD</InlineCode>,{" "}
-            <InlineCode>yesterday</InlineCode>, <InlineCode>today</InlineCode>,
-            or <InlineCode>NdaysAgo</InlineCode> where N is a positive integer.
-            See {dateRange} on devsite.
-          </Typography>
-          {showAdvanced && (
-            <SAB add small onClick={addDateRange}>
-              Add
-            </SAB>
-          )}
-        </>
+        <Typography>
+          The date {showAdvanced ? "ranges" : "range"} to use for the request.
+          Format should be either <InlineCode>YYYY-MM-DD</InlineCode>,{" "}
+          <InlineCode>yesterday</InlineCode>, <InlineCode>today</InlineCode>, or{" "}
+          <InlineCode>NdaysAgo</InlineCode> where N is a positive integer. See{" "}
+          {dateRange} on devsite.
+        </Typography>
       }
     >
       <section className={classes.dateRanges}>
@@ -226,6 +219,13 @@ const DateRanges: React.FC<{
             />
           </section>
         ))}
+        {showAdvanced && (
+          <div>
+            <SAB add small onClick={addDateRange}>
+              date range
+            </SAB>
+          </div>
+        )}
       </section>
     </WithHelpText>
   )

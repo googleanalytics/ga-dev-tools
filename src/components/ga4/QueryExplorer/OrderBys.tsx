@@ -193,6 +193,11 @@ const useStyles = makeStyles(theme => ({
     },
     marginBottom: theme.spacing(1),
   },
+  buttons: {
+    "&> *:not(:first-child)": {
+      marginLeft: theme.spacing(1),
+    },
+  },
   add: {},
 }))
 
@@ -354,10 +359,60 @@ const OrderBys: React.FC<OrderBysProps> = ({
       label="order by"
       className={className}
       helpText={
-        <>
-          <Typography variant="caption" color="textSecondary">
-            The ordering to use for the request. See {orderBysLink} on devsite.
-          </Typography>
+        <Typography variant="caption" color="textSecondary">
+          The ordering to use for the request. See {orderBysLink} on devsite.
+        </Typography>
+      }
+    >
+      <section>
+        <div className={classes.orderBys}>
+          <hr />
+          <section className={classes.grouped}>
+            {orderBys?.map((orderBy, idx) => {
+              const selectedType = optionFor(orderBy)
+              const selectedDirection = directionFor(orderBy)
+              const selectedOrderType = orderTypeFor(orderBy)
+              return (
+                <section key={idx} className={classes.orderBy}>
+                  <TooltipIconButton
+                    tooltip="remove ordering clause"
+                    onClick={() => removeOrderBy(idx)}
+                  >
+                    <Delete />
+                  </TooltipIconButton>
+                  {selectedType?.value === "metric" && props.metric ? (
+                    <MetricSort
+                      className={classes.column}
+                      metricFilter={metricFilter}
+                      setMetric={setMetric}
+                      id={idx}
+                    />
+                  ) : null}
+                  {selectedType?.value === "dimension" && props.dimension ? (
+                    <DimensionSort
+                      className={classes.column}
+                      dimensionFilter={dimensionFilter}
+                      setDimension={setDimension}
+                      setDimensionOrderType={setDimensionOrderType}
+                      id={idx}
+                      orderType={selectedOrderType}
+                    />
+                  ) : null}
+                  {selectedType?.value !== undefined ? (
+                    <Select
+                      className={classes.direction}
+                      options={directionOptions}
+                      value={selectedDirection}
+                      label="direction"
+                      onChange={e => setDirection(idx, e?.value as Direction)}
+                    />
+                  ) : null}
+                </section>
+              )
+            })}
+          </section>
+        </div>
+        <section className={classes.buttons}>
           {props.metric ? (
             <SAB
               add
@@ -378,54 +433,6 @@ const OrderBys: React.FC<OrderBysProps> = ({
               dimension
             </SAB>
           ) : null}
-        </>
-      }
-    >
-      <section className={classes.orderBys}>
-        <hr />
-        <section className={classes.grouped}>
-          {orderBys?.map((orderBy, idx) => {
-            const selectedType = optionFor(orderBy)
-            const selectedDirection = directionFor(orderBy)
-            const selectedOrderType = orderTypeFor(orderBy)
-            return (
-              <section key={idx} className={classes.orderBy}>
-                <TooltipIconButton
-                  tooltip="remove ordering clause"
-                  onClick={() => removeOrderBy(idx)}
-                >
-                  <Delete />
-                </TooltipIconButton>
-                {selectedType?.value === "metric" && props.metric ? (
-                  <MetricSort
-                    className={classes.column}
-                    metricFilter={metricFilter}
-                    setMetric={setMetric}
-                    id={idx}
-                  />
-                ) : null}
-                {selectedType?.value === "dimension" && props.dimension ? (
-                  <DimensionSort
-                    className={classes.column}
-                    dimensionFilter={dimensionFilter}
-                    setDimension={setDimension}
-                    setDimensionOrderType={setDimensionOrderType}
-                    id={idx}
-                    orderType={selectedOrderType}
-                  />
-                ) : null}
-                {selectedType?.value !== undefined ? (
-                  <Select
-                    className={classes.direction}
-                    options={directionOptions}
-                    value={selectedDirection}
-                    label="direction"
-                    onChange={e => setDirection(idx, e?.value as Direction)}
-                  />
-                ) : null}
-              </section>
-            )
-          })}
         </section>
       </section>
       <section className={classes.pabContainer}></section>
