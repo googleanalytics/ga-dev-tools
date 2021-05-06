@@ -2886,6 +2886,13 @@
     prop-types "^15.7.2"
     react-is "^17.0.0"
 
+"@maxim_mazurok/gapi.client.analytics@latest":
+  version "3.0.20190807"
+  resolved "https://registry.yarnpkg.com/@maxim_mazurok/gapi.client.analytics/-/gapi.client.analytics-3.0.20190807.tgz#31e25a0ef3576c158b4c23d5b9b1e429086e5596"
+  integrity sha512-WaWfJVcoUvPvYOX6OX6QWsDE64lW5K9UljkEUOdkWivW8++vs0BbuhF8gr+zBTKgAlxdMlbfiUJRIhg4+l2uKg==
+  dependencies:
+    "@types/gapi.client" "*"
+
 "@maxim_mazurok/gapi.client.analyticsadmin@latest":
   version "1.0.20210412"
   resolved "https://registry.yarnpkg.com/@maxim_mazurok/gapi.client.analyticsadmin/-/gapi.client.analyticsadmin-1.0.20210412.tgz#67573bd020a58eeda297d121fa59a962288be12e"
@@ -3280,26 +3287,19 @@
   dependencies:
     execa "*"
 
-"@types/gapi.analytics@^0.0.3":
-  version "0.0.3"
-  resolved "https://registry.yarnpkg.com/@types/gapi.analytics/-/gapi.analytics-0.0.3.tgz#286b8e7e0a7d9674caedd461678ae4fd5de4d31a"
-  integrity sha512-jIwe5qunizIIruaNBW4TVy3oybE+CbGdQsRapAHNtdCPtE7d+T6KjNLW4YWZ8DBrjKuQDGiTaeyCXKVd8thtmw==
+"@types/gapi.auth2@^0.0.54":
+  version "0.0.54"
+  resolved "https://registry.yarnpkg.com/@types/gapi.auth2/-/gapi.auth2-0.0.54.tgz#812207fb213fde4f2d74e6f0abd9da7ba34782ac"
+  integrity sha512-4HEphaKsGndb9+tnd2PBBmxloaij04iYXVsjgHpFxqbPFt5Le6pasoh5g5BEtwp/YEm9xDbzssp44BYR2/7RcQ==
   dependencies:
     "@types/gapi" "*"
 
-"@types/gapi.auth2@^0.0.51":
-  version "0.0.51"
-  resolved "https://registry.yarnpkg.com/@types/gapi.auth2/-/gapi.auth2-0.0.51.tgz#01410ccff41ec0eb744635d806557de9393c76a7"
-  integrity sha512-j66GKDjxM01HLBpwFlii0E3Bsn7+dn1qabgosGSWhuM0/waHZ8ooT/T3M5U9mdx6BQ4sk+gzW1HDux00yZVWRw==
+"@types/gapi.client.analytics@^3.0.7":
+  version "3.0.7"
+  resolved "https://registry.yarnpkg.com/@types/gapi.client.analytics/-/gapi.client.analytics-3.0.7.tgz#1fbd289800ee8ffeda4a0401c6376d83b8e6f70a"
+  integrity sha512-VQu2EeVeU9py88uf7KVPcA2FJypKVeUODvJv6/mkRh05gZH2UDOSvTu4xOnAHZgG2RCk+3+3j51SYh2WMuZwfw==
   dependencies:
-    "@types/gapi" "*"
-
-"@types/gapi.client.analytics@^3.0.1":
-  version "3.0.1"
-  resolved "https://registry.yarnpkg.com/@types/gapi.client.analytics/-/gapi.client.analytics-3.0.1.tgz#52790aa8237859805ddaed82fa465362fab4a93a"
-  integrity sha512-SZ1Rnqj83PCmOQ6RkUJ5/KfmERB6oRiYw1sR3+qbm06h7hxhnD+rT4ZgvfNtppFSEs80HG358KFw/qiPOlSfHg==
-  dependencies:
-    "@types/gapi.client" "*"
+    "@maxim_mazurok/gapi.client.analytics" latest
 
 "@types/gapi.client.analyticsadmin@^1.0.0":
   version "1.0.0"
@@ -3360,11 +3360,6 @@
   integrity sha512-AiHRaEB50LQg0pZmm659vNBb9f4SJ0qrAnteuzhSeAUcJKxoYgEnprg/83kppCnc2zvtCKbdZry1a5pVY3lOTQ==
   dependencies:
     "@types/node" "*"
-
-"@types/gtag.js@^0.0.3":
-  version "0.0.3"
-  resolved "https://registry.yarnpkg.com/@types/gtag.js/-/gtag.js-0.0.3.tgz#bbc414030b2143fc7874260ab825aac82c42928e"
-  integrity sha512-iRF/4Q3G1t0OTNMjK52tpGSQPgEsYzWQL1IdVXt9BywK6MUK3ypB7LaoEQa8sW9gPXENoU1xAyCxqJhMkB2rCA==
 
 "@types/history@*":
   version "4.7.8"
