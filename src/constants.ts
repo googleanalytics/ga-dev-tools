@@ -15,6 +15,7 @@
 // All static links on the site should be put into this enum. This makes it
 // easier to update all instances of a link on the site.
 export enum Url {
+  ga4DataAPIGetMetadata = "https://developers.google.com/analytics/devguides/reporting/data/v1/rest/v1beta/properties/getMetadata",
   cohortsRangeStartOffset = "https://developers.google.com/analytics/devguides/reporting/data/v1/rest/v1beta/CohortSpec#CohortsRange.FIELDS.start_offset",
   cohortsRangeEndOffset = "https://developers.google.com/analytics/devguides/reporting/data/v1/rest/v1beta/CohortSpec#CohortsRange.FIELDS.end_offset",
   ga4RequestComposerBasicRunReport = "https://developers.google.com/analytics/devguides/reporting/data/v1/rest/v1beta/properties/runReport",

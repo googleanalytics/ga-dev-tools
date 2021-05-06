@@ -30,7 +30,7 @@ import List from "@material-ui/core/List"
 import ListItem from "@material-ui/core/ListItem"
 import { navigate } from "@reach/router"
 import MenuIcon from "@material-ui/icons/Menu"
-import { Switch, Grid, Typography } from "@material-ui/core"
+import Typography from "@material-ui/core/Typography"
 
 import Login, { useLogin, UserStatus } from "../Login"
 import { useGAVersion } from "../../hooks"
@@ -38,38 +38,13 @@ import { GAVersion } from "../../constants"
 import Spinner from "../Spinner"
 import { linkData } from "./links"
 import { useStyles } from "./use-styles"
+import GA4Toggle from "./GA4Toggle"
 
 interface LayoutProps {
   requireLogin?: true
   disableNav?: true
   title: string
   pathname: string
-}
-
-const GA4Toggle: React.FC<{
-  gaVersion: GAVersion
-  setGAVersion: (version: GAVersion) => void
-}> = ({ setGAVersion, gaVersion }) => {
-  return (
-    <Grid component="label" container alignItems="center" spacing={1}>
-      <Grid item>UA</Grid>
-      <Grid item>
-        <Switch
-          checked={gaVersion === GAVersion.GoogleAnalytics4}
-          onChange={e => {
-            if (e.target.checked === true) {
-              setGAVersion(GAVersion.GoogleAnalytics4)
-            } else {
-              setGAVersion(GAVersion.UniversalAnalytics)
-            }
-          }}
-          name="use GA4"
-          color="primary"
-        />
-      </Grid>
-      <Grid item>GA4</Grid>
-    </Grid>
-  )
 }
 
 const Layout: React.FC<LayoutProps> = ({

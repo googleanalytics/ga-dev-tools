@@ -1,22 +1,26 @@
 import * as React from "react"
 import { useMemo } from "react"
 
-import { Clear } from "@material-ui/icons"
 import ExternalLink from "@/components/ExternalLink"
 import Typography from "@material-ui/core/Typography"
 import TextField from "@material-ui/core/TextField"
 import IconButton from "@material-ui/core/IconButton"
+import Clear from "@material-ui/icons/Clear"
 
 import { Url, StorageKey } from "@/constants"
 import { usePersistentString, useScrollTo } from "@/hooks"
+import Loadable from "@/components/Loadable"
 import Info from "@/components/Info"
 import PropertyPicker from "@/components/ga4/PropertyPicker"
 import Field from "./Field"
 import useInputs from "./useInputs"
 import { useDimensionsAndMetrics, Successful } from "./useDimensionsAndMetrics"
-import Loadable from "@/components/Loadable"
 
-const adminAPI = <ExternalLink href={Url.ga4AdminAPI}>Admin API</ExternalLink>
+const dataAPI = (
+  <ExternalLink href={Url.ga4DataAPIGetMetadata}>
+    GA4 Data API's getMetadata method
+  </ExternalLink>
+)
 
 const RenderSuccessful: React.FC<
   Successful & { search: string | undefined }
@@ -94,9 +98,8 @@ const DimensionsMetricsExplorer: React.FC = () => {
     <>
       <section>
         <Typography>
-          The {adminAPI} for GA4 allows users to see custom dimensions and
-          metrics for a given property, or see dimensions and metrics that are
-          shared among all GA4 properties.
+          The {dataAPI} allows users to see query dimensions and metrics
+          (including custom ones) for a given property.
         </Typography>
         <Typography>
           This demo is a catalog of all dimensions and metrics available for a

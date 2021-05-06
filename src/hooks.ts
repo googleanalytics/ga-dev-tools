@@ -1,8 +1,10 @@
 import * as React from "react"
+
 import { useLocation, useNavigate } from "@reach/router"
-import { StorageKey, GAVersion } from "./constants"
 import { useState, useEffect } from "react"
 import { useDispatch } from "react-redux"
+
+import { StorageKey, GAVersion } from "@/constants"
 
 type UsePersistentBoolean = (
   key: StorageKey,
@@ -101,39 +103,85 @@ export const usePersistantObject = <T extends {}>(
   return [value, setValue]
 }
 
-const getRedirectPath = (
+const uaToast = (tool: string) => `Redirecting to the UA ${tool}.`
+const ga4Toast = (tool: string) => `Redirecting to the GA4 ${tool}.`
+
+const getRedirectInfo = (
   path: string,
   version: GAVersion
-): string | undefined => {
+): { redirectPath: string; toast: string } | undefined => {
   switch (version) {
     case GAVersion.UniversalAnalytics: {
       switch (path) {
         case "/ga4/query-explorer/":
-          return "/query-explorer/"
+          return {
+            redirectPath: "/query-explorer/",
+            toast: uaToast("Query Explorer"),
+          }
         case "/ga4/event-builder/":
-          return "/hit-builder/"
+          return {
+            redirectPath: "/hit-builder/",
+            toast: uaToast("Hit Builder"),
+          }
         case "/ga4/dimensions-metrics-explorer/":
-          return "/dimensions-metrics-explorer/"
+          return {
+            redirectPath: "/dimensions-metrics-explorer/",
+            toast: uaToast("Dimensions & Metrics Explorer"),
+          }
         case "/ga4/campaign-url-builder/":
-          return "/campaign-url-builder/"
+          return {
+            redirectPath: "/campaign-url-builder/",
+            toast: uaToast("Campaign URL Builder"),
+          }
+        case "/ga4/":
+          return {
+            redirectPath: "/",
+            toast: "Redirecting to the UA home page.",
+          }
         default:
-          return "/"
+          return {
+            redirectPath: "/",
+            toast: "No UA demo. Redirecting to the UA home page.",
+          }
       }
     }
     case GAVersion.GoogleAnalytics4: {
       switch (path) {
         case "/hit-builder/":
-          return "/ga4/event-builder/"
+          return {
+            redirectPath: "/ga4/event-builder/",
+            toast: ga4Toast("Event Builder"),
+          }
         case "/dimensions-metrics-explorer/":
-          return "/ga4/dimensions-metrics-explorer/"
+          return {
+            redirectPath: "/ga4/dimensions-metrics-explorer/",
+            toast: ga4Toast("Dimensions & Metrics Explorer"),
+          }
         case "/query-explorer/":
-          return "/ga4/query-explorer/"
+          return {
+            redirectPath: "/ga4/query-explorer/",
+            toast: ga4Toast("Query Explorer"),
+          }
         case "/request-composer/":
-          return "/ga4/query-explorer/"
+          return {
+            redirectPath: "/ga4/query-explorer/",
+            toast: ga4Toast("Query Explorer"),
+          }
         case "/campaign-url-builder/":
-          return "/ga4/campaign-url-builder/"
+          return {
+            redirectPath: "/ga4/campaign-url-builder/",
+            toast: ga4Toast("Campaign URL Builder"),
+          }
+        case "/":
+          return {
+            redirectPath: "/ga4/",
+            toast: "Redirecting to the GA4 home page.",
+          }
         default:
-          return "/ga4/"
+          return {
+            redirectPath: "/ga4/",
+            toast: "No GA4 demo. Redirecting to the GA4 home page.",
+          }
       }
     }
   }
@@ -171,12 +219,12 @@ export const useGAVersion = (
 
   const setGAVersion = React.useCallback(
     (version: GAVersion) => {
-      const redirectPath = getRedirectPath(location.pathname, version)
-      if (redirectPath === undefined) {
+      const redirectInfo = getRedirectInfo(location.pathname, version)
+      if (redirectInfo === undefined) {
         return
       }
-      setToast(`redirecting to ${redirectPath}`)
-      navigate(redirectPath)
+      setToast(redirectInfo.toast)
+      navigate(redirectInfo.redirectPath)
     },
     [location.pathname, navigate, setToast]
   )

@@ -100,7 +100,7 @@ const Toaster = () => {
     <Snackbar
       anchorOrigin={{
         vertical: "bottom",
-        horizontal: "left",
+        horizontal: "center",
       }}
       open={toast !== undefined}
       onClose={() => {

@@ -34,11 +34,12 @@ export const useStyles = makeStyles(theme => ({
     flexDirection: "column",
     flexGrow: 1,
     minHeight: "100%",
+    color: theme.palette.getContrastText(theme.palette.grey[200]),
+    backgroundColor: theme.palette.grey[200],
+    paddingBottom: theme.spacing(4),
   },
   contentWrapper: {
     flexGrow: 1,
-    color: theme.palette.getContrastText(theme.palette.grey[200]),
-    backgroundColor: theme.palette.grey[200],
   },
   content: {
     flexGrow: 1,

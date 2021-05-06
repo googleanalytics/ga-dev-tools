@@ -13,12 +13,14 @@
 // limitations under the License.
 
 import * as React from "react"
-import { useStaticQuery, graphql } from "gatsby"
-import Img from "gatsby-image"
+
 import Typography from "@material-ui/core/Typography"
 import { makeStyles } from "@material-ui/core/styles"
-import { Url } from "../../constants"
-import ExternalLink from "../ExternalLink"
+import { useStaticQuery, graphql } from "gatsby"
+import Img from "gatsby-image"
+
+import { Url } from "@/constants"
+import ExternalLink from "@/components/ExternalLink"
 
 const useStyles = makeStyles({ partnersImage: { maxWidth: "600px" } })
 
@@ -63,6 +65,12 @@ const IndexPage = () => (
       </ExternalLink>
       . We encourage you to take a look if you'd like to see how anything is
       done.
+    </Typography>
+    <Typography variant="h3">Support for UA & GA4</Typography>
+    <Typography variant="body1">
+      There is support for both Universal Analytics (UA) and Google Analytics 4
+      (GA4). Click the toggle in the nav bar to switch between the UA and GA4
+      versions of the site.
     </Typography>
     <Typography variant="h3">Demos</Typography>
     <Typography variant="body1">
