@@ -47,12 +47,12 @@ export enum CohortSize {
 type UASegments = gapi.client.analytics.Segment[] | undefined
 type UAColumn = gapi.client.analytics.Column
 type UAColumns = UAColumn[]
-type MetadataAPI = typeof gapi.client.analytics.metadata
+type MetadataAPI = typeof gapi.client.metadata
 interface UAColumnsWithEtag {
   columns: UAColumns
   etag: string
 }
-type ManagementAPI = typeof gapi.client.analytics.management
+type ManagementAPI = typeof gapi.client.management
 interface UASegmentsWithEtag {
   segments: UASegments
   etag: string
