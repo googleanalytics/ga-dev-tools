@@ -119,7 +119,13 @@ const Field: React.FC<FieldProps> = ({ field }) => {
         mightHaveLinks = false
       }
     }
-    return <>{elements}</>
+    return (
+      <>
+        {elements.map((e, idx) => (
+          <React.Fragment key={idx}>{e}</React.Fragment>
+        ))}
+      </>
+    )
   }, [description])
 
   return (

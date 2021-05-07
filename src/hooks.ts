@@ -1,6 +1,7 @@
 import * as React from "react"
 
-import { useLocation, useNavigate } from "@reach/router"
+import { navigate } from "gatsby"
+import { useLocation } from "@reach/router"
 import { useState, useEffect } from "react"
 import { useDispatch } from "react-redux"
 
@@ -207,7 +208,6 @@ export const useGAVersion = (
   setGAVersion: (version: GAVersion) => void
 } => {
   const location = useLocation()
-  const navigate = useNavigate()
   const setToast = useSetToast()
   const gaVersion = React.useMemo(() => {
     if (pathname.includes("/ga4/")) {

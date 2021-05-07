@@ -111,8 +111,9 @@ describe("HitBuilder", () => {
         const t = await findByLabelText("t")
 
         await renderer.act(async () => {
-          userEvent.clear(t)
-          await userEvent.type(t, "pageview", { delay: 50 })
+          await userEvent.type(t, "{selectall}{backspace}pageview", {
+            delay: 50,
+          })
         })
 
         expect(t).toHaveValue("pageview")
@@ -184,8 +185,9 @@ describe("HitBuilder", () => {
         const paramField = await findByLabelText("Parameter name")
 
         await renderer.act(async () => {
-          userEvent.clear(paramField)
-          await userEvent.type(paramField, "newName", { delay: 50 })
+          await userEvent.type(paramField, "{selectall}{backspace}newName", {
+            delay: 50,
+          })
         })
         expect(paramField).toHaveValue("newName")
         expect(hitPayload.value).toContain("newName=paramValue")
@@ -195,8 +197,11 @@ describe("HitBuilder", () => {
         const paramValue = await findByLabelText("Value for newName")
 
         await renderer.act(async () => {
-          userEvent.clear(paramValue)
-          await userEvent.type(paramValue, "paramValue2", { delay: 50 })
+          await userEvent.type(
+            paramValue,
+            "{selectall}{backspace}paramValue2",
+            { delay: 50 }
+          )
         })
         expect(hitPayload.value).toContain("newName=paramValue2")
       })

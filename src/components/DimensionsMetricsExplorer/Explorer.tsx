@@ -18,7 +18,7 @@ import TextField from "@material-ui/core/TextField"
 import IconButton from "@material-ui/core/IconButton"
 import Clear from "@material-ui/icons/Clear"
 import makeStyles from "@material-ui/core/styles/makeStyles"
-import { useDebounce } from "use-debounce/lib"
+import { useDebounce } from "use-debounce"
 
 import { StorageKey } from "@/constants"
 import { WithEtag, Dispatch } from "@/types"
