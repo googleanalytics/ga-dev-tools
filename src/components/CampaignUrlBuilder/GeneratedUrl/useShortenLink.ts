@@ -1,6 +1,9 @@
 import React from "react"
-import { StorageKey } from "../../../constants"
-import { useLocalStorage } from "react-use"
+
+import { Dispatch } from "@/types"
+import { StorageKey } from "@/constants"
+import { usePersistantObject } from "@/hooks"
+import { useBitlyAPIKey } from "@/pages/bitly-auth"
 
 type BitlyStorageCache = {
   // Cache starts at guid level.
@@ -12,6 +15,8 @@ type BitlyStorageCache = {
     | undefined
 }
 
+type SetCacheFn = Dispatch<BitlyStorageCache | undefined>
+
 /**
  * Accepts a long URL and returns a promise that is resolved with its shortened
  * version, using the bitly API.
@@ -22,13 +27,13 @@ type BitlyStorageCache = {
 const shortenUrl = async (
   token: string,
   longUrl: string,
-  cache: BitlyStorageCache,
-  setCacheValue: typeof defaultCacheSetter
+  cache: BitlyStorageCache | undefined,
+  setCacheValue: SetCacheFn
 ): Promise<string> => {
   const user = await bitlyUser(token)
   const guid = user.default_group_guid
 
-  const cachedLink = cache[guid]?.[longUrl]
+  const cachedLink = cache?.[guid]?.[longUrl]
   if (cachedLink !== undefined) {
     return cachedLink
   }
@@ -37,29 +42,22 @@ const shortenUrl = async (
   const shortned = await bitlyShorten(token, longUrl, guid)
   const link = shortned.link
 
-  updateBitlyCache(guid, longUrl, link, cache, setCacheValue)
+  updateBitlyCache(guid, longUrl, link, setCacheValue)
 
   return link
-}
-
-const defaultCacheSetter = (value: BitlyStorageCache): void => {
-  const asString = JSON.stringify(value)
-  window.localStorage.setItem(StorageKey.bitlyCache, asString)
-  return
 }
 
 const updateBitlyCache = (
   guid: string,
   longUrl: string,
   shortUrl: string,
-  cache: BitlyStorageCache,
-  setCacheValue: typeof defaultCacheSetter
+  setCacheValue: SetCacheFn
 ): void => {
-  // Initialize guid level if necessary.
-  cache[guid] = cache[guid] || {}
-  cache[guid]![longUrl] = shortUrl
-  setCacheValue(cache)
-  return
+  setCacheValue((old = {}) => {
+    old[guid] = old[guid] || {}
+    old[guid]![longUrl] = shortUrl
+    return old
+  })
 }
 
 // https://dev.bitly.com/api-reference#createBitlink
@@ -130,18 +128,11 @@ type UseShortLink = () => {
 }
 const useShortenLink: UseShortLink = () => {
   const clientId = process.env.BITLY_CLIENT_ID
-  const [token, setToken] = useLocalStorage<string>(
-    StorageKey.bitlyAccessToken,
-    "",
-    { raw: true }
-  )
-  const [cache, setCache] = useLocalStorage<BitlyStorageCache>(
-    StorageKey.bitlyCache,
-    {}
-  )
+  const [token, setToken] = useBitlyAPIKey()
+  const [cache, setCache] = usePersistantObject(StorageKey.bitlyCache)
 
   const ensureAuth = React.useCallback(async (): Promise<string> => {
-    if (token !== "") {
+    if (token !== "" && token !== undefined) {
       return token
     }
     return new Promise(resolve => {
