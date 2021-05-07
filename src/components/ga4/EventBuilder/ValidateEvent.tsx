@@ -225,7 +225,7 @@ const EventActions: React.FC<ValidateEventProps> = props => {
   const onClick = React.useCallback(async () => {
     sendEvent()
     setEventSent(true)
-    new Promise(resolve => {
+    new Promise<void>(resolve => {
       setTimeout(() => {
         resolve()
       }, 1000)
