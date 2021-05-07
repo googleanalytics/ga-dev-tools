@@ -13,7 +13,7 @@
 // limitations under the License.
 
 declare module "*.svg" {
-  import { HTMLAttributes, SVGAttributes } from "react"
+  import { HTMLAttributes } from "react"
   const value: React.ComponentType<
     HTMLAttributes<SVGElement> & { viewBox?: string }
   >

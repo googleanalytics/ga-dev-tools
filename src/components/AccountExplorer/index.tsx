@@ -19,7 +19,6 @@ import Typography from "@material-ui/core/Typography"
 import Paper from "@material-ui/core/Paper"
 import { useDebounce } from "use-debounce"
 
-import Layout from "@/components/Layout"
 import ViewSelector, { HasView } from "@/components/ViewSelector"
 import ViewsTable from "./ViewTable"
 import useAllViews, { Views } from "./useAllViews"

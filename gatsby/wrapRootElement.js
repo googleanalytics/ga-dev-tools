@@ -1,4 +1,4 @@
-import React, { useEffect } from "react"
+import React from "react"
 import CssBaseline from "@material-ui/core/CssBaseline"
 import { ThemeProvider } from "@material-ui/core"
 import { createMuiTheme, withStyles } from "@material-ui/core/styles"
@@ -110,7 +110,6 @@ const Toaster = () => {
       message={toast}
     />
   )
-  return <>{toast}</>
 }
 
 export default ({ element }) => {

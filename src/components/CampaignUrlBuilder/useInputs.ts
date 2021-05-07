@@ -51,7 +51,15 @@ const useInputs = () => {
       }
       setWebsiteUrl(e.target.value)
     },
-    [setCampaign, setMedium, setSource, setTerm, setContent, setWebsiteUrl]
+    [
+      setCampaign,
+      setMedium,
+      setSource,
+      setTerm,
+      setContent,
+      setWebsiteUrl,
+      setId,
+    ]
   )
 
   return {
