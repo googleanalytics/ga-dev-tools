@@ -24,6 +24,7 @@ module.exports = {
   },
   plugins: [
     `gatsby-plugin-material-ui`,
+    `gatsby-plugin-preload-fonts`,
     {
       resolve: `gatsby-plugin-google-fonts`,
       options: {
