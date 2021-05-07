@@ -60,7 +60,7 @@ const useWarningsFor: UseWarningsFor = ({
       return false
     }
     return true
-  }, [websiteUrl, source, medium, campaign, id])
+  }, [websiteUrl, source, medium, id, version])
 
   const shortenLinkGui = useCallback(() => {
     if (showShort === true) {

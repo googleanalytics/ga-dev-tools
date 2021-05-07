@@ -226,7 +226,7 @@ export const useGAVersion = (
       setToast(redirectInfo.toast)
       navigate(redirectInfo.redirectPath)
     },
-    [location.pathname, navigate, setToast]
+    [location.pathname, setToast]
   )
 
   return { gaVersion, setGAVersion }
