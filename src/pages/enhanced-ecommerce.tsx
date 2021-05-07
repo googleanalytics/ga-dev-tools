@@ -16,8 +16,7 @@ import * as React from "react"
 
 import Typography from "@material-ui/core/Typography"
 import makeStyles from "@material-ui/core/styles/makeStyles"
-import { useStaticQuery, graphql } from "gatsby"
-import Img from "gatsby-image"
+import { StaticImage } from "gatsby-plugin-image"
 
 import { Url } from "@/constants"
 import Layout from "@/components/Layout"
@@ -33,31 +32,6 @@ const useStyles = makeStyles(theme => ({
     marginBottom: theme.spacing(2),
   },
 }))
-
-const DemoScreenshot = () => {
-  const classes = useStyles()
-  const data = useStaticQuery(graphql`
-    query {
-      partners: file(
-        relativePath: { eq: "screenshots/enhanced-ecommerce-2x.png" }
-      ) {
-        childImageSharp {
-          fluid(quality: 100) {
-            ...GatsbyImageSharpFluid
-          }
-        }
-      }
-    }
-  `)
-
-  return (
-    <Img
-      className={classes.demoScreenshot}
-      fluid={data.partners.childImageSharp.fluid}
-      alt="A screenshot from the Enhanced Ecommerce demo."
-    />
-  )
-}
 
 const demoStore = (
   <ExternalLink href={Url.enhancedEcommerceDemo}>
@@ -143,7 +117,11 @@ const EnhancedEcommerce = ({ location: { pathname } }) => {
       </Typography>
 
       <a href={Url.enhancedEcommerceDemo}>
-        <DemoScreenshot />
+        <StaticImage
+          className={classes.demoScreenshot}
+          alt="A screenshot from the Enhanced Ecommerce demo."
+          src="../images/screenshots/enhanced-ecommerce-2x.png"
+        />
       </a>
       <Typography variant="body1">
         Every action in this demo comes with code samples showing exactly how

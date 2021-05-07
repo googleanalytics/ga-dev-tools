@@ -16,38 +16,11 @@ import * as React from "react"
 
 import Typography from "@material-ui/core/Typography"
 import makeStyles from "@material-ui/core/styles/makeStyles"
-import { useStaticQuery, graphql } from "gatsby"
-import Img from "gatsby-image"
+import { StaticImage } from "gatsby-plugin-image"
 
 import { Url } from "@/constants"
 import Layout from "@/components/Layout"
 import ExternalLink from "@/components/ExternalLink"
-
-const useStyles = makeStyles({ spreadsheetImage: { maxWidth: "726px" } })
-
-const SpreadsheetImage = () => {
-  const classes = useStyles()
-  const data = useStaticQuery(graphql`
-    query {
-      spreadsheet: file(
-        relativePath: { eq: "screenshots/spreadsheet-add-on-2x.png" }
-      ) {
-        childImageSharp {
-          fluid(maxWidth: 726) {
-            ...GatsbyImageSharpFluid
-          }
-        }
-      }
-    }
-  `)
-
-  return (
-    <Img
-      className={classes.spreadsheetImage}
-      fluid={data.spreadsheet.childImageSharp.fluid}
-    />
-  )
-}
 
 const SpreadsheetAddOn = ({ location: { pathname } }) => {
   return (
@@ -69,7 +42,10 @@ const SpreadsheetAddOn = ({ location: { pathname } }) => {
       </Typography>
 
       <a href={Url.spreadsheetAddOnExternal}>
-        <SpreadsheetImage />
+        <StaticImage
+          alt="screenshot of the add-on"
+          src="../images/screenshots/spreadsheet-add-on-2x.png"
+        />
       </a>
 
       <Typography variant="caption" paragraph>

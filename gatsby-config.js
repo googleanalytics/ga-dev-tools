@@ -13,6 +13,10 @@
 // limitations under the License.
 
 module.exports = {
+  flags: {
+    PRESERVE_WEBPACK_CACHE: true,
+    DEV_SSR: true,
+  },
   siteMetadata: {
     title: `Discover the Google Analytics Platform`,
     description: ``,
@@ -43,7 +47,8 @@ module.exports = {
         path: `${__dirname}/src/images`,
       },
     },
-    `gatsby-transformer-sharp`,
+    `gatsby-plugin-image`,
     `gatsby-plugin-sharp`,
+    `gatsby-transformer-sharp`,
   ],
 }
