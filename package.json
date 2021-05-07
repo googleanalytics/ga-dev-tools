@@ -68,7 +68,6 @@
     "babel-eslint": "10.x",
     "babel-jest": "^25.3.0",
     "babel-preset-gatsby": "^0.5.5",
-    "core-js": "^3.0.0",
     "eslint": "6.x",
     "eslint-config-react-app": "^5.2.1",
     "eslint-plugin-flowtype": "4.x",
