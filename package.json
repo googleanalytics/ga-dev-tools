@@ -40,7 +40,6 @@
     "react-syntax-highlighter": "^12.2.1",
     "react-use": "^14.1.1",
     "redux": "^4.0.5",
-    "redux-thunk": "^2.3.0",
     "tsconfig-paths-webpack-plugin": "^3.5.1",
     "use-debounce": "^6.0.0",
     "uuid": "^7.0.3"
