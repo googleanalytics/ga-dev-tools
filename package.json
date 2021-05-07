@@ -36,7 +36,6 @@
     "react-redux": "^7.2.0",
     "react-syntax-highlighter": "^12.2.1",
     "redux": "^4.0.5",
-    "tsconfig-paths-webpack-plugin": "^3.5.1",
     "use-debounce": "^6.0.0",
     "uuid": "^7.0.3"
   },
@@ -88,6 +87,7 @@
     "prettier": "^2.0.5",
     "react-test-renderer": "^16.13.1",
     "ts-node": "^8.9.0",
+    "tsconfig-paths-webpack-plugin": "^3.5.1",
     "typescript": "^3.8.3"
   },
   "scripts": {
