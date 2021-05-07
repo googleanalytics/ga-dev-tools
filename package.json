@@ -38,7 +38,6 @@
     "react-loader-spinner": "^4.0.0",
     "react-redux": "^7.2.0",
     "react-syntax-highlighter": "^12.2.1",
-    "react-use": "^14.1.1",
     "redux": "^4.0.5",
     "tsconfig-paths-webpack-plugin": "^3.5.1",
     "use-debounce": "^6.0.0",

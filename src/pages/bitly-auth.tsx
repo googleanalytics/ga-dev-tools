@@ -3,8 +3,8 @@ import React from "react"
 import Typography from "@material-ui/core/Typography"
 import Layout from "@/components/Layout"
 import { useLocation } from "@reach/router"
-import { useLocalStorage } from "react-use"
 import { StorageKey } from "@/constants"
+import { usePersistentString } from "@/hooks"
 
 type BitlyAuthResponse = {
   access_token: string
@@ -32,6 +32,11 @@ const getToken = async (code: string) => {
   }
 }
 
+export const useBitlyAPIKey = () => {
+  // This should be pulled out into a hook since it's used in a few places.
+  return usePersistentString(StorageKey.bitlyAccessToken)
+}
+
 // TODO - Consider adding a settings page for revoking access_tokens.
 export default ({ location: { pathname } }) => {
   const location = useLocation()
@@ -39,12 +44,7 @@ export default ({ location: { pathname } }) => {
     return new URLSearchParams(location.search)
   }, [location.search])
 
-  // This should be pulled out into a hook since it's used in a few places.
-  const [apiKey, setApiKey] = useLocalStorage<string>(
-    StorageKey.bitlyAccessToken,
-    "",
-    { raw: true }
-  )
+  const [apiKey, setApiKey] = useBitlyAPIKey()
 
   React.useEffect(() => {
     const code = params.get("code")
