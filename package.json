@@ -111,7 +111,7 @@
     "ts-node": "^8.1.0",
     "tti-polyfill": "github:deepanjanroy/tti-polyfill#npmify",
     "typescript": "^3.8.3",
-    "url-parse": "^1.2.0",
+    "url-parse": "^1.5.0",
     "uuid": "^2.0.3",
     "webpack": "^4.31.0"
   }
