@@ -16,14 +16,16 @@ import React from "react"
 
 import { SAB } from "@/components/Buttons"
 import useFormStyles from "@/hooks/useFormStyles"
-import { ModifyParameterCtx } from "./EditEvent"
+import { IsCustomEventCtx, ModifyParameterCtx } from "./EditEvent"
 import EditParameter from "./EditParameter"
 import { Parameter, ParameterType } from "./types"
 import { ShowAdvancedCtx } from "."
+import { Typography } from "@material-ui/core"
 
 interface ParameterListProps {
   indentation?: number
   isItemParameter?: boolean
+  isCustomEvent?: boolean
   parameters: Parameter[]
 }
 
@@ -40,27 +42,33 @@ const ParameterList: React.FC<ParameterListProps> = ({
     removeParameter,
     updateParameter,
   } = React.useContext(ModifyParameterCtx)!
+  const isCustomEvent = React.useContext(IsCustomEventCtx)
 
   const hasItemsParameter = React.useMemo(
     () => parameters.find(p => p.type === ParameterType.Items) !== undefined,
     [parameters]
   )
 
-  const buttons = (showAdvanced || isItemParameter) && (
-    <div className={formClasses.buttonRow}>
-      <SAB add small onClick={() => addParameter("string")}>
-        string
-      </SAB>
-      <SAB add small onClick={() => addParameter("number")}>
-        number
-      </SAB>
-      {!hasItemsParameter && !isItemParameter && (
-        <SAB add small onClick={() => addParameter("items")}>
-          items
+  const buttons = (showAdvanced || isItemParameter || isCustomEvent) && (
+    <>
+      <Typography style={{ paddingBottom: "4px" }}>
+        {isItemParameter ? "Add item parameter" : "Add parameter"}
+      </Typography>
+      <div className={formClasses.buttonRow}>
+        <SAB add small onClick={() => addParameter("string")}>
+          string
         </SAB>
-      )}
-      {children}
-    </div>
+        <SAB add small onClick={() => addParameter("number")}>
+          number
+        </SAB>
+        {!hasItemsParameter && !isItemParameter && (
+          <SAB add small onClick={() => addParameter("items")}>
+            items
+          </SAB>
+        )}
+        {children}
+      </div>
+    </>
   )
 
   return (
@@ -95,7 +103,7 @@ const ParameterList: React.FC<ParameterListProps> = ({
         }
         return editParameter
       })}
-      {isItemParameter && parameters.length === 0 && buttons}
+      {(isItemParameter || isCustomEvent) && parameters.length === 0 && buttons}
     </div>
   )
 }

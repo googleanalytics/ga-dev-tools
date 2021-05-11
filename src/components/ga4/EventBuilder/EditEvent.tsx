@@ -50,6 +50,8 @@ export const ModifyParameterCtx = React.createContext<
   | undefined
 >(undefined)
 
+export const IsCustomEventCtx = React.createContext(false)
+
 const EditEvent: React.FC<EditEventProps> = ({
   event,
   setEvent,
@@ -88,7 +90,6 @@ const EditEvent: React.FC<EditEventProps> = ({
 
   const updateName = React.useCallback(
     (idx: number, nuName: string) => {
-      console.log("nuName", nuName)
       updateParameters(old =>
         old.map((p, i) => (i === idx ? { ...p, name: nuName } : p))
       )
@@ -98,7 +99,6 @@ const EditEvent: React.FC<EditEventProps> = ({
 
   const removeParameter = React.useCallback(
     (idx: number) => {
-      console.log("remove parameter", idx)
       updateParameters(old => old.filter((_, i) => i !== idx))
     },
     [updateParameters]
@@ -122,16 +122,17 @@ const EditEvent: React.FC<EditEventProps> = ({
 
   return (
     <section className={formClasses.form}>
-      <Typography variant="h4">Event details</Typography>
       <LabeledCheckbox checked={showAdvanced} setChecked={setShowAdvanced}>
         show advanced options
       </LabeledCheckbox>
       {paramHeading}
-      <ModifyParameterCtx.Provider
-        value={{ addParameter, updateName, removeParameter, updateParameter }}
-      >
-        <ParameterList parameters={parameters} />
-      </ModifyParameterCtx.Provider>
+      <IsCustomEventCtx.Provider value={event.isCustomEvent()}>
+        <ModifyParameterCtx.Provider
+          value={{ addParameter, updateName, removeParameter, updateParameter }}
+        >
+          <ParameterList parameters={parameters} />
+        </ModifyParameterCtx.Provider>
+      </IsCustomEventCtx.Provider>
     </section>
   )
 }

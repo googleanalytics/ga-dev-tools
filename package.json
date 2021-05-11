@@ -26,6 +26,7 @@
     "gatsby-plugin-react-svg": "^3.0.0",
     "gatsby-plugin-sharp": "^3.4.1",
     "gatsby-plugin-typescript": "^3.4.0",
+    "gatsby-plugin-use-query-params": "^1.0.1",
     "gatsby-source-filesystem": "^3.4.0",
     "gatsby-transformer-sharp": "^3.4.0",
     "immutable": "^4.0.0-rc.12",
@@ -40,6 +41,7 @@
     "react-syntax-highlighter": "^15.4.3",
     "redux": "^4.0.5",
     "use-debounce": "^6.0.0",
+    "use-query-params": "^1.2.2",
     "uuid": "^8.3.2"
   },
   "devDependencies": {

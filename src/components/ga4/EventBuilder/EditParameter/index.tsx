@@ -23,6 +23,7 @@ import Remove from "@material-ui/icons/Delete"
 import EditParameterValue from "./EditParameterValue"
 import { Parameter, ParameterType } from "../types"
 import { ShowAdvancedCtx } from ".."
+import { IsCustomEventCtx } from "../EditEvent"
 
 const useStyles = makeStyles(theme => ({
   itemParameterRow: {
@@ -91,11 +92,12 @@ const EditParameter: React.FC<EditParameterProps> = ({
   updateParameter,
 }) => {
   const showAdvanced = React.useContext(ShowAdvancedCtx)
+  const isCustomEvent = React.useContext(IsCustomEventCtx)
   const classes = useStyles()
   const isItem = parameter.type === ParameterType.Items
 
   const removeParameter = React.useMemo(() => {
-    if (showAdvanced || isItem) {
+    if (showAdvanced || isItem || isCustomEvent) {
       return (
         <Tooltip title="remove parameter">
           <IconButton onClick={remove} size="small">
@@ -105,7 +107,7 @@ const EditParameter: React.FC<EditParameterProps> = ({
       )
     }
     return null
-  }, [remove, showAdvanced, isItem])
+  }, [remove, showAdvanced, isItem, isCustomEvent])
 
   return (
     <div>

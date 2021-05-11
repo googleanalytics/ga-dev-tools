@@ -86,8 +86,6 @@ const RenderSuccessful: React.FC<
   )
 }
 
-// TODO - Add in "navigation" section that lets you quickly go to metrics.
-// TODO - Add in a down area.
 const DimensionsMetricsExplorer: React.FC = () => {
   const formClasses = useFormStyles()
   const { search, setSearch } = useInputs()

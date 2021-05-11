@@ -82,9 +82,10 @@ export const ShowAdvancedCtx = React.createContext(false)
 const EventBuilder: React.FC = () => {
   const formClasses = useFormStyles()
   const classes = useStyles()
-  const [useFirebase, setUseFirebase] = React.useState(true)
   const [showAdvanced, setShowAdvanced] = React.useState(false)
   const {
+    useFirebase,
+    setUseFirebase,
     event,
     validateEvent,
     sendEvent,
@@ -114,7 +115,7 @@ const EventBuilder: React.FC = () => {
     user_properties,
     setUserProperties,
     payload,
-  } = useEvents(useFirebase)
+  } = useEvents()
 
   return (
     <div>
@@ -340,6 +341,12 @@ const EventBuilder: React.FC = () => {
         </WithHelpText>
       </section>
 
+      <Typography variant="h4">Event details</Typography>
+      <Typography>
+        Finally, specify the parameters to send with the event. By default, only
+        recommended parameters for the event will appear here. Check "show
+        advanced options" to add custom parameters or add user properties.
+      </Typography>
       <ShowAdvancedCtx.Provider value={showAdvanced}>
         <EditEvent
           event={event}

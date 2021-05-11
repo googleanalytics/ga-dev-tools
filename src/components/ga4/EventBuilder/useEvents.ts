@@ -14,6 +14,8 @@
 
 import { useState, useCallback, useEffect, useMemo } from "react"
 
+import { BooleanParam, useQueryParam } from "use-query-params"
+
 import { usePersistentString, usePersistentBoolean } from "@/hooks"
 import { StorageKey } from "@/constants"
 import {
@@ -28,7 +30,6 @@ import {
   UrlParam,
   MPEventData,
 } from "./types"
-import useFilter from "../QueryExplorer/Filter/useFilter"
 
 type Dispatch<T> = React.Dispatch<React.SetStateAction<T>>
 
@@ -75,14 +76,38 @@ interface UseEventsReturn {
 
   payload: {}
   parameterizedUrl: string
+
+  useFirebase: boolean
+  setUseFirebase: Dispatch<boolean>
 }
 
-type UseEvents = (useFirebase: boolean) => UseEventsReturn
-const useEvents: UseEvents = useFirebase => {
+const useUseFirebase = (): [boolean, Dispatch<boolean>] => {
+  const [param, setParam] = useQueryParam("use_firebase", BooleanParam)
+  const [persistant, setPersistant] = usePersistentBoolean(
+    StorageKey.eventBuilderUseFirebase,
+    false
+  )
+
+  const useFirebase = useMemo(() => {
+    const value = param || persistant
+    if (param !== null && param !== undefined) {
+      setPersistant(param)
+      setParam(undefined, "replaceIn")
+    }
+    return value
+  }, [param, persistant, setPersistant, setParam])
+
+  return [useFirebase, setPersistant]
+}
+
+type UseEvents = () => UseEventsReturn
+const useEvents: UseEvents = () => {
   const urlParts = useMemo(() => {
     return unParameterizeUrl()
   }, [])
   const [event, setEvent] = useState(urlParts.event || MPEvent.default())
+  const [useFirebase, setUseFirebase] = useUseFirebase()
+
   const [api_secret, setAPISecret] = usePersistentString(
     StorageKey.eventBuilderApiSecret,
     "",
@@ -226,6 +251,7 @@ const useEvents: UseEvents = useFirebase => {
       user_properties,
       timestamp_micros,
       non_personalized_ads,
+      use_firebase: useFirebase,
     })
   }, [
     client_id,
@@ -238,6 +264,7 @@ const useEvents: UseEvents = useFirebase => {
     user_properties,
     timestamp_micros,
     non_personalized_ads,
+    useFirebase,
   ])
 
   useEffect(() => {
@@ -285,6 +312,8 @@ const useEvents: UseEvents = useFirebase => {
     setUserProperties,
     validateEvent,
     payload,
+    useFirebase,
+    setUseFirebase,
   }
 }
 
@@ -432,9 +461,12 @@ export const parameterizedUrlFor = ({
   user_properties,
   non_personalized_ads,
   timestamp_micros,
+  use_firebase,
 }: URLParts) => {
   const params = new URLSearchParams()
 
+  use_firebase !== undefined &&
+    params.append(UrlParam.UseFirebase, use_firebase ? "1" : "0")
   client_id && client_id !== "" && params.append(UrlParam.ClientId, client_id)
   app_instance_id &&
     app_instance_id !== "" &&

@@ -19,6 +19,7 @@ export * from "./MpEvent"
 export * from "./events"
 
 export enum UrlParam {
+  UseFirebase = "use_firebase",
   TimestampMicros = "timestamp_micros",
   NonPersonalizedAds = "non_personalized_ads",
   EventData = "event_data",
@@ -65,6 +66,7 @@ export interface InstanceId {
 }
 
 export interface URLParts {
+  use_firebase?: boolean
   event_name?: string
   client_id?: string
   app_instance_id?: string

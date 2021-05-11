@@ -23,6 +23,7 @@ module.exports = {
     author: `Google Analytics Developer Relations`,
   },
   plugins: [
+    `gatsby-plugin-use-query-params`,
     `gatsby-plugin-material-ui`,
     `gatsby-plugin-preload-fonts`,
     {

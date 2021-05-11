@@ -192,6 +192,7 @@ export enum StorageKey {
   eventBuilderUserId = "ga4/event-builder/user-id",
   eventBuilderTimestampMicros = "ga4/event-builder/timestamp-micros",
   eventBuilderNonPersonalizedAds = "ga4/event-builder/non-personalized-ads",
+  eventBuilderUseFirebase = "ga4/event-builder/use-firebase",
 }
 
 export const EventAction = {

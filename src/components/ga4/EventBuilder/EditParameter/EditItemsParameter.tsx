@@ -28,12 +28,24 @@ import {
   ItemArrayParam,
   defaultNumberParam,
 } from "../types"
-import { SAB } from "@/components/Buttons"
+import { SAB, TooltipIconButton } from "@/components/Buttons"
 import WithHelpText from "@/components/WithHelpText"
-import { ModifyParameterCtx } from "../EditEvent"
+import { IsCustomEventCtx, ModifyParameterCtx } from "../EditEvent"
 import { ShowAdvancedCtx } from ".."
 
 const useStyles = makeStyles(theme => ({
+  itemsRow: {
+    display: "flex",
+    "&> :not(:last-child)": {
+      marginRight: theme.spacing(1),
+    },
+    "&> :first-child": {
+      marginTop: theme.spacing(1),
+    },
+    "&> :not(:first-child)": {
+      flexGrow: 1,
+    },
+  },
   deleteRow: {
     display: "flex",
     alignItems: "baseline",
@@ -147,6 +159,7 @@ const EditArrayParameter: React.FC<EditItemArrayParameterProps> = ({
   const classes = useStyles()
   const showAdvanced = React.useContext(ShowAdvancedCtx)
   const [localValues, setLocalValues] = React.useState<Array<Item>>(items.value)
+  const isCustomEvent = React.useContext(IsCustomEventCtx)
 
   React.useEffect(() => {
     if (localValues !== items.value) {
@@ -203,43 +216,45 @@ const EditArrayParameter: React.FC<EditItemArrayParameterProps> = ({
   )
 
   return (
-    <WithHelpText notched label="items">
-      <section className={classes.items}>
-        {showAdvanced && (
-          <Tooltip title="Remove items parameter">
-            <SAB delete small onClick={remove}>
-              parameter
+    <section className={classes.itemsRow}>
+      {(showAdvanced || isCustomEvent) && (
+        <div>
+          <TooltipIconButton tooltip="Remove items parameter" onClick={remove}>
+            <Delete />
+          </TooltipIconButton>
+        </div>
+      )}
+      <WithHelpText notched label="items">
+        <section className={classes.items}>
+          {localValues.map((item, idx) => (
+            <section className={classes.deleteRow}>
+              <Tooltip title={`Remove Item ${idx + 1}`}>
+                <IconButton onClick={removeItem(idx)}>
+                  <Delete />
+                </IconButton>
+              </Tooltip>
+              <WithHelpText
+                notched
+                key={`item-${idx}`}
+                label={<>item {idx + 1}</>}
+              >
+                <EditItem
+                  updateParameterName={updateParameterName(idx)}
+                  item={item}
+                  isFirst={idx === 0}
+                  updateItem={updateItem(idx)}
+                />
+              </WithHelpText>
+            </section>
+          ))}
+          <section>
+            <SAB add small onClick={addItem}>
+              Item
             </SAB>
-          </Tooltip>
-        )}
-        {localValues.map((item, idx) => (
-          <section className={classes.deleteRow}>
-            <Tooltip title={`Remove Item ${idx + 1}`}>
-              <IconButton onClick={removeItem(idx)}>
-                <Delete />
-              </IconButton>
-            </Tooltip>
-            <WithHelpText
-              notched
-              key={`item-${idx}`}
-              label={<>item {idx + 1}</>}
-            >
-              <EditItem
-                updateParameterName={updateParameterName(idx)}
-                item={item}
-                isFirst={idx === 0}
-                updateItem={updateItem(idx)}
-              />
-            </WithHelpText>
           </section>
-        ))}
-        <section>
-          <SAB add small onClick={addItem}>
-            Item
-          </SAB>
         </section>
-      </section>
-    </WithHelpText>
+      </WithHelpText>
+    </section>
   )
 }
 export default EditArrayParameter
