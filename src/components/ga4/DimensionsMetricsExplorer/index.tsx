@@ -15,6 +15,8 @@ import PropertyPicker from "@/components/ga4/PropertyPicker"
 import Field from "./Field"
 import useInputs from "./useInputs"
 import { useDimensionsAndMetrics, Successful } from "./useDimensionsAndMetrics"
+import { Link } from "gatsby"
+import useFormStyles from "@/hooks/useFormStyles"
 
 const dataAPI = (
   <ExternalLink href={Url.ga4DataAPIGetMetadata}>
@@ -65,14 +67,18 @@ const RenderSuccessful: React.FC<
   return (
     <>
       {notAllFields}
-      <Typography variant="h2">Dimensions</Typography>
+      <Typography variant="h2" id="dimensions">
+        Dimensions
+      </Typography>
       {visibleDimensions?.map(dimension => (
         <Field
           key={dimension.apiName}
           field={{ type: "dimension", value: dimension }}
         />
       ))}
-      <Typography variant="h2">Metrics</Typography>
+      <Typography variant="h2" id="metrics">
+        Metrics
+      </Typography>
       {visibleMetrics?.map(metric => (
         <Field key={metric.apiName} field={{ type: "metric", value: metric }} />
       ))}
@@ -80,7 +86,10 @@ const RenderSuccessful: React.FC<
   )
 }
 
+// TODO - Add in "navigation" section that lets you quickly go to metrics.
+// TODO - Add in a down area.
 const DimensionsMetricsExplorer: React.FC = () => {
+  const formClasses = useFormStyles()
   const { search, setSearch } = useInputs()
   const [selectedProperty, setSelectedProperty] = usePersistentString(
     StorageKey.ga4DimensionsMetricsSelectedProperty
@@ -105,25 +114,32 @@ const DimensionsMetricsExplorer: React.FC = () => {
           This demo is a catalog of all dimensions and metrics available for a
           given property. It includes linkable descriptions of all fields.
         </Typography>
-        <PropertyPicker
-          setPropertyId={setSelectedProperty}
-          propertyId={selectedProperty}
-        />
-        <TextField
-          label="Search for a dimension or metric"
-          variant="outlined"
-          fullWidth
-          size="small"
-          value={search || ""}
-          onChange={e => setSearch(e.target.value)}
-          InputProps={{
-            endAdornment: (
-              <IconButton size="small" onClick={() => setSearch("")}>
-                <Clear />
-              </IconButton>
-            ),
-          }}
-        />
+        <section className={formClasses.form}>
+          <Typography variant="h3">Select property</Typography>
+          <PropertyPicker
+            setPropertyId={setSelectedProperty}
+            propertyId={selectedProperty}
+          />
+          <Typography variant="h3">Search</Typography>
+          <TextField
+            label="Search for a dimension or metric"
+            variant="outlined"
+            fullWidth
+            size="small"
+            value={search || ""}
+            onChange={e => setSearch(e.target.value)}
+            InputProps={{
+              endAdornment: (
+                <IconButton size="small" onClick={() => setSearch("")}>
+                  <Clear />
+                </IconButton>
+              ),
+            }}
+          />
+          <Typography>
+            <a href="#metrics">go to metrics</a>
+          </Typography>
+        </section>
         <Loadable
           request={request}
           renderSuccessful={s => <RenderSuccessful {...s} search={search} />}

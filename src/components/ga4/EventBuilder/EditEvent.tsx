@@ -17,19 +17,47 @@ import React from "react"
 import Typography from "@material-ui/core/Typography"
 
 import ParameterList from "./ParameterList"
-import { MPEvent, Parameters, defaultStringParam } from "./types"
+import {
+  MPEvent,
+  Parameters,
+  defaultStringParam,
+  defaultNumberParam,
+  defaultItemArrayParam,
+  Parameter,
+} from "./types"
+import useFormStyles from "@/hooks/useFormStyles"
+import LabeledCheckbox from "@/components/LabeledCheckbox"
+import { Dispatch } from "@/types"
+import { ShowAdvancedCtx } from "."
 
 interface EditEventProps {
   event: MPEvent
   setEvent: React.Dispatch<React.SetStateAction<MPEvent>>
+  setShowAdvanced: Dispatch<boolean>
 }
 
-const EditEvent: React.FC<EditEventProps> = ({ event, setEvent }) => {
-  const parameters = event.getParameters()
+type AddParameter = (type: "string" | "number" | "items") => void
+type UpdateName = (idx: number, nuName: string) => void
+type UpdateParameter = (idx: number, nuParamater: Parameter) => void
+type RemoveParameter = (idx: number) => void
+export const ModifyParameterCtx = React.createContext<
+  | {
+      addParameter: AddParameter
+      updateName: UpdateName
+      removeParameter: RemoveParameter
+      updateParameter: UpdateParameter
+    }
+  | undefined
+>(undefined)
 
-  const defaultEventParameters = React.useMemo(() => {
-    return MPEvent.empty(event.getEventType()).getParameters()
-  }, [event])
+const EditEvent: React.FC<EditEventProps> = ({
+  event,
+  setEvent,
+  setShowAdvanced,
+}) => {
+  const showAdvanced = React.useContext(ShowAdvancedCtx)
+  const formClasses = useFormStyles()
+  const parameters = event.getParameters()
 
   const updateParameters = React.useCallback(
     (update: (old: Parameters) => Parameters): void => {
@@ -38,32 +66,73 @@ const EditEvent: React.FC<EditEventProps> = ({ event, setEvent }) => {
     [setEvent, event]
   )
 
-  const addParameter = React.useCallback(() => {
-    setEvent(event.addParameter("", defaultStringParam("")))
-  }, [event, setEvent])
+  const updateParameter: UpdateParameter = React.useCallback(
+    (idx: number, nu: Parameter): void => {
+      updateParameters(old => old.map((p, i) => (idx === i ? nu : p)))
+    },
+    [updateParameters]
+  )
+
+  const addParameter = React.useCallback(
+    (type: "string" | "number" | "items") => {
+      const nuParam =
+        type === "string"
+          ? defaultStringParam("")
+          : type === "number"
+          ? defaultNumberParam("")
+          : defaultItemArrayParam(false)
+      setEvent(event.addParameter(nuParam))
+    },
+    [event, setEvent]
+  )
+
+  const updateName = React.useCallback(
+    (idx: number, nuName: string) => {
+      console.log("nuName", nuName)
+      updateParameters(old =>
+        old.map((p, i) => (i === idx ? { ...p, name: nuName } : p))
+      )
+    },
+    [updateParameters]
+  )
+
+  const removeParameter = React.useCallback(
+    (idx: number) => {
+      console.log("remove parameter", idx)
+      updateParameters(old => old.filter((_, i) => i !== idx))
+    },
+    [updateParameters]
+  )
+
+  const paramHeading = React.useMemo(() => {
+    if (parameters.length === 0) {
+      if (event.isCustomEvent()) {
+        return (
+          <Typography>No parameters are configured for this event</Typography>
+        )
+      } else {
+        return (
+          <Typography>No parameters are recommended for this event</Typography>
+        )
+      }
+    } else {
+      return <Typography variant="h5">Parameters</Typography>
+    }
+  }, [event, parameters])
 
   return (
-    <>
-      <Typography variant="h3">Event details</Typography>
-      {parameters.length === 0 && defaultEventParameters.length === 0 ? (
-        <Typography>No parameters are recommended for this event</Typography>
-      ) : (
-        <>
-          <Typography variant="h4">Parameters</Typography>
-          <Typography>
-            The fields below are a breakdown of the individual parameters and
-            values for the event in the text box above. When you update these
-            values, the event above will be automatically updated.
-          </Typography>
-        </>
-      )}
-      <ParameterList
-        isNested={false}
-        addParameter={addParameter}
-        parameters={parameters}
-        updateParameters={updateParameters}
-      />
-    </>
+    <section className={formClasses.form}>
+      <Typography variant="h4">Event details</Typography>
+      <LabeledCheckbox checked={showAdvanced} setChecked={setShowAdvanced}>
+        show advanced options
+      </LabeledCheckbox>
+      {paramHeading}
+      <ModifyParameterCtx.Provider
+        value={{ addParameter, updateName, removeParameter, updateParameter }}
+      >
+        <ParameterList parameters={parameters} />
+      </ModifyParameterCtx.Provider>
+    </section>
   )
 }
 export default EditEvent

@@ -67,10 +67,10 @@ const MetricAggregations: React.FC<{
     <WithHelpText
       className={classes.aggregations}
       helpText={
-        <Typography>
+        <>
           The aggregations to use for the metrics. See {metricAggregationsLink}{" "}
-          on devsite.{" "}
-        </Typography>
+          on devsite.
+        </>
       }
     >
       <SelectMultiple

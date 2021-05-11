@@ -9,6 +9,7 @@ export interface LinkedTextFieldProps {
   label: string
   onChange: (e: string) => void
   helperText: string | JSX.Element
+  extraAction?: JSX.Element
   required?: true
   disabled?: boolean
 }
@@ -22,11 +23,21 @@ const LinkedTextField: React.FC<LinkedTextFieldProps> = ({
   required,
   helperText,
   disabled,
+  extraAction,
 }) => {
   return (
     <TextField
       InputProps={{
-        endAdornment: <ExternalLink href={href} title={linkTitle} hover />,
+        endAdornment: (
+          <span
+            style={{
+              display: "inline-flex",
+            }}
+          >
+            {extraAction}
+            <ExternalLink href={href} title={linkTitle} hover />
+          </span>
+        ),
       }}
       size="small"
       variant="outlined"

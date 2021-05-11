@@ -30,11 +30,13 @@ const useStyles = makeStyles(() => ({
 interface EditParameterValueProps {
   parameter: Parameter
   updateParameter: (nu: Parameter) => void
+  remove: () => void
 }
 
 const EditParameterValue: React.FC<EditParameterValueProps> = ({
   parameter,
   updateParameter,
+  remove,
 }) => {
   const classes = useStyles()
   switch (parameter.type) {
@@ -51,6 +53,7 @@ const EditParameterValue: React.FC<EditParameterValueProps> = ({
         <EditItemsParameter
           items={parameter}
           updateParameter={updateParameter}
+          remove={remove}
         />
       )
     case ParameterType.Number:

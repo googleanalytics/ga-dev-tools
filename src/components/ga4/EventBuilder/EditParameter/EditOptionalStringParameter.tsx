@@ -43,7 +43,7 @@ const EditOptionalStringParameter: React.FC<EditOptionalStringParameterProps> = 
       value={localValue}
       variant="outlined"
       size="small"
-      label="Parameter Value"
+      label="string value"
       onChange={e => {
         setLocalValue(e.target.value)
       }}

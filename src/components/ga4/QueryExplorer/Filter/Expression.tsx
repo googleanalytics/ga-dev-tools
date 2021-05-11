@@ -16,8 +16,14 @@ import {
   RemoveExpressionFn,
 } from "./index"
 import ExpressionList from "./ExpressionList"
+import WithHelpText from "@/components/WithHelpText"
 
 const useStyles = makeStyles(theme => ({
+  not: {
+    "&> *:not(:last-child)": {
+      marginBottom: theme.spacing(1),
+    },
+  },
   label: {
     margin: theme.spacing(0),
   },
@@ -86,7 +92,7 @@ export const RemoveExpression: React.FC<{
   }, [removeExpression, path])
 
   return (
-    <SAB onClick={onClick} startIcon={<Delete />} className={className}>
+    <SAB onClick={onClick} delete small className={className}>
       remove {label}
     </SAB>
   )
@@ -172,7 +178,7 @@ const Expression: React.FC<{
   }
   if (expression.andGroup) {
     return (
-      <LabeledSection label="and">
+      <WithHelpText notched label="and">
         <ExpressionList
           type={type}
           updateFilter={updateFilter}
@@ -185,12 +191,12 @@ const Expression: React.FC<{
           variant="and"
           expressionList={expression.andGroup}
         />
-      </LabeledSection>
+      </WithHelpText>
     )
   }
   if (expression.orGroup) {
     return (
-      <LabeledSection label="or">
+      <WithHelpText notched label="or">
         <ExpressionList
           type={type}
           updateFilter={updateFilter}
@@ -203,30 +209,32 @@ const Expression: React.FC<{
           variant="or"
           expressionList={expression.orGroup}
         />
-      </LabeledSection>
+      </WithHelpText>
     )
   }
   if (expression.notExpression) {
     return (
-      <LabeledSection label="not">
-        <Expression
-          type={type}
-          metricFilter={metricFilter}
-          updateFilter={updateFilter}
-          addExpression={addExpression}
-          removeExpression={removeExpression}
-          path={path.concat(["notExpression"])}
-          nesting={nesting + 1}
-          expression={expression.notExpression}
-          dimensionFilter={dimensionFilter}
-        />
-        <RemoveExpression
-          className={classes.removeNot}
-          path={path.concat("notExpression")}
-          removeExpression={removeExpression}
-          label="not"
-        />
-      </LabeledSection>
+      <WithHelpText notched label="not">
+        <section className={classes.not}>
+          <Expression
+            type={type}
+            metricFilter={metricFilter}
+            updateFilter={updateFilter}
+            addExpression={addExpression}
+            removeExpression={removeExpression}
+            path={path.concat(["notExpression"])}
+            nesting={nesting + 1}
+            expression={expression.notExpression}
+            dimensionFilter={dimensionFilter}
+          />
+          <RemoveExpression
+            className={classes.removeNot}
+            path={path.concat("notExpression")}
+            removeExpression={removeExpression}
+            label="not"
+          />
+        </section>
+      </WithHelpText>
     )
   }
   return <AddExpression path={path} addExpression={addExpression} />

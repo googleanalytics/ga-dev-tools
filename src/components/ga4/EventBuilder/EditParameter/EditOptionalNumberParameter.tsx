@@ -36,7 +36,6 @@ const EditOptionalNumberParameter: React.FC<EditOptionalNumberParameterProps> = 
   const updateWithLocalParameter = React.useCallback(() => {
     const parsed = parseFloat(localValue)
     if (isNaN(parsed)) {
-      setLocalValue("")
       return updateParameter({ ...parameter, value: undefined })
     }
     if (parsed !== parameter.value) {
@@ -46,8 +45,10 @@ const EditOptionalNumberParameter: React.FC<EditOptionalNumberParameterProps> = 
 
   return (
     <TextField
+      error={localValue.length > 0 && Number.isNaN(parseFloat(localValue))}
+      inputMode="numeric"
       variant="outlined"
-      label="Parameter Value"
+      label="number value"
       className={className}
       size="small"
       value={localValue}

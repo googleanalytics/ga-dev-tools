@@ -15,13 +15,9 @@
 import React from "react"
 
 import makeStyles from "@material-ui/core/styles/makeStyles"
-import Paper from "@material-ui/core/Paper"
-import Typography from "@material-ui/core/Typography"
 import Tooltip from "@material-ui/core/Tooltip"
 import IconButton from "@material-ui/core/IconButton"
-import Button from "@material-ui/core/Button"
-import AddCircle from "@material-ui/icons/AddCircle"
-import RemoveCircle from "@material-ui/icons/RemoveCircle"
+import Delete from "@material-ui/icons/Delete"
 
 import ParameterList from "../ParameterList"
 import {
@@ -30,16 +26,25 @@ import {
   defaultStringParam,
   MPEvent,
   ItemArrayParam,
+  defaultNumberParam,
 } from "../types"
+import { SAB } from "@/components/Buttons"
+import WithHelpText from "@/components/WithHelpText"
+import { ModifyParameterCtx } from "../EditEvent"
+import { ShowAdvancedCtx } from ".."
 
 const useStyles = makeStyles(theme => ({
-  items: {
-    //
+  deleteRow: {
+    display: "flex",
+    alignItems: "baseline",
+    "&> *:not(:first-child)": {
+      flexGrow: 1,
+    },
   },
-  item: {
-    marginTop: theme.spacing(1),
-    padding: theme.spacing(1),
-    marginLeft: theme.spacing(2),
+  items: {
+    "&> *:last-child": {
+      marginTop: theme.spacing(1),
+    },
   },
   itemTitle: {
     margin: "unset",
@@ -49,10 +54,6 @@ const useStyles = makeStyles(theme => ({
   removeItem: {
     marginLeft: theme.spacing(1),
   },
-  addItem: {
-    marginTop: theme.spacing(1),
-    marginLeft: theme.spacing(2),
-  },
 }))
 
 interface EditItemProps {
@@ -60,37 +61,74 @@ interface EditItemProps {
   updateItem: (update: (old: Item) => Item) => void
   updateParameterName: (oldName: string, nuName: string) => void
   isFirst: boolean
+  className?: string
 }
 
-const EditItem: React.FC<EditItemProps> = ({ item, updateItem }) => {
+const EditItem: React.FC<EditItemProps> = ({ item, updateItem, className }) => {
   const parameters = React.useMemo<Parameter[]>(() => item.parameters, [item])
-  const updateParameters = React.useCallback(
-    update => {
-      updateItem(old => ({ ...old, parameters: update(old.parameters) }))
+
+  const updateParameter = React.useCallback(
+    (idx: number, nuParameter: Parameter) => {
+      updateItem(old => {
+        const nu = old.parameters.map((p, i) => (i === idx ? nuParameter : p))
+        return {
+          ...old,
+          parameters: nu,
+        }
+      })
     },
     [updateItem]
   )
-  const addParameter = React.useCallback(() => {
-    updateItem(old => {
-      const nu = old.parameters.concat([defaultStringParam("")])
-      if (MPEvent.hasDuplicateNames(nu)) {
-        return old
-      }
-      return {
-        ...old,
-        parameters: nu,
-      }
-    })
-  }, [updateItem])
+  const addParameter = React.useCallback(
+    (type: "number" | "string" | "items") => {
+      updateItem(old => {
+        const nuParameter =
+          type === "number" ? defaultNumberParam("") : defaultStringParam("")
+        const nu = old.parameters.concat([nuParameter])
+        return {
+          ...old,
+          parameters: nu,
+        }
+      })
+    },
+    [updateItem]
+  )
+
+  const removeParameter = React.useCallback(
+    (idx: number) => {
+      updateItem(old => {
+        const nu = old.parameters.filter((_, i) => i !== idx)
+        return {
+          ...old,
+          parameters: nu,
+        }
+      })
+    },
+    [updateItem]
+  )
+
+  const updateName = React.useCallback(
+    (idx: number, nuName: string) => {
+      updateItem(old => {
+        const nu = old.parameters.map((p, i) =>
+          i === idx ? { ...p, name: nuName } : p
+        )
+        return {
+          ...old,
+          parameters: nu,
+        }
+      })
+    },
+    [updateItem]
+  )
+
   return (
-    <div className="HitBuilderParam">
-      <ParameterList
-        isNested
-        indentation={6}
-        parameters={parameters}
-        updateParameters={updateParameters}
-        addParameter={addParameter}
-      ></ParameterList>
+    <div className={className}>
+      <ModifyParameterCtx.Provider
+        value={{ addParameter, updateName, removeParameter, updateParameter }}
+      >
+        <ParameterList isItemParameter parameters={parameters} />
+      </ModifyParameterCtx.Provider>
     </div>
   )
 }
@@ -98,13 +136,16 @@ const EditItem: React.FC<EditItemProps> = ({ item, updateItem }) => {
 interface EditItemArrayParameterProps {
   items: ItemArrayParam
   updateParameter: (nu: ItemArrayParam) => void
+  remove: () => void
 }
 
 const EditArrayParameter: React.FC<EditItemArrayParameterProps> = ({
   items,
   updateParameter,
+  remove,
 }) => {
   const classes = useStyles()
+  const showAdvanced = React.useContext(ShowAdvancedCtx)
   const [localValues, setLocalValues] = React.useState<Array<Item>>(items.value)
 
   React.useEffect(() => {
@@ -162,35 +203,43 @@ const EditArrayParameter: React.FC<EditItemArrayParameterProps> = ({
   )
 
   return (
-    <div className={classes.items}>
-      {localValues.map((item, idx) => (
-        <Paper key={`item-${idx}`} className={classes.item}>
-          <Typography variant="h5" className={classes.itemTitle}>
-            Item {idx + 1}
-            <Tooltip title={`Remove Item ${idx}`}>
+    <WithHelpText notched label="items">
+      <section className={classes.items}>
+        {showAdvanced && (
+          <Tooltip title="Remove items parameter">
+            <SAB delete small onClick={remove}>
+              parameter
+            </SAB>
+          </Tooltip>
+        )}
+        {localValues.map((item, idx) => (
+          <section className={classes.deleteRow}>
+            <Tooltip title={`Remove Item ${idx + 1}`}>
               <IconButton onClick={removeItem(idx)}>
-                <RemoveCircle />
+                <Delete />
               </IconButton>
             </Tooltip>
-          </Typography>
-          <EditItem
-            updateParameterName={updateParameterName(idx)}
-            item={item}
-            isFirst={idx === 0}
-            updateItem={updateItem(idx)}
-          />
-        </Paper>
-      ))}
-      <Button
-        className={classes.addItem}
-        variant="outlined"
-        color="primary"
-        startIcon={<AddCircle />}
-        onClick={addItem}
-      >
-        Item
-      </Button>
-    </div>
+            <WithHelpText
+              notched
+              key={`item-${idx}`}
+              label={<>item {idx + 1}</>}
+            >
+              <EditItem
+                updateParameterName={updateParameterName(idx)}
+                item={item}
+                isFirst={idx === 0}
+                updateItem={updateItem(idx)}
+              />
+            </WithHelpText>
+          </section>
+        ))}
+        <section>
+          <SAB add small onClick={addItem}>
+            Item
+          </SAB>
+        </section>
+      </section>
+    </WithHelpText>
   )
 }
 export default EditArrayParameter

@@ -14,12 +14,18 @@
 
 import React from "react"
 
-import AddCircle from "@material-ui/icons/AddCircle"
+import clsx from "classnames"
 
-import { Parameters, defaultStringParam, Parameter } from "./types"
+import {
+  Parameters,
+  defaultStringParam,
+  Parameter,
+  defaultNumberParam,
+} from "./types"
 import Typography from "@material-ui/core/Typography"
-import Button from "@material-ui/core/Button"
 import EditParameter from "./EditParameter"
+import { SAB } from "@/components/Buttons"
+import useFormStyles from "@/hooks/useFormStyles"
 
 interface EditUserPropertiesProps {
   user_properties: Parameters
@@ -30,12 +36,20 @@ const EditUserProperties: React.FC<EditUserPropertiesProps> = ({
   user_properties,
   setUserProperties,
 }) => {
-  const addProperty = React.useCallback(() => {
-    setUserProperties(old => old.concat([defaultStringParam("", true)]))
-  }, [setUserProperties])
+  const formClasses = useFormStyles()
+  const addProperty = React.useCallback(
+    (type: "string" | "number") => {
+      const nuParam =
+        type === "string"
+          ? defaultStringParam("", true)
+          : defaultNumberParam("", true)
+      setUserProperties(old => old.concat([nuParam]))
+    },
+    [setUserProperties]
+  )
 
   const updatePropertyName = React.useCallback(
-    (idx: number) => (_oldName: string, nuName: string) => {
+    (idx: number) => (nuName: string) => {
       setUserProperties(old =>
         old.map((property, i) =>
           idx === i ? { ...property, name: nuName } : property
@@ -59,42 +73,34 @@ const EditUserProperties: React.FC<EditUserPropertiesProps> = ({
     [setUserProperties]
   )
   return (
-    <>
-      <Typography variant="h3">User Properties</Typography>
+    <section className={formClasses.form}>
+      <Typography variant="h5">User Properties</Typography>
       {user_properties.length === 0 ? (
         <section>
           <Typography>No user properties configured.</Typography>
-          <Button
-            startIcon={<AddCircle />}
-            variant="outlined"
-            color="primary"
-            onClick={addProperty}
-          >
-            User Property
-          </Button>
         </section>
       ) : (
-        <section>
-          {user_properties.map((property, idx) => (
-            <EditParameter
-              key={`userProperty-${idx}`}
-              updateParameter={updateProperty(idx)}
-              isNested={false}
-              parameter={property}
-              updateName={updatePropertyName(idx)}
-              remove={removeProperty(idx)}
-            />
-          ))}
-          <Button
-            startIcon={<AddCircle />}
-            variant="outlined"
-            onClick={addProperty}
-          >
-            User Property
-          </Button>
-        </section>
+        user_properties.map((property, idx) => (
+          <EditParameter
+            key={`userProperty-${idx}`}
+            updateParameter={updateProperty(idx)}
+            parameter={property}
+            updateName={updatePropertyName(idx)}
+            remove={removeProperty(idx)}
+          />
+        ))
       )}
-    </>
+      <section
+        className={clsx(formClasses.buttonRow, formClasses.marginBottom)}
+      >
+        <SAB add small onClick={() => addProperty("string")}>
+          string
+        </SAB>
+        <SAB add small onClick={() => addProperty("number")}>
+          number
+        </SAB>
+      </section>
+    </section>
   )
 }
 export default EditUserProperties

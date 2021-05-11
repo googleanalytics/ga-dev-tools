@@ -14,76 +14,87 @@
 
 import React from "react"
 
-import Button from "@material-ui/core/Button"
-import AddCircle from "@material-ui/icons/AddCircle"
-
+import { SAB } from "@/components/Buttons"
+import useFormStyles from "@/hooks/useFormStyles"
+import { ModifyParameterCtx } from "./EditEvent"
 import EditParameter from "./EditParameter"
-import { Parameter, Parameters as ParametersT } from "./types"
+import { Parameter, ParameterType } from "./types"
+import { ShowAdvancedCtx } from "."
 
 interface ParameterListProps {
   indentation?: number
+  isItemParameter?: boolean
   parameters: Parameter[]
-  updateParameters: (update: (old: ParametersT) => ParametersT) => void
-  addParameter: () => void
-  isNested: boolean
 }
 
 const ParameterList: React.FC<ParameterListProps> = ({
-  indentation,
+  isItemParameter,
   parameters,
-  updateParameters,
-  addParameter,
   children,
-  isNested,
 }) => {
-  const updateParameter = React.useCallback(
-    (parameter: Parameter) => (nu: Parameter) => {
-      updateParameters(old =>
-        old.map(p => (p.name === parameter.name ? nu : p))
-      )
-    },
-    [updateParameters]
+  const showAdvanced = React.useContext(ShowAdvancedCtx)
+  const formClasses = useFormStyles()
+  const {
+    addParameter,
+    updateName,
+    removeParameter,
+    updateParameter,
+  } = React.useContext(ModifyParameterCtx)!
+
+  const hasItemsParameter = React.useMemo(
+    () => parameters.find(p => p.type === ParameterType.Items) !== undefined,
+    [parameters]
   )
 
-  const updateName = React.useCallback(
-    (oldName: string, nuName: string) => {
-      updateParameters(old =>
-        old.map(p => (p.name === oldName ? { ...p, name: nuName } : p))
-      )
-    },
-    [updateParameters]
-  )
-
-  const remove = React.useCallback(
-    (parameter: Parameter) => () => {
-      updateParameters(old => old.filter(p => p.name !== parameter.name))
-    },
-    [updateParameters]
+  const buttons = (showAdvanced || isItemParameter) && (
+    <div className={formClasses.buttonRow}>
+      <SAB add small onClick={() => addParameter("string")}>
+        string
+      </SAB>
+      <SAB add small onClick={() => addParameter("number")}>
+        number
+      </SAB>
+      {!hasItemsParameter && !isItemParameter && (
+        <SAB add small onClick={() => addParameter("items")}>
+          items
+        </SAB>
+      )}
+      {children}
+    </div>
   )
 
   return (
-    <div className={`ParameterList indent-${indentation}`}>
-      {parameters.map(parameter => (
-        <EditParameter
-          remove={remove(parameter)}
-          updateName={updateName}
-          isNested={isNested}
-          key={parameter.name}
-          parameter={parameter}
-          updateParameter={updateParameter(parameter)}
-        />
-      ))}
-      <div className="HitBuilderParam buttons">
-        <Button
-          color="primary"
-          variant="outlined"
-          startIcon={<AddCircle />}
-          onClick={addParameter}
-        >
-          Parameter
-        </Button>
-        {children}
-      </div>
+    <div>
+      {parameters.map((parameter, idx) => {
+        const editParameter = (
+          <EditParameter
+            remove={() => removeParameter(idx)}
+            updateName={(nuName: string) => updateName(idx, nuName)}
+            key={`${parameter.name}-${idx}`}
+            parameter={parameter}
+            updateParameter={parameter => updateParameter(idx, parameter)}
+          />
+        )
+        if (idx === parameters.length - 1) {
+          if (parameter.type === ParameterType.Items) {
+            return (
+              <>
+                {buttons}
+                {editParameter}
+              </>
+            )
+          } else {
+            return (
+              <>
+                {editParameter}
+                {buttons}
+              </>
+            )
+          }
+        }
+        return editParameter
+      })}
+      {isItemParameter && parameters.length === 0 && buttons}
     </div>
   )
 }

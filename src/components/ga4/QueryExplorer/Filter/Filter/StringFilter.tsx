@@ -79,6 +79,7 @@ const StringFilter: React.FC<StringFilterProps> = ({
         size="small"
         variant="outlined"
         value={stringFilter.value || ""}
+        label="value"
         onChange={e => {
           const nu = e.target.value
           updateStringFilter(old => ({ ...old, value: nu }))

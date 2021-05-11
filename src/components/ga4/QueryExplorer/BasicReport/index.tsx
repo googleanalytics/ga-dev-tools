@@ -86,6 +86,8 @@ const metricFiltersLink = (
   </ExternalLink>
 )
 
+export const ShowAdvancedCtx = React.createContext(false)
+
 const BasicReport = () => {
   const classes = useStyles()
   const {
@@ -151,7 +153,7 @@ const BasicReport = () => {
   }, [metrics, dimensions])
 
   return (
-    <>
+    <ShowAdvancedCtx.Provider value={showAdvanced}>
       <Typography>
         Returns a customized report of your Google Analytics event data. Reports
         contain statistics derived from data collected by the Google Analytics
@@ -205,12 +207,13 @@ const BasicReport = () => {
         setMetricAggregations={setMetricAggregations}
       />
       <WithHelpText
-        label={showAdvanced ? "dimension filters" : "dimension filter"}
+        notched={showAdvanced}
+        label={showAdvanced ? "dimension filters" : undefined}
         helpText={
-          <Typography>
+          <>
             The {showAdvanced ? "filters" : "filter"} to use for the dimensions
             in the request. See {dimensionFiltersLink} on devsite.
-          </Typography>
+          </>
         }
       >
         <Filter
@@ -222,12 +225,13 @@ const BasicReport = () => {
         />
       </WithHelpText>
       <WithHelpText
-        label={showAdvanced ? "metric filters" : "metric filter"}
+        notched={showAdvanced}
+        label={showAdvanced ? "metric filters" : undefined}
         helpText={
-          <Typography>
+          <>
             The {showAdvanced ? "filters" : "filter"} to use for the metrics in
             the request. See {metricFiltersLink} on devsite.
-          </Typography>
+          </>
         }
       >
         <Filter
@@ -268,10 +272,10 @@ const BasicReport = () => {
       )}
       <WithHelpText
         helpText={
-          <Typography>
+          <>
             Return rows with all metrics equal to 0 separately. See{" "}
             {keepEmptyRowsLink} on devsite.
-          </Typography>
+          </>
         }
       >
         <LabeledCheckbox checked={keepEmptyRows} setChecked={setKeepEmptyRows}>
@@ -305,7 +309,7 @@ const BasicReport = () => {
         requestStatus={requestStatus}
         shouldCollapse={shouldCollapseRequest}
       />
-    </>
+    </ShowAdvancedCtx.Provider>
   )
 }
 

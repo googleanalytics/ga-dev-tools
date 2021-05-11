@@ -16,6 +16,8 @@ import * as React from "react"
 import Layout from "@/components/Layout"
 import DimensionsMetricsExplorer from "@/components/ga4/DimensionsMetricsExplorer"
 
+// TODO - ask brett if authentication is required for the "0" property. IF so,
+// ask if we can relax that restriction to just apiKey.
 export default ({ location: { pathname } }) => {
   return (
     <Layout

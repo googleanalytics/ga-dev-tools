@@ -220,9 +220,6 @@ export class MPEvent {
   updateParameters(update: (old: Parameters) => Parameters): MPEvent {
     const nuEvent = this.clone()
     const nuParameters = update(nuEvent.eventData.parameters)
-    if (MPEvent.hasDuplicateNames(nuParameters)) {
-      return nuEvent
-    }
     nuEvent.eventData.parameters = nuParameters
     return nuEvent
   }
@@ -231,16 +228,18 @@ export class MPEvent {
     return Object.values<Parameter>(this.eventData.parameters)
   }
 
-  // TODO - remove parameterName argument.
-  addParameter(parameterName: string, parameter: Parameter): MPEvent {
-    const alreadyHasParameter =
-      this.eventData.parameters.find(p => p.name === parameter.name) !==
-      undefined
-    if (alreadyHasParameter) {
-      return this
-    }
+  addParameter(parameter: Parameter): MPEvent {
     const nuEvent = this.clone()
-    nuEvent.eventData.parameters.push(parameter)
+    let nuParameters = nuEvent.eventData.parameters
+    let hasItems =
+      nuParameters.find(p => p.type === ParameterType.Items) !== undefined
+    if (hasItems) {
+      const items = nuParameters.pop()!
+      nuParameters.push(parameter)
+      nuParameters.push(items)
+    } else {
+      nuParameters.push(parameter)
+    }
     return nuEvent
   }
 

@@ -14,26 +14,17 @@
 
 import React from "react"
 
-import RemoveCircle from "@material-ui/icons/RemoveCircle"
 import makeStyles from "@material-ui/core/styles/makeStyles"
 import TextField from "@material-ui/core/TextField"
 import Tooltip from "@material-ui/core/Tooltip"
 import IconButton from "@material-ui/core/IconButton"
-import Select from "@material-ui/core/Select"
-import MenuItem from "@material-ui/core/MenuItem"
+import Remove from "@material-ui/icons/Delete"
 
 import EditParameterValue from "./EditParameterValue"
-import {
-  Parameter,
-  ParameterType,
-  defaultParameterFor,
-  MPEvent,
-} from "../types"
+import { Parameter, ParameterType } from "../types"
+import { ShowAdvancedCtx } from ".."
 
 const useStyles = makeStyles(theme => ({
-  parameter: {
-    marginBottom: theme.spacing(1),
-  },
   itemParameterRow: {
     display: "flex",
     "& > div": {
@@ -43,9 +34,10 @@ const useStyles = makeStyles(theme => ({
   parameterRow: {
     display: "flex",
     alignItems: "center",
-    "& > div": {
+    "& > *:not(:last-child)": {
       marginRight: theme.spacing(1),
     },
+    marginBottom: theme.spacing(1),
   },
   parameterType: {
     minWidth: theme.spacing(12),
@@ -57,59 +49,39 @@ const useStyles = makeStyles(theme => ({
 
 interface CustomParamLabelProps {
   name: string
-  updateName: (oldName: string, newName: string) => void
-  remove: () => void
+  updateName: (nuName: string) => void
 }
 
-const CustomLabel: React.FC<CustomParamLabelProps> = ({
-  name,
-  updateName,
-  remove,
-}) => {
+const CustomLabel: React.FC<CustomParamLabelProps> = ({ name, updateName }) => {
   const classes = useStyles()
   const [localName, setLocalName] = React.useState(name)
-  // TODO - This shouldn't be necessary, but something funky is going on effect
-  // wise. This will probably be easy to fix once I have the hooks linter turned
-  // on.
-  const [refresh, setForceRefresh] = React.useState(0)
 
   React.useEffect(() => {
     setLocalName(name)
-  }, [name, refresh])
+  }, [name])
 
   const updateCustomParameterName = React.useCallback(() => {
-    updateName(name, localName)
-    setForceRefresh(a => a + 1)
-  }, [localName, name, updateName])
+    updateName(localName)
+  }, [localName, updateName])
 
   return (
     <TextField
       variant="outlined"
       size="small"
       className={classes.customLabel}
-      label="Parameter name"
+      label="name"
       value={localName}
       onChange={e => setLocalName(e.target.value)}
       onBlur={updateCustomParameterName}
-      InputProps={{
-        endAdornment: (
-          <Tooltip title={`Remove ${localName} parameter`}>
-            <IconButton tabIndex={1} onClick={remove} size="small">
-              <RemoveCircle />
-            </IconButton>
-          </Tooltip>
-        ),
-      }}
     />
   )
 }
 
 interface EditParameterProps {
-  updateName: (oldName: string, newName: string) => void
   remove: () => void
   parameter: Parameter
   updateParameter: (nu: Parameter) => void
-  isNested: boolean
+  updateName: (nuName: string) => void
 }
 
 const EditParameter: React.FC<EditParameterProps> = ({
@@ -117,77 +89,41 @@ const EditParameter: React.FC<EditParameterProps> = ({
   remove,
   parameter,
   updateParameter,
-  isNested,
 }) => {
+  const showAdvanced = React.useContext(ShowAdvancedCtx)
   const classes = useStyles()
   const isItem = parameter.type === ParameterType.Items
 
-  return (
-    <div className={classes.parameter}>
-      {isItem ? (
-        <>
-          <section className={classes.itemParameterRow}>
-            <CustomLabel
-              name={parameter.name}
-              updateName={updateName}
-              remove={remove}
-            />
+  const removeParameter = React.useMemo(() => {
+    if (showAdvanced || isItem) {
+      return (
+        <Tooltip title="remove parameter">
+          <IconButton onClick={remove} size="small">
+            <Remove />
+          </IconButton>
+        </Tooltip>
+      )
+    }
+    return null
+  }, [remove, showAdvanced, isItem])
 
-            <Select
-              className={classes.parameterType}
-              value={parameter.type}
-              onChange={e => {
-                const newParameterType: ParameterType = e.target
-                  .value as ParameterType
-                updateParameter(
-                  defaultParameterFor(newParameterType, parameter.name)
-                )
-              }}
-            >
-              {MPEvent.parameterTypeOptions()
-                .filter(a => (isNested ? a !== ParameterType.Items : true))
-                .map(option => (
-                  <MenuItem value={option} key={option}>
-                    {option}
-                  </MenuItem>
-                ))}
-            </Select>
-          </section>
-          <EditParameterValue
-            parameter={parameter}
-            updateParameter={updateParameter}
-          />
-        </>
+  return (
+    <div>
+      {isItem ? (
+        <EditParameterValue
+          parameter={parameter}
+          remove={remove}
+          updateParameter={updateParameter}
+        />
       ) : (
         <section className={classes.parameterRow}>
-          <CustomLabel
-            name={parameter.name}
-            updateName={updateName}
-            remove={remove}
-          />
+          {removeParameter}
+          <CustomLabel name={parameter.name} updateName={updateName} />
           <EditParameterValue
+            remove={remove}
             parameter={parameter}
             updateParameter={updateParameter}
           />
-          <Select
-            className={classes.parameterType}
-            value={parameter.type}
-            onChange={e => {
-              const newParameterType: ParameterType = e.target
-                .value as ParameterType
-              updateParameter(
-                defaultParameterFor(newParameterType, parameter.name)
-              )
-            }}
-          >
-            {MPEvent.parameterTypeOptions()
-              .filter(a => (isNested ? a !== ParameterType.Items : true))
-              .map(option => (
-                <MenuItem value={option} key={option}>
-                  {option}
-                </MenuItem>
-              ))}
-          </Select>
         </section>
       )}
     </div>

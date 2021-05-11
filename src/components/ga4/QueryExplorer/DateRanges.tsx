@@ -2,7 +2,6 @@ import * as React from "react"
 
 import { v4 as uuid } from "uuid"
 import makeStyles from "@material-ui/core/styles/makeStyles"
-import Typography from "@material-ui/core/Typography"
 import TextField from "@material-ui/core/TextField"
 import Delete from "@material-ui/icons/Delete"
 
@@ -112,6 +111,9 @@ const useDateRanges: UseDateRanges = ({ setDateRanges }) => {
   }
 }
 
+interface Props {
+  advanced: boolean
+}
 const useStyles = makeStyles(theme => ({
   heading: {
     margin: theme.spacing(1, 0),
@@ -129,11 +131,11 @@ const useStyles = makeStyles(theme => ({
     flexDirection: "column",
     marginTop: theme.spacing(1),
   },
-  dateRange: {
+  dateRange: ({ advanced }: Props) => ({
     // marginLeft: theme.spacing(2),
-    marginBottom: theme.spacing(1),
+    marginBottom: advanced ? theme.spacing(1) : "unset",
     display: "flex",
-  },
+  }),
   name: {
     width: "45ch",
   },
@@ -154,7 +156,7 @@ const DateRanges: React.FC<{
   className?: string
   showAdvanced: boolean
 }> = ({ dateRanges, setDateRanges, className, showAdvanced }) => {
-  const classes = useStyles()
+  const classes = useStyles({ advanced: showAdvanced })
   const {
     addDateRange,
     removeDateRange,
@@ -174,15 +176,16 @@ const DateRanges: React.FC<{
   return (
     <WithHelpText
       label={showAdvanced ? "date ranges" : undefined}
+      notched={showAdvanced}
       className={className}
       helpText={
-        <Typography>
+        <>
           The date {showAdvanced ? "ranges" : "range"} to use for the request.
           Format should be either <InlineCode>YYYY-MM-DD</InlineCode>,{" "}
           <InlineCode>yesterday</InlineCode>, <InlineCode>today</InlineCode>, or{" "}
           <InlineCode>NdaysAgo</InlineCode> where N is a positive integer. See{" "}
           {dateRange} on devsite.
-        </Typography>
+        </>
       }
     >
       <section className={classes.dateRanges}>

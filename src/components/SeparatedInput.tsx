@@ -31,6 +31,7 @@ const SeparatedInput: React.FC<SeparatedInputProps> = ({
       options={options || []}
       value={values}
       inputValue={inputValue}
+      limitTags={3}
       onChange={(_event, newValue) => {
         setValues && setValues(newValue)
         onChange && onChange(newValue)

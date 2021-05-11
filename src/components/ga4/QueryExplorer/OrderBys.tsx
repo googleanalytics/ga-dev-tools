@@ -47,9 +47,7 @@ type UseOrderBys = (arg: {
   setDimensionOrderType: (id: number, orderType: OrderType | undefined) => void
 }
 const useOrderBys: UseOrderBys = ({ setOrderBys }) => {
-  const removeOrderBy: ReturnType<
-    UseOrderBys
-  >["removeOrderBy"] = React.useCallback(
+  const removeOrderBy: ReturnType<UseOrderBys>["removeOrderBy"] = React.useCallback(
     id => {
       setOrderBys((old = []) => old.filter((_, idx) => idx !== id))
     },
@@ -85,9 +83,7 @@ const useOrderBys: UseOrderBys = ({ setOrderBys }) => {
     [setOrderBys]
   )
 
-  const setDimension: ReturnType<
-    UseOrderBys
-  >["setDimension"] = React.useCallback(
+  const setDimension: ReturnType<UseOrderBys>["setDimension"] = React.useCallback(
     (id, dimension) => {
       setOrderBys((old = []) =>
         old.map((orderBy, idx) => {
@@ -107,9 +103,7 @@ const useOrderBys: UseOrderBys = ({ setOrderBys }) => {
     [setOrderBys]
   )
 
-  const setDimensionOrderType: ReturnType<
-    UseOrderBys
-  >["setDimensionOrderType"] = React.useCallback(
+  const setDimensionOrderType: ReturnType<UseOrderBys>["setDimensionOrderType"] = React.useCallback(
     (id, orderType) => {
       setOrderBys((old = []) =>
         old.map((orderBy, idx) => {
@@ -126,9 +120,7 @@ const useOrderBys: UseOrderBys = ({ setOrderBys }) => {
     [setOrderBys]
   )
 
-  const setDirection: ReturnType<
-    UseOrderBys
-  >["setDirection"] = React.useCallback(
+  const setDirection: ReturnType<UseOrderBys>["setDirection"] = React.useCallback(
     (id, direction) => {
       setOrderBys((old = []) =>
         old.map((orderBy, idx) => {
@@ -163,9 +155,6 @@ const useStyles = makeStyles(theme => ({
     flexGrow: 1,
     margin: theme.spacing(1, 0, 1, 1),
   },
-  orderBys: {
-    display: "flex",
-  },
   orderBy: {
     display: "flex",
     margin: theme.spacing(1, 0),
@@ -191,7 +180,6 @@ const useStyles = makeStyles(theme => ({
     "& > *:not(:first-child)": {
       marginLeft: theme.spacing(1),
     },
-    marginBottom: theme.spacing(1),
   },
   buttons: {
     "&> *:not(:first-child)": {
@@ -356,8 +344,8 @@ const OrderBys: React.FC<OrderBysProps> = ({
 
   return (
     <WithHelpText
+      notched
       label="order by"
-      className={className}
       helpText={
         <Typography variant="caption" color="textSecondary">
           The ordering to use for the request. See {orderBysLink} on devsite.
@@ -365,10 +353,9 @@ const OrderBys: React.FC<OrderBysProps> = ({
       }
     >
       <section>
-        <div className={classes.orderBys}>
-          <hr />
+        {orderBys !== undefined && orderBys.length > 0 && (
           <section className={classes.grouped}>
-            {orderBys?.map((orderBy, idx) => {
+            {orderBys.map((orderBy, idx) => {
               const selectedType = optionFor(orderBy)
               const selectedDirection = directionFor(orderBy)
               const selectedOrderType = orderTypeFor(orderBy)
@@ -411,7 +398,7 @@ const OrderBys: React.FC<OrderBysProps> = ({
               )
             })}
           </section>
-        </div>
+        )}
         <section className={classes.buttons}>
           {props.metric ? (
             <SAB

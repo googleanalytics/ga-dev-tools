@@ -28,6 +28,7 @@ import {
   UrlParam,
   MPEventData,
 } from "./types"
+import useFilter from "../QueryExplorer/Filter/useFilter"
 
 type Dispatch<T> = React.Dispatch<React.SetStateAction<T>>
 
@@ -76,12 +77,11 @@ interface UseEventsReturn {
   parameterizedUrl: string
 }
 
-type UseEvents = () => UseEventsReturn
-const useEvents: UseEvents = () => {
+type UseEvents = (useFirebase: boolean) => UseEventsReturn
+const useEvents: UseEvents = useFirebase => {
   const urlParts = useMemo(() => {
     return unParameterizeUrl()
   }, [])
-  // TODO - default this back to MPEvent.default()
   const [event, setEvent] = useState(urlParts.event || MPEvent.default())
   const [api_secret, setAPISecret] = usePersistentString(
     StorageKey.eventBuilderApiSecret,
@@ -145,10 +145,10 @@ const useEvents: UseEvents = () => {
     if (user_id !== "") {
       optionals["user_id"] = user_id
     }
-    if (client_id !== "") {
+    if (client_id !== "" && !useFirebase) {
       optionals["client_id"] = client_id
     }
-    if (app_instance_id !== "") {
+    if (app_instance_id !== "" && useFirebase) {
       optionals["app_instance_id"] = app_instance_id
     }
     return {
@@ -160,6 +160,7 @@ const useEvents: UseEvents = () => {
           : MPEvent.parametersToPayload(user_properties),
     }
   }, [
+    useFirebase,
     client_id,
     user_id,
     app_instance_id,
@@ -264,14 +265,14 @@ const useEvents: UseEvents = () => {
     api_secret,
     parameterizedUrl,
     setAPISecret,
-    firebase_app_id,
+    firebase_app_id: useFirebase ? firebase_app_id : "",
     setFirebaseAppId,
-    measurement_id,
-    setMeasurementId,
-    client_id,
-    setClientId,
-    app_instance_id,
+    app_instance_id: useFirebase ? app_instance_id : "",
     setAppInstanceId,
+    measurement_id: useFirebase ? "" : measurement_id,
+    setMeasurementId,
+    client_id: useFirebase ? "" : client_id,
+    setClientId,
     user_id,
     setUserId,
     non_personalized_ads,

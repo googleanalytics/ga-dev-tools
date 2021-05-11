@@ -95,9 +95,7 @@ const useCohortSpec: UseCohortSpec = ({
     [hasRequiredDimension]
   )
 
-  const updateCohortsRange: ReturnType<
-    UseCohortSpec
-  >["updateCohortsRange"] = React.useCallback(
+  const updateCohortsRange: ReturnType<UseCohortSpec>["updateCohortsRange"] = React.useCallback(
     update => {
       setCohortSpec((old = {}) => ({
         ...old,
@@ -107,9 +105,7 @@ const useCohortSpec: UseCohortSpec = ({
     [setCohortSpec]
   )
 
-  const setGranularity: ReturnType<
-    UseCohortSpec
-  >["setGranularity"] = React.useCallback(
+  const setGranularity: ReturnType<UseCohortSpec>["setGranularity"] = React.useCallback(
     granularity => {
       setCohortSpec((old = {}) => ({
         ...old,
@@ -121,9 +117,7 @@ const useCohortSpec: UseCohortSpec = ({
     },
     [setCohortSpec]
   )
-  const addCohort: ReturnType<
-    UseCohortSpec
-  >["addCohort"] = React.useCallback(() => {
+  const addCohort: ReturnType<UseCohortSpec>["addCohort"] = React.useCallback(() => {
     setCohortSpec((old = {}) => {
       const defaults = {}
       if (old.cohorts === undefined || old.cohorts.length === 0) {
@@ -145,9 +139,7 @@ const useCohortSpec: UseCohortSpec = ({
     })
   }, [setCohortSpec, hasRequiredDimension])
 
-  const removeCohort: ReturnType<
-    UseCohortSpec
-  >["removeCohort"] = React.useCallback(
+  const removeCohort: ReturnType<UseCohortSpec>["removeCohort"] = React.useCallback(
     id => {
       setCohortSpec((old = {}) => {
         if (old.cohorts?.length === 1) {
@@ -164,9 +156,7 @@ const useCohortSpec: UseCohortSpec = ({
     [setCohortSpec]
   )
 
-  const updateDateRange: ReturnType<
-    UseCohortSpec
-  >["updateDateRange"] = React.useCallback(
+  const updateDateRange: ReturnType<UseCohortSpec>["updateDateRange"] = React.useCallback(
     (id, update) => {
       setCohortSpec((old = {}) => ({
         ...old,
@@ -304,16 +294,10 @@ const CohortSpec: React.FC<CohortSpecProps> = ({
 
   return (
     <WithHelpText
+      notched
       label="cohort"
       helpText={
-        <>
-          <Typography>
-            The cohort group for this request. See {cohortSpecLink} on devsite.
-          </Typography>
-          <SAB add small onClick={addCohort}>
-            cohort
-          </SAB>
-        </>
+        <>The cohort group for this request. See {cohortSpecLink} on devsite.</>
       }
     >
       {Object.values(warnings).find(a => a) &&
@@ -381,6 +365,9 @@ const CohortSpec: React.FC<CohortSpecProps> = ({
           />
         </div>
       ))}
+      <SAB add small onClick={addCohort}>
+        cohort
+      </SAB>
     </WithHelpText>
   )
 }

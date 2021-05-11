@@ -14,6 +14,11 @@ import {
 import Expression, { AddExpression, RemoveExpression } from "./Expression"
 
 const useStyles = makeStyles(theme => ({
+  expressionList: {
+    "&> *:not(:last-child)": {
+      marginBottom: theme.spacing(1),
+    },
+  },
   buttons: {
     display: "flex",
     "& > *:not(:first-child)": {
@@ -48,7 +53,7 @@ const ExpressionList: React.FC<{
   const classes = useStyles()
 
   return (
-    <>
+    <section className={classes.expressionList}>
       {expressionList.expressions?.map((expression, idx) => (
         <Expression
           type={type}
@@ -77,7 +82,7 @@ const ExpressionList: React.FC<{
           label={variant}
         />
       </section>
-    </>
+    </section>
   )
 }
 

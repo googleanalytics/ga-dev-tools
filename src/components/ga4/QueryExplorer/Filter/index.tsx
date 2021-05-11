@@ -14,11 +14,13 @@ import {
 import Expression, { ExpressionType } from "./Expression"
 import useFilter, { UseFilterContext } from "./useFilter"
 
+interface Props {
+  notched: boolean
+}
 const useStyles = makeStyles(theme => ({
-  filter: {
-    marginTop: theme.spacing(1),
-    marginBottom: theme.spacing(2),
-  },
+  filter: ({ notched }: Props) => ({
+    marginTop: notched ? theme.spacing(1) : "unset",
+  }),
   title: {
     margin: theme.spacing(1, 0),
   },
@@ -60,7 +62,7 @@ const Filter: React.FC<FilterProps> = ({
   type,
   storageKey,
 }) => {
-  const classes = useStyles()
+  const classes = useStyles({ notched: showAdvanced })
   const useFilterValue = useFilter(storageKey, showAdvanced)
   const {
     expression,

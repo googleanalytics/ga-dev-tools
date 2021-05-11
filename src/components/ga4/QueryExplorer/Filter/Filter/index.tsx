@@ -2,7 +2,7 @@ import * as React from "react"
 import { useState, useMemo } from "react"
 
 import clsx from "classnames"
-import { makeStyles } from "@material-ui/core"
+import { makeStyles, Tooltip } from "@material-ui/core"
 import Delete from "@material-ui/icons/Delete"
 
 import {
@@ -12,7 +12,7 @@ import {
   MetricPicker,
 } from "@/components/GA4Pickers"
 import Select, { SelectOption } from "@/components/Select"
-import { TooltipIconButton } from "@/components/Buttons"
+import { SAB, TooltipIconButton } from "@/components/Buttons"
 import { UseFilterContext } from "../useFilter"
 import {
   BaseFilter,
@@ -47,9 +47,13 @@ export const useStyles = makeStyles(theme => ({
   },
   filter: {
     display: "flex",
+    flexWrap: "wrap",
     alignItems: "center",
-    "& > *:not(:first-child)": {
+    "&> *:not(:first-child)": {
       marginLeft: theme.spacing(1),
+    },
+    "&> *": {
+      marginBottom: theme.spacing(1),
     },
   },
 }))
@@ -144,12 +148,13 @@ const Filter: React.FC<{
       className={clsx(classes.filter, { [classes.indented]: nesting > 0 })}
     >
       {showAdvanced && (
-        <TooltipIconButton onClick={onClick} tooltip="Remove filter">
+        <TooltipIconButton onClick={onClick} tooltip="delete filter">
           <Delete />
         </TooltipIconButton>
       )}
       {type === "metric" ? (
         <MetricPicker
+          label="metric filter"
           autoSelectIfOne={showAdvanced}
           metricFilter={metricFilter}
           setMetric={setMetric}
@@ -157,6 +162,7 @@ const Filter: React.FC<{
         />
       ) : (
         <DimensionPicker
+          label="dimension filter"
           autoSelectIfOne={showAdvanced}
           dimensionFilter={dimensionFilter}
           setDimension={setDimension}

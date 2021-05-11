@@ -1,6 +1,7 @@
 import * as React from "react"
 import { Button, Tooltip, IconButton, ButtonProps } from "@material-ui/core"
-import { Add } from "@material-ui/icons"
+import Add from "@material-ui/icons/Add"
+import Delete from "@material-ui/icons/Delete"
 
 // TODO - PAB shouldn't allow you to provide variant or color so it's more
 // obvious how it works.
@@ -11,13 +12,19 @@ export const PAB: typeof Button = ({ ...props }) => {
 
 // Secondary Action Button
 interface SABProps extends ButtonProps {
-  add?: true | undefined
-  small?: true | undefined
+  add?: boolean
+  delete?: boolean
+  small?: boolean
 }
-export const SAB: React.FC<SABProps> = ({ add, small, ...props }) => {
+export const SAB: React.FC<SABProps> = ({
+  add,
+  small,
+  delete: deleteIcon,
+  ...props
+}) => {
   return (
     <Button
-      startIcon={add ? <Add /> : null}
+      startIcon={add ? <Add /> : deleteIcon ? <Delete /> : null}
       {...props}
       size={small ? "small" : props.size}
       variant="outlined"
