@@ -36,6 +36,25 @@ import { Url } from "@/constants"
 import WithHelpText from "@/components/WithHelpText"
 import useFormStyles from "@/hooks/useFormStyles"
 
+export enum Label {
+  APISecret = "api_secret",
+
+  FirebaseAppID = "firebase_app_id",
+  AppInstanceID = "app_instance_id",
+
+  MeasurementID = "measurement_id",
+  ClientID = "client_id",
+
+  UserId = "user_id",
+
+  EventCategory = "event_category",
+  EventName = "event_name",
+  TimestampMicros = "timestamp_micros",
+  NonPersonalizedAds = "non_personalized_ads",
+
+  Payload = "payload",
+}
+
 const ga4MeasurementProtocol = (
   <ExternalLink href={Url.ga4MeasurementProtocol}>
     GA4 Measurement Protocol
@@ -114,6 +133,7 @@ const EventBuilder: React.FC = () => {
         <Grid item>gtag.js</Grid>
         <Grid item>
           <Switch
+            data-testid="use firebase"
             checked={useFirebase}
             onChange={e => {
               setUseFirebase(e.target.checked)
@@ -135,7 +155,8 @@ const EventBuilder: React.FC = () => {
           href="https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference#api_secret"
           linkTitle="See api_secret on devsite."
           value={api_secret || ""}
-          label="api_secret"
+          label={Label.APISecret}
+          id={Label.APISecret}
           helperText="The API secret for the property to send the event to."
           onChange={setAPISecret}
         />
@@ -146,7 +167,8 @@ const EventBuilder: React.FC = () => {
               href="https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference?client_type=firebase#firebase_app_id"
               linkTitle="See firebase_app_id on devsite."
               value={firebase_app_id || ""}
-              label="firebase_app_id"
+              label={Label.FirebaseAppID}
+              id={Label.FirebaseAppID}
               helperText="The identifier for your firebase app."
               onChange={setFirebaseAppId}
             />
@@ -155,7 +177,8 @@ const EventBuilder: React.FC = () => {
               href="https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference?client_type=firebase#app_instance_id"
               linkTitle="See app_instance_id on devsite."
               value={app_instance_id || ""}
-              label="app_instance_id"
+              label={Label.AppInstanceID}
+              id={Label.AppInstanceID}
               helperText="The unique identifier for a specific Firebase installation."
               onChange={setAppInstanceId}
             />
@@ -167,7 +190,8 @@ const EventBuilder: React.FC = () => {
               href="https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference?client_type=gtag#measurement_id"
               linkTitle="See measurement_id on devsite."
               value={measurement_id || ""}
-              label="measurement_id"
+              label={Label.MeasurementID}
+              id={Label.MeasurementID}
               helperText="The identifier for your data stream."
               onChange={setMeasurementId}
             />
@@ -176,7 +200,8 @@ const EventBuilder: React.FC = () => {
               href="https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference?client_type=gtag#client_id"
               linkTitle="See client_id on devsite."
               value={client_id || ""}
-              label="client_id"
+              label={Label.ClientID}
+              id={Label.ClientID}
               helperText="The unique identifier for an instance of a web client."
               onChange={setClientId}
             />
@@ -188,7 +213,8 @@ const EventBuilder: React.FC = () => {
           }#user_id`}
           linkTitle="See user_id on devsite."
           value={user_id || ""}
-          label="user_id"
+          label={Label.UserId}
+          id={Label.UserId}
           helperText="The unique identifier for a given user."
           onChange={setUserId}
         />
@@ -198,6 +224,7 @@ const EventBuilder: React.FC = () => {
           className={classes.fullWidth}
         >
           <Autocomplete<MPEventCategory, false, true, true>
+            data-testid={Label.EventCategory}
             fullWidth
             disableClearable
             autoComplete
@@ -212,7 +239,8 @@ const EventBuilder: React.FC = () => {
             renderInput={params => (
               <TextField
                 {...params}
-                label="event category"
+                label={Label.EventCategory}
+                id={Label.EventCategory}
                 size="small"
                 variant="outlined"
               />
@@ -239,7 +267,8 @@ const EventBuilder: React.FC = () => {
               renderInput={params => (
                 <TextField
                   {...params}
-                  label="event name"
+                  label={Label.EventName}
+                  id={Label.EventName}
                   size="small"
                   variant="outlined"
                 />
@@ -252,7 +281,8 @@ const EventBuilder: React.FC = () => {
             fullWidth
             variant="outlined"
             size="small"
-            label="event name"
+            label={Label.EventName}
+            id={Label.EventName}
             value={event.getEventName()}
             helperText="The name of the event"
             onChange={e => {
@@ -261,7 +291,8 @@ const EventBuilder: React.FC = () => {
           />
         )}
         <LinkedTextField
-          label="timestamp_micros"
+          label={Label.TimestampMicros}
+          id={Label.TimestampMicros}
           linkTitle="See timestamp_micros on devsite."
           href={`https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference?client_type=${
             useFirebase ? "firebase" : "gtag"
@@ -302,8 +333,9 @@ const EventBuilder: React.FC = () => {
           <LabeledCheckbox
             checked={non_personalized_ads}
             setChecked={setNonPersonalizedAds}
+            id={Label.NonPersonalizedAds}
           >
-            non_personalized_ads
+            {Label.NonPersonalizedAds}
           </LabeledCheckbox>
         </WithHelpText>
       </section>

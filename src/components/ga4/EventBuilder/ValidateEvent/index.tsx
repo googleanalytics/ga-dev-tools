@@ -90,7 +90,10 @@ const ValidateEvent: React.FC<ValidateEventProps> = props => {
   const classes = useStyles(props)
 
   return (
-    <Paper className={clsx(classes.editEvent, formClasses.form)}>
+    <Paper
+      className={clsx(classes.editEvent, formClasses.form)}
+      data-testid="validate and send"
+    >
       <ValidationStatus
         className={classes.validationStatus}
         validationStatus={validationStatus}

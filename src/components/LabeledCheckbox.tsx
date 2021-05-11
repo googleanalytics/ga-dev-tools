@@ -9,6 +9,7 @@ interface LabeledCheckboxProps {
   disabled?: boolean
   className?: string
   checkboxClassName?: string
+  id?: string
 }
 
 const LabeledCheckbox: React.FC<LabeledCheckboxProps> = ({
@@ -19,12 +20,14 @@ const LabeledCheckbox: React.FC<LabeledCheckboxProps> = ({
   className,
   checkboxClassName,
   disabled,
+  id,
 }) => {
   return (
     <FormControlLabel
       className={className}
       control={
         <Checkbox
+          id={id}
           className={checkboxClassName}
           size="small"
           checked={checked}

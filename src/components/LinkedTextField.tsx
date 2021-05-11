@@ -12,6 +12,7 @@ export interface LinkedTextFieldProps {
   extraAction?: JSX.Element
   required?: true
   disabled?: boolean
+  id?: string
 }
 
 const LinkedTextField: React.FC<LinkedTextFieldProps> = ({
@@ -24,6 +25,7 @@ const LinkedTextField: React.FC<LinkedTextFieldProps> = ({
   helperText,
   disabled,
   extraAction,
+  id,
 }) => {
   return (
     <TextField
@@ -39,6 +41,7 @@ const LinkedTextField: React.FC<LinkedTextFieldProps> = ({
           </span>
         ),
       }}
+      id={id}
       size="small"
       variant="outlined"
       fullWidth

@@ -66,11 +66,12 @@ const ParameterList: React.FC<ParameterListProps> = ({
   return (
     <div>
       {parameters.map((parameter, idx) => {
+        const key = `${parameter.name}-${idx}`
         const editParameter = (
           <EditParameter
             remove={() => removeParameter(idx)}
             updateName={(nuName: string) => updateName(idx, nuName)}
-            key={`${parameter.name}-${idx}`}
+            key={key}
             parameter={parameter}
             updateParameter={parameter => updateParameter(idx, parameter)}
           />
@@ -78,17 +79,17 @@ const ParameterList: React.FC<ParameterListProps> = ({
         if (idx === parameters.length - 1) {
           if (parameter.type === ParameterType.Items) {
             return (
-              <>
+              <React.Fragment key={key}>
                 {buttons}
                 {editParameter}
-              </>
+              </React.Fragment>
             )
           } else {
             return (
-              <>
+              <React.Fragment key={key}>
                 {editParameter}
                 {buttons}
-              </>
+              </React.Fragment>
             )
           }
         }

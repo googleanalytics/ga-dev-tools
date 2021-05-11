@@ -18,6 +18,7 @@ const EventPayloadInput: React.FC<EventPayloadInputProps> = ({ payload }) => {
   const classes = useStyles()
   return (
     <TextareaAutosize
+      data-testid="payload"
       className={classes.textarea}
       value={JSON.stringify(payload, undefined, "  ")}
       disabled

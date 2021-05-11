@@ -24,22 +24,30 @@ import {
 import { AccountSummary, Column } from "./api"
 
 interface WithProvidersConfig {
-  path: string
-  measurementID?: string
+  path?: string
+  isLoggedIn?: boolean
 }
 
-// TODO this should have support for a user being defined or not.
 export const withProviders = (
   component: JSX.Element | null,
-  { measurementID, path }: WithProvidersConfig = { path: "/" }
+  { path, isLoggedIn }: WithProvidersConfig = { path: "/", isLoggedIn: true }
 ): {
   wrapped: JSX.Element
   history: History
   store: any
 } => {
+  path = path || "/"
+  isLoggedIn = isLoggedIn === undefined ? true : isLoggedIn
+
   const history = createHistory(createMemorySource(path))
   const store = makeStore()
-  store.dispatch({ type: "setMeasurementID", measurementID: measurementID })
+
+  if (isLoggedIn) {
+    store.dispatch({ type: "setUser", user: {} })
+  } else {
+    store.dispatch({ type: "setUser", user: undefined })
+  }
+
   const wrapped = (
     <Provider store={store}>
       <LocationProvider history={history}>{component}</LocationProvider>
