@@ -392,6 +392,14 @@ const getEventFromParams = (searchParams: URLSearchParams) => {
       console.error(e)
       // ignore
     }
+  } else if (searchParams.has(UrlParam.EventType)) {
+    const eventTypeString = searchParams.get(UrlParam.EventType)
+    if (eventTypeString !== null) {
+      const eventType = MPEvent.eventTypeFromString(eventTypeString)
+      if (eventType !== undefined) {
+        return MPEvent.empty(eventType)
+      }
+    }
   }
   return MPEvent.default()
 }

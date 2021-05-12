@@ -19,6 +19,7 @@ export * from "./MpEvent"
 export * from "./events"
 
 export enum UrlParam {
+  EventType = "eventType",
   UseFirebase = "use_firebase",
   TimestampMicros = "timestamp_micros",
   NonPersonalizedAds = "non_personalized_ads",

@@ -261,7 +261,17 @@ const EventBuilder: React.FC = () => {
         {!event.isCustomEvent() && (
           <WithHelpText
             className={classes.fullWidth}
-            helpText="The name of the event"
+            helpText={
+              <>
+                The name of the event. See{" "}
+                <ExternalLink
+                  href={`https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference/events#${event.getEventName()}`}
+                >
+                  {event.getEventType()}{" "}
+                </ExternalLink>
+                on devsite.
+              </>
+            }
           >
             <Autocomplete<MPEventType, false, true, true>
               fullWidth
