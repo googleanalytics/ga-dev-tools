@@ -30,20 +30,9 @@ import WithHelpText from "@/components/WithHelpText"
 import { IsCustomEventCtx, ModifyParameterCtx } from "../EditEvent"
 import { ShowAdvancedCtx } from ".."
 import useFormStyles from "@/hooks/useFormStyles"
+import Typography from "@material-ui/core/Typography"
 
 const useStyles = makeStyles(theme => ({
-  itemsRow: {
-    display: "flex",
-    "&> :not(:last-child)": {
-      marginRight: theme.spacing(1),
-    },
-    "&> :first-child": {
-      marginTop: theme.spacing(1),
-    },
-    "&> :not(:first-child)": {
-      flexGrow: 1,
-    },
-  },
   deleteRow: {
     display: "flex",
     alignItems: "baseline",
@@ -240,38 +229,33 @@ const EditArrayParameter: React.FC<EditItemArrayParameterProps> = ({
   )
 
   return (
-    <section className={classes.itemsRow}>
-      <WithHelpText hrGroup label="items">
-        <section className={classes.items}>
-          {localValues.map((item, idx) => (
-            <WithHelpText
-              notched
-              key={`item-${idx}`}
-              label={<>item {idx + 1}</>}
-            >
-              <EditItem
-                removeItem={() => removeItem(idx)}
-                idx={idx}
-                updateParameterName={updateParameterName(idx)}
-                item={item}
-                isFirst={idx === 0}
-                updateItem={updateItem(idx)}
-              />
-            </WithHelpText>
-          ))}
-          <section className={formClasses.buttonRow}>
-            <SAB add small onClick={addItem} title="add item parameter">
-              item
-            </SAB>
-            {(showAdvanced || isCustomEvent) && (
-              <DAB delete small onClick={remove} title="remove items parameter">
-                parameter
-              </DAB>
-            )}
-          </section>
+    <>
+      <Typography variant="h5">Items</Typography>
+      <section className={classes.items}>
+        {localValues.map((item, idx) => (
+          <WithHelpText notched key={`item-${idx}`} label={<>item {idx + 1}</>}>
+            <EditItem
+              removeItem={() => removeItem(idx)}
+              idx={idx}
+              updateParameterName={updateParameterName(idx)}
+              item={item}
+              isFirst={idx === 0}
+              updateItem={updateItem(idx)}
+            />
+          </WithHelpText>
+        ))}
+        <section className={formClasses.buttonRow}>
+          <SAB add small onClick={addItem} title="add item parameter">
+            item
+          </SAB>
+          {(showAdvanced || isCustomEvent) && (
+            <DAB delete small onClick={remove} title="remove items parameter">
+              parameter
+            </DAB>
+          )}
         </section>
-      </WithHelpText>
-    </section>
+      </section>
+    </>
   )
 }
 export default EditArrayParameter
