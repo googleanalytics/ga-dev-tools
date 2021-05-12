@@ -12,11 +12,12 @@ import {
   ExpressionPath,
 } from "./index"
 import Expression, { AddExpression, RemoveExpression } from "./Expression"
+import WithHelpText from "@/components/WithHelpText"
 
 const useStyles = makeStyles(theme => ({
-  expressionList: {
-    "&> *:not(:last-child)": {
-      marginBottom: theme.spacing(1),
+  expressions: {
+    "&> *": {
+      marginBottom: theme.spacing(3),
     },
   },
   buttons: {
@@ -53,21 +54,23 @@ const ExpressionList: React.FC<{
   const classes = useStyles()
 
   return (
-    <section className={classes.expressionList}>
-      {expressionList.expressions?.map((expression, idx) => (
-        <Expression
-          type={type}
-          updateFilter={updateFilter}
-          metricFilter={metricFilter}
-          dimensionFilter={dimensionFilter}
-          path={path.concat(["expressions", idx])}
-          addExpression={addExpression}
-          removeExpression={removeExpression}
-          key={`${variant}-${nesting}-${idx}`}
-          expression={expression}
-          nesting={nesting + 1}
-        />
-      ))}
+    <WithHelpText hrGroup label={variant.toUpperCase()}>
+      <section className={classes.expressions}>
+        {expressionList.expressions?.map((expression, idx) => (
+          <Expression
+            type={type}
+            updateFilter={updateFilter}
+            metricFilter={metricFilter}
+            dimensionFilter={dimensionFilter}
+            path={path.concat(["expressions", idx])}
+            addExpression={addExpression}
+            removeExpression={removeExpression}
+            key={`${variant}-${nesting}-${idx}`}
+            expression={expression}
+            nesting={nesting + 1}
+          />
+        ))}
+      </section>
       <section className={classes.buttons}>
         <AddExpression
           path={path.concat([
@@ -76,13 +79,14 @@ const ExpressionList: React.FC<{
           ])}
           addExpression={addExpression}
         />
+
         <RemoveExpression
           path={path}
           removeExpression={removeExpression}
           label={variant}
         />
       </section>
-    </section>
+    </WithHelpText>
   )
 }
 

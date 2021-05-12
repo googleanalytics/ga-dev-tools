@@ -85,7 +85,7 @@ const useUseFirebase = (): [boolean, Dispatch<boolean>] => {
   const [param, setParam] = useQueryParam("use_firebase", BooleanParam)
   const [persistant, setPersistant] = usePersistentBoolean(
     StorageKey.eventBuilderUseFirebase,
-    false
+    true
   )
 
   const useFirebase = useMemo(() => {

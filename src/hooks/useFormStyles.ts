@@ -13,6 +13,26 @@ const useFormStyles = makeStyles(theme => ({
       marginRight: theme.spacing(1),
     },
   },
+  trashRow: {
+    display: "flex",
+    alignItems: "baseline",
+    "&> :not(:first-child)": {
+      flexGrow: 1,
+    },
+  },
+  verticleHr: {
+    display: "flex",
+    "&> hr": {
+      marginRight: theme.spacing(1),
+    },
+    "&> :not(:first-child)": {
+      flexGrow: 1,
+    },
+  },
+  forceRight: {
+    display: "flex",
+    justifyContent: "flex-end",
+  },
 }))
 
 export default useFormStyles

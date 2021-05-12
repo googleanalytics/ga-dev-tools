@@ -3,7 +3,6 @@ import * as React from "react"
 import TextField from "@material-ui/core/TextField"
 
 import { UpdateFilterFn, ExpressionPath } from "../index"
-import { useStyles } from "./index"
 import { toNumericValue, numericValueEquals } from "./NumericFilter"
 
 type BFilter = gapi.client.analyticsdata.BetweenFilter
@@ -19,8 +18,6 @@ const BetweenFilter: React.FC<BetweenFilterProps> = ({
   path,
   betweenFilter,
 }) => {
-  const classes = useStyles()
-
   const updateBFilter = React.useCallback(
     (p: "fromValue" | "toValue", nu: string) => {
       const nuVal = toNumericValue(nu)
@@ -38,7 +35,6 @@ const BetweenFilter: React.FC<BetweenFilterProps> = ({
   return (
     <>
       <TextField
-        className={classes.shortWidth}
         size="small"
         variant="outlined"
         label={"From"}
@@ -53,7 +49,6 @@ const BetweenFilter: React.FC<BetweenFilterProps> = ({
         }
       />
       <TextField
-        className={classes.shortWidth}
         size="small"
         variant="outlined"
         label={"To"}

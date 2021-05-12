@@ -3,7 +3,6 @@ import * as React from "react"
 import SeparatedInput from "@/components/SeparatedInput"
 import LabeledCheckbox from "@/components/LabeledCheckbox"
 import { UpdateFilterFn, ExpressionPath } from "../index"
-import { useStyles } from "./index"
 
 type ILFilter = gapi.client.analyticsdata.InListFilter
 
@@ -18,8 +17,6 @@ const InListFilter: React.FC<InListFilterProps> = ({
   path,
   inListFilter,
 }) => {
-  const classes = useStyles()
-
   const updateInListFilter = React.useCallback(
     (update: (filter: ILFilter) => ILFilter) => {
       updateFilter(path, old => ({
@@ -33,7 +30,6 @@ const InListFilter: React.FC<InListFilterProps> = ({
   return (
     <>
       <SeparatedInput
-        className={classes.bigWidth}
         label="values"
         values={inListFilter.values || []}
         onChange={values => {

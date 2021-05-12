@@ -17,6 +17,7 @@ import {
 } from "@/components/GA4Pickers"
 import ExternalLink from "@/components/ExternalLink"
 import WithHelpText from "@/components/WithHelpText"
+import { ArrowDownward, ArrowUpward } from "@material-ui/icons"
 
 const orderBysLink = (
   <ExternalLink href="https://developers.google.com/analytics/devguides/reporting/data/v1/rest/v1beta/properties/runReport#body.request_body.FIELDS.order_bys">
@@ -158,8 +159,8 @@ const useStyles = makeStyles(theme => ({
   orderBy: {
     display: "flex",
     margin: theme.spacing(1, 0),
-    "& > *:not(:first-child)": {
-      marginLeft: theme.spacing(1),
+    "& > :first-child": {
+      marginRight: theme.spacing(1),
     },
   },
   type: {
@@ -192,17 +193,6 @@ const useStyles = makeStyles(theme => ({
 const pivotOption = { value: "pivot", displayName: "pivot" }
 const dimensionOption = { value: "dimension", displayName: "dimension" }
 const metricOption = { value: "metric", displayName: "metric" }
-
-const ascOption = {
-  value: Direction.Ascending,
-  displayName: Direction.Ascending,
-}
-const descOption = {
-  value: Direction.Descending,
-  displayName: Direction.Descending,
-}
-
-const directionOptions: SelectOption[] = [ascOption, descOption]
 
 const orderTypeOptions: SelectOption[] = [
   {
@@ -357,7 +347,6 @@ const OrderBys: React.FC<OrderBysProps> = ({
           <section className={classes.grouped}>
             {orderBys.map((orderBy, idx) => {
               const selectedType = optionFor(orderBy)
-              const selectedDirection = directionFor(orderBy)
               const selectedOrderType = orderTypeFor(orderBy)
               return (
                 <section key={idx} className={classes.orderBy}>
@@ -386,13 +375,19 @@ const OrderBys: React.FC<OrderBysProps> = ({
                     />
                   ) : null}
                   {selectedType?.value !== undefined ? (
-                    <Select
-                      className={classes.direction}
-                      options={directionOptions}
-                      value={selectedDirection}
-                      label="direction"
-                      onChange={e => setDirection(idx, e?.value as Direction)}
-                    />
+                    <TooltipIconButton
+                      tooltip={orderBy.desc ? "descending" : "ascending"}
+                      onClick={() => {
+                        setDirection(
+                          idx,
+                          orderBy.desc
+                            ? Direction.Ascending
+                            : Direction.Descending
+                        )
+                      }}
+                    >
+                      {orderBy.desc ? <ArrowDownward /> : <ArrowUpward />}
+                    </TooltipIconButton>
                   ) : null}
                 </section>
               )
@@ -438,13 +433,6 @@ const optionFor = (orderBy: OrderBy): SelectOption | undefined => {
     return dimensionOption
   }
   return undefined
-}
-
-const directionFor = (orderBy: OrderBy): SelectOption => {
-  if (orderBy.desc === true) {
-    return descOption
-  }
-  return ascOption
 }
 
 const orderTypeFor = (orderBy: OrderBy): SelectOption | undefined => {

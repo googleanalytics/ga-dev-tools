@@ -68,7 +68,6 @@ const StringFilter: React.FC<StringFilterProps> = ({
     <>
       <Select
         label="match type"
-        className={classes.mediumWidth}
         value={matchValue}
         onChange={nu => {
           updateStringFilter(old => ({ ...old, matchType: nu?.value }))
@@ -86,6 +85,7 @@ const StringFilter: React.FC<StringFilterProps> = ({
         }}
       />
       <LabeledCheckbox
+        className={classes.caseSensitive}
         checked={stringFilter.caseSensitive || false}
         onChange={(checked: boolean) => {
           updateStringFilter(old => ({ ...old, caseSensitive: checked }))

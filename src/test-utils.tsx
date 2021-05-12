@@ -22,6 +22,7 @@ import {
   History,
 } from "@reach/router"
 import { AccountSummary, Column } from "./api"
+import { QueryParamProvider } from "use-query-params"
 
 interface WithProvidersConfig {
   path?: string
@@ -39,6 +40,8 @@ export const withProviders = (
   path = path || "/"
   isLoggedIn = isLoggedIn === undefined ? true : isLoggedIn
 
+  window.localStorage.clear()
+
   const history = createHistory(createMemorySource(path))
   const store = makeStore()
 
@@ -50,7 +53,11 @@ export const withProviders = (
 
   const wrapped = (
     <Provider store={store}>
-      <LocationProvider history={history}>{component}</LocationProvider>
+      <LocationProvider history={history}>
+        <QueryParamProvider reachHistory={history}>
+          {component}
+        </QueryParamProvider>
+      </LocationProvider>
     </Provider>
   )
   return { wrapped, history, store }

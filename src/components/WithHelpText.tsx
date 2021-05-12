@@ -2,6 +2,7 @@ import * as React from "react"
 import { makeStyles } from "@material-ui/core"
 import clsx from "classnames"
 import Typography from "@material-ui/core/Typography"
+import useFormStyles from "@/hooks/useFormStyles"
 
 interface WithHelpTextProps {
   label?: string | JSX.Element | undefined
@@ -10,6 +11,7 @@ interface WithHelpTextProps {
   className?: string
   notched?: boolean
   shrink?: boolean
+  hrGroup?: boolean
 }
 
 interface Props {
@@ -19,7 +21,7 @@ interface Props {
 const useStyles = makeStyles(theme => ({
   withHelpText: ({ notched, shrink }: Props) => ({
     marginTop: notched ? theme.spacing(1.5) : "unset",
-    display: shrink ? "flex" : "unset",
+    ...(shrink ? { display: "flex" } : {}),
   }),
   helpText: {
     ...theme.typography.caption,
@@ -32,8 +34,18 @@ const useStyles = makeStyles(theme => ({
   shrunk: {
     flexShrink: 1,
   },
-  notchedContainer: {
+  notchedContainer: ({ shrink }: Props) => ({
     position: "relative",
+    ...(shrink ? {} : { width: "100%" }),
+  }),
+  label: {
+    color: "rgba(0, 0, 0, 0.54)",
+    ...theme.typography.caption,
+    marginBottom: theme.spacing(1),
+  },
+  legend: {
+    color: "rgba(0, 0, 0, 0.54)",
+    ...theme.typography.caption,
   },
   fieldset: {
     position: "absolute",
@@ -56,6 +68,14 @@ const useStyles = makeStyles(theme => ({
   notchedChild: {
     padding: theme.spacing(1),
   },
+  hr: {
+    //
+  },
+  hrChildren: {
+    "&> :last-child": {
+      paddingBottom: theme.spacing(2),
+    },
+  },
 }))
 
 const WithHelpText: React.FC<WithHelpTextProps> = ({
@@ -66,8 +86,33 @@ const WithHelpText: React.FC<WithHelpTextProps> = ({
   notched,
   shrink,
   className,
+  hrGroup,
 }) => {
-  const classes = useStyles({ notched, shrink, className })
+  const classes = useStyles({ notched, shrink })
+  const formClasses = useFormStyles()
+  if (hrGroup) {
+    return (
+      <div className={clsx(classes.hr, className)}>
+        <div className={formClasses.verticleHr}>
+          <hr />
+          <div>
+            <legend className={classes.legend}>{label}</legend>
+            <div className={classes.hrChildren}>
+              {children}
+              {helpText !== undefined && (
+                <div>
+                  <Typography className={classes.helpText}>
+                    {helpText}
+                  </Typography>
+                  {afterHelp}
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
+    )
+  }
   return (
     <div className={clsx(classes.withHelpText, className)}>
       <div
@@ -76,7 +121,7 @@ const WithHelpText: React.FC<WithHelpTextProps> = ({
           [classes.shrunk]: shrink,
         })}
       >
-        {!notched && <label>{label}</label>}
+        {!notched && <label className={classes.label}>{label}</label>}
         <div className={clsx({ [classes.notchedChild]: notched })}>
           {children}
         </div>

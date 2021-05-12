@@ -4,7 +4,6 @@ import TextField from "@material-ui/core/TextField"
 
 import Select, { SelectOption } from "@/components/Select"
 import { UpdateFilterFn, ExpressionPath } from "../index"
-import { useStyles } from "./index"
 
 type NFilter = gapi.client.analyticsdata.NumericFilter
 
@@ -77,7 +76,6 @@ const NumericFilter: React.FC<NumericFilterProps> = ({
   updateFilter,
   path,
 }) => {
-  const classes = useStyles()
   const [value, setValue] = React.useState(
     numericFilter.value?.int64Value ||
       numericFilter.value?.doubleValue?.toString() ||
@@ -113,7 +111,6 @@ const NumericFilter: React.FC<NumericFilterProps> = ({
         options={operationOptions}
       />
       <TextField
-        className={classes.shortWidth}
         size="small"
         variant="outlined"
         onChange={e => setValue(e.target.value)}

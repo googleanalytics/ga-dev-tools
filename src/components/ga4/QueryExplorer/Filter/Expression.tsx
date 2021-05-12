@@ -1,10 +1,8 @@
 import * as React from "react"
 
 import makeStyles from "@material-ui/core/styles/makeStyles"
-import Typography from "@material-ui/core/Typography"
-import Delete from "@material-ui/icons/Delete"
 
-import { SAB, PlainButton } from "@/components/Buttons"
+import { PlainButton, SAB } from "@/components/Buttons"
 import { GA4Dimension, GA4Metric } from "@/components/GA4Pickers"
 import Filter from "./Filter"
 import {
@@ -26,12 +24,6 @@ const useStyles = makeStyles(theme => ({
   },
   label: {
     margin: theme.spacing(0),
-  },
-  labeledSection: {
-    padding: theme.spacing(0, 2),
-    margin: theme.spacing(2, 0),
-    // borderRadius: theme.spacing(1),
-    // border: "1px solid black",
   },
   childrenGroup: {
     display: "flex",
@@ -60,26 +52,9 @@ const useStyles = makeStyles(theme => ({
     minWidth: "12ch",
   },
   removeNot: {
-    marginLeft: theme.spacing(1),
+    marginTop: theme.spacing(1),
   },
 }))
-
-const LabeledSection: React.FC<{
-  label: string
-}> = ({ label, children }) => {
-  const classes = useStyles()
-  return (
-    <div className={classes.labeledSection}>
-      <Typography className={classes.label} component="span">
-        {label}
-      </Typography>
-      <div className={classes.childrenGroup}>
-        <hr className={classes.vrhr} />
-        <section className={classes.children}>{children}</section>
-      </div>
-    </div>
-  )
-}
 
 export const RemoveExpression: React.FC<{
   removeExpression: RemoveExpressionFn
@@ -92,8 +67,8 @@ export const RemoveExpression: React.FC<{
   }, [removeExpression, path])
 
   return (
-    <SAB onClick={onClick} delete small className={className}>
-      remove {label}
+    <SAB small delete onClick={onClick}>
+      delete {label}
     </SAB>
   )
 }
@@ -178,62 +153,57 @@ const Expression: React.FC<{
   }
   if (expression.andGroup) {
     return (
-      <WithHelpText notched label="and">
-        <ExpressionList
-          type={type}
-          updateFilter={updateFilter}
-          dimensionFilter={dimensionFilter}
-          metricFilter={metricFilter}
-          addExpression={addExpression}
-          removeExpression={removeExpression}
-          path={path.concat(["andGroup"])}
-          nesting={nesting + 1}
-          variant="and"
-          expressionList={expression.andGroup}
-        />
-      </WithHelpText>
+      <ExpressionList
+        type={type}
+        updateFilter={updateFilter}
+        dimensionFilter={dimensionFilter}
+        metricFilter={metricFilter}
+        addExpression={addExpression}
+        removeExpression={removeExpression}
+        path={path.concat(["andGroup"])}
+        nesting={nesting + 1}
+        variant="and"
+        expressionList={expression.andGroup}
+      />
     )
   }
   if (expression.orGroup) {
     return (
-      <WithHelpText notched label="or">
-        <ExpressionList
-          type={type}
-          updateFilter={updateFilter}
-          addExpression={addExpression}
-          removeExpression={removeExpression}
-          dimensionFilter={dimensionFilter}
-          metricFilter={metricFilter}
-          path={path.concat(["orGroup"])}
-          nesting={nesting + 1}
-          variant="or"
-          expressionList={expression.orGroup}
-        />
-      </WithHelpText>
+      <ExpressionList
+        type={type}
+        updateFilter={updateFilter}
+        addExpression={addExpression}
+        removeExpression={removeExpression}
+        dimensionFilter={dimensionFilter}
+        metricFilter={metricFilter}
+        path={path.concat(["orGroup"])}
+        nesting={nesting + 1}
+        variant="or"
+        expressionList={expression.orGroup}
+      />
     )
   }
   if (expression.notExpression) {
     return (
-      <WithHelpText notched label="not">
-        <section className={classes.not}>
-          <Expression
-            type={type}
-            metricFilter={metricFilter}
-            updateFilter={updateFilter}
-            addExpression={addExpression}
-            removeExpression={removeExpression}
-            path={path.concat(["notExpression"])}
-            nesting={nesting + 1}
-            expression={expression.notExpression}
-            dimensionFilter={dimensionFilter}
-          />
+      <WithHelpText label="NOT" hrGroup className={classes.not}>
+        <Expression
+          type={type}
+          metricFilter={metricFilter}
+          updateFilter={updateFilter}
+          addExpression={addExpression}
+          removeExpression={removeExpression}
+          path={path.concat(["notExpression"])}
+          nesting={nesting + 1}
+          expression={expression.notExpression}
+          dimensionFilter={dimensionFilter}
+        />
+        <div className={classes.removeNot}>
           <RemoveExpression
-            className={classes.removeNot}
             path={path.concat("notExpression")}
             removeExpression={removeExpression}
             label="not"
           />
-        </section>
+        </div>
       </WithHelpText>
     )
   }

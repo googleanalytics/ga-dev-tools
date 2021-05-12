@@ -15,7 +15,6 @@ import PropertyPicker from "@/components/ga4/PropertyPicker"
 import Field from "./Field"
 import useInputs from "./useInputs"
 import { useDimensionsAndMetrics, Successful } from "./useDimensionsAndMetrics"
-import { Link } from "gatsby"
 import useFormStyles from "@/hooks/useFormStyles"
 
 const dataAPI = (
@@ -115,6 +114,7 @@ const DimensionsMetricsExplorer: React.FC = () => {
         <section className={formClasses.form}>
           <Typography variant="h3">Select property</Typography>
           <PropertyPicker
+            column
             setPropertyId={setSelectedProperty}
             propertyId={selectedProperty}
           />

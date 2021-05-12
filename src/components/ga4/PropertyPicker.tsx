@@ -8,15 +8,19 @@ import { Dispatch, Requestable, RequestStatus } from "../../types"
 type AccountSummary = gapi.client.analyticsadmin.GoogleAnalyticsAdminV1alphaAccountSummary
 export type PropertySummary = gapi.client.analyticsadmin.GoogleAnalyticsAdminV1alphaPropertySummary
 
+interface Props {
+  column?: boolean
+}
 const useStyles = makeStyles(theme => ({
-  propertySelector: {
+  propertySelector: ({ column }: Props) => ({
     display: "flex",
+    flexDirection: column ? "column" : "row",
     paddingTop: theme.spacing(1),
     paddingBottom: theme.spacing(1),
-    "& > *:not(:first-child)": {
-      marginLeft: theme.spacing(1),
-    },
-  },
+    "& > *:not(:first-child)": ({ column }: Props) => ({
+      [column ? "marginTop" : "marginLeft"]: theme.spacing(1),
+    }),
+  }),
 }))
 
 const finished = <A extends {}>(t: Requestable<A>): A | undefined => {
@@ -40,12 +44,14 @@ const fixPropertyId = (s: string | undefined) => {
 interface PropertyPickerProps {
   setPropertyId: Dispatch<string | undefined>
   propertyId: string | undefined
+  column?: boolean
 }
 const PropertyPicker: React.FC<PropertyPickerProps> = ({
   setPropertyId,
   propertyId,
+  column,
 }) => {
-  const classes = useStyles()
+  const classes = useStyles({ column })
 
   const [account, setAccount] = React.useState<string>()
   const fixed = useMemo(() => fixPropertyId(propertyId), [propertyId])
