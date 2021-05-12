@@ -363,14 +363,14 @@ const EventBuilder: React.FC = () => {
           setEvent={setEvent}
           setShowAdvanced={setShowAdvanced}
         />
-      </ShowAdvancedCtx.Provider>
 
-      {showAdvanced && (
-        <EditUserProperties
-          user_properties={user_properties}
-          setUserProperties={setUserProperties}
-        />
-      )}
+        {showAdvanced && (
+          <EditUserProperties
+            user_properties={user_properties}
+            setUserProperties={setUserProperties}
+          />
+        )}
+      </ShowAdvancedCtx.Provider>
 
       <Typography variant="h3" className={classes.validateHeading}>
         Validate & Send

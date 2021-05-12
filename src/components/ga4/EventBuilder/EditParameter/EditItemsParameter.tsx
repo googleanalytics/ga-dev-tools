@@ -15,9 +15,6 @@
 import React from "react"
 
 import makeStyles from "@material-ui/core/styles/makeStyles"
-import Tooltip from "@material-ui/core/Tooltip"
-import IconButton from "@material-ui/core/IconButton"
-import Delete from "@material-ui/icons/Delete"
 
 import ParameterList from "../ParameterList"
 import {
@@ -28,10 +25,11 @@ import {
   ItemArrayParam,
   defaultNumberParam,
 } from "../types"
-import { SAB, TooltipIconButton } from "@/components/Buttons"
+import { DAB, SAB } from "@/components/Buttons"
 import WithHelpText from "@/components/WithHelpText"
 import { IsCustomEventCtx, ModifyParameterCtx } from "../EditEvent"
 import { ShowAdvancedCtx } from ".."
+import useFormStyles from "@/hooks/useFormStyles"
 
 const useStyles = makeStyles(theme => ({
   itemsRow: {
@@ -54,8 +52,11 @@ const useStyles = makeStyles(theme => ({
     },
   },
   items: {
-    "&> *:last-child": {
-      marginTop: theme.spacing(1),
+    "&> :not(:first-child)": {
+      marginTop: theme.spacing(3),
+    },
+    "&> :last-child": {
+      marginTop: theme.spacing(2),
     },
   },
   itemTitle: {
@@ -66,6 +67,9 @@ const useStyles = makeStyles(theme => ({
   removeItem: {
     marginLeft: theme.spacing(1),
   },
+  spacer: {
+    flexGrow: 1,
+  },
 }))
 
 interface EditItemProps {
@@ -74,9 +78,18 @@ interface EditItemProps {
   updateParameterName: (oldName: string, nuName: string) => void
   isFirst: boolean
   className?: string
+  idx: number
+  removeItem: () => void
 }
 
-const EditItem: React.FC<EditItemProps> = ({ item, updateItem, className }) => {
+const EditItem: React.FC<EditItemProps> = ({
+  item,
+  updateItem,
+  className,
+  idx,
+  removeItem,
+}) => {
+  const classes = useStyles()
   const parameters = React.useMemo<Parameter[]>(() => item.parameters, [item])
 
   const updateParameter = React.useCallback(
@@ -139,7 +152,17 @@ const EditItem: React.FC<EditItemProps> = ({ item, updateItem, className }) => {
       <ModifyParameterCtx.Provider
         value={{ addParameter, updateName, removeParameter, updateParameter }}
       >
-        <ParameterList isItemParameter parameters={parameters} />
+        <ParameterList isItemParameter parameters={parameters}>
+          <div className={classes.spacer} />
+          <DAB
+            delete
+            small
+            onClick={removeItem}
+            title={`delete item ${idx + 1}`}
+          >
+            item
+          </DAB>
+        </ParameterList>
       </ModifyParameterCtx.Provider>
     </div>
   )
@@ -156,6 +179,7 @@ const EditArrayParameter: React.FC<EditItemArrayParameterProps> = ({
   updateParameter,
   remove,
 }) => {
+  const formClasses = useFormStyles()
   const classes = useStyles()
   const showAdvanced = React.useContext(ShowAdvancedCtx)
   const [localValues, setLocalValues] = React.useState<Array<Item>>(items.value)
@@ -176,7 +200,7 @@ const EditArrayParameter: React.FC<EditItemArrayParameterProps> = ({
   }, [updateParameter, items])
 
   const removeItem = React.useCallback(
-    (idx: number) => () => {
+    (idx: number) => {
       setLocalValues(old =>
         old.slice(0, idx).concat(old.slice(idx + 1, old.length))
       )
@@ -217,40 +241,33 @@ const EditArrayParameter: React.FC<EditItemArrayParameterProps> = ({
 
   return (
     <section className={classes.itemsRow}>
-      {(showAdvanced || isCustomEvent) && (
-        <div>
-          <TooltipIconButton tooltip="Remove items parameter" onClick={remove}>
-            <Delete />
-          </TooltipIconButton>
-        </div>
-      )}
-      <WithHelpText notched label="items">
+      <WithHelpText hrGroup label="items">
         <section className={classes.items}>
           {localValues.map((item, idx) => (
-            <section className={classes.deleteRow}>
-              <Tooltip title={`Remove Item ${idx + 1}`}>
-                <IconButton onClick={removeItem(idx)}>
-                  <Delete />
-                </IconButton>
-              </Tooltip>
-              <WithHelpText
-                notched
-                key={`item-${idx}`}
-                label={<>item {idx + 1}</>}
-              >
-                <EditItem
-                  updateParameterName={updateParameterName(idx)}
-                  item={item}
-                  isFirst={idx === 0}
-                  updateItem={updateItem(idx)}
-                />
-              </WithHelpText>
-            </section>
+            <WithHelpText
+              notched
+              key={`item-${idx}`}
+              label={<>item {idx + 1}</>}
+            >
+              <EditItem
+                removeItem={() => removeItem(idx)}
+                idx={idx}
+                updateParameterName={updateParameterName(idx)}
+                item={item}
+                isFirst={idx === 0}
+                updateItem={updateItem(idx)}
+              />
+            </WithHelpText>
           ))}
-          <section>
-            <SAB add small onClick={addItem}>
-              Item
+          <section className={formClasses.buttonRow}>
+            <SAB add small onClick={addItem} title="add item parameter">
+              item
             </SAB>
+            {(showAdvanced || isCustomEvent) && (
+              <DAB delete small onClick={remove} title="remove items parameter">
+                parameter
+              </DAB>
+            )}
           </section>
         </section>
       </WithHelpText>

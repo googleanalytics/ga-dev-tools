@@ -14,13 +14,14 @@
 
 import React from "react"
 
+import Typography from "@material-ui/core/Typography"
+
 import { SAB } from "@/components/Buttons"
 import useFormStyles from "@/hooks/useFormStyles"
+import { ShowAdvancedCtx } from "."
 import { IsCustomEventCtx, ModifyParameterCtx } from "./EditEvent"
 import EditParameter from "./EditParameter"
 import { Parameter, ParameterType } from "./types"
-import { ShowAdvancedCtx } from "."
-import { Typography } from "@material-ui/core"
 
 interface ParameterListProps {
   indentation?: number
@@ -52,17 +53,32 @@ const ParameterList: React.FC<ParameterListProps> = ({
   const buttons = (showAdvanced || isItemParameter || isCustomEvent) && (
     <>
       <Typography style={{ paddingBottom: "4px" }}>
-        {isItemParameter ? "Add item parameter" : "Add parameter"}
+        {isItemParameter ? "" : "Add parameter"}
       </Typography>
       <div className={formClasses.buttonRow}>
-        <SAB add small onClick={() => addParameter("string")}>
+        <SAB
+          add
+          small
+          onClick={() => addParameter("string")}
+          title="add string parameter"
+        >
           string
         </SAB>
-        <SAB add small onClick={() => addParameter("number")}>
+        <SAB
+          add
+          small
+          onClick={() => addParameter("number")}
+          title="add number parameter"
+        >
           number
         </SAB>
         {!hasItemsParameter && !isItemParameter && (
-          <SAB add small onClick={() => addParameter("items")}>
+          <SAB
+            add
+            small
+            onClick={() => addParameter("items")}
+            title="add items parameter"
+          >
             items
           </SAB>
         )}

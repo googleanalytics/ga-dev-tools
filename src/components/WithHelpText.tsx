@@ -68,9 +68,9 @@ const useStyles = makeStyles(theme => ({
   notchedChild: {
     padding: theme.spacing(1),
   },
-  hr: {
-    //
-  },
+  hr: ({ shrink }: Props) => ({
+    ...(shrink ? {} : { width: "100%" }),
+  }),
   hrChildren: {
     "&> :last-child": {
       paddingBottom: theme.spacing(2),

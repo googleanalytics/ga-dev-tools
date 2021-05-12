@@ -15,22 +15,64 @@ interface SABProps extends ButtonProps {
   add?: boolean
   delete?: boolean
   small?: boolean
+  title?: string
 }
 export const SAB: React.FC<SABProps> = ({
   add,
   small,
   delete: deleteIcon,
+  title,
   ...props
 }) => {
-  return (
-    <Button
-      startIcon={add ? <Add /> : deleteIcon ? <Delete /> : null}
-      {...props}
-      size={small ? "small" : props.size}
-      variant="outlined"
-      color="secondary"
-    />
-  )
+  const button = React.useMemo(() => {
+    return (
+      <Button
+        startIcon={add ? <Add /> : deleteIcon ? <Delete /> : null}
+        {...props}
+        size={small ? "small" : props.size}
+        variant="outlined"
+        color="secondary"
+      />
+    )
+  }, [add, deleteIcon, small, props])
+
+  if (title !== undefined) {
+    return (
+      <Tooltip title={title}>
+        <span>{button}</span>
+      </Tooltip>
+    )
+  }
+  return button
+}
+
+export const DAB: React.FC<SABProps> = ({
+  add,
+  small,
+  delete: deleteIcon,
+  title,
+  ...props
+}) => {
+  const button = React.useMemo(() => {
+    return (
+      <Button
+        startIcon={add ? <Add /> : deleteIcon ? <Delete /> : null}
+        {...props}
+        size={small ? "small" : props.size}
+        variant="contained"
+        color="secondary"
+      />
+    )
+  }, [add, deleteIcon, small, props])
+
+  if (title !== undefined) {
+    return (
+      <Tooltip title={title}>
+        <span>{button}</span>
+      </Tooltip>
+    )
+  }
+  return button
 }
 
 interface PlainButtonProps extends ButtonProps {

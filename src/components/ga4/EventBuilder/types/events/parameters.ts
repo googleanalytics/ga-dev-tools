@@ -51,11 +51,13 @@ export type ItemArrayParam = {
   timestampMicros?: number
 }
 
+// TODO - this should take the current event type and populate the first
+// default item with the recommended item parameters.
 export const defaultItemArrayParam = (
   isUserProperty = false
 ): ItemArrayParam => ({
   type: ParameterType.Items,
-  value: [],
+  value: [{ parameters: [] }],
   name: "items",
   isUserProperty,
 })

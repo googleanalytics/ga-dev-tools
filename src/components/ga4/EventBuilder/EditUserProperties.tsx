@@ -93,10 +93,20 @@ const EditUserProperties: React.FC<EditUserPropertiesProps> = ({
       <section
         className={clsx(formClasses.buttonRow, formClasses.marginBottom)}
       >
-        <SAB add small onClick={() => addProperty("string")}>
+        <SAB
+          add
+          small
+          onClick={() => addProperty("string")}
+          title="add string user property"
+        >
           string
         </SAB>
-        <SAB add small onClick={() => addProperty("number")}>
+        <SAB
+          add
+          small
+          onClick={() => addProperty("number")}
+          title="add number user property"
+        >
           number
         </SAB>
       </section>
