@@ -62,6 +62,9 @@ const ga4MeasurementProtocol = (
 )
 
 const useStyles = makeStyles(theme => ({
+  clientSwitch: {
+    marginBottom: theme.spacing(2),
+  },
   unifiedParameters: {},
   fullWidth: {
     width: "100%",
@@ -130,21 +133,28 @@ const EventBuilder: React.FC = () => {
         implementations should use firebase, and web implementations should use
         gtag.js
       </Typography>
-      <Grid component="label" container alignItems="center" spacing={1}>
-        <Grid item>gtag.js</Grid>
-        <Grid item>
-          <Switch
-            data-testid="use firebase"
-            checked={useFirebase}
-            onChange={e => {
-              setUseFirebase(e.target.checked)
-            }}
-            name="use firebase"
-            color="primary"
-          />
+      <WithHelpText
+        notched
+        shrink
+        label="client"
+        className={classes.clientSwitch}
+      >
+        <Grid component="label" container alignItems="center" spacing={1}>
+          <Grid item>gtag.js</Grid>
+          <Grid item>
+            <Switch
+              data-testid="use firebase"
+              checked={useFirebase}
+              onChange={e => {
+                setUseFirebase(e.target.checked)
+              }}
+              name="use firebase"
+              color="primary"
+            />
+          </Grid>
+          <Grid item>firebase</Grid>
         </Grid>
-        <Grid item>firebase</Grid>
-      </Grid>
+      </WithHelpText>
 
       <Typography>
         After choosing a client, fill out the inputs below.
@@ -345,7 +355,7 @@ const EventBuilder: React.FC = () => {
       <Typography>
         Finally, specify the parameters to send with the event. By default, only
         recommended parameters for the event will appear here. Check "show
-        advanced options" to add custom parameters or add user properties.
+        advanced options" to add custom parameters or user properties.
       </Typography>
       <ShowAdvancedCtx.Provider value={showAdvanced}>
         <EditEvent

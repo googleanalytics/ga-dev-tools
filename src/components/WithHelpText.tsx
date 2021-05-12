@@ -9,14 +9,17 @@ interface WithHelpTextProps {
   afterHelp?: JSX.Element
   className?: string
   notched?: boolean
+  shrink?: boolean
 }
 
 interface Props {
   notched?: boolean
+  shrink?: boolean
 }
 const useStyles = makeStyles(theme => ({
-  withHelpText: ({ notched }: Props) => ({
+  withHelpText: ({ notched, shrink }: Props) => ({
     marginTop: notched ? theme.spacing(1.5) : "unset",
+    display: shrink ? "flex" : "unset",
   }),
   helpText: {
     ...theme.typography.caption,
@@ -25,6 +28,9 @@ const useStyles = makeStyles(theme => ({
     color: "rgba(0, 0, 0, 0.54)",
     marginLeft: theme.spacing(2),
     padding: "unset",
+  },
+  shrunk: {
+    flexShrink: 1,
   },
   notchedContainer: {
     position: "relative",
@@ -58,11 +64,18 @@ const WithHelpText: React.FC<WithHelpTextProps> = ({
   helpText,
   afterHelp,
   notched,
+  shrink,
+  className,
 }) => {
-  const classes = useStyles({ notched })
+  const classes = useStyles({ notched, shrink, className })
   return (
-    <div className={classes.withHelpText}>
-      <div className={clsx({ [classes.notchedContainer]: notched })}>
+    <div className={clsx(classes.withHelpText, className)}>
+      <div
+        className={clsx({
+          [classes.notchedContainer]: notched,
+          [classes.shrunk]: shrink,
+        })}
+      >
         {!notched && <label>{label}</label>}
         <div className={clsx({ [classes.notchedChild]: notched })}>
           {children}
