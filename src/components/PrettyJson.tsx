@@ -1,4 +1,4 @@
-import React from "react"
+import React, { useMemo } from "react"
 import { makeStyles, Paper } from "@material-ui/core"
 import { IS_SSR } from "../hooks"
 import { CopyIconButton } from "./CopyButton"
@@ -6,7 +6,9 @@ import clsx from "classnames"
 
 interface PrettyJsonProps {
   object: object | undefined
+  tooltipText: string
   className?: string | undefined
+  noPaper?: boolean
   // shouldCollapse?: (props: CollapsedFieldProps) => boolean
   // TODO - This is a workaround because react-json-view doesn't work with
   // gatsby ssr.
@@ -42,6 +44,10 @@ export const shouldCollapseResponse = ({ namespace }: any) => {
 }
 
 const useStyles = makeStyles(theme => ({
+  jsonWrapper: {
+    display: "flex",
+    alignItems: "flex-start",
+  },
   jsonPaper: {
     padding: theme.spacing(2),
     display: "flex",
@@ -56,8 +62,43 @@ const PrettyJson: React.FC<PrettyJsonProps> = ({
   object,
   shouldCollapse,
   className,
+  tooltipText,
+  noPaper,
 }) => {
   const classes = useStyles()
+
+  const inner = useMemo(() => {
+    if (object === undefined || IS_SSR) {
+      return null
+    }
+
+    // TODO - This is a workaround because react-json-view doesn't support SSR.
+    // This path shouldn't be run during SSR since the typeof window check will
+    // return undefined.
+    const ReactJson = require("react-json-view").default
+    return (
+      <>
+        <span className={classes.json}>
+          <ReactJson
+            src={object}
+            name={false}
+            indentWidth={2}
+            enableClipboard={false}
+            displayObjectSize={false}
+            displayDataTypes={false}
+            // The types are just out of date with the component :'(
+            // @ts-ignore
+            displayArrayKey={false}
+            shouldCollapse={shouldCollapse || false}
+          />
+        </span>
+        <CopyIconButton
+          toCopy={JSON.stringify(object)}
+          tooltipText={tooltipText}
+        />
+      </>
+    )
+  }, [object, classes.json, shouldCollapse, tooltipText])
 
   if (object === undefined) {
     return null
@@ -67,33 +108,11 @@ const PrettyJson: React.FC<PrettyJsonProps> = ({
     return null
   }
 
-  // TODO - This is a workaround because react-json-view doesn't support SSR.
-  // This path shouldn't be run during SSR since the typeof window check will
-  // return undefined.
-  const ReactJson = require("react-json-view").default
-
-  return (
-    <Paper className={clsx(classes.jsonPaper, className)}>
-      <span className={classes.json}>
-        <ReactJson
-          src={object}
-          name={false}
-          indentWidth={2}
-          enableClipboard={false}
-          displayObjectSize={false}
-          displayDataTypes={false}
-          // The types are just out of date with the component :'(
-          // @ts-ignore
-          displayArrayKey={false}
-          shouldCollapse={shouldCollapse || false}
-        />
-      </span>
-      <CopyIconButton
-        toCopy={JSON.stringify(object)}
-        tooltipText="Copy request JSON"
-      />
-    </Paper>
-  )
+  if (noPaper) {
+    return <div className={clsx(classes.jsonWrapper, className)}>{inner}</div>
+  } else {
+    return <Paper className={clsx(classes.jsonPaper, className)}>{inner}</Paper>
+  }
 }
 
 export default PrettyJson

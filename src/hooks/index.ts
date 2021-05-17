@@ -2,10 +2,12 @@ import * as React from "react"
 
 import { navigate } from "gatsby"
 import { useLocation } from "@reach/router"
-import { useState, useEffect } from "react"
+import { useState, useEffect, useCallback } from "react"
 import { useDispatch } from "react-redux"
 
 import { StorageKey, GAVersion } from "@/constants"
+import { Dispatch } from "@/types"
+import copyToClipboard from "copy-to-clipboard"
 
 type UsePersistentBoolean = (
   key: StorageKey,
@@ -58,7 +60,7 @@ export const usePersistentString: UsePersistentString = (
     }
     const fromStorage = IS_SSR ? null : window.localStorage.getItem(key)
     if (fromStorage === null) {
-      return undefined || initialValue
+      return initialValue
     }
     if (fromStorage === "undefined" || fromStorage === "") {
       return undefined
@@ -81,7 +83,8 @@ export const usePersistentString: UsePersistentString = (
 }
 
 export const usePersistantObject = <T extends {}>(
-  key: StorageKey
+  key: StorageKey,
+  defaultValue?: T
 ): [T | undefined, React.Dispatch<React.SetStateAction<T | undefined>>] => {
   const [value, setValue] = useState(() => {
     if (IS_SSR) {
@@ -89,7 +92,7 @@ export const usePersistantObject = <T extends {}>(
     }
     let asString = IS_SSR ? null : window.localStorage.getItem(key)
     if (asString === null || asString === "undefined") {
-      return undefined
+      return defaultValue
     }
     return JSON.parse(asString)
   })
@@ -244,4 +247,42 @@ export const useScrollTo = () => {
       }
     }
   }, [location.hash, initialLoad])
+}
+
+export const useAddToArray = <T>(setArray: Dispatch<T[] | undefined>) => {
+  return useCallback(
+    (nu: T) => {
+      setArray((old = []) => old.concat([nu]))
+    },
+    [setArray]
+  )
+}
+
+export const useRemoveByIndex = <T>(setArray: Dispatch<T[] | undefined>) => {
+  return useCallback(
+    (idx: number) => {
+      setArray((old = []) => old.filter((_, i) => i !== idx))
+    },
+    [setArray]
+  )
+}
+
+export const useUpdateByIndex = <T>(setArray: Dispatch<T[] | undefined>) => {
+  return useCallback(
+    (idx: number, update: (old: T) => T) => {
+      setArray((old = []) =>
+        old.map((entry, i) => (i === idx ? update(entry) : entry))
+      )
+    },
+    [setArray]
+  )
+}
+
+export const useCopy = (toCopy: string, toast?: string): (() => void) => {
+  const setToast = useSetToast()
+
+  return React.useCallback(() => {
+    copyToClipboard(toCopy)
+    toast && setToast(toast)
+  }, [toCopy, setToast, toast])
 }

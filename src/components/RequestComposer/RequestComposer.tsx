@@ -192,6 +192,7 @@ const RequestComposer = () => {
 
       <section className={classes.viewSelector}>
         <PrettyJson
+          tooltipText="copy request"
           object={requestObject}
           shouldCollapse={shouldCollapseRequest}
         />

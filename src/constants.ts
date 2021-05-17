@@ -183,6 +183,7 @@ export enum StorageKey {
   metricExpressionPageSize = "request-composer/metric-expression-page-size",
   metricExpressionRequestShowSegmentDefinition = "request-composer/metric-expression-show-segment-definition",
 
+  // GA4 Event Builder
   eventBuilderCategory = "ga4/event-builder/event-category",
   eventBuilderApiSecret = "ga4/event-builder/api-secret",
   eventBuilderFirebaseAppId = "ga4/event-builder/firebase-app-id",
@@ -193,6 +194,12 @@ export enum StorageKey {
   eventBuilderTimestampMicros = "ga4/event-builder/timestamp-micros",
   eventBuilderNonPersonalizedAds = "ga4/event-builder/non-personalized-ads",
   eventBuilderUseFirebase = "ga4/event-builder/use-firebase",
+  ga4EventBuilderEvents = "ga4/event-builder/events",
+  ga4EventBuilderLastEventType = "ga4/event-builder/last-event-type",
+  ga4EventBuilderParameters = "ga4/event-builder/parameters",
+  ga4EventBuilderItems = "ga4/event-builder/items",
+  ga4EventBuilderEventName = "ga4/event-builder/event-name",
+  ga4EventBuilderUserProperties = "ga4/event-builder/user-properties",
 }
 
 export const EventAction = {

@@ -308,6 +308,7 @@ const BasicReport = () => {
 
       {showRequestJSON && (
         <PrettyJson
+          tooltipText="copy request"
           className={classes.requestJSON}
           object={request}
           shouldCollapse={shouldCollapseRequest}

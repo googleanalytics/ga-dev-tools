@@ -86,7 +86,7 @@ describe("Event Builder", () => {
           })
           const userId = await find(Label.UserId, { exact: false })
           const eventCategory = await findByTestId(Label.EventCategory)
-          const eventName = await find(Label.EventName, { exact: false })
+          const eventName = await findByTestId(Label.EventName)
           const timestampMicros = await find(Label.TimestampMicros, {
             exact: false,
           })
@@ -114,7 +114,7 @@ describe("Event Builder", () => {
             renderer.fireEvent.keyDown(eventCategory, { key: "ArrowDown" })
             renderer.fireEvent.keyDown(eventCategory, { key: "Enter" })
 
-            const enInput = within(eventCategory).getByRole("textbox")
+            const enInput = within(eventName).getByRole("textbox")
             eventCategory.focus()
             renderer.fireEvent.change(enInput, { target: { value: "" } })
             renderer.fireEvent.keyDown(eventName, { key: "ArrowDown" })
@@ -133,12 +133,12 @@ describe("Event Builder", () => {
 
           const payload = await findByTestId("payload")
           expect(payload).toHaveTextContent(
-            /"app_instance_id": "my_instance_id"/
+            /"app_instance_id":"my_instance_id"/
           )
-          expect(payload).toHaveTextContent(/"user_id": "my_user_id"/)
-          expect(payload).toHaveTextContent(/"timestamp_micros": "1234"/)
-          expect(payload).toHaveTextContent(/"non_personalized_ads": true/)
-          expect(payload).toHaveTextContent(/"name": "add_to_cart"/)
+          expect(payload).toHaveTextContent(/"user_id":"my_user_id"/)
+          expect(payload).toHaveTextContent(/"timestamp_micros":"1234"/)
+          expect(payload).toHaveTextContent(/"non_personalized_ads":true/)
+          expect(payload).toHaveTextContent(/"name":"add_shipping_info"/)
         })
       })
       describe("for gtag switch", () => {
@@ -164,7 +164,7 @@ describe("Event Builder", () => {
           const clientId = await find(Label.ClientID, { exact: false })
           const userId = await find(Label.UserId, { exact: false })
           const eventCategory = await findByTestId(Label.EventCategory)
-          const eventName = await find(Label.EventName, { exact: false })
+          const eventName = await findByTestId(Label.EventName)
           const timestampMicros = await find(Label.TimestampMicros, {
             exact: false,
           })
@@ -194,7 +194,7 @@ describe("Event Builder", () => {
             renderer.fireEvent.keyDown(eventCategory, { key: "ArrowDown" })
             renderer.fireEvent.keyDown(eventCategory, { key: "Enter" })
 
-            const enInput = within(eventCategory).getByRole("textbox")
+            const enInput = within(eventName).getByRole("textbox")
             eventCategory.focus()
             renderer.fireEvent.change(enInput, { target: { value: "" } })
             renderer.fireEvent.keyDown(eventName, { key: "ArrowDown" })
@@ -216,11 +216,11 @@ describe("Event Builder", () => {
           )
 
           const payload = await findByTestId("payload")
-          expect(payload).toHaveTextContent(/"client_id": "my_client_id"/)
-          expect(payload).toHaveTextContent(/"user_id": "my_user_id"/)
-          expect(payload).toHaveTextContent(/"timestamp_micros": "1234"/)
-          expect(payload).toHaveTextContent(/"non_personalized_ads": true/)
-          expect(payload).toHaveTextContent(/"name": "add_to_cart"/)
+          expect(payload).toHaveTextContent(/"client_id":"my_client_id"/)
+          expect(payload).toHaveTextContent(/"user_id":"my_user_id"/)
+          expect(payload).toHaveTextContent(/"timestamp_micros":"1234"/)
+          expect(payload).toHaveTextContent(/"non_personalized_ads":true/)
+          expect(payload).toHaveTextContent(/"name":"add_shipping_info"/)
         })
       })
     })

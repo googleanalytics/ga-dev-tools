@@ -127,7 +127,11 @@ const ReportsTable: React.FC<ReportsTableProps> = ({
         })}
       </TabPanel>
       <TabPanel value={tab} index={1}>
-        <PrettyJson object={response} shouldCollapse={shouldCollapseResponse} />
+        <PrettyJson
+          tooltipText="copy response"
+          object={response}
+          shouldCollapse={shouldCollapseResponse}
+        />
       </TabPanel>
     </section>
   )

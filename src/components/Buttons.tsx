@@ -1,41 +1,41 @@
 import * as React from "react"
-import { Button, Tooltip, IconButton, ButtonProps } from "@material-ui/core"
+import {
+  Button,
+  Tooltip,
+  IconButton,
+  ButtonProps as MUIButtonProps,
+} from "@material-ui/core"
 import Add from "@material-ui/icons/Add"
 import Delete from "@material-ui/icons/Delete"
-
-// TODO - PAB shouldn't allow you to provide variant or color so it's more
-// obvious how it works.
-// Primary Action Button
-export const PAB: typeof Button = ({ ...props }) => {
-  return <Button {...props} variant="contained" color="primary" />
-}
+import Check from "@material-ui/icons/Check"
 
 // Secondary Action Button
-interface SABProps extends ButtonProps {
+interface Props extends MUIButtonProps {
   add?: boolean
   delete?: boolean
+  check?: boolean
   small?: boolean
   title?: string
 }
-export const SAB: React.FC<SABProps> = ({
+const BaseButton: React.FC<Props> = ({
   add,
   small,
   delete: deleteIcon,
+  check,
   title,
   ...props
 }) => {
   const button = React.useMemo(() => {
     return (
       <Button
-        startIcon={add ? <Add /> : deleteIcon ? <Delete /> : null}
+        startIcon={
+          check ? <Check /> : add ? <Add /> : deleteIcon ? <Delete /> : null
+        }
         {...props}
         size={small ? "small" : props.size}
-        variant="outlined"
-        color="secondary"
       />
     )
-  }, [add, deleteIcon, small, props])
-
+  }, [add, deleteIcon, small, props, check])
   if (title !== undefined) {
     return (
       <Tooltip title={title}>
@@ -46,53 +46,20 @@ export const SAB: React.FC<SABProps> = ({
   return button
 }
 
-export const DAB: React.FC<SABProps> = ({
-  add,
-  small,
-  delete: deleteIcon,
-  title,
-  ...props
-}) => {
-  const button = React.useMemo(() => {
-    return (
-      <Button
-        startIcon={add ? <Add /> : deleteIcon ? <Delete /> : null}
-        {...props}
-        size={small ? "small" : props.size}
-        variant="contained"
-        color="secondary"
-      />
-    )
-  }, [add, deleteIcon, small, props])
-
-  if (title !== undefined) {
-    return (
-      <Tooltip title={title}>
-        <span>{button}</span>
-      </Tooltip>
-    )
-  }
-  return button
+export const PAB: React.FC<Props> = ({ ...props }) => {
+  return <BaseButton {...props} variant="contained" color="primary" />
 }
 
-interface PlainButtonProps extends ButtonProps {
-  add?: true | undefined
-  small?: true | undefined
+export const SAB: React.FC<Props> = ({ ...props }) => {
+  return <BaseButton {...props} variant="outlined" color="secondary" />
 }
 
-export const PlainButton: React.FC<PlainButtonProps> = ({
-  add,
-  small,
-  ...props
-}) => {
-  return (
-    <Button
-      startIcon={add ? <Add /> : null}
-      {...props}
-      size={small ? "small" : props.size}
-      variant="outlined"
-    />
-  )
+export const DAB: React.FC<Props> = ({ ...props }) => {
+  return <BaseButton {...props} variant="contained" color="secondary" />
+}
+
+export const PlainButton: React.FC<Props> = ({ ...props }) => {
+  return <BaseButton {...props} variant="outlined" />
 }
 
 export const TooltipIconButton: React.FC<{

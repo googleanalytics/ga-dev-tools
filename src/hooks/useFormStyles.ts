@@ -15,7 +15,7 @@ const useFormStyles = makeStyles(theme => ({
   },
   trashRow: {
     display: "flex",
-    alignItems: "baseline",
+    alignItems: "center",
     "&> :not(:first-child)": {
       flexGrow: 1,
     },
@@ -28,6 +28,9 @@ const useFormStyles = makeStyles(theme => ({
     "&> :not(:first-child)": {
       flexGrow: 1,
     },
+  },
+  grow: {
+    flexGrow: 1,
   },
   forceRight: {
     display: "flex",

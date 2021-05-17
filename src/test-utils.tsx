@@ -29,6 +29,39 @@ interface WithProvidersConfig {
   isLoggedIn?: boolean
 }
 
+export const wrapperFor: (options: {
+  path?: string
+  isLoggedIn?: boolean
+  setUp?: () => void
+}) => React.FC = ({ path, isLoggedIn, setUp }) => {
+  path = path || "/"
+  isLoggedIn = isLoggedIn === undefined ? true : isLoggedIn
+
+  window.localStorage.clear()
+  setUp && setUp()
+
+  const history = createHistory(createMemorySource(path))
+  const store = makeStore()
+
+  if (isLoggedIn) {
+    store.dispatch({ type: "setUser", user: {} })
+  } else {
+    store.dispatch({ type: "setUser", user: undefined })
+  }
+
+  const Wrapper: React.FC = ({ children }) => (
+    <Provider store={store}>
+      <LocationProvider history={history}>
+        <QueryParamProvider {...{ default: true }} reachHistory={history}>
+          {children}
+        </QueryParamProvider>
+      </LocationProvider>
+    </Provider>
+  )
+  return Wrapper
+}
+export const TestWrapper = wrapperFor({})
+
 export const withProviders = (
   component: JSX.Element | null,
   { path, isLoggedIn }: WithProvidersConfig = { path: "/", isLoggedIn: true }

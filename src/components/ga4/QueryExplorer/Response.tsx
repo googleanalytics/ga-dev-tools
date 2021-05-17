@@ -109,7 +109,11 @@ const Response: React.FC<ReportsTableProps> = ({
         {errorDetail}
         {loading}
         {pending}
-        <PrettyJson object={response} shouldCollapse={shouldCollapse} />
+        <PrettyJson
+          tooltipText="copy response"
+          object={response}
+          shouldCollapse={shouldCollapse}
+        />
       </TabPanel>
     </section>
   )

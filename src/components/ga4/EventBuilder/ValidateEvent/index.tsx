@@ -12,118 +12,259 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import React from "react"
+import React, { useContext } from "react"
 
-import green from "@material-ui/core/colors/green"
-import red from "@material-ui/core/colors/red"
-import grey from "@material-ui/core/colors/grey"
 import { makeStyles } from "@material-ui/core/styles"
-import Paper from "@material-ui/core/Paper"
-import Typography from "@material-ui/core/Typography"
 import clsx from "classnames"
 
-import {
-  ValidationMessage,
-  MPEvent,
-  ValidationStatus as ValidationStatusT,
-  Parameters,
-} from "../types"
 import useFormStyles from "@/hooks/useFormStyles"
-import EventPayloadInput from "./EventPayloadInput"
-import ValidationStatus from "./ValidationStatus"
-import EventActions from "./EventActions"
+import useValidateEvent from "./useValidateEvent"
+import Loadable from "@/components/Loadable"
+import Typography from "@material-ui/core/Typography"
+import { PAB, PlainButton } from "@/components/Buttons"
+import { Check, Warning, Error as ErrorIcon } from "@material-ui/icons"
+import PrettyJson from "@/components/PrettyJson"
+import usePayload from "./usePayload"
+import { ValidationMessage } from "../types"
+import Spinner from "@/components/Spinner"
+import { EventCtx, Label } from ".."
+import { Card } from "@material-ui/core"
+import { green, red } from "@material-ui/core/colors"
+
+interface StyleProps {
+  error?: boolean
+  valid?: boolean
+}
+const useStyles = makeStyles(theme => ({
+  template: {
+    padding: theme.spacing(2),
+  },
+  payloadTitle: {
+    margin: theme.spacing(1, 0),
+  },
+  headers: {
+    ...theme.typography.body2,
+    fontFamily: "monospace",
+  },
+  heading: ({ error, valid }: StyleProps) => ({
+    backgroundColor: error ? red[300] : valid ? green[300] : "inherit",
+    color: error
+      ? theme.palette.getContrastText(red[300])
+      : valid
+      ? theme.palette.getContrastText(green[300])
+      : "inherit",
+    margin: theme.spacing(-2),
+    padding: theme.spacing(2),
+    display: "flex",
+    alignItems: "center",
+    "&> :first-child": {
+      marginRight: theme.spacing(1),
+    },
+    marginBottom: theme.spacing(2),
+  }),
+  payload: {
+    fontSize: theme.typography.caption.fontSize,
+  },
+}))
 
 export interface ValidateEventProps {
-  parameterizedUrl: string
   measurement_id: string
   app_instance_id: string
   firebase_app_id: string
   api_secret: string
   client_id: string
   user_id: string
-  event: MPEvent
-  validateEvent: () => void
-  sendEvent: () => void
-  payload: {}
-  user_properties: Parameters
-  validationStatus: ValidationStatusT
-  validationMessages: ValidationMessage[]
 }
 
-const useStyles = makeStyles(theme => ({
-  payloadTitle: {
-    margin: theme.spacing(1, 0),
-  },
-  editEvent: {
-    "&> *": {
-      padding: theme.spacing(1, 2),
-    },
-  },
-  validationStatus: ({ validationStatus }: ValidateEventProps) => {
-    const baseColor =
-      validationStatus === ValidationStatusT.Invalid
-        ? red
-        : validationStatus === ValidationStatusT.Unset ||
-          validationStatus === ValidationStatusT.Pending
-        ? grey
-        : green
-    return {
-      backgroundColor: baseColor[100],
-      border: `1px solid ${baseColor[500]}`,
-      "&> h2 > svg": {
-        marginRight: theme.spacing(1),
-      },
-    }
-  },
-}))
+const focusFor = (message: ValidationMessage) => {
+  let id: string | undefined
+  switch (message.fieldPath) {
+    case "api_secret":
+      id = Label.APISecret
+      break
+    case "measurement_id":
+      id = Label.MeasurementID
+      break
+    case "firebase_app_id":
+      id = Label.FirebaseAppID
+      break
+    case "app_instance_id":
+      id = Label.AppInstanceID
+      break
+  }
+  if (id) {
+    return (
+      <PlainButton
+        style={{ marginRight: "8px" }}
+        small
+        onClick={() => {
+          id && document.getElementById(id)?.focus()
+        }}
+      >
+        focus
+      </PlainButton>
+    )
+  }
+}
 
-const ValidateEvent: React.FC<ValidateEventProps> = props => {
-  const {
-    measurement_id,
-    firebase_app_id,
-    api_secret,
-    validationStatus,
-    validationMessages,
-    payload,
-  } = props
+interface TemplateProps {
+  heading: string
+  headingIcon?: JSX.Element
+  body: JSX.Element | string
+  validateEvent?: () => void
+  validationMessages?: ValidationMessage[]
+  sendToGA?: () => void
+  copyPayload?: () => void
+  copySharableLink?: () => void
+  error?: boolean
+  valid?: boolean
+  sent?: boolean
+}
+const Template: React.FC<TemplateProps> = ({
+  sent,
+  heading,
+  headingIcon,
+  body,
+  validateEvent,
+  validationMessages,
+  sendToGA,
+  copyPayload,
+  copySharableLink,
+  error,
+  valid,
+}) => {
+  const classes = useStyles({ error, valid })
+  const payload = usePayload()
   const formClasses = useFormStyles()
-  const classes = useStyles(props)
-
+  const { instanceId, api_secret } = useContext(EventCtx)!
   return (
-    <Paper
-      className={clsx(classes.editEvent, formClasses.form)}
+    <Card
+      className={clsx(formClasses.form, classes.template)}
       data-testid="validate and send"
     >
-      <ValidationStatus
-        className={classes.validationStatus}
-        validationStatus={validationStatus}
-        validationMessages={validationMessages}
-      />
-      <div className="HitElement-body">
-        <div className="HitElement-requestInfo">
-          POST /mp/collect?
-          {measurement_id !== ""
-            ? `measurement_id=${measurement_id}`
-            : firebase_app_id !== ""
-            ? `firebase_app_id=${firebase_app_id}`
-            : "measurement_id="}
-          &api_secret={api_secret} HTTP/1.1
-          <br />
-          Host: www.google-analytics.com
-        </div>
-        <div className="HitElement-requestBody">
-          <div className="FormControl FormControl--full">
-            <div className="FormControl-body">
-              <Typography className={classes.payloadTitle} variant="h4">
-                Payload:
+      <Typography className={classes.heading} variant="h3">
+        {headingIcon}
+        {heading}
+      </Typography>
+      {validationMessages !== undefined && (
+        <ul>
+          {validationMessages.map((message, idx) => (
+            <li key={idx}>
+              {focusFor(message)}
+              {message.description}
+            </li>
+          ))}
+        </ul>
+      )}
+
+      {body}
+
+      <section className={formClasses.buttonRow}>
+        {validateEvent !== undefined && (
+          <PAB small onClick={validateEvent}>
+            validate event
+          </PAB>
+        )}
+        {sendToGA && (
+          <PAB check={sent} onClick={sendToGA}>
+            {sent ? "sent" : "send to ga"}
+          </PAB>
+        )}
+        {copyPayload && (
+          <PlainButton onClick={copyPayload}>copy payload</PlainButton>
+        )}
+        {copySharableLink && (
+          <PlainButton onClick={copySharableLink}>
+            copy sharable link
+          </PlainButton>
+        )}
+      </section>
+      <br />
+      <Typography variant="h4">Request info</Typography>
+      <Typography className={classes.headers}>
+        POST /mp/collect?api_secret={api_secret}
+        {instanceId.firebase_app_id &&
+          `&firebase_app_id=${instanceId.firebase_app_id}`}
+        {instanceId.measurement_id &&
+          `&measurement_id=${instanceId.measurement_id}`}{" "}
+        HTTP/1.1 <br />
+        HOST: www.google-analytics.com <br />
+        Content-Type: application/json
+      </Typography>
+      <Typography variant="h5">Payload</Typography>
+      <section data-testid="payload">
+        <PrettyJson
+          className={classes.payload}
+          noPaper
+          object={payload}
+          tooltipText="Copy payload"
+        />
+      </section>
+    </Card>
+  )
+}
+
+const ValidateEvent: React.FC<ValidateEventProps> = () => {
+  const request = useValidateEvent()
+
+  return (
+    <Loadable
+      request={request}
+      renderNotStarted={({ validateEvent }) => (
+        <Template
+          heading="This event has not been validated"
+          headingIcon={<Warning />}
+          body={
+            <>
+              <Typography>
+                Update the event using the controls above.
               </Typography>
-              <EventPayloadInput payload={payload} />
-            </div>
-          </div>
-        </div>
-        <EventActions {...props} payload={payload} />
-      </div>
-    </Paper>
+              <Typography>
+                When you're done editing the event, click "Validate Event" to
+                check if the event is valid.
+              </Typography>
+            </>
+          }
+          validateEvent={validateEvent}
+        />
+      )}
+      renderInProgress={() => (
+        <Template heading="Validating" body={<Spinner ellipses />} />
+      )}
+      renderFailed={({ validationMessages, validateEvent }) => (
+        <Template
+          error
+          headingIcon={<ErrorIcon />}
+          heading="Event is invalid"
+          body=""
+          validateEvent={validateEvent}
+          validationMessages={validationMessages}
+        />
+      )}
+      renderSuccessful={({ sendToGA, copyPayload, copySharableLink, sent }) => (
+        <Template
+          sent={sent}
+          valid
+          heading="Event is valid"
+          headingIcon={<Check />}
+          sendToGA={sendToGA}
+          copyPayload={copyPayload}
+          copySharableLink={copySharableLink}
+          body={
+            <>
+              <Typography>
+                Use the controls below to copy the event payload or share it
+                with coworkers.
+              </Typography>
+              <Typography>
+                You can also send the event to Google Analytics and watch it in
+                action in the Real Time view.
+              </Typography>
+            </>
+          }
+        />
+      )}
+    />
   )
 }
 

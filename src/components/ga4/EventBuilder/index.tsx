@@ -24,17 +24,20 @@ import Refresh from "@material-ui/icons/Refresh"
 
 import LinkedTextField from "@/components/LinkedTextField"
 import LabeledCheckbox from "@/components/LabeledCheckbox"
-import EditEvent from "./EditEvent"
-import EditUserProperties from "./EditUserProperties"
-import ValidateEvent from "./ValidateEvent"
-import { MPEventCategory, MPEventType, MPEvent } from "./types"
-import useEvents from "./useEvents"
 import Grid from "@material-ui/core/Grid"
 import Switch from "@material-ui/core/Switch"
 import ExternalLink from "@/components/ExternalLink"
 import { Url } from "@/constants"
 import WithHelpText from "@/components/WithHelpText"
 import useFormStyles from "@/hooks/useFormStyles"
+import useEvent from "./useEvent"
+import Parameters from "./Parameters"
+import useInputs from "./useInputs"
+import { Category, ClientIds, EventType, InstanceId, Parameter } from "./types"
+import { eventsForCategory } from "./event"
+import useUserProperties from "./useUserProperties"
+import Items from "./Items"
+import ValidateEvent from "./ValidateEvent"
 
 export enum Label {
   APISecret = "api_secret",
@@ -78,47 +81,96 @@ const useStyles = makeStyles(theme => ({
   validateHeading: {
     marginTop: theme.spacing(3),
   },
+  parameters: {
+    "&> :not(:first-child)": {
+      marginTop: theme.spacing(1),
+    },
+  },
+  items: {
+    "&> :not(:first-child)": {
+      marginTop: theme.spacing(3),
+    },
+    "&> :last-child": {
+      marginTop: theme.spacing(1),
+    },
+  },
 }))
 
+export const EventCtx = React.createContext<
+  | {
+      eventName: string
+      type: EventType
+      parameters: Parameter[]
+      items: Parameter[][] | undefined
+      userProperties: Parameter[]
+      timestamp_micros: string | undefined
+      non_personalized_ads: boolean | undefined
+      clientIds: ClientIds
+      instanceId: InstanceId
+      api_secret: string
+    }
+  | undefined
+>(undefined)
 export const ShowAdvancedCtx = React.createContext(false)
+export const UseFirebaseCtx = React.createContext(false)
 
 const EventBuilder: React.FC = () => {
   const formClasses = useFormStyles()
   const classes = useStyles()
   const [showAdvanced, setShowAdvanced] = React.useState(false)
   const {
+    userProperties,
+    addNumberUserProperty,
+    addStringUserProperty,
+    removeUserProperty,
+    setUserPropertyName,
+    setUserPopertyValue,
+  } = useUserProperties()
+  const {
+    parameters,
+    items,
+    type,
+    setType,
+    eventName,
+    setEventName,
+    setParamName,
+    setParamValue,
+    addStringParam,
+    addNumberParam,
+    setItemParamName,
+    setItemParamValue,
+    removeParam,
+    addItem,
+    removeItem,
+    addItemsParam,
+    addItemNumberParam,
+    addItemStringParam,
+    removeItemParam,
+    categories,
+  } = useEvent()
+
+  const {
     useFirebase,
     setUseFirebase,
-    event,
-    validateEvent,
-    sendEvent,
-    setEvent,
-    parameterizedUrl,
     category,
+    setCategory,
     api_secret,
     setAPISecret,
     firebase_app_id,
     setFirebaseAppId,
+    app_instance_id,
+    setAppInstanceId,
     measurement_id,
     setMeasurementId,
     client_id,
     setClientId,
-    app_instance_id,
-    setAppInstanceId,
     user_id,
     setUserId,
-    updateCustomEventName,
-    updateEventCategory,
-    non_personalized_ads,
-    setNonPersonalizedAds,
     timestamp_micros,
     setTimestampMicros,
-    validationStatus,
-    validationMessages,
-    user_properties,
-    setUserProperties,
-    payload,
-  } = useEvents()
+    non_personalized_ads,
+    setNonPersonalizedAds,
+  } = useInputs(categories)
 
   return (
     <div>
@@ -230,85 +282,81 @@ const EventBuilder: React.FC = () => {
           onChange={setUserId}
         />
 
-        <WithHelpText
-          helpText="The category for the event."
-          className={classes.fullWidth}
-        >
-          <Autocomplete<MPEventCategory, false, true, true>
-            data-testid={Label.EventCategory}
-            fullWidth
-            disableClearable
-            autoComplete
-            autoHighlight
-            autoSelect
-            options={Object.values(MPEventCategory)}
-            getOptionLabel={category => category}
-            value={category}
-            onChange={(_event, value) => {
-              updateEventCategory(value as MPEventCategory)
-            }}
-            renderInput={params => (
-              <TextField
-                {...params}
-                label={Label.EventCategory}
-                id={Label.EventCategory}
-                size="small"
-                variant="outlined"
-              />
-            )}
-          />
-        </WithHelpText>
-        {!event.isCustomEvent() && (
-          <WithHelpText
-            className={classes.fullWidth}
-            helpText={
-              <>
-                The name of the event. See{" "}
-                <ExternalLink
-                  href={`https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference/events#${event.getEventName()}`}
-                >
-                  {event.getEventType()}{" "}
-                </ExternalLink>
-                on devsite.
-              </>
+        <Autocomplete<Category, false, true, true>
+          data-testid={Label.EventCategory}
+          fullWidth
+          disableClearable
+          autoComplete
+          autoHighlight
+          autoSelect
+          options={Object.values(Category)}
+          getOptionLabel={category => category}
+          value={category}
+          onChange={(_event, value) => {
+            setCategory(value as Category)
+            const events = eventsForCategory(value as Category)
+            if (events.length > 0) {
+              setType(events[0].type)
             }
-          >
-            <Autocomplete<MPEventType, false, true, true>
-              fullWidth
-              disableClearable
-              autoComplete
-              autoHighlight
-              autoSelect
-              options={MPEvent.eventTypes(category)}
-              getOptionLabel={eventType => eventType}
-              value={event.getEventType()}
-              onChange={(_event, value) => {
-                setEvent(MPEvent.empty(value as MPEventType))
-              }}
-              renderInput={params => (
-                <TextField
-                  {...params}
-                  label={Label.EventName}
-                  id={Label.EventName}
-                  size="small"
-                  variant="outlined"
-                />
-              )}
+          }}
+          renderInput={params => (
+            <TextField
+              {...params}
+              label={Label.EventCategory}
+              id={Label.EventCategory}
+              size="small"
+              variant="outlined"
+              helperText="The category for the event"
             />
-          </WithHelpText>
-        )}
-        {event.isCustomEvent() && (
+          )}
+        />
+        {type === EventType.CustomEvent ? (
           <TextField
             fullWidth
             variant="outlined"
             size="small"
             label={Label.EventName}
             id={Label.EventName}
-            value={event.getEventName()}
+            value={eventName}
             helperText="The name of the event"
             onChange={e => {
-              updateCustomEventName(e.target.value)
+              setEventName(e.target.value)
             }}
+          />
+        ) : (
+          <Autocomplete<EventType, false, true, true>
+            data-testid={Label.EventName}
+            fullWidth
+            disableClearable
+            autoComplete
+            autoHighlight
+            autoSelect
+            options={eventsForCategory(category).map(e => e.type)}
+            getOptionLabel={eventType => eventType}
+            value={type}
+            onChange={(_event, value) => {
+              setType(value as EventType)
+            }}
+            renderInput={params => (
+              <TextField
+                {...params}
+                label={Label.EventName}
+                id={Label.EventName}
+                size="small"
+                variant="outlined"
+                helperText={
+                  <>
+                    The name of the event. See{" "}
+                    <ExternalLink
+                      href={`https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference/events#${type}`}
+                    >
+                      {type}
+                    </ExternalLink>{" "}
+                    on devsite.
+                  </>
+                }
+              />
+            )}
           />
         )}
         <LinkedTextField
@@ -318,7 +366,7 @@ const EventBuilder: React.FC = () => {
           href={`https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference?client_type=${
             useFirebase ? "firebase" : "gtag"
           }#timestamp_micros`}
-          value={timestamp_micros}
+          value={timestamp_micros || ""}
           onChange={setTimestampMicros}
           helperText="The timestamp of the event."
           extraAction={
@@ -367,40 +415,86 @@ const EventBuilder: React.FC = () => {
         recommended parameters for the event will appear here. Check "show
         advanced options" to add custom parameters or user properties.
       </Typography>
-      <ShowAdvancedCtx.Provider value={showAdvanced}>
-        <EditEvent
-          event={event}
-          setEvent={setEvent}
-          setShowAdvanced={setShowAdvanced}
-        />
+      <LabeledCheckbox checked={showAdvanced} onChange={setShowAdvanced}>
+        show advanced options
+      </LabeledCheckbox>
 
-        {showAdvanced && (
-          <EditUserProperties
-            user_properties={user_properties}
-            setUserProperties={setUserProperties}
+      <section className={formClasses.form}>
+        <ShowAdvancedCtx.Provider
+          value={showAdvanced || type === EventType.CustomEvent}
+        >
+          <Typography variant="h5">Parameters</Typography>
+          <Parameters
+            removeParam={removeParam}
+            parameters={parameters}
+            addStringParam={addStringParam}
+            addNumberParam={addNumberParam}
+            setParamName={setParamName}
+            setParamValue={setParamValue}
+            addItemsParam={items === undefined ? addItemsParam : undefined}
           />
-        )}
-      </ShowAdvancedCtx.Provider>
+          {items !== undefined && (
+            <>
+              <Typography variant="h5">Items</Typography>
+              <Items
+                items={items}
+                addItem={addItem}
+                removeItem={removeItem}
+                removeItemParam={removeItemParam}
+                addItemNumberParam={addItemNumberParam}
+                addItemStringParam={addItemStringParam}
+                setItemParamName={setItemParamName}
+                setItemParamValue={setItemParamValue}
+              />
+            </>
+          )}
+
+          {showAdvanced && (
+            <>
+              <Typography variant="h5">User properties</Typography>
+              <Parameters
+                removeParam={removeUserProperty}
+                parameters={userProperties}
+                addStringParam={addStringUserProperty}
+                addNumberParam={addNumberUserProperty}
+                setParamName={setUserPropertyName}
+                setParamValue={setUserPopertyValue}
+              />
+            </>
+          )}
+        </ShowAdvancedCtx.Provider>
+      </section>
 
       <Typography variant="h3" className={classes.validateHeading}>
-        Validate & Send
+        Validate & Send event
       </Typography>
-      <ValidateEvent
-        payload={payload}
-        validationMessages={validationMessages}
-        validationStatus={validationStatus}
-        event={event}
-        sendEvent={sendEvent}
-        parameterizedUrl={parameterizedUrl}
-        validateEvent={validateEvent}
-        user_properties={user_properties}
-        client_id={client_id || ""}
-        user_id={user_id || ""}
-        api_secret={api_secret || ""}
-        measurement_id={measurement_id || ""}
-        app_instance_id={app_instance_id || ""}
-        firebase_app_id={firebase_app_id || ""}
-      />
+      <UseFirebaseCtx.Provider value={useFirebase}>
+        <EventCtx.Provider
+          value={{
+            type,
+            clientIds: useFirebase
+              ? { app_instance_id, user_id }
+              : { client_id, user_id },
+            items,
+            parameters,
+            eventName,
+            userProperties,
+            timestamp_micros,
+            non_personalized_ads,
+            instanceId: useFirebase ? { firebase_app_id } : { measurement_id },
+            api_secret: api_secret!,
+          }}
+        >
+          <ValidateEvent
+            client_id={client_id || ""}
+            user_id={user_id || ""}
+            api_secret={api_secret || ""}
+            measurement_id={measurement_id || ""}
+            app_instance_id={app_instance_id || ""}
+            firebase_app_id={firebase_app_id || ""}
+          />
+        </EventCtx.Provider>
+      </UseFirebaseCtx.Provider>
     </div>
   )
 }
