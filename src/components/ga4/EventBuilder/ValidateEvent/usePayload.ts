@@ -23,6 +23,23 @@ const objectify = (acc: {}, p: Parameter) => ({
     : {}),
 })
 
+const objectifyUserProperties = (acc: {}, p: Parameter) => {
+  let value: string | number | undefined = p.value
+  if (p.type === ParameterType.Number) {
+    value = tryParseNum(value)
+  }
+  return {
+    ...acc,
+    ...(p.name !== "" && value !== "" && value !== undefined
+      ? {
+          [p.name]: {
+            value,
+          },
+        }
+      : {}),
+  }
+}
+
 const removeUndefined = (o: {}): object =>
   Object.entries(o).reduce(
     (acc, [k, v]) => ({
@@ -31,6 +48,17 @@ const removeUndefined = (o: {}): object =>
     }),
     {}
   )
+
+const removeEmptyObject = (o: {}): {} => {
+  const empty = JSON.stringify({})
+  return Object.entries(o).reduce(
+    (acc, [k, v]) => ({
+      ...acc,
+      ...(JSON.stringify(v) === empty ? {} : { [k]: v }),
+    }),
+    {}
+  )
+}
 
 const usePayload = (): {} => {
   const {
@@ -46,7 +74,11 @@ const usePayload = (): {} => {
     () =>
       items === undefined
         ? {}
-        : { items: items.map(i => i.reduce(objectify, {})) },
+        : {
+            items: items
+              .map(i => i.reduce(objectify, {}))
+              .filter(i => JSON.stringify(i) !== JSON.stringify({})),
+          },
     [items]
   )
 
@@ -56,11 +88,7 @@ const usePayload = (): {} => {
   ])
 
   const user_properties = useMemo(
-    () =>
-      userProperties.reduce(
-        (acc, prop) => ({ ...acc, [prop.name]: { value: prop.value } }),
-        {}
-      ),
+    () => userProperties.reduce(objectifyUserProperties, {}),
     [userProperties]
   )
 
@@ -69,7 +97,7 @@ const usePayload = (): {} => {
       ...removeUndefined(clientIds),
       ...removeUndefined({ timestamp_micros }),
       ...removeUndefined({ non_personalized_ads }),
-      ...(userProperties.length > 0 ? { user_properties } : {}),
+      ...removeUndefined(removeEmptyObject({ user_properties })),
       events: [
         { name: eventName, ...(parameters.length > 0 ? { params } : {}) },
       ],
@@ -81,7 +109,6 @@ const usePayload = (): {} => {
     parameters,
     params,
     timestamp_micros,
-    userProperties.length,
     user_properties,
   ])
 

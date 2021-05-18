@@ -197,6 +197,10 @@ const useEvent = (initial?: EventType) => {
     [setItems]
   )
 
+  const removeItems = useCallback(() => {
+    setItems(undefined)
+  }, [setItems])
+
   const removeItemParam: RemoveItemParam = useCallback(
     (idx, itemIdx) => {
       setItems(old => {
@@ -272,6 +276,7 @@ const useEvent = (initial?: EventType) => {
     setItemParamName,
     setItemParamValue,
     removeItemParam,
+    removeItems,
   }
 }
 export default useEvent

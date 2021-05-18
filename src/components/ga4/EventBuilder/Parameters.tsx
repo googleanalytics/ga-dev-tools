@@ -1,4 +1,4 @@
-import { SAB } from "@/components/Buttons"
+import { DAB, SAB } from "@/components/Buttons"
 import useFormStyles from "@/hooks/useFormStyles"
 import makeStyles from "@material-ui/core/styles/makeStyles"
 import * as React from "react"
@@ -84,9 +84,9 @@ const Parameters: React.FC<Props> = ({
         {removeItem !== undefined && (
           <>
             <div className={formClasses.grow} />
-            <SAB delete small title="remove item" onClick={removeItem}>
+            <DAB delete small title="remove item" onClick={removeItem}>
               item
-            </SAB>
+            </DAB>
           </>
         )}
       </section>

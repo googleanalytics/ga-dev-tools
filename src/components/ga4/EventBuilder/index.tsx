@@ -146,6 +146,7 @@ const EventBuilder: React.FC = () => {
     addItemNumberParam,
     addItemStringParam,
     removeItemParam,
+    removeItems,
     categories,
   } = useEvent()
 
@@ -445,6 +446,7 @@ const EventBuilder: React.FC = () => {
                 addItemStringParam={addItemStringParam}
                 setItemParamName={setItemParamName}
                 setItemParamValue={setItemParamValue}
+                removeItems={removeItems}
               />
             </>
           )}
