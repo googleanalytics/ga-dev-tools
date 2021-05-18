@@ -91,6 +91,9 @@ const focusFor = (message: ValidationMessage) => {
     case "app_instance_id":
       id = Label.AppInstanceID
       break
+    case "client_id":
+      id = Label.ClientID
+      break
   }
   if (id) {
     return (
