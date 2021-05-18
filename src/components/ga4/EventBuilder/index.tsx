@@ -449,7 +449,8 @@ const EventBuilder: React.FC = () => {
             </>
           )}
 
-          {showAdvanced && (
+          {(showAdvanced ||
+            (userProperties !== undefined && userProperties.length !== 0)) && (
             <>
               <Typography variant="h5">User properties</Typography>
               <Parameters
