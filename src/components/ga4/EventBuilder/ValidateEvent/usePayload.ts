@@ -55,9 +55,14 @@ const usePayload = (): {} => {
     itemsParameter,
   ])
 
-  const user_properties = useMemo(() => userProperties.reduce(objectify, {}), [
-    userProperties,
-  ])
+  const user_properties = useMemo(
+    () =>
+      userProperties.reduce(
+        (acc, prop) => ({ ...acc, [prop.name]: { value: prop.value } }),
+        {}
+      ),
+    [userProperties]
+  )
 
   const payload = useMemo(() => {
     return {
