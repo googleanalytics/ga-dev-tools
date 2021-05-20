@@ -15,6 +15,8 @@
 // All static links on the site should be put into this enum. This makes it
 // easier to update all instances of a link on the site.
 export enum Url {
+  termsOfService = "https://policies.google.com/terms",
+  privacyPolicy = "https://policies.google.com/privacy",
   ga4MeasurementProtocol = "https://developers.google.com/analytics/devguides/collection/protocol/ga4",
   ga4DataAPIGetMetadata = "https://developers.google.com/analytics/devguides/reporting/data/v1/rest/v1beta/properties/getMetadata",
   cohortsRangeStartOffset = "https://developers.google.com/analytics/devguides/reporting/data/v1/rest/v1beta/CohortSpec#CohortsRange.FIELDS.start_offset",
