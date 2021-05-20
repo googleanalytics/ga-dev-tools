@@ -6,7 +6,13 @@ const notMobile = (theme: Theme) => theme.breakpoints.up("md")
 interface UseStylesProps {
   disableNav: true | undefined
 }
-export const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles(theme => ({
+  footer: {
+    padding: theme.spacing(2),
+    "&> :not(:first-child)": {
+      marginLeft: theme.spacing(1),
+    },
+  },
   activeLink: {
     fontWeight: "bold",
     color: `${theme.palette.primary.main} !important`,
@@ -36,7 +42,6 @@ export const useStyles = makeStyles(theme => ({
     minHeight: "100%",
     color: theme.palette.getContrastText(theme.palette.grey[200]),
     backgroundColor: theme.palette.grey[200],
-    paddingBottom: theme.spacing(4),
   },
   contentWrapper: {
     flexGrow: 1,
@@ -171,3 +176,5 @@ export const useStyles = makeStyles(theme => ({
     flexGrow: 1,
   },
 }))
+
+export default useStyles

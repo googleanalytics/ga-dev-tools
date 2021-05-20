@@ -34,11 +34,13 @@ import Typography from "@material-ui/core/Typography"
 
 import Login, { useLogin, UserStatus } from "../Login"
 import { useGAVersion } from "../../hooks"
-import { GAVersion } from "../../constants"
+import { GAVersion, Url } from "../../constants"
 import Spinner from "../Spinner"
 import { linkData } from "./links"
-import { useStyles } from "./use-styles"
+import useStyles from "./useStyles"
 import GA4Toggle from "./GA4Toggle"
+import useFormStyles from "@/hooks/useFormStyles"
+import ExternalLink from "../ExternalLink"
 
 interface LayoutProps {
   requireLogin?: true
@@ -56,6 +58,7 @@ const Layout: React.FC<LayoutProps> = ({
 }) => {
   const { gaVersion, setGAVersion } = useGAVersion(pathname)
   const classes = useStyles({ disableNav })
+  const formClasses = useFormStyles()
   const [open, setOpen] = React.useState(false)
   const { userStatus, loginLogout } = useLogin()
 
@@ -216,6 +219,11 @@ const Layout: React.FC<LayoutProps> = ({
             )}
           </section>
         </div>
+        <div className={formClasses.grow} />
+        <footer className={classes.footer}>
+          <a href={Url.termsOfService}>Terms of service</a>
+          <a href={Url.privacyPolicy}>Privacy policy</a>
+        </footer>
       </main>
     </div>
   )
