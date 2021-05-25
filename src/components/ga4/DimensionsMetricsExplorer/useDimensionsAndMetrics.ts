@@ -10,7 +10,7 @@ export type Dimension = gapi.client.analyticsdata.DimensionMetadata
 export type Metric = gapi.client.analyticsdata.MetricMetadata
 
 export type Successful = { dimensions: Dimension[]; metrics: Metric[] }
-type UseDimensionsAndMetrics = (property: string) => Requestable<Successful>
+type UseDimensionsAndMetrics = (propertyName: string) => Requestable<Successful>
 
 const MaxCacheTime = 1000 * 60 * 5 // 5 minutes
 
@@ -37,7 +37,7 @@ type Fields = {
   }
 }
 
-export const useDimensionsAndMetrics: UseDimensionsAndMetrics = property => {
+export const useDimensionsAndMetrics: UseDimensionsAndMetrics = propertyName => {
   const gapi = useSelector((state: AppState) => state.gapi)
   const dataAPI = React.useMemo(() => gapi?.client.analyticsdata, [gapi])
   const [fields, setFields] = usePersistantObject<Fields>(
@@ -45,7 +45,7 @@ export const useDimensionsAndMetrics: UseDimensionsAndMetrics = property => {
   )
   const [requestStatus, setRequestStatus] = React.useState<RequestStatus>(
     () => {
-      return requestStatusFor(fields, property)
+      return requestStatusFor(fields, propertyName)
     }
   )
 
@@ -56,11 +56,11 @@ export const useDimensionsAndMetrics: UseDimensionsAndMetrics = property => {
     ) {
       return
     }
-    const nu = requestStatusFor(fields, property)
+    const nu = requestStatusFor(fields, propertyName)
     if (nu !== requestStatus) {
       setRequestStatus(nu)
     }
-  }, [property, fields, requestStatus])
+  }, [propertyName, fields, requestStatus])
 
   React.useEffect(() => {
     if (
@@ -73,7 +73,7 @@ export const useDimensionsAndMetrics: UseDimensionsAndMetrics = property => {
     }
     setRequestStatus(RequestStatus.InProgress)
     dataAPI.properties
-      .getMetadata({ name: `properties/${property}/metadata` })
+      .getMetadata({ name: `${propertyName}/metadata` })
       .then(response => {
         const { dimensions, metrics } = response.result
         if (dimensions === undefined || metrics === undefined) {
@@ -82,19 +82,19 @@ export const useDimensionsAndMetrics: UseDimensionsAndMetrics = property => {
         }
         setFields((old = {}) => ({
           ...old,
-          [property]: { dimensions, metrics, time: new Date().getTime() },
+          [propertyName]: { dimensions, metrics, time: new Date().getTime() },
         }))
         setRequestStatus(RequestStatus.Successful)
       })
-  }, [dataAPI, setFields, property, requestStatus])
+  }, [dataAPI, setFields, propertyName, requestStatus])
 
-  const dimensions = React.useMemo(() => fields?.[property]?.dimensions, [
+  const dimensions = React.useMemo(() => fields?.[propertyName]?.dimensions, [
     fields,
-    property,
+    propertyName,
   ])
-  const metrics = React.useMemo(() => fields?.[property]?.metrics, [
+  const metrics = React.useMemo(() => fields?.[propertyName]?.metrics, [
     fields,
-    property,
+    propertyName,
   ])
 
   if (requestStatus !== RequestStatus.Successful) {

@@ -15,7 +15,7 @@ type CohortSpec = gapi.client.analyticsdata.CohortSpec
 export type RunReportResponse = gapi.client.analyticsdata.RunReportResponse
 
 type UseMakeRequestArgs = {
-  property: string | undefined
+  propertyName: string | undefined
   dimensionFilter: FilterExpression | undefined
   metricFilter: FilterExpression | undefined
   dateRanges: DateRange[] | undefined
@@ -42,7 +42,7 @@ export type RunReportError = {
   status: string
 }
 const useMakeRequest = ({
-  property,
+  propertyName,
   dateRanges,
   dimensions,
   metrics,
@@ -148,16 +148,13 @@ const useMakeRequest = ({
     if (
       dataAPI === undefined ||
       request === undefined ||
-      property === undefined
+      propertyName === undefined
     ) {
       return
     }
     setRequestStatus(RequestStatus.InProgress)
-    const propertyString = property.startsWith("properties/")
-      ? property
-      : `properties/${property}`
     dataAPI.properties
-      .runReport({ property: propertyString, resource: request })
+      .runReport({ property: propertyName, resource: request })
       .then(response => {
         const result = response.result
         setResponse(result)
@@ -168,7 +165,7 @@ const useMakeRequest = ({
         setError(e.result.error)
         setRequestStatus(RequestStatus.Failed)
       })
-  }, [property, dataAPI, request, setResponse])
+  }, [propertyName, dataAPI, request, setResponse])
 
   if (requestStatus === RequestStatus.Successful) {
     if (response === undefined) {

@@ -41,7 +41,7 @@ type UseAvailableColumns = (arg: {
   selectedDimensions: GA4Dimensions
   dimensionFilter?: (dimension: Dimension) => boolean
   metricFilter?: (metric: Metric) => boolean
-  property?: string
+  propertyName?: string
 }) => {
   metricOptions: GA4Metrics
   metricOptionsLessSelected: GA4Metrics
@@ -53,7 +53,7 @@ export const useAvailableColumns: UseAvailableColumns = ({
   selectedDimensions,
   dimensionFilter,
   metricFilter,
-  property = "properties/0",
+  propertyName = "properties/0",
 }) => {
   const gapi = useSelector((state: AppState) => state.gapi)
   const dataAPI = useMemo(() => gapi?.client.analyticsdata, [gapi])
@@ -65,13 +65,13 @@ export const useAvailableColumns: UseAvailableColumns = ({
       return
     }
     dataAPI.properties
-      .getMetadata({ name: `${property}/metadata` })
+      .getMetadata({ name: `${propertyName}/metadata` })
       .then(response => {
         const { dimensions, metrics } = response.result
         setMetrics(metrics)
         setDimensions(dimensions)
       })
-  }, [dataAPI, property])
+  }, [dataAPI, propertyName])
 
   const selectedMetricIds = React.useMemo(
     () => new Set((selectedMetrics || []).map(dimension => dimension.apiName)),
@@ -142,7 +142,7 @@ const Column: React.FC<{ column: GA4Column }> = ({ column }) => {
 export const DimensionsPicker: React.FC<{
   dimensions: GA4Dimensions
   setDimensions: React.Dispatch<React.SetStateAction<GA4Dimensions>>
-  property?: string
+  propertyName?: string
   required?: boolean
   helperText?: string | JSX.Element
   label?: string
@@ -151,13 +151,13 @@ export const DimensionsPicker: React.FC<{
   dimensions,
   setDimensions,
   required,
-  property,
+  propertyName,
   label = "dimensions",
 }) => {
   const { dimensionOptionsLessSelected } = useAvailableColumns({
     selectedDimensions: dimensions,
     selectedMetrics: [],
-    property,
+    propertyName,
   })
 
   return (
@@ -193,7 +193,7 @@ export const DimensionsPicker: React.FC<{
 export const MetricsPicker: React.FC<{
   metrics: GA4Metrics
   setMetrics: React.Dispatch<React.SetStateAction<GA4Metrics>>
-  property?: string
+  propertyName?: string
   required?: boolean
   helperText?: string | JSX.Element
   label?: string
@@ -202,13 +202,13 @@ export const MetricsPicker: React.FC<{
   metrics,
   setMetrics,
   required,
-  property,
+  propertyName,
   label = "metrics",
 }) => {
   const { metricOptionsLessSelected } = useAvailableColumns({
     selectedMetrics: metrics,
     selectedDimensions: [],
-    property,
+    propertyName,
   })
 
   return (
@@ -267,7 +267,7 @@ export const DimensionPicker: React.FC<{
   } = useAvailableColumns({
     selectedDimensions: selected === undefined ? [] : [selected],
     selectedMetrics: [],
-    property,
+    propertyName: property,
     dimensionFilter,
   })
 
@@ -353,7 +353,7 @@ export const MetricPicker: React.FC<{
   const { metricOptions, metricOptionsLessSelected } = useAvailableColumns({
     selectedMetrics: selected === undefined ? [] : [selected],
     selectedDimensions: [],
-    property,
+    propertyName: property,
     metricFilter,
   })
 

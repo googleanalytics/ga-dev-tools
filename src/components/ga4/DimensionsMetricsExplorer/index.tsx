@@ -8,14 +8,15 @@ import IconButton from "@material-ui/core/IconButton"
 import Clear from "@material-ui/icons/Clear"
 
 import { Url, StorageKey } from "@/constants"
-import { usePersistentString, useScrollTo } from "@/hooks"
+import { usePersistantObject, useScrollTo } from "@/hooks"
 import Loadable from "@/components/Loadable"
 import Info from "@/components/Info"
-import PropertyPicker from "@/components/ga4/PropertyPicker"
 import Field from "./Field"
 import useInputs from "./useInputs"
 import { useDimensionsAndMetrics, Successful } from "./useDimensionsAndMetrics"
 import useFormStyles from "@/hooks/useFormStyles"
+import StreamPicker from "../StreamPicker"
+import { AccountSummary, PropertySummary } from "@/types/ga4/StreamPicker"
 
 const dataAPI = (
   <ExternalLink href={Url.ga4DataAPIGetMetadata}>
@@ -88,17 +89,16 @@ const RenderSuccessful: React.FC<
 const DimensionsMetricsExplorer: React.FC = () => {
   const formClasses = useFormStyles()
   const { search, setSearch } = useInputs()
-  const [selectedProperty, setSelectedProperty] = usePersistentString(
+  const [account, setAccount] = usePersistantObject<AccountSummary>(
+    StorageKey.ga4DimensionsMetricsSelectedAccount
+  )
+  const [property, setProperty] = usePersistantObject<PropertySummary>(
     StorageKey.ga4DimensionsMetricsSelectedProperty
   )
-  const propertyId = useMemo(() => {
-    if (selectedProperty === undefined) {
-      return "0"
-    } else {
-      return selectedProperty.substring("properties/".length)
-    }
-  }, [selectedProperty])
-  const request = useDimensionsAndMetrics(propertyId)
+  const propertyName = useMemo(() => property?.property || "properties/0", [
+    property,
+  ])
+  const request = useDimensionsAndMetrics(propertyName)
 
   return (
     <>
@@ -113,10 +113,11 @@ const DimensionsMetricsExplorer: React.FC = () => {
         </Typography>
         <section className={formClasses.form}>
           <Typography variant="h3">Select property</Typography>
-          <PropertyPicker
-            column
-            setPropertyId={setSelectedProperty}
-            propertyId={selectedProperty}
+          <StreamPicker
+            account={account}
+            property={property}
+            setAccount={setAccount}
+            setProperty={setProperty}
           />
           <Typography variant="h3">Search</Typography>
           <TextField

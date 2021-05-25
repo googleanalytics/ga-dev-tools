@@ -12,7 +12,6 @@ import WithHelpText from "@/components/WithHelpText"
 import LinkedTextField from "@/components/LinkedTextField"
 import { PAB } from "@/components/Buttons"
 import PrettyJson from "@/components/PrettyJson"
-import PropertyPicker from "@/components/ga4/PropertyPicker"
 import OrderBys from "../OrderBys"
 import MetricAggregations from "../MetricAggregations"
 import DateRanges from "../DateRanges"
@@ -23,6 +22,7 @@ import Response from "../Response"
 import useMakeRequest from "./useMakeRequest"
 import useInputs from "./useInputs"
 import useFormStyles from "@/hooks/useFormStyles"
+import StreamPicker from "../../StreamPicker"
 
 const useStyles = makeStyles(theme => ({
   showRequestJSON: {
@@ -93,7 +93,6 @@ const BasicReport = () => {
   const classes = useStyles()
   const formClasses = useFormStyles()
   const {
-    setPropertyId,
     dateRanges,
     setDateRanges,
     dimensions,
@@ -119,14 +118,18 @@ const BasicReport = () => {
     metricAggregations,
     setMetricAggregations,
     addFirstSessionDate,
-    propertyId,
     removeDateRanges,
     showAdvanced,
     setShowAdvanced,
+    account,
+    setAccount,
+    property,
+    setProperty,
+    propertyName,
   } = useInputs()
   const useMake = useMakeRequest({
     metricAggregations,
-    property: propertyId,
+    propertyName,
     dimensionFilter,
     offset,
     limit,
@@ -163,10 +166,11 @@ const BasicReport = () => {
       </Typography>
       <section className={formClasses.form}>
         <Typography variant="h3">Select property</Typography>
-        <PropertyPicker
-          column
-          setPropertyId={setPropertyId}
-          propertyId={propertyId}
+        <StreamPicker
+          account={account}
+          property={property}
+          setAccount={setAccount}
+          setProperty={setProperty}
         />
         <Typography variant="h3">Set parameters</Typography>
         <LabeledCheckbox checked={showAdvanced} setChecked={setShowAdvanced}>
@@ -179,7 +183,7 @@ const BasicReport = () => {
         />
         <MetricsPicker
           required={!metricOrDimensionSelected}
-          property={propertyId}
+          propertyName={propertyName}
           setMetrics={setMetrics}
           metrics={metrics}
           helperText={
@@ -191,7 +195,7 @@ const BasicReport = () => {
         />
         <DimensionsPicker
           required={!metricOrDimensionSelected}
-          property={propertyId}
+          propertyName={propertyName}
           setDimensions={setDimensions}
           dimensions={dimensions}
           helperText={
