@@ -69,6 +69,7 @@ export const withProviders = (
   wrapped: JSX.Element
   history: History
   store: any
+  gapi: ReturnType<typeof testGapi>
 } => {
   path = path || "/"
   isLoggedIn = isLoggedIn === undefined ? true : isLoggedIn
@@ -84,6 +85,9 @@ export const withProviders = (
     store.dispatch({ type: "setUser", user: undefined })
   }
 
+  const gapi = testGapi()
+  store.dispatch({ type: "setGapi", gapi })
+
   const wrapped = (
     <Provider store={store}>
       <LocationProvider history={history}>
@@ -93,7 +97,7 @@ export const withProviders = (
       </LocationProvider>
     </Provider>
   )
-  return { wrapped, history, store }
+  return { wrapped, history, store, gapi }
 }
 
 const testAccounts: AccountSummary[] = [
@@ -419,8 +423,83 @@ const metadataColumnsPromise = Promise.resolve({
     etag: "abc123",
   },
 })
+
 export const testGapi = () => ({
   client: {
+    analyticsadmin: {
+      properties: {
+        iosAppDataStreams: {
+          list: (): Promise<{
+            result: gapi.client.analyticsadmin.GoogleAnalyticsAdminV1alphaListIosAppDataStreamsResponse
+          }> => Promise.resolve({ result: {} }),
+        },
+        androidAppDataStreams: {
+          list: (): Promise<{
+            result: gapi.client.analyticsadmin.GoogleAnalyticsAdminV1alphaListAndroidAppDataStreamsResponse
+          }> => Promise.resolve({ result: {} }),
+        },
+        webDataStreams: {
+          list: (): Promise<{
+            result: gapi.client.analyticsadmin.GoogleAnalyticsAdminV1alphaListWebDataStreamsResponse
+          }> => Promise.resolve({ result: {} }),
+        },
+      },
+      accountSummaries: {
+        list: ({
+          pageToken,
+        }: {
+          pageToken?: string
+        }): Promise<{
+          result: gapi.client.analyticsadmin.GoogleAnalyticsAdminV1alphaListAccountSummariesResponse
+        }> => {
+          if (pageToken === "1") {
+            return Promise.resolve({
+              result: {
+                accountSummaries: [
+                  {
+                    account: "accounts/def456",
+                    displayName: "my second account",
+                    name: "accountSummaries/def",
+                    propertySummaries: [
+                      {
+                        displayName: "my third property",
+                        property: "properties/3",
+                      },
+                      {
+                        displayName: "my fourth property",
+                        property: "properties/4",
+                      },
+                    ],
+                  },
+                ],
+              },
+            })
+          }
+          return Promise.resolve({
+            result: {
+              accountSummaries: [
+                {
+                  account: "accounts/abc123",
+                  displayName: "my first account",
+                  name: "accountSummaries/abc",
+                  propertySummaries: [
+                    {
+                      displayName: "my first property",
+                      property: "properties/1",
+                    },
+                    {
+                      displayName: "my second property",
+                      property: "properties/2",
+                    },
+                  ],
+                },
+              ],
+              nextPageToken: "1",
+            },
+          })
+        },
+      },
+    },
     analytics: {
       management: { accountSummaries: { list: () => listPromise } },
       metadata: {

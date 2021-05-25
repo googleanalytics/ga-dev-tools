@@ -30,6 +30,10 @@ interface Props {
   setStream?: Dispatch<Stream | undefined>
 }
 
+export enum Label {
+  Account = "account",
+}
+
 const StreamPicker: React.FC<Props> = ({
   streams,
   account,
@@ -53,6 +57,7 @@ const StreamPicker: React.FC<Props> = ({
     <section className={classes.picker}>
       <Autocomplete<AccountSummary, false, false, false>
         fullWidth
+        data-testid={Label.Account}
         loading={request.status !== RequestStatus.Successful}
         options={successful(request)?.accountSummaries || []}
         noOptionsText="You have no GA accounts with GA4 properties."
@@ -75,7 +80,7 @@ const StreamPicker: React.FC<Props> = ({
         renderInput={params => (
           <TextField
             {...params}
-            label="account"
+            label={Label.Account}
             size="small"
             variant="outlined"
           />

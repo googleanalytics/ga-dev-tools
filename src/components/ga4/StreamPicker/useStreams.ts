@@ -9,7 +9,6 @@ import {
   StreamsRequest,
   WebDataStream,
 } from "@/types/ga4/StreamPicker"
-import React from "react"
 
 const useStreams = (
   property: string | undefined
@@ -54,10 +53,14 @@ const useStreams = (
             setWebPageToken(nextToken)
           }
         })
+        .catch(e => {
+          console.error({ e })
+          setWebStatus(RequestStatus.Failed)
+        })
     }
   }, [gapi, webPageToken, webStatus, property])
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (property === undefined) {
       return
     }
@@ -81,10 +84,14 @@ const useStreams = (
             setAndroidPageToken(nextToken)
           }
         })
+        .catch(e => {
+          console.error({ e })
+          setWebStatus(RequestStatus.Failed)
+        })
     }
   }, [gapi, androidPageToken, androidStatus, property])
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (property === undefined) {
       return
     }
@@ -107,6 +114,10 @@ const useStreams = (
           } else {
             setIosPageToken(nextToken)
           }
+        })
+        .catch(e => {
+          console.error({ e })
+          setWebStatus(RequestStatus.Failed)
         })
     }
   }, [gapi, iosPageToken, iosStatus, property])

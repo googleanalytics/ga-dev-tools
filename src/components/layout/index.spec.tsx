@@ -20,14 +20,14 @@ import { withProviders } from "../../test-utils"
 import Layout from "../layout"
 
 describe("Layout", () => {
-  it("renders correctly", async () => {
-    const { findByText } = renderer.render(
-      withProviders(
-        <Layout title="Page Title" pathname={"/"}>
-          Content
-        </Layout>
-      ).wrapped
+  it("renders correctly with gapi undefined", async () => {
+    const { wrapped, store } = withProviders(
+      <Layout title="Page Title" pathname={"/"}>
+        Content
+      </Layout>
     )
+    store.dispatch({ type: "setGapi", gapi: undefined })
+    const { findByText } = renderer.render(wrapped)
     const content = await findByText("Content")
     expect(content).toBeVisible()
   })

@@ -14,26 +14,17 @@
 
 import * as React from "react"
 import * as renderer from "@testing-library/react"
-import { withProviders, testGapi } from "../../test-utils"
+import { withProviders } from "../../test-utils"
 import userEvent from "@testing-library/user-event"
 import "@testing-library/jest-dom"
 
 import DimensionMetricsExplorer from "./index"
 
 describe("Dimensions and Metrics Explorer", () => {
-  it("renders without error", async () => {
-    const { wrapped, store } = withProviders(<DimensionMetricsExplorer />)
-    store.dispatch({ type: "setUser", user: undefined })
-    const { container } = renderer.render(wrapped)
-    expect(container).toHaveTextContent("Metrics Explorer lists")
-  })
   // This test may go out of date, but we want at least once instance of making
   // sure the intersection logic works for compatable dimensions.
   it("disables incompatable metric when 'User Type' dimension is selected", async () => {
-    const gapi = testGapi()
-    const { wrapped, store } = withProviders(<DimensionMetricsExplorer />)
-    store.dispatch({ type: "setUser", user: {} })
-    store.dispatch({ type: "setGapi", gapi })
+    const { wrapped, gapi } = withProviders(<DimensionMetricsExplorer />)
     const { getByText, findByLabelText } = renderer.render(wrapped)
 
     // Wait for api promise to resolve so it won't render "fetching".

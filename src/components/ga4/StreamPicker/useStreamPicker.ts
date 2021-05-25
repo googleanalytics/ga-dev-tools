@@ -142,6 +142,7 @@ const useStreamPicker = ({
         ...old,
         stream,
       }))
+      setStreamsDone(true)
     }
   }, [streamsDone, property, streamsRequest])
 
