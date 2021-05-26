@@ -38,6 +38,7 @@ import { eventsForCategory } from "./event"
 import useUserProperties from "./useUserProperties"
 import Items from "./Items"
 import ValidateEvent from "./ValidateEvent"
+import MPSecret from "./MPSecret"
 
 export enum Label {
   APISecret = "api_secret",
@@ -209,21 +210,15 @@ const EventBuilder: React.FC = () => {
         </Grid>
       </WithHelpText>
 
-      <Typography>
-        After choosing a client, fill out the inputs below.
-      </Typography>
-
       <section className={formClasses.form}>
-        <LinkedTextField
-          required
-          href="https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference#api_secret"
-          linkTitle="See api_secret on devsite."
-          value={api_secret || ""}
-          label={Label.APISecret}
-          id={Label.APISecret}
-          helperText="The API secret for the property to send the event to."
-          onChange={setAPISecret}
+        <MPSecret
+          setUseFirebase={setUseFirebase}
+          setAPISecret={setAPISecret}
+          api_secret={api_secret}
+          setMeasurementId={setMeasurementId}
+          setFirebaseAppId={setFirebaseAppId}
         />
+        <Typography>Fill out the remaining inputs.</Typography>
         {useFirebase ? (
           <>
             <LinkedTextField

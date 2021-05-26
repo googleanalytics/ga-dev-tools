@@ -3,12 +3,13 @@ import { Dispatch, RequestStatus, successful } from "@/types"
 import Autocomplete from "@material-ui/lab/Autocomplete"
 import { makeStyles, TextField } from "@material-ui/core"
 import Typography from "@material-ui/core/Typography"
-import useStreamPicker from "./useStreamPicker"
+import usePropertyPicker from "./usePropertyPicker"
 import {
   AccountSummary,
   PropertySummary,
   Stream,
 } from "@/types/ga4/StreamPicker"
+import useStreamPicker from "./useStreamPicker"
 
 const useStyles = makeStyles(theme => ({
   picker: {
@@ -17,6 +18,23 @@ const useStyles = makeStyles(theme => ({
     },
   },
 }))
+
+const typeFor = (stream: Stream) => {
+  const name = stream.name
+  if (name === undefined) {
+    return undefined
+  }
+  if (name.includes("web")) {
+    return "web"
+  }
+  if (name.includes("ios")) {
+    return "iOS"
+  }
+  if (name.includes("android")) {
+    return "android"
+  }
+  return undefined
+}
 
 interface Props {
   streams?: boolean
@@ -44,32 +62,32 @@ const StreamPicker: React.FC<Props> = ({
   setStream,
 }) => {
   const classes = useStyles()
-  const request = useStreamPicker({
+  const propertyPicker = usePropertyPicker({
     account,
-    property,
-    stream,
     setAccount,
     setProperty,
-    setStream,
   })
+  const streamPicker = useStreamPicker({ property, stream, setStream })
 
   return (
     <section className={classes.picker}>
       <Autocomplete<AccountSummary, false, false, false>
         fullWidth
         data-testid={Label.Account}
-        loading={request.status !== RequestStatus.Successful}
-        options={successful(request)?.accountSummaries || []}
+        loading={propertyPicker.status !== RequestStatus.Successful}
+        options={successful(propertyPicker)?.accountSummaries || []}
         noOptionsText="You have no GA accounts with GA4 properties."
-        value={successful(request)?.account || null}
+        value={
+          successful(propertyPicker) === undefined ? null : account || null
+        }
         getOptionLabel={account => account.displayName!}
         getOptionSelected={(a, b) => a.name === b.name}
         onChange={(_event, value) => {
           if (value === null) {
-            successful(request)?.setAccountSummary(undefined)
+            successful(propertyPicker)?.setAccountSummary(undefined)
             return
           }
-          successful(request)?.setAccountSummary(value)
+          successful(propertyPicker)?.setAccountSummary(value)
         }}
         renderOption={account => (
           <RenderOption
@@ -88,18 +106,22 @@ const StreamPicker: React.FC<Props> = ({
       />
       <Autocomplete<PropertySummary, false, false, false>
         fullWidth
-        loading={request.status !== RequestStatus.Successful}
-        options={successful(request)?.propertySummaries || []}
+        loading={propertyPicker.status !== RequestStatus.Successful}
+        options={successful(propertyPicker)?.propertySummaries || []}
         noOptionsText="You have no GA accounts with GA4 properties."
-        value={successful(request)?.property || null}
+        value={
+          successful(propertyPicker) === undefined || property === undefined
+            ? null
+            : property
+        }
         getOptionLabel={summary => summary.displayName!}
         getOptionSelected={(a, b) => a.property === b.property}
         onChange={(_event, value) => {
           if (value === null) {
-            successful(request)?.setPropertySummary(undefined)
+            successful(propertyPicker)?.setPropertySummary(undefined)
             return
           }
-          successful(request)?.setPropertySummary(value)
+          successful(propertyPicker)?.setPropertySummary(value)
         }}
         renderOption={summary => (
           <RenderOption
@@ -119,20 +141,27 @@ const StreamPicker: React.FC<Props> = ({
       {streams && (
         <Autocomplete<Stream, false, false, false>
           fullWidth
-          loading={successful(request)?.streams === undefined}
-          options={successful(request)?.streams || []}
+          loading={successful(streamPicker) === undefined}
+          options={successful(streamPicker)?.streams || []}
           noOptionsText="You have no GA accounts with GA4 properties."
-          value={successful(request)?.stream || null}
+          value={
+            successful(streamPicker) === undefined ||
+            successful(streamPicker)?.streams.find(
+              a => a.name === stream?.name
+            ) === undefined
+              ? null
+              : stream || null
+          }
           getOptionLabel={stream =>
             stream.name?.substring(stream.name.lastIndexOf("/") + 1) || ""
           }
           getOptionSelected={(a, b) => a.name === b.name}
           onChange={(_event, value) => {
             if (value === null) {
-              successful(request)?.setStream(undefined)
+              setStream && setStream(undefined)
               return
             }
-            successful(request)?.setStream(value)
+            setStream && setStream(value)
           }}
           renderOption={stream => (
             <RenderOption
@@ -140,6 +169,7 @@ const StreamPicker: React.FC<Props> = ({
               second={
                 stream.name?.substring(stream.name.lastIndexOf("/") + 1) || ""
               }
+              third={typeFor(stream)}
             />
           )}
           renderInput={params => (
@@ -159,15 +189,23 @@ const StreamPicker: React.FC<Props> = ({
 export const RenderOption: React.FC<{
   first: string
   second: string
-}> = ({ first, second }) => {
+  third?: string
+}> = ({ first, second, third }) => {
   return (
-    <div>
-      <Typography variant="body1" component="div">
-        {first}
-      </Typography>
-      <Typography variant="subtitle2" color="primary">
-        {second}
-      </Typography>
+    <div style={{ display: "flex", width: "100%" }}>
+      <div style={{ flexGrow: 1 }}>
+        <Typography variant="body1" component="div">
+          {first}
+        </Typography>
+        <Typography variant="subtitle2" color="primary">
+          {second}
+        </Typography>
+      </div>
+      {third && (
+        <div>
+          <Typography variant="body2">{third}</Typography>
+        </div>
+      )}
     </div>
   )
 }

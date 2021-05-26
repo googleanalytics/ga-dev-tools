@@ -8,7 +8,10 @@ export const onInitialClientRender = () => {
       return
     }
 
-    var SCOPES = ["https://www.googleapis.com/auth/analytics.readonly"]
+    var SCOPES = [
+      "https://www.googleapis.com/auth/analytics.readonly",
+      "https://www.googleapis.com/auth/analytics.edit",
+    ]
 
     const clientId = process.env.GAPI_CLIENT_ID
 

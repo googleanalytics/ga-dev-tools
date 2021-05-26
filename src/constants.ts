@@ -15,6 +15,7 @@
 // All static links on the site should be put into this enum. This makes it
 // easier to update all instances of a link on the site.
 export enum Url {
+  ga4MPApiKeyReference = "https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference#api_secret",
   termsOfService = "https://policies.google.com/terms",
   privacyPolicy = "https://policies.google.com/privacy",
   ga4MeasurementProtocol = "https://developers.google.com/analytics/devguides/collection/protocol/ga4",
@@ -196,6 +197,9 @@ export enum StorageKey {
   eventBuilderTimestampMicros = "ga4/event-builder/timestamp-micros",
   eventBuilderNonPersonalizedAds = "ga4/event-builder/non-personalized-ads",
   eventBuilderUseFirebase = "ga4/event-builder/use-firebase",
+  ga4EventBuilderAccount = "ga4/event-builder/account",
+  ga4EventBuilderProperty = "ga4/event-builder/property",
+  ga4EventBuilderStream = "ga4/event-builder/stream",
   ga4EventBuilderEvents = "ga4/event-builder/events",
   ga4EventBuilderLastEventType = "ga4/event-builder/last-event-type",
   ga4EventBuilderParameters = "ga4/event-builder/parameters",

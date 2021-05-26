@@ -7,6 +7,7 @@ import {
   IosDataStream,
   Stream,
   StreamsRequest,
+  StreamType,
   WebDataStream,
 } from "@/types/ga4/StreamPicker"
 
@@ -27,8 +28,22 @@ const useStreams = (
   const [ios, setIos] = useState<IosDataStream[]>()
   const [iosPageToken, setIosPageToken] = useState<string>()
 
+  useEffect(() => {
+    setWebStatus(RequestStatus.NotStarted)
+    setAndroidStatus(RequestStatus.NotStarted)
+    setIosStatus(RequestStatus.NotStarted)
+    setWeb(undefined)
+    setAndroid(undefined)
+    setIos(undefined)
+  }, [property])
+
   const streams: Stream[] = useMemo(() => {
-    return (web || []).concat(android || []).concat(ios || [])
+    return (web || [])
+      .map(a => ({ ...a, streamType: StreamType.Web }))
+      .concat(
+        (android || []).map(a => ({ ...a, streamType: StreamType.Android }))
+      )
+      .concat((ios || []).map(a => ({ ...a, streamType: StreamType.Ios })))
   }, [web, android, ios])
 
   useEffect(() => {

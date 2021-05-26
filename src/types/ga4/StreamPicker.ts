@@ -4,7 +4,15 @@ export type PropertySummary = gapi.client.analyticsadmin.GoogleAnalyticsAdminV1a
 export type WebDataStream = gapi.client.analyticsadmin.GoogleAnalyticsAdminV1alphaWebDataStream
 export type AndroidDataStream = gapi.client.analyticsadmin.GoogleAnalyticsAdminV1alphaAndroidAppDataStream
 export type IosDataStream = gapi.client.analyticsadmin.GoogleAnalyticsAdminV1alphaIosAppDataStream
-export type Stream = WebDataStream | AndroidDataStream | IosDataStream
+export enum StreamType {
+  Web = "web",
+  Android = "android",
+  Ios = "iOS",
+}
+export type Stream =
+  | (WebDataStream & { streamType: StreamType.Web })
+  | (AndroidDataStream & { streamType: StreamType.Android })
+  | (IosDataStream & { streamType: StreamType.Ios })
 
 export interface SelectedStream {
   account?: AccountSummary
