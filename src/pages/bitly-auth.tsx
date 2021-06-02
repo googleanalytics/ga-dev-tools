@@ -52,10 +52,9 @@ export default ({ location: { pathname } }) => {
       console.error("This page should always have a `code` url parameter.")
       return
     }
-    if (apiKey !== "") {
-      return
+    if (apiKey === "" || apiKey === undefined) {
+      getToken(code).then(setApiKey).catch(console.error)
     }
-    getToken(code).then(setApiKey).catch(console.error)
   }, [params, apiKey, setApiKey])
 
   if (params.get("code") == null) {

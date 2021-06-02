@@ -144,8 +144,10 @@ const useShortenLink: UseShortLink = () => {
       // oauth popup.
       const storageListener = (e: StorageEvent) => {
         if (e.key === StorageKey.bitlyAccessToken && e.newValue !== null) {
-          setToken(e.newValue)
-          resolve(e.newValue)
+          const s = e.newValue
+          const parsed = JSON.parse(s)
+          setToken(parsed.value)
+          resolve(parsed.value)
         }
       }
       window.addEventListener("storage", storageListener)
