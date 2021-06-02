@@ -20,6 +20,9 @@ const reducer = (state = {}, action) => {
       return { ...state, gapi: action.gapi }
     case "setToast":
       return { ...state, toast: action.toast }
+    case "gapiStatus":
+      return { ...state, gapiStatus: action.status }
+
     default:
       return state
   }

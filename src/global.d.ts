@@ -23,5 +23,6 @@ declare module "*.svg" {
 declare interface AppState {
   user?: gapi.auth2.GoogleUser
   gapi?: typeof gapi
+  gapiStatus?: string
   measurementID: string
 }

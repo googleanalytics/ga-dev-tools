@@ -44,6 +44,18 @@ export const onInitialClientRender = () => {
               })
             })
           })
+          .catch(e => {
+            store.dispatch({ type: "setGapi", gapi: window.gapi })
+            store.dispatch({
+              type: "setUser",
+              user: undefined,
+            })
+            store.dispatch({
+              type: "gapiStatus",
+              status: "cannot initialize",
+            })
+            console.error(e)
+          })
       }, console.error)
     })
   })

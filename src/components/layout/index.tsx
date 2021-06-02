@@ -32,7 +32,7 @@ import { navigate } from "@reach/router"
 import MenuIcon from "@material-ui/icons/Menu"
 import Typography from "@material-ui/core/Typography"
 
-import Login, { useLogin, UserStatus } from "../Login"
+import Login from "./Login"
 import { useGAVersion } from "../../hooks"
 import { GAVersion, Url } from "../../constants"
 import Spinner from "../Spinner"
@@ -40,7 +40,8 @@ import { linkData } from "./links"
 import useStyles from "./useStyles"
 import GA4Toggle from "./GA4Toggle"
 import useFormStyles from "@/hooks/useFormStyles"
-import ExternalLink from "../ExternalLink"
+import Loadable from "../Loadable"
+import useLogin2, { UserStatus } from "./useLogin"
 
 interface LayoutProps {
   requireLogin?: true
@@ -49,18 +50,36 @@ interface LayoutProps {
   pathname: string
 }
 
-const Layout: React.FC<LayoutProps> = ({
-  children,
-  title,
+interface TemplateProps {
+  notStarted?: boolean
+  inProgress?: boolean
+  successful?: boolean
+  failed?: boolean
+  userStatus?: UserStatus
+  login?: () => void
+  logout?: () => void
+  user?: gapi.auth2.GoogleUser
+}
+
+const Template: React.FC<LayoutProps & TemplateProps> = ({
+  pathname,
   disableNav,
   requireLogin,
-  pathname,
+  title,
+  children,
+  inProgress,
+  notStarted,
+  successful,
+  failed,
+  userStatus,
+  login,
+  logout,
+  user,
 }) => {
   const { gaVersion, setGAVersion } = useGAVersion(pathname)
   const classes = useStyles({ disableNav })
   const formClasses = useFormStyles()
   const [open, setOpen] = React.useState(false)
-  const { userStatus, loginLogout } = useLogin()
 
   const links = useMemo(() => {
     return linkData.filter(linkData =>
@@ -81,7 +100,14 @@ const Layout: React.FC<LayoutProps> = ({
             GA Demos & Tools
           </Typography>
         </IconButton>
-        <Login />
+        {successful && (
+          <Login
+            user={user!}
+            login={login!}
+            logout={logout!}
+            userStatus={userStatus!}
+          />
+        )}
         <Drawer open={open} onClose={() => setOpen(false)}>
           <List className={classes.mobileNav}>
             <Link
@@ -191,32 +217,43 @@ const Layout: React.FC<LayoutProps> = ({
         <header className={classes.header}>
           <div className={classes.logoRow}>
             <Logo className={classes.logo} />
-            {!disableNav && <Login />}
+            {!disableNav && successful && (
+              <Login
+                user={user!}
+                login={login!}
+                logout={logout!}
+                userStatus={userStatus!}
+              />
+            )}
           </div>
           <Typography variant="h1">{title}</Typography>
         </header>
         <div className={classes.contentWrapper}>
           <section className={classes.content}>
-            {!requireLogin || userStatus === UserStatus.SignedIn ? (
-              children
-            ) : userStatus === UserStatus.SignedOut ? (
-              <div>
-                <Typography>
-                  You must be logged in with Google for this demo.
-                </Typography>
-                <Button
-                  variant="contained"
-                  color="primary"
-                  onClick={loginLogout}
-                >
-                  Login
-                </Button>
-              </div>
-            ) : (
-              <Spinner>
-                <Typography>Checking if you're logged in&hellip;</Typography>
-              </Spinner>
+            {requireLogin && (inProgress || notStarted) && (
+              <Spinner ellipses>Checking if you're logged in</Spinner>
             )}
+            {requireLogin &&
+              successful &&
+              (userStatus === UserStatus.SignedIn ? (
+                children
+              ) : (
+                <div>
+                  <Typography>
+                    You must be logged in with Google for this demo.
+                  </Typography>
+                  <Button variant="contained" color="primary" onClick={login}>
+                    Login
+                  </Button>
+                </div>
+              ))}
+            {requireLogin && failed && (
+              <Typography>
+                Login status could not be determined. Please ensure cookies are
+                enabled.
+              </Typography>
+            )}
+            {!requireLogin && children}
           </section>
         </div>
         <div className={formClasses.grow} />
@@ -229,4 +266,19 @@ const Layout: React.FC<LayoutProps> = ({
   )
 }
 
-export default Layout
+const Layout2: React.FC<LayoutProps> = props => {
+  const request = useLogin2()
+  return (
+    <Loadable
+      request={request}
+      renderNotStarted={() => <Template {...props} notStarted />}
+      renderInProgress={() => <Template {...props} inProgress />}
+      renderSuccessful={successProps => (
+        <Template {...props} {...successProps} successful />
+      )}
+      renderFailed={() => <Template {...props} failed />}
+    />
+  )
+}
+
+export default Layout2
