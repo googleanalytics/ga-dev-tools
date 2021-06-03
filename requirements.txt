@@ -1,4 +1,0 @@
-google-api-python-client
-PyCrypto
-jinja2
-oauth2client

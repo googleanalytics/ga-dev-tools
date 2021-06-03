@@ -1,0 +1,17 @@
+{
+  "dependencies": {
+    "argparse": "^1.0.10",
+    "execa": "^4.0.2",
+    "firebase-tools": "^9.10.0",
+    "inquirer": "^7.2.0"
+  },
+  "devDependencies": {
+    "@types/argparse": "^1.0.38",
+    "@types/execa": "^2.0.0",
+    "@types/inquirer": "^6.5.0",
+    "typescript": "^3.9.5"
+  },
+  "scripts": {
+    "build": "tsc"
+  }
+}

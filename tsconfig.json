@@ -1,7 +1,5 @@
 {
   "compilerOptions": {
-    "outDir": "./public/",
-    "sourceMap": true,
     "strict": true,
     "module": "esnext",
     "moduleResolution": "node",
@@ -14,9 +12,11 @@
     "downlevelIteration": true,
     "noImplicitAny": false,
     "lib": ["dom.iterable", "dom", "esnext"],
-    "types": ["gapi", "gapi.auth2", "gapi.client", "gapi.client.analytics"]
+    "noEmit": true,
+    "baseUrl": "./src",
+    "paths": {
+      "@/*": ["./*"]
+    }
   },
-  "include": [
-    "./src/"
-  ]
+  "include": ["./src/"]
 }
