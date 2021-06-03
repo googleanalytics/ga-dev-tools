@@ -122,11 +122,9 @@ plugins are configured here.
 
   Lets us source data into the app that can be queried via graphql.
 
-- [gatsby-transformer-sharp] & [gatsby-plugin-sharp]
-
 Also see [Gatsby Config API](https://www.gatsbyjs.org/docs/gatsby-config/).
 
-[view the site]: https://ga-dev-tools.appspot.com
+[view the site]: https://ga-dev-tools.web.app
 [submitting an issue]: https://github.com/googleanalytics/ga-dev-tools/issues/new
 [request a new demo or tool]: https://github.com/googleanalytics/ga-dev-tools/issues/new
 [google analytics developers]: http://developers.google.com/analytics
