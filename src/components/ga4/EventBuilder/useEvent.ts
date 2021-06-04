@@ -20,6 +20,8 @@ import {
   useHydratedPersistantString,
 } from "@/hooks/useHydrated"
 
+// TODO - this should be added back in later, but seems to not work correctly
+// right now.
 const keepCommonParameters = (
   oldParams: Parameter[],
   newParams: Parameter[]
@@ -91,9 +93,9 @@ const useEvent = (initial?: EventType) => {
   const setType: SetType = useCallback(
     nuType => {
       const suggested = cloneEvent(suggestedEventFor(nuType))
-      setParameters((old = []) =>
-        keepCommonParameters(old, suggested.parameters)
-      )
+      // TODO - update this to use keepCommonParameters once it's working
+      // correctly.
+      setParameters(suggested.parameters)
       // TODO - This could be improved to potentially keep around items maybe?
       setItems(suggested.items)
       setTypeLocal(nuType)
