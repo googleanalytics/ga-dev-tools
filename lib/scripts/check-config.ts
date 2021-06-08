@@ -32,10 +32,16 @@ export const writeEnvFile = async (config: CommonConfig) => {
 
   const authEndpointLine = `AUTH_ENDPOINT=https://us-central1-${config.firebaseProjectId}.cloudfunctions.net/bitly_auth`
 
+  const measurementIdLine = `GA_MEASUREMENT_ID=${config.measurementId}`
+
   ;[DotEnvProductionPath, DotEnvDevelopmentPath].map(path =>
-    fs.writeFileSync(path, [gapiLine, bitlyLine, authEndpointLine].join("\n"), {
-      encoding: Encoding,
-    })
+    fs.writeFileSync(
+      path,
+      [gapiLine, bitlyLine, authEndpointLine, measurementIdLine].join("\n"),
+      {
+        encoding: Encoding,
+      }
+    )
   )
 }
 
@@ -128,6 +134,15 @@ const configQuestions = (
         )
       },
     },
+    {
+      name: AnswerNames.MeasurementIdProd,
+      type: "input",
+      message: "GA Measurement ID (production):",
+      default: filter?.production?.measurementId || SKIP_QUESTION,
+      when: () => {
+        return filter.askAll || filter?.production?.measurementId === undefined
+      },
+    },
     // Staging questions
     {
       name: AnswerNames.BaseUriStaging,
@@ -175,6 +190,15 @@ const configQuestions = (
       default: filter?.staging?.bitlyClientSecret || SKIP_QUESTION,
       when: () => {
         return filter.askAll || filter?.staging?.bitlyClientSecret === undefined
+      },
+    },
+    {
+      name: AnswerNames.MeasurementIdStaging,
+      type: "input",
+      message: "GA Measurement ID (staging):",
+      default: filter?.staging?.measurementId || SKIP_QUESTION,
+      when: () => {
+        return filter.askAll || filter?.staging?.measurementId === undefined
       },
     },
   ]
@@ -230,6 +254,9 @@ const toRuntimeJson = (
   currentConfig: RuntimeJson | undefined
 ): RuntimeJson => {
   const production: ProductionConfig = {
+    measurementId: throwIfUndefined(
+      answers.measurementIdProd || currentConfig?.production.measurementId
+    ),
     baseUri:
       answers.baseUriProd ||
       currentConfig?.production?.baseUri ||
@@ -251,6 +278,9 @@ const toRuntimeJson = (
   }
 
   const staging: StagingConfig = {
+    measurementId: throwIfUndefined(
+      answers.measurementIdStaging || currentConfig?.staging.measurementId
+    ),
     // TODO - This could be a bit smarter. Especially if we support changing the port.
     baseUri:
       answers.baseUriStaging ||
@@ -305,6 +335,10 @@ const assertAllValues = (runtimeJson: RuntimeJson): RuntimeJson => {
     throw new Error("Missing the staging base url")
   }
 
+  if (runtimeJson.staging.measurementId === undefined) {
+    throw new Error("Missing the staging measurement ID")
+  }
+
   if (runtimeJson.production.gapiClientId === undefined) {
     throw new Error("Missing the production gapiClientId")
   }
@@ -323,6 +357,10 @@ const assertAllValues = (runtimeJson: RuntimeJson): RuntimeJson => {
 
   if (runtimeJson.production.baseUri === undefined) {
     throw new Error("Missing the production base url")
+  }
+
+  if (runtimeJson.production.measurementId === undefined) {
+    throw new Error("Missing the production measurement ID")
   }
 
   return runtimeJson

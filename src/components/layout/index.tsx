@@ -42,6 +42,7 @@ import GA4Toggle from "./GA4Toggle"
 import useFormStyles from "@/hooks/useFormStyles"
 import Loadable from "../Loadable"
 import useLogin2, { UserStatus } from "./useLogin"
+import usePageView from "@/hooks/usePageView"
 
 interface LayoutProps {
   requireLogin?: true
@@ -76,6 +77,7 @@ const Template: React.FC<LayoutProps & TemplateProps> = ({
   logout,
   user,
 }) => {
+  usePageView()
   const { gaVersion, setGAVersion } = useGAVersion(pathname)
   const classes = useStyles({ disableNav })
   const formClasses = useFormStyles()
