@@ -12,6 +12,7 @@ export interface CommonConfig {
   bitlyClientId: string
   bitlyClientSecret: string
   baseUri: string
+  measurementId: string
 }
 
 export interface ProductionConfig extends CommonConfig {}
@@ -32,6 +33,9 @@ export enum AnswerNames {
 
   BitlyClientSecretProd = "bitlyClientSecretProd",
   BitlyClientSecretStaging = "bitlyClientSecretStaging",
+
+  MeasurementIdProd = "measurementIdProd",
+  MeasurementIdStaging = "measurementIdStaging",
 }
 
 export type ConfigAnswers = {
