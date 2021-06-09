@@ -2,7 +2,7 @@ import { useLocation } from "@reach/router"
 import { useEffect, useMemo } from "react"
 import useGtag from "./useGtag"
 
-const usePageView = () => {
+const usePageView = (pageTitle: string) => {
   const location = useLocation()
   const gtag = useGtag()
 
@@ -13,8 +13,9 @@ const usePageView = () => {
   useEffect(() => {
     gtag("event", "page_view", {
       page_location,
+      page_title: pageTitle,
     })
-  }, [gtag, page_location])
+  }, [gtag, page_location, pageTitle])
 }
 
 export default usePageView

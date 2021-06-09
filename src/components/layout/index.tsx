@@ -77,7 +77,7 @@ const Template: React.FC<LayoutProps & TemplateProps> = ({
   logout,
   user,
 }) => {
-  usePageView()
+  usePageView(title)
   const { gaVersion, setGAVersion } = useGAVersion(pathname)
   const classes = useStyles({ disableNav })
   const formClasses = useFormStyles()
