@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import { WindowLocation, NavigateFn } from "@reach/router"
+import { WindowLocation } from "@reach/router"
 import querystring from "querystring"
 
 import {
@@ -34,17 +34,14 @@ const DEFAULT_HIT = "v=1&t=pageview"
  * the default hit is used.
  * @return The default hit.
  */
-export function getInitialHitAndUpdateUrl(
-  l: WindowLocation,
-  navigate: NavigateFn
-): string {
+export function getInitialHitAndUpdateUrl(l: WindowLocation): string {
   const query = l.search.slice(1)
 
   if (query === "") {
     return DEFAULT_HIT
   }
   // Remove the query params after initial load.
-  navigate(window.location.pathname, { replace: true })
+  window.history.replaceState({}, document.title, window.location.pathname)
   return query
 }
 

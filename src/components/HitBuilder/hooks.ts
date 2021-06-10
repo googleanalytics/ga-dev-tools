@@ -15,7 +15,7 @@
 import * as React from "react"
 
 import { useSelector } from "react-redux"
-import { useLocation, useNavigate } from "@reach/router"
+import { useLocation } from "@reach/router"
 
 import { getAnalyticsApi } from "@/api"
 import { Params, Param, ValidationMessage, HitStatus, Property } from "./types"
@@ -124,10 +124,9 @@ export type ParametersAPI = {
 type UseParameters = () => ParametersAPI
 export const useParameters: UseParameters = () => {
   const location = useLocation()
-  const navigate = useNavigate()
 
   const [parameters, setParameters] = React.useState<Params>(() => {
-    const initial = hitUtils.getInitialHitAndUpdateUrl(location, navigate)
+    const initial = hitUtils.getInitialHitAndUpdateUrl(location)
     return hitUtils.convertHitToParams(nextId, initial)
   })
 
