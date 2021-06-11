@@ -94,7 +94,11 @@ const Template: React.FC<LayoutProps & TemplateProps> = ({
 
   return (
     <div className={classes.root}>
-      <Helmet>
+      <Helmet
+        htmlAttributes={{
+          lang: "en",
+        }}
+      >
         <meta charSet="utf-8" />
         <meta name="description" content={description} />
         <title>{title}</title>
