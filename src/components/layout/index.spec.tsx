@@ -22,7 +22,7 @@ import Layout from "../layout"
 describe("Layout", () => {
   it("renders correctly with gapi undefined", async () => {
     const { wrapped, store } = withProviders(
-      <Layout title="Page Title" pathname={"/"}>
+      <Layout title="Page Title" pathname={"/"} description="my description">
         Content
       </Layout>
     )

@@ -22,7 +22,11 @@ import ExternalLink from "@/components/ExternalLink"
 
 const TagAssistant = ({ location: { pathname } }) => {
   return (
-    <Layout title="Tag Assistant" pathname={pathname}>
+    <Layout
+      title="Tag Assistant"
+      pathname={pathname}
+      description="Google Tag Assistant is a Chrome Extension that helps you validate the measurement code on your website and troubleshoot common problems."
+    >
       <Typography variant="body1">
         Google{" "}
         <ExternalLink href={Url.tagAssistantExternal}>

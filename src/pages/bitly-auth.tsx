@@ -59,14 +59,24 @@ export default ({ location: { pathname } }) => {
 
   if (params.get("code") == null) {
     return (
-      <Layout disableNav title="Bitly Auth" pathname={pathname}>
+      <Layout
+        disableNav
+        title="Bitly Auth"
+        pathname={pathname}
+        description="Only used for authentication."
+      >
         <Typography variant="body1">Not found.</Typography>
       </Layout>
     )
   }
 
   return (
-    <Layout disableNav title="Bitly Auth" pathname={pathname}>
+    <Layout
+      disableNav
+      title="Bitly Auth"
+      pathname={pathname}
+      description="Only used for authentication."
+    >
       <Typography variant="body1">
         {(apiKey === undefined || apiKey === "") &&
           "Authenticating with bitly..."}

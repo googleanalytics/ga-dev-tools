@@ -18,7 +18,12 @@ import AccountExplorer from "@/components/AccountExplorer"
 
 export default ({ location: { pathname } }) => {
   return (
-    <Layout title="Account Explorer" requireLogin pathname={pathname}>
+    <Layout
+      title="Account Explorer"
+      requireLogin
+      pathname={pathname}
+      description="Use this tool to search or browse through your google analytics accounts, properties, and views."
+    >
       <AccountExplorer />
     </Layout>
   )

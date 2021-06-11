@@ -23,7 +23,11 @@ import ExternalLink from "@/components/ExternalLink"
 
 const SpreadsheetAddOn = ({ location: { pathname } }) => {
   return (
-    <Layout title="Spreadsheet Add-on" pathname={pathname}>
+    <Layout
+      title="Spreadsheet Add-on"
+      pathname={pathname}
+      description="The Google Analytics Spreadsheet Add-on makes it easier for Google Analytics users to access, visualize, share, and manipulate their data in Google Spreadsheets."
+    >
       <Typography variant="h2">Overview</Typography>
 
       <Typography variant="body1">

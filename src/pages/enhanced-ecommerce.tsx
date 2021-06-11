@@ -107,7 +107,11 @@ const codeBlocks = [
 const EnhancedEcommerce = ({ location: { pathname } }) => {
   const classes = useStyles()
   return (
-    <Layout title="Enhanced Ecommerce" pathname={pathname}>
+    <Layout
+      title="Enhanced Ecommerce"
+      pathname={pathname}
+      description="Explains how the enhanced ecommerce code works."
+    >
       <Typography variant="h2">Overview</Typography>
       <Typography variant="body1">
         The {demoStore} is a sample ecommerce application with a complete

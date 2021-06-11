@@ -19,7 +19,11 @@ import { Link } from "gatsby"
 import Layout from "@/components/Layout"
 
 const NotFoundPage = ({ location: { pathname } }) => (
-  <Layout title="Page Not Found" pathname={pathname}>
+  <Layout
+    title="Page Not Found"
+    pathname={pathname}
+    description="The page you requested was not found."
+  >
     <Link to="/">Home</Link>
   </Layout>
 )

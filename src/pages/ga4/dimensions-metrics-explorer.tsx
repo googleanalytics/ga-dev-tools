@@ -24,6 +24,7 @@ export default ({ location: { pathname } }) => {
       title="Dimensions and Metrics Explorer"
       requireLogin
       pathname={pathname}
+      description="Lists and describes all of the dimensions and metrics available through the Google Analytics Data API."
     >
       <DimensionsMetricsExplorer />
     </Layout>

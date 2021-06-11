@@ -126,7 +126,11 @@ const GroupInfoTemplate: React.FC<
 }) => {
   const classes = useStyles()
   return (
-    <Layout title="Dimensions & Metrics Explorer" pathname={pathname}>
+    <Layout
+      title="Dimensions & Metrics Explorer"
+      pathname={pathname}
+      description={`Contains information on ${groupName} for the Google Analytics API.`}
+    >
       <Typography variant="h2">
         {groupName} group
         <a href={`#${groupName.replace(" ", "-")}`}>

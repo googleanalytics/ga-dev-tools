@@ -20,7 +20,11 @@ import { GAVersion } from "@/constants"
 
 export default ({ location: { pathname } }) => {
   return (
-    <Layout title="Campaign URL Builder" pathname={pathname}>
+    <Layout
+      title="Campaign URL Builder"
+      pathname={pathname}
+      description="This tool allows you to easily add campaign parameters to URLs so you can measure Custom Campaigns in Google Analytics."
+    >
       <CampaignUrlBuilder version={GAVersion.GoogleAnalytics4} />
     </Layout>
   )

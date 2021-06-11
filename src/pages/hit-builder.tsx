@@ -19,7 +19,12 @@ import HitBuilder from "@/components/HitBuilder"
 
 export default ({ location: { pathname } }) => {
   return (
-    <Layout title="Hit Builder" requireLogin pathname={pathname}>
+    <Layout
+      title="Hit Builder"
+      requireLogin
+      pathname={pathname}
+      description="Allows you to construct and validate Measurement Protocol hits using the Measurement Protocol Validation Server."
+    >
       <HitBuilder />
     </Layout>
   )

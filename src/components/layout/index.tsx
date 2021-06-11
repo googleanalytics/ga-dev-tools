@@ -17,6 +17,7 @@ import Button from "@material-ui/core/Button"
 import { Link } from "gatsby"
 import { Home } from "@material-ui/icons"
 import clsx from "classnames"
+import { Helmet } from "react-helmet"
 // TODO - Look into whether or not we can fix this.
 // See
 // https://github.com/benmosher/eslint-plugin-import/blob/master/docs/rules/no-webpack-loader-syntax.md
@@ -48,6 +49,7 @@ interface LayoutProps {
   requireLogin?: true
   disableNav?: true
   title: string
+  description: string
   pathname: string
 }
 
@@ -64,6 +66,7 @@ interface TemplateProps {
 
 const Template: React.FC<LayoutProps & TemplateProps> = ({
   pathname,
+  description,
   disableNav,
   requireLogin,
   title,
@@ -91,6 +94,11 @@ const Template: React.FC<LayoutProps & TemplateProps> = ({
 
   return (
     <div className={classes.root}>
+      <Helmet>
+        <meta charSet="utf-8" />
+        <meta name="description" content={description} />
+        <title>{title}</title>
+      </Helmet>
       <AppBar position="static" className={classes.appBarNav}>
         <IconButton
           edge="start"

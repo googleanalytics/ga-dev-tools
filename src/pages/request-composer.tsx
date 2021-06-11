@@ -19,7 +19,12 @@ import RequestComposer from "@/components/RequestComposer"
 
 export default ({ location: { pathname } }) => {
   return (
-    <Layout title="Request Composer" requireLogin pathname={pathname}>
+    <Layout
+      title="Request Composer"
+      requireLogin
+      pathname={pathname}
+      description="Demonstrates how to compose the following Analytics Reporting API v4 requests and visualize their responses."
+    >
       <RequestComposer />
     </Layout>
   )
