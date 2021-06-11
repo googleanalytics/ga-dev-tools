@@ -19,6 +19,13 @@ export const build = async (shouldCheckConfig: boolean = true) => {
 
   await checkTypes()
 
+  // Delete cache & public contents before a build to keep things neat.
+  await execa("yarn", ["run", "gatsby", "clean"], {
+    stderr: "inherit",
+    stdout: "inherit",
+    stdin: "inherit",
+  })
+
   await execa("yarn", ["run", "gatsby", "build"], {
     stderr: "inherit",
     stdout: "inherit",
