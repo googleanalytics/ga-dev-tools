@@ -19,10 +19,28 @@ module.exports = {
   },
   siteMetadata: {
     title: `Discover the Google Analytics Platform`,
-    description: ``,
+    siteUrl: "https://ga-dev-tools.web.app",
     author: `Google Analytics Developer Relations`,
   },
   plugins: [
+    {
+      resolve: `gatsby-plugin-sitemap`,
+      options: {
+        serialize: ({ path, modifiedGmt }) => {
+          return {
+            url: path,
+            lastmod: modifiedGmt,
+          }
+        },
+      },
+    },
+    {
+      resolve: `gatsby-plugin-robots-txt`,
+      options: {
+        sitemap: "https://www.example.com/sitemap/sitemap-index.xml",
+        policy: [{ userAgent: "*", allow: "/" }],
+      },
+    },
     `gatsby-plugin-use-query-params`,
     `gatsby-plugin-material-ui`,
     `gatsby-plugin-preload-fonts`,
