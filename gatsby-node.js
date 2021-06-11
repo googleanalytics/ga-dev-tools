@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 const TsconfigPathsPlugin = require("tsconfig-paths-webpack-plugin")
+const fs = require("fs")
 
 require("ts-node").register({
   compilerOptions: {
@@ -28,5 +29,15 @@ exports.onCreateWebpackConfig = ({ actions }) => {
     resolve: {
       plugins: [new TsconfigPathsPlugin()],
     },
+  })
+}
+
+// Copy the firebase.json file over to the public directory so things like
+// redirects can be handled at the server-level.
+exports.onPostBuild = () => {
+  fs.copyFile(`./firebase.json`, `./public/firebase.json`, err => {
+    if (err) {
+      throw err
+    }
   })
 }
