@@ -12,7 +12,12 @@
    [`functions.config()`] to get configuration values that are set from the
    previous command.
 
-1. `nvm use 8`
+1. Navigate to the ./functions directory
+1. `nvm use 12`
+
+   Use nvm to switch your current version of node to the same one in the
+   `engines` section of `package.json`.
+
 1. `npm install`
 1. `npm run deploy`
 
@@ -20,8 +25,6 @@
 
 ## Run locally
 
-1. `nvm use 8`
-   Use nvm to switch your current version of node to the same one in the
-   `engines` section of `package.json`.
+1. `nvm use 12`
 1. `npm install`
 1. `npm run serve`

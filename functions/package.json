@@ -6,7 +6,7 @@
     "serve": "npm run build && firebase emulators:start --only functions",
     "shell": "npm run build && firebase functions:shell",
     "start": "npm run shell",
-    "deploy": "firebase --project dev-tools-asha deploy --only functions",
+    "deploy": "firebase --project ga-dev-tools deploy --only functions",
     "logs": "firebase functions:log"
   },
   "engines": {

@@ -27,21 +27,21 @@ exports.bitly_auth = functions.https.onRequest((req, res) => {
 
   const clientId = bitly.client_id
   if (clientId === undefined) {
-    console.log(
+    console.error(
       "Missing bitly clientId. Run:\nyarn check-config --all\nand provide a value for bitly clientId"
     )
   }
 
   const clientSecret = bitly.client_secret
   if (clientSecret === undefined) {
-    console.log(
+    console.error(
       "Missing bitly clientSecret. Run:\nyarn check-config --all\nand provide a value for bitly clientSecret"
     )
   }
 
   const baseUri = bitly.base_uri
   if (baseUri === undefined) {
-    console.log(
+    console.error(
       "Missing bitly base_uri. Run:\nyarn check-config --all\nand provide a value for baseUri."
     )
   }
@@ -72,7 +72,6 @@ exports.bitly_auth = functions.https.onRequest((req, res) => {
       res.status(bitlyRes.status)
       bitlyRes.json().then(
         json => {
-          console.log("resp", json)
           res.status(bitlyRes.status).send(json)
         },
         () => {
@@ -81,7 +80,7 @@ exports.bitly_auth = functions.https.onRequest((req, res) => {
       )
     },
     err => {
-      console.log("error", err)
+      console.error("error", err)
       res.status(err.status || 403).send(err.body || "An error occurred")
     }
   )
