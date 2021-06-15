@@ -20,7 +20,7 @@ import DimensionsMetricsExplorer from "@/components/DimensionsMetricsExplorer"
 export default ({ location: { pathname } }) => {
   return (
     <Layout
-      title="Dimensions & Metrics Explorer"
+      title="UA Dimensions & Metrics Explorer"
       pathname={pathname}
       description="Lists and describes all of the dimensions and metrics available through the Google Analytics Core Reporting API."
     >

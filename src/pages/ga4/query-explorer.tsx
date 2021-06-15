@@ -20,7 +20,7 @@ import QueryExplorer from "@/components/ga4/QueryExplorer"
 export default ({ location: { pathname } }) => {
   return (
     <Layout
-      title="Query Explorer"
+      title="GA4 Query Explorer"
       requireLogin
       pathname={pathname}
       description="The GA4 Query Explorer helps you to create valid requests for the Analytics Data API."
