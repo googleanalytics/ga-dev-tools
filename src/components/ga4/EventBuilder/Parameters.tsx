@@ -43,7 +43,7 @@ const Parameters: React.FC<Props> = ({
     <section className={classes.parameters}>
       {parameters.map((parameter, idx) => (
         <Parameter
-          key={`parameter-${idx}`}
+          key={`parameter-${parameter.name}-idx`}
           parameter={parameter}
           setParamName={name => setParamName(idx, name)}
           setParamValue={value => setParamValue(idx, value)}
