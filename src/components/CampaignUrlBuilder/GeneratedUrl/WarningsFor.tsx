@@ -47,14 +47,13 @@ const WarningsFor: React.FC<WarningsForProps> = ({ websiteUrl, onWarning }) => {
     }
     // Clear out the old value.
     setWarnings([])
-    if (asUrl.hostname === "ga-dev-tools.appspot.com") {
+    if (asUrl.hostname === "ga-dev-tools.web.app") {
       setWarnings(old =>
         old.concat([
           <>
-            It appears that you are linking to this site,{" "}
-            <InlineCode>ga-dev-tools.appspot.com</InlineCode>, instead of your
-            own. You should put your own site's URL in the Website URL field,
-            above.
+            You are linking to this site (
+            <InlineCode>ga-dev-tools.web.app</InlineCode>) instead of your own.
+            You should put your own site's URL in the Website URL field, above.
           </>,
         ])
       )
