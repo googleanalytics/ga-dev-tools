@@ -56,7 +56,7 @@ const useWarningsFor: UseWarningsFor = ({
       }
       return true
     }
-    if (websiteUrl === "" || source === "" || medium === "" || id === "") {
+    if (websiteUrl === "" || source === "" || medium === "") {
       return false
     }
     return true

@@ -87,7 +87,6 @@ export const CampaignUrlBuilder: React.FC<{ version: GAVersion }> = ({
           />
           <TextField
             id="campaign-id"
-            required={version === GAVersion.GoogleAnalytics4}
             value={id || ""}
             onChange={e => setId(e.target.value)}
             label="campaign ID"
@@ -198,7 +197,7 @@ export const CampaignUrlBuilder: React.FC<{ version: GAVersion }> = ({
               <InlineCode>utm_id</InlineCode>
             </TableCell>
             <TableCell>
-              <Typography variant="body1">Yes</Typography>
+              <Typography variant="body1">No</Typography>
             </TableCell>
             <TableCell>
               <Typography variant="body1">
