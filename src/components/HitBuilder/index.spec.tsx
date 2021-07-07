@@ -80,10 +80,6 @@ describe("HitBuilder", () => {
         expect(parameterLabels[1]).toHaveValue("cd")
         const ghi = await findByLabelText("Value for cd")
         expect(ghi).toHaveValue("ghi")
-
-        // location.search should be reset
-        expect(history.location.search.substring(1)).not.toEqual(queryParams)
-        expect(history.location.search).toEqual("")
       })
     })
 
