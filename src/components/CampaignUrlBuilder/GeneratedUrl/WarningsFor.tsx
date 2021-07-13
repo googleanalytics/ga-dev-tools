@@ -42,12 +42,8 @@ const WarningsFor: React.FC<WarningsForProps> = ({ websiteUrl, onWarning }) => {
   const [warnings, setWarnings] = React.useState<JSX.Element[]>([])
 
   React.useEffect(() => {
-    if (asUrl === undefined) {
-      return
-    }
-    // Clear out the old value.
     setWarnings([])
-    if (asUrl.hostname === "ga-dev-tools.web.app") {
+    if (asUrl?.hostname === "ga-dev-tools.web.app") {
       setWarnings(old =>
         old.concat([
           <>
@@ -59,7 +55,22 @@ const WarningsFor: React.FC<WarningsForProps> = ({ websiteUrl, onWarning }) => {
       )
     }
 
-    if (asUrl.hostname === "play.google.com") {
+    if (
+      websiteUrl.startsWith("localhost") ||
+      websiteUrl.startsWith("127.0.0.1") ||
+      asUrl?.hostname === "localhost"
+    ) {
+      setWarnings(old =>
+        old.concat([
+          <>
+            You can't create a campaign url to a local-only site. Use your
+            publically accessible URL.
+          </>,
+        ])
+      )
+    }
+
+    if (asUrl?.hostname === "play.google.com") {
       setWarnings(old =>
         old.concat([
           <>
@@ -71,7 +82,7 @@ const WarningsFor: React.FC<WarningsForProps> = ({ websiteUrl, onWarning }) => {
       )
     }
 
-    if (asUrl.hostname === "itunes.apple.com") {
+    if (asUrl?.hostname === "itunes.apple.com") {
       setWarnings(old =>
         old.concat([
           <>
@@ -82,13 +93,13 @@ const WarningsFor: React.FC<WarningsForProps> = ({ websiteUrl, onWarning }) => {
         ])
       )
     }
-  }, [asUrl])
+  }, [asUrl, websiteUrl])
 
   React.useEffect(() => {
     onWarning(warnings.length !== 0)
   }, [warnings, onWarning])
 
-  if (asUrl === undefined) {
+  if (warnings.length === 0) {
     return null
   }
 
