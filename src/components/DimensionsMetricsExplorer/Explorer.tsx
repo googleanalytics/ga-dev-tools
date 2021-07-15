@@ -30,6 +30,7 @@ import {
 } from "../../hooks"
 import { Column, useApi } from "../../api"
 import ColumnGroupList from "./ColumnGroupList"
+import useAnchorRedirects from "./useAnchorRedirects"
 
 type ColumnAPIResponse = WithEtag<Column[]>
 
@@ -143,6 +144,8 @@ const Explorer: React.FC = () => {
   const [throttledSearch] = useDebounce(searchTerms, 100, { trailing: true })
 
   const columns = useColumns()
+
+  useAnchorRedirects(columns)
 
   return (
     <div>
