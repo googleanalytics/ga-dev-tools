@@ -92,7 +92,7 @@ const IndexPage: React.FC = () => {
         </li>
         <li>
           You may also use GitHub to{" "}
-          <ExternalLink href={Url.gaDevToolsGitHubNewIssue}>
+          <ExternalLink href={Url.gaDevToolsGitHubNewFeatureRequest}>
             request a new demo or tool
           </ExternalLink>
           .
