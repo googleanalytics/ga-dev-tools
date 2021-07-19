@@ -13,7 +13,7 @@ const BugReport: React.FC = () => {
   }, [])
 
   return (
-    <Tooltip title="Report an issue on this page.">
+    <Tooltip title="Report an issue.">
       <IconButton onClick={onClick}>
         <BugIcon />
       </IconButton>
