@@ -40,6 +40,7 @@ import Spinner from "../Spinner"
 import { linkData } from "./links"
 import useStyles from "./useStyles"
 import GA4Toggle from "./GA4Toggle"
+import BugReport from "./BugReport"
 import useFormStyles from "@/hooks/useFormStyles"
 import Loadable from "../Loadable"
 import useLogin2, { UserStatus } from "./useLogin"
@@ -114,6 +115,7 @@ const Template: React.FC<LayoutProps & TemplateProps> = ({
             GA Demos & Tools
           </Typography>
         </IconButton>
+        <BugReport />
         {successful && (
           <Login
             user={user!}
@@ -231,6 +233,7 @@ const Template: React.FC<LayoutProps & TemplateProps> = ({
         <header className={classes.header}>
           <div className={classes.logoRow}>
             <Logo className={classes.logo} />
+            <BugReport />
             {!disableNav && successful && (
               <Login
                 user={user!}
@@ -274,6 +277,7 @@ const Template: React.FC<LayoutProps & TemplateProps> = ({
         <footer className={classes.footer}>
           <a href={Url.termsOfService}>Terms of service</a>
           <a href={Url.privacyPolicy}>Privacy policy</a>
+          <BugReport />
         </footer>
       </main>
     </div>
