@@ -20,7 +20,7 @@ interface Parameters {
   pivotDimensions: UADimensions
   startGroup: string | undefined
   maxGroupCount: string | undefined
-  selectedSegment: UASegment
+  selectedSegment: UASegment | undefined
   samplingLevel: V4SamplingLevel | undefined
   pageToken: string | undefined
   pageSize: string | undefined

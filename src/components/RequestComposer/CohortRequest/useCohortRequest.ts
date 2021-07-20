@@ -102,7 +102,7 @@ const useCohortRequest = ({
 }: {
   viewId: string
   selectedMetric: UAMetric
-  selectedSegment: UASegment
+  selectedSegment: UASegment | undefined
   cohortSize: CohortSize | undefined
   samplingLevel: V4SamplingLevel | undefined
 }) => {
