@@ -22,6 +22,8 @@ import Autocomplete from "@material-ui/lab/Autocomplete"
 import { usePersistantObject, usePersistentString } from "../hooks"
 import { StorageKey } from "../constants"
 import { useSelector } from "react-redux"
+import { Column as ColumnT } from "@/api"
+import { HasView } from "./ViewSelector"
 
 export type UADimensions = UAColumns | undefined
 export type UAMetrics = UAColumns | undefined
@@ -58,48 +60,132 @@ interface UASegmentsWithEtag {
   etag: string
 }
 
-type UseUADimensionsAndMetrics = () => {
+type UseUADimensionsAndMetrics = (
+  view: HasView | undefined
+) => {
   dimensions: UADimensions
   metrics: UAMetrics
   columns: UAColumns | undefined
 }
-const useUADimensionsAndMetrics: UseUADimensionsAndMetrics = () => {
+const useUADimensionsAndMetrics: UseUADimensionsAndMetrics = view => {
   const gapi = useSelector((state: AppState) => state.gapi)
-  const api = React.useMemo<MetadataAPI | undefined>(() => {
+
+  const metadataAPI = React.useMemo<MetadataAPI | undefined>(() => {
     return gapi?.client.analytics.metadata as any
   }, [gapi])
-  const [withEtag, setUAColumnsWithEtag] = usePersistantObject<
-    UAColumnsWithEtag
-  >(StorageKey.uaDimensions)
+
+  const managementAPI = React.useMemo<ManagementAPI | undefined>(() => {
+    return gapi?.client.analytics.management as any
+  }, [gapi])
+
+  const [
+    withEtag,
+    setUAColumnsWithEtag,
+  ] = usePersistantObject<UAColumnsWithEtag>(StorageKey.uaColumns)
+
+  const [customMetrics, setCustomMetrics] = usePersistantObject<
+    gapi.client.analytics.CustomMetric[]
+  >(StorageKey.uaCustomMetrics)
+
+  const [customDimensions, setCustomDimensions] = usePersistantObject<
+    gapi.client.analytics.CustomDimension[]
+  >(StorageKey.uaCustomDimensions)
+
   React.useEffect(() => {
-    if (api === undefined) {
+    if (managementAPI === undefined || view === undefined) {
       return
     }
-    api.columns.list({ reportType: "ga" }).then(response => {
+    Promise.all([
+      managementAPI.customDimensions.list({
+        accountId: view.account.id!,
+        webPropertyId: view.property.id!,
+      }),
+      managementAPI.customMetrics.list({
+        accountId: view.account.id!,
+        webPropertyId: view.property.id!,
+      }),
+    ]).then(results => {
+      const dimensions = results[0].result.items
+      const metrics = results[1].result.items
+      setCustomMetrics(old => {
+        if (
+          old !== undefined &&
+          metrics !== undefined &&
+          old.length === metrics.length
+        ) {
+          if (old.every((a, idx) => a.id === metrics[idx].id)) {
+            return old
+          }
+        }
+        return metrics
+      })
+      setCustomDimensions(old => {
+        if (
+          old !== undefined &&
+          dimensions !== undefined &&
+          old.length === dimensions.length
+        ) {
+          if (old.every((a, idx) => a.id === dimensions[idx].id)) {
+            return old
+          }
+        }
+        return dimensions
+      })
+    })
+  }, [managementAPI, view, setCustomDimensions, setCustomMetrics])
+
+  React.useEffect(() => {
+    if (metadataAPI === undefined) {
+      return
+    }
+    metadataAPI.columns.list({ reportType: "ga" }).then(response => {
       const etag = response.result.etag!
       setUAColumnsWithEtag(old => {
         const columns = response.result.items!
         if (old?.etag === etag) {
-          // TODO I need to double check, but I think this prevents re-renders
           return old
         }
         return { etag, columns }
       })
     })
-  }, [api, setUAColumnsWithEtag])
+  }, [metadataAPI, setUAColumnsWithEtag])
+
+  const withEnumerated = React.useMemo(() => {
+    return withEtag?.columns.flatMap(column => {
+      if (customDimensions !== undefined && column.id === "ga:dimensionXX") {
+        return customDimensions.map(
+          dimension =>
+            ({
+              ...column,
+              id: dimension.id,
+              attributes: { ...column.attributes, uiName: dimension.name },
+            } as ColumnT)
+        )
+      }
+      if (customMetrics !== undefined && column.id === "ga:metricXX") {
+        return customMetrics.map(
+          metric =>
+            ({
+              ...column,
+              id: metric.id,
+              attributes: { ...column.attributes, uiName: metric.name },
+            } as ColumnT)
+        )
+      }
+      return [column]
+    })
+  }, [customDimensions, customMetrics, withEtag])
 
   const dimensions = React.useMemo<UADimensions>(
     () =>
-      withEtag?.columns.filter(
-        column => column.attributes?.type === "DIMENSION"
-      ),
-    [withEtag]
+      withEnumerated?.filter(column => column.attributes?.type === "DIMENSION"),
+    [withEnumerated]
   )
 
   const metrics = React.useMemo(
     () =>
-      withEtag?.columns.filter(column => column.attributes?.type === "METRIC"),
-    [withEtag]
+      withEnumerated?.filter(column => column.attributes?.type === "METRIC"),
+    [withEnumerated]
   )
 
   const columns = React.useMemo(() => withEtag?.columns, [withEtag])
@@ -143,11 +229,12 @@ export const DimensionPicker: React.FC<{
   setDimension: React.Dispatch<React.SetStateAction<UADimension>>
   required?: true | undefined
   helperText?: string
-}> = ({ helperText, setDimension, required, storageKey }) => {
+  view: HasView | undefined
+}> = ({ helperText, setDimension, required, storageKey, view }) => {
   const [selected, setSelected] = usePersistantObject<NonNullable<UADimension>>(
     storageKey
   )
-  const { dimensions } = useUADimensionsAndMetrics()
+  const { dimensions } = useUADimensionsAndMetrics(view)
   const dimensionOptions = React.useMemo<UADimensions>(() => dimensions, [
     dimensions,
   ])
@@ -189,17 +276,19 @@ export const DimensionsPicker: React.FC<{
   required?: true | undefined
   helperText?: string
   label?: string
+  view: HasView | undefined
 }> = ({
   helperText,
   setDimensions,
   required,
   storageKey,
+  view,
   label = "dimensions",
 }) => {
   const [selected, setSelected] = usePersistantObject<
     NonNullable<UADimensions>
   >(storageKey)
-  const { dimensions } = useUADimensionsAndMetrics()
+  const { dimensions } = useUADimensionsAndMetrics(view)
   const dimensionOptions = React.useMemo<UADimensions>(
     () =>
       dimensions?.filter(
@@ -243,12 +332,13 @@ export const MetricPicker: React.FC<{
   setMetric: React.Dispatch<React.SetStateAction<UAMetric>>
   required?: true | undefined
   helperText?: string
+  view: HasView | undefined
   filter?: (metric: NonNullable<UAMetric>) => boolean
-}> = ({ helperText, setMetric, required, storageKey, filter }) => {
+}> = ({ helperText, setMetric, required, storageKey, filter, view }) => {
   const [selected, setSelected] = usePersistantObject<NonNullable<UAMetric>>(
     storageKey
   )
-  const { metrics } = useUADimensionsAndMetrics()
+  const { metrics } = useUADimensionsAndMetrics(view)
   const metricOptions = React.useMemo<UAMetrics>(
     () => metrics?.filter(filter !== undefined ? filter : () => true),
     [metrics, filter]
@@ -291,11 +381,19 @@ export const MetricsPicker: React.FC<{
   required?: true | undefined
   helperText?: string
   label?: string
-}> = ({ helperText, setMetrics, required, storageKey, label = "metrics" }) => {
+  view: HasView | undefined
+}> = ({
+  helperText,
+  setMetrics,
+  required,
+  storageKey,
+  label = "metrics",
+  view,
+}) => {
   const [selected, setSelected] = usePersistantObject<NonNullable<UAMetrics>>(
     storageKey
   )
-  const { metrics } = useUADimensionsAndMetrics()
+  const { metrics } = useUADimensionsAndMetrics(view)
   const metricOptions = React.useMemo<UAMetrics>(
     () =>
       metrics?.filter(
@@ -342,9 +440,10 @@ const useUASegments: UseUASegments = () => {
   const api = React.useMemo<ManagementAPI | undefined>(() => {
     return gapi?.client.analytics.management as any
   }, [gapi])
-  const [withEtag, setUASegmentsWithEtag] = usePersistantObject<
-    UASegmentsWithEtag
-  >(StorageKey.uaSegments)
+  const [
+    withEtag,
+    setUASegmentsWithEtag,
+  ] = usePersistantObject<UASegmentsWithEtag>(StorageKey.uaSegments)
   React.useEffect(() => {
     if (api === undefined) {
       return

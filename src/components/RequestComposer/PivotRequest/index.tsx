@@ -141,18 +141,21 @@ const PivotRequest: React.FC<PivotRequestProps> = ({
           helperText="The end of the date range for the data request. Format: YYYY-MM-DD."
         />
         <MetricsPicker
+          view={view}
           required
           setMetrics={setSelectedMetrics}
           storageKey={StorageKey.pivotRequestMetrics}
           helperText="The metrics to include in the request."
         />
         <DimensionsPicker
+          view={view}
           required
           setDimensions={setSelectedDimensions}
           storageKey={StorageKey.pivotRequestDimensions}
           helperText="The dimensions to include in the request."
         />
         <MetricsPicker
+          view={view}
           required
           setMetrics={setPivotMetrics}
           storageKey={StorageKey.pivotRequestPivotMetrics}
@@ -160,6 +163,7 @@ const PivotRequest: React.FC<PivotRequestProps> = ({
           helperText="The pivot metrics to include in the request."
         />
         <DimensionsPicker
+          view={view}
           required
           setDimensions={setPivotDimensions}
           storageKey={StorageKey.pivotRequestPivotDimensions}

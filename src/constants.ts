@@ -78,7 +78,9 @@ export enum GAVersion {
 // All data in localStorage should have its keys here.
 export enum StorageKey {
   gaVersion = "/ga-version",
-  uaDimensions = "//ua-dimensions",
+  uaColumns = "//ua-columns",
+  uaCustomMetrics = "//ua-custom-metrics",
+  uaCustomDimensions = "//ua-custom-dimensions",
   uaSegments = "//ua-segments",
   viewSelectorData = "//view-selector/data",
 
