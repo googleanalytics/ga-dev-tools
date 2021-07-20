@@ -210,7 +210,7 @@ export const useDataAPIRequest: UseDataAPIRequest = ({
       apiObject["max-results"] = maxResults
     }
     if (filters !== undefined && filters !== "") {
-      apiObject["filters"] = encodeURI(filters)
+      apiObject["filters"] = filters
     }
     if (sort !== undefined) {
       apiObject["sort"] = sort
