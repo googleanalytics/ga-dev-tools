@@ -79,13 +79,13 @@ const useStyles = makeStyles(theme => ({
 }))
 
 const startDateLink = (
-  <ExternalLink href="https://developers.google.com/analytics/devguides/reporting/co@/reference#startDate">
+  <ExternalLink href="https://developers.google.com/analytics/devguides/reporting/core/v3/reference#startDate">
     start-date
   </ExternalLink>
 )
 
 const endDateLink = (
-  <ExternalLink href="https://developers.google.com/analytics/devguides/reporting/co@/reference#endDate">
+  <ExternalLink href="https://developers.google.com/analytics/devguides/reporting/core/v3/reference#endDate">
     end-date
   </ExternalLink>
 )
@@ -98,7 +98,7 @@ const DevsiteLink: React.FC<{ hash: string }> = ({ hash }) => {
     <Tooltip title={`See ${hash} on devsite.`}>
       <a
         className={classes.externalReference}
-        href={`https://developers.google.com/analytics/devguides/reporting/co@/reference#${hash}`}
+        href={`https://developers.google.com/analytics/devguides/reporting/core/v3/reference#${hash}`}
         target="_blank"
         rel="noreferrer"
       >
