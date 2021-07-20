@@ -139,6 +139,7 @@ export const QueryExplorer = () => {
     selectedSamplingValue,
     selectedSegment,
     sort,
+    selectedView,
   } = useInputs()
 
   const { runQuery, requiredParameters, queryResponse } = useDataAPIRequest({
@@ -229,12 +230,14 @@ export const QueryExplorer = () => {
           }
         />
         <MetricsPicker
+          view={selectedView}
           required
           setMetrics={setSelectedMetrics}
           helperText="Metrics to include in the query."
           storageKey={StorageKey.queryExplorerMetrics}
         />
         <DimensionsPicker
+          view={selectedView}
           setDimensions={setSelectedDimensions}
           helperText="Dimensions to include in the query."
           storageKey={StorageKey.queryExplorerDimensions}

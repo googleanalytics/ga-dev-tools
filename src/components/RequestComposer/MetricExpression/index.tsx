@@ -150,6 +150,7 @@ const MetricExpression: React.FC<MetricExpressionRequestProps> = ({
           helperText="Aliases to use for your expressions. Separate multiple aliases with a comma."
         />
         <DimensionsPicker
+          view={view}
           setDimensions={setSelectedDimensions}
           storageKey={StorageKey.metricExpressionRequestDimensions}
           helperText="The dimensions to include in the request."

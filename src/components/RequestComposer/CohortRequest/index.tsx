@@ -101,6 +101,7 @@ const CohortRequest: React.FC<CohortRequestProps> = ({
           helperText="The analytics view ID from which to retrieve data."
         />
         <MetricPicker
+          view={view}
           setMetric={setSelectedMetric}
           storageKey={StorageKey.cohortRequestMetric}
           helperText="The metrics to include in the request."

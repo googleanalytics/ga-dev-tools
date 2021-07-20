@@ -132,11 +132,13 @@ const HistogramRequest: React.FC<HistogramRequestProps> = ({
           helperText="The end of the date range for the data request. Format: YYYY-MM-DD."
         />
         <MetricsPicker
+          view={view}
           setMetrics={setSelectedMetrics}
           storageKey={StorageKey.histogramRequestMetrics}
           helperText="The metrics to include in the request."
         />
         <DimensionsPicker
+          view={view}
           setDimensions={setSelectedDimensions}
           storageKey={StorageKey.histogramRequestDimensions}
           helperText="The dimensions to include in the request."
