@@ -16,7 +16,7 @@ interface Parameters {
   startDate: string | undefined
   endDate: string | undefined
   filtersExpression: string | undefined
-  selectedSegment: UASegment
+  selectedSegment: UASegment | undefined
   samplingLevel: V4SamplingLevel | undefined
 }
 

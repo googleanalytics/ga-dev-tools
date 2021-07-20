@@ -18,7 +18,9 @@
 import * as React from "react"
 
 import { Typography, TextField, makeStyles } from "@material-ui/core"
-import Autocomplete from "@material-ui/lab/Autocomplete"
+import Autocomplete, {
+  createFilterOptions,
+} from "@material-ui/lab/Autocomplete"
 import { usePersistantObject, usePersistentString } from "../hooks"
 import { StorageKey } from "../constants"
 import { useSelector } from "react-redux"
@@ -29,7 +31,7 @@ export type UADimensions = UAColumns | undefined
 export type UAMetrics = UAColumns | undefined
 export type UADimension = UAColumn | undefined
 export type UAMetric = UAColumn | undefined
-export type UASegment = gapi.client.analytics.Segment | undefined
+export type UASegment = gapi.client.analytics.Segment
 export enum V4SamplingLevel {
   Default = "DEFAULT",
   SMALL = "SMALL",
@@ -433,7 +435,7 @@ export const MetricsPicker: React.FC<{
 }
 
 type UseUASegments = () => {
-  segments: UASegments
+  segments: UASegment[] | undefined
 }
 const useUASegments: UseUASegments = () => {
   const gapi = useSelector((state: AppState) => state.gapi)
@@ -471,13 +473,13 @@ const useUASegments: UseUASegments = () => {
 }
 
 const Segment: React.FC<{
-  segment: NonNullable<UASegment>
+  segment: UASegment
   showSegmentDefinition: boolean
 }> = ({ segment, showSegmentDefinition }) => {
   const classes = useColumnStyles()
   const subtitleText = showSegmentDefinition
     ? segment.definition || `${segment.name} has no segment definition.`
-    : segment!.segmentId!
+    : segment.segmentId || ""
   const abbreviatedText =
     subtitleText.length > 40
       ? subtitleText.substring(0, 40) + "..."
@@ -493,15 +495,20 @@ const Segment: React.FC<{
         </Typography>
       </div>
       <Typography variant="subtitle1" color="textSecondary">
-        {segment.type === "CUSTOM" ? "Custom Segment" : "Built In Segment"}
+        {segment.type === "CUSTOM"
+          ? "Custom Segment"
+          : segment.type === "DYNAMIC"
+          ? "Dynamic Segment"
+          : "Built In Segment"}
       </Typography>
     </div>
   )
 }
 
+const filter = createFilterOptions<UASegment>()
 export const SegmentPicker: React.FC<{
   storageKey: StorageKey
-  setSegment: React.Dispatch<React.SetStateAction<UASegment>>
+  setSegment: React.Dispatch<React.SetStateAction<UASegment | undefined>>
   showSegmentDefinition: boolean
   required?: true | undefined
   helperText?: string
@@ -526,7 +533,7 @@ export const SegmentPicker: React.FC<{
   }, [selected, setSegment])
 
   return (
-    <Autocomplete<NonNullable<UASegment>, false, undefined, true>
+    <Autocomplete<UASegment, false, undefined, true>
       fullWidth
       autoComplete
       autoHighlight
@@ -539,9 +546,23 @@ export const SegmentPicker: React.FC<{
           : segment.segmentId!) || ""
       }
       value={value || null}
-      onChange={(_event, value) =>
+      filterOptions={(options, params) => {
+        const filtered = filter(options || [], params)
+
+        // Add entry for creating a dynamic segment based on input.
+        if (params.inputValue !== "") {
+          filtered.push({
+            definition: params.inputValue,
+            name: `Add dynamic segment`,
+            segmentId: params.inputValue,
+            type: "DYNAMIC",
+          })
+        }
+        return filtered
+      }}
+      onChange={(_event, value) => {
         setSelected(value === null ? undefined : (value as UASegment))
-      }
+      }}
       renderOption={column => (
         <Segment
           showSegmentDefinition={showSegmentDefinition}

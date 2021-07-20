@@ -16,7 +16,7 @@ interface Parameters {
   metricExpressions: string | undefined
   metricAliases: string | undefined
   selectedDimensions: UADimensions
-  selectedSegment: UASegment
+  selectedSegment: UASegment | undefined
   pageToken: string | undefined
   pageSize: string | undefined
 }
