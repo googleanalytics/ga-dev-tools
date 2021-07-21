@@ -29,6 +29,7 @@ import {
 import Spinner from "../../components/Spinner"
 import { CopyIconButton } from "../../components/CopyButton"
 import { QueryResponse, APIStatus } from "./hooks"
+import TSVDownload from "./TSVDownload"
 
 const useStyles = makeStyles(theme => ({
   paper: {},
@@ -134,6 +135,8 @@ const Report: React.FC<ReportProps> = ({ queryResponse }) => {
             ),
           }}
         />
+
+        <TSVDownload queryResponse={queryResponse.response} />
       </section>
       <ReportTable queryResponse={queryResponse.response} />
     </Paper>
