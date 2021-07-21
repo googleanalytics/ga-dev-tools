@@ -18,7 +18,7 @@ import Home from "@/components/Home"
 
 const IndexPage = ({ location: { pathname } }) => (
   <Layout
-    title="Discover the Gooogle Analytics platform"
+    title="Discover the Google Analytics platform"
     pathname={pathname}
     description="Google Analytics Demos & Tools is a resource for users and developers to discover what's possible with the Google Analytics Platform. Learn how to implement GA and applications that can be built to take advantage of the flexibility and power of Google Analytics."
   >
