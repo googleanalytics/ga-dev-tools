@@ -92,7 +92,7 @@ const GeneratedURL: React.FC<GeneratedUrlProps> = ({
               }
               label={
                 <Typography variant="body2" component="span">
-                  Set campaign parameters in the fragment protion of the URL (
+                  Set campaign parameters in the fragment portion of the URL (
                   <Typography component="span" color="error" variant="inherit">
                     not recommended
                   </Typography>
