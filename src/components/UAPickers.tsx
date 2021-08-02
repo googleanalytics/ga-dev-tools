@@ -93,6 +93,8 @@ const useUADimensionsAndMetrics: UseUADimensionsAndMetrics = view => {
     gapi.client.analytics.CustomDimension[]
   >(StorageKey.uaCustomDimensions)
 
+  const [goals, setGoals] = React.useState<gapi.client.analytics.Goal[]>()
+
   React.useEffect(() => {
     if (managementAPI === undefined || view === undefined) {
       return
@@ -106,9 +108,15 @@ const useUADimensionsAndMetrics: UseUADimensionsAndMetrics = view => {
         accountId: view.account.id!,
         webPropertyId: view.property.id!,
       }),
+      managementAPI.goals.list({
+        accountId: view.account.id!,
+        webPropertyId: view.property.id!,
+        profileId: view.view.id!,
+      }),
     ]).then(results => {
       const dimensions = results[0].result.items
       const metrics = results[1].result.items
+      const goals = results[2].result.items
       setCustomMetrics(old => {
         if (
           old !== undefined &&
@@ -133,8 +141,20 @@ const useUADimensionsAndMetrics: UseUADimensionsAndMetrics = view => {
         }
         return dimensions
       })
+      setGoals(old => {
+        if (
+          old !== undefined &&
+          goals !== undefined &&
+          old.length === goals.length
+        ) {
+          if (old.every((a, idx) => a.id === goals[idx].id)) {
+            return old
+          }
+        }
+        return goals
+      })
     })
-  }, [managementAPI, view, setCustomDimensions, setCustomMetrics])
+  }, [managementAPI, view, setCustomDimensions, setCustomMetrics, setGoals])
 
   React.useEffect(() => {
     if (metadataAPI === undefined) {
@@ -174,9 +194,52 @@ const useUADimensionsAndMetrics: UseUADimensionsAndMetrics = view => {
             } as ColumnT)
         )
       }
+      if (
+        goals !== undefined &&
+        column.attributes!.minTemplateIndex !== undefined &&
+        /goalxx/i.test(column.id!)
+      ) {
+        return goals.map(goal => ({
+          ...column,
+          id: column.id!.replace("XX", goal.id!),
+          attributes: {
+            ...column.attributes,
+            uiName: `${goal.name} (${column.attributes!.uiName.replace(
+              "XX",
+              goal.id!
+            )})`,
+          },
+        }))
+      }
+      if (column.attributes!.minTemplateIndex !== undefined) {
+        let min = 0
+        let max = 0
+        if (
+          view?.property.level === "PREMIUM" &&
+          column.attributes!.premiumMinTemplateIndex !== undefined
+        ) {
+          min = parseInt(column.attributes!.premiumMinTemplateIndex, 10)
+          max = parseInt(column.attributes!.premiumMaxTemplateIndex, 10)
+        } else {
+          min = parseInt(column.attributes!.minTemplateIndex, 10)
+          max = parseInt(column.attributes!.maxTemplateIndex, 10)
+        }
+        const columns: gapi.client.analytics.Column[] = []
+        for (let i = min; i <= max; i++) {
+          columns.push({
+            ...column,
+            id: column.id!.replace("XX", i.toString()),
+            attributes: {
+              ...column.attributes,
+              uiName: column.attributes!.uiName.replace("XX", i.toString()),
+            },
+          })
+        }
+        return columns
+      }
       return [column]
     })
-  }, [customDimensions, customMetrics, withEtag])
+  }, [customDimensions, customMetrics, withEtag, goals, view?.property.level])
 
   const dimensions = React.useMemo<UADimensions>(
     () =>
