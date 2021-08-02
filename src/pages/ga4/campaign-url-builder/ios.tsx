@@ -15,17 +15,22 @@
 import * as React from "react"
 
 import Layout from "@/components/Layout"
-import CampaignUrlBuilder from "@/components/CampaignUrlBuilder"
+import CampaignUrlBuilder, {
+  UrlBuilderType,
+} from "@/components/CampaignUrlBuilder"
 import { GAVersion } from "@/constants"
 
 export default ({ location: { pathname } }) => {
   return (
     <Layout
-      title="Campaign URL Builder"
+      title="iOS Campaign URL Builder"
       pathname={pathname}
-      description="This tool allows you to easily add campaign parameters to URLs so you can measure Custom Campaigns in Google Analytics."
+      description="This tool allows you to easily add campaign parameters to iOS URLs so you can measure Custom Campaigns in Google Analytics."
     >
-      <CampaignUrlBuilder version={GAVersion.UniversalAnalytics} />
+      <CampaignUrlBuilder
+        version={GAVersion.GoogleAnalytics4}
+        type={UrlBuilderType.Ios}
+      />
     </Layout>
   )
 }

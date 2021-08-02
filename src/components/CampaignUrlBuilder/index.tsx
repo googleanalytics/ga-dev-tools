@@ -13,341 +13,81 @@
 // limitations under the License.
 
 import * as React from "react"
-import Typography from "@material-ui/core/Typography"
-import TextField from "@material-ui/core/TextField"
-import Table from "@material-ui/core/Table"
-import TableBody from "@material-ui/core/TableBody"
-import TableCell from "@material-ui/core/TableCell"
-import TableHead from "@material-ui/core/TableHead"
-import TableRow from "@material-ui/core/TableRow"
 
-import { IS_SSR } from "../../hooks"
-import GeneratedURL from "./GeneratedURL"
-import useStyles from "./useStyles"
-import useInputs from "./useInputs"
-import ExternalLink from "../ExternalLink"
-import InlineCode from "../InlineCode"
-import { Url, GAVersion } from "../../constants"
+import { navigate } from "gatsby"
+import Tabs from "@material-ui/core/Tabs"
+import Tab from "@material-ui/core/Tab"
 
-const customCampaigns = (
-  <ExternalLink href={Url.aboutCustomCampaigns}>Custom Campaigns</ExternalLink>
-)
+import { GAVersion } from "@/constants"
+import TabPanel from "@/components/TabPanel"
+import WebUrlBuilder from "./Web"
+import PlayUrlBuilder from "./Play"
+import IOSUrlBuilder from "./IOS"
 
-export const CampaignUrlBuilder: React.FC<{ version: GAVersion }> = ({
+export enum UrlBuilderType {
+  Web = "web",
+  Play = "play",
+  Ios = "ios",
+}
+
+interface CampaignUrlBuilderProps {
+  version: GAVersion
+  type: UrlBuilderType
+}
+
+export const CampaignUrlBuilder: React.FC<CampaignUrlBuilderProps> = ({
   version,
+  type,
 }) => {
-  const classes = useStyles()
+  const tab = React.useMemo(() => {
+    switch (type) {
+      case UrlBuilderType.Web:
+        return 0
+      case UrlBuilderType.Play:
+        return 1
+      case UrlBuilderType.Ios:
+        return 2
+    }
+  }, [type])
 
-  const {
-    websiteUrl,
-    source,
-    setSource,
-    medium,
-    setMedium,
-    campaign,
-    setCampaign,
-    id,
-    setId,
-    term,
-    setTerm,
-    content,
-    setContent,
-    onWebsiteChange,
-  } = useInputs()
+  const pathForIdx = React.useCallback((idx: number) => {
+    switch (idx) {
+      case 0:
+        return `/campaign-url-builder/`
+      case 1:
+        return `/campaign-url-builder/play`
+      case 2:
+        return `/campaign-url-builder/ios`
+      default:
+        throw new Error("No matching idx")
+    }
+  }, [])
 
   return (
     <>
-      <Typography variant="body1">
-        This tool allows you to easily add campaign parameters to URLs so you
-        can measure {customCampaigns} in Google Analytics.
-      </Typography>
-      <Typography variant="h3">
-        Enter the website URL and campaign information
-      </Typography>
-      <Typography>
-        Fill out all fields marked with an asterisk (*), and the campaign URL
-        will be generated for you.
-      </Typography>
-      {IS_SSR ? null : (
-        <section className={classes.inputs}>
-          <TextField
-            id="website-url"
-            required
-            value={websiteUrl || ""}
-            onChange={onWebsiteChange}
-            label="website URL"
-            size="small"
-            variant="outlined"
-            helperText={
-              <span>
-                The full website URL (e.g.{" "}
-                <span className={classes.bold}>https://www.example.com</span>)
-              </span>
-            }
-          />
-          <TextField
-            id="campaign-id"
-            value={id || ""}
-            onChange={e => setId(e.target.value)}
-            label="campaign ID"
-            size="small"
-            variant="outlined"
-            helperText={<span>The ads campaign id.</span>}
-          />
-          <TextField
-            id="campaign-source"
-            required
-            value={source || ""}
-            onChange={e => setSource(e.target.value)}
-            label="campaign source"
-            size="small"
-            variant="outlined"
-            helperText={
-              <span>
-                The referrer (e.g. <span className={classes.bold}>google</span>,{" "}
-                <span className={classes.bold}>newsletter</span>)
-              </span>
-            }
-          />
-          <TextField
-            id="campaign-medium"
-            required
-            value={medium || ""}
-            onChange={e => setMedium(e.target.value)}
-            label="campaign medium"
-            size="small"
-            variant="outlined"
-            helperText={
-              <span>
-                Marketing medium (e.g. <span className={classes.bold}>cpc</span>
-                , <span className={classes.bold}>banner</span>,{" "}
-                <span className={classes.bold}>email</span>)
-              </span>
-            }
-          />
-          <TextField
-            id="campaign-name"
-            required={version === GAVersion.UniversalAnalytics}
-            value={campaign || ""}
-            onChange={e => setCampaign(e.target.value)}
-            label="campaign name"
-            size="small"
-            variant="outlined"
-            helperText={
-              <span>
-                Product, promo code, or slogan (e.g.{" "}
-                <span className={classes.bold}>spring_sale</span>) One of
-                campaign name or campaign id are required.
-              </span>
-            }
-          />
-          <TextField
-            id="campaign-term"
-            value={term || ""}
-            onChange={e => setTerm(e.target.value)}
-            label="campaign term"
-            size="small"
-            variant="outlined"
-            helperText="Identify the paid keywords"
-          />
-          <TextField
-            id="campaign-content"
-            value={content || ""}
-            onChange={e => setContent(e.target.value)}
-            label="campaign content"
-            size="small"
-            variant="outlined"
-            helperText="Use to differentiate ads"
-          />
-        </section>
-      )}
+      <Tabs
+        value={tab}
+        onChange={(_e, newValue) => {
+          const path = `${
+            version === GAVersion.GoogleAnalytics4 ? "/ga4" : ""
+          }${pathForIdx(newValue)}`
+          navigate(path)
+        }}
+      >
+        <Tab label="Web" />
+        <Tab label="Play" />
+        <Tab label="iOS" />
+      </Tabs>
 
-      <GeneratedURL
-        version={version}
-        source={source || ""}
-        websiteUrl={websiteUrl || ""}
-        medium={medium || ""}
-        campaign={campaign || ""}
-        id={id || ""}
-        term={term || ""}
-        content={content || ""}
-      />
-
-      <Typography variant="h2">
-        More information and examples for each parameter
-      </Typography>
-      <Typography variant="body1">
-        The following table gives a detailed explanation and example of each of
-        the campaign parameters:
-      </Typography>
-
-      <Table size="small">
-        <TableHead>
-          <TableRow>
-            <TableCell>Parameter</TableCell>
-            <TableCell>Required</TableCell>
-            <TableCell>Example</TableCell>
-            <TableCell>Description</TableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          <TableRow>
-            <TableCell className={classes.denseTableCell}>
-              <Typography variant="body1">Campaign Id</Typography>
-              <InlineCode>utm_id</InlineCode>
-            </TableCell>
-            <TableCell>
-              <Typography variant="body1">No</Typography>
-            </TableCell>
-            <TableCell>
-              <Typography variant="body1">
-                <InlineCode>abc.123</InlineCode>
-              </Typography>
-            </TableCell>
-            <TableCell>
-              <Typography variant="body1">
-                Used to identify which ads campaign this referral references.
-                Use <InlineCode>utm_id</InlineCode> to identify a specific ads
-                campaign.
-              </Typography>
-            </TableCell>
-          </TableRow>
-          <TableRow>
-            <TableCell className={classes.denseTableCell}>
-              <Typography variant="body1">Campaign Source</Typography>
-              <InlineCode>utm_source</InlineCode>
-            </TableCell>
-            <TableCell>
-              <Typography variant="body1">Yes</Typography>
-            </TableCell>
-            <TableCell>
-              <Typography variant="body1">
-                <InlineCode>google</InlineCode>
-              </Typography>
-            </TableCell>
-            <TableCell>
-              <Typography variant="body1">
-                Use <InlineCode>utm_source</InlineCode> to identify a search
-                engine, newsletter name, or other source.
-              </Typography>
-            </TableCell>
-          </TableRow>
-          <TableRow>
-            <TableCell className={classes.denseTableCell}>
-              <Typography variant="body1">Campaign Medium</Typography>
-              <InlineCode>utm_medium</InlineCode>
-            </TableCell>
-            <TableCell>
-              <Typography variant="body1">Yes</Typography>
-            </TableCell>
-            <TableCell>
-              <Typography variant="body1">
-                <InlineCode>cpc</InlineCode>
-              </Typography>
-            </TableCell>
-            <TableCell>
-              <Typography variant="body1">
-                Use <InlineCode>utm_medium</InlineCode> to identify a medium
-                such as email or cost-per-click.
-              </Typography>
-            </TableCell>
-          </TableRow>
-          <TableRow>
-            <TableCell className={classes.denseTableCell}>
-              <Typography variant="body1">Campaign Name</Typography>
-              <InlineCode>utm_campaign</InlineCode>
-            </TableCell>
-            <TableCell>
-              <Typography variant="body1">No</Typography>
-            </TableCell>
-            <TableCell>
-              <Typography variant="body1">
-                <InlineCode>spring_sale</InlineCode>
-              </Typography>
-            </TableCell>
-            <TableCell>
-              <Typography variant="body1">
-                Used for keyword analysis. Use{" "}
-                <InlineCode>utm_campaign</InlineCode> to identify a specific
-                product promotion or strategic campaign.
-              </Typography>
-            </TableCell>
-          </TableRow>
-          <TableRow>
-            <TableCell className={classes.denseTableCell}>
-              <Typography variant="body1">Campaign Term</Typography>
-              <InlineCode>utm_term</InlineCode>
-            </TableCell>
-            <TableCell>
-              <Typography variant="body1">No</Typography>
-            </TableCell>
-            <TableCell>
-              <Typography variant="body1">
-                <InlineCode>running+shoes</InlineCode>
-              </Typography>
-            </TableCell>
-            <TableCell>
-              <Typography variant="body1">
-                Used for paid search. Use <InlineCode>utm_term</InlineCode> to
-                note the keywords for this ad.
-              </Typography>
-            </TableCell>
-          </TableRow>
-          <TableRow>
-            <TableCell className={classes.denseTableCell}>
-              <Typography variant="body1">Campaign Content</Typography>
-              <InlineCode>utm_content</InlineCode>
-            </TableCell>
-            <TableCell>
-              <Typography variant="body1">No</Typography>
-            </TableCell>
-            <TableCell>
-              <Typography variant="body1">
-                <InlineCode>logolink</InlineCode>
-              </Typography>
-            </TableCell>
-            <TableCell>
-              <Typography variant="body1">
-                Used for A/B testing and content-targeted ads. Use{" "}
-                <InlineCode>utm_content</InlineCode> to differentiate ads or
-                links that point to the same URL.
-              </Typography>
-            </TableCell>
-          </TableRow>
-        </TableBody>
-      </Table>
-
-      <Typography variant="h2">Related Resources</Typography>
-      <Typography variant="body1" component="ul">
-        <li>
-          <ExternalLink href={Url.aboutCampaign}>About Campaigns</ExternalLink>
-        </li>
-        <li>
-          <ExternalLink href={Url.aboutCustomCampaigns}>
-            About Custom Campaigns
-          </ExternalLink>
-        </li>
-        <li>
-          <ExternalLink href={Url.bestPracticesForCreatingCustomCampaigns}>
-            Best Practices for creating Custom Campaigns
-          </ExternalLink>
-        </li>
-        <li>
-          <ExternalLink href={Url.aboutReferralTrafficReport}>
-            About the Refferal Traffic report
-          </ExternalLink>
-        </li>
-        <li>
-          <ExternalLink href={Url.aboutTrafficSourceDimensions}>
-            About traffic source dimensions
-          </ExternalLink>
-        </li>
-        <li>
-          <ExternalLink href={Url.googleAdsAutoTagging}>
-            Google Ads Auto-Tagging
-          </ExternalLink>
-        </li>
-      </Typography>
+      <TabPanel value={tab} index={0}>
+        <WebUrlBuilder version={version} />
+      </TabPanel>
+      <TabPanel value={tab} index={1}>
+        <PlayUrlBuilder version={version} />
+      </TabPanel>
+      <TabPanel value={tab} index={2}>
+        <IOSUrlBuilder version={version} />
+      </TabPanel>
     </>
   )
 }

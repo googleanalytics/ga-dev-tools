@@ -133,6 +133,7 @@ export enum StorageKey {
   dimensionsMetricsExplorerAllowDeprecated = "dimensions-metrics-explorer/allow-deprecated",
   dimensionsMetricsExplorerOnlySegments = "dimensions-metrics-explorer/only-segments",
 
+  // Web Campaign Builder
   campaignBuilderWebsiteUrl = "campaign-builder/website-url",
   campaignBuilderSource = "campaign-builder/source",
   campaignBuilderMedium = "campaign-builder/medium",
@@ -144,6 +145,22 @@ export enum StorageKey {
   bitlyAccessToken = "bitly-auth/access-token",
   bitlyCache = "bitly-auth/cache-storage",
   requestComposerTab = "request-composer/tab",
+
+  // Play Campaign URL Builder
+  campaignBuilderPlayAppId = "campaign-builder/play/app-id",
+  campaignBuilderPlaySource = "campaign-builder/play/source",
+  campaignBuilderPlayMedium = "campaign-builder/play/medium",
+  campaignBuilderPlayTerm = "campaign-builder/play/term",
+  campaignBuilderPlayContent = "campaign-builder/play/content",
+  campaignBuilderPlayName = "campaign-builder/play/name",
+
+  campaignBuilderIOSAppId = "campaign-builder/ios/app-id",
+  campaignBuilderIOSSource = "campaign-builder/ios/source",
+  campaignBuilderIOSMedium = "campaign-builder/ios/medium",
+  campaignBuilderIOSTerm = "campaign-builder/ios/term",
+  campaignBuilderIOSContent = "campaign-builder/ios/content",
+  campaignBuilderIOSName = "campaign-builder/ios/name",
+  campaignBuilderIOSPropertyId = "campaign-builder/ios/property-id",
 
   histogramRequestDimensions = "request-composer/histogram-request-dimensions",
   histogramRequestMetrics = "request-composer/histogram-request-metrics",

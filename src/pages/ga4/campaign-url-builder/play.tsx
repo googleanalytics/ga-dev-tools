@@ -13,17 +13,24 @@
 // limitations under the License.
 
 import * as React from "react"
+
 import Layout from "@/components/Layout"
-import Home from "@/components/Home"
+import CampaignUrlBuilder, {
+  UrlBuilderType,
+} from "@/components/CampaignUrlBuilder"
+import { GAVersion } from "@/constants"
 
-const IndexPage = ({ location: { pathname } }) => (
-  <Layout
-    title="Discover the Google Analytics platform"
-    pathname={pathname}
-    description="Google Analytics Demos & Tools is a resource for users and developers to discover what's possible with the Google Analytics Platform. Learn how to implement GA and applications that can be built to take advantage of the flexibility and power of Google Analytics."
-  >
-    <Home />
-  </Layout>
-)
-
-export default IndexPage
+export default ({ location: { pathname } }) => {
+  return (
+    <Layout
+      title="Play Campaign URL Builder"
+      pathname={pathname}
+      description="This tool allows you to easily add campaign parameters to play store URLs so you can measure Custom Campaigns in Google Analytics."
+    >
+      <CampaignUrlBuilder
+        version={GAVersion.GoogleAnalytics4}
+        type={UrlBuilderType.Play}
+      />
+    </Layout>
+  )
+}

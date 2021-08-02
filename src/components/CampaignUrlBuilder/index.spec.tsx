@@ -17,7 +17,7 @@ import * as renderer from "@testing-library/react"
 import { withProviders } from "../../test-utils"
 import "@testing-library/jest-dom"
 import userEvent from "@testing-library/user-event"
-import { CampaignUrlBuilder } from "./index"
+import { CampaignUrlBuilder, UrlBuilderType } from "./index"
 import { GAVersion } from "../../constants"
 
 // Capture original error global so it's easier to replace after a mock.
@@ -30,13 +30,19 @@ describe("for the Campaign URL Builder component", () => {
 
   test("can render page without error", () => {
     const { wrapped } = withProviders(
-      <CampaignUrlBuilder version={GAVersion.UniversalAnalytics} />
+      <CampaignUrlBuilder
+        version={GAVersion.UniversalAnalytics}
+        type={UrlBuilderType.Web}
+      />
     )
     renderer.render(wrapped)
   })
   test("generates url for happy path inputs", async () => {
     const { wrapped } = withProviders(
-      <CampaignUrlBuilder version={GAVersion.UniversalAnalytics} />
+      <CampaignUrlBuilder
+        version={GAVersion.UniversalAnalytics}
+        type={UrlBuilderType.Web}
+      />
     )
     const { findByLabelText: find } = renderer.render(wrapped)
     // Enter happy path values
@@ -57,7 +63,10 @@ describe("for the Campaign URL Builder component", () => {
   describe("entering a website url with existing", () => {
     test("fills all when provided", async () => {
       const { wrapped } = withProviders(
-        <CampaignUrlBuilder version={GAVersion.UniversalAnalytics} />
+        <CampaignUrlBuilder
+          version={GAVersion.UniversalAnalytics}
+          type={UrlBuilderType.Web}
+        />
       )
       const { findByLabelText: find } = renderer.render(wrapped)
       renderer.fireEvent.change(await find(/website URL/), {
@@ -78,7 +87,10 @@ describe("for the Campaign URL Builder component", () => {
   describe("entering a no-no url shows a warning", () => {
     test("url: ga-dev-tools.appspot.com", async () => {
       const { wrapped } = withProviders(
-        <CampaignUrlBuilder version={GAVersion.UniversalAnalytics} />
+        <CampaignUrlBuilder
+          version={GAVersion.UniversalAnalytics}
+          type={UrlBuilderType.Web}
+        />
       )
       const { findByLabelText: find, findByTestId } = renderer.render(wrapped)
       await userEvent.type(
@@ -92,7 +104,10 @@ describe("for the Campaign URL Builder component", () => {
     })
     test("url: play.google.com", async () => {
       const { wrapped } = withProviders(
-        <CampaignUrlBuilder version={GAVersion.UniversalAnalytics} />
+        <CampaignUrlBuilder
+          version={GAVersion.UniversalAnalytics}
+          type={UrlBuilderType.Web}
+        />
       )
       const { findByLabelText: find, findByTestId } = renderer.render(wrapped)
       await userEvent.type(await find(/website URL/), "https://play.google.com")
@@ -103,7 +118,10 @@ describe("for the Campaign URL Builder component", () => {
     })
     test("url: itunes.apple.com", async () => {
       const { wrapped } = withProviders(
-        <CampaignUrlBuilder version={GAVersion.UniversalAnalytics} />
+        <CampaignUrlBuilder
+          version={GAVersion.UniversalAnalytics}
+          type={UrlBuilderType.Web}
+        />
       )
       const { findByLabelText: find, findByTestId } = renderer.render(wrapped)
       await userEvent.type(
