@@ -37,17 +37,21 @@ const IOSUrlBuilder: React.FC<IOSUrlBuilderProps> = ({ version }) => {
     setContent,
     setName,
     setPropertyId,
+    setRedirectURL,
+    setDeviceID,
     ...values
   } = useInputs()
   const {
     adNetwork,
-    appId,
+    appID,
     source,
     medium,
     term,
     content,
     name,
-    propertyId,
+    propertyID,
+    redirectURL,
+    deviceID,
   } = values
 
   const url = useGenerateUrl(values)
@@ -87,14 +91,14 @@ const IOSUrlBuilder: React.FC<IOSUrlBuilderProps> = ({ version }) => {
           fullWidth
           label="Google Analytics property ID"
           helperText="e.g. UA-XXXX-Y"
-          value={propertyId}
+          value={propertyID}
           onChange={e => setPropertyId(e.target.value)}
         />
       )
     } else {
       return null
     }
-  }, [version, propertyId, setPropertyId])
+  }, [version, propertyID, setPropertyId])
 
   return (
     <section className={formClasses.form}>
@@ -135,7 +139,7 @@ const IOSUrlBuilder: React.FC<IOSUrlBuilderProps> = ({ version }) => {
         fullWidth
         label="application ID"
         helperText="The final package that is used in your built .apk's manifest, e.g. com.example.application"
-        value={appId}
+        value={appID}
         onChange={e => setAppId(e.target.value)}
       />
       <TextField

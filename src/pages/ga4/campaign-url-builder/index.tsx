@@ -17,7 +17,7 @@ import * as React from "react"
 import Layout from "@/components/Layout"
 import CampaignUrlBuilder, {
   UrlBuilderType,
-} from "@/components/CampaignUrlBuilder"
+} from "@/components/CampaignURLBuilder"
 import { GAVersion } from "@/constants"
 
 export default ({ location: { pathname } }) => {

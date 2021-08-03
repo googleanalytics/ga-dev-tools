@@ -10,13 +10,15 @@ enum QueryParam {
   Term = "d",
   Content = "e",
   Name = "f",
-  PropertyId = "g",
+  PropertyID = "g",
+  RedirectURL = "h",
+  DeviceID = "i",
 }
 
 const useInputs = () => {
   const [adNetwork, setAdNetwork] = useState(supportedAdNetworks[0])
 
-  const [appId, setAppId] = useHydratedPersistantString(
+  const [appID, setAppID] = useHydratedPersistantString(
     StorageKey.campaignBuilderIOSAppId,
     QueryParam.AppID,
     ""
@@ -47,9 +49,21 @@ const useInputs = () => {
     ""
   )
 
-  const [propertyId, setPropertyId] = useHydratedPersistantString(
+  const [propertyID, setPropertyID] = useHydratedPersistantString(
     StorageKey.campaignBuilderIOSPropertyId,
-    QueryParam.PropertyId,
+    QueryParam.PropertyID,
+    ""
+  )
+
+  const [redirectURL, setRedirectURL] = useHydratedPersistantString(
+    StorageKey.campaignBuilderIOSRedirectURL,
+    QueryParam.RedirectURL,
+    ""
+  )
+
+  const [deviceID, setDeviceID] = useHydratedPersistantString(
+    StorageKey.campaignBuilderIOSDeviceID,
+    QueryParam.DeviceID,
     ""
   )
 
@@ -63,8 +77,8 @@ const useInputs = () => {
   }, [adNetwork, setSource])
 
   return {
-    appId,
-    setAppId,
+    appID,
+    setAppID,
     source,
     setSource,
     medium,
@@ -77,8 +91,12 @@ const useInputs = () => {
     setName,
     adNetwork,
     setAdNetwork,
-    propertyId,
-    setPropertyId,
+    propertyID,
+    setPropertyID,
+    redirectURL,
+    setRedirectURL,
+    deviceID,
+    setDeviceID,
   }
 }
 

@@ -3,23 +3,24 @@ import { AdNetwork } from "../adNetworks"
 
 interface Arg {
   adNetwork: AdNetwork
-  appId: string | undefined
+  appID: string | undefined
   source: string | undefined
   medium: string | undefined
   term: string | undefined
   content: string | undefined
   name: string | undefined
-  propertyId: string | undefined
+  propertyID: string | undefined
   redirectURL: string | undefined
-  deviceId: string
+  deviceID: string | undefined
 }
 
 const useGenerateUrl = (arg: Arg): string | undefined => {
   return useMemo(() => {
     if (
-      !arg.appId ||
+      !arg.appID ||
       !arg.source ||
-      !arg.propertyId ||
+      !arg.propertyID ||
+      !arg.deviceID ||
       (arg.adNetwork.method === "redirect" && !arg.redirectURL)
     ) {
       return undefined
@@ -27,12 +28,12 @@ const useGenerateUrl = (arg: Arg): string | undefined => {
 
     const urlParams = new URLSearchParams()
 
-    urlParams.append("tid", arg.propertyId)
+    urlParams.append("tid", arg.propertyID)
     if (arg.redirectURL) {
       urlParams.append("url", arg.redirectURL)
     }
-    urlParams.append("aid", arg.appId)
-    urlParams.append("idfa", arg.deviceId)
+    urlParams.append("aid", arg.appID)
+    urlParams.append("idfa", arg.deviceID)
 
     if (arg.source) {
       urlParams.append("cs", arg.source)

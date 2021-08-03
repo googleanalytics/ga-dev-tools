@@ -161,6 +161,8 @@ export enum StorageKey {
   campaignBuilderIOSContent = "campaign-builder/ios/content",
   campaignBuilderIOSName = "campaign-builder/ios/name",
   campaignBuilderIOSPropertyId = "campaign-builder/ios/property-id",
+  campaignBuilderIOSRedirectURL = "campaign-builder/ios/redirect-url",
+  campaignBuilderIOSDeviceID = "campaign-builder/ios/device-id",
 
   histogramRequestDimensions = "request-composer/histogram-request-dimensions",
   histogramRequestMetrics = "request-composer/histogram-request-metrics",
