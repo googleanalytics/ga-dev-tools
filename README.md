@@ -34,7 +34,15 @@ installed:
 yarn
 ```
 
-Then run the following and answer all prompts:
+Also make sure to install the dependencies in the `lib` directory.
+
+```shell
+cd lib
+yarn
+cd ..
+```
+
+Then run the following (from the top level directory) and answer all prompts:
 
 
 ```shell
