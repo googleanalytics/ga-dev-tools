@@ -61,6 +61,12 @@ export const linkData: LinkData[] = [
     versions: [GAVersion.UniversalAnalytics],
   },
   {
+    text: "Enhanced Ecommerce 2: the reckoning",
+    href: "/ga4/ecommerce/",
+    type: "link",
+    versions: [GAVersion.GoogleAnalytics4],
+  },
+  {
     text: "Hit Builder",
     href: "/hit-builder/",
     type: "link",
