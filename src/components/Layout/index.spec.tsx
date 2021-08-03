@@ -17,7 +17,7 @@ import * as renderer from "@testing-library/react"
 import "@testing-library/jest-dom"
 import { withProviders } from "../../test-utils"
 
-import Layout from "../layout"
+import Layout from "../Layout"
 
 describe("Layout", () => {
   it("renders correctly with gapi undefined", async () => {
