@@ -1,19 +1,21 @@
+export interface CustomField {
+  name: string
+  value: string
+  label?: string
+  visible?: boolean
+  required?: boolean
+  builders?: ("ios" | "play")[]
+  helperText?: string
+}
 export interface AdNetwork {
   label: string
+  method: "ping" | "redirect"
+  deviceId: string
   networkId?: string
   clickId?: string
-  customFields?: {
-    name: string
-    value: string
-    label?: string
-    visible?: boolean
-    required?: boolean
-    builders?: ("ios" | "play")[]
-  }[]
+  customFields?: CustomField[]
   source?: string
   medium?: string
-  method?: "ping" | "redirect"
-  deviceId: string
 }
 
 export const supportedAdNetworks: AdNetwork[] = [
@@ -38,6 +40,7 @@ export const supportedAdNetworks: AdNetwork[] = [
     customFields: [
       {
         label: "iTunes Store ID",
+        helperText: "The itunes store ID",
         name: "asid",
         value: "",
         visible: true,
@@ -74,6 +77,7 @@ export const supportedAdNetworks: AdNetwork[] = [
     customFields: [
       {
         label: "iTunes Store ID",
+        helperText: "The itunes store ID",
         name: "asid",
         value: "",
         visible: true,
@@ -139,6 +143,7 @@ export const supportedAdNetworks: AdNetwork[] = [
     customFields: [
       {
         label: "iTunes Store ID",
+        helperText: "The itunes store ID",
         name: "asid",
         value: "",
         visible: true,

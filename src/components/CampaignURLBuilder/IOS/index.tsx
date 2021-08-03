@@ -30,15 +30,16 @@ const IOSUrlBuilder: React.FC<IOSUrlBuilderProps> = ({ version }) => {
 
   const {
     setAdNetwork,
-    setAppId,
+    setAppID,
     setSource,
     setMedium,
     setTerm,
     setContent,
     setName,
-    setPropertyId,
+    setPropertyID,
     setRedirectURL,
     setDeviceID,
+    updateCustomField,
     ...values
   } = useInputs()
   const {
@@ -52,6 +53,7 @@ const IOSUrlBuilder: React.FC<IOSUrlBuilderProps> = ({ version }) => {
     propertyID,
     redirectURL,
     deviceID,
+    customFields,
   } = values
 
   const url = useGenerateUrl(values)
@@ -73,13 +75,13 @@ const IOSUrlBuilder: React.FC<IOSUrlBuilderProps> = ({ version }) => {
           onlyProperty
           variant="outlined"
           size="small"
-          setPropertyId={setPropertyId}
+          setPropertyId={setPropertyID}
         />
       )
     } else {
       return null
     }
-  }, [version, setPropertyId])
+  }, [version, setPropertyID])
 
   const propertyIdTextField = React.useMemo(() => {
     if (version === GAVersion.UniversalAnalytics) {
@@ -91,14 +93,91 @@ const IOSUrlBuilder: React.FC<IOSUrlBuilderProps> = ({ version }) => {
           fullWidth
           label="Google Analytics property ID"
           helperText="e.g. UA-XXXX-Y"
-          value={propertyID}
-          onChange={e => setPropertyId(e.target.value)}
+          value={propertyID || ""}
+          onChange={e => setPropertyID(e.target.value)}
         />
       )
     } else {
       return null
     }
-  }, [version, propertyID, setPropertyId])
+  }, [version, propertyID, setPropertyID])
+
+  const redirectURLTextField = React.useMemo(() => {
+    if (adNetwork?.method === "redirect") {
+      return (
+        <TextField
+          required
+          size="small"
+          variant="outlined"
+          fullWidth
+          label="redirect URL"
+          helperText={
+            <>
+              The URL to which the user will be redirected, e.g.{" "}
+              <InlineCode>
+                https://itunes.apple.com/us/app/my-app/id123456789
+              </InlineCode>
+            </>
+          }
+          value={redirectURL || ""}
+          onChange={e => setRedirectURL(e.target.value)}
+        />
+      )
+    } else {
+      return null
+    }
+  }, [adNetwork?.method, redirectURL, setRedirectURL])
+
+  const deviceIdTextField = React.useMemo(() => {
+    if (adNetwork?.label === "Custom") {
+      return (
+        <TextField
+          required
+          size="small"
+          variant="outlined"
+          fullWidth
+          label="device ID macro"
+          helperText={
+            <>
+              The macro the ad network will use to populate the device ID, e.g.{" "}
+              <InlineCode>&#123;idfa&#125;</InlineCode>
+            </>
+          }
+          value={deviceID || ""}
+          onChange={e => setDeviceID(e.target.value)}
+        />
+      )
+    } else {
+      return null
+    }
+  }, [adNetwork, deviceID, setDeviceID])
+
+  const customFieldInputs = React.useMemo(() => {
+    if (customFields !== undefined) {
+      return customFields.map((customField, idx) =>
+        customField.visible ? (
+          <TextField
+            key={`${customField.label || `custom field ${idx}`}`}
+            required={customField.required}
+            size="small"
+            variant="outlined"
+            fullWidth
+            label={customField.label || `custom field ${idx}`}
+            helperText={
+              <>
+                {customField.helperText ||
+                  `value for ${customField.label || `custom field ${idx}`}`}
+              </>
+            }
+            value={customField.value || ""}
+            onChange={e =>
+              updateCustomField(idx, old => ({ ...old, value: e.target.value }))
+            }
+          />
+        ) : null
+      )
+    }
+  }, [customFields, updateCustomField])
 
   return (
     <section className={formClasses.form}>
@@ -132,6 +211,7 @@ const IOSUrlBuilder: React.FC<IOSUrlBuilderProps> = ({ version }) => {
           />
         )}
       />
+      {redirectURLTextField}
       <TextField
         required
         size="small"
@@ -140,8 +220,10 @@ const IOSUrlBuilder: React.FC<IOSUrlBuilderProps> = ({ version }) => {
         label="application ID"
         helperText="The final package that is used in your built .apk's manifest, e.g. com.example.application"
         value={appID}
-        onChange={e => setAppId(e.target.value)}
+        onChange={e => setAppID(e.target.value)}
       />
+      {deviceIdTextField}
+      {customFieldInputs}
       <TextField
         required
         size="small"

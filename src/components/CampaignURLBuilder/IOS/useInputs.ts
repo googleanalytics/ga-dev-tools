@@ -1,7 +1,12 @@
 import { StorageKey } from "@/constants"
-import { useHydratedPersistantString } from "@/hooks/useHydrated"
-import { useEffect, useState } from "react"
-import { supportedAdNetworks } from "../adNetworks"
+import { useUpdateByIndex } from "@/hooks"
+import {
+  useHydratedPersistantObject,
+  useHydratedPersistantString,
+} from "@/hooks/useHydrated"
+import { useCallback, useEffect } from "react"
+import { QueryParamConfig } from "use-query-params"
+import { AdNetwork, CustomField, supportedAdNetworks } from "../adNetworks"
 
 enum QueryParam {
   AppID = "a",
@@ -13,10 +18,27 @@ enum QueryParam {
   PropertyID = "g",
   RedirectURL = "h",
   DeviceID = "i",
+  CustomFields = "j",
+  AdNetwork = "k",
+}
+
+const customFieldsParam: QueryParamConfig<CustomField[] | undefined | null> = {
+  encode: v => (v ? btoa(JSON.stringify(v)) : undefined),
+  decode: a => (typeof a === "string" ? JSON.parse(atob(a)) : undefined),
+}
+
+const adNetworkParam: QueryParamConfig<AdNetwork | undefined | null> = {
+  encode: v => (v ? btoa(JSON.stringify(v)) : undefined),
+  decode: a => (typeof a === "string" ? JSON.parse(atob(a)) : undefined),
 }
 
 const useInputs = () => {
-  const [adNetwork, setAdNetwork] = useState(supportedAdNetworks[0])
+  const [adNetwork, setAdNetworkLocal] = useHydratedPersistantObject<AdNetwork>(
+    StorageKey.campaignBuilderIOSAdNetwork,
+    QueryParam.AdNetwork,
+    adNetworkParam,
+    supportedAdNetworks[0]
+  )
 
   const [appID, setAppID] = useHydratedPersistantString(
     StorageKey.campaignBuilderIOSAppId,
@@ -67,14 +89,34 @@ const useInputs = () => {
     ""
   )
 
+  const [customFields, setCustomFields] = useHydratedPersistantObject<
+    CustomField[]
+  >(
+    StorageKey.campaignBuilderIOSCustomFields,
+    QueryParam.CustomFields,
+    customFieldsParam,
+    adNetwork?.customFields || []
+  )
+
+  const updateCustomField = useUpdateByIndex(setCustomFields)
+
   useEffect(() => {
-    if (adNetwork.networkId) {
-      setSource(adNetwork.networkId)
-    }
-    if (adNetwork.label === "Custom") {
-      setSource("")
-    }
-  }, [adNetwork, setSource])
+    setDeviceID(adNetwork?.deviceId)
+  }, [adNetwork, setDeviceID])
+
+  const setAdNetwork = useCallback(
+    (nu: AdNetwork) => {
+      setAdNetworkLocal(nu)
+      setDeviceID(nu.deviceId)
+      setCustomFields(nu.customFields)
+      if (nu.label === "Custom") {
+        setSource("")
+      } else {
+        setSource(nu.networkId)
+      }
+    },
+    [setAdNetworkLocal, setCustomFields, setDeviceID, setSource]
+  )
 
   return {
     appID,
@@ -97,6 +139,8 @@ const useInputs = () => {
     setRedirectURL,
     deviceID,
     setDeviceID,
+    customFields,
+    updateCustomField,
   }
 }
 

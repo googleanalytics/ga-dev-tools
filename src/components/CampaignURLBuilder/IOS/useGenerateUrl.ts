@@ -1,8 +1,8 @@
 import { useMemo } from "react"
-import { AdNetwork } from "../adNetworks"
+import { AdNetwork, CustomField } from "../adNetworks"
 
 interface Arg {
-  adNetwork: AdNetwork
+  adNetwork: AdNetwork | undefined
   appID: string | undefined
   source: string | undefined
   medium: string | undefined
@@ -12,6 +12,7 @@ interface Arg {
   propertyID: string | undefined
   redirectURL: string | undefined
   deviceID: string | undefined
+  customFields: CustomField[] | undefined
 }
 
 const useGenerateUrl = (arg: Arg): string | undefined => {
@@ -21,6 +22,7 @@ const useGenerateUrl = (arg: Arg): string | undefined => {
       !arg.source ||
       !arg.propertyID ||
       !arg.deviceID ||
+      arg.adNetwork === undefined ||
       (arg.adNetwork.method === "redirect" && !arg.redirectURL)
     ) {
       return undefined
@@ -58,8 +60,11 @@ const useGenerateUrl = (arg: Arg): string | undefined => {
       urlParams.append("aclid", arg.adNetwork.clickId)
     }
 
-    // TODO - handle custom parameters
-    // TODO - handle custom device id macro for "custom" option.
+    if (arg.customFields) {
+      arg.customFields.forEach(customField => {
+        urlParams.append(customField.name, customField.value)
+      })
+    }
 
     if (arg.adNetwork.label === "Google AdMob") {
       urlParams.append("hash", "md5")
@@ -67,7 +72,7 @@ const useGenerateUrl = (arg: Arg): string | undefined => {
 
     const queryString = urlParams.toString()
 
-    return `https://play.google.com/store/apps/details?${queryString}`
+    return `https://click.google-analytics.com/${arg.adNetwork.method}?${queryString}`
   }, [arg])
 }
 
