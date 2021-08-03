@@ -28,6 +28,7 @@ import {
   DimensionsPicker,
   MetricsPicker,
   SegmentPicker,
+  useUADimensionsAndMetrics,
   V3SamplingLevelPicker,
 } from "@/components/UAPickers"
 import { PAB } from "@/components/Buttons"
@@ -156,6 +157,8 @@ export const QueryExplorer = () => {
     filters,
     sort,
   })
+
+  const { columns } = useUADimensionsAndMetrics(selectedView)
 
   return (
     <>
@@ -317,7 +320,7 @@ export const QueryExplorer = () => {
           include empty rows
         </LabeledCheckbox>
       </section>
-      <Report queryResponse={queryResponse} />
+      <Report queryResponse={queryResponse} columns={columns} />
     </>
   )
 }
