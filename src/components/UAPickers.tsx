@@ -69,7 +69,7 @@ type UseUADimensionsAndMetrics = (
   metrics: UAMetrics
   columns: UAColumns | undefined
 }
-const useUADimensionsAndMetrics: UseUADimensionsAndMetrics = view => {
+export const useUADimensionsAndMetrics: UseUADimensionsAndMetrics = view => {
   const gapi = useSelector((state: AppState) => state.gapi)
 
   const metadataAPI = React.useMemo<MetadataAPI | undefined>(() => {
@@ -253,7 +253,7 @@ const useUADimensionsAndMetrics: UseUADimensionsAndMetrics = view => {
     [withEnumerated]
   )
 
-  const columns = React.useMemo(() => withEtag?.columns, [withEtag])
+  const columns = React.useMemo(() => withEnumerated, [withEnumerated])
 
   return { dimensions, metrics, columns }
 }

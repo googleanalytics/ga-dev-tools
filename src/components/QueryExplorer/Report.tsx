@@ -44,7 +44,8 @@ const useStyles = makeStyles(theme => ({
 
 const ReportTable: React.FC<{
   queryResponse: gapi.client.analytics.GaData
-}> = ({ queryResponse }) => {
+  columns: gapi.client.analytics.Column[] | undefined
+}> = ({ queryResponse, columns }) => {
   const classes = useStyles()
 
   if (queryResponse === undefined) {
@@ -56,7 +57,10 @@ const ReportTable: React.FC<{
         <TableHead>
           <TableRow>
             {queryResponse.columnHeaders?.map(header => (
-              <TableCell key={header.name}>{header.name}</TableCell>
+              <TableCell key={header.name}>
+                {columns?.find(c => c.id === header.name)?.attributes?.uiName ||
+                  header.name}
+              </TableCell>
             ))}
           </TableRow>
         </TableHead>
@@ -78,9 +82,10 @@ const ReportTable: React.FC<{
 
 interface ReportProps {
   queryResponse: QueryResponse
+  columns: gapi.client.analytics.Column[] | undefined
 }
 
-const Report: React.FC<ReportProps> = ({ queryResponse }) => {
+const Report: React.FC<ReportProps> = ({ queryResponse, columns }) => {
   const classes = useStyles()
   if (queryResponse === undefined) {
     return null
@@ -138,7 +143,7 @@ const Report: React.FC<ReportProps> = ({ queryResponse }) => {
 
         <TSVDownload queryResponse={queryResponse.response} />
       </section>
-      <ReportTable queryResponse={queryResponse.response} />
+      <ReportTable queryResponse={queryResponse.response} columns={columns} />
     </Paper>
   )
 }
