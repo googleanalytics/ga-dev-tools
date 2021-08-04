@@ -19,6 +19,7 @@ import CampaignURLBuilder, {
   URLBuilderType,
 } from "@/components/CampaignURLBuilder"
 import { GAVersion } from "@/constants"
+import { IS_SSR } from "@/hooks"
 
 export default ({ location: { pathname } }) => {
   return (
@@ -27,10 +28,12 @@ export default ({ location: { pathname } }) => {
       pathname={pathname}
       description="This tool allows you to easily add campaign parameters to URLs so you can measure Custom Campaigns in Google Analytics."
     >
-      <CampaignURLBuilder
-        version={GAVersion.GoogleAnalytics4}
-        type={URLBuilderType.Web}
-      />
+      {IS_SSR ? null : (
+        <CampaignURLBuilder
+          version={GAVersion.GoogleAnalytics4}
+          type={URLBuilderType.Web}
+        />
+      )}
     </Layout>
   )
 }
