@@ -19,7 +19,10 @@ import CampaignURLBuilder, {
   URLBuilderType,
 } from "@/components/CampaignURLBuilder"
 import { GAVersion } from "@/constants"
+import { IS_SSR } from "@/hooks"
 
+// It's truly baffling to me, but if I try to server-side render this page,
+// like all of the css gets broken.
 export default ({ location: { pathname } }) => {
   return (
     <Layout
@@ -27,10 +30,12 @@ export default ({ location: { pathname } }) => {
       pathname={pathname}
       description="This tool allows you to easily add campaign parameters to iOS URLs so you can measure Custom Campaigns in Google Analytics."
     >
-      <CampaignURLBuilder
-        version={GAVersion.GoogleAnalytics4}
-        type={URLBuilderType.Ios}
-      />
+      {IS_SSR ? null : (
+        <CampaignURLBuilder
+          version={GAVersion.GoogleAnalytics4}
+          type={URLBuilderType.Ios}
+        />
+      )}
     </Layout>
   )
 }
