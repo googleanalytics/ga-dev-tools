@@ -29,7 +29,7 @@ const PlayURLBuilder: React.FC<PlayURLBuilderProps> = () => {
 
   const {
     setAdNetwork,
-    setAppId,
+    setAppID: setAppId,
     setSource,
     setMedium,
     setTerm,
@@ -37,7 +37,15 @@ const PlayURLBuilder: React.FC<PlayURLBuilderProps> = () => {
     setName,
     ...values
   } = useInputs()
-  const { adNetwork, appId, source, medium, term, content, name } = values
+  const {
+    adNetwork,
+    appID: appId,
+    source,
+    medium,
+    term,
+    content,
+    name,
+  } = values
 
   const url = useGenerateURL(values)
 

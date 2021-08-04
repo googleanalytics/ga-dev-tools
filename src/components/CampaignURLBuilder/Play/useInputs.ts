@@ -15,7 +15,7 @@ enum QueryParam {
 const useInputs = () => {
   const [adNetwork, setAdNetwork] = useState(supportedAdNetworks[0])
 
-  const [appId, setAppId] = useHydratedPersistantString(
+  const [appID, setAppID] = useHydratedPersistantString(
     StorageKey.campaignBuilderPlayAppId,
     QueryParam.AppID,
     ""
@@ -56,8 +56,8 @@ const useInputs = () => {
   }, [adNetwork, setSource])
 
   return {
-    appId,
-    setAppId,
+    appID,
+    setAppID,
     source,
     setSource,
     medium,

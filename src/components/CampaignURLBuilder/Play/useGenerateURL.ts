@@ -3,7 +3,7 @@ import { AdNetwork } from "../adNetworks"
 
 interface Arg {
   adNetwork: AdNetwork
-  appId: string | undefined
+  appID: string | undefined
   source: string | undefined
   medium: string | undefined
   term: string | undefined
@@ -13,13 +13,13 @@ interface Arg {
 
 const useGenerateUrl = (arg: Arg): string | undefined => {
   return useMemo(() => {
-    if (!arg.appId || !arg.source) {
+    if (!arg.appID || !arg.source) {
       return undefined
     }
 
     const urlParams = new URLSearchParams()
 
-    urlParams.append("id", arg.appId)
+    urlParams.append("id", arg.appID)
 
     const encodedParamsString = new URLSearchParams()
     encodedParamsString.append("utm_source", arg.source)
