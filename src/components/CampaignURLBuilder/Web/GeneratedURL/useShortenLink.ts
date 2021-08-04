@@ -9,7 +9,7 @@ type BitlyStorageCache = {
   // Cache starts at guid level.
   [GUID: string]:
     | {
-        // Then is indexd by the longUrl
+        // Then is indexd by the longURL
         [longLink: string]: string | undefined
       }
     | undefined
@@ -24,38 +24,38 @@ type SetCacheFn = Dispatch<BitlyStorageCache | undefined>
  * This function memoizes its results using the provided cache & setCacheValue
  * arguments.
  */
-const shortenUrl = async (
+const shortenURL = async (
   token: string,
-  longUrl: string,
+  longURL: string,
   cache: BitlyStorageCache | undefined,
   setCacheValue: SetCacheFn
 ): Promise<string> => {
   const user = await bitlyUser(token)
   const guid = user.default_group_guid
 
-  const cachedLink = cache?.[guid]?.[longUrl]
+  const cachedLink = cache?.[guid]?.[longURL]
   if (cachedLink !== undefined) {
     return cachedLink
   }
 
   // If the link isn't in the local cache, create it.
-  const shortned = await bitlyShorten(token, longUrl, guid)
+  const shortned = await bitlyShorten(token, longURL, guid)
   const link = shortned.link
 
-  updateBitlyCache(guid, longUrl, link, setCacheValue)
+  updateBitlyCache(guid, longURL, link, setCacheValue)
 
   return link
 }
 
 const updateBitlyCache = (
   guid: string,
-  longUrl: string,
-  shortUrl: string,
+  longURL: string,
+  shortURL: string,
   setCacheValue: SetCacheFn
 ): void => {
   setCacheValue((old = {}) => {
     old[guid] = old[guid] || {}
-    old[guid]![longUrl] = shortUrl
+    old[guid]![longURL] = shortURL
     return old
   })
 }
@@ -66,7 +66,7 @@ export type ShortenResponse = {
 }
 const bitlyShorten = async (
   token: string,
-  longUrl: string,
+  longURL: string,
   guid: string
 ): Promise<ShortenResponse> => {
   const url = "https://api-ssl.bitly.com/v4/shorten"
@@ -78,7 +78,7 @@ const bitlyShorten = async (
       Accept: "application/json",
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({ long_url: longUrl, group_guid: guid }),
+    body: JSON.stringify({ long_url: longURL, group_guid: guid }),
   })
 
   const json = await response.json()
@@ -163,7 +163,7 @@ const useShortenLink: UseShortLink = () => {
         throw new Error("Cannot shortnen an empty string")
       }
       const token = await ensureAuth()
-      const shortLink = await shortenUrl(token, longLink, cache, setCache)
+      const shortLink = await shortenURL(token, longLink, cache, setCache)
       return { shortLink, longLink }
     },
     [ensureAuth, cache, setCache]

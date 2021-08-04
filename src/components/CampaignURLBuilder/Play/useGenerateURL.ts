@@ -1,5 +1,5 @@
 import { useMemo } from "react"
-import { AdNetwork } from "."
+import { AdNetwork } from "../adNetworks"
 
 interface Arg {
   adNetwork: AdNetwork

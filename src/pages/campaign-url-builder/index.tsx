@@ -15,8 +15,8 @@
 import * as React from "react"
 
 import Layout from "@/components/Layout"
-import CampaignUrlBuilder, {
-  UrlBuilderType,
+import CampaignURLBuilder, {
+  URLBuilderType,
 } from "@/components/CampaignURLBuilder"
 import { GAVersion } from "@/constants"
 
@@ -27,9 +27,9 @@ export default ({ location: { pathname } }) => {
       pathname={pathname}
       description="This tool allows you to easily add campaign parameters to URLs so you can measure Custom Campaigns in Google Analytics."
     >
-      <CampaignUrlBuilder
+      <CampaignURLBuilder
         version={GAVersion.UniversalAnalytics}
-        type={UrlBuilderType.Web}
+        type={URLBuilderType.Web}
       />
     </Layout>
   )

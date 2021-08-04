@@ -17,7 +17,7 @@ import * as renderer from "@testing-library/react"
 import { withProviders } from "../../test-utils"
 import "@testing-library/jest-dom"
 import userEvent from "@testing-library/user-event"
-import { CampaignUrlBuilder, UrlBuilderType } from "./index"
+import { CampaignURLBuilder, URLBuilderType } from "./index"
 import { GAVersion } from "../../constants"
 
 // Capture original error global so it's easier to replace after a mock.
@@ -30,18 +30,18 @@ describe("for the Campaign URL Builder component", () => {
 
   test("can render page without error", () => {
     const { wrapped } = withProviders(
-      <CampaignUrlBuilder
+      <CampaignURLBuilder
         version={GAVersion.UniversalAnalytics}
-        type={UrlBuilderType.Web}
+        type={URLBuilderType.Web}
       />
     )
     renderer.render(wrapped)
   })
   test("generates url for happy path inputs", async () => {
     const { wrapped } = withProviders(
-      <CampaignUrlBuilder
+      <CampaignURLBuilder
         version={GAVersion.UniversalAnalytics}
-        type={UrlBuilderType.Web}
+        type={URLBuilderType.Web}
       />
     )
     const { findByLabelText: find } = renderer.render(wrapped)
@@ -63,9 +63,9 @@ describe("for the Campaign URL Builder component", () => {
   describe("entering a website url with existing", () => {
     test("fills all when provided", async () => {
       const { wrapped } = withProviders(
-        <CampaignUrlBuilder
+        <CampaignURLBuilder
           version={GAVersion.UniversalAnalytics}
-          type={UrlBuilderType.Web}
+          type={URLBuilderType.Web}
         />
       )
       const { findByLabelText: find } = renderer.render(wrapped)
@@ -87,9 +87,9 @@ describe("for the Campaign URL Builder component", () => {
   describe("entering a no-no url shows a warning", () => {
     test("url: ga-dev-tools.appspot.com", async () => {
       const { wrapped } = withProviders(
-        <CampaignUrlBuilder
+        <CampaignURLBuilder
           version={GAVersion.UniversalAnalytics}
-          type={UrlBuilderType.Web}
+          type={URLBuilderType.Web}
         />
       )
       const { findByLabelText: find, findByTestId } = renderer.render(wrapped)
@@ -104,9 +104,9 @@ describe("for the Campaign URL Builder component", () => {
     })
     test("url: play.google.com", async () => {
       const { wrapped } = withProviders(
-        <CampaignUrlBuilder
+        <CampaignURLBuilder
           version={GAVersion.UniversalAnalytics}
-          type={UrlBuilderType.Web}
+          type={URLBuilderType.Web}
         />
       )
       const { findByLabelText: find, findByTestId } = renderer.render(wrapped)
@@ -118,9 +118,9 @@ describe("for the Campaign URL Builder component", () => {
     })
     test("url: itunes.apple.com", async () => {
       const { wrapped } = withProviders(
-        <CampaignUrlBuilder
+        <CampaignURLBuilder
           version={GAVersion.UniversalAnalytics}
-          type={UrlBuilderType.Web}
+          type={URLBuilderType.Web}
         />
       )
       const { findByLabelText: find, findByTestId } = renderer.render(wrapped)
@@ -136,7 +136,7 @@ describe("for the Campaign URL Builder component", () => {
   })
 
   // describe("when shortening URLs", () => {
-  //   const setUpValidUrl = async (find: any) => {
+  //   const setUpValidURL = async (find: any) => {
   //     await userEvent.type(await find(/website URL/), "https://example.com")
   //     await userEvent.type(await find(/campaign source/), "google")
   //     await userEvent.type(await find(/campaign medium/), "cpc")
@@ -149,10 +149,10 @@ describe("for the Campaign URL Builder component", () => {
   //     console.error = jest.fn()
   //     delete process.env.BITLY_CLIENT_ID
 
-  //     const { wrapped } = withProviders(<CampaignUrlBuilder />)
+  //     const { wrapped } = withProviders(<CampaignURLBuilder />)
   //     const { findByLabelText, findByTestId } = renderer.render(wrapped)
 
-  //     await setUpValidUrl(findByLabelText)
+  //     await setUpValidURL(findByLabelText)
 
   //     await expect(
   //       async () => await findByTestId("shorten-button")
@@ -164,10 +164,10 @@ describe("for the Campaign URL Builder component", () => {
   //   test("Shorten link button appears when BITLY_CLIENT_ID is set", async () => {
   //     process.env.BITLY_CLIENT_ID = "Explicitly setting value for test"
 
-  //     const { wrapped } = withProviders(<CampaignUrlBuilder />)
+  //     const { wrapped } = withProviders(<CampaignURLBuilder />)
   //     const { findByLabelText, findByTestId } = renderer.render(wrapped)
 
-  //     await setUpValidUrl(findByLabelText)
+  //     await setUpValidURL(findByLabelText)
 
   //     expect(await findByTestId("shorten-button")).toBeVisible()
   //   })
@@ -176,10 +176,10 @@ describe("for the Campaign URL Builder component", () => {
   //     window.localStorage.removeItem(StorageKey.bitlyAccessToken)
   //     process.env.BITLY_CLIENT_ID = "Explicitly setting value for test"
 
-  //     const { wrapped } = withProviders(<CampaignUrlBuilder />)
+  //     const { wrapped } = withProviders(<CampaignURLBuilder />)
   //     const { findByLabelText, findByTestId } = renderer.render(wrapped)
 
-  //     await setUpValidUrl(findByLabelText)
+  //     await setUpValidURL(findByLabelText)
 
   //     expect(await findByTestId("shorten-button")).toHaveTextContent(
   //       "Shorten URL"
@@ -216,11 +216,11 @@ describe("for the Campaign URL Builder component", () => {
   //         }
   //       })
 
-  //       const { wrapped } = withProviders(<CampaignUrlBuilder />)
+  //       const { wrapped } = withProviders(<CampaignURLBuilder />)
   //       const { findByLabelText, findByTestId } = renderer.render(wrapped)
 
   //       await renderer.act(async () => {
-  //         await setUpValidUrl(findByLabelText)
+  //         await setUpValidURL(findByLabelText)
   //         ;(await findByTestId("shorten-button")).click()
   //         expect(sendStorageEvent).toBeDefined()
   //         sendStorageEvent!({
@@ -242,11 +242,11 @@ describe("for the Campaign URL Builder component", () => {
   //       })
   //       window.localStorage.setItem(StorageKey.bitlyAccessToken, "accessToken!")
 
-  //       const { wrapped } = withProviders(<CampaignUrlBuilder />)
+  //       const { wrapped } = withProviders(<CampaignURLBuilder />)
   //       const { findByLabelText, findByTestId } = renderer.render(wrapped)
 
   //       await renderer.act(async () => {
-  //         await setUpValidUrl(findByLabelText)
+  //         await setUpValidURL(findByLabelText)
   //         ;(await findByTestId("shorten-button")).click()
   //       })
 

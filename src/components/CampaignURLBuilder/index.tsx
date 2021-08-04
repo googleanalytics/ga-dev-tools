@@ -20,32 +20,32 @@ import Tab from "@material-ui/core/Tab"
 
 import { GAVersion } from "@/constants"
 import TabPanel from "@/components/TabPanel"
-import WebUrlBuilder from "./Web"
-import PlayUrlBuilder from "./Play"
-import IOSUrlBuilder from "./IOS"
+import WebURLBuilder from "./Web"
+import PlayURLBuilder from "./Play"
+import IOSURLBuilder from "./IOS"
 
-export enum UrlBuilderType {
+export enum URLBuilderType {
   Web = "web",
   Play = "play",
   Ios = "ios",
 }
 
-interface CampaignUrlBuilderProps {
+interface CampaignURLBuilderProps {
   version: GAVersion
-  type: UrlBuilderType
+  type: URLBuilderType
 }
 
-export const CampaignUrlBuilder: React.FC<CampaignUrlBuilderProps> = ({
+export const CampaignURLBuilder: React.FC<CampaignURLBuilderProps> = ({
   version,
   type,
 }) => {
   const tab = React.useMemo(() => {
     switch (type) {
-      case UrlBuilderType.Web:
+      case URLBuilderType.Web:
         return 0
-      case UrlBuilderType.Play:
+      case URLBuilderType.Play:
         return 1
-      case UrlBuilderType.Ios:
+      case URLBuilderType.Ios:
         return 2
     }
   }, [type])
@@ -80,16 +80,16 @@ export const CampaignUrlBuilder: React.FC<CampaignUrlBuilderProps> = ({
       </Tabs>
 
       <TabPanel value={tab} index={0}>
-        <WebUrlBuilder version={version} />
+        <WebURLBuilder version={version} />
       </TabPanel>
       <TabPanel value={tab} index={1}>
-        <PlayUrlBuilder version={version} />
+        <PlayURLBuilder version={version} />
       </TabPanel>
       <TabPanel value={tab} index={2}>
-        <IOSUrlBuilder version={version} />
+        <IOSURLBuilder version={version} />
       </TabPanel>
     </>
   )
 }
 
-export default CampaignUrlBuilder
+export default CampaignURLBuilder

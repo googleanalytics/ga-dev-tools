@@ -13,9 +13,10 @@ interface Arg {
   redirectURL: string | undefined
   deviceID: string | undefined
   customFields: CustomField[] | undefined
+  method: string | undefined
 }
 
-const useGenerateUrl = (arg: Arg): string | undefined => {
+const useGenerateURL = (arg: Arg): string | undefined => {
   return useMemo(() => {
     if (
       !arg.appID ||
@@ -23,7 +24,7 @@ const useGenerateUrl = (arg: Arg): string | undefined => {
       !arg.propertyID ||
       !arg.deviceID ||
       arg.adNetwork === undefined ||
-      (arg.adNetwork.method === "redirect" && !arg.redirectURL)
+      (arg.method === "redirect" && !arg.redirectURL)
     ) {
       return undefined
     }
@@ -72,8 +73,8 @@ const useGenerateUrl = (arg: Arg): string | undefined => {
 
     const queryString = urlParams.toString()
 
-    return `https://click.google-analytics.com/${arg.adNetwork.method}?${queryString}`
+    return `https://click.google-analytics.com/${arg.method}?${queryString}`
   }, [arg])
 }
 
-export default useGenerateUrl
+export default useGenerateURL

@@ -15,9 +15,9 @@
 import * as React from "react"
 
 import Layout from "@/components/Layout"
-import CampaignUrlBuilder, {
-  UrlBuilderType,
-} from "@/components/CampaignUrlBuilder"
+import CampaignURLBuilder, {
+  URLBuilderType,
+} from "@/components/CampaignURLBuilder"
 import { GAVersion } from "@/constants"
 
 export default ({ location: { pathname } }) => {
@@ -27,9 +27,9 @@ export default ({ location: { pathname } }) => {
       pathname={pathname}
       description="This tool allows you to easily add campaign parameters to play store URLs so you can measure Custom Campaigns in Google Analytics."
     >
-      <CampaignUrlBuilder
+      <CampaignURLBuilder
         version={GAVersion.GoogleAnalytics4}
-        type={UrlBuilderType.Play}
+        type={URLBuilderType.Play}
       />
     </Layout>
   )

@@ -20,6 +20,7 @@ enum QueryParam {
   DeviceID = "i",
   CustomFields = "j",
   AdNetwork = "k",
+  Method = "l",
 }
 
 const customFieldsParam: QueryParamConfig<CustomField[] | undefined | null> = {
@@ -89,6 +90,12 @@ const useInputs = () => {
     ""
   )
 
+  const [method, setMethod] = useHydratedPersistantString(
+    StorageKey.campaignBuilderIOSMethod,
+    QueryParam.Method,
+    "redirect"
+  )
+
   const [customFields, setCustomFields] = useHydratedPersistantObject<
     CustomField[]
   >(
@@ -102,7 +109,8 @@ const useInputs = () => {
 
   useEffect(() => {
     setDeviceID(adNetwork?.deviceId)
-  }, [adNetwork, setDeviceID])
+    setMethod(adNetwork?.method)
+  }, [adNetwork, setDeviceID, setMethod])
 
   const setAdNetwork = useCallback(
     (nu: AdNetwork) => {
@@ -141,6 +149,8 @@ const useInputs = () => {
     setDeviceID,
     customFields,
     updateCustomField,
+    method,
+    setMethod,
   }
 }
 

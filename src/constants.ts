@@ -134,7 +134,7 @@ export enum StorageKey {
   dimensionsMetricsExplorerOnlySegments = "dimensions-metrics-explorer/only-segments",
 
   // Web Campaign Builder
-  campaignBuilderWebsiteUrl = "campaign-builder/website-url",
+  campaignBuilderWebsiteURL = "campaign-builder/website-url",
   campaignBuilderSource = "campaign-builder/source",
   campaignBuilderMedium = "campaign-builder/medium",
   campaignBuilderName = "campaign-builder/name",
@@ -165,6 +165,7 @@ export enum StorageKey {
   campaignBuilderIOSDeviceID = "campaign-builder/ios/device-id",
   campaignBuilderIOSCustomFields = "campaign-builder/ios/custom-fields",
   campaignBuilderIOSAdNetwork = "campaign-builder/ios/ad-network",
+  campaignBuilderIOSMethod = "campaign-builder/ios/method",
 
   histogramRequestDimensions = "request-composer/histogram-request-dimensions",
   histogramRequestMetrics = "request-composer/histogram-request-metrics",

@@ -2,11 +2,11 @@ import { useCallback } from "react"
 
 import { usePersistentString } from "@/hooks"
 import { StorageKey } from "@/constants"
-import { extractParamsFromWebsiteUrl } from "./params"
+import { extractParamsFromWebsiteURL } from "./params"
 
 const useInputs = () => {
-  const [websiteUrl, setWebsiteUrl] = usePersistentString(
-    StorageKey.campaignBuilderWebsiteUrl,
+  const [websiteURL, setWebsiteURL] = usePersistentString(
+    StorageKey.campaignBuilderWebsiteURL,
     ""
   )
   const [source, setSource] = usePersistentString(
@@ -33,7 +33,7 @@ const useInputs = () => {
 
   const onWebsiteChange = useCallback(
     e => {
-      const extractedParams = extractParamsFromWebsiteUrl(e.target.value)
+      const extractedParams = extractParamsFromWebsiteURL(e.target.value)
       if (extractedParams !== undefined) {
         const {
           utm_id,
@@ -50,7 +50,7 @@ const useInputs = () => {
         utm_term !== undefined && setTerm(utm_term)
         utm_content !== undefined && setContent(utm_content)
       }
-      setWebsiteUrl(e.target.value)
+      setWebsiteURL(e.target.value)
     },
     [
       setCampaign,
@@ -58,13 +58,13 @@ const useInputs = () => {
       setSource,
       setTerm,
       setContent,
-      setWebsiteUrl,
+      setWebsiteURL,
       setId,
     ]
   )
 
   return {
-    websiteUrl,
+    websiteURL,
     source,
     setSource,
     medium,

@@ -10,13 +10,13 @@ import useFormStyles from "@/hooks/useFormStyles"
 import InlineCode from "@/components/InlineCode"
 import { CopyIconButton } from "@/components/CopyButton"
 import useInputs from "./useInputs"
-import useGenerateUrl from "./useGenerateUrl"
+import useGenerateURL from "./useGenerateURL"
 import useStyles from "../Web/useStyles"
 import ExternalLink from "@/components/ExternalLink"
 import { AdNetwork, supportedAdNetworks } from "../adNetworks"
 import ViewSelector from "@/components/ViewSelector"
 
-interface IOSUrlBuilderProps {
+interface IOSURLBuilderProps {
   version: GAVersion
 }
 
@@ -24,7 +24,7 @@ const customCampaigns = (
   <ExternalLink href={Url.aboutCustomCampaigns}>Custom Campaigns</ExternalLink>
 )
 
-const IOSUrlBuilder: React.FC<IOSUrlBuilderProps> = ({ version }) => {
+const IOSURLBuilder: React.FC<IOSURLBuilderProps> = ({ version }) => {
   const classes = useStyles()
   const formClasses = useFormStyles()
 
@@ -40,6 +40,7 @@ const IOSUrlBuilder: React.FC<IOSUrlBuilderProps> = ({ version }) => {
     setRedirectURL,
     setDeviceID,
     updateCustomField,
+    setMethod,
     ...values
   } = useInputs()
   const {
@@ -54,18 +55,19 @@ const IOSUrlBuilder: React.FC<IOSUrlBuilderProps> = ({ version }) => {
     redirectURL,
     deviceID,
     customFields,
+    method,
   } = values
 
-  const url = useGenerateUrl(values)
+  const url = useGenerateURL(values)
 
   const qrCodeSrc = React.useMemo(() => {
     if (url === undefined) {
       return
     }
-    var qrCodeUrl =
+    var qrCodeURL =
       "https://chart.googleapis.com/chart?cht=qr&chs=250x250&chld=L|0&chl=" +
       encodeURIComponent(url)
-    return qrCodeUrl
+    return qrCodeURL
   }, [url])
 
   const propertySelector = React.useMemo(() => {
@@ -179,6 +181,35 @@ const IOSUrlBuilder: React.FC<IOSUrlBuilderProps> = ({ version }) => {
     }
   }, [customFields, updateCustomField])
 
+  const methodInput = React.useMemo(() => {
+    if (adNetwork?.label === "Custom") {
+      return (
+        <Autocomplete<string, false, true, false>
+          disableClearable
+          fullWidth
+          autoComplete
+          autoHighlight
+          options={["redirect", "ping"]}
+          getOptionLabel={a => a}
+          value={method}
+          onChange={(_event, value) => setMethod(value)}
+          renderOption={a => a}
+          renderInput={params => (
+            <TextField
+              {...params}
+              required
+              label="method"
+              helperText="The click notification method used by your ad network. Check with your network if you aren't sure."
+              size="small"
+              variant="outlined"
+            />
+          )}
+        />
+      )
+    }
+    return null
+  }, [method, setMethod, adNetwork])
+
   return (
     <section className={formClasses.form}>
       <Typography variant="body1">
@@ -211,6 +242,7 @@ const IOSUrlBuilder: React.FC<IOSUrlBuilderProps> = ({ version }) => {
           />
         )}
       />
+      {methodInput}
       {redirectURLTextField}
       <TextField
         required
@@ -318,4 +350,4 @@ const IOSUrlBuilder: React.FC<IOSUrlBuilderProps> = ({ version }) => {
   )
 }
 
-export default IOSUrlBuilder
+export default IOSURLBuilder

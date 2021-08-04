@@ -10,12 +10,12 @@ import useFormStyles from "@/hooks/useFormStyles"
 import InlineCode from "@/components/InlineCode"
 import { CopyIconButton } from "@/components/CopyButton"
 import useInputs from "./useInputs"
-import useGenerateUrl from "./useGenerateUrl"
+import useGenerateURL from "./useGenerateURL"
 import useStyles from "../Web/useStyles"
 import ExternalLink from "@/components/ExternalLink"
 import { AdNetwork, supportedAdNetworks } from "../adNetworks"
 
-interface PlayUrlBuilderProps {
+interface PlayURLBuilderProps {
   version: GAVersion
 }
 
@@ -23,7 +23,7 @@ const customCampaigns = (
   <ExternalLink href={Url.aboutCustomCampaigns}>Custom Campaigns</ExternalLink>
 )
 
-const PlayUrlBuilder: React.FC<PlayUrlBuilderProps> = () => {
+const PlayURLBuilder: React.FC<PlayURLBuilderProps> = () => {
   const classes = useStyles()
   const formClasses = useFormStyles()
 
@@ -39,16 +39,16 @@ const PlayUrlBuilder: React.FC<PlayUrlBuilderProps> = () => {
   } = useInputs()
   const { adNetwork, appId, source, medium, term, content, name } = values
 
-  const url = useGenerateUrl(values)
+  const url = useGenerateURL(values)
 
   const qrCodeSrc = React.useMemo(() => {
     if (url === undefined) {
       return
     }
-    var qrCodeUrl =
+    var qrCodeURL =
       "https://chart.googleapis.com/chart?cht=qr&chs=250x250&chld=L|0&chl=" +
       encodeURIComponent(url)
-    return qrCodeUrl
+    return qrCodeURL
   }, [url])
 
   return (
@@ -184,4 +184,4 @@ const PlayUrlBuilder: React.FC<PlayUrlBuilderProps> = () => {
   )
 }
 
-export default PlayUrlBuilder
+export default PlayURLBuilder

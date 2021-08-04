@@ -33,15 +33,15 @@ const customCampaigns = (
   <ExternalLink href={Url.aboutCustomCampaigns}>Custom Campaigns</ExternalLink>
 )
 
-interface WebUrlBuilderProps {
+interface WebURLBuilderProps {
   version: GAVersion
 }
 
-export const WebUrlBuilder: React.FC<WebUrlBuilderProps> = ({ version }) => {
+export const WebURLBuilder: React.FC<WebURLBuilderProps> = ({ version }) => {
   const classes = useStyles()
 
   const {
-    websiteUrl,
+    websiteURL,
     source,
     setSource,
     medium,
@@ -75,7 +75,7 @@ export const WebUrlBuilder: React.FC<WebUrlBuilderProps> = ({ version }) => {
           <TextField
             id="website-url"
             required
-            value={websiteUrl || ""}
+            value={websiteURL || ""}
             onChange={onWebsiteChange}
             label="website URL"
             size="small"
@@ -167,7 +167,7 @@ export const WebUrlBuilder: React.FC<WebUrlBuilderProps> = ({ version }) => {
       <GeneratedURL
         version={version}
         source={source || ""}
-        websiteUrl={websiteUrl || ""}
+        websiteURL={websiteURL || ""}
         medium={medium || ""}
         campaign={campaign || ""}
         id={id || ""}
@@ -354,4 +354,4 @@ export const WebUrlBuilder: React.FC<WebUrlBuilderProps> = ({ version }) => {
   )
 }
 
-export default WebUrlBuilder
+export default WebURLBuilder

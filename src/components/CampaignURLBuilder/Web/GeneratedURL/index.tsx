@@ -17,9 +17,9 @@ import useShortenLink from "./useShortenLink"
 import useWarningsFor from "./useWarningsFor"
 import WarningsFor from "./WarningsFor"
 
-interface GeneratedUrlProps {
+interface GeneratedURLProps {
   version: GAVersion
-  websiteUrl: string
+  websiteURL: string
   source: string
   medium: string
   campaign: string
@@ -28,9 +28,9 @@ interface GeneratedUrlProps {
   content: string
 }
 
-const GeneratedURL: React.FC<GeneratedUrlProps> = ({
+const GeneratedURL: React.FC<GeneratedURLProps> = ({
   version,
-  websiteUrl,
+  websiteURL,
   source,
   medium,
   campaign,
@@ -43,7 +43,7 @@ const GeneratedURL: React.FC<GeneratedUrlProps> = ({
 
   const { authenticated, shorten, canShorten } = useShortenLink()
   const {
-    problematicUrl,
+    problematicURL,
     hasAllRequired,
     onWarning,
     showShort,
@@ -54,7 +54,7 @@ const GeneratedURL: React.FC<GeneratedUrlProps> = ({
     shortenLinkGui,
   } = useWarningsFor({
     version,
-    websiteUrl,
+    websiteURL,
     source,
     medium,
     campaign,
@@ -66,8 +66,8 @@ const GeneratedURL: React.FC<GeneratedUrlProps> = ({
 
   return (
     <Paper className={clsx(classes.share, formClasses.form)}>
-      <WarningsFor websiteUrl={websiteUrl} onWarning={onWarning} />
-      {!problematicUrl &&
+      <WarningsFor websiteURL={websiteURL} onWarning={onWarning} />
+      {!problematicURL &&
         (hasAllRequired ? (
           <>
             <Typography variant="h2">
