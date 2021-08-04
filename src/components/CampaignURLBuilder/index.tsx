@@ -55,9 +55,9 @@ export const CampaignURLBuilder: React.FC<CampaignURLBuilderProps> = ({
       case 0:
         return `/campaign-url-builder/`
       case 1:
-        return `/campaign-url-builder/play`
+        return `/campaign-url-builder/play/`
       case 2:
-        return `/campaign-url-builder/ios`
+        return `/campaign-url-builder/ios/`
       default:
         throw new Error("No matching idx")
     }

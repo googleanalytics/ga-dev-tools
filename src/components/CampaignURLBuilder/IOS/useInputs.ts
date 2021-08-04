@@ -1,10 +1,12 @@
-import { StorageKey } from "@/constants"
+import { AccountSummary } from "@/api"
+import { GAVersion, StorageKey } from "@/constants"
 import { useUpdateByIndex } from "@/hooks"
 import {
   useHydratedPersistantObject,
   useHydratedPersistantString,
 } from "@/hooks/useHydrated"
-import { useCallback, useEffect } from "react"
+import { PropertySummary } from "@/types/ga4/StreamPicker"
+import { useCallback, useEffect, useMemo } from "react"
 import { QueryParamConfig } from "use-query-params"
 import { AdNetwork, CustomField, supportedAdNetworks } from "../adNetworks"
 
@@ -15,12 +17,15 @@ enum QueryParam {
   Term = "d",
   Content = "e",
   Name = "f",
-  PropertyID = "g",
-  RedirectURL = "h",
-  DeviceID = "i",
-  CustomFields = "j",
-  AdNetwork = "k",
-  Method = "l",
+  RedirectURL = "g",
+  DeviceID = "h",
+  CustomFields = "i",
+  AdNetwork = "j",
+  Method = "k",
+  GA4Account = "l",
+  GA4Property = "m",
+  PropertyIDUA = "n",
+  PropertyIDGA4 = "o",
 }
 
 const customFieldsParam: QueryParamConfig<CustomField[] | undefined | null> = {
@@ -33,7 +38,17 @@ const adNetworkParam: QueryParamConfig<AdNetwork | undefined | null> = {
   decode: a => (typeof a === "string" ? JSON.parse(atob(a)) : undefined),
 }
 
-const useInputs = () => {
+const ga4AccountParam: QueryParamConfig<AccountSummary | undefined | null> = {
+  encode: v => (v ? btoa(JSON.stringify(v)) : undefined),
+  decode: a => (typeof a === "string" ? JSON.parse(atob(a)) : undefined),
+}
+
+const ga4PropertyParam: QueryParamConfig<PropertySummary | undefined | null> = {
+  encode: v => (v ? btoa(JSON.stringify(v)) : undefined),
+  decode: a => (typeof a === "string" ? JSON.parse(atob(a)) : undefined),
+}
+
+const useInputs = (version: GAVersion) => {
   const [adNetwork, setAdNetworkLocal] = useHydratedPersistantObject<AdNetwork>(
     StorageKey.campaignBuilderIOSAdNetwork,
     QueryParam.AdNetwork,
@@ -72,10 +87,62 @@ const useInputs = () => {
     ""
   )
 
-  const [propertyID, setPropertyID] = useHydratedPersistantString(
-    StorageKey.campaignBuilderIOSPropertyID,
-    QueryParam.PropertyID,
+  const [
+    ga4Account,
+    setGA4Account,
+  ] = useHydratedPersistantObject<AccountSummary>(
+    StorageKey.campaignBuilderIOSGA4Account,
+    QueryParam.GA4Account,
+    ga4AccountParam
+  )
+
+  const [
+    ga4Property,
+    setGA4PropertyLocal,
+  ] = useHydratedPersistantObject<PropertySummary>(
+    StorageKey.campaignBuilderIOSGA4Property,
+    QueryParam.GA4Property,
+    ga4PropertyParam
+  )
+
+  const [uaPropertyID, setUAPropertyID] = useHydratedPersistantString(
+    StorageKey.campaignBuilderIOSPropertyIDUA,
+    QueryParam.PropertyIDUA,
     ""
+  )
+  const [ga4PropertyID, setGA4PropertyID] = useHydratedPersistantString(
+    StorageKey.campaignBuilderIOSPropertyIDGA4,
+    QueryParam.PropertyIDGA4,
+    ""
+  )
+
+  const [propertyID, setPropertyID] = useMemo<
+    ReturnType<typeof useHydratedPersistantString>
+  >(() => {
+    if (version === GAVersion.GoogleAnalytics4) {
+      return [ga4PropertyID, setGA4PropertyID]
+    } else {
+      return [uaPropertyID, setUAPropertyID]
+    }
+  }, [version, uaPropertyID, setUAPropertyID, ga4PropertyID, setGA4PropertyID])
+
+  const setGA4Property = useCallback<typeof setGA4PropertyLocal>(
+    property => {
+      setGA4PropertyLocal(old => {
+        let nu: PropertySummary | undefined = undefined
+        if (typeof property === "function") {
+          nu = property(old)
+          return nu
+        } else {
+          nu = property
+        }
+        if (nu !== undefined) {
+          setPropertyID(nu.property?.replace("properties/", ""))
+        }
+        return nu
+      })
+    },
+    [setGA4PropertyLocal, setPropertyID]
   )
 
   const [redirectURL, setRedirectURL] = useHydratedPersistantString(
@@ -151,6 +218,10 @@ const useInputs = () => {
     updateCustomField,
     method,
     setMethod,
+    ga4Account,
+    setGA4Account,
+    ga4Property,
+    setGA4Property,
   }
 }
 

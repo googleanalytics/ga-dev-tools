@@ -19,6 +19,7 @@ const useStyles = makeStyles<Theme, ViewSelector3Props>(theme => ({
   root: props => ({
     display: "flex",
     flexDirection: props.vertical ? "column" : "unset",
+    ...(props.vertical ? { marginBottom: theme.spacing(1) } : {}),
     width: "100%",
   }),
   formControl: {

@@ -15,6 +15,7 @@ import useStyles from "../Web/useStyles"
 import ExternalLink from "@/components/ExternalLink"
 import { AdNetwork, supportedAdNetworks } from "../adNetworks"
 import ViewSelector from "@/components/ViewSelector"
+import StreamPicker from "@/components/ga4/StreamPicker"
 
 interface IOSURLBuilderProps {
   version: GAVersion
@@ -41,8 +42,10 @@ const IOSURLBuilder: React.FC<IOSURLBuilderProps> = ({ version }) => {
     setDeviceID,
     updateCustomField,
     setMethod,
+    setGA4Account,
+    setGA4Property,
     ...values
-  } = useInputs()
+  } = useInputs(version)
   const {
     adNetwork,
     appID,
@@ -56,6 +59,8 @@ const IOSURLBuilder: React.FC<IOSURLBuilderProps> = ({ version }) => {
     deviceID,
     customFields,
     method,
+    ga4Account,
+    ga4Property,
   } = values
 
   const url = useGenerateURL(values)
@@ -78,31 +83,28 @@ const IOSURLBuilder: React.FC<IOSURLBuilderProps> = ({ version }) => {
           variant="outlined"
           size="small"
           setPropertyID={setPropertyID}
+          vertical
         />
       )
     } else {
-      return null
-    }
-  }, [version, setPropertyID])
-
-  const propertyIDTextField = React.useMemo(() => {
-    if (version === GAVersion.UniversalAnalytics) {
       return (
-        <TextField
-          required
-          size="small"
-          variant="outlined"
-          fullWidth
-          label="Google Analytics property ID"
-          helperText="e.g. UA-XXXX-Y"
-          value={propertyID || ""}
-          onChange={e => setPropertyID(e.target.value)}
+        <StreamPicker
+          streams={false}
+          setAccount={setGA4Account}
+          setProperty={setGA4Property}
+          account={ga4Account}
+          property={ga4Property}
         />
       )
-    } else {
-      return null
     }
-  }, [version, propertyID, setPropertyID])
+  }, [
+    version,
+    setPropertyID,
+    setGA4Account,
+    setGA4Property,
+    ga4Account,
+    ga4Property,
+  ])
 
   const redirectURLTextField = React.useMemo(() => {
     if (adNetwork?.method === "redirect") {
@@ -218,7 +220,18 @@ const IOSURLBuilder: React.FC<IOSURLBuilderProps> = ({ version }) => {
       </Typography>
       <Typography variant="h3">Select your property</Typography>
       {propertySelector}
-      {propertyIDTextField}
+      <TextField
+        required
+        size="small"
+        variant="outlined"
+        fullWidth
+        label="Google Analytics property ID"
+        helperText={
+          version === GAVersion.UniversalAnalytics ? "e.g. UA-XXXX-Y" : null
+        }
+        value={propertyID || ""}
+        onChange={e => setPropertyID(e.target.value)}
+      />
       <Typography variant="h3">Enter the campaign information</Typography>
       <Autocomplete<AdNetwork, false, true, false>
         disableClearable

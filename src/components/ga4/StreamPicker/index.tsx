@@ -12,8 +12,8 @@ import {
 
 const useStyles = makeStyles(theme => ({
   picker: {
-    "&> :not(:first-child)": {
-      marginTop: theme.spacing(1),
+    "&> *": {
+      marginBottom: theme.spacing(1),
     },
   },
 }))
