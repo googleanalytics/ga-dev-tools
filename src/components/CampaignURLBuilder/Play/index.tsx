@@ -29,7 +29,7 @@ const PlayURLBuilder: React.FC<PlayURLBuilderProps> = () => {
 
   const {
     setAdNetwork,
-    setAppID: setAppId,
+    setAppID,
     setSource,
     setMedium,
     setTerm,
@@ -37,15 +37,7 @@ const PlayURLBuilder: React.FC<PlayURLBuilderProps> = () => {
     setName,
     ...values
   } = useInputs()
-  const {
-    adNetwork,
-    appID: appId,
-    source,
-    medium,
-    term,
-    content,
-    name,
-  } = values
+  const { adNetwork, appID, source, medium, term, content, name } = values
 
   const url = useGenerateURL(values)
 
@@ -73,7 +65,7 @@ const PlayURLBuilder: React.FC<PlayURLBuilderProps> = () => {
         autoHighlight
         options={Object.values(supportedAdNetworks)}
         getOptionLabel={a => a.label}
-        getOptionSelected={(a, b) => a.networkId === b.networkId}
+        getOptionSelected={(a, b) => a.networkID === b.networkID}
         value={adNetwork}
         onChange={(_event, value) => setAdNetwork(value)}
         renderOption={a => a.label}
@@ -95,8 +87,8 @@ const PlayURLBuilder: React.FC<PlayURLBuilderProps> = () => {
         fullWidth
         label="application ID"
         helperText="The final package that is used in your built .apk's manifest, e.g. com.example.application"
-        value={appId}
-        onChange={e => setAppId(e.target.value)}
+        value={appID}
+        onChange={e => setAppID(e.target.value)}
       />
       <TextField
         required

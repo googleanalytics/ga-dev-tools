@@ -42,7 +42,7 @@ const useInputs = () => {
   )
 
   const [appID, setAppID] = useHydratedPersistantString(
-    StorageKey.campaignBuilderIOSAppId,
+    StorageKey.campaignBuilderIOSAppID,
     QueryParam.AppID,
     ""
   )
@@ -73,7 +73,7 @@ const useInputs = () => {
   )
 
   const [propertyID, setPropertyID] = useHydratedPersistantString(
-    StorageKey.campaignBuilderIOSPropertyId,
+    StorageKey.campaignBuilderIOSPropertyID,
     QueryParam.PropertyID,
     ""
   )
@@ -108,19 +108,19 @@ const useInputs = () => {
   const updateCustomField = useUpdateByIndex(setCustomFields)
 
   useEffect(() => {
-    setDeviceID(adNetwork?.deviceId)
+    setDeviceID(adNetwork?.deviceID)
     setMethod(adNetwork?.method)
   }, [adNetwork, setDeviceID, setMethod])
 
   const setAdNetwork = useCallback(
     (nu: AdNetwork) => {
       setAdNetworkLocal(nu)
-      setDeviceID(nu.deviceId)
+      setDeviceID(nu.deviceID)
       setCustomFields(nu.customFields)
       if (nu.label === "Custom") {
         setSource("")
       } else {
-        setSource(nu.networkId)
+        setSource(nu.networkID)
       }
     },
     [setAdNetworkLocal, setCustomFields, setDeviceID, setSource]

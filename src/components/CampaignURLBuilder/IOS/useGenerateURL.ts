@@ -54,11 +54,11 @@ const useGenerateURL = (arg: Arg): string | undefined => {
       urlParams.append("ck", arg.term)
     }
 
-    if (arg.adNetwork.networkId) {
-      urlParams.append("anid", arg.adNetwork.networkId)
+    if (arg.adNetwork.networkID) {
+      urlParams.append("anid", arg.adNetwork.networkID)
     }
-    if (arg.adNetwork.clickId) {
-      urlParams.append("aclid", arg.adNetwork.clickId)
+    if (arg.adNetwork.clickID) {
+      urlParams.append("aclid", arg.adNetwork.clickID)
     }
 
     if (arg.customFields) {

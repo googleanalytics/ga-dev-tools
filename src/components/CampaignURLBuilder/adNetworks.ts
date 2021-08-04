@@ -10,9 +10,9 @@ export interface CustomField {
 export interface AdNetwork {
   label: string
   method: "ping" | "redirect"
-  deviceId: string
-  networkId?: string
-  clickId?: string
+  deviceID: string
+  networkID?: string
+  clickID?: string
   customFields?: CustomField[]
   source?: string
   medium?: string
@@ -22,9 +22,9 @@ export const supportedAdNetworks: AdNetwork[] = [
   {
     label: "Aarki",
     method: "redirect",
-    deviceId: "{advertising_id}",
-    networkId: "aarki",
-    clickId: "{click_id}",
+    deviceID: "{advertising_id}",
+    networkID: "aarki",
+    clickID: "{click_id}",
     customFields: [
       {
         name: "cp1",
@@ -35,8 +35,8 @@ export const supportedAdNetworks: AdNetwork[] = [
   {
     label: "AdColony",
     method: "redirect",
-    deviceId: "[IDFA]",
-    networkId: "adcolony",
+    deviceID: "[IDFA]",
+    networkID: "adcolony",
     customFields: [
       {
         label: "iTunes Store ID",
@@ -52,28 +52,28 @@ export const supportedAdNetworks: AdNetwork[] = [
   {
     label: "Google AdMob",
     method: "redirect",
-    deviceId: "{idfa}",
-    networkId: "admob",
+    deviceID: "{idfa}",
+    networkID: "admob",
     source: "google",
     medium: "cpc",
   },
   {
     label: "Applovin",
     method: "redirect",
-    deviceId: "{ADID}",
-    networkId: "applovin",
+    deviceID: "{ADID}",
+    networkID: "applovin",
   },
   {
     label: "Conversant (formerly Greystripe)",
     method: "redirect",
-    deviceId: "{idfa}",
-    networkId: "conversant",
+    deviceID: "{idfa}",
+    networkID: "conversant",
   },
   {
     label: "Fiksu",
     method: "ping",
-    deviceId: "{{advertising_id}}",
-    networkId: "fiksu",
+    deviceID: "{{advertising_id}}",
+    networkID: "fiksu",
     customFields: [
       {
         label: "iTunes Store ID",
@@ -89,23 +89,23 @@ export const supportedAdNetworks: AdNetwork[] = [
   {
     label: "InMobi",
     method: "redirect",
-    deviceId: "$IDA",
-    networkId: "inmobi",
-    clickId: "$IMP_ID",
+    deviceID: "$IDA",
+    networkID: "inmobi",
+    clickID: "$IMP_ID",
   },
   {
     label: "Jampp",
     method: "redirect",
-    deviceId: "{apple_ifa}",
-    networkId: "jampp",
-    clickId: "{hash}",
+    deviceID: "{apple_ifa}",
+    networkID: "jampp",
+    clickID: "{hash}",
   },
   {
     label: "Leadbolt",
     method: "redirect",
-    deviceId: "[DEVICE_AD_ID]",
-    networkId: "leadbolt",
-    clickId: "[CLK_ID]",
+    deviceID: "[DEVICE_AD_ID]",
+    networkID: "leadbolt",
+    clickID: "[CLK_ID]",
     customFields: [
       {
         name: "cp1",
@@ -116,30 +116,30 @@ export const supportedAdNetworks: AdNetwork[] = [
   {
     label: "Limei",
     method: "redirect",
-    deviceId: "--IDFA--",
-    networkId: "limei",
-    clickId: "--LIMEIBIDID--",
+    deviceID: "--IDFA--",
+    networkID: "limei",
+    clickID: "--LIMEIBIDID--",
   },
   {
     label: "Millennial Media",
     method: "redirect",
-    deviceId: "[:_jv_uaid:]",
-    networkId: "millennial",
-    clickId: "[:_jv_urid:]",
+    deviceID: "[:_jv_uaid:]",
+    networkID: "millennial",
+    clickID: "[:_jv_urid:]",
   },
   {
     label: "Millennial Media DSP",
     method: "redirect",
-    deviceId: "JT_IDFA",
-    networkId: "millennialdsp",
-    clickId: "JT_REQID",
+    deviceID: "JT_IDFA",
+    networkID: "millennialdsp",
+    clickID: "JT_REQID",
   },
   {
     label: "MdotM",
     method: "redirect",
-    deviceId: "[AID]",
-    networkId: "mdotm",
-    clickId: "[CLICKID]",
+    deviceID: "[AID]",
+    networkID: "mdotm",
+    clickID: "[CLICKID]",
     customFields: [
       {
         label: "iTunes Store ID",
@@ -155,46 +155,46 @@ export const supportedAdNetworks: AdNetwork[] = [
   {
     label: "MobFox",
     method: "redirect",
-    deviceId: "MFOXIFA",
-    networkId: "mobfox",
+    deviceID: "MFOXIFA",
+    networkID: "mobfox",
   },
   {
     label: "nend",
     method: "redirect",
-    deviceId: "{{IDFA}}",
-    networkId: "nend",
-    clickId: "{{NENDID}}",
+    deviceID: "{{IDFA}}",
+    networkID: "nend",
+    clickID: "{{NENDID}}",
   },
   {
     label: "Opera",
     method: "redirect",
-    deviceId: "xxxidfaxxx",
-    networkId: "opera",
-    clickId: "xxxtransidxxx",
+    deviceID: "xxxidfaxxx",
+    networkID: "opera",
+    clickID: "xxxtransidxxx",
   },
   {
     label: "Phunware",
     method: "redirect",
-    deviceId: "[idfa]",
-    networkId: "phunware",
-    clickId: "[transaction_id]",
+    deviceID: "[idfa]",
+    networkID: "phunware",
+    clickID: "[transaction_id]",
   },
   {
     label: "Snakk!Ads",
     method: "redirect",
-    deviceId: "[idfa]",
-    networkId: "snakkads",
-    clickId: "[transaction_id]",
+    deviceID: "[idfa]",
+    networkID: "snakkads",
+    clickID: "[transaction_id]",
   },
   {
     label: "Tapjoy",
     method: "redirect",
-    deviceId: "TAPJOY_RESTORED_RAW_ADVERTISING_ID",
-    networkId: "tapjoy",
+    deviceID: "TAPJOY_RESTORED_RAW_ADVERTISING_ID",
+    networkID: "tapjoy",
   },
   {
     label: "Custom",
     method: "redirect",
-    deviceId: "",
+    deviceID: "",
   },
 ]

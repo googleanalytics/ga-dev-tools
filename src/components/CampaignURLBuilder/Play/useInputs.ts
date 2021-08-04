@@ -16,7 +16,7 @@ const useInputs = () => {
   const [adNetwork, setAdNetwork] = useState(supportedAdNetworks[0])
 
   const [appID, setAppID] = useHydratedPersistantString(
-    StorageKey.campaignBuilderPlayAppId,
+    StorageKey.campaignBuilderPlayAppID,
     QueryParam.AppID,
     ""
   )
@@ -47,8 +47,8 @@ const useInputs = () => {
   )
 
   useEffect(() => {
-    if (adNetwork.networkId) {
-      setSource(adNetwork.networkId)
+    if (adNetwork.networkID) {
+      setSource(adNetwork.networkID)
     }
     if (adNetwork.label === "Custom") {
       setSource("")

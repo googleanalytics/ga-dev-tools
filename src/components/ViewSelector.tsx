@@ -50,7 +50,7 @@ interface ViewSelector3Props {
   size?: "small" | "medium"
   variant?: "outlined" | "standard"
   onlyProperty?: boolean
-  setPropertyId?: Dispatch<string | undefined>
+  setPropertyID?: Dispatch<string | undefined>
 }
 
 type UseViewSelector = () => {
@@ -311,7 +311,7 @@ const useViewSelector: UseViewSelector = () => {
 const ViewSelector: React.FC<ViewSelector3Props> = props => {
   const {
     onlyProperty,
-    setPropertyId,
+    setPropertyID,
     onViewChanged,
     className,
     size = "medium",
@@ -344,10 +344,10 @@ const ViewSelector: React.FC<ViewSelector3Props> = props => {
   }, [selectedAccount, selectedProperty, selectedView, onViewChanged])
 
   React.useEffect(() => {
-    if (setPropertyId !== undefined) {
-      setPropertyId(selectedProperty?.id)
+    if (setPropertyID !== undefined) {
+      setPropertyID(selectedProperty?.id)
     }
-  }, [selectedProperty, setPropertyId])
+  }, [selectedProperty, setPropertyID])
 
   return (
     <div className={classnames(classes.root, className)}>

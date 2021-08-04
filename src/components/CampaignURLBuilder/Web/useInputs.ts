@@ -21,7 +21,7 @@ const useInputs = () => {
     StorageKey.campaignBuilderName,
     ""
   )
-  const [id, setId] = usePersistentString(StorageKey.campaignBuilderId, "")
+  const [id, setID] = usePersistentString(StorageKey.campaignBuilderID, "")
   const [term, setTerm] = usePersistentString(
     StorageKey.campaignBuilderTerm,
     ""
@@ -43,7 +43,7 @@ const useInputs = () => {
           utm_term,
           utm_content,
         } = extractedParams
-        utm_id !== undefined && setId(utm_id)
+        utm_id !== undefined && setID(utm_id)
         utm_source !== undefined && setSource(utm_source)
         utm_medium !== undefined && setMedium(utm_medium)
         utm_campaign !== undefined && setCampaign(utm_campaign)
@@ -59,7 +59,7 @@ const useInputs = () => {
       setTerm,
       setContent,
       setWebsiteURL,
-      setId,
+      setID,
     ]
   )
 
@@ -72,7 +72,7 @@ const useInputs = () => {
     campaign,
     setCampaign,
     id,
-    setId,
+    setID,
     term,
     setTerm,
     content,

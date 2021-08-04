@@ -77,7 +77,7 @@ const IOSURLBuilder: React.FC<IOSURLBuilderProps> = ({ version }) => {
           onlyProperty
           variant="outlined"
           size="small"
-          setPropertyId={setPropertyID}
+          setPropertyID={setPropertyID}
         />
       )
     } else {
@@ -85,7 +85,7 @@ const IOSURLBuilder: React.FC<IOSURLBuilderProps> = ({ version }) => {
     }
   }, [version, setPropertyID])
 
-  const propertyIdTextField = React.useMemo(() => {
+  const propertyIDTextField = React.useMemo(() => {
     if (version === GAVersion.UniversalAnalytics) {
       return (
         <TextField
@@ -130,7 +130,7 @@ const IOSURLBuilder: React.FC<IOSURLBuilderProps> = ({ version }) => {
     }
   }, [adNetwork?.method, redirectURL, setRedirectURL])
 
-  const deviceIdTextField = React.useMemo(() => {
+  const deviceIDTextField = React.useMemo(() => {
     if (adNetwork?.label === "Custom") {
       return (
         <TextField
@@ -218,7 +218,7 @@ const IOSURLBuilder: React.FC<IOSURLBuilderProps> = ({ version }) => {
       </Typography>
       <Typography variant="h3">Select your property</Typography>
       {propertySelector}
-      {propertyIdTextField}
+      {propertyIDTextField}
       <Typography variant="h3">Enter the campaign information</Typography>
       <Autocomplete<AdNetwork, false, true, false>
         disableClearable
@@ -227,7 +227,7 @@ const IOSURLBuilder: React.FC<IOSURLBuilderProps> = ({ version }) => {
         autoHighlight
         options={Object.values(supportedAdNetworks)}
         getOptionLabel={a => a.label}
-        getOptionSelected={(a, b) => a.networkId === b.networkId}
+        getOptionSelected={(a, b) => a.networkID === b.networkID}
         value={adNetwork}
         onChange={(_event, value) => setAdNetwork(value)}
         renderOption={a => a.label}
@@ -254,7 +254,7 @@ const IOSURLBuilder: React.FC<IOSURLBuilderProps> = ({ version }) => {
         value={appID}
         onChange={e => setAppID(e.target.value)}
       />
-      {deviceIdTextField}
+      {deviceIDTextField}
       {customFieldInputs}
       <TextField
         required

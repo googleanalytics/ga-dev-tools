@@ -35,11 +35,11 @@ const useGenerateUrl = (arg: Arg): string | undefined => {
     if (arg.name) {
       encodedParamsString.append("utm_campaign", arg.name)
     }
-    if (arg.adNetwork.networkId) {
-      encodedParamsString.append("anid", arg.adNetwork.networkId)
+    if (arg.adNetwork.networkID) {
+      encodedParamsString.append("anid", arg.adNetwork.networkID)
     }
-    if (arg.adNetwork.clickId) {
-      encodedParamsString.append("aclid", arg.adNetwork.clickId)
+    if (arg.adNetwork.clickID) {
+      encodedParamsString.append("aclid", arg.adNetwork.clickID)
     }
     if (arg.adNetwork.customFields) {
       arg.adNetwork.customFields.forEach(({ name, value }) => {

@@ -49,7 +49,7 @@ export const WebURLBuilder: React.FC<WebURLBuilderProps> = ({ version }) => {
     campaign,
     setCampaign,
     id,
-    setId,
+    setID,
     term,
     setTerm,
     content,
@@ -90,7 +90,7 @@ export const WebURLBuilder: React.FC<WebURLBuilderProps> = ({ version }) => {
           <TextField
             id="campaign-id"
             value={id || ""}
-            onChange={e => setId(e.target.value)}
+            onChange={e => setID(e.target.value)}
             label="campaign ID"
             size="small"
             variant="outlined"
@@ -195,7 +195,7 @@ export const WebURLBuilder: React.FC<WebURLBuilderProps> = ({ version }) => {
         <TableBody>
           <TableRow>
             <TableCell className={classes.denseTableCell}>
-              <Typography variant="body1">Campaign Id</Typography>
+              <Typography variant="body1">Campaign ID</Typography>
               <InlineCode>utm_id</InlineCode>
             </TableCell>
             <TableCell>

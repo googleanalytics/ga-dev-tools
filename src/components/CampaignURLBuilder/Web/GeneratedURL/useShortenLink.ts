@@ -106,7 +106,7 @@ const bitlyUser = async (token: string): Promise<UserResponse> => {
 }
 
 const NO_BITLY_CLIENT_ID =
-  "A bitly clientId is required for shortening links.\nPlease run:\nyarn check-config --all\nAnd provide a value for bitlyClientId"
+  "A bitly clientID is required for shortening links.\nPlease run:\nyarn check-config --all\nAnd provide a value for bitlyClientID"
 
 const WINDOW_FEATURES = [
   ["toolbar", "no"],
@@ -127,7 +127,7 @@ type UseShortLink = () => {
   ) => Promise<{ shortLink: string; longLink: string }>
 }
 const useShortenLink: UseShortLink = () => {
-  const clientId = process.env.BITLY_CLIENT_ID
+  const clientID = process.env.BITLY_CLIENT_ID
   const [token, setToken] = useBitlyAPIKey()
   const [cache, setCache] = usePersistantObject(StorageKey.bitlyCache)
 
@@ -137,7 +137,7 @@ const useShortenLink: UseShortLink = () => {
     }
     return new Promise(resolve => {
       const redirectUri = `${window.location.origin}/bitly-auth`
-      const url = `https://bitly.com/oauth/authorize?client_id=${clientId}&redirect_uri=${redirectUri}`
+      const url = `https://bitly.com/oauth/authorize?client_id=${clientID}&redirect_uri=${redirectUri}`
       const name = "Login with Bit.ly"
       window.open(url, name, WINDOW_FEATURES)
       // TODO - See if there's a better way of getting a notification from the
@@ -152,7 +152,7 @@ const useShortenLink: UseShortLink = () => {
       }
       window.addEventListener("storage", storageListener)
     })
-  }, [token, setToken, clientId])
+  }, [token, setToken, clientID])
 
   const shorten = React.useCallback(
     async (longLink: string) => {
@@ -169,7 +169,7 @@ const useShortenLink: UseShortLink = () => {
     [ensureAuth, cache, setCache]
   )
 
-  if (clientId === undefined) {
+  if (clientID === undefined) {
     console.error(NO_BITLY_CLIENT_ID)
     // Return a stubbed out version that throws if you try to shorten a link.
     return {
