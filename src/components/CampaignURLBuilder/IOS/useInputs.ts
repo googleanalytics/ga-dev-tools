@@ -187,7 +187,7 @@ const useInputs = (version: GAVersion) => {
       if (nu.label === "Custom") {
         setSource("")
       } else {
-        setSource(nu.networkID)
+        setSource(nu.source || nu.networkID)
       }
     },
     [setAdNetworkLocal, setCustomFields, setDeviceID, setSource]
