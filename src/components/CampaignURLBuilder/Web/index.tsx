@@ -316,10 +316,7 @@ export const WebURLBuilder: React.FC<WebURLBuilderProps> = ({ version }) => {
       <Typography variant="h2">Related Resources</Typography>
       <Typography variant="body1" component="ul">
         <li>
-          <ExternalLink href={Url.aboutCampaign}>About Campaigns</ExternalLink>
-        </li>
-        <li>
-          <ExternalLink href={Url.aboutCustomCampaigns}>
+          <ExternalLink href={Url.aboutCampaign}>
             About Custom Campaigns
           </ExternalLink>
         </li>
