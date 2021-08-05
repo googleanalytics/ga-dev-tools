@@ -61,9 +61,21 @@ const useGenerateURL = (arg: Arg): string | undefined => {
       urlParams.append("aclid", arg.adNetwork.clickID)
     }
 
+    // if (arg.adNetwork.customFields) {
+    //   arg.adNetwork.customFields.forEach(customField => {
+    //     if (customField.builders?.includes("play")) {
+    //       const { name, value } = customField
+    //       encodedParamsString.append(name, value)
+    //     }
+    //   })
+    // }
+
     if (arg.customFields) {
       arg.customFields.forEach(customField => {
-        urlParams.append(customField.name, customField.value)
+        if (customField.builders?.includes("ios")) {
+          const { name, value } = customField
+          urlParams.append(name, value)
+        }
       })
     }
 

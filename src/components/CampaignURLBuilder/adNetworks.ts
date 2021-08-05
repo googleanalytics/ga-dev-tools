@@ -1,10 +1,10 @@
 export interface CustomField {
   name: string
   value: string
+  builders: ("ios" | "play")[]
   label?: string
   visible?: boolean
   required?: boolean
-  builders?: ("ios" | "play")[]
   helperText?: string
 }
 export interface AdNetwork {
@@ -29,6 +29,7 @@ export const supportedAdNetworks: AdNetwork[] = [
       {
         name: "cp1",
         value: "{app_id}",
+        builders: ["ios", "play"],
       },
     ],
   },
@@ -110,6 +111,7 @@ export const supportedAdNetworks: AdNetwork[] = [
       {
         name: "cp1",
         value: "[TRACK_ID]",
+        builders: ["ios", "play"],
       },
     ],
   },

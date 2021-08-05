@@ -42,21 +42,29 @@ const useGenerateUrl = (arg: Arg): string | undefined => {
       encodedParamsString.append("aclid", arg.adNetwork.clickID)
     }
     if (arg.adNetwork.customFields) {
-      arg.adNetwork.customFields.forEach(({ name, value }) => {
-        encodedParamsString.append(name, value)
+      arg.adNetwork.customFields.forEach(customField => {
+        if (customField.builders?.includes("play")) {
+          const { name, value } = customField
+          encodedParamsString.append(name, value)
+        }
       })
     }
 
     urlParams.append("referrer", encodedParamsString.toString())
 
-    // TODO - If there are issues with these parameters, uncomment the
-    // following code.
-    //
-    // const queryString = urlParams
-    //   .toString()
-    //   .replaceAll("%257Bclick_id%257D", "{click_id}")
-    //   .replaceAll("%257Bapp_id%257D", "{app_id}")
-    const queryString = urlParams.toString()
+    const queryString = urlParams
+      .toString()
+      // Replace all special macro-values with a non uriEncoded value.
+      .replace("aclid%3D%257Bclick_id%257D", "aclid%3D{click_id}")
+      .replace("aclid%3D%255Btransaction_id%255D", "aclid%3D[transaction_id]")
+      .replace("aclid%3D%257B%257BNENDID%257D%257D", "aclid%3D{{NENDID}}")
+      .replace("aclid%3D%255BCLICKID%255D", "aclid%3D[CLICKID]")
+      .replace("aclid%3D%255B%253A_jv_urid%253A%255D", "aclid%3D[:_jv_urid:]")
+      .replace("aclid%3D%255BCLK_ID%255D", "aclid%3D[CLK_ID]")
+      .replace("aclid%3D%257Bhash%257D", "aclid%3D{hash}")
+      .replace("aclid%3D%2524IMP_ID", "aclid%3D$IMP_ID")
+      .replace("cp1%3D%257Bapp_id%257D", "cp1%3D{app_id}")
+      .replace("cp1%3D%255BTRACK_ID%255D", "cp1%3D[TRACK_ID]")
 
     return `https://play.google.com/store/apps/details?${queryString}`
   }, [arg])
