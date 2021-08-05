@@ -1,14 +1,14 @@
 import { useState, useMemo, useCallback, useEffect } from "react"
 
-import { usePersistentBoolean } from "../../../hooks"
-import { StorageKey, GAVersion } from "../../../constants"
-import { websiteUrlFor } from "../params"
-import { Dispatch } from "../../../types"
+import { usePersistentBoolean } from "@/hooks"
+import { StorageKey, GAVersion } from "@/constants"
+import { Dispatch } from "@/types"
+import { websiteURLFor } from "../params"
 import useShortenLink from "./useShortenLink"
 
 type UseWarningsFor = (arg: {
   version: GAVersion
-  websiteUrl: string
+  websiteURL: string
   source: string
   medium: string
   campaign: string
@@ -17,9 +17,9 @@ type UseWarningsFor = (arg: {
   term: string | undefined
   shorten: ReturnType<typeof useShortenLink>["shorten"]
 }) => {
-  generatedUrl: string
+  generatedURL: string
   hasAllRequired: boolean
-  problematicUrl: boolean
+  problematicURL: boolean
   longLink: string
   shortLink: string | undefined
   showShort: boolean
@@ -30,7 +30,7 @@ type UseWarningsFor = (arg: {
 }
 const useWarningsFor: UseWarningsFor = ({
   version,
-  websiteUrl,
+  websiteURL,
   source,
   medium,
   campaign,
@@ -39,9 +39,9 @@ const useWarningsFor: UseWarningsFor = ({
   term,
   shorten,
 }) => {
-  const [generatedUrl, setGeneratedUrl] = useState("")
-  const [problematicUrl, setProblematicUrl] = useState(false)
-  const [longLink, setLongLink] = useState<string>(generatedUrl)
+  const [generatedURL, setGeneratedURL] = useState("")
+  const [problematicURL, setProblematicURL] = useState(false)
+  const [longLink, setLongLink] = useState<string>(generatedURL)
   const [shortLink, setShortLink] = useState<string>()
   const [showShort, setShowShort] = useState(false)
   const [useFragment, setUseFragment] = usePersistentBoolean(
@@ -51,16 +51,16 @@ const useWarningsFor: UseWarningsFor = ({
 
   const hasAllRequired = useMemo(() => {
     if (version === GAVersion.UniversalAnalytics) {
-      if (websiteUrl === "" || source === "") {
+      if (websiteURL === "" || source === "") {
         return false
       }
       return true
     }
-    if (websiteUrl === "" || source === "" || medium === "") {
+    if (websiteURL === "" || source === "" || medium === "") {
       return false
     }
     return true
-  }, [websiteUrl, source, medium, id, version])
+  }, [websiteURL, source, medium, version])
 
   const shortenLinkGui = useCallback(() => {
     if (showShort === true) {
@@ -82,12 +82,12 @@ const useWarningsFor: UseWarningsFor = ({
 
   const setGeneratedFromInput = useCallback(() => {
     if (!hasAllRequired) {
-      setGeneratedUrl("")
+      setGeneratedURL("")
       setLongLink("")
       return
     }
-    const generated = websiteUrlFor(
-      websiteUrl,
+    const generated = websiteURLFor(
+      websiteURL,
       {
         utm_source: source || undefined,
         utm_medium: medium || undefined,
@@ -98,12 +98,12 @@ const useWarningsFor: UseWarningsFor = ({
       },
       useFragment
     )
-    setGeneratedUrl(generated)
+    setGeneratedURL(generated)
     setLongLink(generated)
   }, [
     hasAllRequired,
     useFragment,
-    websiteUrl,
+    websiteURL,
     source,
     medium,
     campaign,
@@ -122,7 +122,7 @@ const useWarningsFor: UseWarningsFor = ({
     hasAllRequired,
     setGeneratedFromInput,
     useFragment,
-    websiteUrl,
+    websiteURL,
     source,
     medium,
     campaign,
@@ -131,14 +131,14 @@ const useWarningsFor: UseWarningsFor = ({
   ])
 
   const onWarning = useCallback<ReturnType<UseWarningsFor>["onWarning"]>(
-    warningPresent => setProblematicUrl(warningPresent),
-    [setProblematicUrl]
+    warningPresent => setProblematicURL(warningPresent),
+    [setProblematicURL]
   )
 
   return {
-    generatedUrl,
+    generatedURL,
     hasAllRequired,
-    problematicUrl,
+    problematicURL,
     longLink,
     shortLink,
     showShort,

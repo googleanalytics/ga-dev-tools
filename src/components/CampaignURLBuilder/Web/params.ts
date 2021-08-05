@@ -30,25 +30,25 @@ export const CampiagnParams: (keyof CampaignParams)[] = [
   "utm_content",
 ]
 
-export const extractParamsFromWebsiteUrl = (
-  websiteUrl: string
+export const extractParamsFromWebsiteURL = (
+  websiteURL: string
 ): Partial<CampaignParams> | undefined => {
   // Also support fragment params.
-  let asUrl: URL
+  let asURL: URL
   try {
     let missingProtocol = /[^://].*?.com/
-    if (missingProtocol.test(websiteUrl)) {
-      asUrl = new URL(`https://${websiteUrl}`)
+    if (missingProtocol.test(websiteURL)) {
+      asURL = new URL(`https://${websiteURL}`)
     } else {
-      asUrl = new URL(websiteUrl)
+      asURL = new URL(websiteURL)
     }
   } catch (e) {
     return undefined
   }
-  const searchParams = asUrl.searchParams
+  const searchParams = asURL.searchParams
   const campaignParams: Partial<CampaignParams> = {}
 
-  let fragment = asUrl.hash
+  let fragment = asURL.hash
   // Some of the urls we see have fragment, then query params. We support
   // parsing this out, but we do not support keeping it this way in the
   // generated url.
@@ -80,7 +80,7 @@ export const extractParamsFromWebsiteUrl = (
   return campaignParams
 }
 
-export const websiteUrlFor = (
+export const websiteURLFor = (
   original: string,
   params: Partial<CampaignParams>,
   useFragment: boolean = false

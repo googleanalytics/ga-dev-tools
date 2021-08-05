@@ -21,25 +21,26 @@ import TableCell from "@material-ui/core/TableCell"
 import TableHead from "@material-ui/core/TableHead"
 import TableRow from "@material-ui/core/TableRow"
 
-import { IS_SSR } from "../../hooks"
+import { Url, GAVersion } from "@/constants"
 import GeneratedURL from "./GeneratedURL"
 import useStyles from "./useStyles"
 import useInputs from "./useInputs"
-import ExternalLink from "../ExternalLink"
-import InlineCode from "../InlineCode"
-import { Url, GAVersion } from "../../constants"
+import ExternalLink from "../../ExternalLink"
+import InlineCode from "../../InlineCode"
 
 const customCampaigns = (
   <ExternalLink href={Url.aboutCustomCampaigns}>Custom Campaigns</ExternalLink>
 )
 
-export const CampaignUrlBuilder: React.FC<{ version: GAVersion }> = ({
-  version,
-}) => {
+interface WebURLBuilderProps {
+  version: GAVersion
+}
+
+export const WebURLBuilder: React.FC<WebURLBuilderProps> = ({ version }) => {
   const classes = useStyles()
 
   const {
-    websiteUrl,
+    websiteURL,
     source,
     setSource,
     medium,
@@ -47,7 +48,7 @@ export const CampaignUrlBuilder: React.FC<{ version: GAVersion }> = ({
     campaign,
     setCampaign,
     id,
-    setId,
+    setID,
     term,
     setTerm,
     content,
@@ -68,111 +69,108 @@ export const CampaignUrlBuilder: React.FC<{ version: GAVersion }> = ({
         Fill out all fields marked with an asterisk (*), and the campaign URL
         will be generated for you.
       </Typography>
-      {IS_SSR ? null : (
-        <section className={classes.inputs}>
-          <TextField
-            id="website-url"
-            required
-            value={websiteUrl || ""}
-            onChange={onWebsiteChange}
-            label="website URL"
-            size="small"
-            variant="outlined"
-            helperText={
-              <span>
-                The full website URL (e.g.{" "}
-                <span className={classes.bold}>https://www.example.com</span>)
-              </span>
-            }
-          />
-          <TextField
-            id="campaign-id"
-            value={id || ""}
-            onChange={e => setId(e.target.value)}
-            label="campaign ID"
-            size="small"
-            variant="outlined"
-            helperText={<span>The ads campaign id.</span>}
-          />
-          <TextField
-            id="campaign-source"
-            required
-            value={source || ""}
-            onChange={e => setSource(e.target.value)}
-            label="campaign source"
-            size="small"
-            variant="outlined"
-            helperText={
-              <span>
-                The referrer (e.g. <span className={classes.bold}>google</span>,{" "}
-                <span className={classes.bold}>newsletter</span>)
-              </span>
-            }
-          />
-          <TextField
-            id="campaign-medium"
-            required
-            value={medium || ""}
-            onChange={e => setMedium(e.target.value)}
-            label="campaign medium"
-            size="small"
-            variant="outlined"
-            helperText={
-              <span>
-                Marketing medium (e.g. <span className={classes.bold}>cpc</span>
-                , <span className={classes.bold}>banner</span>,{" "}
-                <span className={classes.bold}>email</span>)
-              </span>
-            }
-          />
-          <TextField
-            id="campaign-name"
-            required={version === GAVersion.UniversalAnalytics}
-            value={campaign || ""}
-            onChange={e => setCampaign(e.target.value)}
-            label="campaign name"
-            size="small"
-            variant="outlined"
-            helperText={
-              <span>
-                Product, promo code, or slogan (e.g.{" "}
-                <span className={classes.bold}>spring_sale</span>) One of
-                campaign name or campaign id are required.
-              </span>
-            }
-          />
-          <TextField
-            id="campaign-term"
-            value={term || ""}
-            onChange={e => setTerm(e.target.value)}
-            label="campaign term"
-            size="small"
-            variant="outlined"
-            helperText="Identify the paid keywords"
-          />
-          <TextField
-            id="campaign-content"
-            value={content || ""}
-            onChange={e => setContent(e.target.value)}
-            label="campaign content"
-            size="small"
-            variant="outlined"
-            helperText="Use to differentiate ads"
-          />
-        </section>
-      )}
 
+      <section className={classes.inputs}>
+        <TextField
+          id="website-url"
+          required
+          value={websiteURL || ""}
+          onChange={onWebsiteChange}
+          label="website URL"
+          size="small"
+          variant="outlined"
+          helperText={
+            <span>
+              The full website URL (e.g.{" "}
+              <span className={classes.bold}>https://www.example.com</span>)
+            </span>
+          }
+        />
+        <TextField
+          id="campaign-id"
+          value={id || ""}
+          onChange={e => setID(e.target.value)}
+          label="campaign ID"
+          size="small"
+          variant="outlined"
+          helperText={<span>The ads campaign id.</span>}
+        />
+        <TextField
+          id="campaign-source"
+          required
+          value={source || ""}
+          onChange={e => setSource(e.target.value)}
+          label="campaign source"
+          size="small"
+          variant="outlined"
+          helperText={
+            <span>
+              The referrer (e.g. <span className={classes.bold}>google</span>,{" "}
+              <span className={classes.bold}>newsletter</span>)
+            </span>
+          }
+        />
+        <TextField
+          id="campaign-medium"
+          required
+          value={medium || ""}
+          onChange={e => setMedium(e.target.value)}
+          label="campaign medium"
+          size="small"
+          variant="outlined"
+          helperText={
+            <span>
+              Marketing medium (e.g. <span className={classes.bold}>cpc</span>,{" "}
+              <span className={classes.bold}>banner</span>,{" "}
+              <span className={classes.bold}>email</span>)
+            </span>
+          }
+        />
+        <TextField
+          id="campaign-name"
+          required={version === GAVersion.UniversalAnalytics}
+          value={campaign || ""}
+          onChange={e => setCampaign(e.target.value)}
+          label="campaign name"
+          size="small"
+          variant="outlined"
+          helperText={
+            <span>
+              Product, promo code, or slogan (e.g.{" "}
+              <span className={classes.bold}>spring_sale</span>) One of campaign
+              name or campaign id are required.
+            </span>
+          }
+        />
+        <TextField
+          id="campaign-term"
+          value={term || ""}
+          onChange={e => setTerm(e.target.value)}
+          label="campaign term"
+          size="small"
+          variant="outlined"
+          helperText="Identify the paid keywords"
+        />
+        <TextField
+          id="campaign-content"
+          value={content || ""}
+          onChange={e => setContent(e.target.value)}
+          label="campaign content"
+          size="small"
+          variant="outlined"
+          helperText="Use to differentiate ads"
+        />
+      </section>
       <GeneratedURL
         version={version}
         source={source || ""}
-        websiteUrl={websiteUrl || ""}
+        websiteURL={websiteURL || ""}
         medium={medium || ""}
         campaign={campaign || ""}
         id={id || ""}
         term={term || ""}
         content={content || ""}
       />
-
       <Typography variant="h2">
         More information and examples for each parameter
       </Typography>
@@ -180,7 +178,6 @@ export const CampaignUrlBuilder: React.FC<{ version: GAVersion }> = ({
         The following table gives a detailed explanation and example of each of
         the campaign parameters:
       </Typography>
-
       <Table size="small">
         <TableHead>
           <TableRow>
@@ -193,7 +190,7 @@ export const CampaignUrlBuilder: React.FC<{ version: GAVersion }> = ({
         <TableBody>
           <TableRow>
             <TableCell className={classes.denseTableCell}>
-              <Typography variant="body1">Campaign Id</Typography>
+              <Typography variant="body1">Campaign ID</Typography>
               <InlineCode>utm_id</InlineCode>
             </TableCell>
             <TableCell>
@@ -316,14 +313,10 @@ export const CampaignUrlBuilder: React.FC<{ version: GAVersion }> = ({
           </TableRow>
         </TableBody>
       </Table>
-
       <Typography variant="h2">Related Resources</Typography>
       <Typography variant="body1" component="ul">
         <li>
-          <ExternalLink href={Url.aboutCampaign}>About Campaigns</ExternalLink>
-        </li>
-        <li>
-          <ExternalLink href={Url.aboutCustomCampaigns}>
+          <ExternalLink href={Url.aboutCampaign}>
             About Custom Campaigns
           </ExternalLink>
         </li>
@@ -352,4 +345,4 @@ export const CampaignUrlBuilder: React.FC<{ version: GAVersion }> = ({
   )
 }
 
-export default CampaignUrlBuilder
+export default WebURLBuilder

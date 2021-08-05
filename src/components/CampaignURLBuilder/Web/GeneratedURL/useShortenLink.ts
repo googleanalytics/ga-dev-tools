@@ -9,7 +9,7 @@ type BitlyStorageCache = {
   // Cache starts at guid level.
   [GUID: string]:
     | {
-        // Then is indexd by the longUrl
+        // Then is indexd by the longURL
         [longLink: string]: string | undefined
       }
     | undefined
@@ -24,38 +24,38 @@ type SetCacheFn = Dispatch<BitlyStorageCache | undefined>
  * This function memoizes its results using the provided cache & setCacheValue
  * arguments.
  */
-const shortenUrl = async (
+const shortenURL = async (
   token: string,
-  longUrl: string,
+  longURL: string,
   cache: BitlyStorageCache | undefined,
   setCacheValue: SetCacheFn
 ): Promise<string> => {
   const user = await bitlyUser(token)
   const guid = user.default_group_guid
 
-  const cachedLink = cache?.[guid]?.[longUrl]
+  const cachedLink = cache?.[guid]?.[longURL]
   if (cachedLink !== undefined) {
     return cachedLink
   }
 
   // If the link isn't in the local cache, create it.
-  const shortned = await bitlyShorten(token, longUrl, guid)
+  const shortned = await bitlyShorten(token, longURL, guid)
   const link = shortned.link
 
-  updateBitlyCache(guid, longUrl, link, setCacheValue)
+  updateBitlyCache(guid, longURL, link, setCacheValue)
 
   return link
 }
 
 const updateBitlyCache = (
   guid: string,
-  longUrl: string,
-  shortUrl: string,
+  longURL: string,
+  shortURL: string,
   setCacheValue: SetCacheFn
 ): void => {
   setCacheValue((old = {}) => {
     old[guid] = old[guid] || {}
-    old[guid]![longUrl] = shortUrl
+    old[guid]![longURL] = shortURL
     return old
   })
 }
@@ -66,7 +66,7 @@ export type ShortenResponse = {
 }
 const bitlyShorten = async (
   token: string,
-  longUrl: string,
+  longURL: string,
   guid: string
 ): Promise<ShortenResponse> => {
   const url = "https://api-ssl.bitly.com/v4/shorten"
@@ -78,7 +78,7 @@ const bitlyShorten = async (
       Accept: "application/json",
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({ long_url: longUrl, group_guid: guid }),
+    body: JSON.stringify({ long_url: longURL, group_guid: guid }),
   })
 
   const json = await response.json()
@@ -106,7 +106,7 @@ const bitlyUser = async (token: string): Promise<UserResponse> => {
 }
 
 const NO_BITLY_CLIENT_ID =
-  "A bitly clientId is required for shortening links.\nPlease run:\nyarn check-config --all\nAnd provide a value for bitlyClientId"
+  "A bitly clientID is required for shortening links.\nPlease run:\nyarn check-config --all\nAnd provide a value for bitlyClientID"
 
 const WINDOW_FEATURES = [
   ["toolbar", "no"],
@@ -127,7 +127,7 @@ type UseShortLink = () => {
   ) => Promise<{ shortLink: string; longLink: string }>
 }
 const useShortenLink: UseShortLink = () => {
-  const clientId = process.env.BITLY_CLIENT_ID
+  const clientID = process.env.BITLY_CLIENT_ID
   const [token, setToken] = useBitlyAPIKey()
   const [cache, setCache] = usePersistantObject(StorageKey.bitlyCache)
 
@@ -137,7 +137,7 @@ const useShortenLink: UseShortLink = () => {
     }
     return new Promise(resolve => {
       const redirectUri = `${window.location.origin}/bitly-auth`
-      const url = `https://bitly.com/oauth/authorize?client_id=${clientId}&redirect_uri=${redirectUri}`
+      const url = `https://bitly.com/oauth/authorize?client_id=${clientID}&redirect_uri=${redirectUri}`
       const name = "Login with Bit.ly"
       window.open(url, name, WINDOW_FEATURES)
       // TODO - See if there's a better way of getting a notification from the
@@ -152,7 +152,7 @@ const useShortenLink: UseShortLink = () => {
       }
       window.addEventListener("storage", storageListener)
     })
-  }, [token, setToken, clientId])
+  }, [token, setToken, clientID])
 
   const shorten = React.useCallback(
     async (longLink: string) => {
@@ -163,13 +163,13 @@ const useShortenLink: UseShortLink = () => {
         throw new Error("Cannot shortnen an empty string")
       }
       const token = await ensureAuth()
-      const shortLink = await shortenUrl(token, longLink, cache, setCache)
+      const shortLink = await shortenURL(token, longLink, cache, setCache)
       return { shortLink, longLink }
     },
     [ensureAuth, cache, setCache]
   )
 
-  if (clientId === undefined) {
+  if (clientID === undefined) {
     console.error(NO_BITLY_CLIENT_ID)
     // Return a stubbed out version that throws if you try to shorten a link.
     return {

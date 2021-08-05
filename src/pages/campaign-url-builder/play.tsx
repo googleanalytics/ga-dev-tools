@@ -15,17 +15,25 @@
 import * as React from "react"
 
 import Layout from "@/components/Layout"
-import CampaignUrlBuilder from "@/components/CampaignUrlBuilder"
+import CampaignURLBuilder, {
+  URLBuilderType,
+} from "@/components/CampaignURLBuilder"
 import { GAVersion } from "@/constants"
+import { IS_SSR } from "@/hooks"
 
 export default ({ location: { pathname } }) => {
   return (
     <Layout
-      title="Campaign URL Builder"
+      title="Play Campaign URL Builder"
       pathname={pathname}
-      description="This tool allows you to easily add campaign parameters to URLs so you can measure Custom Campaigns in Google Analytics."
+      description="This tool allows you to easily add campaign parameters to play store URLs so you can measure Custom Campaigns in Google Analytics."
     >
-      <CampaignUrlBuilder version={GAVersion.GoogleAnalytics4} />
+      {IS_SSR ? null : (
+        <CampaignURLBuilder
+          version={GAVersion.UniversalAnalytics}
+          type={URLBuilderType.Play}
+        />
+      )}
     </Layout>
   )
 }

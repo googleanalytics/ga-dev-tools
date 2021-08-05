@@ -4,8 +4,19 @@ const useFormStyles = makeStyles(theme => ({
   form: {
     maxWidth: "80ch",
   },
+  rowMargin: {
+    "&> *:not(:last-child)": {
+      marginBottom: theme.spacing(1),
+    },
+  },
+  marginTop: {
+    marginTop: theme.spacing(1),
+  },
   marginBottom: {
     marginBottom: theme.spacing(1),
+  },
+  marginLeft: {
+    marginLeft: theme.spacing(1),
   },
   buttonRow: {
     display: "flex",

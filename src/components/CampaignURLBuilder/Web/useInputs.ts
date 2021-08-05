@@ -1,11 +1,12 @@
-import { usePersistentString } from "../../hooks"
-import { StorageKey } from "../../constants"
 import { useCallback } from "react"
-import { extractParamsFromWebsiteUrl } from "./params"
+
+import { usePersistentString } from "@/hooks"
+import { StorageKey } from "@/constants"
+import { extractParamsFromWebsiteURL } from "./params"
 
 const useInputs = () => {
-  const [websiteUrl, setWebsiteUrl] = usePersistentString(
-    StorageKey.campaignBuilderWebsiteUrl,
+  const [websiteURL, setWebsiteURL] = usePersistentString(
+    StorageKey.campaignBuilderWebsiteURL,
     ""
   )
   const [source, setSource] = usePersistentString(
@@ -20,7 +21,7 @@ const useInputs = () => {
     StorageKey.campaignBuilderName,
     ""
   )
-  const [id, setId] = usePersistentString(StorageKey.campaignBuilderId, "")
+  const [id, setID] = usePersistentString(StorageKey.campaignBuilderID, "")
   const [term, setTerm] = usePersistentString(
     StorageKey.campaignBuilderTerm,
     ""
@@ -32,7 +33,7 @@ const useInputs = () => {
 
   const onWebsiteChange = useCallback(
     e => {
-      const extractedParams = extractParamsFromWebsiteUrl(e.target.value)
+      const extractedParams = extractParamsFromWebsiteURL(e.target.value)
       if (extractedParams !== undefined) {
         const {
           utm_id,
@@ -42,14 +43,14 @@ const useInputs = () => {
           utm_term,
           utm_content,
         } = extractedParams
-        utm_id !== undefined && setId(utm_id)
+        utm_id !== undefined && setID(utm_id)
         utm_source !== undefined && setSource(utm_source)
         utm_medium !== undefined && setMedium(utm_medium)
         utm_campaign !== undefined && setCampaign(utm_campaign)
         utm_term !== undefined && setTerm(utm_term)
         utm_content !== undefined && setContent(utm_content)
       }
-      setWebsiteUrl(e.target.value)
+      setWebsiteURL(e.target.value)
     },
     [
       setCampaign,
@@ -57,13 +58,13 @@ const useInputs = () => {
       setSource,
       setTerm,
       setContent,
-      setWebsiteUrl,
-      setId,
+      setWebsiteURL,
+      setID,
     ]
   )
 
   return {
-    websiteUrl,
+    websiteURL,
     source,
     setSource,
     medium,
@@ -71,7 +72,7 @@ const useInputs = () => {
     campaign,
     setCampaign,
     id,
-    setId,
+    setID,
     term,
     setTerm,
     content,

@@ -217,7 +217,9 @@ const Template: React.FC<LayoutProps & TemplateProps> = ({
                     classes.innerNav,
                     classes.navLinkBackgroundHover,
                     {
-                      [classes.activeLink]: pathname === linkData.href,
+                      [classes.activeLink]:
+                        pathname === linkData.href ||
+                        pathname.startsWith(linkData.href),
                     }
                   )}
                   to={linkData.href}

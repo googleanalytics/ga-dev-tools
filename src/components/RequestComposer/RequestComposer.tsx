@@ -18,7 +18,6 @@ import { useEffect, useState } from "react"
 import Typography from "@material-ui/core/Typography"
 import Tabs from "@material-ui/core/Tabs"
 import Tab from "@material-ui/core/Tab"
-import Box from "@material-ui/core/Box"
 import makeStyles from "@material-ui/core/styles/makeStyles"
 
 import { StorageKey } from "@/constants"
@@ -31,6 +30,7 @@ import CohortRequest from "./CohortRequest"
 import MetricExpression from "./MetricExpression"
 import ReportsTable from "./ReportsTable"
 import { useMakeReportsRequest } from "./api"
+import TabPanel from "../TabPanel"
 
 const useStyles = makeStyles(theme => ({
   viewSelector: {
@@ -45,25 +45,6 @@ const useStyles = makeStyles(theme => ({
     marginBottom: theme.spacing(2),
   },
 }))
-
-// TODO - I think I want a min height that's at least as tall as the longest
-// tab so far?
-const TabPanel: React.FC<{ value: number; index: number }> = ({
-  value,
-  index,
-  children,
-}) => {
-  return (
-    <div
-      role="tabpanel"
-      hidden={value !== index}
-      id={`simple-tabpanel-${index}`}
-      aria-labelledby={`simple-tab-${index}`}
-    >
-      {value === index && <Box p={3}>{children}</Box>}
-    </div>
-  )
-}
 
 // TODO - The Select Singles don't work correctly with SSR, but there's likely
 // a fix somewhere that someone has done already. Look into it.

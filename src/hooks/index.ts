@@ -137,6 +137,16 @@ const getRedirectInfo = (
             redirectPath: "/campaign-url-builder/",
             toast: uaToast("Campaign URL Builder"),
           }
+        case "/ga4/campaign-url-builder/ios/":
+          return {
+            redirectPath: "/campaign-url-builder/ios/",
+            toast: uaToast("iOS Campaign URL Builder"),
+          }
+        case "/ga4/campaign-url-builder/play/":
+          return {
+            redirectPath: "/campaign-url-builder/play/",
+            toast: uaToast("play Campaign URL Builder"),
+          }
         case "/ga4/":
           return {
             redirectPath: "/",
@@ -175,6 +185,16 @@ const getRedirectInfo = (
           return {
             redirectPath: "/ga4/campaign-url-builder/",
             toast: ga4Toast("Campaign URL Builder"),
+          }
+        case "/campaign-url-builder/ios/":
+          return {
+            redirectPath: "/ga4/campaign-url-builder/ios/",
+            toast: ga4Toast("iOS Campaign URL Builder"),
+          }
+        case "/campaign-url-builder/play/":
+          return {
+            redirectPath: "/ga4/campaign-url-builder/play/",
+            toast: ga4Toast("Play Campaign URL Builder"),
           }
         case "/":
           return {

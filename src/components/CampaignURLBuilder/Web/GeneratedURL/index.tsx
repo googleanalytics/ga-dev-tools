@@ -1,5 +1,6 @@
 import * as React from "react"
 
+import clsx from "classnames"
 import Paper from "@material-ui/core/Paper"
 import { Error as ErrorIcon } from "@material-ui/icons"
 import Typography from "@material-ui/core/Typography"
@@ -8,16 +9,17 @@ import FormControlLabel from "@material-ui/core/FormControlLabel"
 import Checkbox from "@material-ui/core/Checkbox"
 import Button from "@material-ui/core/Button"
 
-import { GAVersion } from "../../../constants"
-import CopyButton from "../../../components/CopyButton"
+import CopyButton from "@/components/CopyButton"
+import { GAVersion } from "@/constants"
+import useFormStyles from "@/hooks/useFormStyles"
 import useStyles from "../useStyles"
 import useShortenLink from "./useShortenLink"
 import useWarningsFor from "./useWarningsFor"
 import WarningsFor from "./WarningsFor"
 
-interface GeneratedUrlProps {
+interface GeneratedURLProps {
   version: GAVersion
-  websiteUrl: string
+  websiteURL: string
   source: string
   medium: string
   campaign: string
@@ -26,9 +28,9 @@ interface GeneratedUrlProps {
   content: string
 }
 
-const GeneratedURL: React.FC<GeneratedUrlProps> = ({
+const GeneratedURL: React.FC<GeneratedURLProps> = ({
   version,
-  websiteUrl,
+  websiteURL,
   source,
   medium,
   campaign,
@@ -37,10 +39,11 @@ const GeneratedURL: React.FC<GeneratedUrlProps> = ({
   content,
 }) => {
   const classes = useStyles()
+  const formClasses = useFormStyles()
 
   const { authenticated, shorten, canShorten } = useShortenLink()
   const {
-    problematicUrl,
+    problematicURL,
     hasAllRequired,
     onWarning,
     showShort,
@@ -51,7 +54,7 @@ const GeneratedURL: React.FC<GeneratedUrlProps> = ({
     shortenLinkGui,
   } = useWarningsFor({
     version,
-    websiteUrl,
+    websiteURL,
     source,
     medium,
     campaign,
@@ -62,9 +65,9 @@ const GeneratedURL: React.FC<GeneratedUrlProps> = ({
   })
 
   return (
-    <Paper className={classes.share}>
-      <WarningsFor websiteUrl={websiteUrl} onWarning={onWarning} />
-      {!problematicUrl &&
+    <Paper className={clsx(classes.share, formClasses.form)}>
+      <WarningsFor websiteURL={websiteURL} onWarning={onWarning} />
+      {!problematicURL &&
         (hasAllRequired ? (
           <>
             <Typography variant="h2">

@@ -4,31 +4,31 @@ import { Warning } from "@material-ui/icons"
 import Typography from "@material-ui/core/Typography"
 import { v4 as uuid } from "uuid"
 
-import InlineCode from "../../../components/InlineCode"
-import { Url } from "../../../constants"
+import InlineCode from "@/components/InlineCode"
+import { Url } from "@/constants"
 import useStyles from "../useStyles"
 
 const iosCampaignTracking = (
   <a href={Url.iosCampaignMeasurement}>iOS Campaign Tracking URL Builder</a>
 )
 
-const googlePlayUrlBuilder = (
+const googlePlayURLBuilder = (
   <a href={Url.googlePlayURLBuilder}>Google Play URL Builder</a>
 )
 
 interface WarningsForProps {
-  websiteUrl: string
+  websiteURL: string
   onWarning: (warningPresent: boolean) => void
 }
-const WarningsFor: React.FC<WarningsForProps> = ({ websiteUrl, onWarning }) => {
+const WarningsFor: React.FC<WarningsForProps> = ({ websiteURL, onWarning }) => {
   const classes = useStyles()
-  const asUrl = React.useMemo<URL | undefined>(() => {
+  const asURL = React.useMemo<URL | undefined>(() => {
     try {
-      return new URL(websiteUrl)
+      return new URL(websiteURL)
     } catch (e) {
       return undefined
     }
-  }, [websiteUrl])
+  }, [websiteURL])
 
   const BaseWarning: React.FC = ({ children }) => {
     return (
@@ -43,7 +43,7 @@ const WarningsFor: React.FC<WarningsForProps> = ({ websiteUrl, onWarning }) => {
 
   React.useEffect(() => {
     setWarnings([])
-    if (asUrl?.hostname === "ga-dev-tools.web.app") {
+    if (asURL?.hostname === "ga-dev-tools.web.app") {
       setWarnings(old =>
         old.concat([
           <>
@@ -56,9 +56,9 @@ const WarningsFor: React.FC<WarningsForProps> = ({ websiteUrl, onWarning }) => {
     }
 
     if (
-      websiteUrl.startsWith("localhost") ||
-      websiteUrl.startsWith("127.0.0.1") ||
-      asUrl?.hostname === "localhost"
+      websiteURL.startsWith("localhost") ||
+      websiteURL.startsWith("127.0.0.1") ||
+      asURL?.hostname === "localhost"
     ) {
       setWarnings(old =>
         old.concat([
@@ -70,19 +70,19 @@ const WarningsFor: React.FC<WarningsForProps> = ({ websiteUrl, onWarning }) => {
       )
     }
 
-    if (asUrl?.hostname === "play.google.com") {
+    if (asURL?.hostname === "play.google.com") {
       setWarnings(old =>
         old.concat([
           <>
             It appears that you are creating a Google Play Store url. You should
-            use the {googlePlayUrlBuilder} instead for creating campaign links
+            use the {googlePlayURLBuilder} instead for creating campaign links
             for Play Store apps.
           </>,
         ])
       )
     }
 
-    if (asUrl?.hostname === "itunes.apple.com") {
+    if (asURL?.hostname === "itunes.apple.com") {
       setWarnings(old =>
         old.concat([
           <>
@@ -93,7 +93,7 @@ const WarningsFor: React.FC<WarningsForProps> = ({ websiteUrl, onWarning }) => {
         ])
       )
     }
-  }, [asUrl, websiteUrl])
+  }, [asURL, websiteURL])
 
   React.useEffect(() => {
     onWarning(warnings.length !== 0)

@@ -13,11 +13,13 @@ import {
 } from "../api"
 import { usePersistantObject } from "../hooks"
 import { StorageKey } from "../constants"
+import { Dispatch } from "@/types"
 
 const useStyles = makeStyles<Theme, ViewSelector3Props>(theme => ({
   root: props => ({
     display: "flex",
     flexDirection: props.vertical ? "column" : "unset",
+    ...(props.vertical ? { marginBottom: theme.spacing(1) } : {}),
     width: "100%",
   }),
   formControl: {
@@ -48,6 +50,8 @@ interface ViewSelector3Props {
   vertical?: true | undefined
   size?: "small" | "medium"
   variant?: "outlined" | "standard"
+  onlyProperty?: boolean
+  setPropertyID?: Dispatch<string | undefined>
 }
 
 type UseViewSelector = () => {
@@ -307,6 +311,8 @@ const useViewSelector: UseViewSelector = () => {
 
 const ViewSelector: React.FC<ViewSelector3Props> = props => {
   const {
+    onlyProperty,
+    setPropertyID,
     onViewChanged,
     className,
     size = "medium",
@@ -337,6 +343,12 @@ const ViewSelector: React.FC<ViewSelector3Props> = props => {
       })
     }
   }, [selectedAccount, selectedProperty, selectedView, onViewChanged])
+
+  React.useEffect(() => {
+    if (setPropertyID !== undefined) {
+      setPropertyID(selectedProperty?.id)
+    }
+  }, [selectedProperty, setPropertyID])
 
   return (
     <div className={classnames(classes.root, className)}>
@@ -382,22 +394,24 @@ const ViewSelector: React.FC<ViewSelector3Props> = props => {
           />
         )}
       />
-      <Autocomplete<ProfileSummary>
-        blurOnSelect
-        openOnFocus
-        autoHighlight
-        className={classes.formControl}
-        options={views || []}
-        value={selectedView || null}
-        getOptionSelected={(a, b) => a.id === b.id}
-        onChange={(_, v: ProfileSummary | null) => {
-          setSelectedView(v || undefined)
-        }}
-        getOptionLabel={view => view.name || ""}
-        renderInput={params => (
-          <TextField {...params} label="view" size={size} variant={variant} />
-        )}
-      />
+      {onlyProperty ? null : (
+        <Autocomplete<ProfileSummary>
+          blurOnSelect
+          openOnFocus
+          autoHighlight
+          className={classes.formControl}
+          options={views || []}
+          value={selectedView || null}
+          getOptionSelected={(a, b) => a.id === b.id}
+          onChange={(_, v: ProfileSummary | null) => {
+            setSelectedView(v || undefined)
+          }}
+          getOptionLabel={view => view.name || ""}
+          renderInput={params => (
+            <TextField {...params} label="view" size={size} variant={variant} />
+          )}
+        />
+      )}
     </div>
   )
 }

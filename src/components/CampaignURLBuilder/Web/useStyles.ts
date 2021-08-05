@@ -26,9 +26,7 @@ const useStyles = makeStyles(theme => ({
     fontWeight: "bold",
   },
   share: {
-    maxWidth: "600px",
     padding: theme.spacing(3),
-    paddingTop: "unset",
     display: "flex",
     flexDirection: "column",
   },
