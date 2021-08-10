@@ -5,8 +5,8 @@ import makeStyles from "@material-ui/core/styles/makeStyles"
 
 const useStyles = makeStyles(theme => ({
   download: {
-    marginTop: theme.spacing(1),
-    marginBottom: theme.spacing(1),
+    marginTop: theme.spacing(-1),
+    marginBottom: theme.spacing(2),
     display: "flex",
     alignItems: "center",
   },

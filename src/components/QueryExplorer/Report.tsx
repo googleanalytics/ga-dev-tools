@@ -28,7 +28,7 @@ import {
 } from "@material-ui/core"
 import Spinner from "../../components/Spinner"
 import { CopyIconButton } from "../../components/CopyButton"
-import { QueryResponse, APIStatus } from "./hooks"
+import { QueryResponse, APIStatus } from "./useDataAPIRequest"
 import TSVDownload from "./TSVDownload"
 
 const useStyles = makeStyles(theme => ({
@@ -39,6 +39,13 @@ const useStyles = makeStyles(theme => ({
   },
   container: {
     maxHeight: 440,
+  },
+  breakAll: {
+    wordBreak: "break-all",
+  },
+  reportLink: {
+    marginTop: theme.spacing(1),
+    marginBottom: theme.spacing(1),
   },
 }))
 
@@ -83,9 +90,14 @@ const ReportTable: React.FC<{
 interface ReportProps {
   queryResponse: QueryResponse
   columns: gapi.client.analytics.Column[] | undefined
+  permalink: string | undefined
 }
 
-const Report: React.FC<ReportProps> = ({ queryResponse, columns }) => {
+const Report: React.FC<ReportProps> = ({
+  queryResponse,
+  columns,
+  permalink,
+}) => {
   const classes = useStyles()
   if (queryResponse === undefined) {
     return null
@@ -126,11 +138,15 @@ const Report: React.FC<ReportProps> = ({ queryResponse, columns }) => {
             <>Does not contain sampled data.</>
           )}
         </Typography>
+
+        <TSVDownload queryResponse={queryResponse.response} />
         <TextField
+          className={classes.breakAll}
           value={queryResponse.response.selfLink}
           variant="outlined"
           fullWidth
           multiline
+          label="API Request"
           InputProps={{
             endAdornment: (
               <CopyIconButton
@@ -140,8 +156,9 @@ const Report: React.FC<ReportProps> = ({ queryResponse, columns }) => {
             ),
           }}
         />
-
-        <TSVDownload queryResponse={queryResponse.response} />
+        <section className={classes.reportLink}>
+          <a href={permalink}>Link to this report</a>
+        </section>
       </section>
       <ReportTable queryResponse={queryResponse.response} columns={columns} />
     </Paper>

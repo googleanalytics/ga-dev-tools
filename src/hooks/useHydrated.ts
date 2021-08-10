@@ -1,6 +1,6 @@
 import { StorageKey } from "@/constants"
 import { Dispatch } from "@/types"
-import { useEffect, useMemo } from "react"
+import { useCallback, useEffect, useMemo } from "react"
 import {
   BooleanParam,
   QueryParamConfig,
@@ -13,6 +13,70 @@ import {
   usePersistentBoolean,
   usePersistentString,
 } from "."
+
+// Takes `key` which uses `useHydratedPersistantString` to get the "stringKey"
+// for a given value and `getValue` which should be a useCallback hook.
+// Hydrates a <T[]> value using "stringKey with getValue. The query param value
+// should be an array of strings that are joined with a ','
+//
+// This method exists in order to use queryParams to store a complex array of
+// objects that's dependent on an API call or is otherwise expensive to store
+// in the URL directly.
+export const useKeyedHydratedPersistantArray = <T>(
+  key: StorageKey,
+  paramName: string,
+  getValue: (keys: string[]) => T[] | undefined
+): [T[] | undefined, Dispatch<string[] | undefined>] => {
+  const [stringKey, setKeyLocal] = useHydratedPersistantString(key, paramName)
+
+  const t = useMemo(() => {
+    if (stringKey === undefined) {
+      return undefined
+    }
+    return getValue(stringKey.split(","))
+  }, [stringKey, getValue])
+
+  const setKeys: Dispatch<string[] | undefined> = useCallback(
+    keys => {
+      setKeyLocal(old => {
+        let nu: string[] | undefined = undefined
+        if (typeof keys === "function") {
+          nu = keys(old?.split(","))
+        } else {
+          nu = keys
+        }
+        return nu?.join(",")
+      })
+    },
+    [setKeyLocal]
+  )
+
+  return [t, setKeys]
+}
+
+// Takes `key` which uses `useHydratedPersistantString` to get the "stringKey"
+// for a given value and `getValue` which should be a useCallback hook.
+// Hydrates a <T> value using "stringKey with getValue.
+//
+// This method exists in order to use queryParams to store a complex object
+// that's dependent on an API call or is otherwise expensive to store in the
+// URL directly.
+export const useKeyedHydratedPersistantObject = <T>(
+  key: StorageKey,
+  paramName: string,
+  getValue: (stringKey: string) => T | undefined
+): [T | undefined, Dispatch<string | undefined>] => {
+  const [stringKey, setKey] = useHydratedPersistantString(key, paramName)
+
+  const t = useMemo(() => {
+    if (stringKey === undefined) {
+      return undefined
+    }
+    return getValue(stringKey)
+  }, [stringKey, getValue])
+
+  return [t, setKey]
+}
 
 export const useHydratedPersistantBoolean = (
   key: StorageKey,

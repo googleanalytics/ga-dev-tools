@@ -79,9 +79,10 @@ export enum GAVersion {
 export enum StorageKey {
   gaVersion = "/ga-version",
   uaColumns = "//ua-columns",
+  uaAccounts = "//ua-accounts",
   uaCustomMetrics = "//ua-custom-metrics",
   uaCustomDimensions = "//ua-custom-dimensions",
-  uaSegments = "//ua-segments",
+  uaSegments = "//ua-segments-2",
   viewSelectorData = "//view-selector/data",
 
   // GA4 Dimensions and metrics explorer
@@ -114,10 +115,17 @@ export enum StorageKey {
   ga4RequestComposerBasicShowAdvanced = "/ga4/request-composer/basic-report/show-advanced",
 
   // Query Explorer
+  queryExplorerAPV = "query-explorer/apv",
+  queryExplorerAccount = "query-explorer/account",
+  queryExplorerProperty = "query-explorer/property",
+  queryExplorerView = "query-explorer/view",
+  queryExplorerViewID = "query-explorer/view-id",
   queryExplorerDimensions = "query-explorer/dimensions",
+  queryExplorerSelectedDimensions = "query-explorer/selected-dimensions-2",
   queryExplorerMetrics = "query-explorer/metrics",
-  queryExplorerSegment = "query-explorer/segment",
-  queyExplorerSamplingLevel = "query-explorer/sampling-level",
+  queryExplorerSelectedMetrics = "query-explorer/selected-metrics-2",
+  queryExplorerSegment = "query-explorer/segment-2",
+  queryExplorerSamplingLevel = "query-explorer/sampling-level",
   queryExplorerShowSegmentDefinition = "query-explorer/show-segment-definition",
   queryExplorerStartDate = "query-explorer/start-date",
   queryExplorerEndDate = "query-explorer/end-date",
@@ -125,7 +133,7 @@ export enum StorageKey {
   queryExplorerMaxResults = "query-explorer/max-results",
   queryExplorerFilters = "query-explorer/filters",
   queryExplorerIncludeEmptyRows = "query-explorer/include-empty-rows",
-  queryExplorerSort = "query-explorer/sort",
+  queryExplorerSort = "query-explorer/sort-2",
 
   // Dimensions and metrics explorer
   dimensionsMetricsExplorerColumns = "dimensions-metrics-explorer/columns",

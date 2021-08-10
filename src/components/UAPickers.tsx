@@ -12,9 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-// TODO - also persist choices per ga:id, instead of per demo
-// TODO - Add a picker for Sort that uses Column
-
 import * as React from "react"
 
 import { Typography, TextField, makeStyles } from "@material-ui/core"
@@ -24,8 +21,11 @@ import Autocomplete, {
 import { usePersistantObject, usePersistentString } from "../hooks"
 import { StorageKey } from "../constants"
 import { useSelector } from "react-redux"
-import { Column as ColumnT } from "@/api"
-import { HasView } from "./ViewSelector"
+import { AccountSummary, Column as ColumnT, WebPropertySummary } from "@/api"
+import { ProfileSummary } from "./ViewSelector/useViewSelector"
+import { Dispatch } from "@/types"
+import useCached from "@/hooks/useCached"
+import moment from "moment"
 
 export type UADimensions = UAColumns | undefined
 export type UAMetrics = UAColumns | undefined
@@ -48,28 +48,30 @@ export enum CohortSize {
   Month = "MONTH",
 }
 
-type UASegments = gapi.client.analytics.Segment[] | undefined
 type UAColumn = gapi.client.analytics.Column
 type UAColumns = UAColumn[]
 type MetadataAPI = typeof gapi.client.analytics.metadata
-interface UAColumnsWithEtag {
-  columns: UAColumns
-  etag: string
-}
 type ManagementAPI = typeof gapi.client.analytics.management
-interface UASegmentsWithEtag {
-  segments: UASegments
-  etag: string
+
+type Arg = {
+  account: AccountSummary | undefined
+  property: WebPropertySummary | undefined
+  view: ProfileSummary | undefined
 }
 
 type UseUADimensionsAndMetrics = (
-  view: HasView | undefined
+  arg: Arg
 ) => {
   dimensions: UADimensions
   metrics: UAMetrics
   columns: UAColumns | undefined
 }
-export const useUADimensionsAndMetrics: UseUADimensionsAndMetrics = view => {
+// TODO add in useCached here.
+export const useUADimensionsAndMetrics: UseUADimensionsAndMetrics = ({
+  account,
+  property,
+  view,
+}) => {
   const gapi = useSelector((state: AppState) => state.gapi)
 
   const metadataAPI = React.useMemo<MetadataAPI | undefined>(() => {
@@ -80,100 +82,44 @@ export const useUADimensionsAndMetrics: UseUADimensionsAndMetrics = view => {
     return gapi?.client.analytics.management as any
   }, [gapi])
 
-  const [
-    withEtag,
-    setUAColumnsWithEtag,
-  ] = usePersistantObject<UAColumnsWithEtag>(StorageKey.uaColumns)
-
-  const [customMetrics, setCustomMetrics] = usePersistantObject<
-    gapi.client.analytics.CustomMetric[]
-  >(StorageKey.uaCustomMetrics)
-
-  const [customDimensions, setCustomDimensions] = usePersistantObject<
-    gapi.client.analytics.CustomDimension[]
-  >(StorageKey.uaCustomDimensions)
-
-  const [goals, setGoals] = React.useState<gapi.client.analytics.Goal[]>()
-
-  React.useEffect(() => {
-    if (managementAPI === undefined || view === undefined) {
-      return
+  const makeRequest = React.useCallback(async () => {
+    if (
+      metadataAPI === undefined ||
+      managementAPI === undefined ||
+      account === undefined ||
+      property === undefined ||
+      view === undefined
+    ) {
+      return Promise.resolve(undefined)
     }
-    Promise.all([
+    const columnsResponse = await metadataAPI.columns.list({ reportType: "ga" })
+    const columns = columnsResponse.result.items
+
+    const [
+      customDimensionsResponse,
+      customMetricsResponse,
+      goalsResponse,
+    ] = await Promise.all([
       managementAPI.customDimensions.list({
-        accountId: view.account.id!,
-        webPropertyId: view.property.id!,
+        accountId: account.id!,
+        webPropertyId: property.id!,
       }),
       managementAPI.customMetrics.list({
-        accountId: view.account.id!,
-        webPropertyId: view.property.id!,
+        accountId: account.id!,
+        webPropertyId: property.id!,
       }),
       managementAPI.goals.list({
-        accountId: view.account.id!,
-        webPropertyId: view.property.id!,
-        profileId: view.view.id!,
+        accountId: account.id!,
+        webPropertyId: property.id!,
+        profileId: view.id!,
       }),
-    ]).then(results => {
-      const dimensions = results[0].result.items
-      const metrics = results[1].result.items
-      const goals = results[2].result.items
-      setCustomMetrics(old => {
-        if (
-          old !== undefined &&
-          metrics !== undefined &&
-          old.length === metrics.length
-        ) {
-          if (old.every((a, idx) => a.id === metrics[idx].id)) {
-            return old
-          }
-        }
-        return metrics
-      })
-      setCustomDimensions(old => {
-        if (
-          old !== undefined &&
-          dimensions !== undefined &&
-          old.length === dimensions.length
-        ) {
-          if (old.every((a, idx) => a.id === dimensions[idx].id)) {
-            return old
-          }
-        }
-        return dimensions
-      })
-      setGoals(old => {
-        if (
-          old !== undefined &&
-          goals !== undefined &&
-          old.length === goals.length
-        ) {
-          if (old.every((a, idx) => a.id === goals[idx].id)) {
-            return old
-          }
-        }
-        return goals
-      })
-    })
-  }, [managementAPI, view, setCustomDimensions, setCustomMetrics, setGoals])
+    ])
 
-  React.useEffect(() => {
-    if (metadataAPI === undefined) {
-      return
-    }
-    metadataAPI.columns.list({ reportType: "ga" }).then(response => {
-      const etag = response.result.etag!
-      setUAColumnsWithEtag(old => {
-        const columns = response.result.items!
-        if (old?.etag === etag) {
-          return old
-        }
-        return { etag, columns }
-      })
-    })
-  }, [metadataAPI, setUAColumnsWithEtag])
+    const customDimensions = customDimensionsResponse.result.items
+    const customMetrics = customMetricsResponse.result.items
+    const goals = goalsResponse.result.items
 
-  const withEnumerated = React.useMemo(() => {
-    return withEtag?.columns.flatMap(column => {
+    return columns?.flatMap(column => {
       if (customDimensions !== undefined && column.id === "ga:dimensionXX") {
         return customDimensions.map(
           dimension =>
@@ -215,7 +161,7 @@ export const useUADimensionsAndMetrics: UseUADimensionsAndMetrics = view => {
         let min = 0
         let max = 0
         if (
-          view?.property.level === "PREMIUM" &&
+          property?.level === "PREMIUM" &&
           column.attributes!.premiumMinTemplateIndex !== undefined
         ) {
           min = parseInt(column.attributes!.premiumMinTemplateIndex, 10)
@@ -239,21 +185,26 @@ export const useUADimensionsAndMetrics: UseUADimensionsAndMetrics = view => {
       }
       return [column]
     })
-  }, [customDimensions, customMetrics, withEtag, goals, view?.property.level])
+  }, [metadataAPI, managementAPI, account, property, view])
+
+  const columns = useCached(
+    // Even though account is sometimes undefined it doesn't really matter
+    // since this hook will re-run once it is. makeRequest is smartEnough to
+    // not do anything when account property or view are undefined.
+    `//ua-dims-mets/${account?.id}-${property?.id}-${view?.id}` as StorageKey,
+    makeRequest,
+    moment.duration(5, "minutes")
+  )
 
   const dimensions = React.useMemo<UADimensions>(
-    () =>
-      withEnumerated?.filter(column => column.attributes?.type === "DIMENSION"),
-    [withEnumerated]
+    () => columns?.filter(column => column.attributes?.type === "DIMENSION"),
+    [columns]
   )
 
   const metrics = React.useMemo(
-    () =>
-      withEnumerated?.filter(column => column.attributes?.type === "METRIC"),
-    [withEnumerated]
+    () => columns?.filter(column => column.attributes?.type === "METRIC"),
+    [columns]
   )
-
-  const columns = React.useMemo(() => withEnumerated, [withEnumerated])
 
   return { dimensions, metrics, columns }
 }
@@ -294,12 +245,22 @@ export const DimensionPicker: React.FC<{
   setDimension: React.Dispatch<React.SetStateAction<UADimension>>
   required?: true | undefined
   helperText?: string
-  view: HasView | undefined
-}> = ({ helperText, setDimension, required, storageKey, view }) => {
+  account: AccountSummary | undefined
+  property: WebPropertySummary | undefined
+  view: ProfileSummary | undefined
+}> = ({
+  helperText,
+  setDimension,
+  required,
+  storageKey,
+  account,
+  property,
+  view,
+}) => {
   const [selected, setSelected] = usePersistantObject<NonNullable<UADimension>>(
     storageKey
   )
-  const { dimensions } = useUADimensionsAndMetrics(view)
+  const { dimensions } = useUADimensionsAndMetrics({ account, property, view })
   const dimensionOptions = React.useMemo<UADimensions>(() => dimensions, [
     dimensions,
   ])
@@ -336,35 +297,33 @@ export const DimensionPicker: React.FC<{
 }
 
 export const DimensionsPicker: React.FC<{
-  storageKey: StorageKey
-  setDimensions: React.Dispatch<React.SetStateAction<UADimensions>>
+  selectedDimensions: ColumnT[] | undefined
+  setDimensionIDs: Dispatch<string[] | undefined>
   required?: true | undefined
   helperText?: string
   label?: string
-  view: HasView | undefined
+  account: AccountSummary | undefined
+  property: WebPropertySummary | undefined
+  view: ProfileSummary | undefined
 }> = ({
   helperText,
-  setDimensions,
+  selectedDimensions,
+  setDimensionIDs,
   required,
-  storageKey,
+  account,
+  property,
   view,
   label = "dimensions",
 }) => {
-  const [selected, setSelected] = usePersistantObject<
-    NonNullable<UADimensions>
-  >(storageKey)
-  const { dimensions } = useUADimensionsAndMetrics(view)
+  const { dimensions } = useUADimensionsAndMetrics({ account, property, view })
   const dimensionOptions = React.useMemo<UADimensions>(
     () =>
       dimensions?.filter(
-        option => (selected || []).find(s => s.id === option.id) === undefined
+        option =>
+          (selectedDimensions || []).find(s => s.id === option.id) === undefined
       ),
-    [dimensions, selected]
+    [dimensions, selectedDimensions]
   )
-
-  React.useEffect(() => {
-    setDimensions(selected)
-  }, [selected, setDimensions])
 
   return (
     <Autocomplete<NonNullable<UADimension>, true, undefined, true>
@@ -375,8 +334,10 @@ export const DimensionsPicker: React.FC<{
       multiple
       options={dimensionOptions || []}
       getOptionLabel={dimension => dimension.id!}
-      value={selected || []}
-      onChange={(_event, value) => setSelected(value as UADimensions)}
+      value={selectedDimensions || []}
+      onChange={(_event, value) =>
+        setDimensionIDs((value as UADimensions)?.map(c => c.id!))
+      }
       renderOption={column => <Column column={column} />}
       renderInput={params => (
         <TextField
@@ -397,13 +358,24 @@ export const MetricPicker: React.FC<{
   setMetric: React.Dispatch<React.SetStateAction<UAMetric>>
   required?: true | undefined
   helperText?: string
-  view: HasView | undefined
+  account: AccountSummary | undefined
+  property: WebPropertySummary | undefined
+  view: ProfileSummary | undefined
   filter?: (metric: NonNullable<UAMetric>) => boolean
-}> = ({ helperText, setMetric, required, storageKey, filter, view }) => {
+}> = ({
+  helperText,
+  setMetric,
+  required,
+  storageKey,
+  filter,
+  account,
+  property,
+  view,
+}) => {
   const [selected, setSelected] = usePersistantObject<NonNullable<UAMetric>>(
     storageKey
   )
-  const { metrics } = useUADimensionsAndMetrics(view)
+  const { metrics } = useUADimensionsAndMetrics({ account, property, view })
   const metricOptions = React.useMemo<UAMetrics>(
     () => metrics?.filter(filter !== undefined ? filter : () => true),
     [metrics, filter]
@@ -441,35 +413,33 @@ export const MetricPicker: React.FC<{
 }
 
 export const MetricsPicker: React.FC<{
-  storageKey: StorageKey
-  setMetrics: React.Dispatch<React.SetStateAction<UAMetrics>>
+  selectedMetrics: ColumnT[] | undefined
+  setMetricIDs: Dispatch<string[] | undefined>
   required?: true | undefined
   helperText?: string
   label?: string
-  view: HasView | undefined
+  account: AccountSummary | undefined
+  property: WebPropertySummary | undefined
+  view: ProfileSummary | undefined
 }> = ({
   helperText,
-  setMetrics,
+  selectedMetrics,
+  setMetricIDs,
   required,
-  storageKey,
   label = "metrics",
+  account,
+  property,
   view,
 }) => {
-  const [selected, setSelected] = usePersistantObject<NonNullable<UAMetrics>>(
-    storageKey
-  )
-  const { metrics } = useUADimensionsAndMetrics(view)
+  const { metrics } = useUADimensionsAndMetrics({ account, property, view })
   const metricOptions = React.useMemo<UAMetrics>(
     () =>
       metrics?.filter(
-        option => (selected || []).find(s => s.id === option.id) === undefined
+        option =>
+          (selectedMetrics || []).find(s => s.id === option.id) === undefined
       ),
-    [metrics, selected]
+    [metrics, selectedMetrics]
   )
-
-  React.useEffect(() => {
-    setMetrics(selected)
-  }, [selected, setMetrics])
 
   return (
     <Autocomplete<NonNullable<UAMetric>, true, undefined, true>
@@ -480,8 +450,10 @@ export const MetricsPicker: React.FC<{
       multiple
       options={metricOptions || []}
       getOptionLabel={metric => metric.id!}
-      value={selected || []}
-      onChange={(_event, value) => setSelected(value as UAMetrics)}
+      value={selectedMetrics || []}
+      onChange={(_event, value) =>
+        setMetricIDs((value as UAMetrics)?.map(c => c.id!))
+      }
       renderOption={column => <Column column={column} />}
       renderInput={params => (
         <TextField
@@ -497,42 +469,27 @@ export const MetricsPicker: React.FC<{
   )
 }
 
-type UseUASegments = () => {
-  segments: UASegment[] | undefined
-}
-const useUASegments: UseUASegments = () => {
+export const useUASegments = (): UASegment[] | undefined => {
   const gapi = useSelector((state: AppState) => state.gapi)
-  const api = React.useMemo<ManagementAPI | undefined>(() => {
+  const managementAPI = React.useMemo<ManagementAPI | undefined>(() => {
     return gapi?.client.analytics.management as any
   }, [gapi])
-  const [
-    withEtag,
-    setUASegmentsWithEtag,
-  ] = usePersistantObject<UASegmentsWithEtag>(StorageKey.uaSegments)
-  React.useEffect(() => {
-    if (api === undefined) {
-      return
+
+  const requestSegments = React.useCallback(async () => {
+    if (managementAPI === undefined) {
+      return Promise.resolve(undefined)
     }
-    api.segments.list({}).then(response => {
-      // TODO - There's probably a cleaner way of handling this, but this works
-      // since the method doesn't actually return an etag.
-      const etag = JSON.stringify(response.result.items || [])
-      setUASegmentsWithEtag(old => {
-        const segments = response.result.items!
-        if (old?.etag === etag) {
-          // TODO I need to double check, but I think this prevents re-renders
-          return old
-        }
-        return { etag, segments }
-      })
-    })
-  }, [api, setUASegmentsWithEtag])
+    const response = await managementAPI.segments.list({})
+    return response.result.items
+  }, [managementAPI])
 
-  const segments = React.useMemo<UADimensions>(() => withEtag?.segments, [
-    withEtag,
-  ])
+  const segments = useCached(
+    StorageKey.uaSegments,
+    requestSegments,
+    moment.duration(5, "minutes")
+  )
 
-  return { segments }
+  return segments
 }
 
 const Segment: React.FC<{
@@ -570,30 +527,28 @@ const Segment: React.FC<{
 
 const filter = createFilterOptions<UASegment>()
 export const SegmentPicker: React.FC<{
-  storageKey: StorageKey
-  setSegment: React.Dispatch<React.SetStateAction<UASegment | undefined>>
+  segment: UASegment | undefined
+  setSegmentID: Dispatch<string | undefined>
   showSegmentDefinition: boolean
   required?: true | undefined
   helperText?: string
 }> = ({
   helperText,
-  setSegment,
+  segment,
+  setSegmentID,
   required,
-  storageKey,
   showSegmentDefinition,
 }) => {
-  const [selected, setSelected] = usePersistantObject<NonNullable<UASegment>>(
-    storageKey
-  )
-  const { segments } = useUASegments()
-  const value = React.useMemo(
-    () => (showSegmentDefinition ? { ...selected } : { ...selected }),
-    [selected, showSegmentDefinition]
-  )
+  const segments = useUASegments()
 
-  React.useEffect(() => {
-    setSegment(selected)
-  }, [selected, setSegment])
+  const getOptionLabel = React.useCallback(
+    (segment: UASegment) =>
+      (showSegmentDefinition
+        ? segment.definition ||
+          (segment.name && `${segment.name} has no segment definiton.`)
+        : segment.segmentId!) || "",
+    [showSegmentDefinition]
+  )
 
   return (
     <Autocomplete<UASegment, false, undefined, true>
@@ -602,13 +557,11 @@ export const SegmentPicker: React.FC<{
       autoHighlight
       freeSolo
       options={segments || []}
-      getOptionLabel={segment =>
-        (showSegmentDefinition
-          ? segment.definition ||
-            (segment.name && `${segment.name} has no segment definiton.`)
-          : segment.segmentId!) || ""
+      getOptionSelected={(a, b) =>
+        a.id === b.id || a.definition === b.definition
       }
-      value={value || null}
+      getOptionLabel={getOptionLabel}
+      value={segment || null}
       filterOptions={(options, params) => {
         const filtered = filter(options || [], params)
 
@@ -618,13 +571,14 @@ export const SegmentPicker: React.FC<{
             definition: params.inputValue,
             name: `Add dynamic segment`,
             segmentId: params.inputValue,
+            id: params.inputValue,
             type: "DYNAMIC",
           })
         }
         return filtered
       }}
       onChange={(_event, value) => {
-        setSelected(value === null ? undefined : (value as UASegment))
+        setSegmentID(value === null ? undefined : (value as UASegment).id)
       }}
       renderOption={column => (
         <Segment
@@ -688,19 +642,11 @@ export const V4SamplingLevelPicker: React.FC<{
 }
 
 export const V3SamplingLevelPicker: React.FC<{
-  storageKey: StorageKey
-  setSamplingLevel: React.Dispatch<
-    React.SetStateAction<V3SamplingLevel | undefined>
-  >
+  samplingLevel: V3SamplingLevel | undefined
+  setSamplingLevel: Dispatch<V3SamplingLevel | undefined>
   required?: true | undefined
   helperText?: string
-}> = ({ helperText, setSamplingLevel, required, storageKey }) => {
-  const [selected, setSelected] = usePersistentString(storageKey)
-
-  React.useEffect(() => {
-    setSamplingLevel(selected as V3SamplingLevel)
-  }, [selected, setSamplingLevel])
-
+}> = ({ helperText, samplingLevel, setSamplingLevel, required }) => {
   return (
     <Autocomplete<NonNullable<V3SamplingLevel>, false, undefined, true>
       fullWidth
@@ -709,9 +655,11 @@ export const V3SamplingLevelPicker: React.FC<{
       freeSolo
       options={Object.values(V3SamplingLevel)}
       getOptionLabel={segment => segment}
-      value={selected || null}
+      value={samplingLevel || null}
       onChange={(_event, value) =>
-        setSelected(value === null ? undefined : (value as V3SamplingLevel))
+        setSamplingLevel(
+          value === null ? undefined : (value as V3SamplingLevel)
+        )
       }
       renderOption={column => column}
       renderInput={params => (

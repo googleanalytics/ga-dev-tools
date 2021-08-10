@@ -21,6 +21,7 @@ import Autocomplete from "@material-ui/lab/Autocomplete"
 
 import { Column } from "@/api"
 import { SortableColumn } from "."
+import { Dispatch } from "@/types"
 
 const useStyles = makeStyles(_ => ({
   conceptOption: {
@@ -41,51 +42,41 @@ const useStyles = makeStyles(_ => ({
 
 interface SortProps {
   columns: Column[]
-  setSort: (sortableColumns: SortableColumn[] | undefined) => void
+  sort: SortableColumn[] | undefined
+  setSortIDs: Dispatch<string[] | undefined>
 }
 
-const Sort: React.FC<SortProps> = ({ columns, setSort }) => {
+const Sort: React.FC<SortProps> = ({ columns, sort, setSortIDs }) => {
   const classes = useStyles()
-  const [localSortColumns, setLocalSortColumns] = React.useState<
-    SortableColumn[]
-  >([])
   const sortableColumns = React.useMemo<SortableColumn[]>(
     () =>
       columns
-        // Only include columns that have not already been selected.
-        .filter(
-          column =>
-            localSortColumns.find(
-              localColumn => localColumn.id === column.id
-            ) === undefined
-        )
+        .filter(column => {
+          if (sort === undefined) {
+            return true
+          }
+          return sort.find(s => s.id === column.id) === undefined
+        })
         // Create and ascending and descending option for every column.
         .flatMap(column => [
           { ...column, sort: "ASCENDING" },
           { ...column, sort: "DESCENDING" },
         ]),
 
-    [columns, localSortColumns]
+    [columns, sort]
   )
 
   // When the available columns change, filter out any values that are no
   // longer valid.
   React.useEffect(() => {
-    const nuLocalSort = localSortColumns.filter(localSortColumn =>
-      columns.find(column => localSortColumn.id === column.id)
-    )
-    if (nuLocalSort.length !== localSortColumns.length) {
-      setLocalSortColumns(nuLocalSort)
+    if (sort === undefined) {
+      return
     }
-  }, [columns, localSortColumns])
-
-  React.useEffect(() => {
-    if (localSortColumns.length === 0) {
-      setSort(undefined)
-    } else {
-      setSort(localSortColumns)
+    const nuSort = sort.filter(column => columns.find(c => column.id === c.id))
+    if (sort.length !== nuSort.length) {
+      setSortIDs(nuSort.map(s => `${s.id}@@@${s.sort}`))
     }
-  }, [localSortColumns, setSort])
+  }, [columns, sort, setSortIDs])
 
   // TODO renderOption={...} should be extracted since this and
   // _ConceptMultiSelect use the same styling.
@@ -98,12 +89,16 @@ const Sort: React.FC<SortProps> = ({ columns, setSort }) => {
       debug
       noOptionsText="A Metric or Dimension is required in order to sort."
       options={sortableColumns}
+      filterOptions={a =>
+        a.filter(column => sort?.find(c => c.id === column.id) === undefined)
+      }
       getOptionLabel={option =>
         `${option.sort === "ASCENDING" ? "" : "-"}${option.id}`
       }
-      value={localSortColumns}
+      getOptionSelected={(a, b) => a.id === b.id && a.sort === b.sort}
+      value={sort}
       onChange={(_event, value, _state) =>
-        setLocalSortColumns(value as SortableColumn[])
+        setSortIDs((value as SortableColumn[]).map(s => `${s.id}@@@${s.sort}`))
       }
       renderOption={option => (
         <div className={classes.conceptOption}>
