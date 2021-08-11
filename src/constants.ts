@@ -85,6 +85,9 @@ export enum StorageKey {
   uaSegments = "//ua-segments-2",
   viewSelectorData = "//view-selector/data",
 
+  // Acount Explorer
+  accountExplorerAPV = "/account-explorer/apv",
+
   // GA4 Dimensions and metrics explorer
   ga4DimensionsMetricsSearch = "/ga4/dimensions-metrics-explorer/search",
   ga4DimensionsMetricsFields = "/ga4/dimensions-metrics-explorer/fields",
@@ -203,6 +206,8 @@ export enum StorageKey {
   campaignBuilderPlayContent = "campaign-builder/play/content",
   campaignBuilderPlayName = "campaign-builder/play/name",
 
+  // IOS Campaign URL Builder
+  campaignBuilderIOSAPV = "campaign-builder/ios/apv",
   campaignBuilderIOSAppID = "campaign-builder/ios/app-id",
   campaignBuilderIOSSource = "campaign-builder/ios/source",
   campaignBuilderIOSMedium = "campaign-builder/ios/medium",

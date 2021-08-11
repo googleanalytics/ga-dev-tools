@@ -5,7 +5,7 @@ import Typography from "@material-ui/core/Typography"
 import TextField from "@material-ui/core/TextField"
 import Paper from "@material-ui/core/Paper"
 
-import { GAVersion, Url } from "@/constants"
+import { GAVersion, StorageKey, Url } from "@/constants"
 import useFormStyles from "@/hooks/useFormStyles"
 import InlineCode from "@/components/InlineCode"
 import { CopyIconButton } from "@/components/CopyButton"
@@ -16,6 +16,7 @@ import ExternalLink from "@/components/ExternalLink"
 import { AdNetwork, supportedAdNetworks } from "../adNetworks"
 import ViewSelector from "@/components/ViewSelector"
 import StreamPicker from "@/components/ga4/StreamPicker"
+import useAccountPropertyView from "@/components/ViewSelector/useAccountPropertyView"
 
 interface IOSURLBuilderProps {
   version: GAVersion
@@ -24,6 +25,12 @@ interface IOSURLBuilderProps {
 const customCampaigns = (
   <ExternalLink href={Url.aboutCustomCampaigns}>Custom Campaigns</ExternalLink>
 )
+
+enum QueryParam {
+  Account = "a",
+  Property = "b",
+  View = "c",
+}
 
 const IOSURLBuilder: React.FC<IOSURLBuilderProps> = ({ version }) => {
   const classes = useStyles()
@@ -75,10 +82,16 @@ const IOSURLBuilder: React.FC<IOSURLBuilderProps> = ({ version }) => {
     return qrCodeURL
   }, [url])
 
+  const apv = useAccountPropertyView(
+    StorageKey.campaignBuilderIOSAPV,
+    QueryParam
+  )
+
   const propertySelector = React.useMemo(() => {
     if (version === GAVersion.UniversalAnalytics) {
       return (
         <ViewSelector
+          {...apv}
           onlyProperty
           variant="outlined"
           size="small"
@@ -104,6 +117,7 @@ const IOSURLBuilder: React.FC<IOSURLBuilderProps> = ({ version }) => {
     setGA4Property,
     ga4Account,
     ga4Property,
+    apv,
   ])
 
   const redirectURLTextField = React.useMemo(() => {

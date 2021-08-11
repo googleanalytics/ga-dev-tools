@@ -15,7 +15,9 @@
 import * as React from "react"
 
 import Layout from "@/components/Layout"
-import QueryExplorer from "@/components/ga4/QueryExplorer"
+import QueryExplorer, {
+  QueryExplorerType,
+} from "@/components/ga4/QueryExplorer"
 
 export default ({ location: { pathname } }) => {
   return (
@@ -25,7 +27,7 @@ export default ({ location: { pathname } }) => {
       pathname={pathname}
       description="The GA4 Query Explorer helps you to create valid requests for the Analytics Data API."
     >
-      <QueryExplorer />
+      <QueryExplorer type={QueryExplorerType.Basic} />
     </Layout>
   )
 }

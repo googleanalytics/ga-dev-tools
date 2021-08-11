@@ -17,16 +17,23 @@ const useAccounts = (): AccountSummary[] | undefined => {
     AccountSummary[] | undefined
   > => {
     if (managementAPI === undefined) {
-      return Promise.resolve(undefined)
+      throw new Error(
+        "invalid invariant - fetchAccounts should never be called with an undefined managementAPI"
+      )
     }
     const response = await managementAPI.accountSummaries.list({})
     return response.result.items
   }, [managementAPI])
 
+  const requestReady = useMemo(() => managementAPI !== undefined, [
+    managementAPI,
+  ])
+
   const accounts = useCached(
     StorageKey.uaAccounts,
     fetchAccounts,
-    moment.duration(5, "minutes")
+    moment.duration(5, "minutes"),
+    requestReady
   )
 
   return accounts

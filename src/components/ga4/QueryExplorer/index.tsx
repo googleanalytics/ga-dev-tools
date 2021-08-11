@@ -1,14 +1,14 @@
 import * as React from "react"
-import { useEffect } from "react"
 
 import Box from "@material-ui/core/Box"
 import Typography from "@material-ui/core/Typography"
 import Tabs from "@material-ui/core/Tabs"
 import Tab from "@material-ui/core/Tab"
 
-import { Url, StorageKey } from "@/constants"
+import { Url } from "@/constants"
 import ExternalLink from "@/components/ExternalLink"
 import BasicReport from "./BasicReport"
+import { navigate } from "gatsby"
 
 const dataAPI = (
   <ExternalLink href={Url.ga4DataAPI}>Analytics Data API</ExternalLink>
@@ -31,31 +31,30 @@ const TabPanel: React.FC<{ value: number; index: number }> = ({
   )
 }
 
-// TODO this should just be a usePersistantNumber hook.
-const useTab = (): [number, React.Dispatch<React.SetStateAction<number>>] => {
-  const [tab, setTab] = React.useState<number>(() => {
-    if (typeof window === "undefined") {
-      return 0
-    }
-    let asString = window.localStorage.getItem(StorageKey.ga4RequestComposerTab)
-    if (asString === null) {
-      return 0
-    }
-    return parseInt(asString, 10)
-  })
-
-  useEffect(() => {
-    if (typeof window === "undefined") {
-      return
-    }
-    window.localStorage.setItem(StorageKey.requestComposerTab, tab.toString())
-  }, [tab])
-
-  return [tab, setTab]
+export enum QueryExplorerType {
+  Basic = "basic",
 }
 
-const QueryExplorer = () => {
-  const [tab, setTab] = useTab()
+interface QueryExplorerProps {
+  type: QueryExplorerType
+}
+
+const QueryExplorer: React.FC<QueryExplorerProps> = ({ type }) => {
+  const tab = React.useMemo(() => {
+    switch (type) {
+      case QueryExplorerType.Basic:
+        return 0
+    }
+  }, [type])
+
+  const pathForIdx = React.useCallback((idx: number) => {
+    switch (idx) {
+      case 0:
+        return `/`
+      default:
+        throw new Error("No matching idx")
+    }
+  }, [])
 
   return (
     <>
@@ -68,7 +67,8 @@ const QueryExplorer = () => {
         <Tabs
           value={tab}
           onChange={(_e, newValue) => {
-            setTab(newValue as any)
+            const path = `${pathForIdx(newValue)}`
+            navigate(path)
           }}
         >
           <Tab label="Basic Report" />

@@ -19,9 +19,13 @@ import Typography from "@material-ui/core/Typography"
 import Paper from "@material-ui/core/Paper"
 import { useDebounce } from "use-debounce"
 
-import ViewSelector, { HasView } from "@/components/ViewSelector"
+import ViewSelector from "@/components/ViewSelector"
 import ViewsTable from "./ViewTable"
-import useAllViews, { Views } from "./useAllViews"
+import useFlattenedViews from "./useFlattenedViews"
+import useAccountPropertyView, {
+  UAAccountPropertyView,
+} from "../ViewSelector/useAccountPropertyView"
+import { StorageKey } from "@/constants"
 
 const useStyles = makeStyles(theme => ({
   viewSelector: {
@@ -61,37 +65,44 @@ const useStyles = makeStyles(theme => ({
 
 const containsQuery = (
   searchQuery: string,
-  populatedView: HasView
+  apv: UAAccountPropertyView
 ): boolean => {
   const pattern = new RegExp(`(${searchQuery})`, "ig")
   const hasMatch =
-    populatedView.account?.name?.match(pattern) ||
-    populatedView.account?.id?.match(pattern) ||
-    populatedView.property?.name?.match(pattern) ||
-    populatedView.property?.id?.match(pattern) ||
-    populatedView.view?.name?.match(pattern) ||
-    populatedView.view?.id?.match(pattern)
+    apv.account?.name?.match(pattern) ||
+    apv.account?.id?.match(pattern) ||
+    apv.property?.name?.match(pattern) ||
+    apv.property?.id?.match(pattern) ||
+    apv.view?.name?.match(pattern) ||
+    apv.view?.id?.match(pattern)
   return !!hasMatch
 }
 
 const viewsForSearch = (
   searchQuery: string,
-  populatedViews: HasView[]
-): HasView[] => {
-  return populatedViews.filter(populated =>
-    containsQuery(searchQuery, populated)
-  )
+  views: UAAccountPropertyView[]
+) => {
+  return views.filter(populated => containsQuery(searchQuery, populated))
 }
 
-const populatedView = (view: Partial<HasView>): HasView | undefined => {
+const populatedView = (
+  apv: UAAccountPropertyView | undefined
+): UAAccountPropertyView | undefined => {
   if (
-    view.account !== undefined &&
-    view.property !== undefined &&
-    view.view !== undefined
+    apv !== undefined &&
+    apv.account !== undefined &&
+    apv.property !== undefined &&
+    apv.view !== undefined
   ) {
-    return view as HasView
+    return apv
   }
   return undefined
+}
+
+enum QueryParam {
+  Account = "a",
+  Property = "b",
+  View = "c",
 }
 
 const AccountExplorer = () => {
@@ -99,25 +110,28 @@ const AccountExplorer = () => {
 
   const [searchQuery, setSearchQuery] = React.useState("")
   const [debouncedQuery] = useDebounce(searchQuery, 100, { trailing: true })
-  const [selectedView, setSelectedView] = React.useState<Partial<HasView>>({})
-  const allViews = useAllViews()
+  const selectedAPV = useAccountPropertyView(
+    StorageKey.accountExplorerAPV,
+    QueryParam
+  )
+  const allViews = useFlattenedViews()
 
-  const filteredViews = React.useMemo<Views>(() => {
-    if (populatedView(selectedView) !== undefined) {
-      return [populatedView(selectedView)!]
+  const filteredViews = React.useMemo(() => {
+    if (populatedView(selectedAPV) !== undefined) {
+      return [populatedView(selectedAPV)!]
     }
     // If allViews is defined
-    if (Array.isArray(allViews)) {
+    if (allViews !== undefined) {
       // If account or property is selected filter out views to only views with that property and view.
       const filtered = allViews
         .filter(view =>
-          selectedView.account !== undefined
-            ? selectedView.account.id === view.account.id
+          selectedAPV?.account !== undefined
+            ? selectedAPV.account.id === view.account!.id
             : true
         )
         .filter(view =>
-          selectedView.property !== undefined
-            ? selectedView.property.id === view.property.id
+          selectedAPV?.property !== undefined
+            ? selectedAPV.property.id === view.property!.id
             : true
         )
       // If there is a search, it should take priority
@@ -128,14 +142,7 @@ const AccountExplorer = () => {
     } else {
       return allViews
     }
-  }, [allViews, selectedView, debouncedQuery])
-
-  const onViewChanged = React.useCallback(
-    viewData => {
-      setSelectedView(viewData)
-    },
-    [setSelectedView]
-  )
+  }, [allViews, selectedAPV, debouncedQuery])
 
   return (
     <>
@@ -164,10 +171,10 @@ const AccountExplorer = () => {
               &hellip;or browse through all your accounts
             </Typography>
             <ViewSelector
+              {...selectedAPV}
               variant="outlined"
               size="small"
               className={classes.viewSelector}
-              onViewChanged={onViewChanged}
             />
             <ViewsTable
               className={classes.table}

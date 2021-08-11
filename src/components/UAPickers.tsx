@@ -18,7 +18,7 @@ import { Typography, TextField, makeStyles } from "@material-ui/core"
 import Autocomplete, {
   createFilterOptions,
 } from "@material-ui/lab/Autocomplete"
-import { usePersistantObject, usePersistentString } from "../hooks"
+import { usePersistentString } from "../hooks"
 import { StorageKey } from "../constants"
 import { useSelector } from "react-redux"
 import { AccountSummary, Column as ColumnT, WebPropertySummary } from "@/api"
@@ -242,8 +242,8 @@ const Column: React.FC<{ column: UAColumn }> = ({ column }) => {
 }
 
 export const DimensionPicker: React.FC<{
-  storageKey: StorageKey
-  setDimension: React.Dispatch<React.SetStateAction<UAColumn[] | undefined>>
+  selectedDimension: UAColumn | undefined
+  setDimensionID: Dispatch<string | undefined>
   required?: true | undefined
   helperText?: string
   account: AccountSummary | undefined
@@ -251,37 +251,30 @@ export const DimensionPicker: React.FC<{
   view: ProfileSummary | undefined
 }> = ({
   helperText,
-  setDimension,
+  selectedDimension,
+  setDimensionID,
   required,
-  storageKey,
   account,
   property,
   view,
 }) => {
-  const [selected, setSelected] = usePersistantObject<
-    NonNullable<UAColumn | undefined>
-  >(storageKey)
   const { dimensions } = useUADimensionsAndMetrics({ account, property, view })
   const dimensionOptions = React.useMemo<UAColumn[] | undefined>(
     () => dimensions,
     [dimensions]
   )
 
-  React.useEffect(() => {
-    setDimension(selected)
-  }, [selected, setDimension])
-
   return (
-    <Autocomplete<NonNullable<UADimension>, false, undefined, true>
+    <Autocomplete<UAColumn, false, undefined, true>
       fullWidth
       autoComplete
       autoHighlight
       freeSolo
       options={dimensionOptions || []}
       getOptionLabel={dimension => dimension.id!}
-      value={selected || null}
+      value={selectedDimension || null}
       onChange={(_event, value) =>
-        setSelected(value === null ? undefined : (value as UADimension))
+        setDimensionID(value === null ? undefined : (value as UAColumn).id)
       }
       renderOption={column => <Column column={column} />}
       renderInput={params => (
