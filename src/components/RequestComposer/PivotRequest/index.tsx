@@ -19,7 +19,6 @@ import makeStyles from "@material-ui/core/styles/makeStyles"
 
 import { usePersistentBoolean } from "@/hooks"
 import { StorageKey } from "@/constants"
-import { HasView } from "@/components/ViewSelector"
 import GADate from "@/components/GADate"
 import LinkedTextField from "@/components/LinkedTextField"
 import LabeledCheckbox from "@/components/LabeledCheckbox"
@@ -28,14 +27,16 @@ import {
   DimensionsPicker,
   SegmentPicker,
   V4SamplingLevelPicker,
+  useUADimensionsAndMetrics,
 } from "@/components/UAPickers"
 import { ReportsRequest } from "../RequestComposer"
 import { linkFor, titleFor } from "../HistogramRequest"
 import usePivotRequestParameters from "./usePivotRequestParameters"
 import usePivotRequest from "./usePivotRequest"
+import { UAAccountPropertyView } from "@/components/ViewSelector/useAccountPropertyView"
 
 interface PivotRequestProps {
-  view: HasView | undefined
+  apv: UAAccountPropertyView
   controlWidth: string
   setRequestObject: (request: ReportsRequest | undefined) => void
 }
@@ -48,7 +49,7 @@ const useStyles = makeStyles(theme => ({
 }))
 
 const PivotRequest: React.FC<PivotRequestProps> = ({
-  view,
+  apv,
   controlWidth,
   setRequestObject,
   children,
@@ -59,6 +60,8 @@ const PivotRequest: React.FC<PivotRequestProps> = ({
     setShowSegmentDefinition,
   ] = usePersistentBoolean(StorageKey.pivotRequestShowSegmentDefinition, false)
 
+  const { columns } = useUADimensionsAndMetrics(apv)
+
   const {
     viewId,
     setViewId,
@@ -67,17 +70,17 @@ const PivotRequest: React.FC<PivotRequestProps> = ({
     endDate,
     setEndDate,
     selectedMetrics,
-    setSelectedMetrics,
+    setSelectedMetricIDs,
     selectedDimensions,
-    setSelectedDimensions,
+    setSelectedDimensionIDs,
     pivotMetrics,
-    setPivotMetrics,
+    setPivotMetricIDs,
     pivotDimensions,
-    setPivotDimensions,
+    setPivotDimensionIDs,
     startGroup,
     setStartGroup,
     selectedSegment,
-    setSelectedSegment,
+    setSelectedSegmentID,
     samplingLevel,
     setSamplingLevel,
     maxGroupCount,
@@ -88,7 +91,7 @@ const PivotRequest: React.FC<PivotRequestProps> = ({
     setPageToken,
     pageSize,
     setPageSize,
-  } = usePivotRequestParameters(view)
+  } = usePivotRequestParameters(apv, columns)
   const requestObject = usePivotRequest({
     viewId,
     startDate,
@@ -141,32 +144,32 @@ const PivotRequest: React.FC<PivotRequestProps> = ({
           helperText="The end of the date range for the data request. Format: YYYY-MM-DD."
         />
         <MetricsPicker
-          view={view}
+          {...apv}
           required
-          setMetrics={setSelectedMetrics}
-          storageKey={StorageKey.pivotRequestMetrics}
+          selectedMetrics={selectedMetrics}
+          setMetricIDs={setSelectedMetricIDs}
           helperText="The metrics to include in the request."
         />
         <DimensionsPicker
-          view={view}
+          {...apv}
           required
-          setDimensions={setSelectedDimensions}
-          storageKey={StorageKey.pivotRequestDimensions}
+          selectedDimensions={selectedDimensions}
+          setDimensionIDs={setSelectedDimensionIDs}
           helperText="The dimensions to include in the request."
         />
         <MetricsPicker
-          view={view}
+          {...apv}
           required
-          setMetrics={setPivotMetrics}
-          storageKey={StorageKey.pivotRequestPivotMetrics}
+          selectedMetrics={pivotMetrics}
+          setMetricIDs={setPivotMetricIDs}
           label="pivot metrics"
           helperText="The pivot metrics to include in the request."
         />
         <DimensionsPicker
-          view={view}
+          {...apv}
           required
-          setDimensions={setPivotDimensions}
-          storageKey={StorageKey.pivotRequestPivotDimensions}
+          selectedDimensions={pivotDimensions}
+          setDimensionIDs={setPivotDimensionIDs}
           label="pivot dimensions"
           helperText="The pivot dimensions to include in the request."
         />
@@ -187,8 +190,8 @@ const PivotRequest: React.FC<PivotRequestProps> = ({
           helperText="The maximum number of groups to return."
         />
         <SegmentPicker
-          setSegment={setSelectedSegment}
-          storageKey={StorageKey.pivotRequestSegment}
+          segment={selectedSegment}
+          setSegmentID={setSelectedSegmentID}
           showSegmentDefinition={showSegmentDefinition}
         />
         <LabeledCheckbox

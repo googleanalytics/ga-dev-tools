@@ -6,7 +6,8 @@ import { usePersistantObject } from "."
 const useCached = <T>(
   cacheKey: StorageKey,
   makeRequest: () => Promise<T>,
-  maxAge: moment.Duration
+  maxAge: moment.Duration,
+  requestReady: boolean
 ): T | undefined => {
   const [cached, setCached] = usePersistantObject<{
     "@@_lastFetched": number
@@ -14,6 +15,9 @@ const useCached = <T>(
   }>(cacheKey)
 
   useEffect(() => {
+    if (requestReady === false) {
+      return
+    }
     if (cached === undefined) {
       makeRequest().then(t => {
         const now = moment.now()
@@ -30,7 +34,7 @@ const useCached = <T>(
         return
       }
     }
-  }, [cached, setCached, makeRequest, maxAge])
+  }, [requestReady, cached, setCached, makeRequest, maxAge])
 
   return useMemo(() => cached?.value, [cached])
 }

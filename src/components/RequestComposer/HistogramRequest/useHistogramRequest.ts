@@ -1,16 +1,11 @@
 import { useMemo } from "react"
 
-import {
-  UAMetrics,
-  UADimensions,
-  UASegment,
-  V4SamplingLevel,
-} from "@/components/UAPickers"
+import { UAColumn, UASegment, V4SamplingLevel } from "@/components/UAPickers"
 import { ReportsRequest, ReportRequest } from "../RequestComposer"
 
 interface Parameters {
-  selectedMetrics: UAMetrics
-  selectedDimensions: UADimensions
+  selectedMetrics: UAColumn[] | undefined
+  selectedDimensions: UAColumn[] | undefined
   buckets: string | undefined
   viewId: string
   startDate: string | undefined

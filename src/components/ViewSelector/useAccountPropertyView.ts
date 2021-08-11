@@ -1,5 +1,6 @@
 import { StorageKey } from "@/constants"
 import { useKeyedHydratedPersistantObject } from "@/hooks/useHydrated"
+import { Dispatch } from "@/types"
 import { useCallback } from "react"
 import useAccounts from "./useAccounts"
 import {
@@ -8,10 +9,22 @@ import {
   WebPropertySummary,
 } from "./useViewSelector"
 
+export interface UAAccountPropertyView {
+  account: AccountSummary | undefined
+  property: WebPropertySummary | undefined
+  view: ProfileSummary | undefined
+}
+
+interface UAAccountPropertyViewSetters {
+  setAccountID: Dispatch<string | undefined>
+  setPropertyID: Dispatch<string | undefined>
+  setViewID: Dispatch<string | undefined>
+}
+
 const useAccountPropertyView = (
   prefix: StorageKey,
   queryParamKeys: { Account: string; Property: string; View: string }
-) => {
+): UAAccountPropertyView & UAAccountPropertyViewSetters => {
   const accounts = useAccounts()
 
   const getAccountByID = useCallback(

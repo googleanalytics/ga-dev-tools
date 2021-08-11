@@ -26,11 +26,9 @@ import { ProfileSummary } from "./ViewSelector/useViewSelector"
 import { Dispatch } from "@/types"
 import useCached from "@/hooks/useCached"
 import moment from "moment"
+import { UAAccountPropertyView } from "./ViewSelector/useAccountPropertyView"
+import { useMemo } from "react"
 
-export type UADimensions = UAColumns | undefined
-export type UAMetrics = UAColumns | undefined
-export type UADimension = UAColumn | undefined
-export type UAMetric = UAColumn | undefined
 export type UASegment = gapi.client.analytics.Segment
 export enum V4SamplingLevel {
   Default = "DEFAULT",
@@ -48,30 +46,19 @@ export enum CohortSize {
   Month = "MONTH",
 }
 
-type UAColumn = gapi.client.analytics.Column
-type UAColumns = UAColumn[]
+export type UAColumn = gapi.client.analytics.Column
 type MetadataAPI = typeof gapi.client.analytics.metadata
 type ManagementAPI = typeof gapi.client.analytics.management
 
-type Arg = {
-  account: AccountSummary | undefined
-  property: WebPropertySummary | undefined
-  view: ProfileSummary | undefined
-}
-
-type UseUADimensionsAndMetrics = (
-  arg: Arg
-) => {
-  dimensions: UADimensions
-  metrics: UAMetrics
-  columns: UAColumns | undefined
-}
-// TODO add in useCached here.
-export const useUADimensionsAndMetrics: UseUADimensionsAndMetrics = ({
+export const useUADimensionsAndMetrics = ({
   account,
   property,
   view,
-}) => {
+}: UAAccountPropertyView): {
+  dimensions: UAColumn[] | undefined
+  metrics: UAColumn[] | undefined
+  columns: UAColumn[] | undefined
+} => {
   const gapi = useSelector((state: AppState) => state.gapi)
 
   const metadataAPI = React.useMemo<MetadataAPI | undefined>(() => {
@@ -81,6 +68,19 @@ export const useUADimensionsAndMetrics: UseUADimensionsAndMetrics = ({
   const managementAPI = React.useMemo<ManagementAPI | undefined>(() => {
     return gapi?.client.analytics.management as any
   }, [gapi])
+
+  const requestReady = React.useMemo(() => {
+    if (
+      metadataAPI === undefined ||
+      managementAPI === undefined ||
+      account === undefined ||
+      property === undefined ||
+      view === undefined
+    ) {
+      return false
+    }
+    return true
+  }, [metadataAPI, managementAPI, account, property, view])
 
   const makeRequest = React.useCallback(async () => {
     if (
@@ -193,10 +193,11 @@ export const useUADimensionsAndMetrics: UseUADimensionsAndMetrics = ({
     // not do anything when account property or view are undefined.
     `//ua-dims-mets/${account?.id}-${property?.id}-${view?.id}` as StorageKey,
     makeRequest,
-    moment.duration(5, "minutes")
+    moment.duration(5, "minutes"),
+    requestReady
   )
 
-  const dimensions = React.useMemo<UADimensions>(
+  const dimensions = React.useMemo<UAColumn[] | undefined>(
     () => columns?.filter(column => column.attributes?.type === "DIMENSION"),
     [columns]
   )
@@ -242,7 +243,7 @@ const Column: React.FC<{ column: UAColumn }> = ({ column }) => {
 
 export const DimensionPicker: React.FC<{
   storageKey: StorageKey
-  setDimension: React.Dispatch<React.SetStateAction<UADimension>>
+  setDimension: React.Dispatch<React.SetStateAction<UAColumn[] | undefined>>
   required?: true | undefined
   helperText?: string
   account: AccountSummary | undefined
@@ -257,13 +258,14 @@ export const DimensionPicker: React.FC<{
   property,
   view,
 }) => {
-  const [selected, setSelected] = usePersistantObject<NonNullable<UADimension>>(
-    storageKey
-  )
+  const [selected, setSelected] = usePersistantObject<
+    NonNullable<UAColumn | undefined>
+  >(storageKey)
   const { dimensions } = useUADimensionsAndMetrics({ account, property, view })
-  const dimensionOptions = React.useMemo<UADimensions>(() => dimensions, [
-    dimensions,
-  ])
+  const dimensionOptions = React.useMemo<UAColumn[] | undefined>(
+    () => dimensions,
+    [dimensions]
+  )
 
   React.useEffect(() => {
     setDimension(selected)
@@ -297,7 +299,7 @@ export const DimensionPicker: React.FC<{
 }
 
 export const DimensionsPicker: React.FC<{
-  selectedDimensions: ColumnT[] | undefined
+  selectedDimensions: UAColumn[] | undefined
   setDimensionIDs: Dispatch<string[] | undefined>
   required?: true | undefined
   helperText?: string
@@ -316,7 +318,7 @@ export const DimensionsPicker: React.FC<{
   label = "dimensions",
 }) => {
   const { dimensions } = useUADimensionsAndMetrics({ account, property, view })
-  const dimensionOptions = React.useMemo<UADimensions>(
+  const dimensionOptions = React.useMemo<UAColumn[] | undefined>(
     () =>
       dimensions?.filter(
         option =>
@@ -326,7 +328,7 @@ export const DimensionsPicker: React.FC<{
   )
 
   return (
-    <Autocomplete<NonNullable<UADimension>, true, undefined, true>
+    <Autocomplete<UAColumn, true, undefined, true>
       fullWidth
       autoComplete
       autoHighlight
@@ -336,7 +338,7 @@ export const DimensionsPicker: React.FC<{
       getOptionLabel={dimension => dimension.id!}
       value={selectedDimensions || []}
       onChange={(_event, value) =>
-        setDimensionIDs((value as UADimensions)?.map(c => c.id!))
+        setDimensionIDs((value as UAColumn[])?.map(c => c.id!))
       }
       renderOption={column => <Column column={column} />}
       renderInput={params => (
@@ -354,48 +356,41 @@ export const DimensionsPicker: React.FC<{
 }
 
 export const MetricPicker: React.FC<{
-  storageKey: StorageKey
-  setMetric: React.Dispatch<React.SetStateAction<UAMetric>>
+  selectedMetric: UAColumn | undefined
+  setMetricID: Dispatch<string | undefined>
   required?: true | undefined
   helperText?: string
   account: AccountSummary | undefined
   property: WebPropertySummary | undefined
   view: ProfileSummary | undefined
-  filter?: (metric: NonNullable<UAMetric>) => boolean
+  filter?: (metric: UAColumn) => boolean
 }> = ({
   helperText,
-  setMetric,
+  selectedMetric,
+  setMetricID,
   required,
-  storageKey,
   filter,
   account,
   property,
   view,
 }) => {
-  const [selected, setSelected] = usePersistantObject<NonNullable<UAMetric>>(
-    storageKey
-  )
   const { metrics } = useUADimensionsAndMetrics({ account, property, view })
-  const metricOptions = React.useMemo<UAMetrics>(
+  const metricOptions = React.useMemo<UAColumn[] | undefined>(
     () => metrics?.filter(filter !== undefined ? filter : () => true),
     [metrics, filter]
   )
 
-  React.useEffect(() => {
-    setMetric(selected)
-  }, [selected, setMetric])
-
   return (
-    <Autocomplete<NonNullable<UAMetric>, false, undefined, true>
+    <Autocomplete<UAColumn, false, undefined, true>
       fullWidth
       autoComplete
       autoHighlight
       freeSolo
       options={metricOptions || []}
       getOptionLabel={metric => metric.id!}
-      value={selected || null}
+      value={selectedMetric || null}
       onChange={(_event, value) =>
-        setSelected(value === null ? undefined : (value as UAMetric))
+        setMetricID(value === null ? undefined : (value as UAColumn).id)
       }
       renderOption={column => <Column column={column} />}
       renderInput={params => (
@@ -432,7 +427,7 @@ export const MetricsPicker: React.FC<{
   view,
 }) => {
   const { metrics } = useUADimensionsAndMetrics({ account, property, view })
-  const metricOptions = React.useMemo<UAMetrics>(
+  const metricOptions = React.useMemo<UAColumn[] | undefined>(
     () =>
       metrics?.filter(
         option =>
@@ -442,7 +437,7 @@ export const MetricsPicker: React.FC<{
   )
 
   return (
-    <Autocomplete<NonNullable<UAMetric>, true, undefined, true>
+    <Autocomplete<UAColumn, true, undefined, true>
       fullWidth
       autoComplete
       autoHighlight
@@ -452,7 +447,7 @@ export const MetricsPicker: React.FC<{
       getOptionLabel={metric => metric.id!}
       value={selectedMetrics || []}
       onChange={(_event, value) =>
-        setMetricIDs((value as UAMetrics)?.map(c => c.id!))
+        setMetricIDs((value as UAColumn[])?.map(c => c.id!))
       }
       renderOption={column => <Column column={column} />}
       renderInput={params => (
@@ -483,10 +478,15 @@ export const useUASegments = (): UASegment[] | undefined => {
     return response.result.items
   }, [managementAPI])
 
+  const requestReady = useMemo(() => {
+    return managementAPI !== undefined
+  }, [managementAPI])
+
   const segments = useCached(
     StorageKey.uaSegments,
     requestSegments,
-    moment.duration(5, "minutes")
+    moment.duration(5, "minutes"),
+    requestReady
   )
 
   return segments

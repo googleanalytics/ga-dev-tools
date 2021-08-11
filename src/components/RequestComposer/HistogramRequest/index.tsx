@@ -19,7 +19,6 @@ import makeStyles from "@material-ui/core/styles/makeStyles"
 
 import { usePersistentBoolean } from "@/hooks"
 import { StorageKey } from "@/constants"
-import { HasView } from "@/components/ViewSelector"
 import LinkedTextField from "@/components/LinkedTextField"
 import GADate from "@/components/GADate"
 import {
@@ -27,11 +26,13 @@ import {
   DimensionsPicker,
   SegmentPicker,
   V4SamplingLevelPicker,
+  useUADimensionsAndMetrics,
 } from "@/components/UAPickers"
 import useHistogramRequest from "./useHistogramRequest"
 import useHistogramRequestParameters from "./useHistogramRequestParameters"
 import { ReportsRequest } from "../RequestComposer"
 import LabeledCheckbox from "@/components/LabeledCheckbox"
+import { UAAccountPropertyView } from "@/components/ViewSelector/useAccountPropertyView"
 
 export const linkFor = (hash: string) =>
   `https://developers.google.com/analytics/devguides/reporting/core/v4/rest/v4/reports/batchGet#${hash}`
@@ -39,7 +40,7 @@ export const linkFor = (hash: string) =>
 export const titleFor = (id: string) => `See ${id} on devsite.`
 
 interface HistogramRequestProps {
-  view: HasView | undefined
+  apv: UAAccountPropertyView
   controlWidth: string
   setRequestObject: (request: ReportsRequest | undefined) => void
 }
@@ -52,7 +53,7 @@ const useStyles = makeStyles(theme => ({
 }))
 
 const HistogramRequest: React.FC<HistogramRequestProps> = ({
-  view,
+  apv,
   controlWidth,
   setRequestObject,
   children,
@@ -65,6 +66,7 @@ const HistogramRequest: React.FC<HistogramRequestProps> = ({
     StorageKey.histogramRequestShowSegmentDefinition,
     false
   )
+  const { columns, dimensions, metrics } = useUADimensionsAndMetrics(apv)
   const {
     viewId,
     setViewId,
@@ -73,18 +75,18 @@ const HistogramRequest: React.FC<HistogramRequestProps> = ({
     endDate,
     setEndDate,
     selectedDimensions,
-    setSelectedDimensions,
+    setSelectedDimensionIDs,
     selectedMetrics,
-    setSelectedMetrics,
+    setSelectedMetricIDs,
     buckets,
     setBuckets,
     filtersExpression,
     setFiltersExpression,
     selectedSegment,
-    setSelectedSegment,
+    setSelectedSegmentID,
     samplingLevel,
     setSamplingLevel,
-  } = useHistogramRequestParameters(view)
+  } = useHistogramRequestParameters(apv, columns)
   const requestObject = useHistogramRequest({
     viewId,
     startDate,
@@ -132,15 +134,15 @@ const HistogramRequest: React.FC<HistogramRequestProps> = ({
           helperText="The end of the date range for the data request. Format: YYYY-MM-DD."
         />
         <MetricsPicker
-          view={view}
-          setMetrics={setSelectedMetrics}
-          storageKey={StorageKey.histogramRequestMetrics}
+          {...apv}
+          selectedMetrics={selectedMetrics}
+          setMetricIDs={setSelectedMetricIDs}
           helperText="The metrics to include in the request."
         />
         <DimensionsPicker
-          view={view}
-          setDimensions={setSelectedDimensions}
-          storageKey={StorageKey.histogramRequestDimensions}
+          {...apv}
+          selectedDimensions={selectedDimensions}
+          setDimensionIDs={setSelectedDimensionIDs}
           helperText="The dimensions to include in the request."
         />
         <LinkedTextField
@@ -161,8 +163,8 @@ const HistogramRequest: React.FC<HistogramRequestProps> = ({
           helperText="Filters that restrict the data returned for the histogram request."
         />
         <SegmentPicker
-          setSegment={setSelectedSegment}
-          storageKey={StorageKey.histogramRequestSegment}
+          segment={selectedSegment}
+          setSegmentID={setSelectedSegmentID}
           showSegmentDefinition={showSegmentDefinition}
         />
         <LabeledCheckbox

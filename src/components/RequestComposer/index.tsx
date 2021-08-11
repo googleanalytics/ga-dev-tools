@@ -26,7 +26,18 @@ const useStyles = makeStyles(theme => ({
   },
 }))
 
-const RequestComposer = () => {
+export enum RequestComposerType {
+  Histogram = "histogram",
+  Pivot = "pivot",
+  Cohort = "cohort",
+  MetricExpression = "metric-expression",
+}
+
+interface RequestComposerProps {
+  type: RequestComposerType
+}
+
+const RequestComposer: React.FC<RequestComposerProps> = ({ type }) => {
   const classes = useStyles()
   return (
     <>
@@ -88,7 +99,7 @@ const RequestComposer = () => {
         <li>Click Make Request.</li>
       </ol>
 
-      <Tool />
+      <Tool type={type} />
     </>
   )
 }

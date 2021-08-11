@@ -13,7 +13,7 @@
 // limitations under the License.
 
 import * as React from "react"
-import { useEffect, useState } from "react"
+import { useState } from "react"
 
 import Typography from "@material-ui/core/Typography"
 import Tabs from "@material-ui/core/Tabs"
@@ -21,7 +21,7 @@ import Tab from "@material-ui/core/Tab"
 import makeStyles from "@material-ui/core/styles/makeStyles"
 
 import { StorageKey } from "@/constants"
-import ViewSelector, { HasView } from "@/components/ViewSelector"
+import ViewSelector from "@/components/ViewSelector"
 import { PAB } from "@/components/Buttons"
 import PrettyJson, { shouldCollapseRequest } from "@/components/PrettyJson"
 import HistogramRequest from "./HistogramRequest"
@@ -31,6 +31,9 @@ import MetricExpression from "./MetricExpression"
 import ReportsTable from "./ReportsTable"
 import { useMakeReportsRequest } from "./api"
 import TabPanel from "../TabPanel"
+import { RequestComposerType } from "."
+import useAccountPropertyView from "../ViewSelector/useAccountPropertyView"
+import { navigate } from "gatsby"
 
 const useStyles = makeStyles(theme => ({
   viewSelector: {
@@ -46,42 +49,56 @@ const useStyles = makeStyles(theme => ({
   },
 }))
 
-// TODO - The Select Singles don't work correctly with SSR, but there's likely
-// a fix somewhere that someone has done already. Look into it.
-// TODO - It'd be nice if this value could be initialized from the
-// urlParameters, if present. This will be something to be careful about (if
-// you want to be accurate over time) for the ga4 version of this demo because
-// if we add new request types, we might not want to add them to the end.
-const useTab = (): [number, React.Dispatch<React.SetStateAction<number>>] => {
-  const [tab, setTab] = React.useState<number>(() => {
-    if (typeof window === "undefined") {
-      return 0
-    }
-    let asString = window.localStorage.getItem(StorageKey.requestComposerTab)
-    if (asString === null) {
-      return 0
-    }
-    return parseInt(asString, 10)
-  })
-
-  useEffect(() => {
-    if (typeof window === "undefined") {
-      return
-    }
-    window.localStorage.setItem(StorageKey.requestComposerTab, tab.toString())
-  }, [tab])
-
-  return [tab, setTab]
-}
-
 export type ReportRequest = gapi.client.analyticsreporting.ReportRequest
 export type ReportsRequest = { reportRequests: Array<ReportRequest> }
 
-const RequestComposer = () => {
+export enum QueryParam {
+  Account = "a",
+  Property = "b",
+  View = "c",
+  Dimensions = "d",
+  Metrics = "e",
+  Segment = "f",
+  PivotMetrics = "g",
+  PivotDimensions = "h",
+  Metric = "i",
+}
+
+interface RequestComposerProps {
+  type: RequestComposerType
+}
+
+const RequestComposer: React.FC<RequestComposerProps> = ({ type }) => {
   const classes = useStyles()
-  const [tab, setTab] = useTab()
+  const tab = React.useMemo(() => {
+    switch (type) {
+      case RequestComposerType.Histogram:
+        return 0
+      case RequestComposerType.Pivot:
+        return 1
+      case RequestComposerType.Cohort:
+        return 2
+      case RequestComposerType.MetricExpression:
+        return 3
+    }
+  }, [type])
+
+  const pathForIdx = React.useCallback((idx: number) => {
+    switch (idx) {
+      case 0:
+        return `/request-composer/`
+      case 1:
+        return `/request-composer/pivot/`
+      case 2:
+        return `/request-composer/cohort/`
+      case 3:
+        return `/request-composer/metric-expression/`
+      default:
+        throw new Error("No matching idx")
+    }
+  }, [])
   const [requestObject, setRequestObject] = useState<ReportsRequest>()
-  const [view, setView] = React.useState<HasView | undefined>()
+
   const {
     makeRequest,
     response,
@@ -103,29 +120,28 @@ const RequestComposer = () => {
     )
   }, [classes, makeRequest, canMakeRequest])
 
-  const onViewChanged = React.useCallback(view => {
-    if ([view.account, view.property, view.view].every(a => a !== undefined)) {
-      setView(view as HasView)
-    }
-  }, [])
+  const accountPropertyView = useAccountPropertyView(
+    StorageKey.requestComposerAPV,
+    QueryParam
+  )
 
   return (
     <>
       <section>
         <Typography variant="h3">Select View</Typography>
         <ViewSelector
+          {...accountPropertyView}
           className={classes.viewSelector}
           variant="outlined"
           size="small"
-          onViewChanged={onViewChanged}
         />
       </section>
       <section>
         <Tabs
           value={tab}
           onChange={(_e, newValue) => {
-            // TODO - huh?
-            setTab(newValue as any)
+            const path = `${pathForIdx(newValue)}`
+            navigate(path)
           }}
         >
           <Tab label="Histogram Request" />
@@ -135,7 +151,7 @@ const RequestComposer = () => {
         </Tabs>
         <TabPanel value={tab} index={0}>
           <HistogramRequest
-            view={view}
+            apv={accountPropertyView}
             controlWidth={classes.maxControlWidth}
             setRequestObject={setRequestObject}
           >
@@ -144,7 +160,7 @@ const RequestComposer = () => {
         </TabPanel>
         <TabPanel value={tab} index={1}>
           <PivotRequest
-            view={view}
+            apv={accountPropertyView}
             controlWidth={classes.maxControlWidth}
             setRequestObject={setRequestObject}
           >
@@ -153,7 +169,7 @@ const RequestComposer = () => {
         </TabPanel>
         <TabPanel value={tab} index={2}>
           <CohortRequest
-            view={view}
+            apv={accountPropertyView}
             controlWidth={classes.maxControlWidth}
             setRequestObject={setRequestObject}
           >
@@ -162,7 +178,7 @@ const RequestComposer = () => {
         </TabPanel>
         <TabPanel value={tab} index={3}>
           <MetricExpression
-            view={view}
+            apv={accountPropertyView}
             controlWidth={classes.maxControlWidth}
             setRequestObject={setRequestObject}
           >

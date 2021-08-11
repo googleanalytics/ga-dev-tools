@@ -15,17 +15,19 @@
 import * as React from "react"
 
 import Layout from "@/components/Layout"
-import RequestComposer from "@/components/RequestComposer"
+import RequestComposer, {
+  RequestComposerType,
+} from "@/components/RequestComposer"
 
 export default ({ location: { pathname } }) => {
   return (
     <Layout
-      title="Request Composer"
+      title="Request Composer - Pivot Request"
       requireLogin
       pathname={pathname}
-      description="Demonstrates how to compose the following Analytics Reporting API v4 requests and visualize their responses."
+      description="Demonstrates how to compose a pivot request using the Analytics Reporting API v4."
     >
-      <RequestComposer />
+      <RequestComposer type={RequestComposerType.Pivot} />
     </Layout>
   )
 }
