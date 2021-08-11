@@ -3,6 +3,7 @@ import * as React from "react"
 import { Segment, Column, useApi } from "@/api"
 import { V3SamplingLevel } from "@/components/UAPickers"
 import { SortableColumn } from "."
+import { useSelector } from "react-redux"
 
 export enum APIStatus {
   Error = "error",
@@ -44,6 +45,7 @@ type UseDataAPIRequest = (
   requiredParameters: boolean
   runQuery: () => void
   queryResponse: QueryResponse
+  accessToken: string | undefined
 }
 
 export const useDataAPIRequest: UseDataAPIRequest = ({
@@ -61,8 +63,14 @@ export const useDataAPIRequest: UseDataAPIRequest = ({
   sort,
 }) => {
   const api = useApi()
+  const user = useSelector((a: AppState) => a.user)
 
   const [queryResponse, setQueryResponse] = React.useState<QueryResponse>()
+
+  const accessToken = React.useMemo(
+    () => user?.getAuthResponse().access_token,
+    [user]
+  )
 
   const requiredParameters = React.useMemo(() => {
     return (
@@ -146,7 +154,7 @@ export const useDataAPIRequest: UseDataAPIRequest = ({
     api,
   ])
 
-  return { runQuery, requiredParameters, queryResponse }
+  return { runQuery, requiredParameters, queryResponse, accessToken }
 }
 
 export default useDataAPIRequest

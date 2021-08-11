@@ -30,6 +30,8 @@ import Spinner from "../../components/Spinner"
 import { CopyIconButton } from "../../components/CopyButton"
 import { QueryResponse, APIStatus } from "./useDataAPIRequest"
 import TSVDownload from "./TSVDownload"
+import LabeledCheckbox from "../LabeledCheckbox"
+import { useState } from "react"
 
 const useStyles = makeStyles(theme => ({
   paper: {},
@@ -91,14 +93,37 @@ interface ReportProps {
   queryResponse: QueryResponse
   columns: gapi.client.analytics.Column[] | undefined
   permalink: string | undefined
+  accessToken: string | undefined
 }
 
 const Report: React.FC<ReportProps> = ({
   queryResponse,
   columns,
   permalink,
+  accessToken,
 }) => {
   const classes = useStyles()
+  const [includeAccessToken, setIncludeAccessToken] = useState(false)
+
+  const requestURL = React.useMemo(() => {
+    if (
+      queryResponse === undefined ||
+      queryResponse.status !== APIStatus.Success
+    ) {
+      return undefined
+    }
+    const [base, queryParamString] = queryResponse.response.selfLink!.split("?")
+    const existingQueryParams = new URLSearchParams(queryParamString)
+    const nuQueryParams = new URLSearchParams()
+    if (includeAccessToken && accessToken !== undefined) {
+      nuQueryParams.append("access_token", accessToken)
+    }
+    existingQueryParams.forEach((value, key) => {
+      nuQueryParams.append(key, value)
+    })
+    return `${base}?${nuQueryParams.toString()}`
+  }, [queryResponse, includeAccessToken, accessToken])
+
   if (queryResponse === undefined) {
     return null
   }
@@ -142,7 +167,7 @@ const Report: React.FC<ReportProps> = ({
         <TSVDownload queryResponse={queryResponse.response} />
         <TextField
           className={classes.breakAll}
-          value={queryResponse.response.selfLink}
+          value={requestURL || ""}
           variant="outlined"
           fullWidth
           multiline
@@ -150,12 +175,18 @@ const Report: React.FC<ReportProps> = ({
           InputProps={{
             endAdornment: (
               <CopyIconButton
-                toCopy={queryResponse.response.selfLink || ""}
+                toCopy={requestURL || ""}
                 tooltipText="Copy API request."
               />
             ),
           }}
         />
+        <LabeledCheckbox
+          checked={includeAccessToken}
+          setChecked={setIncludeAccessToken}
+        >
+          include access token
+        </LabeledCheckbox>
         <section className={classes.reportLink}>
           <a href={permalink}>Link to this report</a>
         </section>
