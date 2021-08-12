@@ -204,6 +204,7 @@ export const QueryExplorer = () => {
       <Typography variant="h3">Select View</Typography>
       <ViewSelector
         {...accountPropertyView}
+        autoFill
         className={classes.viewSelector}
         vertical
         size="small"

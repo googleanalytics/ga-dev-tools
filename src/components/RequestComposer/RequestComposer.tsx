@@ -131,6 +131,7 @@ const RequestComposer: React.FC<RequestComposerProps> = ({ type }) => {
         <Typography variant="h3">Select View</Typography>
         <ViewSelector
           {...accountPropertyView}
+          autoFill
           className={classes.viewSelector}
           variant="outlined"
           size="small"

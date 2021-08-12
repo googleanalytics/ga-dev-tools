@@ -34,6 +34,7 @@ interface CommonProps {
   className?: string
   size?: "small" | "medium"
   variant?: "outlined" | "standard"
+  autoFill?: boolean
 }
 
 interface OnlyProperty extends CommonProps {
@@ -50,6 +51,7 @@ type ViewSelectorProps = AlsoView | OnlyProperty
 
 const ViewSelector: React.FC<ViewSelectorProps> = props => {
   const {
+    autoFill,
     account,
     setAccountID,
     property,
@@ -74,13 +76,15 @@ const ViewSelector: React.FC<ViewSelectorProps> = props => {
         onChange={(_, a: AccountSummary | null) => {
           setAccountID(a?.id || undefined)
 
-          // Update property ID based on new account.
-          const firstWebProperty = a?.webProperties?.[0]
-          setPropertyID(firstWebProperty?.id || undefined)
+          if (autoFill) {
+            // Update property ID based on new account.
+            const firstWebProperty = a?.webProperties?.[0]
+            setPropertyID(firstWebProperty?.id || undefined)
 
-          // Update view ID based on new property if not onlyProperty.
-          const firstView = firstWebProperty?.profiles?.[0]
-          !props.onlyProperty && props.setViewID(firstView?.id || undefined)
+            // Update view ID based on new property if not onlyProperty.
+            const firstView = firstWebProperty?.profiles?.[0]
+            !props.onlyProperty && props.setViewID(firstView?.id || undefined)
+          }
         }}
         getOptionSelected={(a, b) => a.id === b.id}
         getOptionLabel={account => account.name || ""}
@@ -103,9 +107,11 @@ const ViewSelector: React.FC<ViewSelectorProps> = props => {
         onChange={(_, p: WebPropertySummary | null) => {
           setPropertyID(p?.id || undefined)
 
-          // Update view ID based on new property if not onlyProperty.
-          const firstView = p?.profiles?.[0]
-          !props.onlyProperty && props.setViewID(firstView?.id || undefined)
+          if (autoFill) {
+            // Update view ID based on new property if not onlyProperty.
+            const firstView = p?.profiles?.[0]
+            !props.onlyProperty && props.setViewID(firstView?.id || undefined)
+          }
         }}
         getOptionSelected={(a, b) => a.id === b.id}
         getOptionLabel={property => property.name || ""}
