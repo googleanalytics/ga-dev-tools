@@ -50,6 +50,9 @@ export type UAColumn = gapi.client.analytics.Column
 type MetadataAPI = typeof gapi.client.analytics.metadata
 type ManagementAPI = typeof gapi.client.analytics.management
 
+const removeDeprecatedColumns = (column: ColumnT): true | false =>
+  column.attributes?.status !== "DEPRECATED"
+
 export const useUADimensionsAndMetrics = ({
   account,
   property,
@@ -260,7 +263,7 @@ export const DimensionPicker: React.FC<{
 }) => {
   const { dimensions } = useUADimensionsAndMetrics({ account, property, view })
   const dimensionOptions = React.useMemo<UAColumn[] | undefined>(
-    () => dimensions,
+    () => dimensions?.filter(removeDeprecatedColumns),
     [dimensions]
   )
 
@@ -313,10 +316,13 @@ export const DimensionsPicker: React.FC<{
   const { dimensions } = useUADimensionsAndMetrics({ account, property, view })
   const dimensionOptions = React.useMemo<UAColumn[] | undefined>(
     () =>
-      dimensions?.filter(
-        option =>
-          (selectedDimensions || []).find(s => s.id === option.id) === undefined
-      ),
+      dimensions
+        ?.filter(removeDeprecatedColumns)
+        ?.filter(
+          option =>
+            (selectedDimensions || []).find(s => s.id === option.id) ===
+            undefined
+        ),
     [dimensions, selectedDimensions]
   )
 
@@ -369,7 +375,10 @@ export const MetricPicker: React.FC<{
 }) => {
   const { metrics } = useUADimensionsAndMetrics({ account, property, view })
   const metricOptions = React.useMemo<UAColumn[] | undefined>(
-    () => metrics?.filter(filter !== undefined ? filter : () => true),
+    () =>
+      metrics
+        ?.filter(removeDeprecatedColumns)
+        ?.filter(filter !== undefined ? filter : () => true),
     [metrics, filter]
   )
 
@@ -422,10 +431,12 @@ export const MetricsPicker: React.FC<{
   const { metrics } = useUADimensionsAndMetrics({ account, property, view })
   const metricOptions = React.useMemo<UAColumn[] | undefined>(
     () =>
-      metrics?.filter(
-        option =>
-          (selectedMetrics || []).find(s => s.id === option.id) === undefined
-      ),
+      metrics
+        ?.filter(removeDeprecatedColumns)
+        ?.filter(
+          option =>
+            (selectedMetrics || []).find(s => s.id === option.id) === undefined
+        ),
     [metrics, selectedMetrics]
   )
 
