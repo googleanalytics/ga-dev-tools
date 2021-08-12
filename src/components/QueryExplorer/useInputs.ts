@@ -3,9 +3,9 @@ import * as React from "react"
 import { Segment, Column } from "@/api"
 import { StorageKey } from "@/constants"
 import {
-  useUADimensionsAndMetrics,
   useUASegments,
   V3SamplingLevel,
+  useUADimensionsAndMetrics,
 } from "@/components/UAPickers"
 import { SortableColumn } from "."
 import {

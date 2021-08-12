@@ -145,7 +145,12 @@ export const QueryExplorer = () => {
   } = useInputs()
   const { account, property, view } = accountPropertyView
 
-  const { runQuery, requiredParameters, queryResponse } = useDataAPIRequest({
+  const {
+    runQuery,
+    requiredParameters,
+    queryResponse,
+    accessToken,
+  } = useDataAPIRequest({
     viewID,
     startDate,
     endDate,
@@ -357,6 +362,7 @@ export const QueryExplorer = () => {
         </LabeledCheckbox>
       </section>
       <Report
+        accessToken={accessToken}
         queryResponse={queryResponse}
         columns={columns}
         permalink={currentLink}
