@@ -22,14 +22,13 @@ import Launch from "@material-ui/icons/Launch"
 
 import { Column } from "@/api"
 import useDataAPIRequest from "./useDataAPIRequest"
-import useInputs, { QueryParam } from "./useInputs"
-import { Url, StorageKey } from "@/constants"
+import useInputs from "./useInputs"
+import { Url } from "@/constants"
 import ViewSelector from "@/components/ViewSelector"
 import {
   DimensionsPicker,
   MetricsPicker,
   SegmentPicker,
-  useUADimensionsAndMetrics,
   V3SamplingLevelPicker,
 } from "@/components/UAPickers"
 import { PAB } from "@/components/Buttons"
@@ -38,7 +37,6 @@ import ExternalLink from "@/components/ExternalLink"
 import Sort from "./Sort"
 import Report from "./Report"
 import usePermalink from "./usePermalink"
-import useAccountPropertyView from "../ViewSelector/useAccountPropertyView"
 
 const coreReportingApi = (
   <ExternalLink href={Url.coreReportingApi}>Core Reporting API</ExternalLink>
@@ -115,12 +113,6 @@ const DevsiteLink: React.FC<{ hash: string }> = ({ hash }) => {
 export const QueryExplorer = () => {
   const classes = useStyles()
 
-  const accountPropertyView = useAccountPropertyView(
-    StorageKey.queryExplorerAPV,
-    QueryParam
-  )
-  const { account, property, view } = accountPropertyView
-  const { columns } = useUADimensionsAndMetrics(accountPropertyView)
   const {
     viewID,
     setViewID,
@@ -148,7 +140,10 @@ export const QueryExplorer = () => {
     setIncludeEmptyRows,
     segment,
     sort,
-  } = useInputs({ ...accountPropertyView, columns })
+    accountPropertyView,
+    columns,
+  } = useInputs()
+  const { account, property, view } = accountPropertyView
 
   const {
     runQuery,
@@ -209,6 +204,7 @@ export const QueryExplorer = () => {
       <Typography variant="h3">Select View</Typography>
       <ViewSelector
         {...accountPropertyView}
+        autoFill
         className={classes.viewSelector}
         vertical
         size="small"

@@ -2,7 +2,11 @@ import * as React from "react"
 
 import { Segment, Column } from "@/api"
 import { StorageKey } from "@/constants"
-import { useUASegments, V3SamplingLevel } from "@/components/UAPickers"
+import {
+  useUASegments,
+  V3SamplingLevel,
+  useUADimensionsAndMetrics,
+} from "@/components/UAPickers"
 import { SortableColumn } from "."
 import {
   useHydratedPersistantBoolean,
@@ -12,6 +16,7 @@ import {
 } from "@/hooks/useHydrated"
 import { Dispatch } from "@/types"
 import useAccountPropertyView from "../ViewSelector/useAccountPropertyView"
+import { ProfileSummary } from "../ViewSelector/useViewSelector"
 
 export enum QueryParam {
   Account = "a",
@@ -32,23 +37,28 @@ export enum QueryParam {
   IncludeEmptyRows = "include-empty-rows",
 }
 
-export const useInputs = ({
-  view,
-  columns,
-}: ReturnType<typeof useAccountPropertyView> & {
-  columns: Column[] | undefined
-}) => {
+export const useInputs = () => {
   const [viewID, setViewID] = useHydratedPersistantString(
     StorageKey.queryExplorerViewID,
-    QueryParam.ViewID,
-    view === undefined ? undefined : `ga:${view.id}`
+    QueryParam.ViewID
   )
 
-  React.useEffect(() => {
-    if (view !== undefined) {
-      setViewID(`ga:${view!.id}`)
-    }
-  }, [view, setViewID])
+  const onSetView = React.useCallback(
+    (view: ProfileSummary | undefined) => {
+      if (view === undefined) {
+        return
+      }
+      setViewID(`ga:${view.id}`)
+    },
+    [setViewID]
+  )
+
+  const accountPropertyView = useAccountPropertyView(
+    StorageKey.queryExplorerAPV,
+    QueryParam,
+    onSetView
+  )
+  const { columns } = useUADimensionsAndMetrics(accountPropertyView)
 
   const [startDate, setStartDate] = useHydratedPersistantString(
     StorageKey.queryExplorerStartDate,
@@ -221,6 +231,8 @@ export const useInputs = ({
     setShowSegmentDefiniton,
     samplingValue,
     setSamplingValue,
+    accountPropertyView,
+    columns,
   }
 }
 

@@ -23,7 +23,8 @@ interface UAAccountPropertyViewSetters {
 
 const useAccountPropertyView = (
   prefix: StorageKey,
-  queryParamKeys: { Account: string; Property: string; View: string }
+  queryParamKeys: { Account: string; Property: string; View: string },
+  onSetView?: (p: ProfileSummary | undefined) => void
 ): UAAccountPropertyView & UAAccountPropertyViewSetters => {
   const accounts = useAccounts()
 
@@ -81,7 +82,8 @@ const useAccountPropertyView = (
   const [view, setViewID] = useKeyedHydratedPersistantObject<ProfileSummary>(
     `${prefix}-view` as StorageKey,
     queryParamKeys.View,
-    getViewByID
+    getViewByID,
+    onSetView
   )
 
   return { account, setAccountID, property, setPropertyID, view, setViewID }
