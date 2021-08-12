@@ -8,10 +8,10 @@ import TableHead from "@material-ui/core/TableHead"
 import TableRow from "@material-ui/core/TableRow"
 import Typography from "@material-ui/core/Typography"
 
-import { Views } from "./useAllViews"
 import { CopyIconButton } from "@/components/CopyButton"
 import HighlightText from "./HighlightText"
 import Spinner from "@/components/Spinner"
+import { UAAccountPropertyView } from "../ViewSelector/useAccountPropertyView"
 
 const useStyles = makeStyles(theme => ({
   id: {
@@ -34,7 +34,7 @@ const useStyles = makeStyles(theme => ({
 }))
 
 interface ViewTableProps {
-  views: Views
+  views: UAAccountPropertyView[] | undefined
   className?: string
   search?: string
 }
@@ -79,8 +79,6 @@ const textClamp = (text: string, maxWidth: number) => {
   }
 }
 
-// This table shows a list of populated views. A populated view is a combination
-// of account, property, and view, & table ID.
 const ViewsTable: React.FC<ViewTableProps> = ({ views, className, search }) => {
   const classes = useStyles()
   return (
@@ -98,52 +96,55 @@ const ViewsTable: React.FC<ViewTableProps> = ({ views, className, search }) => {
         </TableRow>
       </TableHead>
       <TableBody>
-        {Array.isArray(views) ? (
-          views.map(populated => {
-            const { account, property, view } = populated
-            const viewUrl = `https://analytics.google.com/analytics/web/#/report/vistors-overview/a${account.id}w${property.internalWebPropertyId}p${view.id}`
+        {views !== undefined ? (
+          views.map(apv => {
+            const viewUrl = `https://analytics.google.com/analytics/web/#/report/vistors-overview/a${
+              apv!.account!.id
+            }w${apv!.property!.internalWebPropertyId}p${apv!.view!.id}`
             return (
               <TableRow
-                key={`${populated.account.name}-${populated.property.name}-${populated.view.name}`}
+                key={`${apv!.account!.name}-${apv!.property!.name}-${
+                  apv!.view!.name
+                }`}
               >
                 <ViewCell
-                  textToCopy={account.id || ""}
+                  textToCopy={apv!.account!.id!}
                   copyToolTip="Copy account ID"
                   firstRow={
                     <HighlightText
                       className={classes.mark}
                       search={search}
-                      text={textClamp(account.name || "", maxCellWidth)}
+                      text={textClamp(apv!.account!.name!, maxCellWidth)}
                     />
                   }
                   secondRow={
                     <HighlightText
                       className={classes.mark}
                       search={search}
-                      text={account.id || ""}
+                      text={apv!.account!.id!}
                     />
                   }
                 />
                 <ViewCell
-                  textToCopy={property.id || ""}
+                  textToCopy={apv!.property!.id!}
                   copyToolTip="Copy property ID"
                   firstRow={
                     <HighlightText
                       className={classes.mark}
                       search={search}
-                      text={textClamp(property.name || "", maxCellWidth)}
+                      text={textClamp(apv!.property!.name!, maxCellWidth)}
                     />
                   }
                   secondRow={
                     <HighlightText
                       className={classes.mark}
                       search={search}
-                      text={property.id || ""}
+                      text={apv!.property!.id!}
                     />
                   }
                 />
                 <ViewCell
-                  textToCopy={view.id || ""}
+                  textToCopy={apv!.view!.id!}
                   copyToolTip="Copy view ID"
                   firstRow={
                     <a
@@ -156,7 +157,7 @@ const ViewsTable: React.FC<ViewTableProps> = ({ views, className, search }) => {
                       <HighlightText
                         className={classes.mark}
                         search={search}
-                        text={textClamp(view.name || "", maxCellWidth)}
+                        text={textClamp(apv!.view!.name!, maxCellWidth)}
                       />
                     </a>
                   }
@@ -164,18 +165,18 @@ const ViewsTable: React.FC<ViewTableProps> = ({ views, className, search }) => {
                     <HighlightText
                       className={classes.mark}
                       search={search}
-                      text={view.id || ""}
+                      text={apv!.view!.id!}
                     />
                   }
                 />
                 <ViewCell
-                  textToCopy={`ga:${view.id}`}
+                  textToCopy={`ga:${apv!.view!.id!}`}
                   copyToolTip="Copy table ID"
                   firstRow={
                     <HighlightText
                       className={classes.mark}
                       search={search}
-                      text={`ga:${view.id}`}
+                      text={`ga:${apv!.view!.id!}`}
                     />
                   }
                 />
@@ -191,7 +192,7 @@ const ViewsTable: React.FC<ViewTableProps> = ({ views, className, search }) => {
             </TableCell>
           </TableRow>
         )}
-        {views.length === 0 && (
+        {views?.length === 0 && (
           <TableRow data-testid="components/ViewTable/no-results">
             <TableCell colSpan={4}>No results</TableCell>
           </TableRow>

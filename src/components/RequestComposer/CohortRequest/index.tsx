@@ -19,13 +19,13 @@ import makeStyles from "@material-ui/core/styles/makeStyles"
 
 import { usePersistentBoolean } from "@/hooks"
 import { StorageKey } from "@/constants"
-import { HasView } from "@/components/ViewSelector"
 import {
   MetricPicker,
   SegmentPicker,
   V4SamplingLevelPicker,
   CohortSizePicker,
-  UAMetric,
+  UAColumn,
+  useUADimensionsAndMetrics,
 } from "@/components/UAPickers"
 import LinkedTextField from "@/components/LinkedTextField"
 import LabeledCheckbox from "@/components/LabeledCheckbox"
@@ -33,9 +33,10 @@ import { linkFor, titleFor } from "../HistogramRequest"
 import useCohortRequestParameters from "./useCohortRequestParameters"
 import useCohortRequest from "./useCohortRequest"
 import { ReportsRequest } from "../RequestComposer"
+import { UAAccountPropertyView } from "@/components/ViewSelector/useAccountPropertyView"
 
 interface CohortRequestProps {
-  view: HasView | undefined
+  apv: UAAccountPropertyView
   controlWidth: string
   setRequestObject: (request: ReportsRequest | undefined) => void
 }
@@ -48,7 +49,7 @@ const useStyles = makeStyles(theme => ({
 }))
 
 const CohortRequest: React.FC<CohortRequestProps> = ({
-  view,
+  apv,
   controlWidth,
   setRequestObject,
   children,
@@ -58,18 +59,19 @@ const CohortRequest: React.FC<CohortRequestProps> = ({
     showSegmentDefinition,
     setShowSegmentDefinition,
   ] = usePersistentBoolean(StorageKey.cohortRequestShowSegmentDefinition, false)
+  const { columns } = useUADimensionsAndMetrics(apv)
   const {
     viewId,
     setViewId,
     selectedMetric,
-    setSelectedMetric,
+    setSelectedMetricID,
     cohortSize,
     setCohortSize,
     selectedSegment,
-    setSelectedSegment,
+    setSelectedSegmentID,
     samplingLevel,
     setSamplingLevel,
-  } = useCohortRequestParameters(view)
+  } = useCohortRequestParameters(apv, columns)
   const requestObject = useCohortRequest({
     viewId,
     selectedMetric,
@@ -83,7 +85,7 @@ const CohortRequest: React.FC<CohortRequestProps> = ({
   }, [requestObject, setRequestObject])
 
   const cohortFilter = React.useCallback(
-    (metric: NonNullable<UAMetric>): boolean =>
+    (metric: NonNullable<UAColumn>): boolean =>
       metric?.attributes?.group === "Lifetime Value and Cohorts",
     []
   )
@@ -101,9 +103,9 @@ const CohortRequest: React.FC<CohortRequestProps> = ({
           helperText="The analytics view ID from which to retrieve data."
         />
         <MetricPicker
-          view={view}
-          setMetric={setSelectedMetric}
-          storageKey={StorageKey.cohortRequestMetric}
+          {...apv}
+          selectedMetric={selectedMetric}
+          setMetricID={setSelectedMetricID}
           helperText="The metrics to include in the request."
           filter={cohortFilter}
         />
@@ -113,8 +115,8 @@ const CohortRequest: React.FC<CohortRequestProps> = ({
           helperText="The size of the cohort to use in the request."
         />
         <SegmentPicker
-          setSegment={setSelectedSegment}
-          storageKey={StorageKey.cohortRequestSegment}
+          segment={selectedSegment}
+          setSegmentID={setSelectedSegmentID}
           showSegmentDefinition={showSegmentDefinition}
         />
         <LabeledCheckbox

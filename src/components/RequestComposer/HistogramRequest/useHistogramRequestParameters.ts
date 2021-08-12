@@ -1,19 +1,52 @@
-import { useState, useMemo } from "react"
+import { useState, useMemo, useCallback } from "react"
 
 import { usePersistentString } from "@/hooks"
 import { StorageKey } from "@/constants"
-import { HasView } from "@/components/ViewSelector"
 import {
   V4SamplingLevel,
-  UADimensions,
-  UAMetrics,
   UASegment,
+  useUASegments,
 } from "@/components/UAPickers"
+import { UAAccountPropertyView } from "@/components/ViewSelector/useAccountPropertyView"
+import {
+  useKeyedHydratedPersistantArray,
+  useKeyedHydratedPersistantObject,
+} from "@/hooks/useHydrated"
+import { Column } from "@/api"
+import { QueryParam } from "../RequestComposer"
 
-const useHistogramRequestParameters = (view: HasView | undefined) => {
+const useHistogramRequestParameters = (
+  apv: UAAccountPropertyView,
+  columns: Column[] | undefined
+) => {
   const [viewId, setViewId] = useState("")
-  const [selectedDimensions, setSelectedDimensions] = useState<UADimensions>()
-  const [selectedMetrics, setSelectedMetrics] = useState<UAMetrics>()
+
+  const getColumnsByIDs = useCallback(
+    (ids: string[] | undefined) => {
+      if (ids === undefined || columns === undefined) {
+        return undefined
+      }
+      return columns.filter(c => ids.includes(c.id!))
+    },
+    [columns]
+  )
+
+  const [
+    selectedDimensions,
+    setSelectedDimensionIDs,
+  ] = useKeyedHydratedPersistantArray<Column>(
+    StorageKey.requestComposerHistogramDimensions,
+    QueryParam.Dimensions,
+    getColumnsByIDs
+  )
+  const [
+    selectedMetrics,
+    setSelectedMetricIDs,
+  ] = useKeyedHydratedPersistantArray<Column>(
+    StorageKey.requestComposerHistogramMetrics,
+    QueryParam.Metrics,
+    getColumnsByIDs
+  )
   const [samplingLevel, setSamplingLevel] = useState<V4SamplingLevel>()
 
   const [startDate, setStartDate] = usePersistentString(
@@ -29,14 +62,33 @@ const useHistogramRequestParameters = (view: HasView | undefined) => {
     StorageKey.histogramFiltersExpression,
     "ga:browser=~^Chrome"
   )
-  const [selectedSegment, setSelectedSegment] = useState<UASegment>()
+
+  const segments = useUASegments()
+  const getSegmentByID = useCallback(
+    (id: string | undefined) => {
+      if (id === undefined || segments === undefined) {
+        return undefined
+      }
+      return segments.find(c => c.id === id)
+    },
+    [segments]
+  )
+
+  const [
+    selectedSegment,
+    setSelectedSegmentID,
+  ] = useKeyedHydratedPersistantObject<UASegment>(
+    StorageKey.requestComposerHistogramSegment,
+    QueryParam.Segment,
+    getSegmentByID
+  )
 
   useMemo(() => {
-    const id = view?.view.id
+    const id = apv.view?.id
     if (id !== undefined) {
       setViewId(id)
     }
-  }, [view])
+  }, [apv])
 
   return {
     viewId,
@@ -46,15 +98,15 @@ const useHistogramRequestParameters = (view: HasView | undefined) => {
     endDate,
     setEndDate,
     selectedDimensions,
-    setSelectedDimensions,
+    setSelectedDimensionIDs,
     selectedMetrics,
-    setSelectedMetrics,
+    setSelectedMetricIDs,
     buckets,
     setBuckets,
     filtersExpression,
     setFiltersExpression,
     selectedSegment,
-    setSelectedSegment,
+    setSelectedSegmentID,
     samplingLevel,
     setSamplingLevel,
   }

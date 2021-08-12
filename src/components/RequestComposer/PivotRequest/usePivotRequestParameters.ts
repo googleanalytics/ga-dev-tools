@@ -1,16 +1,24 @@
-import { useState, useMemo } from "react"
+import { useState, useMemo, useCallback } from "react"
 
 import { usePersistentString, usePersistentBoolean } from "@/hooks"
 import { StorageKey } from "@/constants"
-import { HasView } from "@/components/ViewSelector"
 import {
   V4SamplingLevel,
-  UAMetrics,
-  UADimensions,
+  UAColumn,
   UASegment,
+  useUASegments,
 } from "@/components/UAPickers"
+import { UAAccountPropertyView } from "@/components/ViewSelector/useAccountPropertyView"
+import { QueryParam } from "../RequestComposer"
+import {
+  useKeyedHydratedPersistantArray,
+  useKeyedHydratedPersistantObject,
+} from "@/hooks/useHydrated"
 
-const usePivotRequestParameters = (view: HasView | undefined) => {
+const usePivotRequestParameters = (
+  apv: UAAccountPropertyView,
+  columns: UAColumn[] | undefined
+) => {
   const [viewId, setViewId] = useState("")
   const [startDate, setStartDate] = usePersistentString(
     StorageKey.pivotRequestStartDate,
@@ -20,17 +28,74 @@ const usePivotRequestParameters = (view: HasView | undefined) => {
     StorageKey.pivotRequestEndDate,
     "yesterday"
   )
-  const [selectedMetrics, setSelectedMetrics] = useState<UAMetrics>()
-  const [selectedDimensions, setSelectedDimensions] = useState<UADimensions>()
-  const [pivotMetrics, setPivotMetrics] = useState<UAMetrics>()
-  const [pivotDimensions, setPivotDimensions] = useState<UADimensions>()
+  const getColumnsByIDs = useCallback(
+    (ids: string[] | undefined) => {
+      if (ids === undefined || columns === undefined) {
+        return undefined
+      }
+      return columns.filter(c => ids.includes(c.id!))
+    },
+    [columns]
+  )
+
+  const [
+    selectedDimensions,
+    setSelectedDimensionIDs,
+  ] = useKeyedHydratedPersistantArray<UAColumn>(
+    StorageKey.requestComposerPivotDimensions,
+    QueryParam.Dimensions,
+    getColumnsByIDs
+  )
+  const [
+    selectedMetrics,
+    setSelectedMetricIDs,
+  ] = useKeyedHydratedPersistantArray<UAColumn>(
+    StorageKey.requestComposerPivotMetrics,
+    QueryParam.Metrics,
+    getColumnsByIDs
+  )
+  const [
+    pivotMetrics,
+    setPivotMetricIDs,
+  ] = useKeyedHydratedPersistantArray<UAColumn>(
+    StorageKey.requestComposerPivotPivotMetrics,
+    QueryParam.PivotMetrics,
+    getColumnsByIDs
+  )
+  const [
+    pivotDimensions,
+    setPivotDimensionIDs,
+  ] = useKeyedHydratedPersistantArray<UAColumn>(
+    StorageKey.requestComposerPivotPivotDimensions,
+    QueryParam.PivotDimensions,
+    getColumnsByIDs
+  )
   const [startGroup, setStartGroup] = usePersistentString(
     StorageKey.pivotRequestStartGroup
   )
   const [maxGroupCount, setMaxGroupCount] = usePersistentString(
     StorageKey.pivotRequestMaxGroupCount
   )
-  const [selectedSegment, setSelectedSegment] = useState<UASegment>()
+
+  const segments = useUASegments()
+  const getSegmentByID = useCallback(
+    (id: string | undefined) => {
+      if (id === undefined || segments === undefined) {
+        return undefined
+      }
+      return segments.find(c => c.id === id)
+    },
+    [segments]
+  )
+
+  const [
+    selectedSegment,
+    setSelectedSegmentID,
+  ] = useKeyedHydratedPersistantObject<UASegment>(
+    StorageKey.requestComposerPivotSegment,
+    QueryParam.Segment,
+    getSegmentByID
+  )
   const [samplingLevel, setSamplingLevel] = useState<
     V4SamplingLevel | undefined
   >(V4SamplingLevel.Default)
@@ -46,11 +111,11 @@ const usePivotRequestParameters = (view: HasView | undefined) => {
   )
 
   useMemo(() => {
-    const id = view?.view.id
+    const id = apv.view?.id
     if (id !== undefined) {
       setViewId(id)
     }
-  }, [view])
+  }, [apv])
 
   return {
     viewId,
@@ -60,19 +125,19 @@ const usePivotRequestParameters = (view: HasView | undefined) => {
     endDate,
     setEndDate,
     selectedMetrics,
-    setSelectedMetrics,
+    setSelectedMetricIDs,
     selectedDimensions,
-    setSelectedDimensions,
+    setSelectedDimensionIDs,
     pivotMetrics,
-    setPivotMetrics,
+    setPivotMetricIDs,
     pivotDimensions,
-    setPivotDimensions,
+    setPivotDimensionIDs,
     startGroup,
     setStartGroup,
     maxGroupCount,
     setMaxGroupCount,
     selectedSegment,
-    setSelectedSegment,
+    setSelectedSegmentID,
     samplingLevel,
     setSamplingLevel,
     includeEmptyRows,

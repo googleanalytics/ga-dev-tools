@@ -4,8 +4,8 @@ import moment from "moment"
 import {
   CohortSize,
   V4SamplingLevel,
-  UAMetric,
   UASegment,
+  UAColumn,
 } from "@/components/UAPickers"
 import { ReportsRequest, ReportRequest } from "../RequestComposer"
 
@@ -101,7 +101,7 @@ const useCohortRequest = ({
   samplingLevel,
 }: {
   viewId: string
-  selectedMetric: UAMetric
+  selectedMetric: UAColumn | undefined
   selectedSegment: UASegment | undefined
   cohortSize: CohortSize | undefined
   samplingLevel: V4SamplingLevel | undefined

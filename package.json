@@ -9,7 +9,7 @@
     "@material-ui/core": "^4.11.3",
     "@material-ui/data-grid": "^4.0.0-alpha.25",
     "@material-ui/icons": "^4.11.2",
-    "@material-ui/lab": "^4.0.0-alpha.57",
+    "@material-ui/lab": "^4.0.0-alpha.60",
     "@material-ui/styles": "^4.11.3",
     "@reach/router": "^1.3.4",
     "classnames": "^2.2.6",

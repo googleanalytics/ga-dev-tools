@@ -21,7 +21,8 @@ import makeStyles from "@material-ui/core/styles/makeStyles"
 import Launch from "@material-ui/icons/Launch"
 
 import { Column } from "@/api"
-import { useInputs, useDataAPIRequest } from "./hooks"
+import useDataAPIRequest from "./useDataAPIRequest"
+import useInputs, { QueryParam } from "./useInputs"
 import { Url, StorageKey } from "@/constants"
 import ViewSelector from "@/components/ViewSelector"
 import {
@@ -36,6 +37,8 @@ import LabeledCheckbox from "@/components/LabeledCheckbox"
 import ExternalLink from "@/components/ExternalLink"
 import Sort from "./Sort"
 import Report from "./Report"
+import usePermalink from "./usePermalink"
+import useAccountPropertyView from "../ViewSelector/useAccountPropertyView"
 
 const coreReportingApi = (
   <ExternalLink href={Url.coreReportingApi}>Core Reporting API</ExternalLink>
@@ -112,53 +115,82 @@ const DevsiteLink: React.FC<{ hash: string }> = ({ hash }) => {
 export const QueryExplorer = () => {
   const classes = useStyles()
 
+  const accountPropertyView = useAccountPropertyView(
+    StorageKey.queryExplorerAPV,
+    QueryParam
+  )
+  const { account, property, view } = accountPropertyView
+  const { columns } = useUADimensionsAndMetrics(accountPropertyView)
   const {
-    onViewChanged,
-    view,
-    setView,
+    viewID,
+    setViewID,
     startDate,
     setStartDate,
     endDate,
     setEndDate,
     selectedMetrics,
-    setSelectedMetrics,
+    setSelectedMetricIDs,
     selectedDimensions,
-    setSelectedDimensions,
-    setSort,
+    setSelectedDimensionIDs,
+    setSortIDs,
     filters,
     setFilters,
-    setSelectedSegment,
+    setSegmentID,
     showSegmentDefinition,
     setShowSegmentDefiniton,
-    setSelectedSamplingValue,
+    samplingValue,
+    setSamplingValue,
     startIndex,
     setStartIndex,
     maxResults,
     setMaxResults,
     includeEmptyRows,
     setIncludeEmptyRows,
-    selectedSamplingValue,
-    selectedSegment,
+    segment,
     sort,
-    selectedView,
-  } = useInputs()
+  } = useInputs({ ...accountPropertyView, columns })
 
   const { runQuery, requiredParameters, queryResponse } = useDataAPIRequest({
-    view,
+    viewID,
     startDate,
     endDate,
     selectedMetrics,
     selectedDimensions,
     includeEmptyRows,
-    selectedSamplingValue,
-    selectedSegment,
+    samplingValue,
+    segment,
     startIndex,
     maxResults,
     filters,
     sort,
   })
 
-  const { columns } = useUADimensionsAndMetrics(selectedView)
+  const permalink = usePermalink({
+    account,
+    property,
+    view,
+    viewID,
+    startDate,
+    endDate,
+    selectedMetrics,
+    selectedDimensions,
+    sort,
+    filters,
+    segment,
+    showSegmentDefinition,
+    startIndex,
+    maxResults,
+    includeEmptyRows,
+  })
+
+  const [updateLink, setUpdateLink] = React.useState(false)
+  const [currentLink, setCurrentLink] = React.useState<string>()
+  React.useEffect(() => {
+    if (updateLink) {
+      setCurrentLink(permalink)
+      setUpdateLink(false)
+    }
+  }, [permalink, updateLink])
 
   return (
     <>
@@ -171,8 +203,8 @@ export const QueryExplorer = () => {
       </Typography>
       <Typography variant="h3">Select View</Typography>
       <ViewSelector
+        {...accountPropertyView}
         className={classes.viewSelector}
-        onViewChanged={onViewChanged}
         vertical
         size="small"
         variant="outlined"
@@ -189,8 +221,8 @@ export const QueryExplorer = () => {
           fullWidth
           id="ids"
           label="ids"
-          value={view}
-          onChange={e => setView(e.target.value)}
+          value={viewID || ""}
+          onChange={e => setViewID(e.target.value)}
           required
           helperText={<>The unique ID used to retrieve the Analytics data.</>}
         />
@@ -233,21 +265,26 @@ export const QueryExplorer = () => {
           }
         />
         <MetricsPicker
-          view={selectedView}
+          account={account}
+          property={property}
+          view={view}
           required
-          setMetrics={setSelectedMetrics}
+          selectedMetrics={selectedMetrics}
+          setMetricIDs={setSelectedMetricIDs}
           helperText="Metrics to include in the query."
-          storageKey={StorageKey.queryExplorerMetrics}
         />
         <DimensionsPicker
-          view={selectedView}
-          setDimensions={setSelectedDimensions}
+          account={account}
+          property={property}
+          view={view}
+          selectedDimensions={selectedDimensions}
+          setDimensionIDs={setSelectedDimensionIDs}
           helperText="Dimensions to include in the query."
-          storageKey={StorageKey.queryExplorerDimensions}
         />
         <Sort
           columns={(selectedDimensions || []).concat(selectedMetrics || [])}
-          setSort={setSort}
+          sort={sort}
+          setSortIDs={setSortIDs}
         />
         <TextField
           InputProps={{
@@ -263,8 +300,8 @@ export const QueryExplorer = () => {
           helperText="The filters to apply to the query."
         />
         <SegmentPicker
-          storageKey={StorageKey.queryExplorerSegment}
-          setSegment={setSelectedSegment}
+          segment={segment}
+          setSegmentID={setSegmentID}
           showSegmentDefinition={showSegmentDefinition}
         />
         <LabeledCheckbox
@@ -275,8 +312,8 @@ export const QueryExplorer = () => {
           Show segment definitions instead of IDs.
         </LabeledCheckbox>
         <V3SamplingLevelPicker
-          storageKey={StorageKey.queyExplorerSamplingLevel}
-          setSamplingLevel={setSelectedSamplingValue}
+          samplingLevel={samplingValue}
+          setSamplingLevel={setSamplingValue}
           helperText="The sampling level to use for the query."
         />
         <TextField
@@ -308,7 +345,11 @@ export const QueryExplorer = () => {
         <PAB
           disabled={!requiredParameters}
           className={classes.runButton}
-          onClick={runQuery}
+          onClick={() =>
+            runQuery(() => {
+              setUpdateLink(true)
+            })
+          }
         >
           Run Query
         </PAB>
@@ -320,7 +361,11 @@ export const QueryExplorer = () => {
           include empty rows
         </LabeledCheckbox>
       </section>
-      <Report queryResponse={queryResponse} columns={columns} />
+      <Report
+        queryResponse={queryResponse}
+        columns={columns}
+        permalink={currentLink}
+      />
     </>
   )
 }

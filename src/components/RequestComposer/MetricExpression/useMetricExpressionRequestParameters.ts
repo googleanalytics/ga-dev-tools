@@ -1,15 +1,24 @@
-import { useState, useMemo } from "react"
+import { useState, useMemo, useCallback } from "react"
 
 import { usePersistentString } from "@/hooks"
 import { StorageKey } from "@/constants"
-import { HasView } from "@/components/ViewSelector"
 import {
   V4SamplingLevel,
-  UADimensions,
   UASegment,
+  UAColumn,
+  useUASegments,
 } from "@/components/UAPickers"
+import { UAAccountPropertyView } from "@/components/ViewSelector/useAccountPropertyView"
+import {
+  useKeyedHydratedPersistantArray,
+  useKeyedHydratedPersistantObject,
+} from "@/hooks/useHydrated"
+import { QueryParam } from "../RequestComposer"
 
-const useMetricExpressionRequestParameters = (view: HasView | undefined) => {
+const useMetricExpressionRequestParameters = (
+  apv: UAAccountPropertyView,
+  columns: UAColumn[] | undefined
+) => {
   const [viewId, setViewId] = useState("")
   const [startDate, setStartDate] = usePersistentString(
     StorageKey.metricExpressionStartDate,
@@ -27,12 +36,51 @@ const useMetricExpressionRequestParameters = (view: HasView | undefined) => {
     StorageKey.metricExpressionMetricAliases,
     ""
   )
-  const [selectedDimensions, setSelectedDimensions] = useState<UADimensions>()
+
+  const getColumnsByIDs = useCallback(
+    (ids: string[] | undefined) => {
+      if (ids === undefined || columns === undefined) {
+        return undefined
+      }
+      return columns.filter(c => ids.includes(c.id!))
+    },
+    [columns]
+  )
+
+  const [
+    selectedDimensions,
+    setSelectedDimensionIDs,
+  ] = useKeyedHydratedPersistantArray<UAColumn>(
+    StorageKey.requestComposerMetricExpressionDimensions,
+    QueryParam.Dimensions,
+    getColumnsByIDs
+  )
+
   const [filtersExpression, setFiltersExpression] = usePersistentString(
     StorageKey.metricExpressionFiltersExpression,
     ""
   )
-  const [selectedSegment, setSelectedSegment] = useState<UASegment>()
+
+  const segments = useUASegments()
+  const getSegmentByID = useCallback(
+    (id: string | undefined) => {
+      if (id === undefined || segments === undefined) {
+        return undefined
+      }
+      return segments.find(c => c.id === id)
+    },
+    [segments]
+  )
+
+  const [
+    selectedSegment,
+    setSelectedSegmentID,
+  ] = useKeyedHydratedPersistantObject<UASegment>(
+    StorageKey.requestComposerMetricExpressionSegment,
+    QueryParam.Segment,
+    getSegmentByID
+  )
+
   const [samplingLevel, setSamplingLevel] = useState<
     V4SamplingLevel | undefined
   >(V4SamplingLevel.Default)
@@ -44,11 +92,11 @@ const useMetricExpressionRequestParameters = (view: HasView | undefined) => {
   )
 
   useMemo(() => {
-    const id = view?.view.id
+    const id = apv.view?.id
     if (id !== undefined) {
       setViewId(id)
     }
-  }, [view])
+  }, [apv])
 
   return {
     viewId,
@@ -62,11 +110,11 @@ const useMetricExpressionRequestParameters = (view: HasView | undefined) => {
     metricAliases,
     setMetricAliases,
     selectedDimensions,
-    setSelectedDimensions,
+    setSelectedDimensionIDs,
     filtersExpression,
     setFiltersExpression,
     selectedSegment,
-    setSelectedSegment,
+    setSelectedSegmentID,
     samplingLevel,
     setSamplingLevel,
     pageToken,

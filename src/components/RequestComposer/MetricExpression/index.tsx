@@ -20,21 +20,22 @@ import makeStyles from "@material-ui/core/styles/makeStyles"
 import { usePersistentBoolean } from "@/hooks"
 import { StorageKey } from "@/constants"
 import LinkedTextField from "@/components/LinkedTextField"
-import { HasView } from "@/components/ViewSelector"
 import GADate from "@/components/GADate"
 import LabeledCheckbox from "@/components/LabeledCheckbox"
 import {
   DimensionsPicker,
   SegmentPicker,
+  useUADimensionsAndMetrics,
   V4SamplingLevelPicker,
 } from "@/components/UAPickers"
 import { linkFor, titleFor } from "../HistogramRequest/"
 import useMetricExpressionRequestParameters from "./useMetricExpressionRequestParameters"
 import useMetricExpressionRequest from "./useMetricExpressionRequest"
 import { ReportsRequest } from "../RequestComposer"
+import { UAAccountPropertyView } from "@/components/ViewSelector/useAccountPropertyView"
 
 interface MetricExpressionRequestProps {
-  view: HasView | undefined
+  apv: UAAccountPropertyView
   controlWidth: string
   setRequestObject: (request: ReportsRequest | undefined) => void
 }
@@ -47,7 +48,7 @@ const useStyles = makeStyles(theme => ({
 }))
 
 const MetricExpression: React.FC<MetricExpressionRequestProps> = ({
-  view,
+  apv,
   controlWidth,
   setRequestObject,
   children,
@@ -60,6 +61,7 @@ const MetricExpression: React.FC<MetricExpressionRequestProps> = ({
     StorageKey.metricExpressionRequestShowSegmentDefinition,
     false
   )
+  const { columns } = useUADimensionsAndMetrics(apv)
   const {
     viewId,
     setViewId,
@@ -72,18 +74,18 @@ const MetricExpression: React.FC<MetricExpressionRequestProps> = ({
     metricAliases,
     setMetricAliases,
     selectedDimensions,
-    setSelectedDimensions,
+    setSelectedDimensionIDs,
     filtersExpression,
     setFiltersExpression,
     selectedSegment,
-    setSelectedSegment,
+    setSelectedSegmentID,
     samplingLevel,
     setSamplingLevel,
     pageSize,
     setPageSize,
     pageToken,
     setPageToken,
-  } = useMetricExpressionRequestParameters(view)
+  } = useMetricExpressionRequestParameters(apv, columns)
   const requestObject = useMetricExpressionRequest({
     viewId,
     samplingLevel,
@@ -150,9 +152,9 @@ const MetricExpression: React.FC<MetricExpressionRequestProps> = ({
           helperText="Aliases to use for your expressions. Separate multiple aliases with a comma."
         />
         <DimensionsPicker
-          view={view}
-          setDimensions={setSelectedDimensions}
-          storageKey={StorageKey.metricExpressionRequestDimensions}
+          {...apv}
+          selectedDimensions={selectedDimensions}
+          setDimensionIDs={setSelectedDimensionIDs}
           helperText="The dimensions to include in the request."
         />
         <LinkedTextField
@@ -164,8 +166,8 @@ const MetricExpression: React.FC<MetricExpressionRequestProps> = ({
           helperText="Filters that restrict the data returned for the metric expression request."
         />
         <SegmentPicker
-          setSegment={setSelectedSegment}
-          storageKey={StorageKey.metricExpressionRequestSegment}
+          segment={selectedSegment}
+          setSegmentID={setSelectedSegmentID}
           showSegmentDefinition={showSegmentDefinition}
         />
         <LabeledCheckbox

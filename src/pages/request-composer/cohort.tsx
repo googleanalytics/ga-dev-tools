@@ -15,19 +15,19 @@
 import * as React from "react"
 
 import Layout from "@/components/Layout"
-import QueryExplorer, {
-  QueryExplorerType,
-} from "@/components/ga4/QueryExplorer"
+import RequestComposer, {
+  RequestComposerType,
+} from "@/components/RequestComposer"
 
 export default ({ location: { pathname } }) => {
   return (
     <Layout
-      title="GA4 Query Explorer"
+      title="Request Composer - Cohort Request"
       requireLogin
       pathname={pathname}
-      description="The GA4 Query Explorer helps you to create valid requests for the Analytics Data API."
+      description="Demonstrates how to compose a cohort request using the Analytics Reporting API v4."
     >
-      <QueryExplorer type={QueryExplorerType.Basic} />
+      <RequestComposer type={RequestComposerType.Cohort} />
     </Layout>
   )
 }
