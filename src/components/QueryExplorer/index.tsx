@@ -183,6 +183,15 @@ export const QueryExplorer = () => {
     includeEmptyRows,
   })
 
+  const [updateLink, setUpdateLink] = React.useState(false)
+  const [currentLink, setCurrentLink] = React.useState<string>()
+  React.useEffect(() => {
+    if (updateLink) {
+      setCurrentLink(permalink)
+      setUpdateLink(false)
+    }
+  }, [permalink, updateLink])
+
   return (
     <>
       <Typography variant="h2">Overview</Typography>
@@ -336,7 +345,11 @@ export const QueryExplorer = () => {
         <PAB
           disabled={!requiredParameters}
           className={classes.runButton}
-          onClick={runQuery}
+          onClick={() =>
+            runQuery(() => {
+              setUpdateLink(true)
+            })
+          }
         >
           Run Query
         </PAB>
@@ -351,7 +364,7 @@ export const QueryExplorer = () => {
       <Report
         queryResponse={queryResponse}
         columns={columns}
-        permalink={permalink}
+        permalink={currentLink}
       />
     </>
   )

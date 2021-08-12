@@ -42,7 +42,7 @@ type UseDataAPIRequest = (
   arg: Arg
 ) => {
   requiredParameters: boolean
-  runQuery: () => void
+  runQuery: (cb: () => void) => void
   queryResponse: QueryResponse
 }
 
@@ -74,77 +74,81 @@ export const useDataAPIRequest: UseDataAPIRequest = ({
     )
   }, [viewID, startDate, endDate, selectedMetrics])
 
-  const runQuery = React.useCallback(() => {
-    if (
-      viewID === undefined ||
-      api === undefined ||
-      selectedMetrics === undefined ||
-      selectedMetrics.length === 0 ||
-      startDate === undefined ||
-      endDate === undefined
-    ) {
-      return
-    }
-    const metrics = selectedMetrics.map(a => a.id).join(",")
+  const runQuery = React.useCallback(
+    (cb: () => void) => {
+      if (
+        viewID === undefined ||
+        api === undefined ||
+        selectedMetrics === undefined ||
+        selectedMetrics.length === 0 ||
+        startDate === undefined ||
+        endDate === undefined
+      ) {
+        return
+      }
+      const metrics = selectedMetrics.map(a => a.id).join(",")
 
-    const apiObject = {
-      ids: viewID,
-      "start-date": startDate,
-      "end-date": endDate,
-      "include-empty-rows": includeEmptyRows,
-      metrics,
-    }
-    if (selectedDimensions !== undefined && selectedDimensions.length !== 0) {
-      const dimensions = selectedDimensions?.map(a => a.id).join(",")
-      apiObject["dimensions"] = dimensions
-    }
-    if (selectedSamplingValue !== undefined) {
-      apiObject["samplingLevel"] = selectedSamplingValue
-    }
-    if (segment !== undefined) {
-      apiObject["segment"] = segment.segmentId
-    }
-    if (startIndex !== undefined && startIndex !== "") {
-      apiObject["start-index"] = startIndex
-    }
-    if (maxResults !== undefined && maxResults !== "") {
-      apiObject["max-results"] = maxResults
-    }
-    if (filters !== undefined && filters !== "") {
-      apiObject["filters"] = filters
-    }
-    if (sort !== undefined && sort.length > 0) {
-      apiObject["sort"] = sort
-        .map(a => `${a.sort === "ASCENDING" ? "" : "-"}${a.id}`)
-        .join(",")
-    }
-    setQueryResponse({ status: APIStatus.InProgress })
-    api.data.ga
-      .get(apiObject)
-      .then(response => {
-        setQueryResponse({
-          status: APIStatus.Success,
-          response: response.result,
+      const apiObject = {
+        ids: viewID,
+        "start-date": startDate,
+        "end-date": endDate,
+        "include-empty-rows": includeEmptyRows,
+        metrics,
+      }
+      if (selectedDimensions !== undefined && selectedDimensions.length !== 0) {
+        const dimensions = selectedDimensions?.map(a => a.id).join(",")
+        apiObject["dimensions"] = dimensions
+      }
+      if (selectedSamplingValue !== undefined) {
+        apiObject["samplingLevel"] = selectedSamplingValue
+      }
+      if (segment !== undefined) {
+        apiObject["segment"] = segment.segmentId
+      }
+      if (startIndex !== undefined && startIndex !== "") {
+        apiObject["start-index"] = startIndex
+      }
+      if (maxResults !== undefined && maxResults !== "") {
+        apiObject["max-results"] = maxResults
+      }
+      if (filters !== undefined && filters !== "") {
+        apiObject["filters"] = filters
+      }
+      if (sort !== undefined && sort.length > 0) {
+        apiObject["sort"] = sort
+          .map(a => `${a.sort === "ASCENDING" ? "" : "-"}${a.id}`)
+          .join(",")
+      }
+      setQueryResponse({ status: APIStatus.InProgress })
+      api.data.ga
+        .get(apiObject)
+        .then(response => {
+          setQueryResponse({
+            status: APIStatus.Success,
+            response: response.result,
+          })
+          cb()
         })
-      })
-      .catch(e => {
-        setQueryResponse({ status: APIStatus.Error, error: e.result.error })
-      })
-  }, [
-    viewID,
-    startDate,
-    endDate,
-    selectedDimensions,
-    selectedMetrics,
-    segment,
-    sort,
-    startIndex,
-    maxResults,
-    filters,
-    selectedSamplingValue,
-    includeEmptyRows,
-    api,
-  ])
+        .catch(e => {
+          setQueryResponse({ status: APIStatus.Error, error: e.result.error })
+        })
+    },
+    [
+      viewID,
+      startDate,
+      endDate,
+      selectedDimensions,
+      selectedMetrics,
+      segment,
+      sort,
+      startIndex,
+      maxResults,
+      filters,
+      selectedSamplingValue,
+      includeEmptyRows,
+      api,
+    ]
+  )
 
   return { runQuery, requiredParameters, queryResponse }
 }
