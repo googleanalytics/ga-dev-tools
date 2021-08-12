@@ -64,9 +64,10 @@ export const useKeyedHydratedPersistantArray = <T>(
 export const useKeyedHydratedPersistantObject = <T>(
   key: StorageKey,
   paramName: string,
-  getValue: (stringKey: string) => T | undefined
+  getValue: (stringKey: string | undefined) => T | undefined,
+  onSet?: (t: T | undefined) => void
 ): [T | undefined, Dispatch<string | undefined>] => {
-  const [stringKey, setKey] = useHydratedPersistantString(key, paramName)
+  const [stringKey, setKeyLocal] = useHydratedPersistantString(key, paramName)
 
   const t = useMemo(() => {
     if (stringKey === undefined) {
@@ -74,6 +75,23 @@ export const useKeyedHydratedPersistantObject = <T>(
     }
     return getValue(stringKey)
   }, [stringKey, getValue])
+
+  const setKey: Dispatch<string | undefined> = useCallback(
+    key => {
+      setKeyLocal(old => {
+        let nu: string | undefined = undefined
+        if (typeof key === "function") {
+          nu = key(old)
+        } else {
+          nu = key
+        }
+        const nuT = getValue(nu)
+        onSet && onSet(nuT)
+        return nu
+      })
+    },
+    [setKeyLocal, getValue, onSet]
+  )
 
   return [t, setKey]
 }
