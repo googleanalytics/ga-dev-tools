@@ -82,20 +82,31 @@ export const usePersistentString: UsePersistentString = (
   return [value, setValue]
 }
 
+const getObjectFromLocalStorage = <T>(
+  key: StorageKey,
+  defaultValue?: T
+): T | undefined => {
+  if (IS_SSR) {
+    return undefined
+  }
+  let asString = IS_SSR ? null : window.localStorage.getItem(key)
+  if (asString === null || asString === "undefined") {
+    return defaultValue
+  }
+  return JSON.parse(asString)
+}
+
 export const usePersistantObject = <T extends {}>(
   key: StorageKey,
   defaultValue?: T
 ): [T | undefined, React.Dispatch<React.SetStateAction<T | undefined>>] => {
   const [value, setValue] = useState(() => {
-    if (IS_SSR) {
-      return undefined
-    }
-    let asString = IS_SSR ? null : window.localStorage.getItem(key)
-    if (asString === null || asString === "undefined") {
-      return defaultValue
-    }
-    return JSON.parse(asString)
+    return getObjectFromLocalStorage(key, defaultValue)
   })
+
+  useEffect(() => {
+    setValue(getObjectFromLocalStorage(key, defaultValue))
+  }, [key, setValue, defaultValue])
 
   useEffect(() => {
     if (IS_SSR) {

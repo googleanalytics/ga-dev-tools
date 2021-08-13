@@ -13,12 +13,12 @@ export interface SelectedStream {
 }
 
 export interface AccountSummariesRequest {
-  accountSummaries: AccountSummary[]
+  accounts: AccountSummary[]
 }
 
 export interface StreamsRequest {
   web: WebDataStream[]
-  android: AndroidDataStream[]
-  ios: IosDataStream[]
+  // android: AndroidDataStream[]
+  // ios: IosDataStream[]
   streams: Stream[]
 }

@@ -8,7 +8,7 @@ import IconButton from "@material-ui/core/IconButton"
 import Clear from "@material-ui/icons/Clear"
 
 import { Url, StorageKey } from "@/constants"
-import { usePersistantObject, useScrollTo } from "@/hooks"
+import { useScrollTo } from "@/hooks"
 import Loadable from "@/components/Loadable"
 import Info from "@/components/Info"
 import Field from "./Field"
@@ -16,7 +16,7 @@ import useInputs from "./useInputs"
 import { useDimensionsAndMetrics, Successful } from "./useDimensionsAndMetrics"
 import useFormStyles from "@/hooks/useFormStyles"
 import StreamPicker from "../StreamPicker"
-import { AccountSummary, PropertySummary } from "@/types/ga4/StreamPicker"
+import useAccountPropertyStream from "../StreamPicker/useAccountPropertyStream"
 
 const dataAPI = (
   <ExternalLink href={Url.ga4DataAPIGetMetadata}>
@@ -86,19 +86,20 @@ const RenderSuccessful: React.FC<
   )
 }
 
+enum QueryParam {
+  Account = "a",
+  Property = "b",
+  Stream = "c",
+}
+
 const DimensionsMetricsExplorer: React.FC = () => {
   const formClasses = useFormStyles()
   const { search, setSearch } = useInputs()
-  const [account, setAccount] = usePersistantObject<AccountSummary>(
-    StorageKey.ga4DimensionsMetricsSelectedAccount
+  const aps = useAccountPropertyStream(
+    StorageKey.ga4DimensionsMetricsExplorerAPS,
+    QueryParam
   )
-  const [property, setProperty] = usePersistantObject<PropertySummary>(
-    StorageKey.ga4DimensionsMetricsSelectedProperty
-  )
-  const propertyName = useMemo(() => property?.property || "properties/0", [
-    property,
-  ])
-  const request = useDimensionsAndMetrics(propertyName)
+  const request = useDimensionsAndMetrics(aps)
 
   return (
     <>
@@ -113,12 +114,7 @@ const DimensionsMetricsExplorer: React.FC = () => {
         </Typography>
         <section className={formClasses.form}>
           <Typography variant="h3">Select property</Typography>
-          <StreamPicker
-            account={account}
-            property={property}
-            setAccount={setAccount}
-            setProperty={setProperty}
-          />
+          <StreamPicker autoFill {...aps} />
           <Typography variant="h3">Search</Typography>
           <TextField
             label="Search for a dimension or metric"

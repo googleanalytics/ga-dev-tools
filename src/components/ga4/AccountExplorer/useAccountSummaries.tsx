@@ -1,6 +1,10 @@
+import { StorageKey } from "@/constants"
+import useCached from "@/hooks/useCached"
 import { RequestStatus } from "@/types"
 import { useCallback, useMemo, useState } from "react"
 import { useSelector } from "react-redux"
+
+type AccountSummary = gapi.client.analyticsadmin.GoogleAnalyticsAdminV1alphaAccountSummary
 
 const useAccountSummaries = () => {
   const gapi = useSelector((a: AppState) => a.gapi)
@@ -16,7 +20,7 @@ const useAccountSummaries = () => {
       }
       setRequestStatus(RequestStatus.InProgress)
       let pageToken: string | undefined = undefined
-      let accountSummaries = []
+      let accountSummaries: AccountSummary[] = []
       do {
         pageToken = undefined
         const { result } = await adminAPI.accountSummaries.list({
@@ -31,12 +35,18 @@ const useAccountSummaries = () => {
           pageToken = result.nextPageToken
         }
       } while (pageToken !== undefined)
+      setRequestStatus(RequestStatus.Successful)
     } catch (e) {
       setRequestStatus(RequestStatus.Failed)
     }
   }, [adminAPI])
 
-  const accountSummaries = useCached()
+  if (requestStatus === RequestStatus.NotStarted) {
+    return { status: requestStatus }
+  }
+  if (requestStatus === RequestStatus.Successful) {
+    return { status: requestStatus, accountSummaries }
+  }
 }
 
 export default useAccountSummaries

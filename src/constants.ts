@@ -85,10 +85,15 @@ export enum StorageKey {
   uaSegments = "//ua-segments-2",
   viewSelectorData = "//view-selector/data",
 
+  ga4AccountSummaries = "//ga4-account-summaries",
+  ga4WebStreams = "//ga4-web-streams",
+
   // Acount Explorer
   accountExplorerAPV = "/account-explorer/apv",
 
   // GA4 Dimensions and metrics explorer
+  ga4DimensionsMetrics = "/ga4/dimensions-metrics/",
+  ga4DimensionsMetricsExplorerAPS = "/ga4/dimensions-metrics-explorer/aps",
   ga4DimensionsMetricsSearch = "/ga4/dimensions-metrics-explorer/search",
   ga4DimensionsMetricsFields = "/ga4/dimensions-metrics-explorer/fields",
   ga4DimensionsMetricsAccountSummaries = "/ga4/dimensions-metrics-explorer/account-summaries",
