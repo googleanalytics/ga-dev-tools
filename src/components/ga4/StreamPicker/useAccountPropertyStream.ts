@@ -24,7 +24,11 @@ interface AccountPropertyStreamSetters {
 
 const useAccountPropertyStream = (
   prefix: StorageKey,
-  queryParamKeys: { Account: string; Property: string; Stream: string }
+  queryParamKeys: { Account: string; Property: string; Stream: string },
+  // TODO - This is only here because there seems to be a bug with
+  // use-query-params replaceIn functionality where it also removes the anchor.
+  // Need to do a minimum repro and file a bug to that repo.
+  keepParam: boolean = false
 ): AccountPropertyStream & AccountPropertyStreamSetters => {
   const accountsRequest = useAccounts()
 
@@ -47,7 +51,9 @@ const useAccountPropertyStream = (
   ] = useKeyedHydratedPersistantObject<AccountSummary>(
     `${prefix}-account` as StorageKey,
     queryParamKeys.Account,
-    getAccountByID
+    getAccountByID,
+    undefined,
+    { keepParam }
   )
 
   const getPropertyByID = useCallback(
@@ -71,7 +77,9 @@ const useAccountPropertyStream = (
   ] = useKeyedHydratedPersistantObject<PropertySummary>(
     `${prefix}-property` as StorageKey,
     queryParamKeys.Property,
-    getPropertyByID
+    getPropertyByID,
+    undefined,
+    { keepParam }
   )
 
   const streamsRequest = useStreams(property)
@@ -92,7 +100,9 @@ const useAccountPropertyStream = (
   const [stream, setStreamID] = useKeyedHydratedPersistantObject<Stream>(
     `${prefix}-stream` as StorageKey,
     queryParamKeys.Stream,
-    getStreamsByID
+    getStreamsByID,
+    undefined,
+    { keepParam }
   )
 
   return {

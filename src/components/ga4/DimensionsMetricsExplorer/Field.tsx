@@ -9,6 +9,8 @@ import InlineCode from "@/components/InlineCode"
 import { CopyIconButton } from "@/components/CopyButton"
 import ExternalLink from "@/components/ExternalLink"
 import { Dimension, Metric } from "./useDimensionsAndMetrics"
+import { QueryParam } from "."
+import { AccountSummary, PropertySummary } from "@/types/ga4/StreamPicker"
 
 const knownLinks: [string, JSX.Element][] = [
   [
@@ -98,12 +100,25 @@ interface FieldProps {
   field:
     | { type: "dimension"; value: Dimension }
     | { type: "metric"; value: Metric }
+  account: AccountSummary | undefined
+  property: PropertySummary | undefined
 }
-const Field: React.FC<FieldProps> = ({ field }) => {
+const Field: React.FC<FieldProps> = ({ field, account, property }) => {
   const apiName = field.value.apiName || ""
   const uiName = field.value.uiName || ""
   const description = field.value.description || ""
-  const link = `${window.location.origin}${window.location.pathname}#${apiName}`
+
+  const link = React.useMemo(() => {
+    let baseURL = `${window.location.origin}${window.location.pathname}`
+    let search = ``
+    if (!field.value.customDefinition && account && property) {
+      let urlParams = new URLSearchParams()
+      urlParams.append(QueryParam.Account, account.name!)
+      urlParams.append(QueryParam.Property, property.property!)
+      search = `?${urlParams.toString()}`
+    }
+    return `${baseURL}${search}#${apiName}`
+  }, [field, apiName, account, property])
 
   const classes = useStyles()
 
