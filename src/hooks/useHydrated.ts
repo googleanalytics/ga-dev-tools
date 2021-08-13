@@ -137,7 +137,6 @@ const useHydratedValue = <T>(
 ): [t: T | undefined, setT: Dispatch<T | undefined>] => {
   useEffect(() => {
     if (param !== null && param !== undefined) {
-      console.log({ param })
       setValue(param)
       if (!settings?.keepParam) {
         setParam(undefined, "replaceIn")

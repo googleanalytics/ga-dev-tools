@@ -121,6 +121,7 @@ export enum StorageKey {
   ga4RequestComposerBasicMetricAggregations = "/ga4/request-composer/basic-report/metric-aggregations",
   ga4RequestComposerBasicSelectedCurrencyCode = "/ga4/request-composer/basic-report/currency-code",
   ga4RequestComposerBasicShowAdvanced = "/ga4/request-composer/basic-report/show-advanced",
+  ga4QueryExplorerAPS = "/ga4/query-explorer/aps",
 
   // Query Explorer
   queryExplorerAPV = "query-explorer/apv",
@@ -213,6 +214,7 @@ export enum StorageKey {
 
   // IOS Campaign URL Builder
   campaignBuilderIOSAPV = "campaign-builder/ios/apv",
+  campaignBuilderIOSAPS = "campaign-builder/ios/aps",
   campaignBuilderIOSAppID = "campaign-builder/ios/app-id",
   campaignBuilderIOSSource = "campaign-builder/ios/source",
   campaignBuilderIOSMedium = "campaign-builder/ios/medium",

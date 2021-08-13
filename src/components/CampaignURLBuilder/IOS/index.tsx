@@ -17,6 +17,7 @@ import { AdNetwork, supportedAdNetworks } from "../adNetworks"
 import ViewSelector from "@/components/ViewSelector"
 import StreamPicker from "@/components/ga4/StreamPicker"
 import useAccountPropertyView from "@/components/ViewSelector/useAccountPropertyView"
+import useAccountPropertyStream from "@/components/ga4/StreamPicker/useAccountPropertyStream"
 
 interface IOSURLBuilderProps {
   version: GAVersion
@@ -30,6 +31,7 @@ enum QueryParam {
   Account = "a",
   Property = "b",
   View = "c",
+  Stream = "d",
 }
 
 const IOSURLBuilder: React.FC<IOSURLBuilderProps> = ({ version }) => {
@@ -66,8 +68,6 @@ const IOSURLBuilder: React.FC<IOSURLBuilderProps> = ({ version }) => {
     deviceID,
     customFields,
     method,
-    ga4Account,
-    ga4Property,
   } = values
 
   const url = useGenerateURL(values)
@@ -86,6 +86,10 @@ const IOSURLBuilder: React.FC<IOSURLBuilderProps> = ({ version }) => {
     StorageKey.campaignBuilderIOSAPV,
     QueryParam
   )
+  const aps = useAccountPropertyStream(
+    StorageKey.campaignBuilderIOSAPS,
+    QueryParam
+  )
 
   const propertySelector = React.useMemo(() => {
     if (version === GAVersion.UniversalAnalytics) {
@@ -100,25 +104,9 @@ const IOSURLBuilder: React.FC<IOSURLBuilderProps> = ({ version }) => {
         />
       )
     } else {
-      return (
-        <StreamPicker
-          streams={false}
-          setAccount={setGA4Account}
-          setProperty={setGA4Property}
-          account={ga4Account}
-          property={ga4Property}
-        />
-      )
+      return <StreamPicker streams={false} {...aps} />
     }
-  }, [
-    version,
-    setPropertyID,
-    setGA4Account,
-    setGA4Property,
-    ga4Account,
-    ga4Property,
-    apv,
-  ])
+  }, [version, setPropertyID, apv, aps])
 
   const redirectURLTextField = React.useMemo(() => {
     if (adNetwork?.method === "redirect") {

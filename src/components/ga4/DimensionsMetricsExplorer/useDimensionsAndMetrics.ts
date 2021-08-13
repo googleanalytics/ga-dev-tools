@@ -14,7 +14,7 @@ export type Metric = gapi.client.analyticsdata.MetricMetadata
 export type Successful = { dimensions: Dimension[]; metrics: Metric[] }
 
 export const useDimensionsAndMetrics = (
-  apv: AccountPropertyStream
+  aps: AccountPropertyStream
 ): Requestable<Successful> => {
   const gapi = useSelector((state: AppState) => state.gapi)
   const dataAPI = React.useMemo(() => gapi?.client.analyticsdata, [gapi])
@@ -27,8 +27,8 @@ export const useDimensionsAndMetrics = (
   } = useRequestStatus()
 
   const propertyName = React.useMemo(
-    () => `${apv.property?.property || "properties/0"}/metadata`,
-    [apv.property]
+    () => `${aps.property?.property || "properties/0"}/metadata`,
+    [aps.property]
   )
 
   React.useEffect(() => {

@@ -20,6 +20,8 @@ const useStyles = makeStyles(theme => ({
 
 export enum Label {
   Account = "account",
+  Property = "property",
+  Stream = "stream",
 }
 
 interface CommonProps {
@@ -84,6 +86,7 @@ const StreamPicker: React.FC<StreamPickerProps> = props => {
       />
       <Autocomplete<PropertySummary, false, false, false>
         fullWidth
+        data-testid={Label.Property}
         loading={accountsAndProperties.status !== RequestStatus.Successful}
         options={successful(accountsAndProperties)?.properties || []}
         noOptionsText="You have no GA accounts with GA4 properties."

@@ -1,4 +1,4 @@
-import { useState, useCallback, useMemo } from "react"
+import { useState, useCallback } from "react"
 
 import {
   usePersistentString,
@@ -14,12 +14,12 @@ import {
 import { DateRange } from "../DateRanges"
 import { FilterExpression } from "../Filter"
 import { MetricAggregation } from "../MetricAggregations"
-import { AccountSummary, PropertySummary } from "@/types/ga4/StreamPicker"
+import { AccountPropertyStream } from "../../StreamPicker/useAccountPropertyStream"
 
 type OrderBy = gapi.client.analyticsdata.OrderBy
 type CohortSpec = gapi.client.analyticsdata.CohortSpec
 
-const useInputs = () => {
+const useInputs = (aps: AccountPropertyStream) => {
   const [showRequestJSON, setShowRequestJSON] = usePersistentBoolean(
     StorageKey.ga4RequestComposerBasicShowRequestJSON,
     true
@@ -55,19 +55,10 @@ const useInputs = () => {
     MetricAggregation[]
   >(StorageKey.ga4RequestComposerBasicMetricAggregations)
 
-  const [account, setAccount] = usePersistantObject<AccountSummary>(
-    StorageKey.ga4RequestComposerBasicSelectedAccount
-  )
-  const [property, setProperty] = usePersistantObject<PropertySummary>(
-    StorageKey.ga4RequestComposerBasicSelectedProperty
-  )
-
-  const propertyName = useMemo(() => property?.property, [property])
-
   const { dimensionOptions } = useAvailableColumns({
     selectedMetrics: metrics,
     selectedDimensions: dimensions,
-    propertyName,
+    aps,
   })
 
   const [cohortSpec, setCohortSpec] = usePersistantObject<CohortSpec>(
@@ -122,11 +113,6 @@ const useInputs = () => {
     setKeepEmptyRows,
     cohortSpec,
     setCohortSpec,
-    propertyName,
-    account,
-    setAccount,
-    property,
-    setProperty,
   }
 }
 export default useInputs
