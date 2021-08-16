@@ -51,8 +51,6 @@ const IOSURLBuilder: React.FC<IOSURLBuilderProps> = ({ version }) => {
     setDeviceID,
     updateCustomField,
     setMethod,
-    setGA4Account,
-    setGA4Property,
     ...values
   } = useInputs(version)
   const {

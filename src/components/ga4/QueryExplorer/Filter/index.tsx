@@ -106,7 +106,7 @@ const Filter: React.FC<FilterProps> = ({
   }, [expression])
 
   return (
-    <UseFilterContext.Provider value={useFilterValue}>
+    <UseFilterContext.Provider value={{ ...useFilterValue, aps }}>
       <section className={classes.filter}>
         {noFiltersConfigured}
         <Expression
