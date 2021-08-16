@@ -95,3 +95,5 @@ export const useAvailableColumns = ({
     dimensionOptionsLessSelected,
   }
 }
+
+export default useAvailableColumns

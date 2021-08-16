@@ -19,7 +19,7 @@ import Autocomplete from "@material-ui/lab/Autocomplete"
 import { useState } from "react"
 import { Dispatch } from "@/types"
 import { AccountPropertyStream } from "@/components/ga4/StreamPicker/useAccountPropertyStream"
-import { useAvailableColumns } from "./useAvailableColumns"
+import useAvailableColumns from "./useAvailableColumns"
 
 const useColumnStyles = makeStyles(() => ({
   option: {
