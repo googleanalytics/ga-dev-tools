@@ -18,6 +18,7 @@ import ViewSelector from "@/components/ViewSelector"
 import StreamPicker from "@/components/ga4/StreamPicker"
 import useAccountPropertyView from "@/components/ViewSelector/useAccountPropertyView"
 import useAccountPropertyStream from "@/components/ga4/StreamPicker/useAccountPropertyStream"
+import { PropertySummary } from "@/types/ga4/StreamPicker"
 
 interface IOSURLBuilderProps {
   version: GAVersion
@@ -53,6 +54,14 @@ const IOSURLBuilder: React.FC<IOSURLBuilderProps> = ({ version }) => {
     setMethod,
     ...values
   } = useInputs(version)
+
+  const onSetProperty = React.useCallback(
+    (p: PropertySummary | undefined) => {
+      setPropertyID(p?.property?.replace("properties/", ""))
+    },
+    [setPropertyID]
+  )
+
   const {
     adNetwork,
     appID,
@@ -86,7 +95,9 @@ const IOSURLBuilder: React.FC<IOSURLBuilderProps> = ({ version }) => {
   )
   const aps = useAccountPropertyStream(
     StorageKey.campaignBuilderIOSAPS,
-    QueryParam
+    QueryParam,
+    undefined,
+    onSetProperty
   )
 
   const propertySelector = React.useMemo(() => {

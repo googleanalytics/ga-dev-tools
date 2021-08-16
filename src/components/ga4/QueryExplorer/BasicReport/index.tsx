@@ -173,7 +173,7 @@ const BasicReport = () => {
       </Typography>
       <section className={formClasses.form}>
         <Typography variant="h3">Select property</Typography>
-        <StreamPicker {...aps} />
+        <StreamPicker autoFill {...aps} />
         <Typography variant="h3">Set parameters</Typography>
         <LabeledCheckbox checked={showAdvanced} setChecked={setShowAdvanced}>
           Show advanced options

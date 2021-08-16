@@ -37,12 +37,6 @@ export const linkData: LinkData[] = [
     versions: [GAVersion.UniversalAnalytics],
   },
   {
-    text: "Account Explorer",
-    href: "/ga4/account-explorer/",
-    type: "link",
-    versions: [GAVersion.GoogleAnalytics4],
-  },
-  {
     text: "Campaign URL Builder",
     href: "/campaign-url-builder/",
     type: "link",

@@ -28,7 +28,8 @@ const useAccountPropertyStream = (
   // TODO - This is only here because there seems to be a bug with
   // use-query-params replaceIn functionality where it also removes the anchor.
   // Need to do a minimum repro and file a bug to that repo.
-  keepParam: boolean = false
+  keepParam: boolean = false,
+  onSetProperty?: (p: PropertySummary | undefined) => void
 ): AccountPropertyStream & AccountPropertyStreamSetters => {
   const accountsRequest = useAccounts()
 
@@ -78,7 +79,7 @@ const useAccountPropertyStream = (
     `${prefix}-property` as StorageKey,
     queryParamKeys.Property,
     getPropertyByID,
-    undefined,
+    onSetProperty,
     { keepParam }
   )
 
