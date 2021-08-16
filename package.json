@@ -30,6 +30,7 @@
     "gatsby-source-filesystem": "^3.4.0",
     "gatsby-transformer-sharp": "^3.4.0",
     "immutable": "^4.0.0-rc.12",
+    "js-base64": "^3.6.1",
     "load-script": "^1.0.0",
     "moment": "^2.29.1",
     "react": "^17.0.2",

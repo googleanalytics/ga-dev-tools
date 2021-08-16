@@ -45,3 +45,8 @@ export const inProgress = <A, B, C>(
   }
   return undefined
 }
+
+export enum URLVersion {
+  _1 = "1",
+  _2 = "2",
+}
