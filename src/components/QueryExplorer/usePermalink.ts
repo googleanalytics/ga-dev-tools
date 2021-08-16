@@ -89,7 +89,7 @@ const usePermalink = ({
     if (sort !== undefined) {
       urlParams.append(
         QueryParam.Sort,
-        sort.map(s => `${s.id}@@@${s.sort}`).join(",")
+        sort.map(s => `${s.sort === "DESCENDING" ? "-" : ""}${s.id}`).join(",")
       )
     }
 

@@ -190,8 +190,16 @@ export const useInputs = () => {
         .filter(
           c =>
             ids.find(id => {
-              const [innerId, type] = id.split("@@@")
-              return c.id === innerId && type === c.sort
+              if (id.includes("@@@")) {
+                // TODO - add measurement to see if this branch is reached.
+                const [innerId, type] = id.split("@@@")
+                return c.id === innerId && type === c.sort
+              }
+              if (id.startsWith("-")) {
+                const actualId = id.substring(1)
+                return c.id === actualId && c.sort === "DESCENDING"
+              }
+              return c.id === id && c.sort === "ASCENDING"
             }) !== undefined
         )
     },
