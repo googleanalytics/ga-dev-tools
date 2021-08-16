@@ -16,14 +16,10 @@ import * as React from "react"
 
 import { Typography, TextField, makeStyles } from "@material-ui/core"
 import Autocomplete from "@material-ui/lab/Autocomplete"
-import { useMemo, useState } from "react"
-import { Dispatch, RequestStatus } from "../types"
-import {
-  Dimension,
-  Metric,
-  useDimensionsAndMetrics,
-} from "./ga4/DimensionsMetricsExplorer/useDimensionsAndMetrics"
-import { AccountPropertyStream } from "./ga4/StreamPicker/useAccountPropertyStream"
+import { useState } from "react"
+import { Dispatch } from "@/types"
+import { AccountPropertyStream } from "@/components/ga4/StreamPicker/useAccountPropertyStream"
+import { useAvailableColumns } from "./useAvailableColumns"
 
 const useColumnStyles = makeStyles(() => ({
   option: {
@@ -36,77 +32,6 @@ const useColumnStyles = makeStyles(() => ({
     flexDirection: "column",
   },
 }))
-
-type UseAvailableColumns = (arg: {
-  selectedMetrics: GA4Metrics
-  selectedDimensions: GA4Dimensions
-  aps: AccountPropertyStream
-  dimensionFilter?: (dimension: Dimension) => boolean
-  metricFilter?: (metric: Metric) => boolean
-}) => {
-  metricOptions: GA4Metrics
-  metricOptionsLessSelected: GA4Metrics
-  dimensionOptions: GA4Dimensions
-  dimensionOptionsLessSelected: GA4Dimensions
-}
-export const useAvailableColumns: UseAvailableColumns = ({
-  selectedMetrics,
-  selectedDimensions,
-  dimensionFilter,
-  metricFilter,
-  aps,
-}) => {
-  const request = useDimensionsAndMetrics(aps)
-
-  const [metrics, dimensions] = useMemo(() => {
-    if (request.status !== RequestStatus.Successful) {
-      return [undefined, undefined]
-    }
-    return [request.metrics, request.dimensions]
-  }, [request])
-
-  const selectedMetricIds = React.useMemo(
-    () => new Set((selectedMetrics || []).map(dimension => dimension.apiName)),
-    [selectedMetrics]
-  )
-
-  const metricOptions = React.useMemo(
-    () => metrics?.filter(metricFilter || (() => true)),
-    [metrics, metricFilter]
-  )
-
-  const metricOptionsLessSelected = React.useMemo(
-    () =>
-      metricOptions?.filter(metric => !selectedMetricIds.has(metric.apiName)),
-    [metricOptions, selectedMetricIds]
-  )
-
-  const selectedDimensionIds = React.useMemo(
-    () =>
-      new Set((selectedDimensions || []).map(dimension => dimension.apiName)),
-    [selectedDimensions]
-  )
-
-  const dimensionOptions = React.useMemo(
-    () => dimensions?.filter(dimensionFilter || (() => true)),
-    [dimensions, dimensionFilter]
-  )
-
-  const dimensionOptionsLessSelected = React.useMemo(
-    () =>
-      dimensionOptions?.filter(
-        dimension => !selectedDimensionIds.has(dimension.apiName)
-      ),
-    [dimensionOptions, selectedDimensionIds]
-  )
-
-  return {
-    metricOptions,
-    metricOptionsLessSelected,
-    dimensionOptions,
-    dimensionOptionsLessSelected,
-  }
-}
 
 export type GA4Dimension = gapi.client.analyticsdata.DimensionMetadata
 export type GA4Dimensions = GA4Dimension[] | undefined
