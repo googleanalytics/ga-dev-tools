@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo } from "react"
+import { useCallback, useMemo } from "react"
 
 import { useAddToArray, useRemoveByIndex } from "@/hooks"
 import {
@@ -146,28 +146,23 @@ const useEvent = (initial?: EventType) => {
     ItemsParam
   )
 
-  useEffect(() => {
-    if (typeString === undefined) {
-      return
-    }
-    const suggested = cloneEvent(suggestedEventFor(typeString as EventType))
-    // TODO - update this to use keepCommonParameters once it's working
-    // correctly.
-    setParameters(suggested.parameters)
-    // TODO - This could be improved to potentially keep around items maybe?
-    setItems(suggested.items)
-    if (typeString === EventType.CustomEvent) {
-      setEventName("")
-    } else {
-      setEventName(typeString)
-    }
-  }, [typeString, setEventName, setItems, setParameters])
-
   const setType: SetType = useCallback(
     nuType => {
       setTypeLocal(nuType)
+
+      const suggested = cloneEvent(suggestedEventFor(nuType))
+      // TODO - update this to use keepCommonParameters once it's working
+      // correctly.
+      setParameters(suggested.parameters)
+      // TODO - This could be improved to potentially keep around items maybe?
+      setItems(suggested.items)
+      if (nuType === EventType.CustomEvent) {
+        setEventName("")
+      } else {
+        setEventName(nuType)
+      }
     },
-    [setTypeLocal]
+    [setTypeLocal, setEventName, setItems, setParameters]
   )
 
   const setParamName: SetParamName = useCallback(
