@@ -21,6 +21,7 @@ const useSharableLink = () => {
 
   return useMemo(() => {
     const params = new URLSearchParams()
+    ensureVersion(params, UrlParam, URLVersion._2)
 
     const addIfTruthy = (p: UrlParam, v: any) => {
       v && params.append(p, v)
@@ -57,17 +58,14 @@ const useSharableLink = () => {
     addIfTruthy(UrlParam.TimestampMicros, timestamp_micros)
 
     if (userProperties) {
-      ensureVersion(params, UrlParam, URLVersion._2)
       params.append(UrlParam.UserProperties, encodeObject(userProperties))
     }
 
     if (items) {
-      ensureVersion(params, UrlParam, URLVersion._2)
       params.append(UrlParam.Items, encodeObject(items))
     }
 
     if (parameters.length > 0) {
-      ensureVersion(params, UrlParam, URLVersion._2)
       params.append(UrlParam.Parameters, encodeObject(parameters))
     }
 
