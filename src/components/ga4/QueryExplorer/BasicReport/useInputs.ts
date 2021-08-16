@@ -6,11 +6,8 @@ import {
   usePersistantObject,
 } from "@/hooks"
 import { StorageKey } from "@/constants"
-import {
-  GA4Dimensions,
-  GA4Metrics,
-  useAvailableColumns,
-} from "@/components/GA4Pickers"
+import { GA4Dimensions, GA4Metrics } from "@/components/GA4Pickers"
+import useAvailableColumns from "@/components/GA4Pickers/useAvailableColumns"
 import { DateRange } from "../DateRanges"
 import { FilterExpression } from "../Filter"
 import { MetricAggregation } from "../MetricAggregations"
