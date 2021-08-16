@@ -24,25 +24,26 @@ import {
 import { AccountPropertyStream } from "@/components/ga4/StreamPicker/useAccountPropertyStream"
 import { GA4Dimensions, GA4Metrics } from "."
 
-type UseAvailableColumns = (arg: {
+interface Arg {
   selectedMetrics: GA4Metrics
   selectedDimensions: GA4Dimensions
   aps: AccountPropertyStream
   dimensionFilter?: (dimension: Dimension) => boolean
   metricFilter?: (metric: Metric) => boolean
-}) => {
-  metricOptions: GA4Metrics
-  metricOptionsLessSelected: GA4Metrics
-  dimensionOptions: GA4Dimensions
-  dimensionOptionsLessSelected: GA4Dimensions
 }
-export const useAvailableColumns: UseAvailableColumns = ({
+
+export const useAvailableColumns = ({
   selectedMetrics,
   selectedDimensions,
   dimensionFilter,
   metricFilter,
   aps,
-}) => {
+}: Arg): {
+  metricOptions: GA4Metrics
+  metricOptionsLessSelected: GA4Metrics
+  dimensionOptions: GA4Dimensions
+  dimensionOptionsLessSelected: GA4Dimensions
+} => {
   const request = useDimensionsAndMetrics(aps)
 
   const [metrics, dimensions] = useMemo(() => {
