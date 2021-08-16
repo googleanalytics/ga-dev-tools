@@ -6,6 +6,7 @@ import {
   useHydratedPersistantString,
 } from "@/hooks/useHydrated"
 import { PropertySummary } from "@/types/ga4/StreamPicker"
+import { decodeObject, encodeObject } from "@/url"
 import { useCallback, useEffect, useMemo } from "react"
 import { QueryParamConfig } from "use-query-params"
 import { AdNetwork, CustomField, supportedAdNetworks } from "../adNetworks"
@@ -29,23 +30,23 @@ enum QueryParam {
 }
 
 const customFieldsParam: QueryParamConfig<CustomField[] | undefined | null> = {
-  encode: v => (v ? btoa(JSON.stringify(v)) : undefined),
-  decode: a => (typeof a === "string" ? JSON.parse(atob(a)) : undefined),
+  encode: v => (v ? encodeObject(v) : undefined),
+  decode: a => (typeof a === "string" ? decodeObject(a) : undefined),
 }
 
 const adNetworkParam: QueryParamConfig<AdNetwork | undefined | null> = {
-  encode: v => (v ? btoa(JSON.stringify(v)) : undefined),
-  decode: a => (typeof a === "string" ? JSON.parse(atob(a)) : undefined),
+  encode: v => (v ? encodeObject(v) : undefined),
+  decode: a => (typeof a === "string" ? decodeObject(a) : undefined),
 }
 
 const ga4AccountParam: QueryParamConfig<AccountSummary | undefined | null> = {
-  encode: v => (v ? btoa(JSON.stringify(v)) : undefined),
-  decode: a => (typeof a === "string" ? JSON.parse(atob(a)) : undefined),
+  encode: v => (v ? encodeObject(v) : undefined),
+  decode: a => (typeof a === "string" ? decodeObject(a) : undefined),
 }
 
 const ga4PropertyParam: QueryParamConfig<PropertySummary | undefined | null> = {
-  encode: v => (v ? btoa(JSON.stringify(v)) : undefined),
-  decode: a => (typeof a === "string" ? JSON.parse(atob(a)) : undefined),
+  encode: v => (v ? encodeObject(v) : undefined),
+  decode: a => (typeof a === "string" ? decodeObject(a) : undefined),
 }
 
 const useInputs = (version: GAVersion) => {

@@ -1,6 +1,8 @@
 import { useContext, useMemo } from "react"
 import { EventCtx, UseFirebaseCtx } from ".."
 import { MobileIds, UrlParam, WebIds } from "../types"
+import { encodeObject, ensureVersion } from "@/url"
+import { URLVersion } from "@/types"
 
 const useSharableLink = () => {
   const useFirebase = useContext(UseFirebaseCtx)
@@ -54,14 +56,20 @@ const useSharableLink = () => {
 
     addIfTruthy(UrlParam.TimestampMicros, timestamp_micros)
 
-    addIfTruthy(UrlParam.UserProperties, btoa(JSON.stringify(userProperties)))
+    if (userProperties) {
+      ensureVersion(params, UrlParam, URLVersion._2)
+      params.append(UrlParam.UserProperties, encodeObject(userProperties))
+    }
 
-    addIfTruthy(UrlParam.Items, items && btoa(JSON.stringify(items)))
+    if (items) {
+      ensureVersion(params, UrlParam, URLVersion._2)
+      params.append(UrlParam.Items, encodeObject(items))
+    }
 
-    addIfTruthy(
-      UrlParam.Parameters,
-      parameters.length > 0 && btoa(JSON.stringify(parameters))
-    )
+    if (parameters.length > 0) {
+      ensureVersion(params, UrlParam, URLVersion._2)
+      params.append(UrlParam.Parameters, encodeObject(parameters))
+    }
 
     const urlParams = params.toString()
     const { protocol, host, pathname } = window.location

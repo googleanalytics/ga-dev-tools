@@ -99,6 +99,7 @@ export enum UrlParam {
   UserProperties = "m",
   ClientId = "n",
   AppInstanceId = "o",
+  Version = "p",
 }
 
 export enum ValidationStatus {
