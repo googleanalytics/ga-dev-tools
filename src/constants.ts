@@ -85,10 +85,15 @@ export enum StorageKey {
   uaSegments = "//ua-segments-2",
   viewSelectorData = "//view-selector/data",
 
+  ga4AccountSummaries = "//ga4-account-summaries",
+  ga4WebStreams = "//ga4-web-streams",
+
   // Acount Explorer
   accountExplorerAPV = "/account-explorer/apv",
 
   // GA4 Dimensions and metrics explorer
+  ga4DimensionsMetrics = "/ga4/dimensions-metrics/",
+  ga4DimensionsMetricsExplorerAPS = "/ga4/dimensions-metrics-explorer/aps",
   ga4DimensionsMetricsSearch = "/ga4/dimensions-metrics-explorer/search",
   ga4DimensionsMetricsFields = "/ga4/dimensions-metrics-explorer/fields",
   ga4DimensionsMetricsAccountSummaries = "/ga4/dimensions-metrics-explorer/account-summaries",
@@ -116,6 +121,7 @@ export enum StorageKey {
   ga4RequestComposerBasicMetricAggregations = "/ga4/request-composer/basic-report/metric-aggregations",
   ga4RequestComposerBasicSelectedCurrencyCode = "/ga4/request-composer/basic-report/currency-code",
   ga4RequestComposerBasicShowAdvanced = "/ga4/request-composer/basic-report/show-advanced",
+  ga4QueryExplorerAPS = "/ga4/query-explorer/aps",
 
   // Query Explorer
   queryExplorerAPV = "query-explorer/apv",
@@ -207,7 +213,8 @@ export enum StorageKey {
   campaignBuilderPlayName = "campaign-builder/play/name",
 
   // IOS Campaign URL Builder
-  campaignBuilderIOSAPV = "campaign-builder/ios/apv",
+  campaignBuilderIOSAPV = "campaign-builder/ios/apv-2",
+  campaignBuilderIOSAPS = "campaign-builder/ios/aps-2",
   campaignBuilderIOSAppID = "campaign-builder/ios/app-id",
   campaignBuilderIOSSource = "campaign-builder/ios/source",
   campaignBuilderIOSMedium = "campaign-builder/ios/medium",

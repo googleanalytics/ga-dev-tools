@@ -1,4 +1,4 @@
-import { useState, useCallback, useMemo } from "react"
+import { useState, useCallback } from "react"
 
 import {
   usePersistentString,
@@ -6,20 +6,17 @@ import {
   usePersistantObject,
 } from "@/hooks"
 import { StorageKey } from "@/constants"
-import {
-  GA4Dimensions,
-  GA4Metrics,
-  useAvailableColumns,
-} from "@/components/GA4Pickers"
+import { GA4Dimensions, GA4Metrics } from "@/components/GA4Pickers"
+import useAvailableColumns from "@/components/GA4Pickers/useAvailableColumns"
 import { DateRange } from "../DateRanges"
 import { FilterExpression } from "../Filter"
 import { MetricAggregation } from "../MetricAggregations"
-import { AccountSummary, PropertySummary } from "@/types/ga4/StreamPicker"
+import { AccountProperty } from "../../StreamPicker/useAccountProperty"
 
 type OrderBy = gapi.client.analyticsdata.OrderBy
 type CohortSpec = gapi.client.analyticsdata.CohortSpec
 
-const useInputs = () => {
+const useInputs = (aps: AccountProperty) => {
   const [showRequestJSON, setShowRequestJSON] = usePersistentBoolean(
     StorageKey.ga4RequestComposerBasicShowRequestJSON,
     true
@@ -55,19 +52,10 @@ const useInputs = () => {
     MetricAggregation[]
   >(StorageKey.ga4RequestComposerBasicMetricAggregations)
 
-  const [account, setAccount] = usePersistantObject<AccountSummary>(
-    StorageKey.ga4RequestComposerBasicSelectedAccount
-  )
-  const [property, setProperty] = usePersistantObject<PropertySummary>(
-    StorageKey.ga4RequestComposerBasicSelectedProperty
-  )
-
-  const propertyName = useMemo(() => property?.property, [property])
-
   const { dimensionOptions } = useAvailableColumns({
     selectedMetrics: metrics,
     selectedDimensions: dimensions,
-    propertyName,
+    aps,
   })
 
   const [cohortSpec, setCohortSpec] = usePersistantObject<CohortSpec>(
@@ -122,11 +110,6 @@ const useInputs = () => {
     setKeepEmptyRows,
     cohortSpec,
     setCohortSpec,
-    propertyName,
-    account,
-    setAccount,
-    property,
-    setProperty,
   }
 }
 export default useInputs

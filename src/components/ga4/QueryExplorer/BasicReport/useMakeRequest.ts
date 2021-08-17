@@ -8,6 +8,7 @@ import { GA4Dimensions, GA4Metrics } from "@/components/GA4Pickers"
 import { FilterExpression } from "../Filter"
 import { DateRange } from "../DateRanges"
 import { MetricAggregation } from "../MetricAggregations"
+import { PropertySummary } from "@/types/ga4/StreamPicker"
 
 type RunReportRequest = gapi.client.analyticsdata.RunReportRequest
 type OrderBy = gapi.client.analyticsdata.OrderBy
@@ -15,7 +16,7 @@ type CohortSpec = gapi.client.analyticsdata.CohortSpec
 export type RunReportResponse = gapi.client.analyticsdata.RunReportResponse
 
 type UseMakeRequestArgs = {
-  propertyName: string | undefined
+  property: PropertySummary | undefined
   dimensionFilter: FilterExpression | undefined
   metricFilter: FilterExpression | undefined
   dateRanges: DateRange[] | undefined
@@ -42,7 +43,7 @@ export type RunReportError = {
   status: string
 }
 const useMakeRequest = ({
-  propertyName,
+  property,
   dateRanges,
   dimensions,
   metrics,
@@ -148,13 +149,13 @@ const useMakeRequest = ({
     if (
       dataAPI === undefined ||
       request === undefined ||
-      propertyName === undefined
+      property === undefined
     ) {
       return
     }
     setRequestStatus(RequestStatus.InProgress)
     dataAPI.properties
-      .runReport({ property: propertyName, resource: request })
+      .runReport({ property: property.property!, resource: request })
       .then(response => {
         const result = response.result
         setResponse(result)
@@ -165,7 +166,7 @@ const useMakeRequest = ({
         setError(e.result.error)
         setRequestStatus(RequestStatus.Failed)
       })
-  }, [propertyName, dataAPI, request, setResponse])
+  }, [property, dataAPI, request, setResponse])
 
   if (requestStatus === RequestStatus.Successful) {
     if (response === undefined) {

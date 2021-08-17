@@ -18,6 +18,7 @@ import {
 import ExternalLink from "@/components/ExternalLink"
 import WithHelpText from "@/components/WithHelpText"
 import { ArrowDownward, ArrowUpward } from "@material-ui/icons"
+import { AccountProperty } from "../StreamPicker/useAccountProperty"
 
 const orderBysLink = (
   <ExternalLink href="https://developers.google.com/analytics/devguides/reporting/data/v1/rest/v1beta/properties/runReport#body.request_body.FIELDS.order_bys">
@@ -214,7 +215,8 @@ const MetricSort: React.FC<{
   setMetric: ReturnType<UseOrderBys>["setMetric"]
   className: string
   id: number
-}> = ({ metricFilter, className, setMetric, id }) => {
+  aps: AccountProperty
+}> = ({ metricFilter, className, setMetric, id, aps }) => {
   const [metric, setMetricLocal] = React.useState<GA4Metric>()
 
   React.useEffect(() => {
@@ -223,6 +225,7 @@ const MetricSort: React.FC<{
 
   return (
     <MetricPicker
+      aps={aps}
       autoSelectIfOne
       setMetric={setMetricLocal}
       className={className}
@@ -232,6 +235,7 @@ const MetricSort: React.FC<{
 }
 
 const DimensionSort: React.FC<{
+  aps: AccountProperty
   dimensionFilter: (m: GA4Dimension) => boolean
   setDimension: ReturnType<UseOrderBys>["setDimension"]
   setDimensionOrderType: ReturnType<UseOrderBys>["setDimensionOrderType"]
@@ -239,6 +243,7 @@ const DimensionSort: React.FC<{
   id: number
   orderType: SelectOption | undefined
 }> = ({
+  aps,
   dimensionFilter,
   className,
   setDimension,
@@ -256,6 +261,7 @@ const DimensionSort: React.FC<{
   return (
     <>
       <DimensionPicker
+        aps={aps}
         autoSelectIfOne
         setDimension={setDimensionLocal}
         className={className}
@@ -289,11 +295,13 @@ type PickedDimension =
 type OrderBysProps = {
   orderBys: OrderBy[] | undefined
   setOrderBys: Dispatch<OrderBy[] | undefined>
+  aps: AccountProperty
   className?: string
 } & PickedDimension &
   PickedMetric
 
 const OrderBys: React.FC<OrderBysProps> = ({
+  aps,
   orderBys,
   setOrderBys,
   className,
@@ -358,6 +366,7 @@ const OrderBys: React.FC<OrderBysProps> = ({
                   </TooltipIconButton>
                   {selectedType?.value === "metric" && props.metric ? (
                     <MetricSort
+                      aps={aps}
                       className={classes.column}
                       metricFilter={metricFilter}
                       setMetric={setMetric}
@@ -366,6 +375,7 @@ const OrderBys: React.FC<OrderBysProps> = ({
                   ) : null}
                   {selectedType?.value === "dimension" && props.dimension ? (
                     <DimensionSort
+                      aps={aps}
                       className={classes.column}
                       dimensionFilter={dimensionFilter}
                       setDimension={setDimension}

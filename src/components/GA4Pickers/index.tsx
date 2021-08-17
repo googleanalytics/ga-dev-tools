@@ -16,13 +16,10 @@ import * as React from "react"
 
 import { Typography, TextField, makeStyles } from "@material-ui/core"
 import Autocomplete from "@material-ui/lab/Autocomplete"
-import { useSelector } from "react-redux"
-import { useMemo, useEffect, useState } from "react"
-import { Dispatch } from "../types"
-import {
-  Dimension,
-  Metric,
-} from "./ga4/DimensionsMetricsExplorer/useDimensionsAndMetrics"
+import { useState } from "react"
+import { Dispatch } from "@/types"
+import useAvailableColumns from "./useAvailableColumns"
+import { AccountProperty } from "../ga4/StreamPicker/useAccountProperty"
 
 const useColumnStyles = makeStyles(() => ({
   option: {
@@ -35,86 +32,6 @@ const useColumnStyles = makeStyles(() => ({
     flexDirection: "column",
   },
 }))
-
-type UseAvailableColumns = (arg: {
-  selectedMetrics: GA4Metrics
-  selectedDimensions: GA4Dimensions
-  dimensionFilter?: (dimension: Dimension) => boolean
-  metricFilter?: (metric: Metric) => boolean
-  propertyName?: string
-}) => {
-  metricOptions: GA4Metrics
-  metricOptionsLessSelected: GA4Metrics
-  dimensionOptions: GA4Dimensions
-  dimensionOptionsLessSelected: GA4Dimensions
-}
-export const useAvailableColumns: UseAvailableColumns = ({
-  selectedMetrics,
-  selectedDimensions,
-  dimensionFilter,
-  metricFilter,
-  propertyName = "properties/0",
-}) => {
-  const gapi = useSelector((state: AppState) => state.gapi)
-  const dataAPI = useMemo(() => gapi?.client.analyticsdata, [gapi])
-  const [metrics, setMetrics] = React.useState<GA4Metrics>()
-  const [dimensions, setDimensions] = React.useState<GA4Dimensions>()
-
-  useEffect(() => {
-    if (dataAPI === undefined) {
-      return
-    }
-    dataAPI.properties
-      .getMetadata({ name: `${propertyName}/metadata` })
-      .then(response => {
-        const { dimensions, metrics } = response.result
-        setMetrics(metrics)
-        setDimensions(dimensions)
-      })
-  }, [dataAPI, propertyName])
-
-  const selectedMetricIds = React.useMemo(
-    () => new Set((selectedMetrics || []).map(dimension => dimension.apiName)),
-    [selectedMetrics]
-  )
-
-  const metricOptions = React.useMemo(
-    () => metrics?.filter(metricFilter || (() => true)),
-    [metrics, metricFilter]
-  )
-
-  const metricOptionsLessSelected = React.useMemo(
-    () =>
-      metricOptions?.filter(metric => !selectedMetricIds.has(metric.apiName)),
-    [metricOptions, selectedMetricIds]
-  )
-
-  const selectedDimensionIds = React.useMemo(
-    () =>
-      new Set((selectedDimensions || []).map(dimension => dimension.apiName)),
-    [selectedDimensions]
-  )
-
-  const dimensionOptions = React.useMemo(
-    () => dimensions?.filter(dimensionFilter || (() => true)),
-    [dimensions, dimensionFilter]
-  )
-
-  const dimensionOptionsLessSelected = React.useMemo(
-    () =>
-      dimensionOptions?.filter(
-        dimension => !selectedDimensionIds.has(dimension.apiName)
-      ),
-    [dimensionOptions, selectedDimensionIds]
-  )
-
-  return {
-    metricOptions,
-    metricOptionsLessSelected,
-    dimensionOptions,
-    dimensionOptionsLessSelected,
-  }
-}
 
 export type GA4Dimension = gapi.client.analyticsdata.DimensionMetadata
 export type GA4Dimensions = GA4Dimension[] | undefined
@@ -142,7 +59,7 @@ const Column: React.FC<{ column: GA4Column }> = ({ column }) => {
 export const DimensionsPicker: React.FC<{
   dimensions: GA4Dimensions
   setDimensions: React.Dispatch<React.SetStateAction<GA4Dimensions>>
-  propertyName?: string
+  aps: AccountProperty
   required?: boolean
   helperText?: string | JSX.Element
   label?: string
@@ -151,13 +68,13 @@ export const DimensionsPicker: React.FC<{
   dimensions,
   setDimensions,
   required,
-  propertyName,
+  aps,
   label = "dimensions",
 }) => {
   const { dimensionOptionsLessSelected } = useAvailableColumns({
     selectedDimensions: dimensions,
     selectedMetrics: [],
-    propertyName,
+    aps,
   })
 
   return (
@@ -193,7 +110,7 @@ export const DimensionsPicker: React.FC<{
 export const MetricsPicker: React.FC<{
   metrics: GA4Metrics
   setMetrics: React.Dispatch<React.SetStateAction<GA4Metrics>>
-  propertyName?: string
+  aps: AccountProperty
   required?: boolean
   helperText?: string | JSX.Element
   label?: string
@@ -202,13 +119,13 @@ export const MetricsPicker: React.FC<{
   metrics,
   setMetrics,
   required,
-  propertyName,
+  aps,
   label = "metrics",
 }) => {
   const { metricOptionsLessSelected } = useAvailableColumns({
     selectedMetrics: metrics,
     selectedDimensions: [],
-    propertyName,
+    aps,
   })
 
   return (
@@ -242,10 +159,10 @@ export const MetricsPicker: React.FC<{
 }
 
 export const DimensionPicker: React.FC<{
+  aps: AccountProperty
   autoSelectIfOne?: boolean
   setDimension?: Dispatch<GA4Dimension | undefined>
   dimensionFilter?: (dimension: GA4Dimension) => boolean
-  property?: string
   required?: boolean
   helperText?: string | JSX.Element
   label?: string
@@ -255,7 +172,7 @@ export const DimensionPicker: React.FC<{
   helperText,
   setDimension,
   required,
-  property,
+  aps,
   dimensionFilter,
   className,
   label = "dimension",
@@ -267,7 +184,7 @@ export const DimensionPicker: React.FC<{
   } = useAvailableColumns({
     selectedDimensions: selected === undefined ? [] : [selected],
     selectedMetrics: [],
-    propertyName: property,
+    aps,
     dimensionFilter,
   })
 
@@ -331,10 +248,10 @@ export const DimensionPicker: React.FC<{
 }
 
 export const MetricPicker: React.FC<{
+  aps: AccountProperty
   autoSelectIfOne?: boolean
   setMetric?: Dispatch<GA4Metric | undefined>
   metricFilter?: (metric: GA4Metric) => boolean
-  property?: string
   required?: true | undefined
   helperText?: string | JSX.Element
   label?: string
@@ -344,7 +261,7 @@ export const MetricPicker: React.FC<{
   helperText,
   setMetric,
   required,
-  property,
+  aps,
   metricFilter,
   className,
   label = "metric",
@@ -353,7 +270,7 @@ export const MetricPicker: React.FC<{
   const { metricOptions, metricOptionsLessSelected } = useAvailableColumns({
     selectedMetrics: selected === undefined ? [] : [selected],
     selectedDimensions: [],
-    propertyName: property,
+    aps,
     metricFilter,
   })
 

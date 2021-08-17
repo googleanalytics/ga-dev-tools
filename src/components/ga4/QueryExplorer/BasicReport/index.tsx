@@ -23,6 +23,7 @@ import useMakeRequest from "./useMakeRequest"
 import useInputs from "./useInputs"
 import useFormStyles from "@/hooks/useFormStyles"
 import StreamPicker from "../../StreamPicker"
+import useAccountProperty from "../../StreamPicker/useAccountProperty"
 
 const useStyles = makeStyles(theme => ({
   showRequestJSON: {
@@ -89,9 +90,17 @@ const metricFiltersLink = (
 
 export const ShowAdvancedCtx = React.createContext(false)
 
+export enum QueryParam {
+  Account = "a",
+  Property = "b",
+  Stream = "c",
+}
+
 const BasicReport = () => {
   const classes = useStyles()
   const formClasses = useFormStyles()
+  const aps = useAccountProperty(StorageKey.ga4QueryExplorerAPS, QueryParam)
+  const { property } = aps
   const {
     dateRanges,
     setDateRanges,
@@ -121,15 +130,10 @@ const BasicReport = () => {
     removeDateRanges,
     showAdvanced,
     setShowAdvanced,
-    account,
-    setAccount,
-    property,
-    setProperty,
-    propertyName,
-  } = useInputs()
+  } = useInputs(aps)
   const useMake = useMakeRequest({
     metricAggregations,
-    propertyName,
+    property,
     dimensionFilter,
     offset,
     limit,
@@ -166,12 +170,7 @@ const BasicReport = () => {
       </Typography>
       <section className={formClasses.form}>
         <Typography variant="h3">Select property</Typography>
-        <StreamPicker
-          account={account}
-          property={property}
-          setAccount={setAccount}
-          setProperty={setProperty}
-        />
+        <StreamPicker autoFill {...aps} />
         <Typography variant="h3">Set parameters</Typography>
         <LabeledCheckbox checked={showAdvanced} setChecked={setShowAdvanced}>
           Show advanced options
@@ -182,8 +181,8 @@ const BasicReport = () => {
           showAdvanced={showAdvanced}
         />
         <MetricsPicker
+          aps={aps}
           required={!metricOrDimensionSelected}
-          propertyName={propertyName}
           setMetrics={setMetrics}
           metrics={metrics}
           helperText={
@@ -194,8 +193,8 @@ const BasicReport = () => {
           }
         />
         <DimensionsPicker
+          aps={aps}
           required={!metricOrDimensionSelected}
-          propertyName={propertyName}
           setDimensions={setDimensions}
           dimensions={dimensions}
           helperText={
@@ -207,6 +206,7 @@ const BasicReport = () => {
         />
 
         <OrderBys
+          aps={aps}
           metric
           metricOptions={metrics}
           dimension
@@ -229,6 +229,7 @@ const BasicReport = () => {
           }
         >
           <Filter
+            aps={aps}
             showAdvanced={showAdvanced}
             storageKey={StorageKey.ga4RequestComposerBasicDimensionFilter}
             type={FilterType.Dimension}
@@ -247,6 +248,7 @@ const BasicReport = () => {
           }
         >
           <Filter
+            aps={aps}
             showAdvanced={showAdvanced}
             storageKey={StorageKey.ga4RequestComposerBasicMetricFilter}
             type={FilterType.Metric}
@@ -274,6 +276,7 @@ const BasicReport = () => {
         )}
         {showAdvanced && (
           <CohortSpec
+            aps={aps}
             cohortSpec={cohortSpec}
             setCohortSpec={setCohortSpec}
             dimensions={dimensions}

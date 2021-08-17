@@ -9,9 +9,10 @@ import {
   AddExpressionFn,
 } from "./index"
 import { ExpressionType } from "./Expression"
+import { AccountProperty } from "../../StreamPicker/useAccountProperty"
 
 export const UseFilterContext = createContext<
-  ReturnType<UseFilter> | undefined
+  (ReturnType<UseFilter> & { aps: AccountProperty }) | undefined
 >(undefined)
 
 type UseFilter = (

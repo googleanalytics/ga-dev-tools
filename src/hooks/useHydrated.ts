@@ -65,9 +65,15 @@ export const useKeyedHydratedPersistantObject = <T>(
   key: StorageKey,
   paramName: string,
   getValue: (stringKey: string | undefined) => T | undefined,
-  onSet?: (t: T | undefined) => void
+  onSet?: (t: T | undefined) => void,
+  settings?: { keepParam: boolean }
 ): [T | undefined, Dispatch<string | undefined>] => {
-  const [stringKey, setKeyLocal] = useHydratedPersistantString(key, paramName)
+  const [stringKey, setKeyLocal] = useHydratedPersistantString(
+    key,
+    paramName,
+    undefined,
+    settings
+  )
 
   const t = useMemo(() => {
     if (stringKey === undefined) {
@@ -126,14 +132,17 @@ const useHydratedValue = <T>(
   setParam: (
     nuValue: T | null | undefined,
     updateType?: UrlUpdateType | undefined
-  ) => void
+  ) => void,
+  settings?: { keepParam: boolean }
 ): [t: T | undefined, setT: Dispatch<T | undefined>] => {
   useEffect(() => {
     if (param !== null && param !== undefined) {
       setValue(param)
-      setParam(undefined, "replaceIn")
+      if (!settings?.keepParam) {
+        setParam(undefined, "replaceIn")
+      }
     }
-  }, [param, setParam, setValue])
+  }, [param, setParam, setValue, settings])
 
   const hydrated = useMemo(() => {
     return param || value
@@ -167,19 +176,21 @@ export const useHydratedPersistantObject = <T extends {}>(
 const useHydratedString = (
   value: string | undefined,
   setValue: Dispatch<string | undefined>,
-  paramName: string
+  paramName: string,
+  settings?: { keepParam: boolean }
 ) => {
   const [param, setParam] = useQueryParam(paramName, StringParam)
 
-  return useHydratedValue(value, setValue, param, setParam)
+  return useHydratedValue(value, setValue, param, setParam, settings)
 }
 
 export const useHydratedPersistantString = (
   key: StorageKey,
   paramName: string,
-  initialValue?: string
+  initialValue?: string,
+  settings?: { keepParam: boolean }
 ) => {
   const [value, setValue] = usePersistentString(key, initialValue)
 
-  return useHydratedString(value, setValue, paramName)
+  return useHydratedString(value, setValue, paramName, settings)
 }

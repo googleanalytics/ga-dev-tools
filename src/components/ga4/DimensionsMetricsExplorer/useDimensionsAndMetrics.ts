@@ -3,110 +3,78 @@ import * as React from "react"
 import { useSelector } from "react-redux"
 
 import { Requestable, RequestStatus } from "@/types"
-import { usePersistantObject } from "@/hooks"
 import { StorageKey } from "@/constants"
+import useCached from "@/hooks/useCached"
+import useRequestStatus from "@/hooks/useRequestStatus"
+import moment from "moment"
+import { AccountProperty } from "../StreamPicker/useAccountProperty"
 
 export type Dimension = gapi.client.analyticsdata.DimensionMetadata
 export type Metric = gapi.client.analyticsdata.MetricMetadata
-
 export type Successful = { dimensions: Dimension[]; metrics: Metric[] }
-type UseDimensionsAndMetrics = (propertyName: string) => Requestable<Successful>
 
-const MaxCacheTime = 1000 * 60 * 5 // 5 minutes
-
-const requestStatusFor = (
-  fields: Fields | undefined,
-  property: string
-): RequestStatus => {
-  const now = new Date().getTime()
-  const fromFields = fields?.[property]
-  if (fromFields !== undefined && fromFields.time !== undefined) {
-    const ellapsed = now - fromFields.time
-    if (ellapsed <= MaxCacheTime) {
-      return RequestStatus.Successful
-    }
-  }
-  return RequestStatus.NotStarted
-}
-
-type Fields = {
-  [key: string]: {
-    time: number // epoch millis
-    dimensions: Dimension[]
-    metrics: Metric[]
-  }
-}
-
-export const useDimensionsAndMetrics: UseDimensionsAndMetrics = propertyName => {
+export const useDimensionsAndMetrics = (
+  aps: AccountProperty
+): Requestable<Successful> => {
   const gapi = useSelector((state: AppState) => state.gapi)
   const dataAPI = React.useMemo(() => gapi?.client.analyticsdata, [gapi])
-  const [fields, setFields] = usePersistantObject<Fields>(
-    StorageKey.ga4DimensionsMetricsFields
-  )
-  const [requestStatus, setRequestStatus] = React.useState<RequestStatus>(
-    () => {
-      return requestStatusFor(fields, propertyName)
-    }
+  const {
+    status,
+    setInProgress,
+    setFailed,
+    setSuccessful,
+    setNotStarted,
+  } = useRequestStatus()
+
+  const propertyName = React.useMemo(
+    () => `${aps.property?.property || "properties/0"}/metadata`,
+    [aps.property]
   )
 
   React.useEffect(() => {
-    if (
-      requestStatus === RequestStatus.InProgress ||
-      requestStatus === RequestStatus.NotStarted
-    ) {
-      return
-    }
-    const nu = requestStatusFor(fields, propertyName)
-    if (nu !== requestStatus) {
-      setRequestStatus(nu)
-    }
-  }, [propertyName, fields, requestStatus])
+    setNotStarted()
+  }, [propertyName, setNotStarted])
 
-  React.useEffect(() => {
-    if (
-      dataAPI === undefined ||
-      requestStatus === RequestStatus.Successful ||
-      requestStatus === RequestStatus.InProgress ||
-      requestStatus === RequestStatus.Failed
-    ) {
-      return
-    }
-    setRequestStatus(RequestStatus.InProgress)
-    dataAPI.properties
-      .getMetadata({ name: `${propertyName}/metadata` })
-      .then(response => {
-        const { dimensions, metrics } = response.result
-        if (dimensions === undefined || metrics === undefined) {
-          setRequestStatus(RequestStatus.Failed)
-          return
-        }
-        setFields((old = {}) => ({
-          ...old,
-          [propertyName]: { dimensions, metrics, time: new Date().getTime() },
-        }))
-        setRequestStatus(RequestStatus.Successful)
+  const requestReady = React.useMemo(() => dataAPI !== undefined, [dataAPI])
+
+  const getMetadata = React.useCallback(async () => {
+    try {
+      if (dataAPI === undefined) {
+        throw new Error("Invalid invariant - dataAPI must be defined.")
+      }
+      setInProgress()
+      const { result } = await dataAPI.properties.getMetadata({
+        name: propertyName,
       })
-  }, [dataAPI, setFields, propertyName, requestStatus])
+      return { metrics: result.metrics, dimensions: result.dimensions }
+    } catch (e) {
+      setFailed()
+    }
+  }, [dataAPI, propertyName, setFailed, setInProgress])
 
-  const dimensions = React.useMemo(() => fields?.[propertyName]?.dimensions, [
-    fields,
-    propertyName,
-  ])
-  const metrics = React.useMemo(() => fields?.[propertyName]?.metrics, [
-    fields,
-    propertyName,
-  ])
+  const dimsAndMets = useCached(
+    `${StorageKey.ga4DimensionsMetrics}/${propertyName}` as StorageKey,
+    getMetadata,
+    moment.duration(5, "minutes"),
+    requestReady
+  )
 
-  if (requestStatus !== RequestStatus.Successful) {
-    return { status: requestStatus }
-  } else {
+  React.useEffect(() => {
+    if (dimsAndMets !== undefined) {
+      setSuccessful()
+    }
+  }, [dimsAndMets, setSuccessful])
+
+  const dimensions = React.useMemo(() => dimsAndMets?.dimensions, [dimsAndMets])
+  const metrics = React.useMemo(() => dimsAndMets?.metrics, [dimsAndMets])
+
+  if (status === RequestStatus.Successful) {
     if (dimensions === undefined || metrics === undefined) {
-      return { status: RequestStatus.NotStarted }
+      throw new Error(
+        "Invalid invariant - dimensions & metrics must be defined."
+      )
     }
-    return {
-      status: requestStatus,
-      dimensions,
-      metrics,
-    }
+    return { status, dimensions, metrics }
   }
+  return { status }
 }

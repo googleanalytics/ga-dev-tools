@@ -8,7 +8,7 @@ import IconButton from "@material-ui/core/IconButton"
 import Clear from "@material-ui/icons/Clear"
 
 import { Url, StorageKey } from "@/constants"
-import { usePersistantObject, useScrollTo } from "@/hooks"
+import { useScrollTo } from "@/hooks"
 import Loadable from "@/components/Loadable"
 import Info from "@/components/Info"
 import Field from "./Field"
@@ -16,7 +16,9 @@ import useInputs from "./useInputs"
 import { useDimensionsAndMetrics, Successful } from "./useDimensionsAndMetrics"
 import useFormStyles from "@/hooks/useFormStyles"
 import StreamPicker from "../StreamPicker"
-import { AccountSummary, PropertySummary } from "@/types/ga4/StreamPicker"
+import useAccountProperty, {
+  AccountProperty,
+} from "../StreamPicker/useAccountProperty"
 
 const dataAPI = (
   <ExternalLink href={Url.ga4DataAPIGetMetadata}>
@@ -25,8 +27,8 @@ const dataAPI = (
 )
 
 const RenderSuccessful: React.FC<
-  Successful & { search: string | undefined }
-> = ({ dimensions, metrics, search }) => {
+  Successful & { search: string | undefined; aps: AccountProperty }
+> = ({ dimensions, metrics, search, aps }) => {
   const visibleDimensions = React.useMemo(
     () =>
       dimensions.filter(dimension =>
@@ -72,6 +74,7 @@ const RenderSuccessful: React.FC<
       </Typography>
       {visibleDimensions?.map(dimension => (
         <Field
+          {...aps}
           key={dimension.apiName}
           field={{ type: "dimension", value: dimension }}
         />
@@ -80,25 +83,31 @@ const RenderSuccessful: React.FC<
         Metrics
       </Typography>
       {visibleMetrics?.map(metric => (
-        <Field key={metric.apiName} field={{ type: "metric", value: metric }} />
+        <Field
+          {...aps}
+          key={metric.apiName}
+          field={{ type: "metric", value: metric }}
+        />
       ))}
     </>
   )
 }
 
+export enum QueryParam {
+  Account = "a",
+  Property = "b",
+  Stream = "c",
+}
+
 const DimensionsMetricsExplorer: React.FC = () => {
   const formClasses = useFormStyles()
   const { search, setSearch } = useInputs()
-  const [account, setAccount] = usePersistantObject<AccountSummary>(
-    StorageKey.ga4DimensionsMetricsSelectedAccount
+  const aps = useAccountProperty(
+    StorageKey.ga4DimensionsMetricsExplorerAPS,
+    QueryParam,
+    true
   )
-  const [property, setProperty] = usePersistantObject<PropertySummary>(
-    StorageKey.ga4DimensionsMetricsSelectedProperty
-  )
-  const propertyName = useMemo(() => property?.property || "properties/0", [
-    property,
-  ])
-  const request = useDimensionsAndMetrics(propertyName)
+  const request = useDimensionsAndMetrics(aps)
 
   return (
     <>
@@ -113,12 +122,7 @@ const DimensionsMetricsExplorer: React.FC = () => {
         </Typography>
         <section className={formClasses.form}>
           <Typography variant="h3">Select property</Typography>
-          <StreamPicker
-            account={account}
-            property={property}
-            setAccount={setAccount}
-            setProperty={setProperty}
-          />
+          <StreamPicker autoFill {...aps} />
           <Typography variant="h3">Search</Typography>
           <TextField
             label="Search for a dimension or metric"
@@ -141,7 +145,9 @@ const DimensionsMetricsExplorer: React.FC = () => {
         </section>
         <Loadable
           request={request}
-          renderSuccessful={s => <RenderSuccessful {...s} search={search} />}
+          renderSuccessful={s => (
+            <RenderSuccessful {...s} aps={aps} search={search} />
+          )}
           inProgressText="Loading dimensions and metrics"
         />
       </section>

@@ -18,6 +18,7 @@ import LinkedTextField from "@/components/LinkedTextField"
 import { GADateRange } from "@/components/GADate"
 import { Dispatch } from "@/types"
 import makeStyles from "@material-ui/core/styles/makeStyles"
+import { AccountProperty } from "../StreamPicker/useAccountProperty"
 
 type DateRange = gapi.client.analyticsdata.DateRange
 type CohortsRange = gapi.client.analyticsdata.CohortsRange
@@ -244,6 +245,7 @@ const useStyles = makeStyles(theme => ({
 type CohortSpecType = gapi.client.analyticsdata.CohortSpec
 
 interface CohortSpecProps {
+  aps: AccountProperty
   cohortSpec: CohortSpecType | undefined
   setCohortSpec: Dispatch<CohortSpecType | undefined>
   dimensions: GA4Dimensions
@@ -252,6 +254,7 @@ interface CohortSpecProps {
   removeDateRanges: () => void
 }
 const CohortSpec: React.FC<CohortSpecProps> = ({
+  aps,
   cohortSpec,
   setCohortSpec,
   dimensions,
@@ -358,7 +361,11 @@ const CohortSpec: React.FC<CohortSpecProps> = ({
           >
             <Delete />
           </TooltipIconButton>
-          <DimensionPicker autoSelectIfOne dimensionFilter={dimensionFilter} />
+          <DimensionPicker
+            aps={aps}
+            autoSelectIfOne
+            dimensionFilter={dimensionFilter}
+          />
           <GADateRange
             value={cohort.dateRange || {}}
             setValue={update => updateDateRange(idx, update)}

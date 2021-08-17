@@ -13,6 +13,7 @@ import {
 } from "@/components/GA4Pickers"
 import Expression, { ExpressionType } from "./Expression"
 import useFilter, { UseFilterContext } from "./useFilter"
+import { AccountProperty } from "../../StreamPicker/useAccountProperty"
 
 interface Props {
   notched: boolean
@@ -32,6 +33,7 @@ export enum FilterType {
 }
 
 interface FilterProps {
+  aps: AccountProperty
   showAdvanced: boolean
   fields: GA4Dimensions | GA4Metrics
   setFilterExpression: Dispatch<FilterExpression | undefined>
@@ -56,6 +58,7 @@ export type AddExpressionFn = (
 ) => void
 
 const Filter: React.FC<FilterProps> = ({
+  aps,
   showAdvanced,
   fields,
   setFilterExpression,
@@ -103,7 +106,7 @@ const Filter: React.FC<FilterProps> = ({
   }, [expression])
 
   return (
-    <UseFilterContext.Provider value={useFilterValue}>
+    <UseFilterContext.Provider value={{ ...useFilterValue, aps }}>
       <section className={classes.filter}>
         {noFiltersConfigured}
         <Expression
