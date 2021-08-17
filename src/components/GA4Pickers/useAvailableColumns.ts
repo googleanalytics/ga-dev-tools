@@ -21,13 +21,13 @@ import {
   Metric,
   useDimensionsAndMetrics,
 } from "@/components/ga4/DimensionsMetricsExplorer/useDimensionsAndMetrics"
-import { AccountPropertyStream } from "@/components/ga4/StreamPicker/useAccountPropertyStream"
 import { GA4Dimensions, GA4Metrics } from "."
+import { AccountProperty } from "../ga4/StreamPicker/useAccountProperty"
 
 interface Arg {
   selectedMetrics: GA4Metrics
   selectedDimensions: GA4Dimensions
-  aps: AccountPropertyStream
+  aps: AccountProperty
   dimensionFilter?: (dimension: Dimension) => boolean
   metricFilter?: (metric: Metric) => boolean
 }

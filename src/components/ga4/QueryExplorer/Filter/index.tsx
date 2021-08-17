@@ -13,7 +13,7 @@ import {
 } from "@/components/GA4Pickers"
 import Expression, { ExpressionType } from "./Expression"
 import useFilter, { UseFilterContext } from "./useFilter"
-import { AccountPropertyStream } from "../../StreamPicker/useAccountPropertyStream"
+import { AccountProperty } from "../../StreamPicker/useAccountProperty"
 
 interface Props {
   notched: boolean
@@ -33,7 +33,7 @@ export enum FilterType {
 }
 
 interface FilterProps {
-  aps: AccountPropertyStream
+  aps: AccountProperty
   showAdvanced: boolean
   fields: GA4Dimensions | GA4Metrics
   setFilterExpression: Dispatch<FilterExpression | undefined>

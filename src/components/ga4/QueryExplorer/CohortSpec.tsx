@@ -18,7 +18,7 @@ import LinkedTextField from "@/components/LinkedTextField"
 import { GADateRange } from "@/components/GADate"
 import { Dispatch } from "@/types"
 import makeStyles from "@material-ui/core/styles/makeStyles"
-import { AccountPropertyStream } from "../StreamPicker/useAccountPropertyStream"
+import { AccountProperty } from "../StreamPicker/useAccountProperty"
 
 type DateRange = gapi.client.analyticsdata.DateRange
 type CohortsRange = gapi.client.analyticsdata.CohortsRange
@@ -245,7 +245,7 @@ const useStyles = makeStyles(theme => ({
 type CohortSpecType = gapi.client.analyticsdata.CohortSpec
 
 interface CohortSpecProps {
-  aps: AccountPropertyStream
+  aps: AccountProperty
   cohortSpec: CohortSpecType | undefined
   setCohortSpec: Dispatch<CohortSpecType | undefined>
   dimensions: GA4Dimensions

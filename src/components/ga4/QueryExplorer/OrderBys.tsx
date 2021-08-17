@@ -18,7 +18,7 @@ import {
 import ExternalLink from "@/components/ExternalLink"
 import WithHelpText from "@/components/WithHelpText"
 import { ArrowDownward, ArrowUpward } from "@material-ui/icons"
-import { AccountPropertyStream } from "../StreamPicker/useAccountPropertyStream"
+import { AccountProperty } from "../StreamPicker/useAccountProperty"
 
 const orderBysLink = (
   <ExternalLink href="https://developers.google.com/analytics/devguides/reporting/data/v1/rest/v1beta/properties/runReport#body.request_body.FIELDS.order_bys">
@@ -215,7 +215,7 @@ const MetricSort: React.FC<{
   setMetric: ReturnType<UseOrderBys>["setMetric"]
   className: string
   id: number
-  aps: AccountPropertyStream
+  aps: AccountProperty
 }> = ({ metricFilter, className, setMetric, id, aps }) => {
   const [metric, setMetricLocal] = React.useState<GA4Metric>()
 
@@ -235,7 +235,7 @@ const MetricSort: React.FC<{
 }
 
 const DimensionSort: React.FC<{
-  aps: AccountPropertyStream
+  aps: AccountProperty
   dimensionFilter: (m: GA4Dimension) => boolean
   setDimension: ReturnType<UseOrderBys>["setDimension"]
   setDimensionOrderType: ReturnType<UseOrderBys>["setDimensionOrderType"]
@@ -295,7 +295,7 @@ type PickedDimension =
 type OrderBysProps = {
   orderBys: OrderBy[] | undefined
   setOrderBys: Dispatch<OrderBy[] | undefined>
-  aps: AccountPropertyStream
+  aps: AccountProperty
   className?: string
 } & PickedDimension &
   PickedMetric

@@ -16,9 +16,9 @@ import useInputs from "./useInputs"
 import { useDimensionsAndMetrics, Successful } from "./useDimensionsAndMetrics"
 import useFormStyles from "@/hooks/useFormStyles"
 import StreamPicker from "../StreamPicker"
-import useAccountPropertyStream, {
-  AccountPropertyStream,
-} from "../StreamPicker/useAccountPropertyStream"
+import useAccountProperty, {
+  AccountProperty,
+} from "../StreamPicker/useAccountProperty"
 
 const dataAPI = (
   <ExternalLink href={Url.ga4DataAPIGetMetadata}>
@@ -27,7 +27,7 @@ const dataAPI = (
 )
 
 const RenderSuccessful: React.FC<
-  Successful & { search: string | undefined; aps: AccountPropertyStream }
+  Successful & { search: string | undefined; aps: AccountProperty }
 > = ({ dimensions, metrics, search, aps }) => {
   const visibleDimensions = React.useMemo(
     () =>
@@ -102,7 +102,7 @@ export enum QueryParam {
 const DimensionsMetricsExplorer: React.FC = () => {
   const formClasses = useFormStyles()
   const { search, setSearch } = useInputs()
-  const aps = useAccountPropertyStream(
+  const aps = useAccountProperty(
     StorageKey.ga4DimensionsMetricsExplorerAPS,
     QueryParam,
     true

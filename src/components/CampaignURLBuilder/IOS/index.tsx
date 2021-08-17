@@ -17,8 +17,8 @@ import { AdNetwork, supportedAdNetworks } from "../adNetworks"
 import ViewSelector from "@/components/ViewSelector"
 import StreamPicker from "@/components/ga4/StreamPicker"
 import useAccountPropertyView from "@/components/ViewSelector/useAccountPropertyView"
-import useAccountPropertyStream from "@/components/ga4/StreamPicker/useAccountPropertyStream"
 import { PropertySummary } from "@/types/ga4/StreamPicker"
+import useAccountProperty from "@/components/ga4/StreamPicker/useAccountProperty"
 
 interface IOSURLBuilderProps {
   version: GAVersion
@@ -93,7 +93,7 @@ const IOSURLBuilder: React.FC<IOSURLBuilderProps> = ({ version }) => {
     StorageKey.campaignBuilderIOSAPV,
     QueryParam
   )
-  const aps = useAccountPropertyStream(
+  const aps = useAccountProperty(
     StorageKey.campaignBuilderIOSAPS,
     QueryParam,
     undefined,
@@ -113,7 +113,7 @@ const IOSURLBuilder: React.FC<IOSURLBuilderProps> = ({ version }) => {
         />
       )
     } else {
-      return <StreamPicker streams={false} {...aps} />
+      return <StreamPicker autoFill streams={false} {...aps} />
     }
   }, [version, setPropertyID, apv, aps])
 

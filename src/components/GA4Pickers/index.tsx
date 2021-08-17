@@ -18,8 +18,8 @@ import { Typography, TextField, makeStyles } from "@material-ui/core"
 import Autocomplete from "@material-ui/lab/Autocomplete"
 import { useState } from "react"
 import { Dispatch } from "@/types"
-import { AccountPropertyStream } from "@/components/ga4/StreamPicker/useAccountPropertyStream"
 import useAvailableColumns from "./useAvailableColumns"
+import { AccountProperty } from "../ga4/StreamPicker/useAccountProperty"
 
 const useColumnStyles = makeStyles(() => ({
   option: {
@@ -59,7 +59,7 @@ const Column: React.FC<{ column: GA4Column }> = ({ column }) => {
 export const DimensionsPicker: React.FC<{
   dimensions: GA4Dimensions
   setDimensions: React.Dispatch<React.SetStateAction<GA4Dimensions>>
-  aps: AccountPropertyStream
+  aps: AccountProperty
   required?: boolean
   helperText?: string | JSX.Element
   label?: string
@@ -110,7 +110,7 @@ export const DimensionsPicker: React.FC<{
 export const MetricsPicker: React.FC<{
   metrics: GA4Metrics
   setMetrics: React.Dispatch<React.SetStateAction<GA4Metrics>>
-  aps: AccountPropertyStream
+  aps: AccountProperty
   required?: boolean
   helperText?: string | JSX.Element
   label?: string
@@ -159,7 +159,7 @@ export const MetricsPicker: React.FC<{
 }
 
 export const DimensionPicker: React.FC<{
-  aps: AccountPropertyStream
+  aps: AccountProperty
   autoSelectIfOne?: boolean
   setDimension?: Dispatch<GA4Dimension | undefined>
   dimensionFilter?: (dimension: GA4Dimension) => boolean
@@ -248,7 +248,7 @@ export const DimensionPicker: React.FC<{
 }
 
 export const MetricPicker: React.FC<{
-  aps: AccountPropertyStream
+  aps: AccountProperty
   autoSelectIfOne?: boolean
   setMetric?: Dispatch<GA4Metric | undefined>
   metricFilter?: (metric: GA4Metric) => boolean

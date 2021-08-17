@@ -2,7 +2,7 @@ import { useCallback, useMemo, useEffect } from "react"
 
 import useGapi from "@/hooks/useGapi"
 import { Requestable, RequestStatus } from "@/types"
-import { AccountSummariesRequest } from "@/types/ga4/StreamPicker"
+import { AccountSummaries } from "@/types/ga4/StreamPicker"
 import useCached from "@/hooks/useCached"
 import { StorageKey } from "@/constants"
 import moment from "moment"
@@ -15,7 +15,7 @@ const getAccountSummaries = (response: AccountSummariesResponse) =>
 const getPageToken = (response: AccountSummariesResponse) =>
   response.nextPageToken
 
-const useAccountSummaries = (): Requestable<AccountSummariesRequest> => {
+const useAccountSummaries = (): Requestable<AccountSummaries> => {
   const gapi = useGapi()
   const adminAPI = useMemo(() => gapi?.client.analyticsadmin, [gapi])
   const { status, setInProgress, setFailed, setSuccessful } = useRequestStatus()

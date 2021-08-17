@@ -4,17 +4,17 @@ import { useSelector } from "react-redux"
 
 import { Requestable, RequestStatus } from "@/types"
 import { StorageKey } from "@/constants"
-import { AccountPropertyStream } from "../StreamPicker/useAccountPropertyStream"
 import useCached from "@/hooks/useCached"
 import useRequestStatus from "@/hooks/useRequestStatus"
 import moment from "moment"
+import { AccountProperty } from "../StreamPicker/useAccountProperty"
 
 export type Dimension = gapi.client.analyticsdata.DimensionMetadata
 export type Metric = gapi.client.analyticsdata.MetricMetadata
 export type Successful = { dimensions: Dimension[]; metrics: Metric[] }
 
 export const useDimensionsAndMetrics = (
-  aps: AccountPropertyStream
+  aps: AccountProperty
 ): Requestable<Successful> => {
   const gapi = useSelector((state: AppState) => state.gapi)
   const dataAPI = React.useMemo(() => gapi?.client.analyticsdata, [gapi])
@@ -33,7 +33,7 @@ export const useDimensionsAndMetrics = (
 
   React.useEffect(() => {
     setNotStarted()
-  }, [propertyName])
+  }, [propertyName, setNotStarted])
 
   const requestReady = React.useMemo(() => dataAPI !== undefined, [dataAPI])
 

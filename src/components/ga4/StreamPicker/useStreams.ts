@@ -6,8 +6,9 @@ import {
   // AndroidDataStream,
   // IosDataStream,
   PropertySummary,
+  Stream,
   // Stream,
-  StreamsRequest,
+  StreamType,
   // WebDataStream,
 } from "@/types/ga4/StreamPicker"
 import usePaginatedCallback from "@/hooks/usePaginatedCallback"
@@ -22,8 +23,9 @@ const getWebStreams = (response: WebStreamsResponse) => response.webDataStreams
 const getWebPageToken = (response: WebStreamsResponse) => response.nextPageToken
 
 const useStreams = (
-  property: PropertySummary | undefined
-): Requestable<StreamsRequest> => {
+  property: PropertySummary | undefined,
+  onComplete?: () => void
+): Requestable<{ streams: Stream[] }> => {
   const gapi = useGapi()
   const adminAPI = useMemo(() => gapi?.client.analyticsadmin, [gapi])
 
@@ -57,6 +59,24 @@ const useStreams = (
     },
     [adminAPI, property]
   )
+  // useEffect(() => {
+  //   console.log(
+  //     "paginatedWebStreamsRequest changed",
+  //     paginatedWebStreamsRequest
+  //   )
+  // }, [paginatedWebStreamsRequest])
+  //
+  // What I'm observing.
+  //
+  // When I change the property, I'm no longer able to choose a stream, because
+  // the list of streams doesn't match with the property.
+  //
+  // The stream dropdown values are correct.
+  //
+  // The stream values that are wrong are the ones that are used in the getById
+  // for the useHydrated call.
+  //
+  // This is the call happens in the useAccountPropertyStreams.
   const requestWebStreams = usePaginatedCallback(
     requestReady,
     "Invalid invariant - property & adminAPI must be defined.",
@@ -67,8 +87,13 @@ const useStreams = (
     setWebStreamFailed
   )
 
+  const storageKey = useMemo(
+    () => `${StorageKey.ga4WebStreams}/${property?.property}` as StorageKey,
+    [property?.property]
+  )
+
   const webStreams = useCached(
-    `${StorageKey.ga4WebStreams}/${property?.property}` as StorageKey,
+    storageKey,
     requestWebStreams,
     moment.duration(5, "minutes"),
     requestReady
@@ -77,8 +102,9 @@ const useStreams = (
   useEffect(() => {
     if (webStreams !== undefined) {
       setWebStreamSuccessful()
+      onComplete && onComplete()
     }
-  }, [setWebStreamSuccessful, webStreams])
+  }, [setWebStreamSuccessful, webStreams, onComplete])
 
   if (webStreamsStatus === RequestStatus.Successful) {
     if (webStreams === undefined) {
@@ -86,8 +112,10 @@ const useStreams = (
     }
     return {
       status: RequestStatus.Successful,
-      web: webStreams,
-      streams: webStreams,
+      streams: webStreams.map(s => ({
+        type: StreamType.WebDataStream,
+        value: s,
+      })),
     }
   }
 

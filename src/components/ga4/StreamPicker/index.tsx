@@ -1,9 +1,9 @@
 import * as React from "react"
-import { Dispatch, RequestStatus, successful } from "@/types"
+import { Dispatch, Requestable, successful } from "@/types"
 import Autocomplete from "@material-ui/lab/Autocomplete"
 import { makeStyles, TextField } from "@material-ui/core"
 import Typography from "@material-ui/core/Typography"
-import useStreamPicker from "./useStreamPicker"
+import useAccountsAndProperties from "./useAccountsAndProperties"
 import {
   AccountSummary,
   PropertySummary,
@@ -33,12 +33,15 @@ interface CommonProps {
 }
 
 interface WithStreams extends CommonProps {
+  // If needed this can be updated to only show web, firebase, or ios streams.
   streams: true
+  stream: Stream | undefined
+  setStreamID: Dispatch<string | undefined>
+  streamsRequest: Requestable<{ streams: Stream[] }>
+  updateToFirstStream: () => void
 }
 
 interface OnlyProperty extends CommonProps {
-  stream: Stream | undefined
-  setStreamID: Dispatch<string | undefined>
   streams?: false | undefined
 }
 
@@ -48,15 +51,15 @@ const StreamPicker: React.FC<StreamPickerProps> = props => {
   const { account, property, setAccountID, setPropertyID, autoFill } = props
   const classes = useStyles()
 
-  const { accountsAndProperties } = useStreamPicker(account, property)
+  const accountsAndPropertiesRequest = useAccountsAndProperties(account)
 
   return (
     <section className={classes.picker}>
       <Autocomplete<AccountSummary, false, false, false>
         fullWidth
         data-testid={Label.Account}
-        loading={accountsAndProperties.status !== RequestStatus.Successful}
-        options={successful(accountsAndProperties)?.accounts || []}
+        loading={!successful(accountsAndPropertiesRequest)}
+        options={successful(accountsAndPropertiesRequest)?.accounts || []}
         noOptionsText="You have no GA accounts with GA4 properties."
         value={account || null}
         getOptionLabel={account => account.displayName!}
@@ -65,9 +68,10 @@ const StreamPicker: React.FC<StreamPickerProps> = props => {
           setAccountID(value === null ? undefined : value?.name)
 
           if (autoFill) {
-            setPropertyID(value?.propertySummaries?.[0].property)
+            const property = value?.propertySummaries?.[0]
+            setPropertyID(property?.property)
+            props.streams && props.updateToFirstStream()
           }
-          // TODO - handle autoFill for streams
         }}
         renderOption={account => (
           <RenderOption
@@ -87,16 +91,19 @@ const StreamPicker: React.FC<StreamPickerProps> = props => {
       <Autocomplete<PropertySummary, false, false, false>
         fullWidth
         data-testid={Label.Property}
-        loading={accountsAndProperties.status !== RequestStatus.Successful}
-        options={successful(accountsAndProperties)?.properties || []}
+        loading={!successful(accountsAndPropertiesRequest)}
+        options={successful(accountsAndPropertiesRequest)?.properties || []}
         noOptionsText="You have no GA accounts with GA4 properties."
         value={property || null}
         getOptionLabel={summary => summary.displayName!}
         getOptionSelected={(a, b) => a.property === b.property}
         onChange={(_event, value) => {
-          setPropertyID(value === null ? undefined : value?.property)
+          const property = value === null ? undefined : value
+          setPropertyID(property?.property)
 
-          // TODO - handle autoFill for streams
+          if (autoFill) {
+            props.streams && props.updateToFirstStream()
+          }
         }}
         renderOption={summary => (
           <RenderOption
@@ -113,6 +120,39 @@ const StreamPicker: React.FC<StreamPickerProps> = props => {
           />
         )}
       />
+      {props.streams && (
+        <Autocomplete<Stream, false, false, false>
+          fullWidth
+          data-testid={Label.Stream}
+          loading={property !== undefined && !successful(props.streamsRequest)}
+          options={successful(props.streamsRequest)?.streams || []}
+          noOptionsText={
+            property === undefined
+              ? "Select an account an property to populate this dropdown."
+              : "There are no streams for the selected property."
+          }
+          value={props.stream || null}
+          getOptionLabel={stream => stream.value.displayName!}
+          getOptionSelected={(a, b) => a.value.name === b.value.name}
+          onChange={(_event, value) => {
+            props.setStreamID(value?.value.name)
+          }}
+          renderOption={stream => (
+            <RenderOption
+              first={stream.value.displayName!}
+              second={stream.type + " stream"}
+            />
+          )}
+          renderInput={params => (
+            <TextField
+              {...params}
+              label={Label.Stream}
+              size="small"
+              variant="outlined"
+            />
+          )}
+        />
+      )}
     </section>
   )
 }

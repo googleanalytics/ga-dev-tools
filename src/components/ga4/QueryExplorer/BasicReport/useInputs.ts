@@ -11,12 +11,12 @@ import useAvailableColumns from "@/components/GA4Pickers/useAvailableColumns"
 import { DateRange } from "../DateRanges"
 import { FilterExpression } from "../Filter"
 import { MetricAggregation } from "../MetricAggregations"
-import { AccountPropertyStream } from "../../StreamPicker/useAccountPropertyStream"
+import { AccountProperty } from "../../StreamPicker/useAccountProperty"
 
 type OrderBy = gapi.client.analyticsdata.OrderBy
 type CohortSpec = gapi.client.analyticsdata.CohortSpec
 
-const useInputs = (aps: AccountPropertyStream) => {
+const useInputs = (aps: AccountProperty) => {
   const [showRequestJSON, setShowRequestJSON] = usePersistentBoolean(
     StorageKey.ga4RequestComposerBasicShowRequestJSON,
     true

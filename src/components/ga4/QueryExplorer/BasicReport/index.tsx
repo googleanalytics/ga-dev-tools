@@ -23,7 +23,7 @@ import useMakeRequest from "./useMakeRequest"
 import useInputs from "./useInputs"
 import useFormStyles from "@/hooks/useFormStyles"
 import StreamPicker from "../../StreamPicker"
-import useAccountPropertyStream from "../../StreamPicker/useAccountPropertyStream"
+import useAccountProperty from "../../StreamPicker/useAccountProperty"
 
 const useStyles = makeStyles(theme => ({
   showRequestJSON: {
@@ -99,10 +99,7 @@ export enum QueryParam {
 const BasicReport = () => {
   const classes = useStyles()
   const formClasses = useFormStyles()
-  const aps = useAccountPropertyStream(
-    StorageKey.ga4QueryExplorerAPS,
-    QueryParam
-  )
+  const aps = useAccountProperty(StorageKey.ga4QueryExplorerAPS, QueryParam)
   const { property } = aps
   const {
     dateRanges,

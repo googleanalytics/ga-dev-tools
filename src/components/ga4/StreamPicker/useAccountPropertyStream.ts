@@ -1,25 +1,22 @@
 import { StorageKey } from "@/constants"
 import { useKeyedHydratedPersistantObject } from "@/hooks/useHydrated"
-import { Dispatch, RequestStatus } from "@/types"
-import {
-  AccountSummary,
-  PropertySummary,
-  Stream,
-} from "@/types/ga4/StreamPicker"
-import { useCallback } from "react"
-import useAccounts from "./useAccounts"
+import { Dispatch, Requestable, successful } from "@/types"
+import { PropertySummary, Stream } from "@/types/ga4/StreamPicker"
+import { useCallback, useEffect, useState } from "react"
+import useAccountProperty, {
+  AccountProperty,
+  AccountPropertySetters,
+} from "./useAccountProperty"
 import useStreams from "./useStreams"
 
-export interface AccountPropertyStream {
-  account: AccountSummary | undefined
-  property: PropertySummary | undefined
+export interface AccountPropertyStream extends AccountProperty {
   stream: Stream | undefined
+  streamsRequest: Requestable<{ streams: Stream[] }>
 }
 
-interface AccountPropertyStreamSetters {
-  setAccountID: Dispatch<string | undefined>
-  setPropertyID: Dispatch<string | undefined>
+interface AccountPropertyStreamSetters extends AccountPropertySetters {
   setStreamID: Dispatch<string | undefined>
+  updateToFirstStream: () => void
 }
 
 const useAccountPropertyStream = (
@@ -31,69 +28,34 @@ const useAccountPropertyStream = (
   keepParam: boolean = false,
   onSetProperty?: (p: PropertySummary | undefined) => void
 ): AccountPropertyStream & AccountPropertyStreamSetters => {
-  const accountsRequest = useAccounts()
-
-  const getAccountByID = useCallback(
-    (id: string | undefined) => {
-      if (
-        accountsRequest.status !== RequestStatus.Successful ||
-        id === undefined
-      ) {
-        return undefined
-      }
-      return accountsRequest.accounts.find(a => a.name === id)
-    },
-    [accountsRequest]
+  const accountProperty = useAccountProperty(
+    prefix,
+    queryParamKeys,
+    keepParam,
+    onSetProperty
   )
 
-  const [
-    account,
-    setAccountID,
-  ] = useKeyedHydratedPersistantObject<AccountSummary>(
-    `${prefix}-account` as StorageKey,
-    queryParamKeys.Account,
-    getAccountByID,
-    undefined,
-    { keepParam }
-  )
+  const { property } = accountProperty
 
-  const getPropertyByID = useCallback(
-    (id: string | undefined) => {
-      if (
-        accountsRequest.status !== RequestStatus.Successful ||
-        id === undefined
-      ) {
-        return undefined
-      }
-      return accountsRequest.accounts
-        .flatMap(a => a.propertySummaries || [])
-        .find(p => p.property === id)
-    },
-    [accountsRequest]
-  )
-
-  const [
-    property,
-    setPropertyID,
-  ] = useKeyedHydratedPersistantObject<PropertySummary>(
-    `${prefix}-property` as StorageKey,
-    queryParamKeys.Property,
-    getPropertyByID,
-    onSetProperty,
-    { keepParam }
-  )
+  const updateToFirstStream = useCallback(() => {
+    // I don't really like this, but I'm not sure how else to get this to
+    // update correctly.
+    setTimeout(() => {
+      setSetToFirst(true)
+    }, 100)
+  }, [])
 
   const streamsRequest = useStreams(property)
 
   const getStreamsByID = useCallback(
     (id: string | undefined) => {
-      if (
-        streamsRequest.status !== RequestStatus.Successful ||
-        id === undefined
-      ) {
+      if (!successful(streamsRequest) || id === undefined) {
         return undefined
       }
-      return streamsRequest.streams.find(s => s.name === id)
+      const stream = successful(streamsRequest)?.streams.find(
+        s => s.value.name === id
+      )
+      return stream
     },
     [streamsRequest]
   )
@@ -106,13 +68,20 @@ const useAccountPropertyStream = (
     { keepParam }
   )
 
+  const [setToFirst, setSetToFirst] = useState(false)
+  useEffect(() => {
+    if (successful(streamsRequest) && setToFirst) {
+      setStreamID(successful(streamsRequest)?.streams?.[0].value.name)
+      setSetToFirst(false)
+    }
+  }, [streamsRequest, setToFirst, setStreamID])
+
   return {
-    account,
-    setAccountID,
-    property,
-    setPropertyID,
+    ...accountProperty,
     stream,
     setStreamID,
+    streamsRequest,
+    updateToFirstStream,
   }
 }
 
