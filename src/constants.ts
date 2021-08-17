@@ -213,8 +213,8 @@ export enum StorageKey {
   campaignBuilderPlayName = "campaign-builder/play/name",
 
   // IOS Campaign URL Builder
-  campaignBuilderIOSAPV = "campaign-builder/ios/apv",
-  campaignBuilderIOSAPS = "campaign-builder/ios/aps",
+  campaignBuilderIOSAPV = "campaign-builder/ios/apv-2",
+  campaignBuilderIOSAPS = "campaign-builder/ios/aps-2",
   campaignBuilderIOSAppID = "campaign-builder/ios/app-id",
   campaignBuilderIOSSource = "campaign-builder/ios/source",
   campaignBuilderIOSMedium = "campaign-builder/ios/medium",
