@@ -145,7 +145,7 @@ const Field: React.FC<FieldProps> = ({ field, account, property }) => {
 
   return (
     <div id={apiName} key={apiName}>
-      <Typography variant="h3" className={classes.heading}>
+      <Typography variant="h4" className={classes.heading}>
         <Link to={`#${apiName}`}>{uiName}</Link>
         <InlineCode className={classes.apiName}>{apiName}</InlineCode>
         <CopyIconButton

@@ -13,12 +13,19 @@ import Loadable from "@/components/Loadable"
 import Info from "@/components/Info"
 import Field from "./Field"
 import useInputs from "./useInputs"
-import { useDimensionsAndMetrics, Successful } from "./useDimensionsAndMetrics"
+import {
+  useDimensionsAndMetrics,
+  Successful,
+  Dimension,
+  Metric,
+} from "./useDimensionsAndMetrics"
 import useFormStyles from "@/hooks/useFormStyles"
 import StreamPicker from "../StreamPicker"
 import useAccountProperty, {
   AccountProperty,
 } from "../StreamPicker/useAccountProperty"
+import { Link } from "gatsby"
+import { makeStyles } from "@material-ui/core"
 
 const dataAPI = (
   <ExternalLink href={Url.ga4DataAPIGetMetadata}>
@@ -26,69 +33,111 @@ const dataAPI = (
   </ExternalLink>
 )
 
+const useStyles = makeStyles(theme => ({
+  headingLinks: {
+    "& > a": {
+      color: theme.palette.text.primary,
+    },
+  },
+}))
+
 const RenderSuccessful: React.FC<
   Successful & { search: string | undefined; aps: AccountProperty }
-> = ({ dimensions, metrics, search, aps }) => {
-  const visibleDimensions = React.useMemo(
-    () =>
-      dimensions.filter(dimension =>
-        search === undefined
-          ? true
-          : dimension.uiName?.toLowerCase().includes(search.toLowerCase()) ||
-            dimension.apiName?.toLowerCase().includes(search.toLowerCase())
-      ),
-    [search, dimensions]
+> = ({ categories, search, aps }) => {
+  const classes = useStyles()
+  const searchRegex = useMemo(
+    () => (search === undefined ? undefined : new RegExp(search, "gi")),
+    [search]
   )
 
-  const visibleMetrics = React.useMemo(
+  const searchFilter = React.useCallback(
+    (c: Dimension | Metric) => {
+      if (searchRegex === undefined) {
+        return true
+      }
+      return searchRegex.test(c.uiName!) || searchRegex.test(c.apiName!)
+    },
+    [searchRegex]
+  )
+
+  const filteredCategories = React.useMemo(
     () =>
-      metrics.filter(metric =>
-        search === undefined
-          ? true
-          : metric.uiName?.toLowerCase().includes(search.toLowerCase()) ||
-            metric.apiName?.toLowerCase().includes(search.toLowerCase())
-      ),
-    [search, metrics]
+      categories.map(c => ({
+        ...c,
+        dimensions: c.dimensions.filter(searchFilter),
+        metrics: c.metrics.filter(searchFilter),
+      })),
+    [searchFilter, categories]
   )
 
   const notAllFields = useMemo(() => {
-    if (
-      visibleMetrics.length !== metrics.length ||
-      visibleDimensions.length !== dimensions.length
-    ) {
+    if (searchRegex !== undefined) {
       return (
         <Info>
           You are only viewing a subset of the available metrics and dimensions.
         </Info>
       )
     }
-  }, [visibleMetrics, visibleDimensions, metrics, dimensions])
+  }, [searchRegex])
 
   useScrollTo()
 
   return (
     <>
       {notAllFields}
-      <Typography variant="h2" id="dimensions">
-        Dimensions
-      </Typography>
-      {visibleDimensions?.map(dimension => (
-        <Field
-          {...aps}
-          key={dimension.apiName}
-          field={{ type: "dimension", value: dimension }}
-        />
-      ))}
-      <Typography variant="h2" id="metrics">
-        Metrics
-      </Typography>
-      {visibleMetrics?.map(metric => (
-        <Field
-          {...aps}
-          key={metric.apiName}
-          field={{ type: "metric", value: metric }}
-        />
-      ))}
+      {filteredCategories.map(({ category, dimensions, metrics }) => {
+        if (dimensions.length === 0 && metrics.length === 0) {
+          return null
+        }
+        const baseAnchor = encodeURIComponent(category)
+        return (
+          <React.Fragment key={category}>
+            <Typography
+              variant="h2"
+              id={baseAnchor}
+              className={classes.headingLinks}
+            >
+              <Link to={`#${baseAnchor}`}>{category}</Link>
+            </Typography>
+            {dimensions.length > 0 && (
+              <>
+                <Typography
+                  variant="h3"
+                  id={`${baseAnchor}_dimensions`}
+                  className={classes.headingLinks}
+                >
+                  <Link to={`#${baseAnchor}_dimensions`}>Dimensions</Link>
+                </Typography>
+                {dimensions.map(dimension => (
+                  <Field
+                    {...aps}
+                    key={dimension.apiName}
+                    field={{ type: "dimension", value: dimension }}
+                  />
+                ))}
+              </>
+            )}
+            {metrics.length > 0 && (
+              <>
+                <Typography
+                  variant="h3"
+                  id={`${baseAnchor}_metrics`}
+                  className={classes.headingLinks}
+                >
+                  <Link to={`#${baseAnchor}_metrics`}>Metrics</Link>
+                </Typography>
+                {metrics.map(metric => (
+                  <Field
+                    {...aps}
+                    key={metric.apiName}
+                    field={{ type: "metric", value: metric }}
+                  />
+                ))}
+              </>
+            )}
+          </React.Fragment>
+        )
+      })}
     </>
   )
 }
@@ -139,9 +188,6 @@ const DimensionsMetricsExplorer: React.FC = () => {
               ),
             }}
           />
-          <Typography>
-            <a href="#metrics">go to metrics</a>
-          </Typography>
         </section>
         <Loadable
           request={request}

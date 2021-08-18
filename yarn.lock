@@ -2230,9 +2230,9 @@
     "@types/gapi.client" "*"
 
 "@maxim_mazurok/gapi.client.analyticsdata@latest":
-  version "1.0.20210505"
-  resolved "https://registry.yarnpkg.com/@maxim_mazurok/gapi.client.analyticsdata/-/gapi.client.analyticsdata-1.0.20210505.tgz#e3330b1ceaf979884dd99a55d50c8b9f63c75271"
-  integrity sha512-3CEt7obBInncvQaQ0Y5RGxFPA1woKavieFpepfsHkgcLCcrj4HTZCR6I+4ZtQceKNF0DBSIRRUXGbYubUr8tJA==
+  version "1.0.20210816"
+  resolved "https://registry.yarnpkg.com/@maxim_mazurok/gapi.client.analyticsdata/-/gapi.client.analyticsdata-1.0.20210816.tgz#a275d6daa14b7ef3db55d0dcf64e2bb8c94af8e6"
+  integrity sha512-6c9yx/3XkNd0L6zHzs3pcAS2MiUambt6nHnBQsK8FvQZQXpG0SB/v+pPTMHULmRO7C05hlSyvZ0EwSRTVO0+EQ==
   dependencies:
     "@types/gapi.client" "*"
 
@@ -2673,10 +2673,10 @@
   dependencies:
     "@maxim_mazurok/gapi.client.analyticsadmin" latest
 
-"@types/gapi.client.analyticsdata@^1.0.1":
-  version "1.0.1"
-  resolved "https://registry.yarnpkg.com/@types/gapi.client.analyticsdata/-/gapi.client.analyticsdata-1.0.1.tgz#4a3bd77ec9b7f189f1dab69cde8b8310704c7f0e"
-  integrity sha512-DZPh0wx0v3MI0Q9i85uDUNSRdgLMga7cAKFJ8JTatnF6l5NVLHBiQwhp7TIcMVsYwJtjfJDy+smYcPIJYPdthw==
+"@types/gapi.client.analyticsdata@^1.0.2":
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/@types/gapi.client.analyticsdata/-/gapi.client.analyticsdata-1.0.2.tgz#60b43b63c7f0c678dea182bf70980739d10cc9e5"
+  integrity sha512-u4ais6pS3HkvYR1kM2osJXWWbZHWttjqnuVlE5SgGEGQVxCE6dvEXffCtZZ3gD6wGVyhdmJQxlBbHFXABA3Csw==
   dependencies:
     "@maxim_mazurok/gapi.client.analyticsdata" latest
 

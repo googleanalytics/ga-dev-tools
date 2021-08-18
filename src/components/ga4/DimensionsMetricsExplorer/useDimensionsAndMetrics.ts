@@ -11,7 +11,15 @@ import { AccountProperty } from "../StreamPicker/useAccountProperty"
 
 export type Dimension = gapi.client.analyticsdata.DimensionMetadata
 export type Metric = gapi.client.analyticsdata.MetricMetadata
-export type Successful = { dimensions: Dimension[]; metrics: Metric[] }
+export type Successful = {
+  dimensions: Dimension[]
+  metrics: Metric[]
+  categories: Array<{
+    category: string
+    dimensions: Dimension[]
+    metrics: Metric[]
+  }>
+}
 
 export const useDimensionsAndMetrics = (
   aps: AccountProperty
@@ -65,6 +73,28 @@ export const useDimensionsAndMetrics = (
     }
   }, [dimsAndMets, setSuccessful])
 
+  const categories = React.useMemo(
+    () =>
+      [
+        ...new Set<string>(
+          (dimsAndMets?.metrics || [])
+            // TODO - remove the any casts once the types are updated to
+            // include category.
+            .map(m => (m as any).category)
+            .concat(dimsAndMets?.dimensions?.map(d => (d as any).category))
+        ),
+      ].map(category => ({
+        category,
+        dimensions: (dimsAndMets?.dimensions || []).filter(
+          d => (d as any).category === category
+        ),
+        metrics: (dimsAndMets?.metrics || []).filter(
+          m => (m as any).category === category
+        ),
+      })),
+    [dimsAndMets]
+  )
+
   const dimensions = React.useMemo(() => dimsAndMets?.dimensions, [dimsAndMets])
   const metrics = React.useMemo(() => dimsAndMets?.metrics, [dimsAndMets])
 
@@ -74,7 +104,7 @@ export const useDimensionsAndMetrics = (
         "Invalid invariant - dimensions & metrics must be defined."
       )
     }
-    return { status, dimensions, metrics }
+    return { status, dimensions, metrics, categories }
   }
   return { status }
 }

@@ -57,7 +57,7 @@
     "@types/gapi.auth2": "^0.0.54",
     "@types/gapi.client.analytics": "^3.0.7",
     "@types/gapi.client.analyticsadmin": "^1.0.0",
-    "@types/gapi.client.analyticsdata": "^1.0.1",
+    "@types/gapi.client.analyticsdata": "^1.0.2",
     "@types/gapi.client.analyticsreporting": "^4.0.3",
     "@types/gtag.js": "^0.0.5",
     "@types/jest": "^26.0.23",
