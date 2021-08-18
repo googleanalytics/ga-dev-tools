@@ -46,7 +46,7 @@ const RenderSuccessful: React.FC<
 > = ({ categories, search, aps }) => {
   const classes = useStyles()
   const searchRegex = useMemo(
-    () => (search === undefined ? undefined : new RegExp(search, "gi")),
+    () => (search ? new RegExp(search, "gi") : undefined),
     [search]
   )
 
