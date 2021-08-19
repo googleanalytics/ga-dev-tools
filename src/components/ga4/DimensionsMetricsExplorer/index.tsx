@@ -26,11 +26,18 @@ import useAccountProperty, {
 } from "../StreamPicker/useAccountProperty"
 import { Link } from "gatsby"
 import { makeStyles } from "@material-ui/core"
+import useCompatibility from "./useCompatibility"
+import Compatible from "./Compatible"
+import ScrollToTop from "@/components/ScrollToTop"
 
 const dataAPI = (
   <ExternalLink href={Url.ga4DataAPIGetMetadata}>
     GA4 Data API's getMetadata method
   </ExternalLink>
+)
+
+const checkCompatibility = (
+  <ExternalLink href="#todo">checkCompatibility</ExternalLink>
 )
 
 const useStyles = makeStyles(theme => ({
@@ -49,6 +56,8 @@ const RenderSuccessful: React.FC<
     () => (search ? new RegExp(search, "gi") : undefined),
     [search]
   )
+
+  const compability = useCompatibility(aps)
 
   const searchFilter = React.useCallback(
     (c: Dimension | Metric) => {
@@ -80,10 +89,15 @@ const RenderSuccessful: React.FC<
     }
   }, [searchRegex])
 
+  const compatible = useMemo(() => {
+    return <Compatible {...compability} />
+  }, [compability])
+
   useScrollTo()
 
   return (
     <>
+      {compatible}
       {notAllFields}
       {filteredCategories.map(({ category, dimensions, metrics }) => {
         if (dimensions.length === 0 && metrics.length === 0) {
@@ -110,6 +124,7 @@ const RenderSuccessful: React.FC<
                 </Typography>
                 {dimensions.map(dimension => (
                   <Field
+                    {...compability}
                     {...aps}
                     key={dimension.apiName}
                     field={{ type: "dimension", value: dimension }}
@@ -128,6 +143,7 @@ const RenderSuccessful: React.FC<
                 </Typography>
                 {metrics.map(metric => (
                   <Field
+                    {...compability}
                     {...aps}
                     key={metric.apiName}
                     field={{ type: "metric", value: metric }}
@@ -161,13 +177,19 @@ const DimensionsMetricsExplorer: React.FC = () => {
   return (
     <>
       <section>
+        <ScrollToTop />
         <Typography>
           The {dataAPI} allows users to see query dimensions and metrics
           (including custom ones) for a given property.
         </Typography>
         <Typography>
           This demo is a catalog of all dimensions and metrics available for a
-          given property. It includes linkable descriptions of all fields.
+          given property with linkable descriptions for all fields.
+        </Typography>
+        <Typography>
+          This demo also uses the {checkCompatibility} API so you can see which
+          dimensions and metrics are compatible with each other. As you add
+          fields to the request, incompatible fields will be grayed out.
         </Typography>
         <section className={formClasses.form}>
           <Typography variant="h3">Select property</Typography>

@@ -9,7 +9,7 @@ export interface QueryExplorerLinkProps {
 }
 
 const QueryExplorerLink: React.FC<QueryExplorerLinkProps> = ({
-  children,
+  children = "Query Explorer",
   ...props
 }) => {
   const linkToQueryExplorer = useLinkToQueryExplorer(props)

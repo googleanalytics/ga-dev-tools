@@ -1,5 +1,6 @@
 import * as React from "react"
 
+import clsx from "classnames"
 import IconLink from "@material-ui/icons/Link"
 import makeStyles from "@material-ui/core/styles/makeStyles"
 import Typography from "@material-ui/core/Typography"
@@ -11,6 +12,10 @@ import ExternalLink from "@/components/ExternalLink"
 import { Dimension, Metric } from "./useDimensionsAndMetrics"
 import { QueryParam } from "."
 import { AccountSummary, PropertySummary } from "@/types/ga4/StreamPicker"
+import { PAB, SAB } from "@/components/Buttons"
+import { CompatibleHook } from "./useCompatibility"
+import { useSetToast } from "@/hooks"
+import { Tooltip } from "@material-ui/core"
 
 const knownLinks: [string, JSX.Element][] = [
   [
@@ -75,6 +80,15 @@ const linkifyText = (
 }
 
 const useStyles = makeStyles(theme => ({
+  incompatible: {
+    color: theme.palette.grey[400],
+    "&> h4": {
+      color: theme.palette.grey[400],
+      "&> a": {
+        color: theme.palette.grey[400],
+      },
+    },
+  },
   heading: {
     display: "flex",
     flexWrap: "wrap",
@@ -96,14 +110,27 @@ const useStyles = makeStyles(theme => ({
   },
 }))
 
-interface FieldProps {
+interface FieldProps extends CompatibleHook {
   field:
     | { type: "dimension"; value: Dimension }
     | { type: "metric"; value: Metric }
   account: AccountSummary | undefined
   property: PropertySummary | undefined
 }
-const Field: React.FC<FieldProps> = ({ field, account, property }) => {
+const Field: React.FC<FieldProps> = ({
+  field,
+  account,
+  property,
+  dimensions,
+  metrics,
+  addMetric,
+  addDimension,
+  removeMetric,
+  removeDimension,
+  incompatibleDimensions,
+  incompatibleMetrics,
+}) => {
+  const setToast = useSetToast()
   const apiName = field.value.apiName || ""
   const uiName = field.value.uiName || ""
   const description = field.value.description || ""
@@ -143,8 +170,21 @@ const Field: React.FC<FieldProps> = ({ field, account, property }) => {
     )
   }, [description])
 
+  const isCompatible = React.useMemo(() => {
+    return (
+      incompatibleDimensions?.find(d => d.apiName === field.value.apiName) ===
+        undefined &&
+      incompatibleMetrics?.find(m => m.apiName === field.value.apiName) ===
+        undefined
+    )
+  }, [incompatibleMetrics, incompatibleDimensions, field.value.apiName])
+
   return (
-    <div id={apiName} key={apiName}>
+    <div
+      id={apiName}
+      key={apiName}
+      className={clsx({ [classes.incompatible]: !isCompatible })}
+    >
       <Typography variant="h4" className={classes.heading}>
         <Link to={`#${apiName}`}>{uiName}</Link>
         <InlineCode className={classes.apiName}>{apiName}</InlineCode>
@@ -155,6 +195,35 @@ const Field: React.FC<FieldProps> = ({ field, account, property }) => {
         />
       </Typography>
       <Typography>{withLinks}</Typography>
+      {metrics?.find(m => m.apiName === field.value.apiName) ||
+      dimensions?.find(d => d.apiName === field.value.apiName) ? (
+        <SAB
+          delete
+          small
+          onClick={() => {
+            field.type === "metric"
+              ? removeMetric(field.value)
+              : removeDimension(field.value)
+            setToast(`Removed ${field.value.apiName} from the request.`)
+          }}
+        >
+          request
+        </SAB>
+      ) : (
+        <PAB
+          add
+          small
+          disabled={!isCompatible}
+          onClick={() => {
+            field.type === "metric"
+              ? addMetric(field.value)
+              : addDimension(field.value)
+            setToast(`Added ${field.value.apiName} to the request.`)
+          }}
+        >
+          request
+        </PAB>
+      )}
     </div>
   )
 }
