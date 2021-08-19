@@ -13,6 +13,14 @@ const useStyles = makeStyles(theme => ({
   chipGroup: {
     display: "flex",
     alignItems: "baseline",
+    flexWrap: "wrap",
+    "& > :not(:last-child)": {
+      marginRight: theme.spacing(1),
+    },
+  },
+  removeButton: {
+    marginTop: theme.spacing(1),
+    marginBottom: theme.spacing(1),
   },
 }))
 
@@ -61,9 +69,11 @@ const Compatible: React.FC<CompatibleHook> = ({
           />
         ))}
       </div>
-      <SAB delete small onClick={reset}>
-        Clear fields
-      </SAB>
+      <div className={classes.removeButton}>
+        <SAB delete small onClick={reset}>
+          Clear fields
+        </SAB>
+      </div>
       <Typography>
         Use these fields in the{" "}
         <QueryExplorerLink dimensions={dimensions} metrics={metrics} />
