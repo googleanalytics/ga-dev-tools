@@ -24,6 +24,15 @@ module.exports = {
   },
   plugins: [
     {
+      resolve: `gatsby-plugin-manifest`,
+      options: {
+        name: `Google Analytics Demos & Tools`,
+        short_name: `GA Dev Tools`,
+        start_url: `/`,
+        icon: "src/images/favicon.png",
+      },
+    },
+    {
       resolve: `gatsby-plugin-sitemap`,
       options: {
         serialize: ({ path, modifiedGmt }) => {
