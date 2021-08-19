@@ -15,7 +15,6 @@ import { AccountSummary, PropertySummary } from "@/types/ga4/StreamPicker"
 import { PAB, SAB } from "@/components/Buttons"
 import { CompatibleHook } from "./useCompatibility"
 import { useSetToast } from "@/hooks"
-import { Tooltip } from "@material-ui/core"
 
 const knownLinks: [string, JSX.Element][] = [
   [
@@ -117,20 +116,85 @@ interface FieldProps extends CompatibleHook {
   account: AccountSummary | undefined
   property: PropertySummary | undefined
 }
-const Field: React.FC<FieldProps> = ({
-  field,
-  account,
+
+const CompatibleControls: React.FC<FieldProps & { isCompatible: boolean }> = ({
   property,
-  dimensions,
   metrics,
+  dimensions,
+  field,
+  isCompatible,
   addMetric,
   addDimension,
   removeMetric,
   removeDimension,
-  incompatibleDimensions,
-  incompatibleMetrics,
 }) => {
   const setToast = useSetToast()
+
+  const canAdd = React.useMemo(
+    () =>
+      metrics?.find(m => m.apiName === field.value.apiName) === undefined &&
+      dimensions?.find(d => d.apiName === field.value.apiName) === undefined,
+    [metrics, dimensions, field.value.apiName]
+  )
+
+  const addToRequest = React.useMemo(() => {
+    if (canAdd) {
+      return (
+        <PAB
+          add
+          small
+          disabled={!isCompatible}
+          onClick={() => {
+            field.type === "metric"
+              ? addMetric(field.value)
+              : addDimension(field.value)
+            setToast(`Added ${field.value.apiName} to the request.`)
+          }}
+        >
+          request
+        </PAB>
+      )
+    }
+  }, [canAdd, addDimension, addMetric, setToast, field, isCompatible])
+
+  const removeFromRequest = React.useMemo(() => {
+    if (!canAdd) {
+      return (
+        <SAB
+          delete
+          small
+          onClick={() => {
+            field.type === "metric"
+              ? removeMetric(field.value)
+              : removeDimension(field.value)
+            setToast(`Removed ${field.value.apiName} from the request.`)
+          }}
+        >
+          request
+        </SAB>
+      )
+    }
+  }, [canAdd, field, removeMetric, removeDimension, setToast])
+
+  if (property === undefined) {
+    return null
+  }
+  return (
+    <>
+      {addToRequest}
+      {removeFromRequest}
+    </>
+  )
+}
+
+const Field: React.FC<FieldProps> = props => {
+  const {
+    field,
+    account,
+    property,
+    incompatibleDimensions,
+    incompatibleMetrics,
+  } = props
   const apiName = field.value.apiName || ""
   const uiName = field.value.uiName || ""
   const description = field.value.description || ""
@@ -195,35 +259,7 @@ const Field: React.FC<FieldProps> = ({
         />
       </Typography>
       <Typography>{withLinks}</Typography>
-      {metrics?.find(m => m.apiName === field.value.apiName) ||
-      dimensions?.find(d => d.apiName === field.value.apiName) ? (
-        <SAB
-          delete
-          small
-          onClick={() => {
-            field.type === "metric"
-              ? removeMetric(field.value)
-              : removeDimension(field.value)
-            setToast(`Removed ${field.value.apiName} from the request.`)
-          }}
-        >
-          request
-        </SAB>
-      ) : (
-        <PAB
-          add
-          small
-          disabled={!isCompatible}
-          onClick={() => {
-            field.type === "metric"
-              ? addMetric(field.value)
-              : addDimension(field.value)
-            setToast(`Added ${field.value.apiName} to the request.`)
-          }}
-        >
-          request
-        </PAB>
-      )}
+      <CompatibleControls {...props} isCompatible={isCompatible} />
     </div>
   )
 }
