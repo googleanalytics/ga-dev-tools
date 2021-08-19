@@ -1,4 +1,5 @@
 import { makeStyles, useScrollTrigger } from "@material-ui/core"
+import { ArrowUpward } from "@material-ui/icons"
 import * as React from "react"
 import { PlainButton } from "../Buttons"
 
@@ -26,7 +27,9 @@ const ScrollToTop = () => {
 
   return (
     <div className={classes.scrollToTop}>
-      <PlainButton onClick={onClick}>Back to Top</PlainButton>
+      <PlainButton startIcon={<ArrowUpward />} onClick={onClick}>
+        Back to Top
+      </PlainButton>
     </div>
   )
 }
