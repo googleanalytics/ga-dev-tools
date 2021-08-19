@@ -1,10 +1,8 @@
 import * as React from "react"
 
-import clsx from "classnames"
 import IconLink from "@material-ui/icons/Link"
 import makeStyles from "@material-ui/core/styles/makeStyles"
 import Typography from "@material-ui/core/Typography"
-import { Link } from "gatsby"
 
 import InlineCode from "@/components/InlineCode"
 import { CopyIconButton } from "@/components/CopyButton"
@@ -12,9 +10,9 @@ import ExternalLink from "@/components/ExternalLink"
 import { Dimension, Metric } from "./useDimensionsAndMetrics"
 import { QueryParam } from "."
 import { AccountSummary, PropertySummary } from "@/types/ga4/StreamPicker"
-import { PAB, SAB } from "@/components/Buttons"
-import { CompatibleHook } from "./useCompatibility"
 import { useSetToast } from "@/hooks"
+import LabeledCheckbox from "@/components/LabeledCheckbox"
+import { CompatibleHook } from "./useCompatibility"
 
 const knownLinks: [string, JSX.Element][] = [
   [
@@ -79,13 +77,10 @@ const linkifyText = (
 }
 
 const useStyles = makeStyles(theme => ({
-  incompatible: {
-    color: theme.palette.grey[400],
-    "&> h4": {
-      color: theme.palette.grey[400],
-      "&> a": {
-        color: theme.palette.grey[400],
-      },
+  headingUIName: {
+    marginRight: theme.spacing(1),
+    "& > span": {
+      fontSize: "inherit",
     },
   },
   heading: {
@@ -117,83 +112,22 @@ interface FieldProps extends CompatibleHook {
   property: PropertySummary | undefined
 }
 
-const CompatibleControls: React.FC<FieldProps & { isCompatible: boolean }> = ({
-  property,
-  metrics,
-  dimensions,
-  field,
-  isCompatible,
-  addMetric,
-  addDimension,
-  removeMetric,
-  removeDimension,
-}) => {
+const Field: React.FC<FieldProps> = props => {
+  const classes = useStyles()
   const setToast = useSetToast()
 
-  const canAdd = React.useMemo(
-    () =>
-      metrics?.find(m => m.apiName === field.value.apiName) === undefined &&
-      dimensions?.find(d => d.apiName === field.value.apiName) === undefined,
-    [metrics, dimensions, field.value.apiName]
-  )
-
-  const addToRequest = React.useMemo(() => {
-    if (canAdd) {
-      return (
-        <PAB
-          add
-          small
-          disabled={!isCompatible}
-          onClick={() => {
-            field.type === "metric"
-              ? addMetric(field.value)
-              : addDimension(field.value)
-            setToast(`Added ${field.value.apiName} to the request.`)
-          }}
-        >
-          request
-        </PAB>
-      )
-    }
-  }, [canAdd, addDimension, addMetric, setToast, field, isCompatible])
-
-  const removeFromRequest = React.useMemo(() => {
-    if (!canAdd) {
-      return (
-        <SAB
-          delete
-          small
-          onClick={() => {
-            field.type === "metric"
-              ? removeMetric(field.value)
-              : removeDimension(field.value)
-            setToast(`Removed ${field.value.apiName} from the request.`)
-          }}
-        >
-          request
-        </SAB>
-      )
-    }
-  }, [canAdd, field, removeMetric, removeDimension, setToast])
-
-  if (property === undefined) {
-    return null
-  }
-  return (
-    <>
-      {addToRequest}
-      {removeFromRequest}
-    </>
-  )
-}
-
-const Field: React.FC<FieldProps> = props => {
   const {
     field,
     account,
     property,
     incompatibleDimensions,
     incompatibleMetrics,
+    dimensions,
+    metrics,
+    addMetric,
+    addDimension,
+    removeMetric,
+    removeDimension,
   } = props
   const apiName = field.value.apiName || ""
   const uiName = field.value.uiName || ""
@@ -210,8 +144,6 @@ const Field: React.FC<FieldProps> = props => {
     }
     return `${baseURL}${search}#${apiName}`
   }, [field, apiName, account, property])
-
-  const classes = useStyles()
 
   const withLinks = React.useMemo(() => {
     let remainingText = description
@@ -243,14 +175,46 @@ const Field: React.FC<FieldProps> = props => {
     )
   }, [incompatibleMetrics, incompatibleDimensions, field.value.apiName])
 
+  const checked = React.useMemo(
+    () =>
+      dimensions?.find(d => d.apiName === field.value.apiName) !== undefined ||
+      metrics?.find(m => m.apiName === field.value.apiName) !== undefined,
+    [dimensions, metrics, field.value.apiName]
+  )
+
+  const onChange = React.useCallback(() => {
+    if (checked) {
+      field.type === "metric"
+        ? removeMetric(field.value)
+        : removeDimension(field.value)
+      setToast(`Removed ${field.value.uiName} from the request.`)
+    } else {
+      field.type === "metric"
+        ? addMetric(field.value)
+        : addDimension(field.value)
+      setToast(`Added ${field.value.uiName} to the request.`)
+    }
+  }, [
+    checked,
+    addDimension,
+    addMetric,
+    removeDimension,
+    removeMetric,
+    setToast,
+    field,
+  ])
+
   return (
-    <div
-      id={apiName}
-      key={apiName}
-      className={clsx({ [classes.incompatible]: !isCompatible })}
-    >
+    <div id={apiName} key={apiName}>
       <Typography variant="h4" className={classes.heading}>
-        <Link to={`#${apiName}`}>{uiName}</Link>
+        <LabeledCheckbox
+          className={classes.headingUIName}
+          checked={checked}
+          onChange={onChange}
+          disabled={!isCompatible}
+        >
+          {uiName}
+        </LabeledCheckbox>
         <InlineCode className={classes.apiName}>{apiName}</InlineCode>
         <CopyIconButton
           icon={<IconLink color="primary" />}
@@ -259,7 +223,6 @@ const Field: React.FC<FieldProps> = props => {
         />
       </Typography>
       <Typography>{withLinks}</Typography>
-      <CompatibleControls {...props} isCompatible={isCompatible} />
     </div>
   )
 }

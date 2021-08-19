@@ -46,12 +46,18 @@ const useStyles = makeStyles(theme => ({
       color: theme.palette.text.primary,
     },
   },
+  search: {
+    marginTop: theme.spacing(1),
+  },
 }))
 
-const RenderSuccessful: React.FC<
-  Successful & { search: string | undefined; aps: AccountProperty }
-> = ({ categories, search, aps }) => {
+const RenderSuccessful: React.FC<Successful & { aps: AccountProperty }> = ({
+  categories,
+  aps,
+}) => {
   const classes = useStyles()
+  const formClasses = useFormStyles()
+  const { search, setSearch } = useInputs()
   const searchRegex = useMemo(
     () => (search ? new RegExp(search, "gi") : undefined),
     [search]
@@ -89,15 +95,27 @@ const RenderSuccessful: React.FC<
     }
   }, [searchRegex])
 
-  const compatible = useMemo(() => {
-    return <Compatible {...compability} />
-  }, [compability])
-
   useScrollTo()
 
   return (
     <>
-      {compatible}
+      <Compatible {...compability} />
+      <TextField
+        className={classes.search}
+        label="Search for a dimension or metric"
+        variant="outlined"
+        fullWidth
+        size="small"
+        value={search || ""}
+        onChange={e => setSearch(e.target.value)}
+        InputProps={{
+          endAdornment: (
+            <IconButton size="small" onClick={() => setSearch("")}>
+              <Clear />
+            </IconButton>
+          ),
+        }}
+      />
       {notAllFields}
       {filteredCategories.map(({ category, dimensions, metrics }) => {
         if (dimensions.length === 0 && metrics.length === 0) {
@@ -166,7 +184,6 @@ export enum QueryParam {
 
 const DimensionsMetricsExplorer: React.FC = () => {
   const formClasses = useFormStyles()
-  const { search, setSearch } = useInputs()
   const aps = useAccountProperty(
     StorageKey.ga4DimensionsMetricsExplorerAPS,
     QueryParam,
@@ -187,7 +204,7 @@ const DimensionsMetricsExplorer: React.FC = () => {
           given property with linkable descriptions for all fields.
         </Typography>
         <Typography>
-          If you choose an Account and Property, this demo also uses the
+          If you choose an Account and Property, this demo also uses the{" "}
           {checkCompatibility} API so you can see which dimensions and metrics
           are compatible with each other. As you add fields to the request,
           incompatible fields will be grayed out.
@@ -195,28 +212,10 @@ const DimensionsMetricsExplorer: React.FC = () => {
         <section className={formClasses.form}>
           <Typography variant="h3">Select property</Typography>
           <StreamPicker autoFill {...aps} />
-          <Typography variant="h3">Search</Typography>
-          <TextField
-            label="Search for a dimension or metric"
-            variant="outlined"
-            fullWidth
-            size="small"
-            value={search || ""}
-            onChange={e => setSearch(e.target.value)}
-            InputProps={{
-              endAdornment: (
-                <IconButton size="small" onClick={() => setSearch("")}>
-                  <Clear />
-                </IconButton>
-              ),
-            }}
-          />
         </section>
         <Loadable
           request={request}
-          renderSuccessful={s => (
-            <RenderSuccessful {...s} aps={aps} search={search} />
-          )}
+          renderSuccessful={s => <RenderSuccessful {...s} aps={aps} />}
           inProgressText="Loading dimensions and metrics"
         />
       </section>
