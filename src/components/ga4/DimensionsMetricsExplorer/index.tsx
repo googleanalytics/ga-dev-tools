@@ -187,9 +187,10 @@ const DimensionsMetricsExplorer: React.FC = () => {
           given property with linkable descriptions for all fields.
         </Typography>
         <Typography>
-          This demo also uses the {checkCompatibility} API so you can see which
-          dimensions and metrics are compatible with each other. As you add
-          fields to the request, incompatible fields will be grayed out.
+          If you choose an Account and Property, this demo also uses the
+          {checkCompatibility} API so you can see which dimensions and metrics
+          are compatible with each other. As you add fields to the request,
+          incompatible fields will be grayed out.
         </Typography>
         <section className={formClasses.form}>
           <Typography variant="h3">Select property</Typography>
