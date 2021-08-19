@@ -41,7 +41,6 @@ const useCompatibility = (ap: AccountProperty): CompatibleHook => {
     setMetrics(undefined)
   }, [])
 
-  // const getCompatibility =
   useEffect(() => {
     if (gapi === undefined || ap.property === undefined) {
       return undefined
@@ -76,6 +75,7 @@ const useCompatibility = (ap: AccountProperty): CompatibleHook => {
         setIncompatibleMetrics(m)
         setIncompatibleDimensions(d)
       })
+      .catch(console.error)
   }, [gapi, dimensions, metrics, ap.property])
 
   return {

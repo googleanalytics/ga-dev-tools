@@ -23,7 +23,7 @@ const useLinkToQueryExplorer = (arg: QueryExplorerLinkProps) => {
     const paramString = urlParams.toString()
     const withQuestionMark = paramString === "" ? "" : `?${paramString}`
 
-    return `/ga4/query-explorer${withQuestionMark}`
+    return `/ga4/query-explorer/${withQuestionMark}`
   }, [arg])
 }
 
