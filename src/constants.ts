@@ -145,7 +145,7 @@ export enum StorageKey {
   queryExplorerSort = "query-explorer/sort-2",
 
   // Dimensions and metrics explorer
-  dimensionsMetricsExplorerColumns = "dimensions-metrics-explorer/columns",
+  dimensionsMetricsExplorerColumns = "dimensions-metrics-explorer/columns-2",
   dimensionsMetricsExplorerSearch = "dimensions-metrics-explorer/search",
   dimensionsMetricsExplorerAllowDeprecated = "dimensions-metrics-explorer/allow-deprecated",
   dimensionsMetricsExplorerOnlySegments = "dimensions-metrics-explorer/only-segments",

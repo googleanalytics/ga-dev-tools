@@ -21,41 +21,14 @@ import makeStyles from "@material-ui/core/styles/makeStyles"
 import { useDebounce } from "use-debounce"
 
 import { StorageKey } from "@/constants"
-import { WithEtag, Dispatch } from "@/types"
+import { Dispatch, failed, inProgress, notStarted, successful } from "@/types"
 import LabeledCheckbox from "@/components/LabeledCheckbox"
-import {
-  usePersistantObject,
-  usePersistentBoolean,
-  usePersistentString,
-} from "../../hooks"
-import { Column, useApi } from "../../api"
+import { usePersistentBoolean, usePersistentString } from "../../hooks"
 import ColumnGroupList from "./ColumnGroupList"
 import useAnchorRedirects from "./useAnchorRedirects"
-
-type ColumnAPIResponse = WithEtag<Column[]>
-
-const useColumns = (): Column[] | undefined => {
-  const api = useApi()
-  const [columns, setColumns] = usePersistantObject<ColumnAPIResponse>(
-    StorageKey.dimensionsMetricsExplorerColumns
-  )
-
-  React.useEffect(() => {
-    if (api === undefined) {
-      return
-    }
-
-    api.metadata.columns.list({ reportType: "ga" }).then(response => {
-      const nu = response.result
-      if (nu.etag === columns?.etag) {
-        return
-      }
-      setColumns({ etag: nu.etag!, value: nu.items! })
-    })
-  }, [api, setColumns, columns])
-
-  return columns?.value
-}
+import useColumns from "./useColumns"
+import { Typography } from "@material-ui/core"
+import PrettyJson from "../PrettyJson"
 
 const useStyles = makeStyles(theme => ({
   search: {
@@ -143,9 +116,9 @@ const Explorer: React.FC = () => {
 
   const [throttledSearch] = useDebounce(searchTerms, 100, { trailing: true })
 
-  const columns = useColumns()
+  const columnsRequest = useColumns()
 
-  useAnchorRedirects(columns)
+  useAnchorRedirects(successful(columnsRequest)?.columns)
 
   return (
     <div>
@@ -157,15 +130,26 @@ const Explorer: React.FC = () => {
         onlySegments={onlySegments}
         setOnlySegments={setOnlySegments}
       />
-      {columns !== undefined ? (
+      {successful(columnsRequest) && (
         <ColumnGroupList
           searchTerms={throttledSearch || []}
           allowDeprecated={allowDeprecated}
           onlySegments={onlySegments}
-          columns={columns}
+          columns={successful(columnsRequest)!.columns}
         />
-      ) : (
+      )}
+      {(inProgress(columnsRequest) || notStarted(columnsRequest)) && (
         <div>Loading dimensions and metrics...</div>
+      )}
+      {failed(columnsRequest) && (
+        <div>
+          <Typography>There was an error calling the api.</Typography>
+          <Typography>Details:</Typography>
+          <PrettyJson
+            tooltipText="Copy error object."
+            object={failed(columnsRequest)!.errorData}
+          />
+        </div>
       )}
     </div>
   )

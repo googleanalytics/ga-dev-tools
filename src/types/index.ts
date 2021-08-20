@@ -46,6 +46,15 @@ export const inProgress = <A, B, C>(
   return undefined
 }
 
+export const failed = <A, B, C, D>(
+  request: Requestable<A, B, C, D>
+): D | undefined => {
+  if (request.status === RequestStatus.Failed) {
+    return request
+  }
+  return undefined
+}
+
 export enum URLVersion {
   _1 = "1",
   _2 = "2",
