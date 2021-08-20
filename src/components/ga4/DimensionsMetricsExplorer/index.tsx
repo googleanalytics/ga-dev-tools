@@ -36,9 +36,10 @@ const dataAPI = (
   </ExternalLink>
 )
 
-const checkCompatibility = (
-  <ExternalLink href="#todo">checkCompatibility</ExternalLink>
-)
+// TODO - add back in once this api is public.
+// const checkCompatibility = (
+//   <ExternalLink href="#todo">checkCompatibility</ExternalLink>
+// )
 
 const useStyles = makeStyles(theme => ({
   headingLinks: {
@@ -190,6 +191,14 @@ const DimensionsMetricsExplorer: React.FC = () => {
   )
   const request = useDimensionsAndMetrics(aps)
 
+  // TODO - add in once endpoint is public.
+  // <Typography>
+  //   If you choose an Account and Property, this demo also uses the{" "}
+  //   {checkCompatibility} API so you can see which dimensions and metrics
+  //   are compatible with each other. As you add fields to the request,
+  //   incompatible fields will be grayed out.
+  // </Typography>
+
   return (
     <>
       <section>
@@ -201,12 +210,6 @@ const DimensionsMetricsExplorer: React.FC = () => {
         <Typography>
           This demo is a catalog of all dimensions and metrics available for a
           given property with linkable descriptions for all fields.
-        </Typography>
-        <Typography>
-          If you choose an Account and Property, this demo also uses the{" "}
-          {checkCompatibility} API so you can see which dimensions and metrics
-          are compatible with each other. As you add fields to the request,
-          incompatible fields will be grayed out.
         </Typography>
         <section className={formClasses.form}>
           <Typography variant="h3">Select property</Typography>
