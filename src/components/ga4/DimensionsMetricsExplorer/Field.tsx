@@ -207,14 +207,18 @@ const Field: React.FC<FieldProps> = props => {
   return (
     <div id={apiName} key={apiName}>
       <Typography variant="h4" className={classes.heading}>
-        <LabeledCheckbox
-          className={classes.headingUIName}
-          checked={checked}
-          onChange={onChange}
-          disabled={!isCompatible}
-        >
-          {uiName}
-        </LabeledCheckbox>
+        {property === undefined ? (
+          uiName
+        ) : (
+          <LabeledCheckbox
+            className={classes.headingUIName}
+            checked={checked}
+            onChange={onChange}
+            disabled={!isCompatible}
+          >
+            {uiName}
+          </LabeledCheckbox>
+        )}
         <InlineCode className={classes.apiName}>{apiName}</InlineCode>
         <CopyIconButton
           icon={<IconLink color="primary" />}

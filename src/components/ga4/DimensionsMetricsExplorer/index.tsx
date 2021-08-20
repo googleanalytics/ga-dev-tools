@@ -56,7 +56,6 @@ const RenderSuccessful: React.FC<Successful & { aps: AccountProperty }> = ({
   aps,
 }) => {
   const classes = useStyles()
-  const formClasses = useFormStyles()
   const { search, setSearch } = useInputs()
   const searchRegex = useMemo(
     () => (search ? new RegExp(search, "gi") : undefined),
@@ -99,7 +98,7 @@ const RenderSuccessful: React.FC<Successful & { aps: AccountProperty }> = ({
 
   return (
     <>
-      <Compatible {...compability} />
+      <Compatible property={aps.property} {...compability} />
       <TextField
         className={classes.search}
         label="Search for a dimension or metric"

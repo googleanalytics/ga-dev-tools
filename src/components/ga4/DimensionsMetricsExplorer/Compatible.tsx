@@ -1,4 +1,5 @@
 import { useSetToast } from "@/hooks"
+import { PropertySummary } from "@/types/ga4/StreamPicker"
 import {
   Chip,
   IconButton,
@@ -38,34 +39,21 @@ const useStyles = makeStyles(theme => ({
   },
 }))
 
-const Compatible: React.FC<CompatibleHook> = ({
-  dimensions,
-  metrics,
-  removeMetric,
-  removeDimension,
-  reset,
-}) => {
+const WithProperty: React.FC<
+  CompatibleHook & { property: PropertySummary | undefined }
+> = ({ dimensions, metrics, removeMetric, removeDimension, property }) => {
   const classes = useStyles()
-  const setToast = useSetToast()
+
+  if (property === undefined) {
+    return null
+  }
 
   return (
-    <Paper className={classes.compatible}>
-      <Typography variant="h3">
-        Fields in Request{" "}
-        <IconButton
-          disabled={
-            !(
-              (dimensions !== undefined && dimensions.length > 0) ||
-              (metrics !== undefined && metrics.length > 0)
-            )
-          }
-          onClick={() => {
-            reset()
-            setToast("Reset request.")
-          }}
-        >
-          <Replay />
-        </IconButton>
+    <>
+      <Typography>
+        As you choose dimensions & metrics (by clicking the checkbox next to
+        their name), they will be added here. Incompatible dimensions & metrics
+        will be grayed out.
       </Typography>
       <div className={classes.chipGrid}>
         <Typography className={classes.chipLabel}>Dimensions:</Typography>
@@ -101,6 +89,42 @@ const Compatible: React.FC<CompatibleHook> = ({
         <Typography>
           Use these fields in the{" "}
           <QueryExplorerLink dimensions={dimensions} metrics={metrics} />
+        </Typography>
+      )}
+    </>
+  )
+}
+
+const Compatible: React.FC<
+  CompatibleHook & { property: PropertySummary | undefined }
+> = props => {
+  const classes = useStyles()
+  const setToast = useSetToast()
+  const { dimensions, metrics, reset, property } = props
+
+  return (
+    <Paper className={classes.compatible}>
+      <Typography variant="h3">
+        Compatible Fields
+        <IconButton
+          disabled={
+            !(
+              (dimensions !== undefined && dimensions.length > 0) ||
+              (metrics !== undefined && metrics.length > 0)
+            )
+          }
+          onClick={() => {
+            reset()
+            setToast("Reset request.")
+          }}
+        >
+          <Replay />
+        </IconButton>
+      </Typography>
+      <WithProperty {...props} property={property} />
+      {property === undefined && (
+        <Typography>
+          Pick a property above to enable this functionality.
         </Typography>
       )}
     </Paper>
