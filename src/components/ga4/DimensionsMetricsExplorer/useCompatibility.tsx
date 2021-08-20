@@ -1,5 +1,5 @@
 import { useAddToArray } from "@/hooks"
-import { useCallback, useEffect, useState } from "react"
+import { useCallback, useEffect, useMemo, useState } from "react"
 import { useSelector } from "react-redux"
 import { AccountProperty } from "../StreamPicker/useAccountProperty"
 import { Dimension, Metric } from "./useDimensionsAndMetrics"
@@ -14,6 +14,7 @@ export interface CompatibleHook {
   addMetric: (m: Metric) => void
   removeMetric: (m: Metric) => void
   reset: () => void
+  hasFieldSelected: boolean
 }
 
 const useCompatibility = (ap: AccountProperty): CompatibleHook => {
@@ -78,6 +79,13 @@ const useCompatibility = (ap: AccountProperty): CompatibleHook => {
       .catch(console.error)
   }, [gapi, dimensions, metrics, ap.property])
 
+  const hasFieldSelected = useMemo(
+    () =>
+      (dimensions !== undefined && dimensions.length) > 0 ||
+      (metrics !== undefined && metrics.length > 0),
+    [dimensions, metrics]
+  )
+
   return {
     dimensions,
     metrics,
@@ -88,6 +96,7 @@ const useCompatibility = (ap: AccountProperty): CompatibleHook => {
     reset,
     incompatibleMetrics,
     incompatibleDimensions,
+    hasFieldSelected,
   }
 }
 

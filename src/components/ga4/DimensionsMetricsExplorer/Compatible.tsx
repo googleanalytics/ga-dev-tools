@@ -1,4 +1,3 @@
-import { useSetToast } from "@/hooks"
 import { PropertySummary } from "@/types/ga4/StreamPicker"
 import {
   Chip,
@@ -41,7 +40,14 @@ const useStyles = makeStyles(theme => ({
 
 const WithProperty: React.FC<
   CompatibleHook & { property: PropertySummary | undefined }
-> = ({ dimensions, metrics, removeMetric, removeDimension, property }) => {
+> = ({
+  dimensions,
+  metrics,
+  removeMetric,
+  removeDimension,
+  property,
+  hasFieldSelected,
+}) => {
   const classes = useStyles()
 
   if (property === undefined) {
@@ -84,8 +90,7 @@ const WithProperty: React.FC<
             : "No metrics selected."}
         </div>
       </div>
-      {((dimensions !== undefined && dimensions.length > 0) ||
-        (metrics !== undefined && metrics.length > 0)) && (
+      {hasFieldSelected && (
         <Typography>
           Use these fields in the{" "}
           <QueryExplorerLink dimensions={dimensions} metrics={metrics} />
@@ -99,25 +104,13 @@ const Compatible: React.FC<
   CompatibleHook & { property: PropertySummary | undefined }
 > = props => {
   const classes = useStyles()
-  const setToast = useSetToast()
-  const { dimensions, metrics, reset, property } = props
+  const { reset, property, hasFieldSelected } = props
 
   return (
     <Paper className={classes.compatible}>
       <Typography variant="h3">
         Compatible Fields
-        <IconButton
-          disabled={
-            !(
-              (dimensions !== undefined && dimensions.length > 0) ||
-              (metrics !== undefined && metrics.length > 0)
-            )
-          }
-          onClick={() => {
-            reset()
-            setToast("Reset request.")
-          }}
-        >
+        <IconButton disabled={!hasFieldSelected} onClick={reset}>
           <Replay />
         </IconButton>
       </Typography>

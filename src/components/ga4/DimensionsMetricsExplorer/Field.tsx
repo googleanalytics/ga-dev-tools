@@ -10,7 +10,6 @@ import ExternalLink from "@/components/ExternalLink"
 import { Dimension, Metric } from "./useDimensionsAndMetrics"
 import { QueryParam } from "."
 import { AccountSummary, PropertySummary } from "@/types/ga4/StreamPicker"
-import { useSetToast } from "@/hooks"
 import LabeledCheckbox from "@/components/LabeledCheckbox"
 import { CompatibleHook } from "./useCompatibility"
 
@@ -114,7 +113,6 @@ interface FieldProps extends CompatibleHook {
 
 const Field: React.FC<FieldProps> = props => {
   const classes = useStyles()
-  const setToast = useSetToast()
 
   const {
     field,
@@ -187,22 +185,12 @@ const Field: React.FC<FieldProps> = props => {
       field.type === "metric"
         ? removeMetric(field.value)
         : removeDimension(field.value)
-      setToast(`Removed ${field.value.uiName} from the request.`)
     } else {
       field.type === "metric"
         ? addMetric(field.value)
         : addDimension(field.value)
-      setToast(`Added ${field.value.uiName} to the request.`)
     }
-  }, [
-    checked,
-    addDimension,
-    addMetric,
-    removeDimension,
-    removeMetric,
-    setToast,
-    field,
-  ])
+  }, [checked, addDimension, addMetric, removeDimension, removeMetric, field])
 
   return (
     <div id={apiName} key={apiName}>
