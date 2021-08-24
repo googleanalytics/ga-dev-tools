@@ -18,7 +18,10 @@ type ConfigQuestionFilter = {
   askAll?: true | undefined
 } & Partial<RuntimeJson>
 
-export const writeEnvFile = async (config: CommonConfig) => {
+export const writeEnvFile = async (
+  config: CommonConfig,
+  endpointName: string = "bitly_auth"
+) => {
   // If any questions are skipped, don't include them in the outgoing .env
   // files so they are `undefined` for `process.env[ENV_NAME]`.
   const gapiLine =
@@ -30,7 +33,7 @@ export const writeEnvFile = async (config: CommonConfig) => {
       ? undefined
       : `BITLY_CLIENT_ID=${config.bitlyClientId}`
 
-  const authEndpointLine = `AUTH_ENDPOINT=https://us-central1-${config.firebaseProjectId}.cloudfunctions.net/bitly_auth`
+  const authEndpointLine = `AUTH_ENDPOINT=https://us-central1-${config.firebaseProjectId}.cloudfunctions.net/${endpointName}`
 
   const measurementIdLine = `GA_MEASUREMENT_ID=${config.measurementId}`
 

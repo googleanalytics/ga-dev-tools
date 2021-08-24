@@ -1,7 +1,10 @@
 import * as functions from "firebase-functions"
 import fetch from "node-fetch"
 
-exports.bitly_auth = functions.https.onRequest((req, res) => {
+const bitlyAuth = (isIntegration: boolean) => (
+  req: functions.https.Request,
+  res: functions.Response<any>
+) => {
   res.set("Access-Control-Allow-Origin", "*")
 
   if (req.method !== "POST") {
@@ -46,7 +49,9 @@ exports.bitly_auth = functions.https.onRequest((req, res) => {
     )
   }
 
-  const redirectUri = `${baseUri}/bitly-auth`
+  const redirectUri = isIntegration
+    ? `https://ga-dev-tools-integration.web.app/bitly-auth`
+    : `${baseUri}/bitly-auth`
 
   const bitlyAuthEndpoint = "https://api-ssl.bitly.com/oauth/access_token"
   const bitlyBody = [
@@ -84,4 +89,7 @@ exports.bitly_auth = functions.https.onRequest((req, res) => {
       res.status(err.status || 403).send(err.body || "An error occurred")
     }
   )
-})
+}
+
+exports.bitly_auth = functions.https.onRequest(bitlyAuth(false))
+exports.bitly_auth_integration = functions.https.onRequest(bitlyAuth(true))

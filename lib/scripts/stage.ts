@@ -14,12 +14,18 @@ export const stage = async (args: DeployArgs) => {
   await writeEnvFile(
     args.environment === Environment.Production
       ? config.production
-      : config.staging
+      : {
+          ...config.staging,
+          firebaseProjectId: config.production.firebaseProjectId,
+        },
+    args.environment === Environment.Staging
+      ? "bitly_auth_integration"
+      : undefined
   )
 
   await ensureFirebaseLoginStatus({ noLocalhost: args.noLocalhost })
 
-  // TODO - should stage also do functions, or should the be managed
+  // TODO - should stage also do functions, or should they be managed
   // separately?
   //
   // await ensureFirebaseFunctionsConfig({
