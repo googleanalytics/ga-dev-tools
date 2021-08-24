@@ -7,6 +7,7 @@ import { v4 as uuid } from "uuid"
 import InlineCode from "@/components/InlineCode"
 import { Url } from "@/constants"
 import useStyles from "../useStyles"
+import { Dispatch } from "@/types"
 
 const iosCampaignTracking = (
   <a href={Url.iosCampaignMeasurement}>iOS Campaign Tracking URL Builder</a>
@@ -18,9 +19,12 @@ const googlePlayURLBuilder = (
 
 interface WarningsForProps {
   websiteURL: string
-  onWarning: (warningPresent: boolean) => void
+  setHasWarning: Dispatch<boolean>
 }
-const WarningsFor: React.FC<WarningsForProps> = ({ websiteURL, onWarning }) => {
+const WarningsFor: React.FC<WarningsForProps> = ({
+  websiteURL,
+  setHasWarning,
+}) => {
   const classes = useStyles()
   const asURL = React.useMemo<URL | undefined>(() => {
     try {
@@ -39,65 +43,50 @@ const WarningsFor: React.FC<WarningsForProps> = ({ websiteURL, onWarning }) => {
     )
   }
 
-  const [warnings, setWarnings] = React.useState<JSX.Element[]>([])
-
-  React.useEffect(() => {
-    setWarnings([])
-    if (asURL?.hostname === "ga-dev-tools.web.app") {
-      setWarnings(old =>
-        old.concat([
-          <>
-            You are linking to this site (
-            <InlineCode>ga-dev-tools.web.app</InlineCode>) instead of your own.
-            You should put your own site's URL in the Website URL field, above.
-          </>,
-        ])
-      )
+  const warnings = React.useMemo(() => {
+    let w: JSX.Element[] = []
+    if (asURL === undefined) {
+      w = w.concat([<>The website URL provided is not a valid URL.</>])
     }
-
-    if (
-      websiteURL.startsWith("localhost") ||
-      websiteURL.startsWith("127.0.0.1") ||
-      asURL?.hostname === "localhost"
-    ) {
-      setWarnings(old =>
-        old.concat([
-          <>
-            You can't create a campaign url to a local-only site. Use your
-            publically accessible URL.
-          </>,
-        ])
-      )
+    if (asURL?.hostname === "ga-dev-tools.web.app") {
+      w = w.concat([
+        <>
+          You are linking to this site (
+          <InlineCode>ga-dev-tools.web.app</InlineCode>) instead of your own.
+          You should put your own site's URL in the Website URL field, above.
+        </>,
+      ])
     }
 
     if (asURL?.hostname === "play.google.com") {
-      setWarnings(old =>
-        old.concat([
-          <>
-            It appears that you are creating a Google Play Store url. You should
-            use the {googlePlayURLBuilder} instead for creating campaign links
-            for Play Store apps.
-          </>,
-        ])
-      )
+      w = w.concat([
+        <>
+          It appears that you are creating a Google Play Store url. You should
+          use the {googlePlayURLBuilder} instead for creating campaign links for
+          Play Store apps.
+        </>,
+      ])
     }
 
     if (asURL?.hostname === "itunes.apple.com") {
-      setWarnings(old =>
-        old.concat([
-          <>
-            It appears you are creating an iOS App Store URL. You should use the{" "}
-            {iosCampaignTracking} instead for creating campaign links for Play
-            Store apps.
-          </>,
-        ])
-      )
+      w = w.concat([
+        <>
+          It appears you are creating an iOS App Store URL. You should use the{" "}
+          {iosCampaignTracking} instead for creating campaign links for Play
+          Store apps.
+        </>,
+      ])
     }
+    return w
   }, [asURL, websiteURL])
 
   React.useEffect(() => {
-    onWarning(warnings.length !== 0)
-  }, [warnings, onWarning])
+    if (warnings.length !== 0) {
+      setHasWarning(true)
+    } else {
+      setHasWarning(false)
+    }
+  }, [warnings, setHasWarning])
 
   if (warnings.length === 0) {
     return null

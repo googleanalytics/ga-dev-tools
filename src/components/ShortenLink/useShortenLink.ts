@@ -161,7 +161,16 @@ const useShortenLink: UseShortLink = () => {
         throw new Error("Cannot shorten a shortlink")
       }
       if (longLink === "") {
-        throw new Error("Cannot shortnen an empty string")
+        throw new Error("Cannot shorten an empty string")
+      }
+      if (
+        longLink.startsWith("http://localhost") ||
+        longLink.startsWith("localhost") ||
+        longLink.startsWith("127.0.0.1")
+      ) {
+        throw new Error(
+          "You can't create a short link to a local-only site. Use a publically accessible URL."
+        )
       }
       const token = await ensureAuth()
       const shortLink = await shortenUrl(token, longLink, cache, setCache)
