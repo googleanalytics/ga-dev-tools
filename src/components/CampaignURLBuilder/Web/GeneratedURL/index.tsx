@@ -5,17 +5,16 @@ import Paper from "@material-ui/core/Paper"
 import { Error as ErrorIcon } from "@material-ui/icons"
 import Typography from "@material-ui/core/Typography"
 import TextField from "@material-ui/core/TextField"
-import FormControlLabel from "@material-ui/core/FormControlLabel"
-import Checkbox from "@material-ui/core/Checkbox"
-import Button from "@material-ui/core/Button"
-
-import CopyButton from "@/components/CopyButton"
 import { GAVersion } from "@/constants"
 import useFormStyles from "@/hooks/useFormStyles"
 import useStyles from "../useStyles"
-import useShortenLink from "./useShortenLink"
-import useWarningsFor from "./useWarningsFor"
 import WarningsFor from "./WarningsFor"
+import useGenerateURL from "./useGenerateURL"
+import ShortenLink from "@/components/ShortenLink"
+import useInputs from "./useInputs"
+import LabeledCheckbox from "@/components/LabeledCheckbox"
+import { CopyIconButton } from "@/components/CopyButton"
+import Warning from "@/components/Warning"
 
 interface GeneratedURLProps {
   version: GAVersion
@@ -41,34 +40,43 @@ const GeneratedURL: React.FC<GeneratedURLProps> = ({
   const classes = useStyles()
   const formClasses = useFormStyles()
 
-  const { authenticated, shorten, canShorten } = useShortenLink()
   const {
-    problematicURL,
-    hasAllRequired,
-    onWarning,
-    showShort,
-    shortLink,
-    longLink,
     useFragment,
     setUseFragment,
-    shortenLinkGui,
-  } = useWarningsFor({
-    version,
+    shortened,
+    setShortened,
+    shortenError,
+    setShortenError,
+    hasWarning,
+    setHasWarning,
+  } = useInputs()
+
+  const hasRequiredFields = React.useMemo(() => {
+    if (version === GAVersion.UniversalAnalytics) {
+      return [websiteURL, source].every(a => a !== undefined && a !== "")
+    } else {
+      return [websiteURL, source, medium].every(
+        a => a !== undefined && a !== ""
+      )
+    }
+  }, [version, websiteURL, source, medium])
+
+  const generatedURL = useGenerateURL({
     websiteURL,
     source,
     medium,
     campaign,
     id,
-    shorten,
-    content,
     term,
+    content,
+    useFragment,
   })
 
   return (
     <Paper className={clsx(classes.share, formClasses.form)}>
-      <WarningsFor websiteURL={websiteURL} onWarning={onWarning} />
-      {!problematicURL &&
-        (hasAllRequired ? (
+      <WarningsFor websiteURL={websiteURL} setHasWarning={setHasWarning} />
+      {!hasWarning &&
+        (hasRequiredFields ? (
           <>
             <Typography variant="h2">
               Share the generated campaign URL
@@ -82,55 +90,71 @@ const GeneratedURL: React.FC<GeneratedURLProps> = ({
               id="generated-url"
               label="generated URL"
               multiline
-              value={showShort ? shortLink : longLink}
+              value={generatedURL}
               variant="outlined"
               className={classes.generatedInput}
+              InputProps={{
+                endAdornment: (
+                  <CopyIconButton
+                    toCopy={generatedURL || ""}
+                    tooltipText="Copy campaign URL."
+                  />
+                ),
+              }}
             />
-            <FormControlLabel
-              control={
-                <Checkbox
-                  checked={useFragment}
-                  onChange={e => setUseFragment(e.target.checked)}
-                />
-              }
-              label={
-                <Typography variant="body2" component="span">
-                  Set campaign parameters in the fragment portion of the URL (
-                  <Typography component="span" color="error" variant="inherit">
-                    not recommended
-                  </Typography>
-                  )
+            <LabeledCheckbox checked={useFragment} setChecked={setUseFragment}>
+              <Typography variant="body2" component="span">
+                Set campaign parameters in the fragment portion of the URL (
+                <Typography component="span" color="error" variant="inherit">
+                  not recommended
                 </Typography>
-              }
-            />
-            <section className={classes.buttons}>
-              <CopyButton
-                variant="contained"
-                color="primary"
-                toCopy={showShort ? shortLink || "" : longLink}
-                text="Copy URL"
+                )
+              </Typography>
+            </LabeledCheckbox>
+            <section className={classes.shortened}>
+              <TextField
+                id="shortened-url"
+                label="shortened URL"
+                disabled={shortened === undefined}
+                value={
+                  shortened ||
+                  "Click shorten link to shorten your generated URL."
+                }
+                size="small"
+                variant="outlined"
+                className={classes.generatedInput}
+                InputProps={{
+                  endAdornment: (
+                    <CopyIconButton
+                      disabled={shortened === undefined}
+                      toCopy={shortened || ""}
+                      tooltipText="Copy shortened URL."
+                    />
+                  ),
+                }}
               />
-              {canShorten && (
-                <Button
-                  variant="contained"
-                  onClick={shortenLinkGui}
-                  data-testid="shorten-button"
-                >
-                  {authenticated === false
-                    ? "Shorten URL"
-                    : showShort
-                    ? "Show original"
-                    : "Shorten URL"}
-                </Button>
-              )}
+              <div>
+                <ShortenLink
+                  medium
+                  url={generatedURL}
+                  setShortened={setShortened}
+                  setError={setShortenError}
+                />
+              </div>
             </section>
+            {shortenError && (
+              <Warning>
+                There was an error with shortening your URL: <br />{" "}
+                {shortenError}
+              </Warning>
+            )}
           </>
         ) : (
           <section className={classes.shareInvalid}>
             <ErrorIcon />
             <Typography variant="body1">
-              Fill out all the required fields above and a URL will be
-              automatically generated for you here.
+              Fill out required fields above and a URL will be generated for you
+              here.
             </Typography>
           </section>
         ))}

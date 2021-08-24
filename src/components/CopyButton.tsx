@@ -94,11 +94,13 @@ interface CopyIconButtonProps {
   tooltipText?: string
   className?: string
   size?: IconButtonProps["size"]
+  disabled?: boolean
 }
 export const CopyIconButton: React.FC<CopyIconButtonProps> = ({
   toCopy,
   size,
   className,
+  disabled,
   tooltipText = "Copy",
   icon = <FileCopyIcon />,
 }) => {
@@ -109,13 +111,22 @@ export const CopyIconButton: React.FC<CopyIconButtonProps> = ({
     setShowAlert(true)
   }, [toCopy])
 
+  const button = React.useMemo(() => {
+    return (
+      <IconButton
+        disabled={disabled}
+        onClick={copyCode}
+        size={size}
+        className={className}
+      >
+        {icon}
+      </IconButton>
+    )
+  }, [disabled, className, copyCode, icon, size])
+
   return (
     <>
-      <Tooltip title={tooltipText}>
-        <IconButton onClick={copyCode} size={size} className={className}>
-          {icon}
-        </IconButton>
-      </Tooltip>
+      {disabled ? button : <Tooltip title={tooltipText}>{button}</Tooltip>}
       <Snackbar
         open={showAlert}
         autoHideDuration={2000}

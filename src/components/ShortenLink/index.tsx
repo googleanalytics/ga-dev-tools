@@ -4,18 +4,22 @@ import { PAB, PlainButton, SAB } from "../Buttons"
 import useShortenLink from "./useShortenLink"
 
 interface ShortenLinkProps {
-  url: string
-  setShortened: Dispatch<string>
+  url: string | undefined
+  setShortened: Dispatch<string | undefined>
+  setError: Dispatch<string | undefined>
   pab?: boolean
   sab?: boolean
+  medium?: boolean
 }
 
 const ShortenLink: React.FC<ShortenLinkProps> = ({
-  children,
+  children = "Shorten link",
   pab,
   sab,
+  medium,
   url,
   setShortened,
+  setError,
 }) => {
   const ButtonComponent = React.useMemo(() => {
     if (pab) {
@@ -30,11 +34,24 @@ const ShortenLink: React.FC<ShortenLinkProps> = ({
   const { shorten } = useShortenLink()
 
   const onClick = React.useCallback(() => {
-    shorten(url).then(({ shortLink }) => setShortened(shortLink))
-  }, [shorten, url, setShortened])
+    if (url === undefined) {
+      return
+    }
+    shorten(url)
+      .then(({ shortLink }) => setShortened(shortLink))
+      .catch(error => {
+        console.error("Error with shortening link", error)
+        setError(error.message)
+      })
+  }, [shorten, url, setShortened, setError])
 
   return (
-    <ButtonComponent small onClick={onClick}>
+    <ButtonComponent
+      small={!medium}
+      medium={medium}
+      onClick={onClick}
+      disabled={url === undefined}
+    >
       {children}
     </ButtonComponent>
   )

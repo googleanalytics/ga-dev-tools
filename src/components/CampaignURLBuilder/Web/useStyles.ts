@@ -16,6 +16,17 @@ const useStyles = makeStyles(theme => ({
       margin: theme.spacing(1),
     },
   },
+  shortened: {
+    marginTop: theme.spacing(1),
+    display: "flex",
+    alignItems: "center",
+    "& > :first-child": {
+      flexGrow: 1,
+    },
+    "& > :not(:first-child)": {
+      marginLeft: theme.spacing(1),
+    },
+  },
   inputs: {
     display: "flex",
     flexDirection: "column",

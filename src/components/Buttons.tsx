@@ -15,11 +15,13 @@ interface Props extends MUIButtonProps {
   delete?: boolean
   check?: boolean
   small?: boolean
+  medium?: boolean
   title?: string
 }
 const BaseButton: React.FC<Props> = ({
   add,
   small,
+  medium,
   delete: deleteIcon,
   check,
   title,
@@ -32,10 +34,10 @@ const BaseButton: React.FC<Props> = ({
           check ? <Check /> : add ? <Add /> : deleteIcon ? <Delete /> : null
         }
         {...props}
-        size={small ? "small" : props.size}
+        size={small ? "small" : medium ? "medium" : props.size}
       />
     )
-  }, [add, deleteIcon, small, props, check])
+  }, [add, deleteIcon, small, props, check, medium])
   if (title !== undefined) {
     return (
       <Tooltip title={title}>
