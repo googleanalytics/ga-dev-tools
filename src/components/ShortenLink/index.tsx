@@ -41,7 +41,6 @@ const ShortenLink: React.FC<ShortenLinkProps> = ({
       .then(({ shortLink }) => setShortened(shortLink))
       .catch(error => {
         console.error("Error with shortening link", error)
-        console.log({ error })
         setError(error.message)
       })
   }, [shorten, url, setShortened, setError])

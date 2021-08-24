@@ -11,6 +11,7 @@ interface WarningProps {
 const useStyles = makeStyles(theme => ({
   warning: {
     margin: theme.spacing(2, 0),
+    marginRight: theme.spacing(1),
     padding: theme.spacing(1),
     display: "flex",
     flexDirection: "row",
