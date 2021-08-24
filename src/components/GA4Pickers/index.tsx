@@ -58,7 +58,10 @@ const Column: React.FC<{ column: GA4Column }> = ({ column }) => {
 
 export const DimensionsPicker: React.FC<{
   dimensions: GA4Dimensions
-  setDimensions: React.Dispatch<React.SetStateAction<GA4Dimensions>>
+  // TODO - migrate away entirely from setDimensions and only use the IDs and make
+  // it required.
+  setDimensions?: React.Dispatch<React.SetStateAction<GA4Dimensions>>
+  setDimensionIDs?: Dispatch<string[] | undefined>
   aps: AccountProperty
   required?: boolean
   helperText?: string | JSX.Element
@@ -67,6 +70,7 @@ export const DimensionsPicker: React.FC<{
   helperText,
   dimensions,
   setDimensions,
+  setDimensionIDs,
   required,
   aps,
   label = "dimensions",
@@ -87,11 +91,18 @@ export const DimensionsPicker: React.FC<{
       options={dimensionOptionsLessSelected || []}
       getOptionLabel={dimension => dimension.apiName!}
       value={dimensions || []}
-      onChange={(_event, value) =>
-        value.length === 0
-          ? setDimensions(undefined)
-          : setDimensions(value as GA4Dimensions)
-      }
+      onChange={(_event, value) => {
+        if (setDimensions !== undefined) {
+          value.length === 0
+            ? setDimensions(undefined)
+            : setDimensions(value as GA4Dimensions)
+        }
+        if (setDimensionIDs !== undefined) {
+          value.length === 0
+            ? setDimensionIDs(undefined)
+            : setDimensionIDs((value as GA4Dimension[]).map(m => m.apiName!))
+        }
+      }}
       renderOption={column => <Column column={column} />}
       renderInput={params => (
         <TextField
@@ -109,7 +120,10 @@ export const DimensionsPicker: React.FC<{
 
 export const MetricsPicker: React.FC<{
   metrics: GA4Metrics
-  setMetrics: React.Dispatch<React.SetStateAction<GA4Metrics>>
+  // TODO - migrate away entirely from setMetrics and only use the IDs and make
+  // it required.
+  setMetrics?: React.Dispatch<React.SetStateAction<GA4Metrics>>
+  setMetricIDs?: Dispatch<string[] | undefined>
   aps: AccountProperty
   required?: boolean
   helperText?: string | JSX.Element
@@ -118,6 +132,7 @@ export const MetricsPicker: React.FC<{
   helperText,
   metrics,
   setMetrics,
+  setMetricIDs: setMetricsIDs,
   required,
   aps,
   label = "metrics",
@@ -128,8 +143,10 @@ export const MetricsPicker: React.FC<{
     aps,
   })
 
+  // TODO - I'm not sure this should be a freeSolo.
+
   return (
-    <Autocomplete<NonNullable<GA4Metric>, true, undefined, true>
+    <Autocomplete<GA4Metric, true, undefined, true>
       fullWidth
       autoComplete
       autoHighlight
@@ -138,11 +155,18 @@ export const MetricsPicker: React.FC<{
       options={metricOptionsLessSelected || []}
       getOptionLabel={metric => metric.apiName!}
       value={metrics || []}
-      onChange={(_event, value) =>
-        value.length === 0
-          ? setMetrics(undefined)
-          : setMetrics(value as GA4Metrics)
-      }
+      onChange={(_event, value) => {
+        if (setMetrics !== undefined) {
+          value.length === 0
+            ? setMetrics(undefined)
+            : setMetrics(value as GA4Metrics)
+        }
+        if (setMetricsIDs !== undefined) {
+          value.length === 0
+            ? setMetricsIDs(undefined)
+            : setMetricsIDs((value as GA4Metric[]).map(m => m.apiName!))
+        }
+      }}
       renderOption={column => <Column column={column} />}
       renderInput={params => (
         <TextField

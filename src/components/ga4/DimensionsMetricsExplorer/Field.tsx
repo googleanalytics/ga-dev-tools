@@ -3,7 +3,6 @@ import * as React from "react"
 import IconLink from "@material-ui/icons/Link"
 import makeStyles from "@material-ui/core/styles/makeStyles"
 import Typography from "@material-ui/core/Typography"
-import { Link } from "gatsby"
 
 import InlineCode from "@/components/InlineCode"
 import { CopyIconButton } from "@/components/CopyButton"
@@ -11,6 +10,8 @@ import ExternalLink from "@/components/ExternalLink"
 import { Dimension, Metric } from "./useDimensionsAndMetrics"
 import { QueryParam } from "."
 import { AccountSummary, PropertySummary } from "@/types/ga4/StreamPicker"
+import LabeledCheckbox from "@/components/LabeledCheckbox"
+import { CompatibleHook } from "./useCompatibility"
 
 const knownLinks: [string, JSX.Element][] = [
   [
@@ -75,6 +76,12 @@ const linkifyText = (
 }
 
 const useStyles = makeStyles(theme => ({
+  headingUIName: {
+    marginRight: theme.spacing(1),
+    "& > span": {
+      fontSize: "inherit",
+    },
+  },
   heading: {
     display: "flex",
     flexWrap: "wrap",
@@ -96,14 +103,30 @@ const useStyles = makeStyles(theme => ({
   },
 }))
 
-interface FieldProps {
+interface FieldProps extends CompatibleHook {
   field:
     | { type: "dimension"; value: Dimension }
     | { type: "metric"; value: Metric }
   account: AccountSummary | undefined
   property: PropertySummary | undefined
 }
-const Field: React.FC<FieldProps> = ({ field, account, property }) => {
+
+const Field: React.FC<FieldProps> = props => {
+  const classes = useStyles()
+
+  const {
+    field,
+    account,
+    property,
+    incompatibleDimensions,
+    incompatibleMetrics,
+    dimensions,
+    metrics,
+    addMetric,
+    addDimension,
+    removeMetric,
+    removeDimension,
+  } = props
   const apiName = field.value.apiName || ""
   const uiName = field.value.uiName || ""
   const description = field.value.description || ""
@@ -119,8 +142,6 @@ const Field: React.FC<FieldProps> = ({ field, account, property }) => {
     }
     return `${baseURL}${search}#${apiName}`
   }, [field, apiName, account, property])
-
-  const classes = useStyles()
 
   const withLinks = React.useMemo(() => {
     let remainingText = description
@@ -143,10 +164,49 @@ const Field: React.FC<FieldProps> = ({ field, account, property }) => {
     )
   }, [description])
 
+  const isCompatible = React.useMemo(() => {
+    return (
+      incompatibleDimensions?.find(d => d.apiName === field.value.apiName) ===
+        undefined &&
+      incompatibleMetrics?.find(m => m.apiName === field.value.apiName) ===
+        undefined
+    )
+  }, [incompatibleMetrics, incompatibleDimensions, field.value.apiName])
+
+  const checked = React.useMemo(
+    () =>
+      dimensions?.find(d => d.apiName === field.value.apiName) !== undefined ||
+      metrics?.find(m => m.apiName === field.value.apiName) !== undefined,
+    [dimensions, metrics, field.value.apiName]
+  )
+
+  const onChange = React.useCallback(() => {
+    if (checked) {
+      field.type === "metric"
+        ? removeMetric(field.value)
+        : removeDimension(field.value)
+    } else {
+      field.type === "metric"
+        ? addMetric(field.value)
+        : addDimension(field.value)
+    }
+  }, [checked, addDimension, addMetric, removeDimension, removeMetric, field])
+
   return (
     <div id={apiName} key={apiName}>
       <Typography variant="h4" className={classes.heading}>
-        <Link to={`#${apiName}`}>{uiName}</Link>
+        {property === undefined ? (
+          uiName
+        ) : (
+          <LabeledCheckbox
+            className={classes.headingUIName}
+            checked={checked}
+            onChange={onChange}
+            disabled={!isCompatible}
+          >
+            {uiName}
+          </LabeledCheckbox>
+        )}
         <InlineCode className={classes.apiName}>{apiName}</InlineCode>
         <CopyIconButton
           icon={<IconLink color="primary" />}

@@ -6,17 +6,22 @@ import {
   usePersistantObject,
 } from "@/hooks"
 import { StorageKey } from "@/constants"
-import { GA4Dimensions, GA4Metrics } from "@/components/GA4Pickers"
 import useAvailableColumns from "@/components/GA4Pickers/useAvailableColumns"
 import { DateRange } from "../DateRanges"
 import { FilterExpression } from "../Filter"
 import { MetricAggregation } from "../MetricAggregations"
 import { AccountProperty } from "../../StreamPicker/useAccountProperty"
+import { useKeyedHydratedPersistantArray } from "@/hooks/useHydrated"
+import { QueryParam } from "."
+import { useDimensionsAndMetrics } from "../../DimensionsMetricsExplorer/useDimensionsAndMetrics"
+import { successful } from "@/types"
 
 type OrderBy = gapi.client.analyticsdata.OrderBy
 type CohortSpec = gapi.client.analyticsdata.CohortSpec
 
 const useInputs = (aps: AccountProperty) => {
+  const dimensionsAndMetricsRequest = useDimensionsAndMetrics(aps)
+
   const [showRequestJSON, setShowRequestJSON] = usePersistentBoolean(
     StorageKey.ga4RequestComposerBasicShowRequestJSON,
     true
@@ -24,13 +29,43 @@ const useInputs = (aps: AccountProperty) => {
   const [dateRanges, setDateRanges] = usePersistantObject<DateRange[]>(
     StorageKey.ga4RequestComposerBasicDateRanges
   )
-  const [dimensions, setDimensions] = usePersistantObject<
-    NonNullable<GA4Dimensions>
-  >(StorageKey.ga4RequestComposerBasicSelectedDimensions)
-  const [dimensionFilter, setDimensionFilter] = useState<FilterExpression>()
-  const [metrics, setMetrics] = usePersistantObject<NonNullable<GA4Metrics>>(
-    StorageKey.ga4RequestComposerBasicSelectedMetrics
+
+  const getDimensionsByIDs = useCallback(
+    (ids: string[] | undefined) => {
+      if (ids === undefined || !successful(dimensionsAndMetricsRequest)) {
+        return undefined
+      }
+      const { dimensions } = successful(dimensionsAndMetricsRequest)!
+      return dimensions.filter(m => ids.includes(m.apiName!))
+    },
+    [dimensionsAndMetricsRequest]
   )
+
+  const [dimensions, setDimensionIDs] = useKeyedHydratedPersistantArray(
+    StorageKey.ga4RequestComposerBasicSelectedDimensions,
+    QueryParam.Dimensions,
+    getDimensionsByIDs
+  )
+
+  const [dimensionFilter, setDimensionFilter] = useState<FilterExpression>()
+
+  const getMetricsByIDs = useCallback(
+    (ids: string[] | undefined) => {
+      if (ids === undefined || !successful(dimensionsAndMetricsRequest)) {
+        return undefined
+      }
+      const { metrics } = successful(dimensionsAndMetricsRequest)!
+      return metrics.filter(m => ids.includes(m.apiName!))
+    },
+    [dimensionsAndMetricsRequest]
+  )
+
+  const [metrics, setMetricIDs] = useKeyedHydratedPersistantArray(
+    StorageKey.ga4RequestComposerBasicSelectedMetrics,
+    QueryParam.Metrics,
+    getMetricsByIDs
+  )
+
   const [metricFilter, setMetricFilter] = useState<FilterExpression>()
   const [offset, setOffset] = usePersistentString(
     StorageKey.ga4RequestComposerBasicSelectedOffset
@@ -74,8 +109,8 @@ const useInputs = (aps: AccountProperty) => {
     if (firstSessionDate === undefined) {
       return
     }
-    setDimensions((old = []) => old.concat([firstSessionDate]))
-  }, [setDimensions, dimensionOptions])
+    setDimensionIDs((old = []) => old.concat([firstSessionDate.apiName!]))
+  }, [setDimensionIDs, dimensionOptions])
 
   const removeDateRanges = useCallback(() => {
     setDateRanges(undefined)
@@ -90,9 +125,9 @@ const useInputs = (aps: AccountProperty) => {
     dateRanges,
     setDateRanges,
     dimensions,
-    setDimensions,
+    setDimensionIDs,
     metrics,
-    setMetrics,
+    setMetricIDs,
     showRequestJSON,
     setShowRequestJSON,
     dimensionFilter,

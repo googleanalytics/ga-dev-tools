@@ -59,7 +59,7 @@ export const DAB: React.FC<Props> = ({ ...props }) => {
 }
 
 export const PlainButton: React.FC<Props> = ({ ...props }) => {
-  return <BaseButton {...props} variant="outlined" />
+  return <BaseButton {...props} variant="contained" />
 }
 
 export const TooltipIconButton: React.FC<{

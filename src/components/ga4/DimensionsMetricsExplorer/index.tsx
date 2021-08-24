@@ -26,6 +26,9 @@ import useAccountProperty, {
 } from "../StreamPicker/useAccountProperty"
 import { Link } from "gatsby"
 import { makeStyles } from "@material-ui/core"
+import useCompatibility from "./useCompatibility"
+import Compatible from "./Compatible"
+import ScrollToTop from "@/components/ScrollToTop"
 
 const dataAPI = (
   <ExternalLink href={Url.ga4DataAPIGetMetadata}>
@@ -33,22 +36,34 @@ const dataAPI = (
   </ExternalLink>
 )
 
+// TODO - add back in once this api is public.
+// const checkCompatibility = (
+//   <ExternalLink href="#todo">checkCompatibility</ExternalLink>
+// )
+
 const useStyles = makeStyles(theme => ({
   headingLinks: {
     "& > a": {
       color: theme.palette.text.primary,
     },
   },
+  search: {
+    marginTop: theme.spacing(1),
+  },
 }))
 
-const RenderSuccessful: React.FC<
-  Successful & { search: string | undefined; aps: AccountProperty }
-> = ({ categories, search, aps }) => {
+const RenderSuccessful: React.FC<Successful & { aps: AccountProperty }> = ({
+  categories,
+  aps,
+}) => {
   const classes = useStyles()
+  const { search, setSearch } = useInputs()
   const searchRegex = useMemo(
     () => (search ? new RegExp(search, "gi") : undefined),
     [search]
   )
+
+  const compability = useCompatibility(aps)
 
   const searchFilter = React.useCallback(
     (c: Dimension | Metric) => {
@@ -84,6 +99,23 @@ const RenderSuccessful: React.FC<
 
   return (
     <>
+      <Compatible property={aps.property} {...compability} />
+      <TextField
+        className={classes.search}
+        label="Search for a dimension or metric"
+        variant="outlined"
+        fullWidth
+        size="small"
+        value={search || ""}
+        onChange={e => setSearch(e.target.value)}
+        InputProps={{
+          endAdornment: (
+            <IconButton size="small" onClick={() => setSearch("")}>
+              <Clear />
+            </IconButton>
+          ),
+        }}
+      />
       {notAllFields}
       {filteredCategories.map(({ category, dimensions, metrics }) => {
         if (dimensions.length === 0 && metrics.length === 0) {
@@ -110,6 +142,7 @@ const RenderSuccessful: React.FC<
                 </Typography>
                 {dimensions.map(dimension => (
                   <Field
+                    {...compability}
                     {...aps}
                     key={dimension.apiName}
                     field={{ type: "dimension", value: dimension }}
@@ -128,6 +161,7 @@ const RenderSuccessful: React.FC<
                 </Typography>
                 {metrics.map(metric => (
                   <Field
+                    {...compability}
                     {...aps}
                     key={metric.apiName}
                     field={{ type: "metric", value: metric }}
@@ -150,7 +184,6 @@ export enum QueryParam {
 
 const DimensionsMetricsExplorer: React.FC = () => {
   const formClasses = useFormStyles()
-  const { search, setSearch } = useInputs()
   const aps = useAccountProperty(
     StorageKey.ga4DimensionsMetricsExplorerAPS,
     QueryParam,
@@ -158,42 +191,33 @@ const DimensionsMetricsExplorer: React.FC = () => {
   )
   const request = useDimensionsAndMetrics(aps)
 
+  // TODO - add in once endpoint is public.
+  // <Typography>
+  //   If you choose an Account and Property, this demo also uses the{" "}
+  //   {checkCompatibility} API so you can see which dimensions and metrics
+  //   are compatible with each other. As you add fields to the request,
+  //   incompatible fields will be grayed out.
+  // </Typography>
+
   return (
     <>
       <section>
+        <ScrollToTop />
         <Typography>
           The {dataAPI} allows users to see query dimensions and metrics
           (including custom ones) for a given property.
         </Typography>
         <Typography>
           This demo is a catalog of all dimensions and metrics available for a
-          given property. It includes linkable descriptions of all fields.
+          given property with linkable descriptions for all fields.
         </Typography>
         <section className={formClasses.form}>
           <Typography variant="h3">Select property</Typography>
           <StreamPicker autoFill {...aps} />
-          <Typography variant="h3">Search</Typography>
-          <TextField
-            label="Search for a dimension or metric"
-            variant="outlined"
-            fullWidth
-            size="small"
-            value={search || ""}
-            onChange={e => setSearch(e.target.value)}
-            InputProps={{
-              endAdornment: (
-                <IconButton size="small" onClick={() => setSearch("")}>
-                  <Clear />
-                </IconButton>
-              ),
-            }}
-          />
         </section>
         <Loadable
           request={request}
-          renderSuccessful={s => (
-            <RenderSuccessful {...s} aps={aps} search={search} />
-          )}
+          renderSuccessful={s => <RenderSuccessful {...s} aps={aps} />}
           inProgressText="Loading dimensions and metrics"
         />
       </section>

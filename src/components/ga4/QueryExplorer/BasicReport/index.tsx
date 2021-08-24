@@ -94,6 +94,8 @@ export enum QueryParam {
   Account = "a",
   Property = "b",
   Stream = "c",
+  Dimensions = "d",
+  Metrics = "e",
 }
 
 const BasicReport = () => {
@@ -105,9 +107,9 @@ const BasicReport = () => {
     dateRanges,
     setDateRanges,
     dimensions,
-    setDimensions,
+    setDimensionIDs,
     metrics,
-    setMetrics,
+    setMetricIDs,
     showRequestJSON,
     setShowRequestJSON,
     dimensionFilter,
@@ -183,7 +185,7 @@ const BasicReport = () => {
         <MetricsPicker
           aps={aps}
           required={!metricOrDimensionSelected}
-          setMetrics={setMetrics}
+          setMetricIDs={setMetricIDs}
           metrics={metrics}
           helperText={
             <>
@@ -195,7 +197,7 @@ const BasicReport = () => {
         <DimensionsPicker
           aps={aps}
           required={!metricOrDimensionSelected}
-          setDimensions={setDimensions}
+          setDimensionIDs={setDimensionIDs}
           dimensions={dimensions}
           helperText={
             <>
