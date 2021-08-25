@@ -45,6 +45,8 @@ import useFormStyles from "@/hooks/useFormStyles"
 import Loadable from "../Loadable"
 import useLogin2, { UserStatus } from "./useLogin"
 import usePageView from "@/hooks/usePageView"
+import { ErrorBoundary } from "react-error-boundary"
+import ErrorFallback from "../ErrorFallback"
 
 interface LayoutProps {
   requireLogin?: true
@@ -92,6 +94,12 @@ const Template: React.FC<LayoutProps & TemplateProps> = ({
       linkData.versions.find(version => version === gaVersion)
     )
   }, [gaVersion])
+
+  const tryResetApp = React.useCallback(() => {
+    // Often issues are related to bad data in localstorage, try clearing it to
+    // see if that helps.
+    window.localStorage.clear()
+  }, [])
 
   return (
     <div className={classes.root}>
@@ -248,32 +256,37 @@ const Template: React.FC<LayoutProps & TemplateProps> = ({
           <Typography variant="h1">{title}</Typography>
         </header>
         <div className={classes.contentWrapper}>
-          <section className={classes.content}>
-            {requireLogin && (inProgress || notStarted) && (
-              <Spinner ellipses>Checking if you're logged in</Spinner>
-            )}
-            {requireLogin &&
-              successful &&
-              (userStatus === UserStatus.SignedIn ? (
-                children
-              ) : (
-                <div>
-                  <Typography>
-                    You must be logged in with Google for this demo.
-                  </Typography>
-                  <Button variant="contained" color="primary" onClick={login}>
-                    Login
-                  </Button>
-                </div>
-              ))}
-            {requireLogin && failed && (
-              <Typography>
-                Login status could not be determined. Please ensure cookies are
-                enabled.
-              </Typography>
-            )}
-            {!requireLogin && children}
-          </section>
+          <ErrorBoundary
+            FallbackComponent={ErrorFallback}
+            onReset={tryResetApp}
+          >
+            <section className={classes.content}>
+              {requireLogin && (inProgress || notStarted) && (
+                <Spinner ellipses>Checking if you're logged in</Spinner>
+              )}
+              {requireLogin &&
+                successful &&
+                (userStatus === UserStatus.SignedIn ? (
+                  children
+                ) : (
+                  <div>
+                    <Typography>
+                      You must be logged in with Google for this demo.
+                    </Typography>
+                    <Button variant="contained" color="primary" onClick={login}>
+                      Login
+                    </Button>
+                  </div>
+                ))}
+              {requireLogin && failed && (
+                <Typography>
+                  Login status could not be determined. Please ensure cookies
+                  are enabled.
+                </Typography>
+              )}
+              {!requireLogin && children}
+            </section>
+          </ErrorBoundary>
         </div>
         <div className={formClasses.grow} />
         <footer className={classes.footer}>
