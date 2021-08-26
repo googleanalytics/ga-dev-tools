@@ -75,7 +75,7 @@ const useStreams = (
     [property?.property]
   )
 
-  const webStreams = useCached(
+  const { value: webStreams } = useCached(
     webStorageKey,
     requestWebStreams,
     moment.duration(5, "minutes"),
@@ -127,7 +127,7 @@ const useStreams = (
     [property?.property]
   )
 
-  const iosStreams = useCached(
+  const { value: iosStreams } = useCached(
     iosStorageKey,
     requestIOSStreams,
     moment.duration(5, "minutes"),
@@ -179,7 +179,7 @@ const useStreams = (
     [property?.property]
   )
 
-  const androidStreams = useCached(
+  const { value: androidStreams } = useCached(
     androidStorageKey,
     requestAndroidStreams,
     moment.duration(5, "minutes"),

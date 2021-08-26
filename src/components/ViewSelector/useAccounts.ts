@@ -29,7 +29,7 @@ const useAccounts = (): AccountSummary[] | undefined => {
     managementAPI,
   ])
 
-  const accounts = useCached(
+  const { value: accounts } = useCached(
     StorageKey.uaAccounts,
     fetchAccounts,
     moment.duration(5, "minutes"),

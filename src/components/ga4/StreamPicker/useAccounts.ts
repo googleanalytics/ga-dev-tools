@@ -44,7 +44,7 @@ const useAccountSummaries = (): Requestable<AccountSummaries> => {
     setFailed
   )
 
-  const accountSummaries = useCached(
+  const { value: accountSummaries } = useCached(
     StorageKey.ga4AccountSummaries,
     requestAccountSummaries,
     moment.duration(5, "minutes"),

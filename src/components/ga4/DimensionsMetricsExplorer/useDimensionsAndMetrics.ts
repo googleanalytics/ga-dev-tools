@@ -60,7 +60,7 @@ export const useDimensionsAndMetrics = (
     }
   }, [dataAPI, propertyName, setFailed, setInProgress])
 
-  const dimsAndMets = useCached(
+  const { value: dimsAndMets } = useCached(
     `${StorageKey.ga4DimensionsMetrics}/${propertyName}` as StorageKey,
     getMetadata,
     moment.duration(5, "minutes"),

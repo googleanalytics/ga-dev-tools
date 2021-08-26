@@ -1,42 +1,62 @@
 import { StorageKey } from "@/constants"
 import moment from "moment"
-import { useEffect, useMemo } from "react"
+import { useCallback, useEffect, useMemo } from "react"
 import { usePersistantObject } from "."
+
+interface Cached<T> {
+  "@@_lastFetched": number
+  "@@_cacheKey": string
+  value: T
+}
 
 const useCached = <T>(
   cacheKey: StorageKey,
   makeRequest: () => Promise<T>,
   maxAge: moment.Duration,
-  requestReady: boolean
-): T | undefined => {
-  const [cached, setCached] = usePersistantObject<{
-    "@@_lastFetched": number
-    value: T
-  }>(cacheKey)
+  requestReady: boolean,
+  onError?: (e: any) => void
+): { value: T | undefined; bustCache: () => Promise<void> } => {
+  const [cached, setCached] = usePersistantObject<Cached<T>>(cacheKey)
 
-  useEffect(() => {
+  const updateCachedValue = useCallback(async () => {
     if (requestReady === false) {
       return
     }
+    try {
+      const t = await makeRequest()
+      const now = moment.now()
+      setCached({ "@@_lastFetched": now, value: t, "@@_cacheKey": cacheKey })
+    } catch (e) {
+      onError
+        ? onError(e)
+        : console.error("An unhandled error has occured, ", e)
+    }
+  }, [makeRequest, setCached, onError, cacheKey, requestReady])
+
+  useEffect(() => {
     if (cached === undefined) {
-      makeRequest().then(t => {
-        const now = moment.now()
-        setCached({ "@@_lastFetched": now, value: t })
-      })
+      updateCachedValue()
     } else {
       const now = moment()
       if (now.isAfter(moment(cached["@@_lastFetched"]).add(maxAge))) {
-        makeRequest().then(t => {
-          const now = moment.now()
-          setCached({ "@@_lastFetched": now, value: t })
-        })
+        updateCachedValue()
       } else {
         return
       }
     }
-  }, [requestReady, cached, setCached, makeRequest, maxAge])
+  }, [cached, maxAge, onError, updateCachedValue])
 
-  return useMemo(() => cached?.value, [cached])
+  const bustCache = useCallback(async () => {
+    await updateCachedValue()
+  }, [updateCachedValue])
+
+  return useMemo(
+    () => ({
+      value: cached?.value,
+      bustCache,
+    }),
+    [cached, bustCache]
+  )
 }
 
 export default useCached
