@@ -1,7 +1,7 @@
 import React from "react"
 import CssBaseline from "@material-ui/core/CssBaseline"
 import { ThemeProvider } from "@material-ui/core"
-import { createMuiTheme, withStyles } from "@material-ui/core/styles"
+import { createTheme, withStyles } from "@material-ui/core/styles"
 import orange from "@material-ui/core/colors/orange"
 import deepOrange from "@material-ui/core/colors/deepOrange"
 import Snackbar from "@material-ui/core/Snackbar"
@@ -28,7 +28,7 @@ const reducer = (state = {}, action) => {
   }
 }
 
-const globalTheme = createMuiTheme({
+const globalTheme = createTheme({
   palette: {
     primary: orange,
     secondary: deepOrange,
