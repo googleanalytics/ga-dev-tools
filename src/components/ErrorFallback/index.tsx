@@ -8,7 +8,7 @@ import Warning from "../Warning"
 const useStyles = makeStyles(theme => ({
   error: {
     padding: theme.spacing(2),
-    maxWidth: theme.breakpoints.width("md"),
+    maxWidth: theme.breakpoints.values.md,
   },
   resetButton: {
     marginTop: theme.spacing(1),

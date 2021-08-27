@@ -56,7 +56,7 @@ const useStyles = makeStyles(theme => ({
     margin: theme.spacing(1),
     padding: theme.spacing(1, 1),
     width: "100%",
-    "max-width": theme.breakpoints.width("sm"),
+    "max-width": theme.breakpoints.values.sm,
   },
   table: {
     "margin-top": theme.spacing(6),
