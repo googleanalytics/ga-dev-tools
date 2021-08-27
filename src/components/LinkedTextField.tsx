@@ -46,7 +46,7 @@ const LinkedTextField: React.FC<LinkedTextFieldProps> = ({
       variant="outlined"
       fullWidth
       label={label}
-      value={value === undefined ? null : value}
+      value={value === undefined ? "" : value}
       onChange={e => onChange(e.target.value)}
       required={required}
       helperText={helperText}
