@@ -431,17 +431,38 @@ export const testGapi = () => ({
         iosAppDataStreams: {
           list: (): Promise<{
             result: gapi.client.analyticsadmin.GoogleAnalyticsAdminV1alphaListIosAppDataStreamsResponse
-          }> => Promise.resolve({ result: {} }),
+          }> =>
+            Promise.resolve({
+              result: {
+                iosAppDataStreams: [
+                  { name: "iosStream", displayName: "My ios stream" },
+                ],
+              },
+            }),
         },
         androidAppDataStreams: {
           list: (): Promise<{
             result: gapi.client.analyticsadmin.GoogleAnalyticsAdminV1alphaListAndroidAppDataStreamsResponse
-          }> => Promise.resolve({ result: {} }),
+          }> =>
+            Promise.resolve({
+              result: {
+                androidAppDataStreams: [
+                  { name: "androidStream", displayName: "my android stream" },
+                ],
+              },
+            }),
         },
         webDataStreams: {
           list: (): Promise<{
             result: gapi.client.analyticsadmin.GoogleAnalyticsAdminV1alphaListWebDataStreamsResponse
-          }> => Promise.resolve({ result: {} }),
+          }> =>
+            Promise.resolve({
+              result: {
+                webDataStreams: [
+                  { name: "webStream", displayName: "my web stream" },
+                ],
+              },
+            }),
         },
       },
       accountSummaries: {

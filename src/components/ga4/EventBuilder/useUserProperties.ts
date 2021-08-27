@@ -3,7 +3,7 @@ import { useAddToArray, useRemoveByIndex, useUpdateByIndex } from "@/hooks"
 import { useHydratedPersistantObject } from "@/hooks/useHydrated"
 import { useCallback } from "react"
 import { numberParam, stringParam } from "./event"
-import { Parameter, UrlParam } from "./types"
+import { Parameter, QueryParam } from "./types"
 import { ParametersParam } from "./useEvent"
 
 const useUserProperties = () => {
@@ -11,7 +11,7 @@ const useUserProperties = () => {
     Parameter[]
   >(
     StorageKey.ga4EventBuilderUserProperties,
-    UrlParam.UserProperties,
+    QueryParam.UserProperties,
     ParametersParam
   )
 

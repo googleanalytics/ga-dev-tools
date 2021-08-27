@@ -68,6 +68,7 @@ export enum Url {
   measurementProtocol = "https://developers.google.com/analytics/devguides/collection/protocol/v1",
   validatingMeasurement = "https://developers.google.com/analytics/devguides/collection/protocol/v1/validating-hits",
   coreReportingApi = "https://developers.google.com/analytics/devguides/reporting/core/v3/",
+  ga4MPAPISecretReference = "https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference#api_secret",
 }
 
 export enum GAVersion {
@@ -248,6 +249,8 @@ export enum StorageKey {
   ga4EventBuilderItems = "ga4/event-builder/items",
   ga4EventBuilderEventName = "ga4/event-builder/event-name",
   ga4EventBuilderUserProperties = "ga4/event-builder/user-properties",
+  eventBuilderMPSecrets = "ga4/event-builder/mp-secrets",
+  eventBuilderAPS = "ga4/event-builder/aps",
 }
 
 export const EventAction = {

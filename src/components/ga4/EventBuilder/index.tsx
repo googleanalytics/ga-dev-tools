@@ -38,6 +38,7 @@ import { eventsForCategory } from "./event"
 import useUserProperties from "./useUserProperties"
 import Items from "./Items"
 import ValidateEvent from "./ValidateEvent"
+import MPSecret from "./MPSecret"
 
 export enum Label {
   APISecret = "api_secret",
@@ -171,6 +172,8 @@ const EventBuilder: React.FC = () => {
     setTimestampMicros,
     non_personalized_ads,
     setNonPersonalizedAds,
+    secret,
+    setSecret,
   } = useInputs(categories)
 
   return (
@@ -214,6 +217,11 @@ const EventBuilder: React.FC = () => {
       </Typography>
 
       <section className={formClasses.form}>
+        <MPSecret
+          secret={secret}
+          setSecret={setSecret}
+          useFirebase={useFirebase}
+        />
         <LinkedTextField
           required
           href="https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference#api_secret"

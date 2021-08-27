@@ -26,6 +26,11 @@ const getAndroidPageToken = (response: IOSStreamsResponse) =>
 
 const useStreams = (
   property: PropertySummary | undefined,
+  streams: {
+    androidStreams?: boolean
+    webStreams?: boolean
+    iosStreams?: boolean
+  },
   onComplete?: () => void
 ): Requestable<{ streams: Stream[] }> => {
   const gapi = useGapi()
@@ -79,7 +84,7 @@ const useStreams = (
     webStorageKey,
     requestWebStreams,
     moment.duration(5, "minutes"),
-    requestReady
+    requestReady && !!streams.webStreams
   )
 
   useEffect(() => {
@@ -131,7 +136,7 @@ const useStreams = (
     iosStorageKey,
     requestIOSStreams,
     moment.duration(5, "minutes"),
-    requestReady
+    requestReady && !!streams.iosStreams
   )
 
   useEffect(() => {
@@ -183,7 +188,7 @@ const useStreams = (
     androidStorageKey,
     requestAndroidStreams,
     moment.duration(5, "minutes"),
-    requestReady
+    requestReady && !!streams.androidStreams
   )
 
   useEffect(() => {
@@ -194,13 +199,13 @@ const useStreams = (
 
   useEffect(() => {
     if (
-      webStreams !== undefined &&
-      iosStreams !== undefined &&
-      androidStreams !== undefined
+      (webStreams !== undefined || !streams.webStreams) &&
+      (iosStreams !== undefined || !streams.iosStreams) &&
+      (androidStreams !== undefined || !streams.androidStreams)
     ) {
       onComplete && onComplete()
     }
-  }, [onComplete, webStreams, iosStreams, androidStreams])
+  }, [onComplete, webStreams, iosStreams, androidStreams, streams])
 
   useEffect(() => {
     setWebStreamNotStarted()
@@ -214,36 +219,37 @@ const useStreams = (
   ])
 
   if (
-    webStreamsStatus === RequestStatus.Successful &&
-    iosStreamsStatus === RequestStatus.Successful &&
-    androidStreamsStatus === RequestStatus.Successful
+    (webStreamsStatus === RequestStatus.Successful || !streams.webStreams) &&
+    (iosStreamsStatus === RequestStatus.Successful || !streams.iosStreams) &&
+    (androidStreamsStatus === RequestStatus.Successful ||
+      !streams.androidStreams)
   ) {
-    if (webStreams === undefined) {
+    if (webStreams === undefined && streams.webStreams) {
       throw new Error("Invalid invariant - webStreams must be defined here.")
     }
-    if (iosStreams === undefined) {
+    if (iosStreams === undefined && streams.iosStreams) {
       throw new Error("Invalid invariant - iosStreams must be defined here.")
     }
-    if (androidStreams === undefined) {
+    if (androidStreams === undefined && streams.androidStreams) {
       throw new Error(
         "Invalid invariant - androidStreams must be defined here."
       )
     }
     return {
       status: RequestStatus.Successful,
-      streams: webStreams
+      streams: (streams.webStreams ? webStreams! : [])
         .map(s => ({
           type: StreamType.WebDataStream,
           value: s,
         }))
         .concat(
-          iosStreams.map(s => ({
+          (streams.iosStreams ? iosStreams! : []).map(s => ({
             type: StreamType.IOSDataStream,
             value: s,
           }))
         )
         .concat(
-          androidStreams.map(s => ({
+          (streams.androidStreams ? androidStreams! : []).map(s => ({
             type: StreamType.AndroidDataStream,
             value: s,
           }))

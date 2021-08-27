@@ -33,7 +33,6 @@ interface CommonProps {
 }
 
 interface WithStreams extends CommonProps {
-  // If needed this can be updated to only show web, firebase, or ios streams.
   streams: true
   stream: Stream | undefined
   setStreamID: Dispatch<string | undefined>
