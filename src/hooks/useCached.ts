@@ -37,8 +37,12 @@ const useCached = <T>(
     if (cached === undefined) {
       updateCachedValue()
     } else {
+      const cacheTime = cached["@@_lastFetched"]
       const now = moment()
-      if (now.isAfter(moment(cached["@@_lastFetched"]).add(maxAge))) {
+      if (
+        cacheTime === undefined ||
+        now.isAfter(moment(cached["@@_lastFetched"]).add(maxAge))
+      ) {
         updateCachedValue()
       } else {
         return
@@ -50,13 +54,16 @@ const useCached = <T>(
     await updateCachedValue()
   }, [updateCachedValue])
 
-  return useMemo(
-    () => ({
+  return useMemo(() => {
+    const now = moment()
+    if (now.isAfter(moment(cached?.["@@_lastFetched"]).add(maxAge))) {
+      return { value: undefined, bustCache }
+    }
+    return {
       value: cached?.value,
       bustCache,
-    }),
-    [cached, bustCache]
-  )
+    }
+  }, [cached, bustCache, maxAge])
 }
 
 export default useCached
