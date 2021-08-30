@@ -44,7 +44,7 @@ interface OnlyProperty extends CommonProps {
   streams?: false | undefined
 }
 
-type StreamPickerProps = OnlyProperty | WithStreams
+export type StreamPickerProps = OnlyProperty | WithStreams
 
 const StreamPicker: React.FC<StreamPickerProps> = props => {
   const { account, property, setAccountID, setPropertyID, autoFill } = props
