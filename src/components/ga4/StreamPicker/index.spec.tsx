@@ -16,12 +16,10 @@ import * as React from "react"
 
 import * as renderer from "@testing-library/react"
 import "@testing-library/jest-dom"
-import { renderHook } from "@testing-library/react-hooks"
 import { act, within } from "@testing-library/react"
 
 import { withProviders } from "@/test-utils"
-import Sut, { Label } from "./index"
-import { AccountSummary, PropertySummary } from "@/types/ga4/StreamPicker"
+import Sut, { Label, StreamPickerProps } from "./index"
 import useAccountPropertyStream from "./useAccountPropertyStream"
 import { StorageKey } from "@/constants"
 
@@ -31,37 +29,52 @@ enum QueryParam {
   Stream = "c",
 }
 
+const WithAPS: React.FC<Partial<StreamPickerProps>> = props => {
+  console.debug("test component rendering.")
+  const aps = useAccountPropertyStream("a" as StorageKey, QueryParam, {
+    androidStreams: true,
+    iosStreams: true,
+    webStreams: true,
+  })
+  return <Sut {...aps} {...props} />
+}
+
 describe("StreamPicker", () => {
-  test("Selects a property & stream when an account is picked.", async () => {
-    const { result } = renderHook(() =>
-      useAccountPropertyStream("a" as StorageKey, QueryParam)
-    )
-    const { gapi, wrapped } = withProviders(<Sut {...result.current} />)
+  describe("when autoFill is true", () => {
+    test("selects a property & stream after an account is picked.", async () => {
+      console.debug("hi")
+      const { gapi, wrapped } = withProviders(<WithAPS autoFill />)
 
-    const { findByTestId } = renderer.render(wrapped)
+      const { findByTestId } = renderer.render(wrapped)
 
-    // Await for the mocked accountSummaries method to finish.
-    await act(async () => {
-      await act(async () => {
-        await gapi.client.analyticsadmin.accountSummaries.list({})
-        await gapi.client.analyticsadmin.accountSummaries.list({
-          pageToken: "1",
-        })
-      })
+      // // Await for the mocked accountSummaries methods to finish.
+      // await act(async () => {
+      //   await gapi.client.analyticsadmin.accountSummaries.list({})
+      //   await gapi.client.analyticsadmin.accountSummaries.list({
+      //     pageToken: "1",
+      //   })
+      // })
+
+      const accountPicker = await findByTestId(Label.Account)
+
+      // await act(async () => {
+      //   const accountInput = within(accountPicker).getByRole("textbox")
+      //   accountPicker.focus()
+      //   renderer.fireEvent.change(accountInput, { target: { value: "" } })
+      //   renderer.fireEvent.keyDown(accountPicker, { key: "ArrowDown" })
+      //   renderer.fireEvent.keyDown(accountPicker, { key: "ArrowDown" })
+      //   renderer.fireEvent.keyDown(accountPicker, { key: "Enter" })
+      // })
+
+      // // Await for the mocked stream methods to finish.
+      // await act(async () => {
+      //   await gapi.client.analyticsadmin.properties.webDataStreams.list()
+      //   await gapi.client.analyticsadmin.properties.iosAppDataStreams.list()
+      //   await gapi.client.analyticsadmin.properties.androidAppDataStreams.list()
+      // })
+
+      expect(within(accountPicker).getByRole("textbox")).toHaveValue("hi")
     })
-
-    const accountPicker = await findByTestId(Label.Account)
-
-    await act(async () => {
-      const accountInput = within(accountPicker).getByRole("textbox")
-      accountPicker.focus()
-      renderer.fireEvent.change(accountInput, { target: { value: "" } })
-      renderer.fireEvent.keyDown(accountPicker, { key: "ArrowDown" })
-      renderer.fireEvent.keyDown(accountPicker, { key: "ArrowDown" })
-      renderer.fireEvent.keyDown(accountPicker, { key: "Enter" })
-    })
-
-    expect(within(accountPicker).getByRole("textbox")).toHaveValue("hi")
   })
   // describe("with defaults", () => {
   //   test("of { account } selects default", async () => {

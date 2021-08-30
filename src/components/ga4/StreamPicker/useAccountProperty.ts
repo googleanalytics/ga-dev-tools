@@ -26,6 +26,8 @@ const useAccountProperty = (
 ): AccountProperty & AccountPropertySetters => {
   const accountsRequest = useAccounts()
 
+  console.log({ accountsRequest })
+
   const getAccountByID = useCallback(
     (id: string | undefined) => {
       if (!successful(accountsRequest) || id === undefined) {

@@ -190,7 +190,7 @@ export const useUADimensionsAndMetrics = ({
     })
   }, [metadataAPI, managementAPI, account, property, view])
 
-  const columns = useCached(
+  const { value: columns } = useCached(
     // Even though account is sometimes undefined it doesn't really matter
     // since this hook will re-run once it is. makeRequest is smartEnough to
     // not do anything when account property or view are undefined.
@@ -486,7 +486,7 @@ export const useUASegments = (): UASegment[] | undefined => {
     return managementAPI !== undefined
   }, [managementAPI])
 
-  const segments = useCached(
+  const { value: segments } = useCached(
     StorageKey.uaSegments,
     requestSegments,
     moment.duration(5, "minutes"),

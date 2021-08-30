@@ -33,7 +33,6 @@ interface CommonProps {
 }
 
 interface WithStreams extends CommonProps {
-  // If needed this can be updated to only show web, firebase, or ios streams.
   streams: true
   stream: Stream | undefined
   setStreamID: Dispatch<string | undefined>
@@ -45,7 +44,7 @@ interface OnlyProperty extends CommonProps {
   streams?: false | undefined
 }
 
-type StreamPickerProps = OnlyProperty | WithStreams
+export type StreamPickerProps = OnlyProperty | WithStreams
 
 const StreamPicker: React.FC<StreamPickerProps> = props => {
   const { account, property, setAccountID, setPropertyID, autoFill } = props

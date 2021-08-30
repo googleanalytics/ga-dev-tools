@@ -22,6 +22,11 @@ interface AccountPropertyStreamSetters extends AccountPropertySetters {
 const useAccountPropertyStream = (
   prefix: StorageKey,
   queryParamKeys: { Account: string; Property: string; Stream: string },
+  streams: {
+    androidStreams?: boolean
+    webStreams?: boolean
+    iosStreams?: boolean
+  },
   // TODO - This is only here because there seems to be a bug with
   // use-query-params replaceIn functionality where it also removes the anchor.
   // Need to do a minimum repro and file a bug to that repo.
@@ -45,7 +50,7 @@ const useAccountPropertyStream = (
     }, 100)
   }, [])
 
-  const streamsRequest = useStreams(property)
+  const streamsRequest = useStreams(property, streams)
 
   const getStreamsByID = useCallback(
     (id: string | undefined) => {

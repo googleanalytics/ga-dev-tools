@@ -34,7 +34,7 @@ const useColumns = (): Requestable<
       })
   }, [metadataAPI, setFailed, setInProgress])
 
-  const columns = useCached(
+  const { value: columns } = useCached(
     StorageKey.dimensionsMetricsExplorerColumns,
     makeRequest,
     moment.duration(5, "minutes"),

@@ -23,6 +23,7 @@ import {
 } from "@reach/router"
 import { AccountSummary, Column } from "./api"
 import { QueryParamProvider } from "use-query-params"
+import { PartialDeep } from "type-fest"
 
 interface WithProvidersConfig {
   path?: string
@@ -33,7 +34,8 @@ export const wrapperFor: (options: {
   path?: string
   isLoggedIn?: boolean
   setUp?: () => void
-}) => React.FC = ({ path, isLoggedIn, setUp }) => {
+  gapi?: PartialDeep<typeof gapi>
+}) => React.FC = ({ path, isLoggedIn, setUp, gapi }) => {
   path = path || "/"
   isLoggedIn = isLoggedIn === undefined ? true : isLoggedIn
 
@@ -47,6 +49,9 @@ export const wrapperFor: (options: {
     store.dispatch({ type: "setUser", user: {} })
   } else {
     store.dispatch({ type: "setUser", user: undefined })
+  }
+  if (gapi) {
+    store.dispatch({ type: "setGapi", gapi })
   }
 
   const Wrapper: React.FC = ({ children }) => (
@@ -69,7 +74,7 @@ export const withProviders = (
   wrapped: JSX.Element
   history: History
   store: any
-  gapi: ReturnType<typeof testGapi>
+  gapi?: PartialDeep<typeof gapi>
 } => {
   path = path || "/"
   isLoggedIn = isLoggedIn === undefined ? true : isLoggedIn
@@ -431,17 +436,38 @@ export const testGapi = () => ({
         iosAppDataStreams: {
           list: (): Promise<{
             result: gapi.client.analyticsadmin.GoogleAnalyticsAdminV1alphaListIosAppDataStreamsResponse
-          }> => Promise.resolve({ result: {} }),
+          }> =>
+            Promise.resolve({
+              result: {
+                iosAppDataStreams: [
+                  { name: "iosStream", displayName: "My ios stream" },
+                ],
+              },
+            }),
         },
         androidAppDataStreams: {
           list: (): Promise<{
             result: gapi.client.analyticsadmin.GoogleAnalyticsAdminV1alphaListAndroidAppDataStreamsResponse
-          }> => Promise.resolve({ result: {} }),
+          }> =>
+            Promise.resolve({
+              result: {
+                androidAppDataStreams: [
+                  { name: "androidStream", displayName: "my android stream" },
+                ],
+              },
+            }),
         },
         webDataStreams: {
           list: (): Promise<{
             result: gapi.client.analyticsadmin.GoogleAnalyticsAdminV1alphaListWebDataStreamsResponse
-          }> => Promise.resolve({ result: {} }),
+          }> =>
+            Promise.resolve({
+              result: {
+                webDataStreams: [
+                  { name: "webStream", displayName: "my web stream" },
+                ],
+              },
+            }),
         },
       },
       accountSummaries: {

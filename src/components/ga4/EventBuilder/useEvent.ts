@@ -5,7 +5,7 @@ import {
   EventType,
   Parameter,
   ParameterType,
-  UrlParam,
+  QueryParam,
 } from "@/components/ga4/EventBuilder/types"
 import {
   cloneEvent,
@@ -79,7 +79,7 @@ const ItemsParam: QueryParamConfig<Parameter[][] | undefined | null> = {
 
 const getVersion = (): string => {
   const urlParams = new URLSearchParams(window.location.search)
-  const version = urlParams.get(UrlParam.Version)
+  const version = urlParams.get(QueryParam.Version)
   if (version === null) {
     return "1"
   }
@@ -120,7 +120,7 @@ export const ParametersParam: QueryParamConfig<
 const useEvent = (initial?: EventType) => {
   const [typeString, setTypeLocal] = useHydratedPersistantString(
     StorageKey.ga4EventBuilderLastEventType,
-    UrlParam.EventType,
+    QueryParam.EventType,
     initial || EventType.SelectContent
   )
 
@@ -128,21 +128,21 @@ const useEvent = (initial?: EventType) => {
 
   const [eventName, setEventName] = useHydratedPersistantString(
     StorageKey.ga4EventBuilderEventName,
-    UrlParam.EventName
+    QueryParam.EventName
   )
 
   const categories = useMemo(() => suggestedEventFor(type).categories, [type])
 
   const [parameters, setParameters] = useHydratedPersistantObject(
     StorageKey.ga4EventBuilderParameters,
-    UrlParam.Parameters,
+    QueryParam.Parameters,
     ParametersParam,
     suggestedEventFor(type).parameters
   )
 
   const [items, setItems] = useHydratedPersistantObject(
     StorageKey.ga4EventBuilderItems,
-    UrlParam.Items,
+    QueryParam.Items,
     ItemsParam
   )
 
