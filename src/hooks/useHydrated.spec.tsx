@@ -49,17 +49,18 @@ describe("useHydratedPersistantString", () => {
   })
 })
 
-describe("use", () => {
-  test("", () => {
+describe("useKeyedHydratedPersistantObject", () => {
+  test("grabs value from localStorage for first render.", () => {
     const key = "a" as StorageKey
+    const id = "my-id"
+    const expectedValue = "abcdef"
     const paramName = "paramName"
-    const complexValue = { id: "a", value: "aaa" }
-    // TODO - put the key in localStorage so this actually has something to
-    // grab for the first render.
+    window.localStorage.setItem(key, JSON.stringify({ value: id }))
+    const complexValue = { id: "my-id", value: expectedValue }
     const { result } = renderHook(
       () => {
         const getValue = useCallback((key: string | undefined) => {
-          if (key === "a") {
+          if (key === id) {
             return complexValue
           } else {
             return undefined
@@ -75,8 +76,6 @@ describe("use", () => {
         wrapper: wrapperFor({}),
       }
     )
-    console.log("current", result.current)
-    console.log("error", result.error)
-    expect(result.current[0]?.value).toEqual("hi")
+    expect(result.current[0]?.value).toEqual(expectedValue)
   })
 })

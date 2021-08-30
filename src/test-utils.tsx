@@ -28,6 +28,7 @@ import { PartialDeep } from "type-fest"
 interface WithProvidersConfig {
   path?: string
   isLoggedIn?: boolean
+  clearStorage?: boolean
 }
 
 export const wrapperFor: (options: {
@@ -35,11 +36,12 @@ export const wrapperFor: (options: {
   isLoggedIn?: boolean
   setUp?: () => void
   gapi?: PartialDeep<typeof gapi>
-}) => React.FC = ({ path, isLoggedIn, setUp, gapi }) => {
+  clearStorage?: boolean
+}) => React.FC = ({ path, isLoggedIn, setUp, gapi, clearStorage }) => {
   path = path || "/"
   isLoggedIn = isLoggedIn === undefined ? true : isLoggedIn
 
-  window.localStorage.clear()
+  clearStorage && window.localStorage.clear()
   setUp && setUp()
 
   const history = createHistory(createMemorySource(path))
@@ -69,7 +71,10 @@ export const TestWrapper = wrapperFor({})
 
 export const withProviders = (
   component: JSX.Element | null,
-  { path, isLoggedIn }: WithProvidersConfig = { path: "/", isLoggedIn: true }
+  { path, isLoggedIn, clearStorage }: WithProvidersConfig = {
+    path: "/",
+    isLoggedIn: true,
+  }
 ): {
   wrapped: JSX.Element
   history: History
@@ -79,7 +84,7 @@ export const withProviders = (
   path = path || "/"
   isLoggedIn = isLoggedIn === undefined ? true : isLoggedIn
 
-  window.localStorage.clear()
+  clearStorage && window.localStorage.clear()
 
   const history = createHistory(createMemorySource(path))
   const store = makeStore()
