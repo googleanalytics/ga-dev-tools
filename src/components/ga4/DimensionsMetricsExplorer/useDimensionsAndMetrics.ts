@@ -28,7 +28,7 @@ export const DimensionsAndMetricsRequestCtx = React.createContext<DimensionsAndM
 
 export const useDimensionsAndMetrics = (
   aps: AccountProperty
-): DimensionsAndMetricsRequest => {
+): Requestable<Successful> => {
   const gapi = useSelector((state: AppState) => state.gapi)
   const dataAPI = React.useMemo(() => gapi?.client.analyticsdata, [gapi])
 

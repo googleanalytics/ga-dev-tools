@@ -192,7 +192,6 @@ const BasicReport = () => {
             showAdvanced={showAdvanced}
           />
           <MetricsPicker
-            aps={aps}
             required={!metricOrDimensionSelected}
             setMetricIDs={setMetricIDs}
             metrics={metrics}
@@ -204,7 +203,6 @@ const BasicReport = () => {
             }
           />
           <DimensionsPicker
-            aps={aps}
             required={!metricOrDimensionSelected}
             setDimensionIDs={setDimensionIDs}
             dimensions={dimensions}
@@ -217,7 +215,6 @@ const BasicReport = () => {
           />
 
           <OrderBys
-            aps={aps}
             metric
             metricOptions={metrics}
             dimension
@@ -241,7 +238,6 @@ const BasicReport = () => {
             }
           >
             <Filter
-              aps={aps}
               showAdvanced={showAdvanced}
               storageKey={StorageKey.ga4RequestComposerBasicDimensionFilter}
               type={FilterType.Dimension}
@@ -260,7 +256,6 @@ const BasicReport = () => {
             }
           >
             <Filter
-              aps={aps}
               showAdvanced={showAdvanced}
               storageKey={StorageKey.ga4RequestComposerBasicMetricFilter}
               type={FilterType.Metric}
@@ -288,7 +283,6 @@ const BasicReport = () => {
           )}
           {showAdvanced && (
             <CohortSpec
-              aps={aps}
               cohortSpec={cohortSpec}
               setCohortSpec={setCohortSpec}
               dimensions={dimensions}
