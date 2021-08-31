@@ -32,9 +32,15 @@ import useCohortRequestParameters from "./useCohortRequestParameters"
 import useCohortRequest from "./useCohortRequest"
 import { ReportsRequest } from "../RequestComposer"
 import { UAAccountPropertyView } from "@/components/ViewSelector/useAccountPropertyView"
-import useUADimensionsAndMetrics from "@/components/UAPickers/useDimensionsAndMetrics"
+import useUADimensionsAndMetrics, {
+  UADimensionsAndMetricsRequestCtx,
+} from "@/components/UAPickers/useDimensionsAndMetrics"
 import { successful } from "@/types"
 import { Column } from "@/types/ua"
+import {
+  UASegmentsRequestCtx,
+  useUASegments,
+} from "@/components/UAPickers/useUASegments"
 
 interface CohortRequestProps {
   apv: UAAccountPropertyView
@@ -61,6 +67,7 @@ const CohortRequest: React.FC<CohortRequestProps> = ({
     setShowSegmentDefinition,
   ] = usePersistentBoolean(StorageKey.cohortRequestShowSegmentDefinition, false)
   const uaDimensionsAndMetricsRequest = useUADimensionsAndMetrics(apv)
+  const segmentsRequest = useUASegments()
   const {
     viewId,
     setViewId,
@@ -74,7 +81,8 @@ const CohortRequest: React.FC<CohortRequestProps> = ({
     setSamplingLevel,
   } = useCohortRequestParameters(
     apv,
-    successful(uaDimensionsAndMetricsRequest)?.columns
+    successful(uaDimensionsAndMetricsRequest)?.columns,
+    successful(segmentsRequest)?.segments
   )
   const requestObject = useCohortRequest({
     viewId,
@@ -95,7 +103,9 @@ const CohortRequest: React.FC<CohortRequestProps> = ({
   )
 
   return (
-    <>
+    <UADimensionsAndMetricsRequestCtx.Provider
+      value={uaDimensionsAndMetricsRequest}
+    >
       <section className={controlWidth}>
         <LinkedTextField
           href={linkFor("ReportRequest.FIELDS.view_id")}
@@ -118,11 +128,13 @@ const CohortRequest: React.FC<CohortRequestProps> = ({
           storageKey={StorageKey.cohortRequestCohortSize}
           helperText="The size of the cohort to use in the request."
         />
-        <SegmentPicker
-          segment={selectedSegment}
-          setSegmentID={setSelectedSegmentID}
-          showSegmentDefinition={showSegmentDefinition}
-        />
+        <UASegmentsRequestCtx.Provider value={segmentsRequest}>
+          <SegmentPicker
+            segment={selectedSegment}
+            setSegmentID={setSelectedSegmentID}
+            showSegmentDefinition={showSegmentDefinition}
+          />
+        </UASegmentsRequestCtx.Provider>
         <LabeledCheckbox
           className={classes.showSegments}
           checked={showSegmentDefinition}
@@ -136,7 +148,7 @@ const CohortRequest: React.FC<CohortRequestProps> = ({
         />
         {children}
       </section>
-    </>
+    </UADimensionsAndMetricsRequestCtx.Provider>
   )
 }
 

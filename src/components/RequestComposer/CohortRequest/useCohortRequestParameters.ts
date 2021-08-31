@@ -6,12 +6,11 @@ import { useKeyedHydratedPersistantObject } from "@/hooks/useHydrated"
 import { StorageKey } from "@/constants"
 import { QueryParam } from "../RequestComposer"
 import { Column, Segment } from "@/types/ua"
-import { useUASegments } from "@/components/UAPickers/useUASegments"
-import { RequestStatus } from "@/types"
 
 const useCohortRequestParameters = (
   apv: UAAccountPropertyView,
-  columns: Column[] | undefined
+  columns: Column[] | undefined,
+  segments: Segment[] | undefined
 ) => {
   const [viewId, setViewId] = useState("")
 
@@ -36,18 +35,14 @@ const useCohortRequestParameters = (
 
   const [samplingLevel, setSamplingLevel] = useState<V4SamplingLevel>()
 
-  const segmentsRequest = useUASegments()
   const getSegmentByID = useCallback(
     (id: string | undefined) => {
-      if (
-        id === undefined ||
-        segmentsRequest.status !== RequestStatus.Successful
-      ) {
+      if (id === undefined || segments === undefined) {
         return undefined
       }
-      return segmentsRequest.segments.find(c => c.id === id)
+      return segments.find(c => c.id === id)
     },
-    [segmentsRequest]
+    [segments]
   )
 
   const [

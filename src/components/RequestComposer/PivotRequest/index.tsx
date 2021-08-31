@@ -33,8 +33,14 @@ import { linkFor, titleFor } from "../HistogramRequest"
 import usePivotRequestParameters from "./usePivotRequestParameters"
 import usePivotRequest from "./usePivotRequest"
 import { UAAccountPropertyView } from "@/components/ViewSelector/useAccountPropertyView"
-import useUADimensionsAndMetrics from "@/components/UAPickers/useDimensionsAndMetrics"
+import useUADimensionsAndMetrics, {
+  UADimensionsAndMetricsRequestCtx,
+} from "@/components/UAPickers/useDimensionsAndMetrics"
 import { successful } from "@/types"
+import {
+  UASegmentsRequestCtx,
+  useUASegments,
+} from "@/components/UAPickers/useUASegments"
 
 interface PivotRequestProps {
   apv: UAAccountPropertyView
@@ -62,6 +68,7 @@ const PivotRequest: React.FC<PivotRequestProps> = ({
   ] = usePersistentBoolean(StorageKey.pivotRequestShowSegmentDefinition, false)
 
   const uaDimensionsAndMetricsRequest = useUADimensionsAndMetrics(apv)
+  const segmentsRequest = useUASegments()
 
   const {
     viewId,
@@ -94,7 +101,8 @@ const PivotRequest: React.FC<PivotRequestProps> = ({
     setPageSize,
   } = usePivotRequestParameters(
     apv,
-    successful(uaDimensionsAndMetricsRequest)?.columns
+    successful(uaDimensionsAndMetricsRequest)?.columns,
+    successful(segmentsRequest)?.segments
   )
   const requestObject = usePivotRequest({
     viewId,
@@ -118,7 +126,9 @@ const PivotRequest: React.FC<PivotRequestProps> = ({
   }, [requestObject, setRequestObject])
 
   return (
-    <>
+    <UADimensionsAndMetricsRequestCtx.Provider
+      value={uaDimensionsAndMetricsRequest}
+    >
       <section className={controlWidth}>
         <LinkedTextField
           href={linkFor("ReportRequest.FIELDS.view_id")}
@@ -193,11 +203,13 @@ const PivotRequest: React.FC<PivotRequestProps> = ({
           onChange={setMaxGroupCount}
           helperText="The maximum number of groups to return."
         />
-        <SegmentPicker
-          segment={selectedSegment}
-          setSegmentID={setSelectedSegmentID}
-          showSegmentDefinition={showSegmentDefinition}
-        />
+        <UASegmentsRequestCtx.Provider value={segmentsRequest}>
+          <SegmentPicker
+            segment={selectedSegment}
+            setSegmentID={setSelectedSegmentID}
+            showSegmentDefinition={showSegmentDefinition}
+          />
+        </UASegmentsRequestCtx.Provider>
         <LabeledCheckbox
           className={classes.showSegments}
           checked={showSegmentDefinition}
@@ -236,7 +248,7 @@ const PivotRequest: React.FC<PivotRequestProps> = ({
         <br />
         {children}
       </section>
-    </>
+    </UADimensionsAndMetricsRequestCtx.Provider>
   )
 }
 

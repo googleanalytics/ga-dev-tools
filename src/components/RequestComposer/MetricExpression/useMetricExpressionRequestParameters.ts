@@ -10,12 +10,11 @@ import {
 } from "@/hooks/useHydrated"
 import { QueryParam } from "../RequestComposer"
 import { Column, Segment } from "@/types/ua"
-import { useUASegments } from "@/components/UAPickers/useUASegments"
-import { RequestStatus } from "@/types"
 
 const useMetricExpressionRequestParameters = (
   apv: UAAccountPropertyView,
-  columns: Column[] | undefined
+  columns: Column[] | undefined,
+  segments: Segment[] | undefined
 ) => {
   const [viewId, setViewId] = useState("")
   const [startDate, setStartDate] = usePersistentString(
@@ -59,18 +58,14 @@ const useMetricExpressionRequestParameters = (
     ""
   )
 
-  const segmentsRequest = useUASegments()
   const getSegmentByID = useCallback(
     (id: string | undefined) => {
-      if (
-        id === undefined ||
-        segmentsRequest.status !== RequestStatus.Successful
-      ) {
+      if (id === undefined || segments === undefined) {
         return undefined
       }
-      return segmentsRequest.segments.find(c => c.id === id)
+      return segments.find(c => c.id === id)
     },
-    [segmentsRequest]
+    [segments]
   )
 
   const [
