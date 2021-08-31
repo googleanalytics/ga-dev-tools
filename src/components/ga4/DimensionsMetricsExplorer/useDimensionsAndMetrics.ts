@@ -20,9 +20,15 @@ export type Successful = {
   }>
 }
 
+export type DimensionsAndMetricsRequest = Requestable<Successful>
+
+export const DimensionsAndMetricsRequestCtx = React.createContext<DimensionsAndMetricsRequest>(
+  { status: RequestStatus.NotStarted }
+)
+
 export const useDimensionsAndMetrics = (
   aps: AccountProperty
-): Requestable<Successful> => {
+): DimensionsAndMetricsRequest => {
   const gapi = useSelector((state: AppState) => state.gapi)
   const dataAPI = React.useMemo(() => gapi?.client.analyticsdata, [gapi])
 

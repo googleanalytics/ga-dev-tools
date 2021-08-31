@@ -10,18 +10,17 @@ import useAvailableColumns from "@/components/GA4Pickers/useAvailableColumns"
 import { DateRange } from "../DateRanges"
 import { FilterExpression } from "../Filter"
 import { MetricAggregation } from "../MetricAggregations"
-import { AccountProperty } from "../../StreamPicker/useAccountProperty"
 import { useKeyedHydratedPersistantArray } from "@/hooks/useHydrated"
 import { QueryParam } from "."
-import { useDimensionsAndMetrics } from "../../DimensionsMetricsExplorer/useDimensionsAndMetrics"
-import { successful } from "@/types"
+import { DimensionsAndMetricsRequest } from "../../DimensionsMetricsExplorer/useDimensionsAndMetrics"
+import { RequestStatus } from "@/types"
 
 type OrderBy = gapi.client.analyticsdata.OrderBy
 type CohortSpec = gapi.client.analyticsdata.CohortSpec
 
-const useInputs = (aps: AccountProperty) => {
-  const dimensionsAndMetricsRequest = useDimensionsAndMetrics(aps)
-
+const useInputs = (
+  dimensionsAndMetricsRequest: DimensionsAndMetricsRequest
+) => {
   const [showRequestJSON, setShowRequestJSON] = usePersistentBoolean(
     StorageKey.ga4RequestComposerBasicShowRequestJSON,
     true
@@ -32,11 +31,15 @@ const useInputs = (aps: AccountProperty) => {
 
   const getDimensionsByIDs = useCallback(
     (ids: string[] | undefined) => {
-      if (ids === undefined || !successful(dimensionsAndMetricsRequest)) {
+      if (
+        ids === undefined ||
+        dimensionsAndMetricsRequest.status !== RequestStatus.Successful
+      ) {
         return undefined
       }
-      const { dimensions } = successful(dimensionsAndMetricsRequest)!
-      return dimensions.filter(m => ids.includes(m.apiName!))
+      return dimensionsAndMetricsRequest.dimensions.filter(m =>
+        ids.includes(m.apiName!)
+      )
     },
     [dimensionsAndMetricsRequest]
   )
@@ -51,11 +54,15 @@ const useInputs = (aps: AccountProperty) => {
 
   const getMetricsByIDs = useCallback(
     (ids: string[] | undefined) => {
-      if (ids === undefined || !successful(dimensionsAndMetricsRequest)) {
+      if (
+        ids === undefined ||
+        dimensionsAndMetricsRequest.status !== RequestStatus.Successful
+      ) {
         return undefined
       }
-      const { metrics } = successful(dimensionsAndMetricsRequest)!
-      return metrics.filter(m => ids.includes(m.apiName!))
+      return dimensionsAndMetricsRequest.metrics.filter(m =>
+        ids.includes(m.apiName!)
+      )
     },
     [dimensionsAndMetricsRequest]
   )
@@ -90,7 +97,7 @@ const useInputs = (aps: AccountProperty) => {
   const { dimensionOptions } = useAvailableColumns({
     selectedMetrics: metrics,
     selectedDimensions: dimensions,
-    aps,
+    request: dimensionsAndMetricsRequest,
   })
 
   const [cohortSpec, setCohortSpec] = usePersistantObject<CohortSpec>(
