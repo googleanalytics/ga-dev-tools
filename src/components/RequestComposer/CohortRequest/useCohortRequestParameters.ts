@@ -1,20 +1,17 @@
 import { useState, useMemo, useCallback } from "react"
 
-import {
-  V4SamplingLevel,
-  CohortSize,
-  UASegment,
-  UAColumn,
-  useUASegments,
-} from "@/components/UAPickers"
+import { V4SamplingLevel, CohortSize } from "@/components/UAPickers"
 import { UAAccountPropertyView } from "@/components/ViewSelector/useAccountPropertyView"
 import { useKeyedHydratedPersistantObject } from "@/hooks/useHydrated"
 import { StorageKey } from "@/constants"
 import { QueryParam } from "../RequestComposer"
+import { Column, Segment } from "@/types/ua"
+import { useUASegments } from "@/components/UAPickers/useUASegments"
+import { RequestStatus } from "@/types"
 
 const useCohortRequestParameters = (
   apv: UAAccountPropertyView,
-  columns: UAColumn[] | undefined
+  columns: Column[] | undefined
 ) => {
   const [viewId, setViewId] = useState("")
 
@@ -31,7 +28,7 @@ const useCohortRequestParameters = (
   const [
     selectedMetric,
     setSelectedMetricID,
-  ] = useKeyedHydratedPersistantObject<UAColumn>(
+  ] = useKeyedHydratedPersistantObject<Column>(
     StorageKey.requestComposerCohortMetric,
     QueryParam.Metric,
     getColumnByID
@@ -39,21 +36,24 @@ const useCohortRequestParameters = (
 
   const [samplingLevel, setSamplingLevel] = useState<V4SamplingLevel>()
 
-  const segments = useUASegments()
+  const segmentsRequest = useUASegments()
   const getSegmentByID = useCallback(
     (id: string | undefined) => {
-      if (id === undefined || segments === undefined) {
+      if (
+        id === undefined ||
+        segmentsRequest.status !== RequestStatus.Successful
+      ) {
         return undefined
       }
-      return segments.find(c => c.id === id)
+      return segmentsRequest.segments.find(c => c.id === id)
     },
-    [segments]
+    [segmentsRequest]
   )
 
   const [
     selectedSegment,
     setSelectedSegmentID,
-  ] = useKeyedHydratedPersistantObject<UASegment>(
+  ] = useKeyedHydratedPersistantObject<Segment>(
     StorageKey.requestComposerCohortSegment,
     QueryParam.Segment,
     getSegmentByID

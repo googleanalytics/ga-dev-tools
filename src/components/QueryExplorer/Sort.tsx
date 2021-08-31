@@ -19,9 +19,9 @@ import TextField from "@material-ui/core/TextField"
 import makeStyles from "@material-ui/core/styles/makeStyles"
 import Autocomplete from "@material-ui/lab/Autocomplete"
 
-import { Column } from "@/api"
 import { SortableColumn } from "."
 import { Dispatch } from "@/types"
+import { Column } from "@/types/ua"
 
 const useStyles = makeStyles(_ => ({
   conceptOption: {

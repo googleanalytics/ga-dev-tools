@@ -26,13 +26,14 @@ import {
   DimensionsPicker,
   SegmentPicker,
   V4SamplingLevelPicker,
-  useUADimensionsAndMetrics,
 } from "@/components/UAPickers"
 import useHistogramRequest from "./useHistogramRequest"
 import useHistogramRequestParameters from "./useHistogramRequestParameters"
 import { ReportsRequest } from "../RequestComposer"
 import LabeledCheckbox from "@/components/LabeledCheckbox"
 import { UAAccountPropertyView } from "@/components/ViewSelector/useAccountPropertyView"
+import { successful } from "@/types"
+import useUADimensionsAndMetrics from "@/components/UAPickers/useDimensionsAndMetrics"
 
 export const linkFor = (hash: string) =>
   `https://developers.google.com/analytics/devguides/reporting/core/v4/rest/v4/reports/batchGet#${hash}`
@@ -66,7 +67,7 @@ const HistogramRequest: React.FC<HistogramRequestProps> = ({
     StorageKey.histogramRequestShowSegmentDefinition,
     false
   )
-  const { columns, dimensions, metrics } = useUADimensionsAndMetrics(apv)
+  const uaDimensionsAndMetricsRequest = useUADimensionsAndMetrics(apv)
   const {
     viewId,
     setViewId,
@@ -86,7 +87,10 @@ const HistogramRequest: React.FC<HistogramRequestProps> = ({
     setSelectedSegmentID,
     samplingLevel,
     setSamplingLevel,
-  } = useHistogramRequestParameters(apv, columns)
+  } = useHistogramRequestParameters(
+    apv,
+    successful(uaDimensionsAndMetricsRequest)?.columns
+  )
   const requestObject = useHistogramRequest({
     viewId,
     startDate,

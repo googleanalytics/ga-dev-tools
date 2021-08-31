@@ -27,13 +27,14 @@ import {
   DimensionsPicker,
   SegmentPicker,
   V4SamplingLevelPicker,
-  useUADimensionsAndMetrics,
 } from "@/components/UAPickers"
 import { ReportsRequest } from "../RequestComposer"
 import { linkFor, titleFor } from "../HistogramRequest"
 import usePivotRequestParameters from "./usePivotRequestParameters"
 import usePivotRequest from "./usePivotRequest"
 import { UAAccountPropertyView } from "@/components/ViewSelector/useAccountPropertyView"
+import useUADimensionsAndMetrics from "@/components/UAPickers/useDimensionsAndMetrics"
+import { successful } from "@/types"
 
 interface PivotRequestProps {
   apv: UAAccountPropertyView
@@ -60,7 +61,7 @@ const PivotRequest: React.FC<PivotRequestProps> = ({
     setShowSegmentDefinition,
   ] = usePersistentBoolean(StorageKey.pivotRequestShowSegmentDefinition, false)
 
-  const { columns } = useUADimensionsAndMetrics(apv)
+  const uaDimensionsAndMetricsRequest = useUADimensionsAndMetrics(apv)
 
   const {
     viewId,
@@ -91,7 +92,10 @@ const PivotRequest: React.FC<PivotRequestProps> = ({
     setPageToken,
     pageSize,
     setPageSize,
-  } = usePivotRequestParameters(apv, columns)
+  } = usePivotRequestParameters(
+    apv,
+    successful(uaDimensionsAndMetricsRequest)?.columns
+  )
   const requestObject = usePivotRequest({
     viewId,
     startDate,

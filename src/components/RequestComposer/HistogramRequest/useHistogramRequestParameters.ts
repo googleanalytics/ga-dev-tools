@@ -2,18 +2,16 @@ import { useState, useMemo, useCallback } from "react"
 
 import { usePersistentString } from "@/hooks"
 import { StorageKey } from "@/constants"
-import {
-  V4SamplingLevel,
-  UASegment,
-  useUASegments,
-} from "@/components/UAPickers"
+import { V4SamplingLevel } from "@/components/UAPickers"
 import { UAAccountPropertyView } from "@/components/ViewSelector/useAccountPropertyView"
 import {
   useKeyedHydratedPersistantArray,
   useKeyedHydratedPersistantObject,
 } from "@/hooks/useHydrated"
-import { Column } from "@/api"
 import { QueryParam } from "../RequestComposer"
+import { Column, Segment } from "@/types/ua"
+import { useUASegments } from "@/components/UAPickers/useUASegments"
+import { RequestStatus } from "@/types"
 
 const useHistogramRequestParameters = (
   apv: UAAccountPropertyView,
@@ -63,21 +61,24 @@ const useHistogramRequestParameters = (
     "ga:browser=~^Chrome"
   )
 
-  const segments = useUASegments()
+  const segmentsRequest = useUASegments()
   const getSegmentByID = useCallback(
     (id: string | undefined) => {
-      if (id === undefined || segments === undefined) {
+      if (
+        id === undefined ||
+        segmentsRequest.status !== RequestStatus.Successful
+      ) {
         return undefined
       }
-      return segments.find(c => c.id === id)
+      return segmentsRequest.segments.find(c => c.id === id)
     },
-    [segments]
+    [segmentsRequest]
   )
 
   const [
     selectedSegment,
     setSelectedSegmentID,
-  ] = useKeyedHydratedPersistantObject<UASegment>(
+  ] = useKeyedHydratedPersistantObject<Segment>(
     StorageKey.requestComposerHistogramSegment,
     QueryParam.Segment,
     getSegmentByID

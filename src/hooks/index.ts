@@ -99,23 +99,35 @@ const getObjectFromLocalStorage = <T>(
 export const usePersistantObject = <T extends {}>(
   key: StorageKey,
   defaultValue?: T
-): [T | undefined, React.Dispatch<React.SetStateAction<T | undefined>>] => {
-  const [value, setValue] = useState(() => {
+): [T | undefined, Dispatch<T | undefined>] => {
+  const [localValue, setValueLocal] = useState(() => {
     return getObjectFromLocalStorage(key, defaultValue)
   })
 
-  useEffect(() => {
-    setValue(getObjectFromLocalStorage(key, defaultValue))
-  }, [key, setValue, defaultValue])
+  const setValue: Dispatch<T | undefined> = useCallback(
+    v => {
+      setValueLocal(old => {
+        let nu: T | undefined = undefined
+        if (v instanceof Function) {
+          nu = v(old)
+        } else {
+          nu = v
+        }
+        if (!IS_SSR) {
+          window.localStorage.setItem(key, JSON.stringify(nu))
+        }
+        return nu
+      })
+    },
+    [key]
+  )
 
-  useEffect(() => {
-    if (IS_SSR) {
-      return
-    }
-    window.localStorage.setItem(key, JSON.stringify(value))
-  }, [value, key])
+  const fromStorage = React.useMemo(
+    () => getObjectFromLocalStorage(key, defaultValue) || localValue,
+    [key, localValue, defaultValue]
+  )
 
-  return [value, setValue]
+  return [fromStorage, setValue]
 }
 
 const uaToast = (tool: string) => `Redirecting to the UA ${tool}.`

@@ -24,8 +24,8 @@ import { Link } from "gatsby"
 import { sortBy } from "lodash"
 
 import Layout from "@/components/Layout"
-import { Column } from "@/api"
 import { CopyIconButton } from "@/components/CopyButton"
+import { Column } from "./common-types"
 
 type GroupInfoTemplateProps = {
   pageContext: {

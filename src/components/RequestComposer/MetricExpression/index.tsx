@@ -25,7 +25,6 @@ import LabeledCheckbox from "@/components/LabeledCheckbox"
 import {
   DimensionsPicker,
   SegmentPicker,
-  useUADimensionsAndMetrics,
   V4SamplingLevelPicker,
 } from "@/components/UAPickers"
 import { linkFor, titleFor } from "../HistogramRequest/"
@@ -33,6 +32,8 @@ import useMetricExpressionRequestParameters from "./useMetricExpressionRequestPa
 import useMetricExpressionRequest from "./useMetricExpressionRequest"
 import { ReportsRequest } from "../RequestComposer"
 import { UAAccountPropertyView } from "@/components/ViewSelector/useAccountPropertyView"
+import useUADimensionsAndMetrics from "@/components/UAPickers/useDimensionsAndMetrics"
+import { successful } from "@/types"
 
 interface MetricExpressionRequestProps {
   apv: UAAccountPropertyView
@@ -61,7 +62,7 @@ const MetricExpression: React.FC<MetricExpressionRequestProps> = ({
     StorageKey.metricExpressionRequestShowSegmentDefinition,
     false
   )
-  const { columns } = useUADimensionsAndMetrics(apv)
+  const uaDimensionsAndMetricsRequest = useUADimensionsAndMetrics(apv)
   const {
     viewId,
     setViewId,
@@ -85,7 +86,10 @@ const MetricExpression: React.FC<MetricExpressionRequestProps> = ({
     setPageSize,
     pageToken,
     setPageToken,
-  } = useMetricExpressionRequestParameters(apv, columns)
+  } = useMetricExpressionRequestParameters(
+    apv,
+    successful(uaDimensionsAndMetricsRequest)?.columns
+  )
   const requestObject = useMetricExpressionRequest({
     viewId,
     samplingLevel,

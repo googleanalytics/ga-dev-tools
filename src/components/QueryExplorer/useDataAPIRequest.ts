@@ -1,9 +1,9 @@
 import * as React from "react"
 
-import { Segment, Column, useApi } from "@/api"
 import { V3SamplingLevel } from "@/components/UAPickers"
 import { SortableColumn } from "."
 import { useSelector } from "react-redux"
+import { Column, Segment } from "@/types/ua"
 
 export enum APIStatus {
   Error = "error",
@@ -62,7 +62,7 @@ export const useDataAPIRequest: UseDataAPIRequest = ({
   filters,
   sort,
 }) => {
-  const api = useApi()
+  const gapi = useSelector((a: AppState) => a.gapi)
   const user = useSelector((a: AppState) => a.user)
 
   const [queryResponse, setQueryResponse] = React.useState<QueryResponse>()
@@ -86,7 +86,7 @@ export const useDataAPIRequest: UseDataAPIRequest = ({
     (cb: () => void) => {
       if (
         viewID === undefined ||
-        api === undefined ||
+        gapi === undefined ||
         selectedMetrics === undefined ||
         selectedMetrics.length === 0 ||
         startDate === undefined ||
@@ -128,7 +128,7 @@ export const useDataAPIRequest: UseDataAPIRequest = ({
           .join(",")
       }
       setQueryResponse({ status: APIStatus.InProgress })
-      api.data.ga
+      gapi.client.analytics.data.ga
         .get(apiObject)
         .then(response => {
           setQueryResponse({
@@ -154,7 +154,7 @@ export const useDataAPIRequest: UseDataAPIRequest = ({
       filters,
       selectedSamplingValue,
       includeEmptyRows,
-      api,
+      gapi,
     ]
   )
 

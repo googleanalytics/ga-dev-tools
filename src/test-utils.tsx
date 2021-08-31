@@ -21,8 +21,8 @@ import {
   LocationProvider,
   History,
 } from "@reach/router"
-import { AccountSummary, Column } from "./api"
 import { QueryParamProvider } from "use-query-params"
+import { AccountSummary, Column } from "./types/ua"
 
 interface WithProvidersConfig {
   path?: string

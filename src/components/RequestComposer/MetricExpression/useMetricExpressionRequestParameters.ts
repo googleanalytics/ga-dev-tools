@@ -2,22 +2,20 @@ import { useState, useMemo, useCallback } from "react"
 
 import { usePersistentString } from "@/hooks"
 import { StorageKey } from "@/constants"
-import {
-  V4SamplingLevel,
-  UASegment,
-  UAColumn,
-  useUASegments,
-} from "@/components/UAPickers"
+import { V4SamplingLevel } from "@/components/UAPickers"
 import { UAAccountPropertyView } from "@/components/ViewSelector/useAccountPropertyView"
 import {
   useKeyedHydratedPersistantArray,
   useKeyedHydratedPersistantObject,
 } from "@/hooks/useHydrated"
 import { QueryParam } from "../RequestComposer"
+import { Column, Segment } from "@/types/ua"
+import { useUASegments } from "@/components/UAPickers/useUASegments"
+import { RequestStatus } from "@/types"
 
 const useMetricExpressionRequestParameters = (
   apv: UAAccountPropertyView,
-  columns: UAColumn[] | undefined
+  columns: Column[] | undefined
 ) => {
   const [viewId, setViewId] = useState("")
   const [startDate, setStartDate] = usePersistentString(
@@ -50,7 +48,7 @@ const useMetricExpressionRequestParameters = (
   const [
     selectedDimensions,
     setSelectedDimensionIDs,
-  ] = useKeyedHydratedPersistantArray<UAColumn>(
+  ] = useKeyedHydratedPersistantArray<Column>(
     StorageKey.requestComposerMetricExpressionDimensions,
     QueryParam.Dimensions,
     getColumnsByIDs
@@ -61,21 +59,24 @@ const useMetricExpressionRequestParameters = (
     ""
   )
 
-  const segments = useUASegments()
+  const segmentsRequest = useUASegments()
   const getSegmentByID = useCallback(
     (id: string | undefined) => {
-      if (id === undefined || segments === undefined) {
+      if (
+        id === undefined ||
+        segmentsRequest.status !== RequestStatus.Successful
+      ) {
         return undefined
       }
-      return segments.find(c => c.id === id)
+      return segmentsRequest.segments.find(c => c.id === id)
     },
-    [segments]
+    [segmentsRequest]
   )
 
   const [
     selectedSegment,
     setSelectedSegmentID,
-  ] = useKeyedHydratedPersistantObject<UASegment>(
+  ] = useKeyedHydratedPersistantObject<Segment>(
     StorageKey.requestComposerMetricExpressionSegment,
     QueryParam.Segment,
     getSegmentByID

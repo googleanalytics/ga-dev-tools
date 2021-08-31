@@ -11,7 +11,8 @@ import Typography from "@material-ui/core/Typography"
 import { CopyIconButton } from "@/components/CopyButton"
 import HighlightText from "./HighlightText"
 import Spinner from "@/components/Spinner"
-import { UAAccountPropertyView } from "../ViewSelector/useAccountPropertyView"
+import { RequestStatus } from "@/types"
+import useFlattenedViews from "../ViewSelector/useFlattenedViews"
 
 const useStyles = makeStyles(theme => ({
   id: {
@@ -34,7 +35,7 @@ const useStyles = makeStyles(theme => ({
 }))
 
 interface ViewTableProps {
-  views: UAAccountPropertyView[] | undefined
+  flattenedViewsRequest: ReturnType<typeof useFlattenedViews>
   className?: string
   search?: string
 }
@@ -79,7 +80,11 @@ const textClamp = (text: string, maxWidth: number) => {
   }
 }
 
-const ViewsTable: React.FC<ViewTableProps> = ({ views, className, search }) => {
+const ViewsTable: React.FC<ViewTableProps> = ({
+  flattenedViewsRequest,
+  className,
+  search,
+}) => {
   const classes = useStyles()
   return (
     <Table
@@ -96,93 +101,99 @@ const ViewsTable: React.FC<ViewTableProps> = ({ views, className, search }) => {
         </TableRow>
       </TableHead>
       <TableBody>
-        {views !== undefined ? (
-          views.map(apv => {
-            const viewUrl = `https://analytics.google.com/analytics/web/#/report/vistors-overview/a${
-              apv!.account!.id
-            }w${apv!.property!.internalWebPropertyId}p${apv!.view!.id}`
-            return (
-              <TableRow
-                key={`${apv!.account!.name}-${apv!.property!.name}-${
-                  apv!.view!.name
-                }`}
-              >
-                <ViewCell
-                  textToCopy={apv!.account!.id!}
-                  copyToolTip="Copy account ID"
-                  firstRow={
-                    <HighlightText
-                      className={classes.mark}
-                      search={search}
-                      text={textClamp(apv!.account!.name!, maxCellWidth)}
-                    />
-                  }
-                  secondRow={
-                    <HighlightText
-                      className={classes.mark}
-                      search={search}
-                      text={apv!.account!.id!}
-                    />
-                  }
-                />
-                <ViewCell
-                  textToCopy={apv!.property!.id!}
-                  copyToolTip="Copy property ID"
-                  firstRow={
-                    <HighlightText
-                      className={classes.mark}
-                      search={search}
-                      text={textClamp(apv!.property!.name!, maxCellWidth)}
-                    />
-                  }
-                  secondRow={
-                    <HighlightText
-                      className={classes.mark}
-                      search={search}
-                      text={apv!.property!.id!}
-                    />
-                  }
-                />
-                <ViewCell
-                  textToCopy={apv!.view!.id!}
-                  copyToolTip="Copy view ID"
-                  firstRow={
-                    <a
-                      className={classes.link}
-                      href={viewUrl}
-                      title="Open this view in Google Analytics"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
+        {flattenedViewsRequest.status === RequestStatus.Successful ? (
+          flattenedViewsRequest.flattenedViews.length === 0 ? (
+            <TableRow data-testid="components/ViewTable/no-results">
+              <TableCell colSpan={4}>No results</TableCell>
+            </TableRow>
+          ) : (
+            flattenedViewsRequest.flattenedViews.map(apv => {
+              const viewUrl = `https://analytics.google.com/analytics/web/#/report/vistors-overview/a${
+                apv!.account!.id
+              }w${apv!.property!.internalWebPropertyId}p${apv!.view!.id}`
+              return (
+                <TableRow
+                  key={`${apv!.account!.name}-${apv!.property!.name}-${
+                    apv!.view!.name
+                  }`}
+                >
+                  <ViewCell
+                    textToCopy={apv!.account!.id!}
+                    copyToolTip="Copy account ID"
+                    firstRow={
                       <HighlightText
                         className={classes.mark}
                         search={search}
-                        text={textClamp(apv!.view!.name!, maxCellWidth)}
+                        text={textClamp(apv!.account!.name!, maxCellWidth)}
                       />
-                    </a>
-                  }
-                  secondRow={
-                    <HighlightText
-                      className={classes.mark}
-                      search={search}
-                      text={apv!.view!.id!}
-                    />
-                  }
-                />
-                <ViewCell
-                  textToCopy={`ga:${apv!.view!.id!}`}
-                  copyToolTip="Copy table ID"
-                  firstRow={
-                    <HighlightText
-                      className={classes.mark}
-                      search={search}
-                      text={`ga:${apv!.view!.id!}`}
-                    />
-                  }
-                />
-              </TableRow>
-            )
-          })
+                    }
+                    secondRow={
+                      <HighlightText
+                        className={classes.mark}
+                        search={search}
+                        text={apv!.account!.id!}
+                      />
+                    }
+                  />
+                  <ViewCell
+                    textToCopy={apv!.property!.id!}
+                    copyToolTip="Copy property ID"
+                    firstRow={
+                      <HighlightText
+                        className={classes.mark}
+                        search={search}
+                        text={textClamp(apv!.property!.name!, maxCellWidth)}
+                      />
+                    }
+                    secondRow={
+                      <HighlightText
+                        className={classes.mark}
+                        search={search}
+                        text={apv!.property!.id!}
+                      />
+                    }
+                  />
+                  <ViewCell
+                    textToCopy={apv!.view!.id!}
+                    copyToolTip="Copy view ID"
+                    firstRow={
+                      <a
+                        className={classes.link}
+                        href={viewUrl}
+                        title="Open this view in Google Analytics"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        <HighlightText
+                          className={classes.mark}
+                          search={search}
+                          text={textClamp(apv!.view!.name!, maxCellWidth)}
+                        />
+                      </a>
+                    }
+                    secondRow={
+                      <HighlightText
+                        className={classes.mark}
+                        search={search}
+                        text={apv!.view!.id!}
+                      />
+                    }
+                  />
+                  <ViewCell
+                    textToCopy={`ga:${apv!.view!.id!}`}
+                    copyToolTip="Copy table ID"
+                    firstRow={
+                      <HighlightText
+                        className={classes.mark}
+                        search={search}
+                        text={`ga:${apv!.view!.id!}`}
+                      />
+                    }
+                  />
+                </TableRow>
+              )
+            })
+          )
         ) : (
           <TableRow data-testid="components/ViewTable/no-results">
             <TableCell colSpan={4}>
@@ -190,11 +201,6 @@ const ViewsTable: React.FC<ViewTableProps> = ({ views, className, search }) => {
                 <Typography>Loading views&hellip;</Typography>
               </Spinner>
             </TableCell>
-          </TableRow>
-        )}
-        {views?.length === 0 && (
-          <TableRow data-testid="components/ViewTable/no-results">
-            <TableCell colSpan={4}>No results</TableCell>
           </TableRow>
         )}
       </TableBody>

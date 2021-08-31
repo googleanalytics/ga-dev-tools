@@ -24,8 +24,6 @@ import {
   SegmentPicker,
   V4SamplingLevelPicker,
   CohortSizePicker,
-  UAColumn,
-  useUADimensionsAndMetrics,
 } from "@/components/UAPickers"
 import LinkedTextField from "@/components/LinkedTextField"
 import LabeledCheckbox from "@/components/LabeledCheckbox"
@@ -34,6 +32,9 @@ import useCohortRequestParameters from "./useCohortRequestParameters"
 import useCohortRequest from "./useCohortRequest"
 import { ReportsRequest } from "../RequestComposer"
 import { UAAccountPropertyView } from "@/components/ViewSelector/useAccountPropertyView"
+import useUADimensionsAndMetrics from "@/components/UAPickers/useDimensionsAndMetrics"
+import { successful } from "@/types"
+import { Column } from "@/types/ua"
 
 interface CohortRequestProps {
   apv: UAAccountPropertyView
@@ -59,7 +60,7 @@ const CohortRequest: React.FC<CohortRequestProps> = ({
     showSegmentDefinition,
     setShowSegmentDefinition,
   ] = usePersistentBoolean(StorageKey.cohortRequestShowSegmentDefinition, false)
-  const { columns } = useUADimensionsAndMetrics(apv)
+  const uaDimensionsAndMetricsRequest = useUADimensionsAndMetrics(apv)
   const {
     viewId,
     setViewId,
@@ -71,7 +72,10 @@ const CohortRequest: React.FC<CohortRequestProps> = ({
     setSelectedSegmentID,
     samplingLevel,
     setSamplingLevel,
-  } = useCohortRequestParameters(apv, columns)
+  } = useCohortRequestParameters(
+    apv,
+    successful(uaDimensionsAndMetricsRequest)?.columns
+  )
   const requestObject = useCohortRequest({
     viewId,
     selectedMetric,
@@ -85,7 +89,7 @@ const CohortRequest: React.FC<CohortRequestProps> = ({
   }, [requestObject, setRequestObject])
 
   const cohortFilter = React.useCallback(
-    (metric: NonNullable<UAColumn>): boolean =>
+    (metric: NonNullable<Column>): boolean =>
       metric?.attributes?.group === "Lifetime Value and Cohorts",
     []
   )

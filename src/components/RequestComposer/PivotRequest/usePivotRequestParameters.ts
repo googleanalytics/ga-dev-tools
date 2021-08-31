@@ -2,22 +2,20 @@ import { useState, useMemo, useCallback } from "react"
 
 import { usePersistentString, usePersistentBoolean } from "@/hooks"
 import { StorageKey } from "@/constants"
-import {
-  V4SamplingLevel,
-  UAColumn,
-  UASegment,
-  useUASegments,
-} from "@/components/UAPickers"
+import { V4SamplingLevel } from "@/components/UAPickers"
 import { UAAccountPropertyView } from "@/components/ViewSelector/useAccountPropertyView"
 import { QueryParam } from "../RequestComposer"
 import {
   useKeyedHydratedPersistantArray,
   useKeyedHydratedPersistantObject,
 } from "@/hooks/useHydrated"
+import { Column, Segment } from "@/types/ua"
+import { useUASegments } from "@/components/UAPickers/useUASegments"
+import { RequestStatus } from "@/types"
 
 const usePivotRequestParameters = (
   apv: UAAccountPropertyView,
-  columns: UAColumn[] | undefined
+  columns: Column[] | undefined
 ) => {
   const [viewId, setViewId] = useState("")
   const [startDate, setStartDate] = usePersistentString(
@@ -41,7 +39,7 @@ const usePivotRequestParameters = (
   const [
     selectedDimensions,
     setSelectedDimensionIDs,
-  ] = useKeyedHydratedPersistantArray<UAColumn>(
+  ] = useKeyedHydratedPersistantArray<Column>(
     StorageKey.requestComposerPivotDimensions,
     QueryParam.Dimensions,
     getColumnsByIDs
@@ -49,7 +47,7 @@ const usePivotRequestParameters = (
   const [
     selectedMetrics,
     setSelectedMetricIDs,
-  ] = useKeyedHydratedPersistantArray<UAColumn>(
+  ] = useKeyedHydratedPersistantArray<Column>(
     StorageKey.requestComposerPivotMetrics,
     QueryParam.Metrics,
     getColumnsByIDs
@@ -57,7 +55,7 @@ const usePivotRequestParameters = (
   const [
     pivotMetrics,
     setPivotMetricIDs,
-  ] = useKeyedHydratedPersistantArray<UAColumn>(
+  ] = useKeyedHydratedPersistantArray<Column>(
     StorageKey.requestComposerPivotPivotMetrics,
     QueryParam.PivotMetrics,
     getColumnsByIDs
@@ -65,7 +63,7 @@ const usePivotRequestParameters = (
   const [
     pivotDimensions,
     setPivotDimensionIDs,
-  ] = useKeyedHydratedPersistantArray<UAColumn>(
+  ] = useKeyedHydratedPersistantArray<Column>(
     StorageKey.requestComposerPivotPivotDimensions,
     QueryParam.PivotDimensions,
     getColumnsByIDs
@@ -77,21 +75,24 @@ const usePivotRequestParameters = (
     StorageKey.pivotRequestMaxGroupCount
   )
 
-  const segments = useUASegments()
+  const segmentsRequest = useUASegments()
   const getSegmentByID = useCallback(
     (id: string | undefined) => {
-      if (id === undefined || segments === undefined) {
+      if (
+        id === undefined ||
+        segmentsRequest.status !== RequestStatus.Successful
+      ) {
         return undefined
       }
-      return segments.find(c => c.id === id)
+      return segmentsRequest.segments.find(c => c.id === id)
     },
-    [segments]
+    [segmentsRequest]
   )
 
   const [
     selectedSegment,
     setSelectedSegmentID,
-  ] = useKeyedHydratedPersistantObject<UASegment>(
+  ] = useKeyedHydratedPersistantObject<Segment>(
     StorageKey.requestComposerPivotSegment,
     QueryParam.Segment,
     getSegmentByID
