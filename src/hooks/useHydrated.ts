@@ -85,7 +85,7 @@ export const useKeyedHydratedPersistantObject = <T>(
   const setKey: Dispatch<string | undefined> = useCallback(
     key => {
       setKeyLocal(old => {
-        let nu: string | undefined = undefined
+        let nu: string | undefined
         if (typeof key === "function") {
           nu = key(old)
         } else {

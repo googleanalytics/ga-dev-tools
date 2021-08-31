@@ -1,9 +1,10 @@
 import "@testing-library/jest-dom"
-import { renderHook, act } from "@testing-library/react-hooks"
+import { renderHook } from "@testing-library/react-hooks"
 
 import useAccountProperty from "./useAccountProperty"
 import { wrapperFor } from "@/test-utils"
 import { StorageKey } from "@/constants"
+import moment from "moment"
 
 enum QueryParam {
   Account = "a",
@@ -12,56 +13,105 @@ enum QueryParam {
 }
 
 describe("useAccountProperty hook", () => {
-  test("with Account & Property values already saved in localStorage", async () => {
+  describe("with accountSummaries cached locally", () => {
     const accountID = "account-id"
-    window.localStorage.setItem(
-      "a-account",
-      JSON.stringify({ value: accountID })
-    )
-    const accountSummariesMock = jest.fn<
-      Promise<{
-        result: gapi.client.analyticsadmin.GoogleAnalyticsAdminV1alphaListAccountSummariesResponse
-      }>,
-      Parameters<typeof gapi.client.analyticsadmin.accountSummaries.list>
-    >(() =>
-      Promise.resolve({
-        result: {
-          accountSummaries: [
+    const propertyID = "property-id"
+
+    beforeEach(() => {
+      window.localStorage.clear()
+      const summaries: gapi.client.analyticsadmin.GoogleAnalyticsAdminV1alphaAccountSummary[] = [
+        {
+          name: accountID,
+          displayName: "my account",
+          account: "accounts/my-account",
+          propertySummaries: [
             {
-              account: accountID,
-              displayName: "My first account",
-              propertySummaries: [
-                { property: "property-id", displayName: "My first property" },
-              ],
+              property: propertyID,
+              displayName: "my property",
             },
           ],
         },
-      })
-    )
-    const { result, waitForNextUpdate } = renderHook(
-      () => useAccountProperty("a" as StorageKey, QueryParam),
-      {
-        wrapper: wrapperFor({
-          gapi: {
-            client: {
-              analyticsadmin: {
-                accountSummaries: { list: accountSummariesMock as any },
-              },
-            },
-          },
-        }),
-      }
-    )
-
-    expect(result.current.account).toBeUndefined()
-    expect(result.current.property).toBeUndefined()
-
-    await act(async () => {
-      await waitForNextUpdate()
+      ]
+      window.localStorage.setItem(
+        StorageKey.ga4AccountSummaries,
+        JSON.stringify({ value: summaries, "@@_last_fetched": moment.now() })
+      )
     })
 
-    expect(result.current.account).not.toBeUndefined()
+    test("with Account & Property values in localStorage", async () => {
+      const storageKey = "a" as StorageKey
+      window.localStorage.setItem(
+        "a-account",
+        JSON.stringify({ value: accountID })
+      )
+      window.localStorage.setItem(
+        "a-property",
+        JSON.stringify({ value: propertyID })
+      )
+
+      const { result } = renderHook(
+        () => useAccountProperty(storageKey, QueryParam),
+        { wrapper: wrapperFor({}) }
+      )
+
+      expect(result.current.account).not.toBeUndefined()
+      expect(result.current.account!.name).toBe(accountID)
+
+      expect(result.current.property).not.toBeUndefined()
+      expect(result.current.property!.property).toBe(propertyID)
+    })
   })
+  // test("with Account & Property values already saved in localStorage", async () => {
+  //   const accountID = "account-id"
+  //   window.localStorage.setItem(
+  //     "a-account",
+  //     JSON.stringify({ value: accountID })
+  //   )
+  //   const accountSummariesMock = jest.fn<
+  //     Promise<{
+  //       result: gapi.client.analyticsadmin.GoogleAnalyticsAdminV1alphaListAccountSummariesResponse
+  //     }>,
+  //     Parameters<typeof gapi.client.analyticsadmin.accountSummaries.list>
+  //   >(() =>
+  //     Promise.resolve({
+  //       result: {
+  //         accountSummaries: [
+  //           {
+  //             account: accountID,
+  //             displayName: "My first account",
+  //             propertySummaries: [
+  //               { property: "property-id", displayName: "My first property" },
+  //             ],
+  //           },
+  //         ],
+  //       },
+  //     })
+  //   )
+  //   const { result, waitForNextUpdate } = renderHook(
+  //     () => useAccountProperty("a" as StorageKey, QueryParam),
+  //     {
+  //       wrapper: wrapperFor({
+  //         gapi: {
+  //           client: {
+  //             analyticsadmin: {
+  //               accountSummaries: { list: accountSummariesMock as any },
+  //             },
+  //           },
+  //         },
+  //       }),
+  //     }
+  //   )
+
+  //   expect(result.current.account).toBeUndefined()
+  //   expect(result.current.property).toBeUndefined()
+
+  //   await act(async () => {
+  //     await waitForNextUpdate()
+  //     await waitForNextUpdate()
+  //   })
+
+  //   expect(result.current.account).not.toBeUndefined()
+  // })
   // test("defaults to selectContent", () => {
   //   const { result } = renderHook(() => useEvent(), options)
   //   expect(result.current.type).toBe(EventType.SelectContent)

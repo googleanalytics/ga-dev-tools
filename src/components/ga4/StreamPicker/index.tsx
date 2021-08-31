@@ -29,7 +29,6 @@ interface CommonProps {
   property: PropertySummary | undefined
   setAccountID: Dispatch<string | undefined>
   setPropertyID: Dispatch<string | undefined>
-  autoFill?: boolean
 }
 
 interface WithStreams extends CommonProps {
@@ -37,7 +36,7 @@ interface WithStreams extends CommonProps {
   stream: Stream | undefined
   setStreamID: Dispatch<string | undefined>
   streamsRequest: Requestable<{ streams: Stream[] }>
-  updateToFirstStream: () => void
+  noStreamsText?: string
 }
 
 interface OnlyProperty extends CommonProps {
@@ -47,7 +46,7 @@ interface OnlyProperty extends CommonProps {
 export type StreamPickerProps = OnlyProperty | WithStreams
 
 const StreamPicker: React.FC<StreamPickerProps> = props => {
-  const { account, property, setAccountID, setPropertyID, autoFill } = props
+  const { account, property, setAccountID, setPropertyID } = props
   const classes = useStyles()
 
   const accountsAndPropertiesRequest = useAccountsAndProperties(account)
@@ -65,12 +64,6 @@ const StreamPicker: React.FC<StreamPickerProps> = props => {
         getOptionSelected={(a, b) => a.name === b.name}
         onChange={(_event, value) => {
           setAccountID(value === null ? undefined : value?.name)
-
-          if (autoFill) {
-            const property = value?.propertySummaries?.[0]
-            setPropertyID(property?.property)
-            props.streams && props.updateToFirstStream()
-          }
         }}
         renderOption={account => (
           <RenderOption
@@ -99,10 +92,6 @@ const StreamPicker: React.FC<StreamPickerProps> = props => {
         onChange={(_event, value) => {
           const property = value === null ? undefined : value
           setPropertyID(property?.property)
-
-          if (autoFill) {
-            props.streams && props.updateToFirstStream()
-          }
         }}
         renderOption={summary => (
           <RenderOption
@@ -128,7 +117,8 @@ const StreamPicker: React.FC<StreamPickerProps> = props => {
           noOptionsText={
             property === undefined
               ? "Select an account an property to populate this dropdown."
-              : "There are no streams for the selected property."
+              : props.noStreamsText ||
+                "There are no streams for the selected property."
           }
           value={props.stream || null}
           getOptionLabel={stream => stream.value.displayName!}

@@ -2,14 +2,14 @@ import { StorageKey } from "@/constants"
 import useCached from "@/hooks/useCached"
 import useRequestStatus from "@/hooks/useRequestStatus"
 import { Requestable, RequestStatus } from "@/types"
+import { Stream } from "@/types/ga4/StreamPicker"
 import moment from "moment"
 import { useCallback, useEffect } from "react"
-import { AccountPropertyStream } from "../../StreamPicker/useAccountPropertyStream"
 import useCreateMPSecret from "./useCreateMPSecret"
 import useGetMPSecrets from "./useGetMPSecrets"
 
 interface MPSecrets {
-  secrets: MPSecret[]
+  secrets: MPSecret[] | undefined
   createMPSecret: (displayName: string) => Promise<MPSecret>
 }
 
@@ -20,30 +20,23 @@ export interface MPSecret {
 }
 
 interface Args {
-  aps: AccountPropertyStream
+  stream: Stream | undefined
 }
-const useMPSecretsRequest = ({ aps }: Args): Requestable<MPSecrets> => {
+const useMPSecretsRequest = ({ stream }: Args): Requestable<MPSecrets> => {
   const { status, setFailed, setSuccessful, setInProgress } = useRequestStatus(
     RequestStatus.NotStarted
   )
 
-  useEffect(() => {
-    if (aps.stream === undefined) {
-      setFailed()
-    }
-  }, [setFailed, aps.stream])
-
   const {
     getMPSecrets: getMPSecretsLocal,
     requestReady: getMPSecretsRequestReady,
-  } = useGetMPSecrets(aps)
+  } = useGetMPSecrets(stream)
 
-  const createMPSecretLocal = useCreateMPSecret(aps)
+  const createMPSecretLocal = useCreateMPSecret(stream)
 
   const getMPSecrets = useCallback(async () => {
     setInProgress()
-    const secrets = await getMPSecretsLocal()
-    return secrets
+    return getMPSecretsLocal()
   }, [getMPSecretsLocal, setInProgress])
 
   const onError = useCallback(
@@ -56,7 +49,7 @@ const useMPSecretsRequest = ({ aps }: Args): Requestable<MPSecrets> => {
   )
 
   const { value: secrets, bustCache } = useCached(
-    `${StorageKey.eventBuilderMPSecrets}/${aps.stream?.value.name}` as StorageKey,
+    `${StorageKey.eventBuilderMPSecrets}/${stream?.value.name}` as StorageKey,
     getMPSecrets,
     moment.duration(5, "minutes"),
     getMPSecretsRequestReady,
@@ -78,6 +71,14 @@ const useMPSecretsRequest = ({ aps }: Args): Requestable<MPSecrets> => {
     }
   }, [secrets, setSuccessful, status])
 
+  if (stream === undefined) {
+    return {
+      status: RequestStatus.Successful,
+      secrets: undefined,
+      createMPSecret,
+    }
+  }
+
   if (
     status === RequestStatus.NotStarted ||
     status === RequestStatus.InProgress ||
@@ -88,9 +89,8 @@ const useMPSecretsRequest = ({ aps }: Args): Requestable<MPSecrets> => {
     if (secrets !== undefined) {
       return { status, secrets, createMPSecret }
     } else {
-      console.log({ aps, secrets })
-      // throw new Error("Invalid invariant - secrets must be defined here.")
-      return { status: RequestStatus.InProgress }
+      throw new Error("Invalid invariant - secrets must be defined here.")
+      // return { status: RequestStatus.InProgress }
     }
   }
 }

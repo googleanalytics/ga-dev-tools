@@ -51,8 +51,6 @@ const useAccountSummaries = (): Requestable<AccountSummaries> => {
     requestReady
   )
 
-  console.log("useAccountSummaries", { accountSummaries })
-
   useEffect(() => {
     if (accountSummaries !== undefined) {
       setSuccessful()

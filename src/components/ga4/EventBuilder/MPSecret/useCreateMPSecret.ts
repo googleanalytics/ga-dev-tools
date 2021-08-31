@@ -1,19 +1,15 @@
+import { Stream } from "@/types/ga4/StreamPicker"
 import { useCallback } from "react"
 import { useSelector } from "react-redux"
-import { AccountPropertyStream } from "../../StreamPicker/useAccountPropertyStream"
 
 const necessaryScopes = ["https://www.googleapis.com/auth/analytics.edit"]
 
-const useCreateMPSecret = (aps: AccountPropertyStream) => {
+const useCreateMPSecret = (stream: Stream | undefined) => {
   const gapi = useSelector((a: AppState) => a.gapi)
   const user = useSelector((a: AppState) => a.user)
   return useCallback(
     async (displayName: string) => {
-      if (
-        gapi === undefined ||
-        aps.stream === undefined ||
-        user === undefined
-      ) {
+      if (gapi === undefined || stream === undefined || user === undefined) {
         return
       }
       try {
@@ -24,7 +20,7 @@ const useCreateMPSecret = (aps: AccountPropertyStream) => {
         }
         // TODO - Update this once this is available in the client libraries.
         const response = await gapi.client.request({
-          path: `https://content-analyticsadmin.googleapis.com/v1alpha/${aps.stream.value.name}/measurementProtocolSecrets`,
+          path: `https://content-analyticsadmin.googleapis.com/v1alpha/${stream.value.name}/measurementProtocolSecrets`,
           method: "POST",
           body: JSON.stringify({
             display_name: displayName,
@@ -39,7 +35,7 @@ const useCreateMPSecret = (aps: AccountPropertyStream) => {
         }
       }
     },
-    [gapi, aps, user]
+    [gapi, stream, user]
   )
 }
 

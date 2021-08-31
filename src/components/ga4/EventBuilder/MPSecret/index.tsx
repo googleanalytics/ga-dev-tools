@@ -58,11 +58,29 @@ const MPSecret: React.FC<Props> = ({ secret, setSecret, useFirebase }) => {
   const formClasses = useFormStyles()
   const classes = useStyles()
 
-  const aps = useAccountPropertyStream(StorageKey.eventBuilderAPS, QueryParam, {
-    androidStreams: useFirebase,
-    webStreams: !useFirebase,
+  const aps = useAccountPropertyStream(
+    StorageKey.eventBuilderAPS,
+    QueryParam,
+    {
+      androidStreams: useFirebase,
+      iosStreams: useFirebase,
+      webStreams: !useFirebase,
+    },
+    true
+  )
+
+  const secretsRequest = useMPSecretsRequest({
+    aps,
   })
-  const secretsRequest = useMPSecretsRequest({ aps })
+
+  React.useEffect(() => {
+    if (successful(secretsRequest)) {
+      const secrets = successful(secretsRequest)!.secrets
+      console.log("setting to first secret")
+      setSecret(secrets?.[0])
+    }
+  }, [secretsRequest])
+
   const [creationError, setCreationError] = React.useState<any>()
 
   const {
@@ -75,7 +93,15 @@ const MPSecret: React.FC<Props> = ({ secret, setSecret, useFirebase }) => {
   return (
     <section className={classes.mpSecret}>
       <Typography>Choose an account, property, and stream.</Typography>
-      <StreamPicker autoFill streams {...aps} />
+      <StreamPicker
+        streams
+        {...aps}
+        noStreamsText={
+          useFirebase
+            ? "There are no iOS or Android streams for the selected property."
+            : "There are no web streams for the selected property."
+        }
+      />
       <Typography>
         Select an existing api_secret or create a new secret.
       </Typography>

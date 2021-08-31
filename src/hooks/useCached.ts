@@ -54,16 +54,13 @@ const useCached = <T>(
     await updateCachedValue()
   }, [updateCachedValue])
 
-  return useMemo(() => {
-    const now = moment()
-    if (now.isAfter(moment(cached?.["@@_lastFetched"]).add(maxAge))) {
-      return { value: undefined, bustCache }
-    }
-    return {
+  return useMemo(
+    () => ({
       value: cached?.value,
       bustCache,
-    }
-  }, [cached, bustCache, maxAge])
+    }),
+    [cached, bustCache, maxAge]
+  )
 }
 
 export default useCached

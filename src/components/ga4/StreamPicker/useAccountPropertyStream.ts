@@ -1,4 +1,5 @@
 import { StorageKey } from "@/constants"
+
 import { useKeyedHydratedPersistantObject } from "@/hooks/useHydrated"
 import { Dispatch, Requestable, successful } from "@/types"
 import { PropertySummary, Stream } from "@/types/ga4/StreamPicker"
@@ -16,7 +17,6 @@ export interface AccountPropertyStream extends AccountProperty {
 
 interface AccountPropertyStreamSetters extends AccountPropertySetters {
   setStreamID: Dispatch<string | undefined>
-  updateToFirstStream: () => void
 }
 
 const useAccountPropertyStream = (
@@ -27,6 +27,7 @@ const useAccountPropertyStream = (
     webStreams?: boolean
     iosStreams?: boolean
   },
+  autoFill: boolean = false,
   // TODO - This is only here because there seems to be a bug with
   // use-query-params replaceIn functionality where it also removes the anchor.
   // Need to do a minimum repro and file a bug to that repo.
@@ -36,19 +37,12 @@ const useAccountPropertyStream = (
   const accountProperty = useAccountProperty(
     prefix,
     queryParamKeys,
+    autoFill,
     keepParam,
     onSetProperty
   )
 
   const { property } = accountProperty
-
-  const updateToFirstStream = useCallback(() => {
-    // I don't really like this, but I'm not sure how else to get this to
-    // update correctly.
-    setTimeout(() => {
-      setSetToFirst(true)
-    }, 100)
-  }, [])
 
   const streamsRequest = useStreams(property, streams)
 
@@ -73,20 +67,39 @@ const useAccountPropertyStream = (
     { keepParam }
   )
 
-  const [setToFirst, setSetToFirst] = useState(false)
+  // This seems like a hacky workaround, but I'm not sure what else the pattern
+  // would be here.
+  const [needsUpdate, setNeedsUpdate] = useState(false)
   useEffect(() => {
-    if (successful(streamsRequest) && setToFirst) {
-      setStreamID(successful(streamsRequest)?.streams?.[0].value.name)
-      setSetToFirst(false)
+    if (property === undefined) {
+      setNeedsUpdate(false)
+      setStreamID(undefined)
+    } else {
+      setNeedsUpdate(true)
     }
-  }, [streamsRequest, setToFirst, setStreamID])
+  }, [property])
+
+  useEffect(() => {
+    if (autoFill) {
+      if (successful(streamsRequest) && needsUpdate) {
+        console.log("updating stream to first from list", {
+          autoFill,
+          streamsRequest,
+          setStreamID,
+        })
+        const firstStreamID = successful(streamsRequest)!.streams?.[0]?.value
+          ?.name
+        setStreamID(firstStreamID)
+        setNeedsUpdate(false)
+      }
+    }
+  }, [autoFill, streamsRequest, setStreamID])
 
   return {
     ...accountProperty,
     stream,
     setStreamID,
     streamsRequest,
-    updateToFirstStream,
   }
 }
 

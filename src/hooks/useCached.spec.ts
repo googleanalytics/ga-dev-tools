@@ -88,7 +88,7 @@ describe("useCached", () => {
         return useCached(key, makeRequest, expirey, requestReady)
       })
 
-      expect(result.current.value).toEqual(undefined)
+      expect(result.current.value).toEqual("i am out of date")
 
       await act(async () => {
         await waitForNextUpdate()
