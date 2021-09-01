@@ -40,17 +40,21 @@ const useCompatibility = (ap: AccountProperty): CompatibleHook => {
   const reset = useCallback(() => {
     setDimensions(undefined)
     setMetrics(undefined)
+    setIncompatibleDimensions(undefined)
+    setIncompatibleMetrics(undefined)
   }, [])
 
   useEffect(() => {
     if (gapi === undefined || ap.property === undefined) {
-      return undefined
+      return
     }
     if (
       (dimensions === undefined || dimensions.length === 0) &&
       (metrics === undefined || metrics.length === 0)
     ) {
-      return undefined
+      setIncompatibleMetrics(undefined)
+      setIncompatibleDimensions(undefined)
+      return
     }
     gapi.client
       .request({
