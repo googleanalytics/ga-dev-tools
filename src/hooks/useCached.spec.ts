@@ -2,11 +2,11 @@ import "@testing-library/jest-dom"
 import { renderHook } from "@testing-library/react-hooks"
 
 import { StorageKey } from "@/constants"
-import { useCallback, useMemo } from "react"
+import { useCallback, useMemo, useState } from "react"
 import useCached from "./useCached"
 import moment from "moment"
 import { act } from "react-test-renderer"
-import { RequestStatus, successful } from "@/types"
+import { inProgress, RequestStatus, successful } from "@/types"
 
 describe("useCached", () => {
   // The specific storage key shouldn't matter.
@@ -154,6 +154,7 @@ describe("useCached", () => {
       expect(actual).not.toBeUndefined()
       expect(actual!.value).toEqual(secondValue)
     })
+
     test("and switch to another value in cache, return other value", async () => {
       const firstKey = "firstKey" as StorageKey
       const firstValue = {
@@ -182,26 +183,71 @@ describe("useCached", () => {
         })
       )
 
-      const makeRequest = async () => {
-        fail("should not be called if value is in localStorage")
-      }
-      const requestReady = true
-      const { result, rerender } = renderHook(
-        ({ key }: { key: StorageKey }) => {
-          return useCached(key, makeRequest, expirey, requestReady)
-        },
-        { initialProps: { key: firstKey } }
-      )
-
-      expect(successful(result.current)).not.toBeUndefined()
-      expect(successful(result.current)!.value).toEqual(firstValue)
-
-      act(() => {
-        rerender({ key: secondKey })
+      const { result } = renderHook(() => {
+        const [key, setKey] = useState(firstKey)
+        const makeRequest = useCallback(async () => {
+          return secondValue
+        }, [])
+        const requestReady = useMemo(() => true, [])
+        const sut = useCached(key, makeRequest, expirey, requestReady)
+        return { sut, setKey }
       })
 
-      expect(successful(result.current)).not.toBeUndefined()
-      expect(successful(result.current)!.value).toEqual(secondValue)
+      expect(successful(result.current.sut)).not.toBeUndefined()
+      expect(successful(result.current.sut)!.value).toEqual(firstValue)
+
+      act(() => {
+        result.current.setKey(secondKey)
+      })
+
+      expect(successful(result.current.sut)).not.toBeUndefined()
+      expect(successful(result.current.sut)!.value).toEqual(secondValue)
+    })
+
+    test("and switch to another value not in cache, re-runs request and sets to InProgress", async () => {
+      const firstKey = "firstKey" as StorageKey
+      const firstValue = {
+        hi: "there",
+      }
+      const secondKey = "secondKey" as StorageKey
+      const secondValue = {
+        alsoHi: "alsoThere",
+      }
+
+      window.localStorage.setItem(
+        firstKey,
+        JSON.stringify({
+          value: firstValue,
+          "@@_lastFetched": moment.now(),
+          "@@_cacheKey": firstKey,
+        })
+      )
+
+      const { result, waitForNextUpdate } = renderHook(() => {
+        const [key, setKey] = useState(firstKey)
+        const makeRequest = useCallback(async () => {
+          return secondValue
+        }, [])
+        const requestReady = useMemo(() => true, [])
+        const sut = useCached(key, makeRequest, expirey, requestReady)
+        return { sut, setKey }
+      })
+
+      expect(successful(result.current.sut)).not.toBeUndefined()
+      expect(successful(result.current.sut)!.value).toEqual(firstValue)
+
+      act(() => {
+        result.current.setKey(secondKey)
+      })
+
+      expect(inProgress(result.current.sut)).not.toBeUndefined()
+
+      await act(async () => {
+        await waitForNextUpdate()
+      })
+
+      expect(successful(result.current.sut)).not.toBeUndefined()
+      expect(successful(result.current.sut)!.value).toEqual(secondValue)
     })
   })
 })

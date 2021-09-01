@@ -98,13 +98,15 @@ const useCached = <T, E = any>(
         return { status, error }
       }
       case RequestStatus.Successful: {
+        // If the cache is undefined, but the status is Successful, that means
+        // the key was just changed.
         if (cached === undefined) {
-          throw new Error("Invalid invariant, cached must be defined here")
+          return { status: RequestStatus.InProgress }
         }
         return { status, value: cached.value, bustCache }
       }
     }
-  }, [status, cached, bustCache, maxAge])
+  }, [status, cached, bustCache])
 }
 
 export default useCached

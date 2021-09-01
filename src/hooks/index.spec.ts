@@ -2,12 +2,9 @@ import "@testing-library/jest-dom"
 import { renderHook } from "@testing-library/react-hooks"
 
 import { StorageKey } from "@/constants"
-import { useCallback, useMemo } from "react"
-import useCached from "./useCached"
-import moment from "moment"
+import { useState } from "react"
 import { act } from "react-test-renderer"
 import { usePersistantObject } from "."
-import { RequestStatus, successful } from "@/types"
 
 describe("usePersistantObject", () => {
   beforeEach(() => {
@@ -28,20 +25,22 @@ describe("usePersistantObject", () => {
       window.localStorage.setItem(firstKey, JSON.stringify(firstValue))
       window.localStorage.setItem(secondKey, JSON.stringify(secondValue))
 
-      const { result, rerender } = renderHook(
-        ({ key }: { key: StorageKey }) => {
-          return usePersistantObject(key)
+      const { result } = renderHook(
+        () => {
+          const [key, setKey] = useState(firstKey)
+          const sut = usePersistantObject(key)
+          return { sut, setKey }
         },
         { initialProps: { key: firstKey } }
       )
 
-      expect(result.current[0]).toEqual(firstValue)
+      expect(result.current.sut[0]).toEqual(firstValue)
 
       act(() => {
-        rerender({ key: secondKey })
+        result.current.setKey(secondKey)
       })
 
-      expect(result.current[0]).toEqual(secondValue)
+      expect(result.current.sut[0]).toEqual(secondValue)
     })
   })
 })

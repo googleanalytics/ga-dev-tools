@@ -54,11 +54,14 @@ export const usePersistentString: UsePersistentString = (
   initialValue,
   overwrite
 ) => {
+  if (IS_SSR) {
+    return useState(initialValue)
+  }
   const [value, setValue] = useState<string | undefined>(() => {
     if (overwrite !== undefined) {
       return overwrite
     }
-    const fromStorage = IS_SSR ? null : window.localStorage.getItem(key)
+    const fromStorage = window.localStorage.getItem(key)
     if (fromStorage === null) {
       return initialValue
     }
@@ -89,7 +92,7 @@ const getObjectFromLocalStorage = <T>(
   if (IS_SSR) {
     return undefined
   }
-  let asString = IS_SSR ? null : window.localStorage.getItem(key)
+  let asString = window.localStorage.getItem(key)
   if (asString === null || asString === "undefined") {
     return defaultValue
   }
@@ -100,6 +103,10 @@ export const usePersistantObject = <T extends {}>(
   key: StorageKey,
   defaultValue?: T
 ): [T | undefined, Dispatch<T | undefined>] => {
+  if (IS_SSR) {
+    return useState<T | undefined>(defaultValue)
+  }
+
   const [localValue, setValueLocal] = useState(() => {
     return getObjectFromLocalStorage(key, defaultValue)
   })
@@ -122,8 +129,11 @@ export const usePersistantObject = <T extends {}>(
     [key]
   )
 
+  // Note - This feels wrong, but I have to depend on localValue changing to
+  // catch changes that only happen when setValue is run. Don't remove
+  // localValue
   const fromStorage = React.useMemo(
-    () => getObjectFromLocalStorage(key, defaultValue) || localValue,
+    () => getObjectFromLocalStorage(key, defaultValue),
     [key, localValue, defaultValue]
   )
 
