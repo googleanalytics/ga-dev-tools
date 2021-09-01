@@ -3,7 +3,6 @@ import { useMemo } from "react"
 import { Requestable, RequestStatus, successful } from "@/types"
 import { AccountSummary, PropertySummary } from "@/types/ga4/StreamPicker"
 import useAccounts from "./useAccounts"
-import useStreams from "./useStreams"
 
 const useAccountsAndProperties = (
   account: AccountSummary | undefined

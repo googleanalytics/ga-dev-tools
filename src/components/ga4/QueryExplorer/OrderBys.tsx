@@ -18,7 +18,6 @@ import {
 import ExternalLink from "@/components/ExternalLink"
 import WithHelpText from "@/components/WithHelpText"
 import { ArrowDownward, ArrowUpward } from "@material-ui/icons"
-import { AccountProperty } from "../StreamPicker/useAccountProperty"
 
 const orderBysLink = (
   <ExternalLink href="https://developers.google.com/analytics/devguides/reporting/data/v1/rest/v1beta/properties/runReport#body.request_body.FIELDS.order_bys">

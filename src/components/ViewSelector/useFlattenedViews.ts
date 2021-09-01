@@ -61,12 +61,7 @@ const useFlattenedViews = (
       default:
         return { status: accountSummariesRequest.status }
     }
-  }, [
-    accountSummariesRequest,
-    accountSummary,
-    propertySummary,
-    filterFlattened,
-  ])
+  }, [accountSummariesRequest, filterFlattened])
 }
 
 export default useFlattenedViews

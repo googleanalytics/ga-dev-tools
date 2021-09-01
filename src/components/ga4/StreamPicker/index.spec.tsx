@@ -21,7 +21,6 @@ import { act, within } from "@testing-library/react"
 
 import { withProviders } from "@/test-utils"
 import Sut, { Label } from "./index"
-import { AccountSummary, PropertySummary } from "@/types/ga4/StreamPicker"
 import useAccountPropertyStream from "./useAccountPropertyStream"
 import { StorageKey } from "@/constants"
 

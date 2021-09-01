@@ -55,7 +55,7 @@ describe("HitBuilder", () => {
       test("with query parameters for a non-default t parameter", async () => {
         const queryParams = "v=1&t=screenview&tid=UA-fake&cid=abc&an=def&cd=ghi"
 
-        const { wrapped, history } = withProviders(<HitBuilder />, {
+        const { wrapped } = withProviders(<HitBuilder />, {
           path: `/hit-builder?${queryParams}`,
         })
         const { findByLabelText, findAllByLabelText } = renderer.render(wrapped)

@@ -55,8 +55,12 @@ export const usePersistentString: UsePersistentString = (
   overwrite
 ) => {
   if (IS_SSR) {
+    // This is okay to disable because this will _only_ be true during server
+    // side rendireng
+    // eslint-disable-next-line react-hooks/rules-of-hooks
     return useState(initialValue)
   }
+  // eslint-disable-next-line react-hooks/rules-of-hooks
   const [value, setValue] = useState<string | undefined>(() => {
     if (overwrite !== undefined) {
       return overwrite
@@ -71,6 +75,7 @@ export const usePersistentString: UsePersistentString = (
     return JSON.parse(fromStorage).value
   })
 
+  // eslint-disable-next-line react-hooks/rules-of-hooks
   useEffect(() => {
     if (IS_SSR) {
       return
@@ -104,13 +109,18 @@ export const usePersistantObject = <T extends {}>(
   defaultValue?: T
 ): [T | undefined, Dispatch<T | undefined>] => {
   if (IS_SSR) {
+    // This is okay to disable because this will _only_ be true during server
+    // side rendireng
+    // eslint-disable-next-line react-hooks/rules-of-hooks
     return useState<T | undefined>(defaultValue)
   }
 
+  // eslint-disable-next-line react-hooks/rules-of-hooks
   const [localValue, setValueLocal] = useState(() => {
     return getObjectFromLocalStorage(key, defaultValue)
   })
 
+  // eslint-disable-next-line react-hooks/rules-of-hooks
   const setValue: Dispatch<T | undefined> = useCallback(
     v => {
       setValueLocal(old => {
@@ -132,10 +142,15 @@ export const usePersistantObject = <T extends {}>(
   // Note - This feels wrong, but I have to depend on localValue changing to
   // catch changes that only happen when setValue is run. Don't remove
   // localValue
-  const fromStorage = React.useMemo(
-    () => getObjectFromLocalStorage(key, defaultValue),
-    [key, localValue, defaultValue]
-  )
+  // eslint-disable-next-line react-hooks/rules-of-hooks
+  const fromStorage = React.useMemo(() => {
+    // We want to depend on localValue so this stays up to date when it's
+    // updated, but ultimately we want to use the value from localStorage which
+    // we _know_ is going to be up to date when `key` changes.
+    // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+    localValue
+    return getObjectFromLocalStorage(key, defaultValue)
+  }, [key, localValue, defaultValue])
 
   return [fromStorage, setValue]
 }

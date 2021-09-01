@@ -78,7 +78,7 @@ const WarningsFor: React.FC<WarningsForProps> = ({
       ])
     }
     return w
-  }, [asURL, websiteURL])
+  }, [asURL])
 
   React.useEffect(() => {
     if (warnings.length !== 0) {

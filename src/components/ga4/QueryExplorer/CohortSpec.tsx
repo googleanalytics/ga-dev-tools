@@ -18,7 +18,6 @@ import LinkedTextField from "@/components/LinkedTextField"
 import { GADateRange } from "@/components/GADate"
 import { Dispatch } from "@/types"
 import makeStyles from "@material-ui/core/styles/makeStyles"
-import { AccountProperty } from "../StreamPicker/useAccountProperty"
 
 type DateRange = gapi.client.analyticsdata.DateRange
 type CohortsRange = gapi.client.analyticsdata.CohortsRange

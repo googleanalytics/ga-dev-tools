@@ -65,7 +65,17 @@ const useCached = <T, E = any>(
       setFailed()
       onFailure && onFailure()
     }
-  }, [makeRequest, setCached, cacheKey, requestReady, setSuccessful, onSuccess])
+  }, [
+    makeRequest,
+    setCached,
+    cacheKey,
+    requestReady,
+    setSuccessful,
+    onSuccess,
+    onFailure,
+    setFailed,
+    setInProgress,
+  ])
 
   useEffect(() => {
     if (cached === undefined) {
@@ -82,7 +92,7 @@ const useCached = <T, E = any>(
         return
       }
     }
-  }, [requestReady, cached, setCached, makeRequest, maxAge])
+  }, [requestReady, cached, setCached, makeRequest, maxAge, updateCachedValue])
 
   const bustCache = useCallback(async () => {
     return updateCachedValue()
@@ -106,7 +116,7 @@ const useCached = <T, E = any>(
         return { status, value: cached.value, bustCache }
       }
     }
-  }, [status, cached, bustCache])
+  }, [status, cached, bustCache, error])
 }
 
 export default useCached

@@ -13,7 +13,6 @@ import {
 } from "@/components/GA4Pickers"
 import Expression, { ExpressionType } from "./Expression"
 import useFilter, { UseFilterContext } from "./useFilter"
-import { AccountProperty } from "../../StreamPicker/useAccountProperty"
 
 interface Props {
   notched: boolean
