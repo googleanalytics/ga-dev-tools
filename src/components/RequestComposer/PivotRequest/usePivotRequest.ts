@@ -1,6 +1,7 @@
 import { useMemo } from "react"
 
-import { V4SamplingLevel, UASegment, UAColumn } from "@/components/UAPickers"
+import { V4SamplingLevel } from "@/components/UAPickers"
+import { Column, Segment } from "@/types/ua"
 
 type ReportRequest = gapi.client.analyticsreporting.ReportRequest
 type Request = { reportRequests: Array<ReportRequest> }
@@ -9,13 +10,13 @@ interface Parameters {
   viewId: string | undefined
   startDate: string | undefined
   endDate: string | undefined
-  metrics: UAColumn[] | undefined
-  pivotMetrics: UAColumn[] | undefined
-  dimensions: UAColumn[] | undefined
-  pivotDimensions: UAColumn[] | undefined
+  metrics: Column[] | undefined
+  pivotMetrics: Column[] | undefined
+  dimensions: Column[] | undefined
+  pivotDimensions: Column[] | undefined
   startGroup: string | undefined
   maxGroupCount: string | undefined
-  selectedSegment: UASegment | undefined
+  selectedSegment: Segment | undefined
   samplingLevel: V4SamplingLevel | undefined
   pageToken: string | undefined
   pageSize: string | undefined

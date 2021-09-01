@@ -245,7 +245,6 @@ const useStyles = makeStyles(theme => ({
 type CohortSpecType = gapi.client.analyticsdata.CohortSpec
 
 interface CohortSpecProps {
-  aps: AccountProperty
   cohortSpec: CohortSpecType | undefined
   setCohortSpec: Dispatch<CohortSpecType | undefined>
   dimensions: GA4Dimensions
@@ -254,7 +253,6 @@ interface CohortSpecProps {
   removeDateRanges: () => void
 }
 const CohortSpec: React.FC<CohortSpecProps> = ({
-  aps,
   cohortSpec,
   setCohortSpec,
   dimensions,
@@ -361,11 +359,7 @@ const CohortSpec: React.FC<CohortSpecProps> = ({
           >
             <Delete />
           </TooltipIconButton>
-          <DimensionPicker
-            aps={aps}
-            autoSelectIfOne
-            dimensionFilter={dimensionFilter}
-          />
+          <DimensionPicker autoSelectIfOne dimensionFilter={dimensionFilter} />
           <GADateRange
             value={cohort.dateRange || {}}
             setValue={update => updateDateRange(idx, update)}

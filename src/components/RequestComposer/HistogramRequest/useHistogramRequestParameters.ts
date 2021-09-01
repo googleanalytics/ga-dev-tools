@@ -2,22 +2,19 @@ import { useState, useMemo, useCallback } from "react"
 
 import { usePersistentString } from "@/hooks"
 import { StorageKey } from "@/constants"
-import {
-  V4SamplingLevel,
-  UASegment,
-  useUASegments,
-} from "@/components/UAPickers"
+import { V4SamplingLevel } from "@/components/UAPickers"
 import { UAAccountPropertyView } from "@/components/ViewSelector/useAccountPropertyView"
 import {
   useKeyedHydratedPersistantArray,
   useKeyedHydratedPersistantObject,
 } from "@/hooks/useHydrated"
-import { Column } from "@/api"
 import { QueryParam } from "../RequestComposer"
+import { Column, Segment } from "@/types/ua"
 
 const useHistogramRequestParameters = (
   apv: UAAccountPropertyView,
-  columns: Column[] | undefined
+  columns: Column[] | undefined,
+  segments: Segment[] | undefined
 ) => {
   const [viewId, setViewId] = useState("")
 
@@ -63,7 +60,6 @@ const useHistogramRequestParameters = (
     "ga:browser=~^Chrome"
   )
 
-  const segments = useUASegments()
   const getSegmentByID = useCallback(
     (id: string | undefined) => {
       if (id === undefined || segments === undefined) {
@@ -77,7 +73,7 @@ const useHistogramRequestParameters = (
   const [
     selectedSegment,
     setSelectedSegmentID,
-  ] = useKeyedHydratedPersistantObject<UASegment>(
+  ] = useKeyedHydratedPersistantObject<Segment>(
     StorageKey.requestComposerHistogramSegment,
     QueryParam.Segment,
     getSegmentByID

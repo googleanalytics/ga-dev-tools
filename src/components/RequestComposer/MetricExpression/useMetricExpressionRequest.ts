@@ -1,7 +1,8 @@
 import { useMemo } from "react"
 
-import { V4SamplingLevel, UASegment, UAColumn } from "@/components/UAPickers"
+import { V4SamplingLevel } from "@/components/UAPickers"
 import { ReportsRequest, ReportRequest } from "../RequestComposer"
+import { Column, Segment } from "@/types/ua"
 
 interface Parameters {
   viewId: string
@@ -11,8 +12,8 @@ interface Parameters {
   endDate: string | undefined
   metricExpressions: string | undefined
   metricAliases: string | undefined
-  selectedDimensions: UAColumn[] | undefined
-  selectedSegment: UASegment | undefined
+  selectedDimensions: Column[] | undefined
+  selectedSegment: Segment | undefined
   pageToken: string | undefined
   pageSize: string | undefined
 }

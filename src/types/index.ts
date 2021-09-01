@@ -6,10 +6,10 @@ export interface WithEtag<T> {
 export type Dispatch<T> = React.Dispatch<React.SetStateAction<T>>
 
 export enum RequestStatus {
-  Successful,
-  NotStarted,
-  InProgress,
-  Failed,
+  Successful = "successful",
+  NotStarted = "not-started",
+  InProgress = "in-progress",
+  Failed = "failed",
 }
 
 export type Requestable<

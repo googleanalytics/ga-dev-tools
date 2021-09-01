@@ -1,13 +1,9 @@
 import { useMemo } from "react"
 import moment from "moment"
 
-import {
-  CohortSize,
-  V4SamplingLevel,
-  UASegment,
-  UAColumn,
-} from "@/components/UAPickers"
+import { CohortSize, V4SamplingLevel } from "@/components/UAPickers"
 import { ReportsRequest, ReportRequest } from "../RequestComposer"
+import { Column, Segment } from "@/types/ua"
 
 type Cohort = gapi.client.analyticsreporting.Cohort
 
@@ -101,8 +97,8 @@ const useCohortRequest = ({
   samplingLevel,
 }: {
   viewId: string
-  selectedMetric: UAColumn | undefined
-  selectedSegment: UASegment | undefined
+  selectedMetric: Column | undefined
+  selectedSegment: Segment | undefined
   cohortSize: CohortSize | undefined
   samplingLevel: V4SamplingLevel | undefined
 }) => {

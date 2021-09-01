@@ -20,10 +20,9 @@ import TextField from "@material-ui/core/TextField"
 import makeStyles from "@material-ui/core/styles/makeStyles"
 import Launch from "@material-ui/icons/Launch"
 
-import { Column } from "@/api"
 import useDataAPIRequest from "./useDataAPIRequest"
 import useInputs from "./useInputs"
-import { Url } from "@/constants"
+import { StorageKey, Url } from "@/constants"
 import ViewSelector from "@/components/ViewSelector"
 import {
   DimensionsPicker,
@@ -37,6 +36,14 @@ import ExternalLink from "@/components/ExternalLink"
 import Sort from "./Sort"
 import Report from "./Report"
 import usePermalink from "./usePermalink"
+import { Column, ProfileSummary } from "@/types/ua"
+import useUADimensionsAndMetrics, {
+  UADimensionsAndMetricsRequestCtx,
+} from "../UAPickers/useDimensionsAndMetrics"
+import { UASegmentsRequestCtx, useUASegments } from "../UAPickers/useUASegments"
+import useAccountPropertyView from "../ViewSelector/useAccountPropertyView"
+import { useHydratedPersistantString } from "@/hooks/useHydrated"
+import { successful } from "@/types"
 
 const coreReportingApi = (
   <ExternalLink href={Url.coreReportingApi}>Core Reporting API</ExternalLink>
@@ -110,12 +117,53 @@ const DevsiteLink: React.FC<{ hash: string }> = ({ hash }) => {
   )
 }
 
+export enum QueryParam {
+  Account = "a",
+  Property = "b",
+  View = "c",
+  ShowSegmentDefinitions = "d",
+  ViewID = "ids",
+  StartDate = "start-date",
+  EndDate = "end-date",
+  SelectedMetrics = "metrics",
+  SelectedDimensions = "dimensions",
+  Sort = "sort",
+  Filters = "filters",
+  Segment = "segment",
+  SamplingLevel = "samplingLevel",
+  StartIndex = "start-index",
+  MaxResults = "max-results",
+  IncludeEmptyRows = "include-empty-rows",
+}
+
 export const QueryExplorer = () => {
   const classes = useStyles()
 
+  const [viewID, setViewID] = useHydratedPersistantString(
+    StorageKey.queryExplorerViewID,
+    QueryParam.ViewID
+  )
+
+  const onSetView = React.useCallback(
+    (view: ProfileSummary | undefined) => {
+      if (view === undefined) {
+        return
+      }
+      setViewID(`ga:${view.id}`)
+    },
+    [setViewID]
+  )
+
+  const accountPropertyView = useAccountPropertyView(
+    StorageKey.queryExplorerAPV,
+    QueryParam,
+    onSetView
+  )
+  const uaDimensionsAndMetricsRequest = useUADimensionsAndMetrics(
+    accountPropertyView
+  )
+  const uaSegmentsRequest = useUASegments()
   const {
-    viewID,
-    setViewID,
     startDate,
     setStartDate,
     endDate,
@@ -140,9 +188,7 @@ export const QueryExplorer = () => {
     setIncludeEmptyRows,
     segment,
     sort,
-    accountPropertyView,
-    columns,
-  } = useInputs()
+  } = useInputs(uaDimensionsAndMetricsRequest, uaSegmentsRequest)
   const { account, property, view } = accountPropertyView
 
   const {
@@ -193,7 +239,9 @@ export const QueryExplorer = () => {
   }, [permalink, updateLink])
 
   return (
-    <>
+    <UADimensionsAndMetricsRequestCtx.Provider
+      value={uaDimensionsAndMetricsRequest}
+    >
       <Typography variant="h2">Overview</Typography>
       <Typography variant="body1">
         This tool lets you interact with the {coreReportingApi} by building
@@ -266,18 +314,12 @@ export const QueryExplorer = () => {
           }
         />
         <MetricsPicker
-          account={account}
-          property={property}
-          view={view}
           required
           selectedMetrics={selectedMetrics}
           setMetricIDs={setSelectedMetricIDs}
           helperText="Metrics to include in the query."
         />
         <DimensionsPicker
-          account={account}
-          property={property}
-          view={view}
           selectedDimensions={selectedDimensions}
           setDimensionIDs={setSelectedDimensionIDs}
           helperText="Dimensions to include in the query."
@@ -300,11 +342,13 @@ export const QueryExplorer = () => {
           fullWidth
           helperText="The filters to apply to the query."
         />
-        <SegmentPicker
-          segment={segment}
-          setSegmentID={setSegmentID}
-          showSegmentDefinition={showSegmentDefinition}
-        />
+        <UASegmentsRequestCtx.Provider value={uaSegmentsRequest}>
+          <SegmentPicker
+            segment={segment}
+            setSegmentID={setSegmentID}
+            showSegmentDefinition={showSegmentDefinition}
+          />
+        </UASegmentsRequestCtx.Provider>
         <LabeledCheckbox
           checked={showSegmentDefinition}
           setChecked={setShowSegmentDefiniton}
@@ -365,10 +409,10 @@ export const QueryExplorer = () => {
       <Report
         accessToken={accessToken}
         queryResponse={queryResponse}
-        columns={columns}
+        columns={successful(uaDimensionsAndMetricsRequest)?.columns}
         permalink={currentLink}
       />
-    </>
+    </UADimensionsAndMetricsRequestCtx.Provider>
   )
 }
 

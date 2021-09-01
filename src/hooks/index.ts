@@ -54,11 +54,14 @@ export const usePersistentString: UsePersistentString = (
   initialValue,
   overwrite
 ) => {
+  if (IS_SSR) {
+    return useState(initialValue)
+  }
   const [value, setValue] = useState<string | undefined>(() => {
     if (overwrite !== undefined) {
       return overwrite
     }
-    const fromStorage = IS_SSR ? null : window.localStorage.getItem(key)
+    const fromStorage = window.localStorage.getItem(key)
     if (fromStorage === null) {
       return initialValue
     }
@@ -89,7 +92,7 @@ const getObjectFromLocalStorage = <T>(
   if (IS_SSR) {
     return undefined
   }
-  let asString = IS_SSR ? null : window.localStorage.getItem(key)
+  let asString = window.localStorage.getItem(key)
   if (asString === null || asString === "undefined") {
     return defaultValue
   }
@@ -99,23 +102,42 @@ const getObjectFromLocalStorage = <T>(
 export const usePersistantObject = <T extends {}>(
   key: StorageKey,
   defaultValue?: T
-): [T | undefined, React.Dispatch<React.SetStateAction<T | undefined>>] => {
-  const [value, setValue] = useState(() => {
+): [T | undefined, Dispatch<T | undefined>] => {
+  if (IS_SSR) {
+    return useState<T | undefined>(defaultValue)
+  }
+
+  const [localValue, setValueLocal] = useState(() => {
     return getObjectFromLocalStorage(key, defaultValue)
   })
 
-  useEffect(() => {
-    setValue(getObjectFromLocalStorage(key, defaultValue))
-  }, [key, setValue, defaultValue])
+  const setValue: Dispatch<T | undefined> = useCallback(
+    v => {
+      setValueLocal(old => {
+        let nu: T | undefined = undefined
+        if (v instanceof Function) {
+          nu = v(old)
+        } else {
+          nu = v
+        }
+        if (!IS_SSR) {
+          window.localStorage.setItem(key, JSON.stringify(nu))
+        }
+        return nu
+      })
+    },
+    [key]
+  )
 
-  useEffect(() => {
-    if (IS_SSR) {
-      return
-    }
-    window.localStorage.setItem(key, JSON.stringify(value))
-  }, [value, key])
+  // Note - This feels wrong, but I have to depend on localValue changing to
+  // catch changes that only happen when setValue is run. Don't remove
+  // localValue
+  const fromStorage = React.useMemo(
+    () => getObjectFromLocalStorage(key, defaultValue),
+    [key, localValue, defaultValue]
+  )
 
-  return [value, setValue]
+  return [fromStorage, setValue]
 }
 
 const uaToast = (tool: string) => `Redirecting to the UA ${tool}.`

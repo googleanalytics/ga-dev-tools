@@ -18,18 +18,13 @@ import { Typography, TextField, makeStyles } from "@material-ui/core"
 import Autocomplete, {
   createFilterOptions,
 } from "@material-ui/lab/Autocomplete"
-import { usePersistentString } from "../hooks"
-import { StorageKey } from "../constants"
-import { useSelector } from "react-redux"
-import { AccountSummary, Column as ColumnT, WebPropertySummary } from "@/api"
-import { ProfileSummary } from "./ViewSelector/useViewSelector"
-import { Dispatch } from "@/types"
-import useCached from "@/hooks/useCached"
-import moment from "moment"
-import { UAAccountPropertyView } from "./ViewSelector/useAccountPropertyView"
-import { useMemo } from "react"
+import { usePersistentString } from "@/hooks"
+import { StorageKey } from "@/constants"
+import { Column as ColumnT, Segment as SegmentT } from "@/types/ua"
+import { Dispatch, RequestStatus, successful } from "@/types"
+import { UADimensionsAndMetricsRequestCtx } from "./useDimensionsAndMetrics"
+import { UASegmentsRequestCtx } from "./useUASegments"
 
-export type UASegment = gapi.client.analytics.Segment
 export enum V4SamplingLevel {
   Default = "DEFAULT",
   SMALL = "SMALL",
@@ -46,172 +41,8 @@ export enum CohortSize {
   Month = "MONTH",
 }
 
-export type UAColumn = gapi.client.analytics.Column
-type MetadataAPI = typeof gapi.client.analytics.metadata
-type ManagementAPI = typeof gapi.client.analytics.management
-
 const removeDeprecatedColumns = (column: ColumnT): true | false =>
   column.attributes?.status !== "DEPRECATED"
-
-export const useUADimensionsAndMetrics = ({
-  account,
-  property,
-  view,
-}: UAAccountPropertyView): {
-  dimensions: UAColumn[] | undefined
-  metrics: UAColumn[] | undefined
-  columns: UAColumn[] | undefined
-} => {
-  const gapi = useSelector((state: AppState) => state.gapi)
-
-  const metadataAPI = React.useMemo<MetadataAPI | undefined>(() => {
-    return gapi?.client.analytics.metadata as any
-  }, [gapi])
-
-  const managementAPI = React.useMemo<ManagementAPI | undefined>(() => {
-    return gapi?.client.analytics.management as any
-  }, [gapi])
-
-  const requestReady = React.useMemo(() => {
-    if (
-      metadataAPI === undefined ||
-      managementAPI === undefined ||
-      account === undefined ||
-      property === undefined ||
-      view === undefined
-    ) {
-      return false
-    }
-    return true
-  }, [metadataAPI, managementAPI, account, property, view])
-
-  const makeRequest = React.useCallback(async () => {
-    if (
-      metadataAPI === undefined ||
-      managementAPI === undefined ||
-      account === undefined ||
-      property === undefined ||
-      view === undefined
-    ) {
-      return Promise.resolve(undefined)
-    }
-    const columnsResponse = await metadataAPI.columns.list({ reportType: "ga" })
-    const columns = columnsResponse.result.items
-
-    const [
-      customDimensionsResponse,
-      customMetricsResponse,
-      goalsResponse,
-    ] = await Promise.all([
-      managementAPI.customDimensions.list({
-        accountId: account.id!,
-        webPropertyId: property.id!,
-      }),
-      managementAPI.customMetrics.list({
-        accountId: account.id!,
-        webPropertyId: property.id!,
-      }),
-      managementAPI.goals.list({
-        accountId: account.id!,
-        webPropertyId: property.id!,
-        profileId: view.id!,
-      }),
-    ])
-
-    const customDimensions = customDimensionsResponse.result.items
-    const customMetrics = customMetricsResponse.result.items
-    const goals = goalsResponse.result.items
-
-    return columns?.flatMap(column => {
-      if (customDimensions !== undefined && column.id === "ga:dimensionXX") {
-        return customDimensions.map(
-          dimension =>
-            ({
-              ...column,
-              id: dimension.id,
-              attributes: { ...column.attributes, uiName: dimension.name },
-            } as ColumnT)
-        )
-      }
-      if (customMetrics !== undefined && column.id === "ga:metricXX") {
-        return customMetrics.map(
-          metric =>
-            ({
-              ...column,
-              id: metric.id,
-              attributes: { ...column.attributes, uiName: metric.name },
-            } as ColumnT)
-        )
-      }
-      if (
-        goals !== undefined &&
-        column.attributes!.minTemplateIndex !== undefined &&
-        /goalxx/i.test(column.id!)
-      ) {
-        return goals.map(goal => ({
-          ...column,
-          id: column.id!.replace("XX", goal.id!),
-          attributes: {
-            ...column.attributes,
-            uiName: `${goal.name} (${column.attributes!.uiName.replace(
-              "XX",
-              goal.id!
-            )})`,
-          },
-        }))
-      }
-      if (column.attributes!.minTemplateIndex !== undefined) {
-        let min = 0
-        let max = 0
-        if (
-          property?.level === "PREMIUM" &&
-          column.attributes!.premiumMinTemplateIndex !== undefined
-        ) {
-          min = parseInt(column.attributes!.premiumMinTemplateIndex, 10)
-          max = parseInt(column.attributes!.premiumMaxTemplateIndex, 10)
-        } else {
-          min = parseInt(column.attributes!.minTemplateIndex, 10)
-          max = parseInt(column.attributes!.maxTemplateIndex, 10)
-        }
-        const columns: gapi.client.analytics.Column[] = []
-        for (let i = min; i <= max; i++) {
-          columns.push({
-            ...column,
-            id: column.id!.replace("XX", i.toString()),
-            attributes: {
-              ...column.attributes,
-              uiName: column.attributes!.uiName.replace("XX", i.toString()),
-            },
-          })
-        }
-        return columns
-      }
-      return [column]
-    })
-  }, [metadataAPI, managementAPI, account, property, view])
-
-  const columns = useCached(
-    // Even though account is sometimes undefined it doesn't really matter
-    // since this hook will re-run once it is. makeRequest is smartEnough to
-    // not do anything when account property or view are undefined.
-    `//ua-dims-mets/${account?.id}-${property?.id}-${view?.id}` as StorageKey,
-    makeRequest,
-    moment.duration(5, "minutes"),
-    requestReady
-  )
-
-  const dimensions = React.useMemo<UAColumn[] | undefined>(
-    () => columns?.filter(column => column.attributes?.type === "DIMENSION"),
-    [columns]
-  )
-
-  const metrics = React.useMemo(
-    () => columns?.filter(column => column.attributes?.type === "METRIC"),
-    [columns]
-  )
-
-  return { dimensions, metrics, columns }
-}
 
 const useColumnStyles = makeStyles(() => ({
   option: {
@@ -225,7 +56,7 @@ const useColumnStyles = makeStyles(() => ({
   },
 }))
 
-const Column: React.FC<{ column: UAColumn }> = ({ column }) => {
+const Column: React.FC<{ column: ColumnT }> = ({ column }) => {
   const classes = useColumnStyles()
   return (
     <div className={classes.option}>
@@ -245,39 +76,27 @@ const Column: React.FC<{ column: UAColumn }> = ({ column }) => {
 }
 
 export const DimensionPicker: React.FC<{
-  selectedDimension: UAColumn | undefined
+  selectedDimension: ColumnT | undefined
   setDimensionID: Dispatch<string | undefined>
   required?: true | undefined
   helperText?: string
-  account: AccountSummary | undefined
-  property: WebPropertySummary | undefined
-  view: ProfileSummary | undefined
-}> = ({
-  helperText,
-  selectedDimension,
-  setDimensionID,
-  required,
-  account,
-  property,
-  view,
-}) => {
-  const { dimensions } = useUADimensionsAndMetrics({ account, property, view })
-  const dimensionOptions = React.useMemo<UAColumn[] | undefined>(
-    () => dimensions?.filter(removeDeprecatedColumns),
-    [dimensions]
-  )
+}> = ({ helperText, selectedDimension, setDimensionID, required }) => {
+  const request = React.useContext(UADimensionsAndMetricsRequestCtx)
 
   return (
-    <Autocomplete<UAColumn, false, undefined, true>
+    <Autocomplete<ColumnT, false, undefined, true>
       fullWidth
       autoComplete
       autoHighlight
       freeSolo
-      options={dimensionOptions || []}
+      loading={request.status === RequestStatus.InProgress}
+      options={
+        successful(request)?.dimensions.filter(removeDeprecatedColumns) || []
+      }
       getOptionLabel={dimension => dimension.id!}
       value={selectedDimension || null}
       onChange={(_event, value) =>
-        setDimensionID(value === null ? undefined : (value as UAColumn).id)
+        setDimensionID(value === null ? undefined : (value as ColumnT).id)
       }
       renderOption={column => <Column column={column} />}
       renderInput={params => (
@@ -295,49 +114,41 @@ export const DimensionPicker: React.FC<{
 }
 
 export const DimensionsPicker: React.FC<{
-  selectedDimensions: UAColumn[] | undefined
+  selectedDimensions: ColumnT[] | undefined
   setDimensionIDs: Dispatch<string[] | undefined>
   required?: true | undefined
   helperText?: string
   label?: string
-  account: AccountSummary | undefined
-  property: WebPropertySummary | undefined
-  view: ProfileSummary | undefined
 }> = ({
   helperText,
   selectedDimensions,
   setDimensionIDs,
   required,
-  account,
-  property,
-  view,
   label = "dimensions",
 }) => {
-  const { dimensions } = useUADimensionsAndMetrics({ account, property, view })
-  const dimensionOptions = React.useMemo<UAColumn[] | undefined>(
-    () =>
-      dimensions
-        ?.filter(removeDeprecatedColumns)
-        ?.filter(
-          option =>
-            (selectedDimensions || []).find(s => s.id === option.id) ===
-            undefined
-        ),
-    [dimensions, selectedDimensions]
-  )
+  const request = React.useContext(UADimensionsAndMetricsRequestCtx)
 
   return (
-    <Autocomplete<UAColumn, true, undefined, true>
+    <Autocomplete<ColumnT, true, undefined, true>
       fullWidth
       autoComplete
       autoHighlight
       freeSolo
       multiple
-      options={dimensionOptions || []}
+      loading={request.status === RequestStatus.InProgress}
+      options={
+        successful(request)
+          ?.dimensions.filter(removeDeprecatedColumns)
+          .filter(
+            option =>
+              (selectedDimensions || []).find(s => s.id === option.id) ===
+              undefined
+          ) || []
+      }
       getOptionLabel={dimension => dimension.id!}
       value={selectedDimensions || []}
       onChange={(_event, value) =>
-        setDimensionIDs((value as UAColumn[])?.map(c => c.id!))
+        setDimensionIDs((value as ColumnT[])?.map(c => c.id!))
       }
       renderOption={column => <Column column={column} />}
       renderInput={params => (
@@ -355,44 +166,30 @@ export const DimensionsPicker: React.FC<{
 }
 
 export const MetricPicker: React.FC<{
-  selectedMetric: UAColumn | undefined
+  selectedMetric: ColumnT | undefined
   setMetricID: Dispatch<string | undefined>
   required?: true | undefined
   helperText?: string
-  account: AccountSummary | undefined
-  property: WebPropertySummary | undefined
-  view: ProfileSummary | undefined
-  filter?: (metric: UAColumn) => boolean
-}> = ({
-  helperText,
-  selectedMetric,
-  setMetricID,
-  required,
-  filter,
-  account,
-  property,
-  view,
-}) => {
-  const { metrics } = useUADimensionsAndMetrics({ account, property, view })
-  const metricOptions = React.useMemo<UAColumn[] | undefined>(
-    () =>
-      metrics
-        ?.filter(removeDeprecatedColumns)
-        ?.filter(filter !== undefined ? filter : () => true),
-    [metrics, filter]
-  )
+  filter?: (metric: ColumnT) => boolean
+}> = ({ helperText, selectedMetric, setMetricID, required, filter }) => {
+  const request = React.useContext(UADimensionsAndMetricsRequestCtx)
 
   return (
-    <Autocomplete<UAColumn, false, undefined, true>
+    <Autocomplete<ColumnT, false, undefined, true>
       fullWidth
       autoComplete
       autoHighlight
       freeSolo
-      options={metricOptions || []}
+      loading={request.status === RequestStatus.InProgress}
+      options={
+        successful(request)
+          ?.metrics.filter(removeDeprecatedColumns)
+          .filter(filter !== undefined ? filter : () => true) || []
+      }
       getOptionLabel={metric => metric.id!}
       value={selectedMetric || null}
       onChange={(_event, value) =>
-        setMetricID(value === null ? undefined : (value as UAColumn).id)
+        setMetricID(value === null ? undefined : (value as ColumnT).id)
       }
       renderOption={column => <Column column={column} />}
       renderInput={params => (
@@ -415,43 +212,36 @@ export const MetricsPicker: React.FC<{
   required?: true | undefined
   helperText?: string
   label?: string
-  account: AccountSummary | undefined
-  property: WebPropertySummary | undefined
-  view: ProfileSummary | undefined
 }> = ({
   helperText,
   selectedMetrics,
   setMetricIDs,
   required,
   label = "metrics",
-  account,
-  property,
-  view,
 }) => {
-  const { metrics } = useUADimensionsAndMetrics({ account, property, view })
-  const metricOptions = React.useMemo<UAColumn[] | undefined>(
-    () =>
-      metrics
-        ?.filter(removeDeprecatedColumns)
-        ?.filter(
-          option =>
-            (selectedMetrics || []).find(s => s.id === option.id) === undefined
-        ),
-    [metrics, selectedMetrics]
-  )
+  const request = React.useContext(UADimensionsAndMetricsRequestCtx)
 
   return (
-    <Autocomplete<UAColumn, true, undefined, true>
+    <Autocomplete<ColumnT, true, undefined, true>
       fullWidth
       autoComplete
       autoHighlight
       freeSolo
       multiple
-      options={metricOptions || []}
+      loading={request.status === RequestStatus.InProgress}
+      options={
+        successful(request)
+          ?.metrics.filter(removeDeprecatedColumns)
+          .filter(
+            option =>
+              (selectedMetrics || []).find(s => s.id === option.id) ===
+              undefined
+          ) || []
+      }
       getOptionLabel={metric => metric.id!}
       value={selectedMetrics || []}
       onChange={(_event, value) =>
-        setMetricIDs((value as UAColumn[])?.map(c => c.id!))
+        setMetricIDs((value as ColumnT[])?.map(c => c.id!))
       }
       renderOption={column => <Column column={column} />}
       renderInput={params => (
@@ -468,36 +258,8 @@ export const MetricsPicker: React.FC<{
   )
 }
 
-export const useUASegments = (): UASegment[] | undefined => {
-  const gapi = useSelector((state: AppState) => state.gapi)
-  const managementAPI = React.useMemo<ManagementAPI | undefined>(() => {
-    return gapi?.client.analytics.management as any
-  }, [gapi])
-
-  const requestSegments = React.useCallback(async () => {
-    if (managementAPI === undefined) {
-      return Promise.resolve(undefined)
-    }
-    const response = await managementAPI.segments.list({})
-    return response.result.items
-  }, [managementAPI])
-
-  const requestReady = useMemo(() => {
-    return managementAPI !== undefined
-  }, [managementAPI])
-
-  const segments = useCached(
-    StorageKey.uaSegments,
-    requestSegments,
-    moment.duration(5, "minutes"),
-    requestReady
-  )
-
-  return segments
-}
-
 const Segment: React.FC<{
-  segment: UASegment
+  segment: SegmentT
   showSegmentDefinition: boolean
 }> = ({ segment, showSegmentDefinition }) => {
   const classes = useColumnStyles()
@@ -529,9 +291,9 @@ const Segment: React.FC<{
   )
 }
 
-const filter = createFilterOptions<UASegment>()
+const filter = createFilterOptions<SegmentT>()
 export const SegmentPicker: React.FC<{
-  segment: UASegment | undefined
+  segment: SegmentT | undefined
   setSegmentID: Dispatch<string | undefined>
   showSegmentDefinition: boolean
   required?: true | undefined
@@ -543,10 +305,10 @@ export const SegmentPicker: React.FC<{
   required,
   showSegmentDefinition,
 }) => {
-  const segments = useUASegments()
+  const request = React.useContext(UASegmentsRequestCtx)
 
   const getOptionLabel = React.useCallback(
-    (segment: UASegment) =>
+    (segment: SegmentT) =>
       (showSegmentDefinition
         ? segment.definition ||
           (segment.name && `${segment.name} has no segment definiton.`)
@@ -555,12 +317,13 @@ export const SegmentPicker: React.FC<{
   )
 
   return (
-    <Autocomplete<UASegment, false, undefined, true>
+    <Autocomplete<SegmentT, false, undefined, true>
       fullWidth
       autoComplete
       autoHighlight
       freeSolo
-      options={segments || []}
+      loading={request.status === RequestStatus.InProgress}
+      options={successful(request)?.segments || []}
       getOptionSelected={(a, b) =>
         a.id === b.id || a.definition === b.definition
       }
@@ -582,7 +345,7 @@ export const SegmentPicker: React.FC<{
         return filtered
       }}
       onChange={(_event, value) => {
-        setSegmentID(value === null ? undefined : (value as UASegment).id)
+        setSegmentID(value === null ? undefined : (value as SegmentT).id)
       }}
       renderOption={column => (
         <Segment

@@ -24,8 +24,6 @@ import {
   SegmentPicker,
   V4SamplingLevelPicker,
   CohortSizePicker,
-  UAColumn,
-  useUADimensionsAndMetrics,
 } from "@/components/UAPickers"
 import LinkedTextField from "@/components/LinkedTextField"
 import LabeledCheckbox from "@/components/LabeledCheckbox"
@@ -34,6 +32,15 @@ import useCohortRequestParameters from "./useCohortRequestParameters"
 import useCohortRequest from "./useCohortRequest"
 import { ReportsRequest } from "../RequestComposer"
 import { UAAccountPropertyView } from "@/components/ViewSelector/useAccountPropertyView"
+import useUADimensionsAndMetrics, {
+  UADimensionsAndMetricsRequestCtx,
+} from "@/components/UAPickers/useDimensionsAndMetrics"
+import { successful } from "@/types"
+import { Column } from "@/types/ua"
+import {
+  UASegmentsRequestCtx,
+  useUASegments,
+} from "@/components/UAPickers/useUASegments"
 
 interface CohortRequestProps {
   apv: UAAccountPropertyView
@@ -59,7 +66,8 @@ const CohortRequest: React.FC<CohortRequestProps> = ({
     showSegmentDefinition,
     setShowSegmentDefinition,
   ] = usePersistentBoolean(StorageKey.cohortRequestShowSegmentDefinition, false)
-  const { columns } = useUADimensionsAndMetrics(apv)
+  const uaDimensionsAndMetricsRequest = useUADimensionsAndMetrics(apv)
+  const segmentsRequest = useUASegments()
   const {
     viewId,
     setViewId,
@@ -71,7 +79,11 @@ const CohortRequest: React.FC<CohortRequestProps> = ({
     setSelectedSegmentID,
     samplingLevel,
     setSamplingLevel,
-  } = useCohortRequestParameters(apv, columns)
+  } = useCohortRequestParameters(
+    apv,
+    successful(uaDimensionsAndMetricsRequest)?.columns,
+    successful(segmentsRequest)?.segments
+  )
   const requestObject = useCohortRequest({
     viewId,
     selectedMetric,
@@ -85,13 +97,15 @@ const CohortRequest: React.FC<CohortRequestProps> = ({
   }, [requestObject, setRequestObject])
 
   const cohortFilter = React.useCallback(
-    (metric: NonNullable<UAColumn>): boolean =>
+    (metric: NonNullable<Column>): boolean =>
       metric?.attributes?.group === "Lifetime Value and Cohorts",
     []
   )
 
   return (
-    <>
+    <UADimensionsAndMetricsRequestCtx.Provider
+      value={uaDimensionsAndMetricsRequest}
+    >
       <section className={controlWidth}>
         <LinkedTextField
           href={linkFor("ReportRequest.FIELDS.view_id")}
@@ -114,11 +128,13 @@ const CohortRequest: React.FC<CohortRequestProps> = ({
           storageKey={StorageKey.cohortRequestCohortSize}
           helperText="The size of the cohort to use in the request."
         />
-        <SegmentPicker
-          segment={selectedSegment}
-          setSegmentID={setSelectedSegmentID}
-          showSegmentDefinition={showSegmentDefinition}
-        />
+        <UASegmentsRequestCtx.Provider value={segmentsRequest}>
+          <SegmentPicker
+            segment={selectedSegment}
+            setSegmentID={setSelectedSegmentID}
+            showSegmentDefinition={showSegmentDefinition}
+          />
+        </UASegmentsRequestCtx.Provider>
         <LabeledCheckbox
           className={classes.showSegments}
           checked={showSegmentDefinition}
@@ -132,7 +148,7 @@ const CohortRequest: React.FC<CohortRequestProps> = ({
         />
         {children}
       </section>
-    </>
+    </UADimensionsAndMetricsRequestCtx.Provider>
   )
 }
 

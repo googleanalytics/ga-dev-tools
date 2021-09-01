@@ -1,18 +1,17 @@
 import { StorageKey } from "@/constants"
 import { useKeyedHydratedPersistantObject } from "@/hooks/useHydrated"
-import { Dispatch } from "@/types"
+import { Dispatch, RequestStatus } from "@/types"
 import { useCallback } from "react"
-import useAccounts from "./useAccounts"
-import {
-  AccountSummary,
-  ProfileSummary,
-  WebPropertySummary,
-} from "./useViewSelector"
+import useFlattenedViews from "./useFlattenedViews"
+
+export type AccountSummary = gapi.client.analytics.AccountSummary
+export type WebPropertySummary = gapi.client.analytics.WebPropertySummary
+export type ProfileSummary = gapi.client.analytics.ProfileSummary
 
 export interface UAAccountPropertyView {
-  account: AccountSummary | undefined
-  property: WebPropertySummary | undefined
-  view: ProfileSummary | undefined
+  account?: AccountSummary
+  property?: WebPropertySummary
+  view?: ProfileSummary
 }
 
 interface UAAccountPropertyViewSetters {
@@ -26,16 +25,21 @@ const useAccountPropertyView = (
   queryParamKeys: { Account: string; Property: string; View: string },
   onSetView?: (p: ProfileSummary | undefined) => void
 ): UAAccountPropertyView & UAAccountPropertyViewSetters => {
-  const accounts = useAccounts()
+  const flattenedViewsRequest = useFlattenedViews()
 
   const getAccountByID = useCallback(
     (id: string | undefined) => {
-      if (accounts === undefined || id === undefined) {
+      if (
+        flattenedViewsRequest.status !== RequestStatus.Successful ||
+        id === undefined
+      ) {
         return undefined
       }
-      return accounts.find(a => a.id === id)
+      return flattenedViewsRequest.flattenedViews.find(
+        flattenedView => flattenedView.account?.id === id
+      )?.account
     },
-    [accounts]
+    [flattenedViewsRequest]
   )
 
   const [
@@ -49,12 +53,17 @@ const useAccountPropertyView = (
 
   const getPropertyByID = useCallback(
     (id: string | undefined) => {
-      if (accounts === undefined || id === undefined) {
+      if (
+        flattenedViewsRequest.status !== RequestStatus.Successful ||
+        id === undefined
+      ) {
         return undefined
       }
-      return accounts.flatMap(a => a.webProperties || []).find(p => p.id === id)
+      return flattenedViewsRequest.flattenedViews.find(
+        flattenedView => flattenedView.property?.id === id
+      )?.property
     },
-    [accounts]
+    [flattenedViewsRequest]
   )
 
   const [
@@ -68,15 +77,17 @@ const useAccountPropertyView = (
 
   const getViewByID = useCallback(
     (id: string | undefined) => {
-      if (accounts === undefined || id === undefined) {
+      if (
+        flattenedViewsRequest.status !== RequestStatus.Successful ||
+        id === undefined
+      ) {
         return undefined
       }
-      return accounts
-        .flatMap(a => a.webProperties || [])
-        .flatMap(p => p.profiles || [])
-        .find(p => p.id === id)
+      return flattenedViewsRequest.flattenedViews.find(
+        flattenedView => flattenedView.view?.id === id
+      )?.view
     },
-    [accounts]
+    [flattenedViewsRequest]
   )
 
   const [view, setViewID] = useKeyedHydratedPersistantObject<ProfileSummary>(

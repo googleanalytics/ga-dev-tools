@@ -1,42 +1,112 @@
 import { StorageKey } from "@/constants"
+import { Requestable, RequestStatus } from "@/types"
 import moment from "moment"
-import { useEffect, useMemo } from "react"
+import { useCallback, useEffect, useMemo, useState } from "react"
 import { usePersistantObject } from "."
+import useRequestStatus from "./useRequestStatus"
 
-const useCached = <T>(
+interface Cached<T> {
+  "@@_lastFetched": number
+  "@@_cacheKey": string
+  value: T
+}
+
+const cacheValueValid = <T>(
+  cached: Cached<T> | undefined,
+  maxAge: moment.Duration
+): boolean => {
+  const now = moment()
+  const cacheTime = cached?.["@@_lastFetched"]
+
+  if (cacheTime === undefined || now.isAfter(moment(cacheTime).add(maxAge))) {
+    return false
+  }
+  return true
+}
+
+interface Successful<T> {
+  value: T
+  bustCache: () => Promise<void>
+}
+
+interface Failed<E = any> {
+  error: E | undefined
+}
+
+const useCached = <T, E = any>(
   cacheKey: StorageKey,
   makeRequest: () => Promise<T>,
   maxAge: moment.Duration,
-  requestReady: boolean
-): T | undefined => {
-  const [cached, setCached] = usePersistantObject<{
-    "@@_lastFetched": number
-    value: T
-  }>(cacheKey)
+  requestReady: boolean,
+  onSuccess?: () => void,
+  onFailure?: () => void
+): Requestable<Successful<T>, {}, {}, Failed<E>> => {
+  const [cached, setCached] = usePersistantObject<Cached<T>>(cacheKey)
+  const { status, setInProgress, setFailed, setSuccessful } = useRequestStatus(
+    cacheValueValid(cached, maxAge)
+      ? RequestStatus.Successful
+      : RequestStatus.InProgress
+  )
+  const [error, setError] = useState<E>()
 
-  useEffect(() => {
+  const updateCachedValue = useCallback(async () => {
     if (requestReady === false) {
       return
     }
+    try {
+      setInProgress()
+      const t = await makeRequest()
+      const now = moment.now()
+      setCached({ "@@_lastFetched": now, "@@_cacheKey": cacheKey, value: t })
+      setSuccessful()
+      onSuccess && onSuccess()
+    } catch (e) {
+      setError(e)
+      setFailed()
+      onFailure && onFailure()
+    }
+  }, [makeRequest, setCached, cacheKey, requestReady, setSuccessful, onSuccess])
+
+  useEffect(() => {
     if (cached === undefined) {
-      makeRequest().then(t => {
-        const now = moment.now()
-        setCached({ "@@_lastFetched": now, value: t })
-      })
+      updateCachedValue()
     } else {
       const now = moment()
-      if (now.isAfter(moment(cached["@@_lastFetched"]).add(maxAge))) {
-        makeRequest().then(t => {
-          const now = moment.now()
-          setCached({ "@@_lastFetched": now, value: t })
-        })
+      const cacheTime = cached["@@_lastFetched"]
+      if (
+        cacheTime === undefined ||
+        now.isAfter(moment(cacheTime).add(maxAge))
+      ) {
+        updateCachedValue()
       } else {
         return
       }
     }
   }, [requestReady, cached, setCached, makeRequest, maxAge])
 
-  return useMemo(() => cached?.value, [cached])
+  const bustCache = useCallback(async () => {
+    return updateCachedValue()
+  }, [updateCachedValue])
+
+  return useMemo(() => {
+    switch (status) {
+      case RequestStatus.NotStarted:
+        return { status }
+      case RequestStatus.InProgress:
+        return { status }
+      case RequestStatus.Failed: {
+        return { status, error }
+      }
+      case RequestStatus.Successful: {
+        // If the cache is undefined, but the status is Successful, that means
+        // the key was just changed.
+        if (cached === undefined) {
+          return { status: RequestStatus.InProgress }
+        }
+        return { status, value: cached.value, bustCache }
+      }
+    }
+  }, [status, cached, bustCache])
 }
 
 export default useCached

@@ -147,7 +147,7 @@ const Explorer: React.FC = () => {
           <Typography>Details:</Typography>
           <PrettyJson
             tooltipText="Copy error object."
-            object={failed(columnsRequest)!.errorData}
+            object={failed(columnsRequest)!.error}
           />
         </div>
       )}

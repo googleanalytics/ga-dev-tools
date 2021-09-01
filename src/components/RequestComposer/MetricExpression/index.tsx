@@ -25,7 +25,6 @@ import LabeledCheckbox from "@/components/LabeledCheckbox"
 import {
   DimensionsPicker,
   SegmentPicker,
-  useUADimensionsAndMetrics,
   V4SamplingLevelPicker,
 } from "@/components/UAPickers"
 import { linkFor, titleFor } from "../HistogramRequest/"
@@ -33,6 +32,14 @@ import useMetricExpressionRequestParameters from "./useMetricExpressionRequestPa
 import useMetricExpressionRequest from "./useMetricExpressionRequest"
 import { ReportsRequest } from "../RequestComposer"
 import { UAAccountPropertyView } from "@/components/ViewSelector/useAccountPropertyView"
+import useUADimensionsAndMetrics, {
+  UADimensionsAndMetricsRequestCtx,
+} from "@/components/UAPickers/useDimensionsAndMetrics"
+import { successful } from "@/types"
+import {
+  UASegmentsRequestCtx,
+  useUASegments,
+} from "@/components/UAPickers/useUASegments"
 
 interface MetricExpressionRequestProps {
   apv: UAAccountPropertyView
@@ -61,7 +68,8 @@ const MetricExpression: React.FC<MetricExpressionRequestProps> = ({
     StorageKey.metricExpressionRequestShowSegmentDefinition,
     false
   )
-  const { columns } = useUADimensionsAndMetrics(apv)
+  const uaDimensionsAndMetricsRequest = useUADimensionsAndMetrics(apv)
+  const segmentsRequest = useUASegments()
   const {
     viewId,
     setViewId,
@@ -85,7 +93,11 @@ const MetricExpression: React.FC<MetricExpressionRequestProps> = ({
     setPageSize,
     pageToken,
     setPageToken,
-  } = useMetricExpressionRequestParameters(apv, columns)
+  } = useMetricExpressionRequestParameters(
+    apv,
+    successful(uaDimensionsAndMetricsRequest)?.columns,
+    successful(segmentsRequest)?.segments
+  )
   const requestObject = useMetricExpressionRequest({
     viewId,
     samplingLevel,
@@ -105,7 +117,9 @@ const MetricExpression: React.FC<MetricExpressionRequestProps> = ({
   }, [requestObject, setRequestObject])
 
   return (
-    <>
+    <UADimensionsAndMetricsRequestCtx.Provider
+      value={uaDimensionsAndMetricsRequest}
+    >
       <section className={controlWidth}>
         <LinkedTextField
           href={linkFor("ReportRequest.FIELDS.view_id")}
@@ -165,11 +179,13 @@ const MetricExpression: React.FC<MetricExpressionRequestProps> = ({
           onChange={setFiltersExpression}
           helperText="Filters that restrict the data returned for the metric expression request."
         />
-        <SegmentPicker
-          segment={selectedSegment}
-          setSegmentID={setSelectedSegmentID}
-          showSegmentDefinition={showSegmentDefinition}
-        />
+        <UASegmentsRequestCtx.Provider value={segmentsRequest}>
+          <SegmentPicker
+            segment={selectedSegment}
+            setSegmentID={setSelectedSegmentID}
+            showSegmentDefinition={showSegmentDefinition}
+          />
+        </UASegmentsRequestCtx.Provider>
         <LabeledCheckbox
           className={classes.showSegments}
           checked={showSegmentDefinition}
@@ -200,7 +216,7 @@ const MetricExpression: React.FC<MetricExpressionRequestProps> = ({
         />
         {children}
       </section>
-    </>
+    </UADimensionsAndMetricsRequestCtx.Provider>
   )
 }
 

@@ -125,7 +125,7 @@ const Filter: React.FC<{
     removeExpression(path)
   }, [removeExpression, path])
 
-  const { showAdvanced, aps } = React.useContext(UseFilterContext)!
+  const { showAdvanced } = React.useContext(UseFilterContext)!
 
   return (
     <WithHelpText
@@ -135,7 +135,6 @@ const Filter: React.FC<{
       <section className={classes.filter}>
         {type === "metric" ? (
           <MetricPicker
-            aps={aps}
             label="metric"
             autoSelectIfOne={showAdvanced}
             metricFilter={metricFilter}
@@ -143,7 +142,6 @@ const Filter: React.FC<{
           />
         ) : (
           <DimensionPicker
-            aps={aps}
             label="dimension"
             autoSelectIfOne={showAdvanced}
             dimensionFilter={dimensionFilter}

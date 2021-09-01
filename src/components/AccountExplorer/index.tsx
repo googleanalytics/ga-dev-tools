@@ -21,11 +21,11 @@ import { useDebounce } from "use-debounce"
 
 import ViewSelector from "@/components/ViewSelector"
 import ViewsTable from "./ViewTable"
-import useFlattenedViews from "./useFlattenedViews"
 import useAccountPropertyView, {
   UAAccountPropertyView,
 } from "../ViewSelector/useAccountPropertyView"
 import { StorageKey } from "@/constants"
+import useFlattenedViews from "../ViewSelector/useFlattenedViews"
 
 const useStyles = makeStyles(theme => ({
   viewSelector: {
@@ -78,27 +78,6 @@ const containsQuery = (
   return !!hasMatch
 }
 
-const viewsForSearch = (
-  searchQuery: string,
-  views: UAAccountPropertyView[]
-) => {
-  return views.filter(populated => containsQuery(searchQuery, populated))
-}
-
-const populatedView = (
-  apv: UAAccountPropertyView | undefined
-): UAAccountPropertyView | undefined => {
-  if (
-    apv !== undefined &&
-    apv.account !== undefined &&
-    apv.property !== undefined &&
-    apv.view !== undefined
-  ) {
-    return apv
-  }
-  return undefined
-}
-
 enum QueryParam {
   Account = "a",
   Property = "b",
@@ -114,35 +93,17 @@ const AccountExplorer = () => {
     StorageKey.accountExplorerAPV,
     QueryParam
   )
-  const allViews = useFlattenedViews()
 
-  const filteredViews = React.useMemo(() => {
-    if (populatedView(selectedAPV) !== undefined) {
-      return [populatedView(selectedAPV)!]
-    }
-    // If allViews is defined
-    if (allViews !== undefined) {
-      // If account or property is selected filter out views to only views with that property and view.
-      const filtered = allViews
-        .filter(view =>
-          selectedAPV?.account !== undefined
-            ? selectedAPV.account.id === view.account!.id
-            : true
-        )
-        .filter(view =>
-          selectedAPV?.property !== undefined
-            ? selectedAPV.property.id === view.property!.id
-            : true
-        )
-      // If there is a search, it should take priority
-      if (debouncedQuery !== "") {
-        return viewsForSearch(debouncedQuery, filtered)
-      }
-      return filtered
-    } else {
-      return allViews
-    }
-  }, [allViews, selectedAPV, debouncedQuery])
+  const filterViews = React.useCallback(
+    (fv: UAAccountPropertyView) => containsQuery(debouncedQuery, fv),
+    [debouncedQuery]
+  )
+
+  const flattenedViewsRequest = useFlattenedViews(
+    selectedAPV.account,
+    selectedAPV.property,
+    filterViews
+  )
 
   return (
     <>
@@ -178,8 +139,8 @@ const AccountExplorer = () => {
             />
             <ViewsTable
               className={classes.table}
-              views={filteredViews}
-              search={searchQuery === "" ? undefined : searchQuery}
+              flattenedViewsRequest={flattenedViewsRequest}
+              search={debouncedQuery === "" ? undefined : debouncedQuery}
             />
           </div>
         </header>

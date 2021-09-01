@@ -17,7 +17,6 @@ import * as React from "react"
 import { useSelector } from "react-redux"
 import { useLocation } from "@reach/router"
 
-import { getAnalyticsApi } from "@/api"
 import { Params, Param, ValidationMessage, HitStatus, Property } from "./types"
 import * as hitUtils from "./hit"
 
@@ -249,8 +248,9 @@ export const useProperties: UseProperties = () => {
       return
     }
     ;(async () => {
-      const api = getAnalyticsApi(gapi)
-      const summaries = (await api.management.accountSummaries.list({})).result
+      const summaries = (
+        await gapi.client.analytics.management.accountSummaries.list({})
+      ).result
       const properties: Property[] = []
       summaries.items?.forEach(account => {
         const accountName = account.name || ""

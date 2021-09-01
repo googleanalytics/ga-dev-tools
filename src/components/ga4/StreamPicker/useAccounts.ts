@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useEffect } from "react"
+import { useCallback, useMemo } from "react"
 
 import useGapi from "@/hooks/useGapi"
 import { Requestable, RequestStatus } from "@/types"
@@ -7,7 +7,6 @@ import useCached from "@/hooks/useCached"
 import { StorageKey } from "@/constants"
 import moment from "moment"
 import usePaginatedCallback from "@/hooks/usePaginatedCallback"
-import useRequestStatus from "@/hooks/useRequestStatus"
 
 type AccountSummariesResponse = gapi.client.analyticsadmin.GoogleAnalyticsAdminV1alphaListAccountSummariesResponse
 const getAccountSummaries = (response: AccountSummariesResponse) =>
@@ -18,7 +17,6 @@ const getPageToken = (response: AccountSummariesResponse) =>
 const useAccountSummaries = (): Requestable<AccountSummaries> => {
   const gapi = useGapi()
   const adminAPI = useMemo(() => gapi?.client.analyticsadmin, [gapi])
-  const { status, setInProgress, setFailed, setSuccessful } = useRequestStatus()
 
   const requestReady = useMemo(() => adminAPI !== undefined, [adminAPI])
 
@@ -39,40 +37,26 @@ const useAccountSummaries = (): Requestable<AccountSummaries> => {
     "invalid invariant. adminAPI cannot be undefined when this method is called.",
     paginatedRequest,
     getAccountSummaries,
-    getPageToken,
-    setInProgress,
-    setFailed
+    getPageToken
   )
 
-  const accountSummaries = useCached(
+  const accountSummariesRequest = useCached(
     StorageKey.ga4AccountSummaries,
     requestAccountSummaries,
     moment.duration(5, "minutes"),
     requestReady
   )
 
-  useEffect(() => {
-    if (accountSummaries !== undefined) {
-      setSuccessful()
-    }
-  }, [accountSummaries, setSuccessful])
-
-  switch (status) {
-    case RequestStatus.Failed:
-    case RequestStatus.InProgress:
-    case RequestStatus.NotStarted:
-      return { status }
+  switch (accountSummariesRequest.status) {
     case RequestStatus.Successful: {
-      if (accountSummaries === undefined) {
-        throw new Error(
-          "Invalid invariant - accountSummaries should not be undefined."
-        )
-      }
+      const accountSummaries = accountSummariesRequest.value || []
       return {
-        status: RequestStatus.Successful,
+        status: accountSummariesRequest.status,
         accounts: accountSummaries,
       }
     }
+    default:
+      return { status: accountSummariesRequest.status }
   }
 }
 
