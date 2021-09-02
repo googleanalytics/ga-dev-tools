@@ -50,7 +50,11 @@ describe("ViewSelector", () => {
     const accountName = "my account name"
     const listAccountSummaries = jest.fn()
     listAccountSummaries.mockReturnValue(
-      Promise.resolve([{ name: accountName, id: "account id", properties: [] }])
+      Promise.resolve({
+        result: {
+          items: [{ name: accountName, id: "account id", properties: [] }],
+        },
+      })
     )
     const { wrapped } = withProviders(<DefaultSut />, {
       ua: { listAccountSummaries },
