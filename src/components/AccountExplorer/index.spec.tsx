@@ -37,7 +37,7 @@ describe("AccountExplorer", () => {
         store.dispatch({ type: "setGapi", gapi })
         const { findByText } = renderer.render(wrapped)
         await renderer.act(async () => {
-          await gapi.client.analytics.management.accountSummaries.list()
+          await gapi!.client!.analytics!.management!.accountSummaries!.list!()
         })
         const viewColumn = await findByText("View Name 1 1 1")
         expect(viewColumn).toBeVisible()
@@ -50,7 +50,7 @@ describe("AccountExplorer", () => {
 
         const { findByText, findByLabelText } = renderer.render(wrapped)
         await renderer.act(async () => {
-          await gapi.client.analytics.management.accountSummaries.list()
+          await gapi!.client!.analytics!.management!.accountSummaries!.list!()
         })
         await renderer.act(async () => {
           // Choose the second view in the list
@@ -70,7 +70,7 @@ describe("AccountExplorer", () => {
 
         const { findByText, findByPlaceholderText } = renderer.render(wrapped)
         await renderer.act(async () => {
-          await gapi.client.analytics.management.accountSummaries.list()
+          await gapi!.client!.analytics!.management!.accountSummaries!.list!()
         })
         await renderer.act(async () => {
           // Choose the second view in the list
