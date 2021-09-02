@@ -428,7 +428,9 @@ const metadataColumnsPromise = Promise.resolve({
   },
 })
 
-export const testGapi = ({ uaListAccountSummaries }: WithProvidersConfig) => ({
+export const testGapi = ({
+  uaListAccountSummaries,
+}: WithProvidersConfig | undefined = {}) => ({
   client: {
     analyticsadmin: {
       properties: {
