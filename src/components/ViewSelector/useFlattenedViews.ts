@@ -44,10 +44,16 @@ const useFlattenedViews = (
             const account = { ...summary }
 
             const properties = summary.webProperties || []
+            if (properties.length === 0) {
+              return { account }
+            }
             return properties.flatMap(propertySummary => {
               const property = { ...propertySummary }
 
               const profiles = propertySummary.profiles || []
+              if (profiles.length === 0) {
+                return { account, property }
+              }
               return profiles.map(profile => ({
                 view: profile,
                 property,

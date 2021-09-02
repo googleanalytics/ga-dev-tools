@@ -50,6 +50,18 @@ interface AlsoView extends CommonProps {
 
 type ViewSelectorProps = AlsoView | OnlyProperty
 
+export enum Label {
+  Account = "account",
+  Property = "property",
+  View = "view",
+}
+
+export enum TestID {
+  AccountAutocomplete = "account-autocomplete",
+  PropertyAutocomplete = "property-autocomplete",
+  ViewAutocomplete = "view-autocomplete",
+}
+
 const ViewSelector: React.FC<ViewSelectorProps> = props => {
   const {
     autoFill,
@@ -68,6 +80,7 @@ const ViewSelector: React.FC<ViewSelectorProps> = props => {
   return (
     <div className={classnames(classes.root, className)}>
       <Autocomplete<AccountSummary>
+        data-testid={TestID.AccountAutocomplete}
         blurOnSelect
         openOnFocus
         autoHighlight
@@ -94,13 +107,14 @@ const ViewSelector: React.FC<ViewSelectorProps> = props => {
         renderInput={params => (
           <TextField
             {...params}
-            label="account"
+            label={Label.Account}
             size={size}
             variant={variant}
           />
         )}
       />
       <Autocomplete<WebPropertySummary>
+        data-testid={TestID.PropertyAutocomplete}
         blurOnSelect
         openOnFocus
         autoHighlight
@@ -127,7 +141,7 @@ const ViewSelector: React.FC<ViewSelectorProps> = props => {
         renderInput={params => (
           <TextField
             {...params}
-            label="property"
+            label={Label.Property}
             size={size}
             variant={variant}
           />
@@ -135,6 +149,7 @@ const ViewSelector: React.FC<ViewSelectorProps> = props => {
       />
       {props.onlyProperty ? null : (
         <Autocomplete<ProfileSummary>
+          data-testid={TestID.ViewAutocomplete}
           blurOnSelect
           openOnFocus
           autoHighlight
@@ -155,7 +170,12 @@ const ViewSelector: React.FC<ViewSelectorProps> = props => {
           }}
           getOptionLabel={view => view.name || ""}
           renderInput={params => (
-            <TextField {...params} label="view" size={size} variant={variant} />
+            <TextField
+              {...params}
+              label={Label.View}
+              size={size}
+              variant={variant}
+            />
           )}
         />
       )}
