@@ -62,6 +62,7 @@ const GeneratedURL: React.FC<GeneratedURLProps> = ({
   }, [version, websiteURL, source, medium])
 
   const generatedURL = useGenerateURL({
+    setShortened,
     websiteURL,
     source,
     medium,
@@ -135,6 +136,7 @@ const GeneratedURL: React.FC<GeneratedURLProps> = ({
               />
               <div>
                 <ShortenLink
+                  disabled={shortened !== undefined}
                   medium
                   url={generatedURL}
                   setShortened={setShortened}
