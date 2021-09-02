@@ -38,19 +38,21 @@ const page2Summaries: AccountSummary[] = [
 const listAccountSummaries: typeof gapi.client.analyticsadmin.accountSummaries.list = ({
   pageToken,
 } = {}) => {
-  if (pageToken === "page2") {
-    return Promise.resolve({
-      result: {
-        accountSummaries: page2Summaries,
-      },
-    }) as any
+  switch (pageToken) {
+    case "page2":
+      return Promise.resolve({
+        result: {
+          accountSummaries: page2Summaries,
+        },
+      }) as any
+    case undefined:
+      return Promise.resolve({
+        result: {
+          accountSummaries: page1Summaries,
+          nextPageToken: "page2",
+        },
+      }) as any
   }
-  return Promise.resolve({
-    result: {
-      accountSummaries: page1Summaries,
-      nextPageToken: "page2",
-    },
-  }) as any
 }
 
 export default listAccountSummaries
