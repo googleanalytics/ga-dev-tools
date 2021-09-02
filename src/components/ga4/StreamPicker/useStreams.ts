@@ -1,12 +1,12 @@
 import { useCallback, useMemo } from "react"
 
-import useGapi from "@/hooks/useGapi"
 import { Requestable, RequestStatus } from "@/types"
 import { PropertySummary, Stream, StreamType } from "@/types/ga4/StreamPicker"
 import usePaginatedCallback from "@/hooks/usePaginatedCallback"
 import useCached from "@/hooks/useCached"
 import { StorageKey } from "@/constants"
 import moment from "moment"
+import { useSelector } from "react-redux"
 
 type WebStreamsResponse = gapi.client.analyticsadmin.GoogleAnalyticsAdminV1alphaListWebDataStreamsResponse
 type IOSStreamsResponse = gapi.client.analyticsadmin.GoogleAnalyticsAdminV1alphaListIosAppDataStreamsResponse
@@ -26,7 +26,7 @@ const getAndroidPageToken = (response: IOSStreamsResponse) =>
 const useStreams = (
   property: PropertySummary | undefined
 ): Requestable<{ streams: Stream[] }> => {
-  const gapi = useGapi()
+  const gapi = useSelector((a: AppState) => a.gapi)
   const adminAPI = useMemo(() => gapi?.client.analyticsadmin, [gapi])
 
   const requestReady = useMemo(
