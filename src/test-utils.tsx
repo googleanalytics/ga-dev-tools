@@ -27,6 +27,7 @@ import { AccountSummary, Column } from "./types/ua"
 interface WithProvidersConfig {
   path?: string
   isLoggedIn?: boolean
+  uaListAccountSummaries?: () => Promise<gapi.client.analytics.AccountSummary[]>
 }
 
 export const wrapperFor: (options: {
@@ -64,7 +65,10 @@ export const TestWrapper = wrapperFor({})
 
 export const withProviders = (
   component: JSX.Element | null,
-  { path, isLoggedIn }: WithProvidersConfig = { path: "/", isLoggedIn: true }
+  { path, isLoggedIn, uaListAccountSummaries }: WithProvidersConfig = {
+    path: "/",
+    isLoggedIn: true,
+  }
 ): {
   wrapped: JSX.Element
   history: History
@@ -85,7 +89,7 @@ export const withProviders = (
     store.dispatch({ type: "setUser", user: undefined })
   }
 
-  const gapi = testGapi()
+  const gapi = testGapi({ uaListAccountSummaries })
   store.dispatch({ type: "setGapi", gapi })
 
   const wrapped = (
@@ -424,7 +428,9 @@ const metadataColumnsPromise = Promise.resolve({
   },
 })
 
-export const testGapi = () => ({
+export const testGapi = ({
+  uaListAccountSummaries,
+}: WithProvidersConfig | undefined = {}) => ({
   client: {
     analyticsadmin: {
       properties: {
@@ -501,7 +507,16 @@ export const testGapi = () => ({
       },
     },
     analytics: {
-      management: { accountSummaries: { list: () => listPromise } },
+      management: {
+        accountSummaries: {
+          list: uaListAccountSummaries
+            ? () =>
+                uaListAccountSummaries().then(a => ({
+                  result: { items: a },
+                }))
+            : () => listPromise,
+        },
+      },
       metadata: {
         columns: {
           list: () => {
