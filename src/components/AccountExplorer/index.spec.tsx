@@ -14,43 +14,38 @@
 
 import * as React from "react"
 import * as renderer from "@testing-library/react"
-import { withProviders, testGapi } from "../../test-utils"
+import { withProviders } from "../../test-utils"
 import "@testing-library/jest-dom"
 
 import AccountExplorer from "./index"
 
 describe("AccountExplorer", () => {
   it("renders without error for an unauthorized user", async () => {
-    const { wrapped, store } = withProviders(<AccountExplorer />)
-    store.dispatch({ type: "setUser", user: undefined })
-    const { findByTestId } = renderer.render(wrapped)
-    const result = await findByTestId("components/ViewTable/no-results")
-    expect(result).toBeVisible()
+    const { wrapped } = withProviders(<AccountExplorer />, {
+      isLoggedIn: false,
+    })
+    const { findByText } = renderer.render(wrapped)
+
+    const heading = await findByText("Overview")
+    expect(heading).toBeVisible()
   })
   describe("with an authorized user", () => {
-    const user = { getId: () => "userId" }
     describe("with accounts", () => {
       it("selects the first account & shows it in the tree", async () => {
-        const gapi = testGapi()
-        const { wrapped, store } = withProviders(<AccountExplorer />)
-        store.dispatch({ type: "setUser", user })
-        store.dispatch({ type: "setGapi", gapi })
+        const { wrapped, gapi } = withProviders(<AccountExplorer />)
         const { findByText } = renderer.render(wrapped)
         await renderer.act(async () => {
-          await gapi.client.analytics.management.accountSummaries.list()
+          await gapi!.client!.analytics!.management!.accountSummaries!.list!()
         })
         const viewColumn = await findByText("View Name 1 1 1")
         expect(viewColumn).toBeVisible()
       })
       it("picking a view updates the table", async () => {
-        const gapi = testGapi()
-        const { wrapped, store } = withProviders(<AccountExplorer />)
-        store.dispatch({ type: "setUser", user })
-        store.dispatch({ type: "setGapi", gapi })
+        const { wrapped, gapi } = withProviders(<AccountExplorer />)
 
         const { findByText, findByLabelText } = renderer.render(wrapped)
         await renderer.act(async () => {
-          await gapi.client.analytics.management.accountSummaries.list()
+          await gapi!.client!.analytics!.management!.accountSummaries!.list!()
         })
         await renderer.act(async () => {
           // Choose the second view in the list
@@ -63,14 +58,11 @@ describe("AccountExplorer", () => {
         expect(viewColumn).toBeVisible()
       })
       it("searching for a view updates the table", async () => {
-        const gapi = testGapi()
-        const { wrapped, store } = withProviders(<AccountExplorer />)
-        store.dispatch({ type: "setUser", user })
-        store.dispatch({ type: "setGapi", gapi })
+        const { wrapped, gapi } = withProviders(<AccountExplorer />)
 
         const { findByText, findByPlaceholderText } = renderer.render(wrapped)
         await renderer.act(async () => {
-          await gapi.client.analytics.management.accountSummaries.list()
+          await gapi!.client!.analytics!.management!.accountSummaries!.list!()
         })
         await renderer.act(async () => {
           // Choose the second view in the list

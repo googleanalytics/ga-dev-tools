@@ -1,40 +1,40 @@
 import { useCallback } from "react"
 
+const MaxPages = 100
+
 const usePaginatedCallback = <T, U>(
   requestReady: boolean,
   errorMessage: string,
-  paginatedRequest: (pageToken: string | undefined) => gapi.client.Request<U>,
+  paginatedRequest: (
+    pageToken: string | undefined
+  ) => Promise<gapi.client.Response<U>>,
   getTs: (u: U) => T[] | undefined,
   getPageToken: (u: U) => string | undefined,
-  onBeforeRequest?: () => void,
-  onError?: () => void
+  onBeforeRequest?: () => void
 ): (() => Promise<T[] | undefined>) => {
   return useCallback(async () => {
-    try {
-      if (!requestReady) {
-        throw new Error(errorMessage)
-      }
-      onBeforeRequest && onBeforeRequest()
-      let pageToken: string | undefined = undefined
-      let ts: T[] = []
-      do {
-        pageToken = undefined
-        const u = await paginatedRequest(pageToken)
-
-        const nextTs = getTs(u.result)
-
-        ts = ts.concat(nextTs || [])
-
-        const nextPageToken = getPageToken(u.result)
-
-        if (nextPageToken) {
-          pageToken = nextPageToken
-        }
-      } while (pageToken !== undefined)
-      return ts
-    } catch (e) {
-      onError && onError()
+    if (!requestReady) {
+      throw new Error(errorMessage)
     }
+    onBeforeRequest && onBeforeRequest()
+    let pageToken: string | undefined = undefined
+    let ts: T[] = []
+    let page = 0
+    do {
+      const u = await paginatedRequest(pageToken)
+
+      const nextTs = getTs(u.result)
+
+      ts = ts.concat(nextTs || [])
+
+      const nextPageToken = getPageToken(u.result)
+      pageToken = nextPageToken
+      page++
+    } while (pageToken !== undefined && page < MaxPages)
+    if (page >= MaxPages) {
+      throw new Error("went past max pagination.")
+    }
+    return ts
   }, [
     requestReady,
     errorMessage,
@@ -42,7 +42,6 @@ const usePaginatedCallback = <T, U>(
     getTs,
     getPageToken,
     onBeforeRequest,
-    onError,
   ])
 }
 

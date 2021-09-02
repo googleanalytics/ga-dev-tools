@@ -21,7 +21,6 @@ import Sut, { Label, TestID } from "./index"
 import useAccountPropertyView from "./useAccountPropertyView"
 import { StorageKey } from "@/constants"
 import { fireEvent, within } from "@testing-library/react"
-import { AccountSummary } from "@/types/ua"
 
 enum QueryParam {
   Account = "a",
@@ -49,12 +48,16 @@ describe("ViewSelector", () => {
   })
   test("can select account with no properties", async () => {
     const accountName = "my account name"
-    const listAccountSummaries = jest.fn<Promise<AccountSummary[]>, any>()
+    const listAccountSummaries = jest.fn()
     listAccountSummaries.mockReturnValue(
-      Promise.resolve([{ name: accountName, id: "account id", properties: [] }])
+      Promise.resolve({
+        result: {
+          items: [{ name: accountName, id: "account id", properties: [] }],
+        },
+      })
     )
     const { wrapped } = withProviders(<DefaultSut />, {
-      uaListAccountSummaries: listAccountSummaries,
+      ua: { listAccountSummaries },
     })
     const { findByTestId } = renderer.render(wrapped)
 

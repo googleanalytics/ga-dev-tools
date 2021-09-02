@@ -21,13 +21,13 @@ const useAccountSummaries = (): Requestable<AccountSummaries> => {
   const requestReady = useMemo(() => adminAPI !== undefined, [adminAPI])
 
   const paginatedRequest = useCallback(
-    (pageToken: string | undefined) => {
+    async (pageToken: string | undefined) => {
       if (adminAPI === undefined) {
         throw new Error(
           "invalid invariant. adminAPI cannot be undefined when this method is called."
         )
       }
-      return adminAPI.accountSummaries.list({ pageToken })
+      return await adminAPI.accountSummaries.list({ pageToken })
     },
     [adminAPI]
   )

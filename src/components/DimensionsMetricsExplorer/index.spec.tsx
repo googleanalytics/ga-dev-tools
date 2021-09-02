@@ -30,7 +30,7 @@ describe("Dimensions and Metrics Explorer", () => {
     // Wait for api promise to resolve so it won't render "fetching".
     await renderer.act(async () => {
       // metadata: { columns: { list: () => metadataColumnsPromise } },
-      await gapi.client.analytics.metadata.columns.list()
+      await gapi!.client!.analytics!.metadata!.columns!.list!()
       // await gapi.client.analytics.management.accountSummaries.list()
     })
 

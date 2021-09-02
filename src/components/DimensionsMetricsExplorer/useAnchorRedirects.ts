@@ -10,7 +10,7 @@ const useAnchorRedirects = (
   const { hash, pathname } = useLocation()
 
   useEffect(() => {
-    if (hash === "" || columns === undefined) {
+    if (hash === undefined || hash === "" || columns === undefined) {
       return
     }
     if (hash.startsWith("#ga:")) {
