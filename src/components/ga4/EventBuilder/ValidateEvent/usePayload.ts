@@ -1,6 +1,6 @@
 import { useContext, useMemo } from "react"
 import { EventCtx } from ".."
-import { ParameterType, Parameter } from "../types"
+import { ParameterType, Parameter, EventType } from "../types"
 
 const tryParseNum = (s: string | undefined): number | undefined => {
   if (s === undefined) {
@@ -62,14 +62,23 @@ const removeEmptyObject = (o: {}): {} => {
 
 const usePayload = (): {} => {
   const {
-    eventName,
+    eventName: customEventName,
     parameters,
     items,
     userProperties,
     timestamp_micros,
     non_personalized_ads,
     clientIds,
+    type,
   } = useContext(EventCtx)!
+
+  const eventName = useMemo(() => {
+    if (type === EventType.CustomEvent) {
+      return customEventName
+    }
+    return type
+  }, [type, customEventName])
+
   const itemsParameter = useMemo(
     () =>
       items === undefined
