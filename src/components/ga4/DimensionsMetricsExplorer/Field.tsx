@@ -134,7 +134,7 @@ const Field: React.FC<FieldProps> = props => {
   const link = React.useMemo(() => {
     let baseURL = `${window.location.origin}${window.location.pathname}`
     let search = ``
-    if (!field.value.customDefinition && account && property) {
+    if (field.value.customDefinition && account && property) {
       let urlParams = new URLSearchParams()
       urlParams.append(QueryParam.Account, account.name!)
       urlParams.append(QueryParam.Property, property.property!)
