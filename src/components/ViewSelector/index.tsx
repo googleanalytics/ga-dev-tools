@@ -4,12 +4,13 @@ import TextField from "@material-ui/core/TextField"
 import Autocomplete from "@material-ui/lab/Autocomplete"
 import classnames from "classnames"
 
-import { Dispatch } from "@/types"
-import useViewSelector, {
+import { Dispatch, RequestStatus, successful } from "@/types"
+import {
   AccountSummary,
   ProfileSummary,
   WebPropertySummary,
-} from "./useViewSelector"
+} from "./useAccountPropertyView"
+import useAccountSummaries from "./useAccountSummaries"
 
 const useStyles = makeStyles<Theme, ViewSelectorProps>(theme => ({
   root: props => ({
@@ -26,9 +27,9 @@ const useStyles = makeStyles<Theme, ViewSelectorProps>(theme => ({
 }))
 
 interface CommonProps {
-  account: AccountSummary | undefined
+  account?: AccountSummary
   setAccountID: Dispatch<string | undefined>
-  property: WebPropertySummary | undefined
+  property?: WebPropertySummary
   setPropertyID: Dispatch<string | undefined>
   vertical?: boolean
   className?: string
@@ -42,12 +43,24 @@ interface OnlyProperty extends CommonProps {
 }
 
 interface AlsoView extends CommonProps {
-  view: ProfileSummary | undefined
+  view?: ProfileSummary
   setViewID: Dispatch<string | undefined>
   onlyProperty?: false | undefined
 }
 
 type ViewSelectorProps = AlsoView | OnlyProperty
+
+export enum Label {
+  Account = "account",
+  Property = "property",
+  View = "view",
+}
+
+export enum TestID {
+  AccountAutocomplete = "account-autocomplete",
+  PropertyAutocomplete = "property-autocomplete",
+  ViewAutocomplete = "view-autocomplete",
+}
 
 const ViewSelector: React.FC<ViewSelectorProps> = props => {
   const {
@@ -62,16 +75,19 @@ const ViewSelector: React.FC<ViewSelectorProps> = props => {
   } = props
   const classes = useStyles(props)
 
-  const { accounts, properties, views } = useViewSelector(account, property)
+  const request = useAccountSummaries(account, property)
 
   return (
     <div className={classnames(classes.root, className)}>
       <Autocomplete<AccountSummary>
+        data-testid={TestID.AccountAutocomplete}
         blurOnSelect
         openOnFocus
         autoHighlight
+        noOptionsText="You don't have any Google Analytics accounts."
         className={classes.formControl}
-        options={accounts || []}
+        loading={request.status === RequestStatus.InProgress}
+        options={successful(request)?.accountSummaries || []}
         value={account || null}
         onChange={(_, a: AccountSummary | null) => {
           setAccountID(a?.id || undefined)
@@ -91,18 +107,25 @@ const ViewSelector: React.FC<ViewSelectorProps> = props => {
         renderInput={params => (
           <TextField
             {...params}
-            label="account"
+            label={Label.Account}
             size={size}
             variant={variant}
           />
         )}
       />
       <Autocomplete<WebPropertySummary>
+        data-testid={TestID.PropertyAutocomplete}
         blurOnSelect
         openOnFocus
         autoHighlight
         className={classes.formControl}
-        options={properties || []}
+        loading={request.status === RequestStatus.InProgress}
+        options={successful(request)?.propertySummaries || []}
+        noOptionsText={
+          account === undefined
+            ? "Select an account to show available properties."
+            : "You don't have any properties for this account."
+        }
         value={property || null}
         onChange={(_, p: WebPropertySummary | null) => {
           setPropertyID(p?.id || undefined)
@@ -118,7 +141,7 @@ const ViewSelector: React.FC<ViewSelectorProps> = props => {
         renderInput={params => (
           <TextField
             {...params}
-            label="property"
+            label={Label.Property}
             size={size}
             variant={variant}
           />
@@ -126,11 +149,20 @@ const ViewSelector: React.FC<ViewSelectorProps> = props => {
       />
       {props.onlyProperty ? null : (
         <Autocomplete<ProfileSummary>
+          data-testid={TestID.ViewAutocomplete}
           blurOnSelect
           openOnFocus
           autoHighlight
           className={classes.formControl}
-          options={views || []}
+          loading={request.status === RequestStatus.InProgress}
+          options={successful(request)?.profileSummaries || []}
+          noOptionsText={
+            account === undefined
+              ? "Select an account and property to show available views."
+              : property === undefined
+              ? "Select a property to show available views"
+              : "You don't have any views for this property."
+          }
           value={props.view || null}
           getOptionSelected={(a, b) => a.id === b.id}
           onChange={(_, v: ProfileSummary | null) => {
@@ -138,7 +170,12 @@ const ViewSelector: React.FC<ViewSelectorProps> = props => {
           }}
           getOptionLabel={view => view.name || ""}
           renderInput={params => (
-            <TextField {...params} label="view" size={size} variant={variant} />
+            <TextField
+              {...params}
+              label={Label.View}
+              size={size}
+              variant={variant}
+            />
           )}
         />
       )}

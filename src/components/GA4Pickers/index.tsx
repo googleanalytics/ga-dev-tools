@@ -17,9 +17,9 @@ import * as React from "react"
 import { Typography, TextField, makeStyles } from "@material-ui/core"
 import Autocomplete from "@material-ui/lab/Autocomplete"
 import { useState } from "react"
-import { Dispatch } from "@/types"
+import { Dispatch, RequestStatus } from "@/types"
 import useAvailableColumns from "./useAvailableColumns"
-import { AccountProperty } from "../ga4/StreamPicker/useAccountProperty"
+import { DimensionsAndMetricsRequestCtx } from "../ga4/DimensionsMetricsExplorer/useDimensionsAndMetrics"
 
 const useColumnStyles = makeStyles(() => ({
   option: {
@@ -62,7 +62,6 @@ export const DimensionsPicker: React.FC<{
   // it required.
   setDimensions?: React.Dispatch<React.SetStateAction<GA4Dimensions>>
   setDimensionIDs?: Dispatch<string[] | undefined>
-  aps: AccountProperty
   required?: boolean
   helperText?: string | JSX.Element
   label?: string
@@ -72,13 +71,13 @@ export const DimensionsPicker: React.FC<{
   setDimensions,
   setDimensionIDs,
   required,
-  aps,
   label = "dimensions",
 }) => {
+  const request = React.useContext(DimensionsAndMetricsRequestCtx)
   const { dimensionOptionsLessSelected } = useAvailableColumns({
     selectedDimensions: dimensions,
     selectedMetrics: [],
-    aps,
+    request,
   })
 
   return (
@@ -88,6 +87,7 @@ export const DimensionsPicker: React.FC<{
       autoHighlight
       freeSolo
       multiple
+      loading={request.status === RequestStatus.InProgress}
       options={dimensionOptionsLessSelected || []}
       getOptionLabel={dimension => dimension.apiName!}
       value={dimensions || []}
@@ -124,7 +124,6 @@ export const MetricsPicker: React.FC<{
   // it required.
   setMetrics?: React.Dispatch<React.SetStateAction<GA4Metrics>>
   setMetricIDs?: Dispatch<string[] | undefined>
-  aps: AccountProperty
   required?: boolean
   helperText?: string | JSX.Element
   label?: string
@@ -134,13 +133,13 @@ export const MetricsPicker: React.FC<{
   setMetrics,
   setMetricIDs: setMetricsIDs,
   required,
-  aps,
   label = "metrics",
 }) => {
+  const request = React.useContext(DimensionsAndMetricsRequestCtx)
   const { metricOptionsLessSelected } = useAvailableColumns({
     selectedMetrics: metrics,
     selectedDimensions: [],
-    aps,
+    request,
   })
 
   // TODO - I'm not sure this should be a freeSolo.
@@ -152,6 +151,7 @@ export const MetricsPicker: React.FC<{
       autoHighlight
       freeSolo
       multiple
+      loading={request.status === RequestStatus.InProgress}
       options={metricOptionsLessSelected || []}
       getOptionLabel={metric => metric.apiName!}
       value={metrics || []}
@@ -183,7 +183,6 @@ export const MetricsPicker: React.FC<{
 }
 
 export const DimensionPicker: React.FC<{
-  aps: AccountProperty
   autoSelectIfOne?: boolean
   setDimension?: Dispatch<GA4Dimension | undefined>
   dimensionFilter?: (dimension: GA4Dimension) => boolean
@@ -196,19 +195,19 @@ export const DimensionPicker: React.FC<{
   helperText,
   setDimension,
   required,
-  aps,
   dimensionFilter,
   className,
   label = "dimension",
 }) => {
   const [selected, setSelected] = useState<GA4Dimension>()
+  const request = React.useContext(DimensionsAndMetricsRequestCtx)
   const {
     dimensionOptions,
     dimensionOptionsLessSelected,
   } = useAvailableColumns({
     selectedDimensions: selected === undefined ? [] : [selected],
     selectedMetrics: [],
-    aps,
+    request,
     dimensionFilter,
   })
 
@@ -250,6 +249,7 @@ export const DimensionPicker: React.FC<{
       autoComplete
       autoHighlight
       freeSolo
+      loading={request.status === RequestStatus.InProgress}
       options={dimensionOptionsLessSelected || []}
       getOptionLabel={dimension => dimension.apiName!}
       value={selected === undefined ? null : selected}
@@ -272,7 +272,6 @@ export const DimensionPicker: React.FC<{
 }
 
 export const MetricPicker: React.FC<{
-  aps: AccountProperty
   autoSelectIfOne?: boolean
   setMetric?: Dispatch<GA4Metric | undefined>
   metricFilter?: (metric: GA4Metric) => boolean
@@ -285,16 +284,16 @@ export const MetricPicker: React.FC<{
   helperText,
   setMetric,
   required,
-  aps,
   metricFilter,
   className,
   label = "metric",
 }) => {
   const [selected, setSelected] = useState<GA4Metric>()
+  const request = React.useContext(DimensionsAndMetricsRequestCtx)
   const { metricOptions, metricOptionsLessSelected } = useAvailableColumns({
     selectedMetrics: selected === undefined ? [] : [selected],
     selectedDimensions: [],
-    aps,
+    request,
     metricFilter,
   })
 
@@ -336,6 +335,7 @@ export const MetricPicker: React.FC<{
       autoComplete
       autoHighlight
       freeSolo
+      loading={request.status === RequestStatus.InProgress}
       options={metricOptionsLessSelected || []}
       getOptionLabel={metric => metric.apiName!}
       value={selected === undefined ? null : selected}

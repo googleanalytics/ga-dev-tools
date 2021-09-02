@@ -11,7 +11,9 @@ import Typography from "@material-ui/core/Typography"
 import { CopyIconButton } from "@/components/CopyButton"
 import HighlightText from "./HighlightText"
 import Spinner from "@/components/Spinner"
-import { UAAccountPropertyView } from "../ViewSelector/useAccountPropertyView"
+import { RequestStatus } from "@/types"
+import useFlattenedViews from "../ViewSelector/useFlattenedViews"
+import { AccountSummary, ProfileSummary, WebPropertySummary } from "@/types/ua"
 
 const useStyles = makeStyles(theme => ({
   id: {
@@ -34,7 +36,7 @@ const useStyles = makeStyles(theme => ({
 }))
 
 interface ViewTableProps {
-  views: UAAccountPropertyView[] | undefined
+  flattenedViewsRequest: ReturnType<typeof useFlattenedViews>
   className?: string
   search?: string
 }
@@ -45,7 +47,7 @@ interface ViewCellProps {
   copyToolTip: string
   textToCopy: string
 }
-const ViewCell: React.FC<ViewCellProps> = ({
+const APVCell: React.FC<ViewCellProps> = ({
   firstRow,
   secondRow,
   copyToolTip,
@@ -79,7 +81,126 @@ const textClamp = (text: string, maxWidth: number) => {
   }
 }
 
-const ViewsTable: React.FC<ViewTableProps> = ({ views, className, search }) => {
+const AccountCell: React.FC<{
+  account: AccountSummary | undefined
+  classes: ReturnType<typeof useStyles>
+  search: string | undefined
+}> = ({ account, classes, search }) => {
+  if (account === undefined) {
+    return null
+  }
+  return (
+    <APVCell
+      textToCopy={account?.id || ""}
+      copyToolTip="Copy account ID"
+      firstRow={
+        <HighlightText
+          className={classes.mark}
+          search={search}
+          text={textClamp(account?.name || "", maxCellWidth)}
+        />
+      }
+      secondRow={
+        <HighlightText
+          className={classes.mark}
+          search={search}
+          text={account?.id || ""}
+        />
+      }
+    />
+  )
+}
+
+const PropertyCell: React.FC<{
+  property: WebPropertySummary | undefined
+  classes: ReturnType<typeof useStyles>
+  search: string | undefined
+}> = ({ property, classes, search }) => {
+  if (property === undefined) {
+    return <TableCell>No UA properties for account.</TableCell>
+  }
+
+  return (
+    <APVCell
+      textToCopy={property?.id || ""}
+      copyToolTip="Copy property ID"
+      firstRow={
+        <HighlightText
+          className={classes.mark}
+          search={search}
+          text={textClamp(property!.name!, maxCellWidth)}
+        />
+      }
+      secondRow={
+        <HighlightText
+          className={classes.mark}
+          search={search}
+          text={property!.id!}
+        />
+      }
+    />
+  )
+}
+
+const ViewCell: React.FC<{
+  account: AccountSummary | undefined
+  property: WebPropertySummary | undefined
+  view: ProfileSummary | undefined
+  classes: ReturnType<typeof useStyles>
+  search: string | undefined
+}> = ({ account, property, view, classes, search }) => {
+  if (view === undefined) {
+    return <TableCell colSpan={2}>No UA views for account.</TableCell>
+  }
+  const viewUrl = `https://analytics.google.com/analytics/web/#/report/vistors-overview/a${account?.id}w${property?.internalWebPropertyId}p${view?.id}`
+  return (
+    <React.Fragment>
+      <APVCell
+        textToCopy={view!.id!}
+        copyToolTip="Copy view ID"
+        firstRow={
+          <a
+            className={classes.link}
+            href={viewUrl}
+            title="Open this view in Google Analytics"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <HighlightText
+              className={classes.mark}
+              search={search}
+              text={textClamp(view!.name!, maxCellWidth)}
+            />
+          </a>
+        }
+        secondRow={
+          <HighlightText
+            className={classes.mark}
+            search={search}
+            text={view!.id!}
+          />
+        }
+      />
+      <APVCell
+        textToCopy={`ga:${view!.id!}`}
+        copyToolTip="Copy table ID"
+        firstRow={
+          <HighlightText
+            className={classes.mark}
+            search={search}
+            text={`ga:${view!.id!}`}
+          />
+        }
+      />
+    </React.Fragment>
+  )
+}
+
+const ViewsTable: React.FC<ViewTableProps> = ({
+  flattenedViewsRequest,
+  className,
+  search,
+}) => {
   const classes = useStyles()
   return (
     <Table
@@ -96,93 +217,38 @@ const ViewsTable: React.FC<ViewTableProps> = ({ views, className, search }) => {
         </TableRow>
       </TableHead>
       <TableBody>
-        {views !== undefined ? (
-          views.map(apv => {
-            const viewUrl = `https://analytics.google.com/analytics/web/#/report/vistors-overview/a${
-              apv!.account!.id
-            }w${apv!.property!.internalWebPropertyId}p${apv!.view!.id}`
-            return (
-              <TableRow
-                key={`${apv!.account!.name}-${apv!.property!.name}-${
-                  apv!.view!.name
-                }`}
-              >
-                <ViewCell
-                  textToCopy={apv!.account!.id!}
-                  copyToolTip="Copy account ID"
-                  firstRow={
-                    <HighlightText
-                      className={classes.mark}
-                      search={search}
-                      text={textClamp(apv!.account!.name!, maxCellWidth)}
-                    />
-                  }
-                  secondRow={
-                    <HighlightText
-                      className={classes.mark}
-                      search={search}
-                      text={apv!.account!.id!}
-                    />
-                  }
-                />
-                <ViewCell
-                  textToCopy={apv!.property!.id!}
-                  copyToolTip="Copy property ID"
-                  firstRow={
-                    <HighlightText
-                      className={classes.mark}
-                      search={search}
-                      text={textClamp(apv!.property!.name!, maxCellWidth)}
-                    />
-                  }
-                  secondRow={
-                    <HighlightText
-                      className={classes.mark}
-                      search={search}
-                      text={apv!.property!.id!}
-                    />
-                  }
-                />
-                <ViewCell
-                  textToCopy={apv!.view!.id!}
-                  copyToolTip="Copy view ID"
-                  firstRow={
-                    <a
-                      className={classes.link}
-                      href={viewUrl}
-                      title="Open this view in Google Analytics"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      <HighlightText
-                        className={classes.mark}
-                        search={search}
-                        text={textClamp(apv!.view!.name!, maxCellWidth)}
-                      />
-                    </a>
-                  }
-                  secondRow={
-                    <HighlightText
-                      className={classes.mark}
-                      search={search}
-                      text={apv!.view!.id!}
-                    />
-                  }
-                />
-                <ViewCell
-                  textToCopy={`ga:${apv!.view!.id!}`}
-                  copyToolTip="Copy table ID"
-                  firstRow={
-                    <HighlightText
-                      className={classes.mark}
-                      search={search}
-                      text={`ga:${apv!.view!.id!}`}
-                    />
-                  }
-                />
-              </TableRow>
-            )
-          })
+        {flattenedViewsRequest.status === RequestStatus.Successful ? (
+          flattenedViewsRequest.flattenedViews.length === 0 ? (
+            <TableRow data-testid="components/ViewTable/no-results">
+              <TableCell colSpan={4}>No results</TableCell>
+            </TableRow>
+          ) : (
+            flattenedViewsRequest.flattenedViews.map(apv => {
+              return (
+                <TableRow
+                  key={`${apv?.account?.name}-${apv?.property?.name}-${apv?.view?.name}`}
+                >
+                  <AccountCell
+                    account={apv.account}
+                    classes={classes}
+                    search={search}
+                  />
+                  <PropertyCell
+                    property={apv.property}
+                    classes={classes}
+                    search={search}
+                  />
+                  <ViewCell
+                    account={apv.account}
+                    property={apv.property}
+                    view={apv.view}
+                    classes={classes}
+                    search={search}
+                  />
+                </TableRow>
+              )
+            })
+          )
         ) : (
           <TableRow data-testid="components/ViewTable/no-results">
             <TableCell colSpan={4}>
@@ -190,11 +256,6 @@ const ViewsTable: React.FC<ViewTableProps> = ({ views, className, search }) => {
                 <Typography>Loading views&hellip;</Typography>
               </Spinner>
             </TableCell>
-          </TableRow>
-        )}
-        {views?.length === 0 && (
-          <TableRow data-testid="components/ViewTable/no-results">
-            <TableCell colSpan={4}>No results</TableCell>
           </TableRow>
         )}
       </TableBody>

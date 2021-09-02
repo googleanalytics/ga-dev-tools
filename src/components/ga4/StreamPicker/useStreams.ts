@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo } from "react"
+import { useCallback, useMemo } from "react"
 
 import { Requestable, RequestStatus } from "@/types"
 import { PropertySummary, Stream, StreamType } from "@/types/ga4/StreamPicker"
@@ -6,7 +6,6 @@ import usePaginatedCallback from "@/hooks/usePaginatedCallback"
 import useCached from "@/hooks/useCached"
 import { StorageKey } from "@/constants"
 import moment from "moment"
-import useRequestStatus from "@/hooks/useRequestStatus"
 import { useSelector } from "react-redux"
 
 type WebStreamsResponse = gapi.client.analyticsadmin.GoogleAnalyticsAdminV1alphaListWebDataStreamsResponse
@@ -25,24 +24,10 @@ const getAndroidPageToken = (response: IOSStreamsResponse) =>
   response.nextPageToken
 
 const useStreams = (
-  property: PropertySummary | undefined,
-  streams: {
-    androidStreams?: boolean
-    webStreams?: boolean
-    iosStreams?: boolean
-  },
-  onComplete?: () => void
+  property: PropertySummary | undefined
 ): Requestable<{ streams: Stream[] }> => {
   const gapi = useSelector((a: AppState) => a.gapi)
   const adminAPI = useMemo(() => gapi?.client.analyticsadmin, [gapi])
-
-  const {
-    status: webStreamsStatus,
-    setInProgress: setWebStreamInProgress,
-    setSuccessful: setWebStreamSuccessful,
-    setNotStarted: setWebStreamNotStarted,
-    setFailed: setWebStreamFailed,
-  } = useRequestStatus()
 
   const requestReady = useMemo(
     () => adminAPI !== undefined && property !== undefined,
@@ -69,9 +54,7 @@ const useStreams = (
     "Invalid invariant - property & adminAPI must be defined.",
     paginatedWebStreamsRequest,
     getWebStreams,
-    getWebPageToken,
-    setWebStreamInProgress,
-    setWebStreamFailed
+    getWebPageToken
   )
 
   const webStorageKey = useMemo(
@@ -80,26 +63,12 @@ const useStreams = (
     [property?.property]
   )
 
-  const { value: webStreams } = useCached(
+  const webStreamsRequest = useCached(
     webStorageKey,
     requestWebStreams,
     moment.duration(5, "minutes"),
-    requestReady && !!streams.webStreams
+    requestReady
   )
-
-  useEffect(() => {
-    if (webStreams !== undefined) {
-      setWebStreamSuccessful()
-    }
-  }, [setWebStreamSuccessful, webStreams])
-
-  const {
-    status: iosStreamsStatus,
-    setInProgress: setIOSStreamInProgress,
-    setSuccessful: setIOSStreamSuccessful,
-    setNotStarted: setIOSStreamNotStarted,
-    setFailed: setIOSStreamFailed,
-  } = useRequestStatus()
 
   const paginatedIOSStreamsRequest = useCallback(
     (pageToken: string | undefined) => {
@@ -121,9 +90,7 @@ const useStreams = (
     "Invalid invariant - property & adminAPI must be defined.",
     paginatedIOSStreamsRequest,
     getIOSStreams,
-    getIOSPageToken,
-    setIOSStreamInProgress,
-    setIOSStreamFailed
+    getIOSPageToken
   )
 
   const iosStorageKey = useMemo(
@@ -132,26 +99,12 @@ const useStreams = (
     [property?.property]
   )
 
-  const { value: iosStreams } = useCached(
+  const iosStreamsRequest = useCached(
     iosStorageKey,
     requestIOSStreams,
     moment.duration(5, "minutes"),
-    requestReady && !!streams.iosStreams
+    requestReady
   )
-
-  useEffect(() => {
-    if (iosStreams !== undefined) {
-      setIOSStreamSuccessful()
-    }
-  }, [setIOSStreamSuccessful, iosStreams])
-
-  const {
-    status: androidStreamsStatus,
-    setInProgress: setAndroidStreamInProgress,
-    setSuccessful: setAndroidStreamSuccessful,
-    setNotStarted: setAndroidStreamNotStarted,
-    setFailed: setAndroidStreamFailed,
-  } = useRequestStatus()
 
   const paginatedAndroidStreamsRequest = useCallback(
     (pageToken: string | undefined) => {
@@ -173,9 +126,7 @@ const useStreams = (
     "Invalid invariant - property & adminAPI must be defined.",
     paginatedAndroidStreamsRequest,
     getAndroidStreams,
-    getAndroidPageToken,
-    setAndroidStreamInProgress,
-    setAndroidStreamFailed
+    getAndroidPageToken
   )
 
   const androidStorageKey = useMemo(
@@ -184,95 +135,58 @@ const useStreams = (
     [property?.property]
   )
 
-  const { value: androidStreams } = useCached(
+  const androidStreamsRequest = useCached(
     androidStorageKey,
     requestAndroidStreams,
     moment.duration(5, "minutes"),
-    requestReady && !!streams.androidStreams
+    requestReady
   )
 
-  useEffect(() => {
-    if (androidStreams !== undefined) {
-      setAndroidStreamSuccessful()
-    }
-  }, [setAndroidStreamSuccessful, androidStreams])
-
-  useEffect(() => {
+  return useMemo(() => {
     if (
-      (webStreams !== undefined || !streams.webStreams) &&
-      (iosStreams !== undefined || !streams.iosStreams) &&
-      (androidStreams !== undefined || !streams.androidStreams)
+      webStreamsRequest.status === RequestStatus.Successful &&
+      androidStreamsRequest.status === RequestStatus.Successful &&
+      iosStreamsRequest.status === RequestStatus.Successful
     ) {
-      onComplete && onComplete()
+      const webStreams = (webStreamsRequest.value || []).map(s => ({
+        type: StreamType.WebDataStream,
+        value: s,
+      }))
+      const androidStreams = (androidStreamsRequest.value || []).map(s => ({
+        type: StreamType.AndroidDataStream,
+        value: s,
+      }))
+      const iosStreams = (iosStreamsRequest.value || []).map(s => ({
+        type: StreamType.IOSDataStream,
+        value: s,
+      }))
+      return {
+        status: RequestStatus.Successful,
+        streams: webStreams.concat(androidStreams).concat(iosStreams),
+      }
     }
-  }, [onComplete, webStreams, iosStreams, androidStreams, streams])
-
-  useEffect(() => {
-    setWebStreamNotStarted()
-    setIOSStreamNotStarted()
-    setAndroidStreamNotStarted()
-  }, [
-    property,
-    setWebStreamNotStarted,
-    setIOSStreamNotStarted,
-    setAndroidStreamNotStarted,
-  ])
-
-  if (
-    (webStreamsStatus === RequestStatus.Successful || !streams.webStreams) &&
-    (iosStreamsStatus === RequestStatus.Successful || !streams.iosStreams) &&
-    (androidStreamsStatus === RequestStatus.Successful ||
-      !streams.androidStreams)
-  ) {
-    if (webStreams === undefined && streams.webStreams) {
-      throw new Error("Invalid invariant - webStreams must be defined here.")
+    if (
+      webStreamsRequest.status === RequestStatus.InProgress ||
+      androidStreamsRequest.status === RequestStatus.InProgress ||
+      iosStreamsRequest.status === RequestStatus.InProgress
+    ) {
+      return {
+        status: RequestStatus.InProgress,
+      }
     }
-    if (iosStreams === undefined && streams.iosStreams) {
-      throw new Error("Invalid invariant - iosStreams must be defined here.")
-    }
-    if (androidStreams === undefined && streams.androidStreams) {
-      throw new Error(
-        "Invalid invariant - androidStreams must be defined here."
-      )
+    if (
+      webStreamsRequest.status === RequestStatus.Failed ||
+      androidStreamsRequest.status === RequestStatus.Failed ||
+      iosStreamsRequest.status === RequestStatus.Failed
+    ) {
+      return {
+        status: RequestStatus.Failed,
+      }
     }
     return {
-      status: RequestStatus.Successful,
-      streams: (streams.webStreams ? webStreams! : [])
-        .map(s => ({
-          type: StreamType.WebDataStream,
-          value: s,
-        }))
-        .concat(
-          (streams.iosStreams ? iosStreams! : []).map(s => ({
-            type: StreamType.IOSDataStream,
-            value: s,
-          }))
-        )
-        .concat(
-          (streams.androidStreams ? androidStreams! : []).map(s => ({
-            type: StreamType.AndroidDataStream,
-            value: s,
-          }))
-        ),
+      status: RequestStatus.NotStarted,
     }
-  }
-
-  if (
-    webStreamsStatus === RequestStatus.InProgress ||
-    iosStreamsStatus === RequestStatus.InProgress ||
-    androidStreamsStatus === RequestStatus.InProgress
-  ) {
-    return { status: RequestStatus.InProgress }
-  }
-
-  if (
-    webStreamsStatus === RequestStatus.Failed ||
-    iosStreamsStatus === RequestStatus.Failed ||
-    androidStreamsStatus === RequestStatus.Failed
-  ) {
-    return { status: RequestStatus.Failed }
-  }
-  return { status: RequestStatus.NotStarted }
+  }, [webStreamsRequest, androidStreamsRequest, iosStreamsRequest])
 }
 
 export default useStreams

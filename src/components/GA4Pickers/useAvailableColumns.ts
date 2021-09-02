@@ -18,18 +18,17 @@ import { useMemo } from "react"
 import { RequestStatus } from "@/types"
 import {
   Dimension,
+  DimensionsAndMetricsRequest,
   Metric,
-  useDimensionsAndMetrics,
 } from "@/components/ga4/DimensionsMetricsExplorer/useDimensionsAndMetrics"
 import { GA4Dimensions, GA4Metrics } from "."
-import { AccountProperty } from "../ga4/StreamPicker/useAccountProperty"
 
 interface Arg {
   selectedMetrics: GA4Metrics
   selectedDimensions: GA4Dimensions
-  aps: AccountProperty
   dimensionFilter?: (dimension: Dimension) => boolean
   metricFilter?: (metric: Metric) => boolean
+  request: DimensionsAndMetricsRequest
 }
 
 export const useAvailableColumns = ({
@@ -37,15 +36,13 @@ export const useAvailableColumns = ({
   selectedDimensions,
   dimensionFilter,
   metricFilter,
-  aps,
+  request,
 }: Arg): {
   metricOptions: GA4Metrics
   metricOptionsLessSelected: GA4Metrics
   dimensionOptions: GA4Dimensions
   dimensionOptionsLessSelected: GA4Dimensions
 } => {
-  const request = useDimensionsAndMetrics(aps)
-
   const [metrics, dimensions] = useMemo(() => {
     if (request.status !== RequestStatus.Successful) {
       return [undefined, undefined]

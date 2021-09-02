@@ -28,10 +28,10 @@ import { Set } from "immutable"
 import { navigate } from "gatsby"
 import classnames from "classnames"
 
-import { Column } from "@/api"
 import { CopyIconButton } from "@/components/CopyButton"
 import LabeledCheckbox from "@/components/LabeledCheckbox"
 import { CUBES_BY_COLUMN_NAME, CUBE_NAMES, CubesByColumnName } from "./cubes"
+import { Column } from "@/types/ua"
 
 const useStyles = makeStyles(theme => ({
   accordionTitle: { margin: 0 },

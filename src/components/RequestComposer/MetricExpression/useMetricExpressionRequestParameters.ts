@@ -2,22 +2,19 @@ import { useState, useMemo, useCallback } from "react"
 
 import { usePersistentString } from "@/hooks"
 import { StorageKey } from "@/constants"
-import {
-  V4SamplingLevel,
-  UASegment,
-  UAColumn,
-  useUASegments,
-} from "@/components/UAPickers"
+import { V4SamplingLevel } from "@/components/UAPickers"
 import { UAAccountPropertyView } from "@/components/ViewSelector/useAccountPropertyView"
 import {
   useKeyedHydratedPersistantArray,
   useKeyedHydratedPersistantObject,
 } from "@/hooks/useHydrated"
 import { QueryParam } from "../RequestComposer"
+import { Column, Segment } from "@/types/ua"
 
 const useMetricExpressionRequestParameters = (
   apv: UAAccountPropertyView,
-  columns: UAColumn[] | undefined
+  columns: Column[] | undefined,
+  segments: Segment[] | undefined
 ) => {
   const [viewId, setViewId] = useState("")
   const [startDate, setStartDate] = usePersistentString(
@@ -50,7 +47,7 @@ const useMetricExpressionRequestParameters = (
   const [
     selectedDimensions,
     setSelectedDimensionIDs,
-  ] = useKeyedHydratedPersistantArray<UAColumn>(
+  ] = useKeyedHydratedPersistantArray<Column>(
     StorageKey.requestComposerMetricExpressionDimensions,
     QueryParam.Dimensions,
     getColumnsByIDs
@@ -61,7 +58,6 @@ const useMetricExpressionRequestParameters = (
     ""
   )
 
-  const segments = useUASegments()
   const getSegmentByID = useCallback(
     (id: string | undefined) => {
       if (id === undefined || segments === undefined) {
@@ -75,7 +71,7 @@ const useMetricExpressionRequestParameters = (
   const [
     selectedSegment,
     setSelectedSegmentID,
-  ] = useKeyedHydratedPersistantObject<UASegment>(
+  ] = useKeyedHydratedPersistantObject<Segment>(
     StorageKey.requestComposerMetricExpressionSegment,
     QueryParam.Segment,
     getSegmentByID

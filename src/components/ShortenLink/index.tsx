@@ -10,9 +10,11 @@ interface ShortenLinkProps {
   pab?: boolean
   sab?: boolean
   medium?: boolean
+  disabled?: boolean
 }
 
 const ShortenLink: React.FC<ShortenLinkProps> = ({
+  disabled,
   children = "Shorten link",
   pab,
   sab,
@@ -50,7 +52,7 @@ const ShortenLink: React.FC<ShortenLinkProps> = ({
       small={!medium}
       medium={medium}
       onClick={onClick}
-      disabled={url === undefined}
+      disabled={url === undefined || disabled}
     >
       {children}
     </ButtonComponent>

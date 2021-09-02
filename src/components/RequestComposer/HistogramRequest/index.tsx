@@ -26,13 +26,20 @@ import {
   DimensionsPicker,
   SegmentPicker,
   V4SamplingLevelPicker,
-  useUADimensionsAndMetrics,
 } from "@/components/UAPickers"
 import useHistogramRequest from "./useHistogramRequest"
 import useHistogramRequestParameters from "./useHistogramRequestParameters"
 import { ReportsRequest } from "../RequestComposer"
 import LabeledCheckbox from "@/components/LabeledCheckbox"
 import { UAAccountPropertyView } from "@/components/ViewSelector/useAccountPropertyView"
+import { successful } from "@/types"
+import useUADimensionsAndMetrics, {
+  UADimensionsAndMetricsRequestCtx,
+} from "@/components/UAPickers/useDimensionsAndMetrics"
+import {
+  UASegmentsRequestCtx,
+  useUASegments,
+} from "@/components/UAPickers/useUASegments"
 
 export const linkFor = (hash: string) =>
   `https://developers.google.com/analytics/devguides/reporting/core/v4/rest/v4/reports/batchGet#${hash}`
@@ -66,7 +73,8 @@ const HistogramRequest: React.FC<HistogramRequestProps> = ({
     StorageKey.histogramRequestShowSegmentDefinition,
     false
   )
-  const { columns, dimensions, metrics } = useUADimensionsAndMetrics(apv)
+  const uaDimensionsAndMetricsRequest = useUADimensionsAndMetrics(apv)
+  const segmentsRequest = useUASegments()
   const {
     viewId,
     setViewId,
@@ -86,7 +94,11 @@ const HistogramRequest: React.FC<HistogramRequestProps> = ({
     setSelectedSegmentID,
     samplingLevel,
     setSamplingLevel,
-  } = useHistogramRequestParameters(apv, columns)
+  } = useHistogramRequestParameters(
+    apv,
+    successful(uaDimensionsAndMetricsRequest)?.columns,
+    successful(segmentsRequest)?.segments
+  )
   const requestObject = useHistogramRequest({
     viewId,
     startDate,
@@ -104,7 +116,9 @@ const HistogramRequest: React.FC<HistogramRequestProps> = ({
   }, [requestObject, setRequestObject])
 
   return (
-    <>
+    <UADimensionsAndMetricsRequestCtx.Provider
+      value={uaDimensionsAndMetricsRequest}
+    >
       <section className={controlWidth}>
         <LinkedTextField
           href={linkFor("ReportRequest.FIELDS.view_id")}
@@ -162,11 +176,13 @@ const HistogramRequest: React.FC<HistogramRequestProps> = ({
           onChange={setFiltersExpression}
           helperText="Filters that restrict the data returned for the histogram request."
         />
-        <SegmentPicker
-          segment={selectedSegment}
-          setSegmentID={setSelectedSegmentID}
-          showSegmentDefinition={showSegmentDefinition}
-        />
+        <UASegmentsRequestCtx.Provider value={segmentsRequest}>
+          <SegmentPicker
+            segment={selectedSegment}
+            setSegmentID={setSelectedSegmentID}
+            showSegmentDefinition={showSegmentDefinition}
+          />
+        </UASegmentsRequestCtx.Provider>
         <LabeledCheckbox
           className={classes.showSegments}
           checked={showSegmentDefinition}
@@ -181,7 +197,7 @@ const HistogramRequest: React.FC<HistogramRequestProps> = ({
         />
         {children}
       </section>
-    </>
+    </UADimensionsAndMetricsRequestCtx.Provider>
   )
 }
 

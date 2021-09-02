@@ -85,7 +85,7 @@ describe("for the Campaign URL Builder component", () => {
     })
   })
   describe("entering a no-no url shows a warning", () => {
-    test("url: ga-dev-tools.appspot.com", async () => {
+    test("url: ga-dev-tools.web.app", async () => {
       const { wrapped } = withProviders(
         <CampaignURLBuilder
           version={GAVersion.UniversalAnalytics}
@@ -95,7 +95,7 @@ describe("for the Campaign URL Builder component", () => {
       const { findByLabelText: find, findByTestId } = renderer.render(wrapped)
       await userEvent.type(
         await find(/website URL/),
-        "https://ga-dev-tools.appspot.com"
+        "https://ga-dev-tools.web.app"
       )
 
       const warningBanner = await findByTestId("bad-url-warnings")

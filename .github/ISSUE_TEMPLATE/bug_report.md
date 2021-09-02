@@ -7,6 +7,9 @@ assignees: ''
 
 ---
 
+**What page is this happening on**
+Copy the URL of the page this issue is happening on. 
+
 **Describe the bug**
 A clear and concise description of what the bug is.
 

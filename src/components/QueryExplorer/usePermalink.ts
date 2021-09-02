@@ -1,14 +1,12 @@
 import { useMemo } from "react"
-import { Column } from "@/api"
-import { QueryParam } from "./useInputs"
-import { SortableColumn } from "."
-import { UASegment } from "../UAPickers"
+import { QueryParam, SortableColumn } from "."
 import { BooleanParam } from "serialize-query-params"
 import {
   AccountSummary,
   ProfileSummary,
   WebPropertySummary,
-} from "../ViewSelector/useViewSelector"
+} from "../ViewSelector/useAccountPropertyView"
+import { Column, Segment } from "@/types/ua"
 
 type Arg = {
   account: AccountSummary | undefined
@@ -21,7 +19,7 @@ type Arg = {
   selectedDimensions: Column[] | undefined
   sort: SortableColumn[] | undefined
   filters: string | undefined
-  segment: UASegment | undefined
+  segment: Segment | undefined
   showSegmentDefinition: boolean | undefined
   startIndex: string | undefined
   maxResults: string | undefined

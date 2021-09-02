@@ -1,7 +1,9 @@
+import { Dispatch } from "@/types"
 import { useMemo } from "react"
 import { websiteURLFor } from "../params"
 
 interface Arg {
+  setShortened: Dispatch<string | undefined>
   websiteURL?: string
   source?: string
   medium?: string
@@ -13,6 +15,7 @@ interface Arg {
 }
 
 const useGenerateURL = ({
+  setShortened,
   websiteURL,
   source,
   medium,
@@ -23,6 +26,8 @@ const useGenerateURL = ({
   useFragment,
 }: Arg) => {
   return useMemo(() => {
+    // Whenever the generated url changes, clear out the shortened url.
+    setShortened(undefined)
     if (websiteURL === undefined) {
       return undefined
     }
@@ -38,7 +43,17 @@ const useGenerateURL = ({
       },
       useFragment
     )
-  }, [useFragment, websiteURL, source, medium, campaign, id, term, content])
+  }, [
+    useFragment,
+    websiteURL,
+    source,
+    medium,
+    campaign,
+    id,
+    term,
+    content,
+    setShortened,
+  ])
 }
 
 export default useGenerateURL

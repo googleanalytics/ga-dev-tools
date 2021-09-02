@@ -1,65 +1,23 @@
 import * as React from "react"
 
-import { Segment, Column } from "@/api"
 import { StorageKey } from "@/constants"
-import {
-  useUASegments,
-  V3SamplingLevel,
-  useUADimensionsAndMetrics,
-} from "@/components/UAPickers"
-import { SortableColumn } from "."
+import { V3SamplingLevel } from "@/components/UAPickers"
+import { QueryParam, SortableColumn } from "."
 import {
   useHydratedPersistantBoolean,
   useHydratedPersistantString,
   useKeyedHydratedPersistantArray,
   useKeyedHydratedPersistantObject,
 } from "@/hooks/useHydrated"
-import { Dispatch } from "@/types"
-import useAccountPropertyView from "../ViewSelector/useAccountPropertyView"
-import { ProfileSummary } from "../ViewSelector/useViewSelector"
+import { Dispatch, RequestStatus } from "@/types"
+import { Column, Segment } from "@/types/ua"
+import useUADimensionsAndMetrics from "../UAPickers/useDimensionsAndMetrics"
+import { useUASegments } from "../UAPickers/useUASegments"
 
-export enum QueryParam {
-  Account = "a",
-  Property = "b",
-  View = "c",
-  ShowSegmentDefinitions = "d",
-  ViewID = "ids",
-  StartDate = "start-date",
-  EndDate = "end-date",
-  SelectedMetrics = "metrics",
-  SelectedDimensions = "dimensions",
-  Sort = "sort",
-  Filters = "filters",
-  Segment = "segment",
-  SamplingLevel = "samplingLevel",
-  StartIndex = "start-index",
-  MaxResults = "max-results",
-  IncludeEmptyRows = "include-empty-rows",
-}
-
-export const useInputs = () => {
-  const [viewID, setViewID] = useHydratedPersistantString(
-    StorageKey.queryExplorerViewID,
-    QueryParam.ViewID
-  )
-
-  const onSetView = React.useCallback(
-    (view: ProfileSummary | undefined) => {
-      if (view === undefined) {
-        return
-      }
-      setViewID(`ga:${view.id}`)
-    },
-    [setViewID]
-  )
-
-  const accountPropertyView = useAccountPropertyView(
-    StorageKey.queryExplorerAPV,
-    QueryParam,
-    onSetView
-  )
-  const { columns } = useUADimensionsAndMetrics(accountPropertyView)
-
+export const useInputs = (
+  uaDimensionsAndMetricsRequest: ReturnType<typeof useUADimensionsAndMetrics>,
+  uaSegmentsRequest: ReturnType<typeof useUASegments>
+) => {
   const [startDate, setStartDate] = useHydratedPersistantString(
     StorageKey.queryExplorerStartDate,
     QueryParam.StartDate,
@@ -83,14 +41,15 @@ export const useInputs = () => {
     QueryParam.Filters
   )
 
-  const segments = useUASegments()
-
   const getSegmentByID = React.useCallback(
     (id: string | undefined) => {
-      if (id === undefined || segments === undefined) {
+      if (
+        id === undefined ||
+        uaSegmentsRequest.status !== RequestStatus.Successful
+      ) {
         return undefined
       }
-      const builtInSegment = segments.find(s => s.id === id)
+      const builtInSegment = uaSegmentsRequest.segments.find(s => s.id === id)
       if (builtInSegment !== undefined) {
         return builtInSegment
       }
@@ -104,7 +63,7 @@ export const useInputs = () => {
         type: "DYNAMIC",
       }
     },
-    [segments]
+    [uaSegmentsRequest]
   )
 
   const [segment, setSegmentID] = useKeyedHydratedPersistantObject<Segment>(
@@ -115,12 +74,17 @@ export const useInputs = () => {
 
   const getColumnsByIDs = React.useCallback(
     (ids: string[] | undefined) => {
-      if (columns === undefined || ids === undefined) {
+      if (
+        uaDimensionsAndMetricsRequest.status !== RequestStatus.Successful ||
+        ids === undefined
+      ) {
         return undefined
       }
-      return columns.filter(c => ids.includes(c.id!))
+      return uaDimensionsAndMetricsRequest.columns.filter(c =>
+        ids.includes(c.id!)
+      )
     },
-    [columns]
+    [uaDimensionsAndMetricsRequest]
   )
 
   const [
@@ -179,10 +143,13 @@ export const useInputs = () => {
 
   const getSortByIDs = React.useCallback(
     (ids: string[] | undefined) => {
-      if (columns === undefined || ids === undefined) {
+      if (
+        uaDimensionsAndMetricsRequest.status !== RequestStatus.Successful ||
+        ids === undefined
+      ) {
         return undefined
       }
-      return columns
+      return uaDimensionsAndMetricsRequest.columns
         .flatMap<SortableColumn>(c => [
           { ...c, sort: "ASCENDING" },
           { ...c, sort: "DESCENDING" },
@@ -203,7 +170,7 @@ export const useInputs = () => {
             }) !== undefined
         )
     },
-    [columns]
+    [uaDimensionsAndMetricsRequest]
   )
 
   const [sort, setSortIDs] = useKeyedHydratedPersistantArray<SortableColumn>(
@@ -213,8 +180,6 @@ export const useInputs = () => {
   )
 
   return {
-    viewID,
-    setViewID,
     sort,
     setSortIDs,
     startDate,
@@ -239,8 +204,6 @@ export const useInputs = () => {
     setShowSegmentDefiniton,
     samplingValue,
     setSamplingValue,
-    accountPropertyView,
-    columns,
   }
 }
 

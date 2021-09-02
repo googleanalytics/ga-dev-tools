@@ -54,11 +54,18 @@ export const usePersistentString: UsePersistentString = (
   initialValue,
   overwrite
 ) => {
+  if (IS_SSR) {
+    // This is okay to disable because this will _only_ be true during server
+    // side rendireng
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    return useState(initialValue)
+  }
+  // eslint-disable-next-line react-hooks/rules-of-hooks
   const [value, setValue] = useState<string | undefined>(() => {
     if (overwrite !== undefined) {
       return overwrite
     }
-    const fromStorage = IS_SSR ? null : window.localStorage.getItem(key)
+    const fromStorage = window.localStorage.getItem(key)
     if (fromStorage === null) {
       return initialValue
     }
@@ -68,6 +75,7 @@ export const usePersistentString: UsePersistentString = (
     return JSON.parse(fromStorage).value
   })
 
+  // eslint-disable-next-line react-hooks/rules-of-hooks
   useEffect(() => {
     if (IS_SSR) {
       return
@@ -89,7 +97,7 @@ const getObjectFromLocalStorage = <T>(
   if (IS_SSR) {
     return undefined
   }
-  let asString = IS_SSR ? null : window.localStorage.getItem(key)
+  let asString = window.localStorage.getItem(key)
   if (asString === null || asString === "undefined") {
     return defaultValue
   }
@@ -99,23 +107,52 @@ const getObjectFromLocalStorage = <T>(
 export const usePersistantObject = <T extends {}>(
   key: StorageKey,
   defaultValue?: T
-): [T | undefined, React.Dispatch<React.SetStateAction<T | undefined>>] => {
-  const [value, setValue] = useState(() => {
+): [T | undefined, Dispatch<T | undefined>] => {
+  if (IS_SSR) {
+    // This is okay to disable because this will _only_ be true during server
+    // side rendireng
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    return useState<T | undefined>(defaultValue)
+  }
+
+  // eslint-disable-next-line react-hooks/rules-of-hooks
+  const [localValue, setValueLocal] = useState(() => {
     return getObjectFromLocalStorage(key, defaultValue)
   })
 
-  useEffect(() => {
-    setValue(getObjectFromLocalStorage(key, defaultValue))
-  }, [key, setValue, defaultValue])
+  // eslint-disable-next-line react-hooks/rules-of-hooks
+  const setValue: Dispatch<T | undefined> = useCallback(
+    v => {
+      setValueLocal(old => {
+        let nu: T | undefined = undefined
+        if (v instanceof Function) {
+          nu = v(old)
+        } else {
+          nu = v
+        }
+        if (!IS_SSR) {
+          window.localStorage.setItem(key, JSON.stringify(nu))
+        }
+        return nu
+      })
+    },
+    [key]
+  )
 
-  useEffect(() => {
-    if (IS_SSR) {
-      return
-    }
-    window.localStorage.setItem(key, JSON.stringify(value))
-  }, [value, key])
+  // Note - This feels wrong, but I have to depend on localValue changing to
+  // catch changes that only happen when setValue is run. Don't remove
+  // localValue
+  // eslint-disable-next-line react-hooks/rules-of-hooks
+  const fromStorage = React.useMemo(() => {
+    // We want to depend on localValue so this stays up to date when it's
+    // updated, but ultimately we want to use the value from localStorage which
+    // we _know_ is going to be up to date when `key` changes.
+    // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+    localValue
+    return getObjectFromLocalStorage(key, defaultValue)
+  }, [key, localValue, defaultValue])
 
-  return [value, setValue]
+  return [fromStorage, setValue]
 }
 
 const uaToast = (tool: string) => `Redirecting to the UA ${tool}.`
