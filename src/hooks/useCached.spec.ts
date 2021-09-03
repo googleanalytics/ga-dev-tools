@@ -6,7 +6,7 @@ import { useCallback, useMemo, useState } from "react"
 import useCached from "./useCached"
 import moment from "moment"
 import { act } from "react-test-renderer"
-import { inProgress, RequestStatus, successful } from "@/types"
+import { failed, inProgress, RequestStatus, successful } from "@/types"
 
 describe("useCached", () => {
   // The specific storage key shouldn't matter.
@@ -15,6 +15,39 @@ describe("useCached", () => {
 
   beforeEach(() => {
     window.localStorage.clear()
+  })
+
+  describe("when request throws an error", () => {
+    test("Doesn't re-try the request millions of times", async () => {
+      const expectedMessage = "This error should be handled gracefully."
+      let madeRequest = false
+      const requestReady = true
+      const makeRequest = async () => {
+        if (madeRequest) {
+          fail("This should only have been called once.")
+        } else {
+          madeRequest = true
+          throw new Error(expectedMessage)
+        }
+      }
+      const { result, waitForNextUpdate } = renderHook(() => {
+        return useCached(key, makeRequest, expirey, requestReady)
+      })
+
+      // First render the status should be InProgress while it's making the
+      // async request.
+      expect(result.current.status).toEqual(RequestStatus.InProgress)
+
+      await act(async () => {
+        await waitForNextUpdate()
+      })
+
+      // Then, since the request faliled, it should be in a failure state
+      // forever.
+      const actual = failed(result.current)
+      expect(actual).not.toBeUndefined()
+      expect(actual!.error.message).toBe(expectedMessage)
+    })
   })
 
   describe("when value not in cache", () => {
