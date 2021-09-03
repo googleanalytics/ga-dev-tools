@@ -11,6 +11,9 @@ import {
   WebPropertySummary,
 } from "./useAccountPropertyView"
 import useAccountSummaries from "./useAccountSummaries"
+import Typography from "@material-ui/core/Typography"
+import Warning from "../Warning"
+import InlineCode from "../InlineCode"
 
 const useStyles = makeStyles<Theme, ViewSelectorProps>(theme => ({
   root: props => ({
@@ -76,6 +79,21 @@ const ViewSelector: React.FC<ViewSelectorProps> = props => {
   const classes = useStyles(props)
 
   const request = useAccountSummaries(account, property)
+
+  if (request.status === RequestStatus.Failed) {
+    return (
+      <Warning>
+        <Typography>
+          There was an error while requesting your accounts.
+        </Typography>
+        {request.error.message && (
+          <Typography>
+            Error Message: <InlineCode>{request.error.message}</InlineCode>
+          </Typography>
+        )}
+      </Warning>
+    )
+  }
 
   return (
     <div className={classnames(classes.root, className)}>

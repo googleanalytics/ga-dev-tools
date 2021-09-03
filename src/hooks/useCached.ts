@@ -1,7 +1,7 @@
 import { StorageKey } from "@/constants"
 import { Requestable, RequestStatus } from "@/types"
 import moment from "moment"
-import { useCallback, useEffect, useMemo, useState } from "react"
+import { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import { usePersistantObject } from "."
 import useRequestStatus from "./useRequestStatus"
 
@@ -37,10 +37,9 @@ const useCached = <T, E = any>(
   cacheKey: StorageKey,
   makeRequest: () => Promise<T>,
   maxAge: moment.Duration,
-  requestReady: boolean,
-  onSuccess?: () => void,
-  onFailure?: () => void
+  requestReady: boolean
 ): Requestable<Successful<T>, {}, {}, Failed<E>> => {
+  const hasThrown = useRef(false)
   const [cached, setCached] = usePersistantObject<Cached<T>>(cacheKey)
   const { status, setInProgress, setFailed, setSuccessful } = useRequestStatus(
     cacheValueValid(cached, maxAge)
@@ -50,7 +49,7 @@ const useCached = <T, E = any>(
   const [error, setError] = useState<E>()
 
   const updateCachedValue = useCallback(async () => {
-    if (requestReady === false) {
+    if (!requestReady || hasThrown.current === true) {
       return
     }
     try {
@@ -59,11 +58,10 @@ const useCached = <T, E = any>(
       const now = moment.now()
       setCached({ "@@_lastFetched": now, "@@_cacheKey": cacheKey, value: t })
       setSuccessful()
-      onSuccess && onSuccess()
     } catch (e) {
+      hasThrown.current = true
       setError(e)
       setFailed()
-      onFailure && onFailure()
     }
   }, [
     makeRequest,
@@ -71,13 +69,14 @@ const useCached = <T, E = any>(
     cacheKey,
     requestReady,
     setSuccessful,
-    onSuccess,
-    onFailure,
     setFailed,
     setInProgress,
   ])
 
   useEffect(() => {
+    if (hasThrown.current) {
+      return
+    }
     if (cached === undefined) {
       updateCachedValue()
     } else {

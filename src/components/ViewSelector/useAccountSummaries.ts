@@ -16,7 +16,7 @@ interface Successful {
 const useAccountSummaries = (
   accountSummary?: AccountSummary,
   propertySummary?: WebPropertySummary
-): Requestable<Successful> => {
+): Requestable<Successful, {}, {}, { error?: any }> => {
   const gapi = useSelector((state: AppState) => state.gapi)
 
   const managementAPI = useMemo(() => {
@@ -81,6 +81,13 @@ const useAccountSummaries = (
           accountSummaries,
           propertySummaries,
           profileSummaries,
+        }
+      }
+      case RequestStatus.Failed: {
+        console.log({ accountSummariesRequest })
+        return {
+          status: accountSummariesRequest.status,
+          error: accountSummariesRequest.error,
         }
       }
       default:
