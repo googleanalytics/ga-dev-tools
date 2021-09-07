@@ -13,7 +13,7 @@ const useColumns = (): Requestable<
   { error: any }
 > => {
   const gapi = useSelector((a: AppState) => a.gapi)
-  const metadataAPI = useMemo(() => gapi?.client.analytics.metadata, [gapi])
+  const metadataAPI = useMemo(() => gapi?.client?.analytics?.metadata, [gapi])
 
   const requestReady = useMemo(() => metadataAPI !== undefined, [metadataAPI])
 

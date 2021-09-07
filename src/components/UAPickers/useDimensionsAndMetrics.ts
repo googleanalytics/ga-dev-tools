@@ -23,8 +23,10 @@ const useUADimensionsAndMetrics = ({
 }: UAAccountPropertyView): Requestable<Successful> => {
   const gapi = useSelector((state: AppState) => state.gapi)
 
-  const metadataAPI = useMemo(() => gapi?.client.analytics.metadata, [gapi])
-  const managementAPI = useMemo(() => gapi?.client.analytics.management, [gapi])
+  const metadataAPI = useMemo(() => gapi?.client?.analytics?.metadata, [gapi])
+  const managementAPI = useMemo(() => gapi?.client?.analytics?.management, [
+    gapi,
+  ])
 
   const requestReady = useMemo(() => {
     if (
