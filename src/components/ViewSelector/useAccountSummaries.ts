@@ -20,7 +20,7 @@ const useAccountSummaries = (
   const gapi = useSelector((state: AppState) => state.gapi)
 
   const managementAPI = useMemo(() => {
-    return gapi?.client.analytics.management
+    return gapi?.client?.analytics?.management
   }, [gapi])
 
   const requestAccountSummaries = useCallback(async (): Promise<
