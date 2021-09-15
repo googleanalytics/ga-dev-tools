@@ -59,7 +59,15 @@ const RenderSuccessful: React.FC<Successful & { aps: AccountProperty }> = ({
   const classes = useStyles()
   const { search, setSearch } = useInputs()
   const searchRegex = useMemo(
-    () => (search ? new RegExp(search, "gi") : undefined),
+    () =>
+      search
+        ? new RegExp(
+            // Escape all "special" regex characters. We're only creating a regex
+            // here to make the testing code more simple.
+            search.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&"),
+            "gi"
+          )
+        : undefined,
     [search]
   )
 
