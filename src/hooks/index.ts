@@ -200,6 +200,11 @@ const getRedirectInfo = (
             redirectPath: "/",
             toast: "Redirecting to the UA home page.",
           }
+        case "/ga4/account-explorer/":
+          return {
+            redirectPath: "/account-explorer/",
+            toast: uaToast("Account Explorer"),
+          }
         default:
           return {
             redirectPath: "/",
@@ -248,6 +253,11 @@ const getRedirectInfo = (
           return {
             redirectPath: "/ga4/",
             toast: "Redirecting to the GA4 home page.",
+          }
+        case "/account-explorer/":
+          return {
+            redirectPath: "/ga4/account-explorer/",
+            toast: ga4Toast("Account Explorer"),
           }
         default:
           return {
