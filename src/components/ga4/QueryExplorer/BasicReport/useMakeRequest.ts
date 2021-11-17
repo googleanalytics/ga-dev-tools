@@ -63,7 +63,7 @@ const useMakeRequest = ({
   { error: RunReportError } & Common
 > => {
   const gapi = useSelector((state: AppState) => state.gapi)
-  const dataAPI = useMemo(() => gapi?.client.analyticsdata, [gapi])
+  const dataAPI = useMemo(() => gapi?.client?.analyticsdata, [gapi])
   const [requestStatus, setRequestStatus] = useState(RequestStatus.NotStarted)
   const [response, setResponse] = usePersistantObject<object>(
     StorageKey.ga4RequestComposerBasicResponse

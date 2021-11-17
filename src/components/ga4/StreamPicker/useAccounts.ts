@@ -16,7 +16,7 @@ const getPageToken = (response: AccountSummariesResponse) =>
 
 const useAccountSummaries = (): Requestable<AccountSummaries> => {
   const gapi = useSelector((a: AppState) => a.gapi)
-  const adminAPI = useMemo(() => gapi?.client.analyticsadmin, [gapi])
+  const adminAPI = useMemo(() => gapi?.client?.analyticsadmin, [gapi])
 
   const requestReady = useMemo(() => adminAPI !== undefined, [adminAPI])
 

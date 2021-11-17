@@ -13,7 +13,7 @@ export const useAnalyticsReportingAPI = (): ReportingAPI | undefined => {
     if (gapi === undefined) {
       return
     }
-    setReportingAPI(gapi.client.analyticsreporting)
+    setReportingAPI(gapi?.client?.analyticsreporting)
   }, [gapi])
 
   return reportingAPI
