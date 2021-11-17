@@ -241,16 +241,18 @@ type UseProperties = () => {
 // the management api.
 export const useProperties: UseProperties = () => {
   const gapi = useSelector((state: AppState) => state.gapi)
+  const managementAPI = React.useMemo(
+    () => gapi?.client?.analytics?.management,
+    [gapi]
+  )
   const [properties, setProperties] = React.useState<Property[]>([])
 
   React.useEffect(() => {
-    if (gapi === undefined) {
+    if (managementAPI === undefined) {
       return
     }
     ;(async () => {
-      const summaries = (
-        await gapi.client.analytics.management.accountSummaries.list({})
-      ).result
+      const summaries = (await managementAPI.accountSummaries?.list({})).result
       const properties: Property[] = []
       summaries.items?.forEach(account => {
         const accountName = account.name || ""
@@ -266,7 +268,7 @@ export const useProperties: UseProperties = () => {
       })
       setProperties(properties)
     })()
-  }, [gapi])
+  }, [managementAPI])
 
   return { properties }
 }

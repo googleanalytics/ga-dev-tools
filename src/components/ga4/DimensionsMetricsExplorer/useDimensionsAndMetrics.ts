@@ -30,7 +30,7 @@ export const useDimensionsAndMetrics = (
   aps: AccountProperty
 ): Requestable<Successful> => {
   const gapi = useSelector((state: AppState) => state.gapi)
-  const dataAPI = React.useMemo(() => gapi?.client.analyticsdata, [gapi])
+  const dataAPI = React.useMemo(() => gapi?.client?.analyticsdata, [gapi])
 
   const propertyName = React.useMemo(
     () => `${aps.property?.property || "properties/0"}/metadata`,
