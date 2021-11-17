@@ -75,6 +75,10 @@ const Column: React.FC<{ column: ColumnT }> = ({ column }) => {
   )
 }
 
+const columnFilterOptions = createFilterOptions<ColumnT>({
+  stringify: option => `${option.id} ${option.attributes?.uiName || ""}`,
+})
+
 export const DimensionPicker: React.FC<{
   selectedDimension: ColumnT | undefined
   setDimensionID: Dispatch<string | undefined>
@@ -85,6 +89,7 @@ export const DimensionPicker: React.FC<{
 
   return (
     <Autocomplete<ColumnT, false, undefined, true>
+      filterOptions={columnFilterOptions}
       fullWidth
       autoComplete
       autoHighlight
@@ -130,6 +135,7 @@ export const DimensionsPicker: React.FC<{
 
   return (
     <Autocomplete<ColumnT, true, undefined, true>
+      filterOptions={columnFilterOptions}
       fullWidth
       autoComplete
       autoHighlight
@@ -176,6 +182,7 @@ export const MetricPicker: React.FC<{
 
   return (
     <Autocomplete<ColumnT, false, undefined, true>
+      filterOptions={columnFilterOptions}
       fullWidth
       autoComplete
       autoHighlight
@@ -223,6 +230,7 @@ export const MetricsPicker: React.FC<{
 
   return (
     <Autocomplete<ColumnT, true, undefined, true>
+      filterOptions={columnFilterOptions}
       fullWidth
       autoComplete
       autoHighlight
@@ -291,7 +299,9 @@ const Segment: React.FC<{
   )
 }
 
-const filter = createFilterOptions<SegmentT>()
+const segmentFilterOptions = createFilterOptions<SegmentT>({
+  stringify: option => `${option.segmentId} ${option.name}`,
+})
 export const SegmentPicker: React.FC<{
   segment: SegmentT | undefined
   setSegmentID: Dispatch<string | undefined>
@@ -330,7 +340,7 @@ export const SegmentPicker: React.FC<{
       getOptionLabel={getOptionLabel}
       value={segment || null}
       filterOptions={(options, params) => {
-        const filtered = filter(options || [], params)
+        const filtered = segmentFilterOptions(options || [], params)
 
         // Add entry for creating a dynamic segment based on input.
         if (params.inputValue !== "") {
