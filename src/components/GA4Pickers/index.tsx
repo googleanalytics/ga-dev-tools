@@ -15,7 +15,9 @@
 import * as React from "react"
 
 import { Typography, TextField, makeStyles } from "@material-ui/core"
-import Autocomplete from "@material-ui/lab/Autocomplete"
+import Autocomplete, {
+  createFilterOptions,
+} from "@material-ui/lab/Autocomplete"
 import { useState } from "react"
 import { Dispatch, RequestStatus } from "@/types"
 import useAvailableColumns from "./useAvailableColumns"
@@ -56,6 +58,9 @@ const Column: React.FC<{ column: GA4Column }> = ({ column }) => {
   )
 }
 
+const dimensionsFilterOptions = createFilterOptions<GA4Dimension>({
+  stringify: option => `${option.uiName} ${option.apiName}`,
+})
 export const DimensionsPicker: React.FC<{
   dimensions: GA4Dimensions
   // TODO - migrate away entirely from setDimensions and only use the IDs and make
@@ -82,6 +87,7 @@ export const DimensionsPicker: React.FC<{
 
   return (
     <Autocomplete<NonNullable<GA4Dimension>, true, undefined, true>
+      filterOptions={dimensionsFilterOptions}
       fullWidth
       autoComplete
       autoHighlight
@@ -118,6 +124,9 @@ export const DimensionsPicker: React.FC<{
   )
 }
 
+const metricsFilterOptions = createFilterOptions<GA4Metric>({
+  stringify: option => `${option.uiName} ${option.apiName}`,
+})
 export const MetricsPicker: React.FC<{
   metrics: GA4Metrics
   // TODO - migrate away entirely from setMetrics and only use the IDs and make
@@ -146,6 +155,7 @@ export const MetricsPicker: React.FC<{
 
   return (
     <Autocomplete<GA4Metric, true, undefined, true>
+      filterOptions={metricsFilterOptions}
       fullWidth
       autoComplete
       autoHighlight
@@ -244,6 +254,7 @@ export const DimensionPicker: React.FC<{
 
   return (
     <Autocomplete<NonNullable<GA4Dimension>, false, undefined, true>
+      filterOptions={dimensionsFilterOptions}
       className={className}
       fullWidth
       autoComplete
@@ -330,6 +341,7 @@ export const MetricPicker: React.FC<{
 
   return (
     <Autocomplete<NonNullable<GA4Metric>, false, undefined, true>
+      filterOptions={metricsFilterOptions}
       className={className}
       fullWidth
       autoComplete
