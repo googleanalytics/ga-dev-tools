@@ -59,8 +59,6 @@ const useAllAPS = () => {
     accounts as AccountWithStreams[]
   )
 
-  console.log(allAPS)
-
   const shouldRun = useRef(true)
 
   useEffect(() => {
