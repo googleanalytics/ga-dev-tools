@@ -1,12 +1,24 @@
+import { StorageKey } from "@/constants"
 import { RequestStatus } from "@/types"
 import { AccountSummary, PropertySummary } from "@/types/ga4/StreamPicker"
+import moment from "moment"
 import { useEffect, useMemo, useRef, useState } from "react"
 import { useSelector } from "react-redux"
 import useAccountSummaries from "../StreamPicker/useAccounts"
 
+const maxAge = moment.duration(30, "minutes")
+type StreamsForProperty = {
+  webStreams: gapi.client.analyticsadmin.GoogleAnalyticsAdminV1alphaWebDataStream[]
+  iosStreams: gapi.client.analyticsadmin.GoogleAnalyticsAdminV1alphaIosAppDataStream[]
+  androidStreams: gapi.client.analyticsadmin.GoogleAnalyticsAdminV1alphaAndroidAppDataStream[]
+  property: string
+  timestamp: number
+}
+
 const fetchAllStreams = async (
   adminAPI: typeof gapi.client.analyticsadmin,
-  property: string
+  property: string,
+  key: string
 ) => {
   const [
     {
@@ -31,7 +43,18 @@ const fetchAllStreams = async (
   ])
   // TODO - consider handling pagination, though it seems very unlikely there
   // will be _pages_ of streams for a given property.
-  return { webStreams, iosStreams, androidStreams }
+  const fetchTime = moment.now()
+  const nu: StreamsForProperty = {
+    webStreams,
+    iosStreams,
+    androidStreams,
+    property,
+    timestamp: fetchTime,
+  }
+
+  window.localStorage.setItem(key, JSON.stringify(nu))
+
+  return nu
 }
 
 interface PropertyWithStreams extends PropertySummary {
@@ -87,11 +110,35 @@ const useAllAPS = () => {
           ) {
             if (shouldRun.current) {
               const currentProperty = currentProperties[propertyIdx]
-              const {
-                webStreams,
-                androidStreams,
-                iosStreams,
-              } = await fetchAllStreams(adminAPI, currentProperty.property!)
+
+              const key = StorageKey.ga4Streams + currentProperty.property!
+              const fromCache = window.localStorage.getItem(key)
+              let stuff: StreamsForProperty
+              if (fromCache !== null) {
+                const parsed: StreamsForProperty = JSON.parse(fromCache)
+                const now = moment()
+                const cacheTime = moment(parsed.timestamp)
+                if (
+                  cacheTime === undefined ||
+                  now.isAfter(moment(cacheTime).add(maxAge))
+                ) {
+                  console.log("should update")
+                  stuff = await fetchAllStreams(
+                    adminAPI,
+                    currentProperty.property!,
+                    key
+                  )
+                } else {
+                  stuff = parsed
+                }
+              } else {
+                stuff = await fetchAllStreams(
+                  adminAPI,
+                  currentProperty.property!,
+                  key
+                )
+              }
+              const { webStreams, androidStreams, iosStreams } = stuff
               setAllAPS((old = []) => {
                 return old.map((aws, aIdx) =>
                   aIdx === accountIdx

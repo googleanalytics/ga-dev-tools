@@ -252,6 +252,7 @@ export enum StorageKey {
   // GA4 Account Explorer
   ga4AccountExplorerAPS = "ga4/account-explorer/aps",
   allAPS = "ga4/account-explorer/all-aps",
+  ga4Streams = "ga4/account-explorer/streams-for-property/",
 }
 
 export const EventAction = {
