@@ -4,6 +4,7 @@ import { StorageKey } from "@/constants"
 import useAccountPropertyStream from "../StreamPicker/useAccountPropertyStream"
 import StreamPicker from "../StreamPicker"
 import ExploreTable from "./ExploreTable"
+import useAccountProperty from "../StreamPicker/useAccountProperty"
 
 enum QueryParam {
   Account = "a",
@@ -12,10 +13,7 @@ enum QueryParam {
 }
 
 const AccountExplorer = () => {
-  const aps = useAccountPropertyStream(
-    StorageKey.ga4AccountExplorerAPS,
-    QueryParam
-  )
+  const ap = useAccountProperty(StorageKey.ga4AccountExplorerAPS, QueryParam)
 
   return (
     <>
@@ -26,8 +24,8 @@ const AccountExplorer = () => {
         and find the IDs that you need for APIs or other tools or services that
         integrate with Google Analytics.
       </Typography>
-      <StreamPicker {...aps} streams />
-      <ExploreTable />
+      <StreamPicker {...ap} />
+      <ExploreTable {...ap} />
     </>
   )
 }

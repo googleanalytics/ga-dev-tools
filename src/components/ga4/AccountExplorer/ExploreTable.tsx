@@ -12,9 +12,10 @@ import {
 } from "@material-ui/core"
 import { Android, Apple, Language } from "@material-ui/icons"
 import React from "react"
+import { AccountProperty } from "../StreamPicker/useAccountProperty"
 import useAllAPS from "./useAllAPS"
 
-interface ExploreTableProps {}
+interface ExploreTableProps extends AccountProperty {}
 
 const WebCell: React.FC<{
   stream: gapi.client.analyticsadmin.GoogleAnalyticsAdminV1alphaWebDataStream
@@ -85,7 +86,7 @@ const useStyles = makeStyles(theme => ({
   },
 }))
 
-const ExploreTable: React.FC<ExploreTableProps> = () => {
+const ExploreTable: React.FC<ExploreTableProps> = ({ account, property }) => {
   const aps = useAllAPS()
   const classes = useStyles()
 
@@ -153,6 +154,16 @@ const ExploreTable: React.FC<ExploreTableProps> = () => {
               const rows: JSX.Element[] = []
               const baseKey = `${a.account}-${p.property}`
 
+              if (account !== undefined) {
+                if (a.account !== account.account) {
+                  return null
+                }
+                if (property !== undefined) {
+                  if (p.property !== property.property) {
+                    return null
+                  }
+                }
+              }
               if (p.webStreams === undefined) {
                 rows.push(
                   <Wrapper key={`${baseKey}-web-loading`}>Loading...</Wrapper>
