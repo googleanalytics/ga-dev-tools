@@ -1,3 +1,5 @@
+import * as React from "react"
+import {StoreProvider} from "./src/components/ga4/EnhancedEcommerce/store-context"
 import CustomLayout from "./gatsby/wrapRootElement.js"
 
 // TODO - look into making this work like gatsby-node & use typescript for the
@@ -5,3 +7,8 @@ import CustomLayout from "./gatsby/wrapRootElement.js"
 
 export { onInitialClientRender } from "./gatsby/onInitialClientRender"
 export const wrapPageElement = CustomLayout
+
+// Wrap every page using a StoreProvider object used by eCommerce demo.
+export const wrapRootElement = ({ element }) => (
+    <StoreProvider>{element}</StoreProvider>
+)
