@@ -1,0 +1,47 @@
+.gaConsoleStyle {
+  align-self: stretch;
+  height: 100px;
+  align-items: center;
+  background: black;
+  color: white;
+  overflow: auto;
+  padding: var(--size-gap) var(--size-gutter);
+  position: fixed;
+  bottom: 0;
+  width: 80%;
+  opacity: 0.7;
+}
+
+.emptyEvents {
+  text-align: center;
+  font-weight: var(--medium);
+}
+
+.eventLine {
+  display: flex;
+  flex-direction: row;
+  white-space: nowrap;
+}
+
+.eventTimestamp {
+  padding-right: var(--space-md);
+}
+
+.eventName {
+  padding-right: var(--space-md);
+  font-weight: var(--semibold);
+}
+
+.eventDescription {
+  padding-right: var(--space-md);
+}
+
+.eventSnippet {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-style: italic;
+  color: var(--grey-50);
+  text-decoration: dotted underline;
+  cursor: pointer;
+}
