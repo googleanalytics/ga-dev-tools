@@ -1,0 +1,37 @@
+.cartButton {
+  color: var(--text-color-secondary);
+  grid-area: cartButton;
+  width: var(--size-input);
+  height: var(--size-input);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  align-self: center;
+}
+
+.cartButton:hover {
+  color: var(--text-color);
+}
+
+.badge {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--primary);
+  box-shadow: 0 0 0 2px white;
+  color: var(--text-color-inverted);
+  font-size: var(--text-xs);
+  font-weight: var(--bold);
+  border-radius: var(--radius-rounded);
+  position: absolute;
+  bottom: 4px;
+  right: 4px;
+  height: 16px;
+  min-width: 16px;
+  padding: 0 var(--space-sm);
+}
+
+.cartButton[aria-current="page"] {
+  color: var(--primary);
+}
