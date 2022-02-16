@@ -1,5 +1,6 @@
 src/images/*
 **/*.json
+**/*.css
 **/*.lock
 lib/build/*
 node_modules/
