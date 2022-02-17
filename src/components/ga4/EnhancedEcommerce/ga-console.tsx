@@ -35,7 +35,15 @@ function TabPanel(props) {
 export function GaConsole({className}) {
     const {events} = React.useContext(StoreContext)
     const [open, setOpen] = React.useState(false);
-    const [selectedEvent, setSelectedEvent] = React.useState({});
+
+    const [selectedEvent, setSelectedEvent] = React.useState({
+        key: 0,
+        timestamp: '',
+        name: '',
+        description: '',
+        snippet: ''
+    });
+
     const [value, setValue] = React.useState(0);
 
     const handleClickOpen = (eventKey) => () => {
