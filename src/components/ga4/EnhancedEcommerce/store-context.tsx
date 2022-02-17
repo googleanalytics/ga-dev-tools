@@ -1,24 +1,78 @@
 import * as React from "react"
 
-const defaultValues = {
+export interface GAEvent
+{
+    key: number
+    timestamp: string
+    name: string
+    description: string
+    snippet: string
+}
+
+interface Product
+{
+    id: number
+    title: string
+    brand: string
+    category: string
+    price: number
+}
+
+interface CartItem
+{
+    id: number
+    product: Product
+    variantId: string
+    quantity: number
+}
+
+interface PostalAddress
+{
+    firstName: string
+    lastName: string
+    addressLine1: string
+    addressLine2: string
+    city: string
+    provinceState: string
+    zipPostalCode: string
+    country: string
+}
+
+interface CheckoutState
+{
+    email: string
+    shippingAddress: PostalAddress
+    billingAddress: PostalAddress
+    paymentMethod: string
+    shippingMethod: string
+    coupon: string
+}
+
+interface StoreContextValues {
+    events: GAEvent[]
+    cart: CartItem[]
+    lastCart: CartItem[]
+    isOpen: boolean
+    checkoutState: CheckoutState
+    onOpen(): void
+    onClose(): void
+    addEvent(name: string, description: string, snippet: string): void
+    addVariantToCart(product: Product, variantId: string,
+                     quantity: number): void
+    removeLineItem(id: number): void
+    updateLineItem(id: number, quantity: number): void
+    getCartSubtotal(): number
+    updateCheckoutState(name: string, value: string|number): void
+    updateShippingAddress(name: string, value: string|number): void
+    updateBillingAddress(name: string, value: string|number): void
+    emptyCart(): CartItem[]
+}
+
+const defaultValues: StoreContextValues = {
     cart: [],
     lastCart: [],
     events: [],
     isOpen: false,
-    onOpen: () => {
-    },
-    onClose: () => {
-    },
-    addEvent: () => {
-    },
-    addVariantToCart: () => {
-    },
-    removeCartItem: () => {
-    },
-    updateCartItem: () => {
-    },
-    getCartSubtotal: () => {
-    },
     checkoutState: {
         email: '',
         shippingAddress: {
@@ -29,7 +83,7 @@ const defaultValues = {
             city: '',
             provinceState: '',
             country: '',
-            zipCode: ''
+            zipPostalCode: ''
         },
         shippingMethod: '',
         billingAddress: {
@@ -40,12 +94,37 @@ const defaultValues = {
             city: '',
             provinceState: '',
             country: '',
-            zipCode: ''
+            zipPostalCode: ''
         },
         coupon: '',
         paymentMethod: ''
+    },
+    onOpen: () => {
+    },
+    onClose: () => {
+    },
+    addEvent: () => {
+    },
+    addVariantToCart: () => {
+    },
+    removeLineItem: () => {
+    },
+    updateLineItem: () => {
+    },
+    getCartSubtotal: () => {
+        return 0
+    },
+    updateCheckoutState: () => {
+    },
+    updateShippingAddress: () => {
+    },
+    updateBillingAddress: () => {
+    },
+    emptyCart: () => {
+        return []
     }
 }
+
 
 export const StoreContext = React.createContext(defaultValues)
 
@@ -55,12 +134,10 @@ export const StoreProvider = ({children}) => {
 
     const [checkoutState, setCheckoutState] = React.useState(defaultValues.checkoutState)
     const [events, setEvents] = React.useState(defaultValues.events)
-    const [didJustAddToCart, setDidJustAddToCart] = React.useState(false)
 
     const addEvent = (name, description, snippet) => {
         const key = events.length
         const timestamp = new Intl.DateTimeFormat('default', {
-
             hour: 'numeric',
             minute: 'numeric',
             second: 'numeric',
@@ -88,8 +165,6 @@ export const StoreProvider = ({children}) => {
         ]
         const newCart = cart.concat(cartItems)
         setCart(newCart)
-        setDidJustAddToCart(true)
-        setTimeout(() => setDidJustAddToCart(false), 3000)
     }
 
     const removeLineItem = (id) => {
@@ -149,13 +224,12 @@ export const StoreProvider = ({children}) => {
                 removeLineItem,
                 updateLineItem,
                 getCartSubtotal,
-                didJustAddToCart,
-                cart,
-                checkoutState,
                 updateCheckoutState,
                 updateShippingAddress,
                 updateBillingAddress,
                 emptyCart,
+                cart,
+                checkoutState,
                 lastCart,
                 events
             }}

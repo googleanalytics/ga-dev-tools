@@ -1,5 +1,5 @@
 import * as React from "react"
-import {StoreContext} from "./store-context"
+import {StoreContext, GAEvent} from "./store-context"
 import {emptyEvents, eventDescription, eventLine, eventName, eventSnippet, eventTimestamp, gaConsoleStyle} from "@/components/ga4/EnhancedEcommerce/ga-console.module.css";
 import Dialog from '@material-ui/core/Dialog';
 import Tabs from '@material-ui/core/Tabs';
@@ -35,7 +35,15 @@ function TabPanel(props) {
 export function GaConsole({className}) {
     const {events} = React.useContext(StoreContext)
     const [open, setOpen] = React.useState(false);
-    const [selectedEvent, setSelectedEvent] = React.useState({});
+
+    const [selectedEvent, setSelectedEvent] = React.useState({
+        key: 0,
+        timestamp: '',
+        name: '',
+        description: '',
+        snippet: ''
+    });
+
     const [value, setValue] = React.useState(0);
 
     const handleClickOpen = (eventKey) => () => {
