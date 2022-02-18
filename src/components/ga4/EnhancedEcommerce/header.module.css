@@ -1,0 +1,28 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.header {
+  display: grid;
+  width: 100%;
+  padding: var(--size-gap) var(--size-gutter);
+  grid-template-columns: 1fr;
+  grid-template-areas: "cartButton" "navHeader";
+  align-items: start;
+  background-color: var(--background);
+}
+
+@media (min-width: 640px) {
+  .header {
+    grid-template-columns: 1fr min-content;
+    grid-template-areas:  "navHeader cartButton";
+  }
+}
+
+
+.nav {
+  grid-area: navHeader;
+  align-self: stretch;
+}

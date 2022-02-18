@@ -1,0 +1,8 @@
+.footerStyle {
+  margin-top: 100px;
+}
+
+.gaConsole {
+  padding: var(--size-gutter-raw);
+
+}
