@@ -9,7 +9,7 @@ interface GAEvent
     snippet: string
 }
 
-interface Product
+export interface Product
 {
     id: number
     title: string
@@ -18,7 +18,7 @@ interface Product
     price: number
 }
 
-interface CartItem
+export interface CartItem
 {
     id: number
     product: Product
