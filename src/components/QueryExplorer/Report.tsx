@@ -30,7 +30,6 @@ import Spinner from "../../components/Spinner"
 import { CopyIconButton } from "../../components/CopyButton"
 import { QueryResponse, APIStatus } from "./useDataAPIRequest"
 import TSVDownload from "./TSVDownload"
-import LabeledCheckbox from "../LabeledCheckbox"
 import { useState } from "react"
 
 const useStyles = makeStyles(theme => ({
@@ -93,17 +92,14 @@ interface ReportProps {
   queryResponse: QueryResponse
   columns: gapi.client.analytics.Column[] | undefined
   permalink: string | undefined
-  accessToken: string | undefined
 }
 
 const Report: React.FC<ReportProps> = ({
   queryResponse,
   columns,
   permalink,
-  accessToken,
 }) => {
   const classes = useStyles()
-  const [includeAccessToken, setIncludeAccessToken] = useState(false)
 
   const requestURL = React.useMemo(() => {
     if (
@@ -115,14 +111,11 @@ const Report: React.FC<ReportProps> = ({
     const [base, queryParamString] = queryResponse.response.selfLink!.split("?")
     const existingQueryParams = new URLSearchParams(queryParamString)
     const nuQueryParams = new URLSearchParams()
-    if (includeAccessToken && accessToken !== undefined) {
-      nuQueryParams.append("access_token", accessToken)
-    }
     existingQueryParams.forEach((value, key) => {
       nuQueryParams.append(key, value)
     })
     return `${base}?${nuQueryParams.toString()}`
-  }, [queryResponse, includeAccessToken, accessToken])
+  }, [queryResponse])
 
   if (queryResponse === undefined) {
     return null
@@ -181,12 +174,6 @@ const Report: React.FC<ReportProps> = ({
             ),
           }}
         />
-        <LabeledCheckbox
-          checked={includeAccessToken}
-          setChecked={setIncludeAccessToken}
-        >
-          include access token
-        </LabeledCheckbox>
         <section className={classes.reportLink}>
           <a href={permalink}>Link to this report</a>
         </section>
