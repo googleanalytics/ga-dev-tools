@@ -73,6 +73,12 @@ export const linkData: LinkData[] = [
     versions: [GAVersion.GoogleAnalytics4],
   },
   {
+    text: "Firebase Measurement Protocol Validator",
+    href: "/ga4/firebase_measurement_protocol_validator/",
+    type: "link",
+    versions: [GAVersion.GoogleAnalytics4],
+  },
+  {
     text: "Dimensions & Metrics Explorer",
     href: "/ga4/dimensions-metrics-explorer/",
     type: "link",

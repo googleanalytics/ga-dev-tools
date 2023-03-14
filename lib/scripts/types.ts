@@ -100,3 +100,53 @@ export type Args =
   | DevelopArgs
   | DeployArgs
   | DeployFunctionsArgs
+  
+  export type Payload = {
+    user_id: string;
+    events: Array<Event>;
+    timestamp_micros?: string;
+    app_instance_id: string;
+    non_personalized_ads: boolean;
+    validationBehavior?: string;
+  };
+  
+  export type Event = {
+    name: string;
+    params: {
+      visitor_id: string;
+      country: string;
+      region: string;
+      transaction_id: string;
+      ogp_nor_loc: number;
+      ogp_nob_loc: number;
+      ogp_loc: number;
+      value: number;
+      currency: string;
+    };
+  };
+  
+  export type AdditionalParams = {
+    param_type: string;
+    value: string;
+  };
+  
+  export type SchemaType = string;
+  
+  export type ContentLength = number;
+
+  export type ValidationServerResponse = {
+    validationMessages?: Array<ValidationMessage>
+  }
+
+  export type ValidationMessage = {
+    fieldPath: string,
+    description: string,
+    validationCode: string
+  }
+
+  export type SchemaValidationError = {
+    message: string
+    instance: Payload
+    validator: string
+    path: Array<string>
+  }
