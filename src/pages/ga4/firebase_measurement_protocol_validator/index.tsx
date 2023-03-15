@@ -19,7 +19,7 @@ import TextField from "@material-ui/core/TextField"
 import Layout from "@/components/Layout"
 import { IS_SSR } from "@/hooks"
 import { PlainButton } from "@/components/Buttons"
-import { validationLib } from "../../../../lib/scripts/validationLib"
+import { validationLib } from "../../../../validators/validationLib"
 export default ({ location: { pathname } }) => {
   const [firebaseAppId, setFireBaseAppId] = useState("")
   const [payload, setPayload] = useState("")

@@ -1,10 +1,10 @@
-import * as path from "path"
+// import * as path from "path"
 
-export const PWD = process.cwd()
-export const Encoding = "utf8"
-export const RuntimeJsonPath = path.join(PWD, "runtime.json")
-export const DotEnvProductionPath = path.join(PWD, ".env.production")
-export const DotEnvDevelopmentPath = path.join(PWD, ".env.development")
+// export const PWD = process.cwd()
+// export const Encoding = "utf8"
+// export const RuntimeJsonPath = path.join(PWD, "runtime.json")
+// export const DotEnvProductionPath = path.join(PWD, ".env.production")
+// export const DotEnvDevelopmentPath = path.join(PWD, ".env.development")
 
 export type Payload = {
     user_id: string;
