@@ -1,4 +1,5 @@
 import { validationServerAdaptor } from "./validationServerAdaptor"
+import validateHit from "../src/components/ga4/EventBuilder/ValidateEvent/useValidateEvent"
 import {
     Payload,
     SchemaType,
@@ -25,13 +26,28 @@ export class validationLib  {
     }
 
     public validate(): boolean {
+        // error message from API
         const serverAdaptor = new validationServerAdaptor(
             this.payload,
             this.schemaType
         )
-        serverAdaptor.smartValidate()
-        console.log('validate inside class!')
+        const response = serverAdaptor.smartValidate()
+        // Validate(this.payload)
+
+        // error messages from JSON schema validator
+        // let baseValidator = validator.EventValidator(schema=baseContent.schema)
+        // let eventValidator = validator.EventValidator(schema=eventContent.schema)
+        // let targetValidator = this.schemaType === "event" ? eventValidator : baseValidator
+        
         return true
     }
-
 }
+
+// function Validate(payload) {
+//     console.log('here')
+//     validateHit(
+//         payload,
+//         "1: xxxxxxxxxxxx: xxx: xxxxxxxxxxxxxxxxxxxxxx",
+//         "mock_api_secret",
+//     )
+// }

@@ -38,52 +38,54 @@ export class validationServerAdaptor  {
         const maxLoops = 5;
 
         for (let loopIndex = 0; loopIndex < maxLoops; loopIndex++) {
-            console.log('IN LOOP');
-            this.callValidationServer(mutablePayload)
+          this.callValidationServer(mutablePayload)
+          .then(errors => {
+            if (errors.length) {
+              let error: ValidationMessage = errors[0];
+              totalErrors.push(error);
 
-            // this won't work because this is going to never be populated
-            if (this.validationMessages.length) {
-                let error: ValidationMessage = this.validationMessages[0];
-                totalErrors.push(error);
-                let fixedPayload = this.smartFixError(
-                    JSON.parse(JSON.stringify(mutablePayload)), 
-                    error
-                )
+              let fixedPayload = this.smartFixError(
+                JSON.parse(JSON.stringify(mutablePayload)),
+                error
+              )
 
-                if (fixedPayload === mutablePayload) {
-                    runValidations = false;
-                } else {
-                    mutablePayload = fixedPayload;
-                }
-            } else {
+              if (fixedPayload === mutablePayload) {
                 runValidations = false;
+              } else {
+                mutablePayload = fixedPayload;
+              }
+            } else {
+              runValidations = false;
             }
+          })
         }
 
+        console.log('totalErrors', totalErrors)
         return totalErrors.map((message) => {
             return this.getErrorMessage(this.payload, message)
         })
     }
 
-    private async callValidationServer(payload: Payload): Promise<ValidationMessage[]>{
+    private callValidationServer(payload: Payload): Promise<ValidationMessage[]>{
       payload["validationBehavior"] = "ENFORCE_RECOMMENDATIONS"
+
       let validationMessages: Array<ValidationMessage> = []
-      try {
-        const response = await fetch(VALIDATION_SERVER_URL, {
+
+      return fetch(VALIDATION_SERVER_URL, {
           body: JSON.stringify(payload),
           method: "POST",
-        });
-        const responseMessages = await response.json();
-        this.validationMessages = responseMessages["validationMessages"] || [];
-      } catch (error) {
-        if (error instanceof Error && error.name === "ConnectionError") {
-          // no-op
-        } else {
-          throw error;
-        }
-      }
-
-      return this.validationMessages
+        })
+        .then(response => response.json())
+        .then(res => {
+          return res["validationMessages"] as ValidationMessage[]
+        })
+        // .catch(error => {
+        //   if (error instanceof Error && error.name === "ConnectionError") {
+        //     // no-op
+        //   } else {
+        //     throw error;
+        //   }
+        // })
     }
 
     private smartFixError(payload: Payload, error: ValidationMessage): Payload {

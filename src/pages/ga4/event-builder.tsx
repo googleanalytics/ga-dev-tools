@@ -21,7 +21,6 @@ export default ({ location: { pathname } }) => {
   return (
     <Layout
       title="Event Builder"
-      requireLogin
       pathname={pathname}
       description="The GA4 Event Builder allows you to create, validate, and send events using the GA4 Measurement Protocol."
     >

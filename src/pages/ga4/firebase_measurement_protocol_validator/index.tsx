@@ -101,7 +101,6 @@ export default ({ location: { pathname } }) => {
                 726,
               )
               const validationResult = validation.validate()
-              console.log('validationResult', validationResult)
             }}
           >
             submit

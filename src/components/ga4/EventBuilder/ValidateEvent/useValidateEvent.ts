@@ -67,7 +67,10 @@ export type ValidationSuccessful = {
   copyPayload: () => void
   copySharableLink: () => void
 }
-export type ValidationNotStarted = { validateEvent: () => void }
+export type ValidationNotStarted = { 
+  validateEvent: () => void 
+  validatePayloadAttributes: () => void
+}
 export type ValidationInProgress = {}
 export type ValidationFailed = {
   validationMessages: ValidationMessage[]
@@ -120,8 +123,10 @@ const useValidateEvent = (): Requestable<
       return
     }
     setStatus(RequestStatus.InProgress)
+    validatePayloadAttributes()
     validateHit(payload, instanceId, api_secret)
       .then(messages => {
+        console.log('messages', messages)
         setTimeout(() => {
           if (messages.length > 0) {
             setValidationMessages(
@@ -144,10 +149,15 @@ const useValidateEvent = (): Requestable<
       })
   }, [status, payload, api_secret, instanceId, useFirebase])
 
+  const validatePayloadAttributes = () => {
+    console.log('add additional messages HERE')
+    // validate payload attributes
+  }
+
   if (status === RequestStatus.Successful) {
     return { status, sendToGA, copyPayload, copySharableLink, sent }
   } else if (status === RequestStatus.NotStarted) {
-    return { status, validateEvent }
+    return { status, validateEvent, validatePayloadAttributes }
   } else if (status === RequestStatus.Failed) {
     return { status, validationMessages, validateEvent }
   } else {
