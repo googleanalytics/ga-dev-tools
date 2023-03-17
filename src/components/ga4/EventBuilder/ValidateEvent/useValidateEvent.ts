@@ -119,9 +119,11 @@ const useValidateEvent = (): Requestable<
     if (status === RequestStatus.InProgress) {
       return
     }
+    validatePayloadAttributes()
     setStatus(RequestStatus.InProgress)
     validateHit(payload, instanceId, api_secret)
       .then(messages => {
+        console.log('messages', messages)
         setTimeout(() => {
           if (messages.length > 0) {
             setValidationMessages(
@@ -143,6 +145,10 @@ const useValidateEvent = (): Requestable<
         console.error(e)
       })
   }, [status, payload, api_secret, instanceId, useFirebase])
+
+  const validatePayloadAttributes = () => {
+    console.log('validation logic here')
+  }
 
   if (status === RequestStatus.Successful) {
     return { status, sendToGA, copyPayload, copySharableLink, sent }
