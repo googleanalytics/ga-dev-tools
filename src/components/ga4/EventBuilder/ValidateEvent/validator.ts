@@ -22,4 +22,8 @@ export class Validator {
     public isValid = (payload) => {
         return this.validator.isValid(payload)
     }
+
+    public getErrors = (payload) => {
+        return this.validator.validate(payload)
+    }
 }
