@@ -1,5 +1,7 @@
 import { useCopy } from "@/hooks"
 import { Requestable, RequestStatus } from "@/types"
+import { Validator } from "./validator"
+import { eventSchema } from "./schemas/event"
 import {
   createContext,
   useCallback,
@@ -119,35 +121,47 @@ const useValidateEvent = (): Requestable<
     if (status === RequestStatus.InProgress) {
       return
     }
-    validatePayloadAttributes()
     setStatus(RequestStatus.InProgress)
+    setValidationMessages([])
+    validatePayloadAttributes(payload)
     validateHit(payload, instanceId, api_secret)
       .then(messages => {
-        console.log('messages', messages)
         setTimeout(() => {
           if (messages.length > 0) {
-            setValidationMessages(
-              messages.filter(a =>
+            let apiValidationMessages = messages.filter(a =>
                 a.fieldPath === "measurement_id"
                   ? !useFirebase
                   : a.fieldPath === "firebase_app_id"
                   ? useFirebase
                   : true
               )
-            )
+            setValidationMessages(prevState => [...prevState, ...apiValidationMessages])
             setStatus(RequestStatus.Failed)
           } else {
             setStatus(RequestStatus.Successful)
           }
         }, 250)
+        console.log('validationMessages', validationMessages)
       })
       .catch(e => {
         console.error(e)
       })
   }, [status, payload, api_secret, instanceId, useFirebase])
 
-  const validatePayloadAttributes = () => {
-    console.log('validation logic here')
+  const validatePayloadAttributes = (payload) => {
+    let validator = new Validator(eventSchema)
+
+    if (!validator.isValid(payload)) {
+      let errors: ValidationMessage[] = validator.getErrors(payload).map((err) => {
+        return {
+          description: err.message,
+          validationCode: err.name,
+          fieldCode: err.data,
+
+        }
+      })
+      setValidationMessages(prevState => [...prevState, ...errors])
+    }
   }
 
   if (status === RequestStatus.Successful) {
