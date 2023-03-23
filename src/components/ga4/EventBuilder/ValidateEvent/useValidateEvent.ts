@@ -1,7 +1,7 @@
 import { useCopy } from "@/hooks"
 import { Requestable, RequestStatus } from "@/types"
 import { Validator } from "./validator"
-import { eventSchema } from "./schemas/event"
+import { baseContentSchema } from "./schemas/baseContent"
 import {
   createContext,
   useCallback,
@@ -141,7 +141,6 @@ const useValidateEvent = (): Requestable<
             setStatus(RequestStatus.Successful)
           }
         }, 250)
-        console.log('validationMessages', validationMessages)
       })
       .catch(e => {
         console.error(e)
@@ -149,10 +148,11 @@ const useValidateEvent = (): Requestable<
   }, [status, payload, api_secret, instanceId, useFirebase])
 
   const validatePayloadAttributes = (payload) => {
-    let validator = new Validator(eventSchema)
+    let validator = new Validator(baseContentSchema)
 
     if (!validator.isValid(payload)) {
       let errors: ValidationMessage[] = validator.getErrors(payload).map((err) => {
+        console.log(err)
         return {
           description: err.message,
           validationCode: err.name,

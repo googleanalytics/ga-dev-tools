@@ -4,7 +4,7 @@
 import { userPropertiesSchema } from './userProperties'
 import { eventsSchema } from './events'
 
-const baseContentSchema = {
+export const baseContentSchema = {
     "type": "object",
     "required": ["app_instance_id", "events"],
     "additionalProperties": false,
