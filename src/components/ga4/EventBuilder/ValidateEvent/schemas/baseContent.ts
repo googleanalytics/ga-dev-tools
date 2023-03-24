@@ -17,7 +17,7 @@ export const baseContentSchema = {
             "type": "string"
         },
         "timestamp_micros": {
-            "type": "number"
+            // "type": "number"
         },
         "user_properties": userPropertiesSchema,
         "non_personalized_ads": {

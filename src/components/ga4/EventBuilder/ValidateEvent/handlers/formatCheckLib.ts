@@ -36,17 +36,23 @@ const isValidAppInstanceId = (payload) => {
 
     if (appInstanceId.length != 32) {
         errors.push({
-            description: `app_instance_id: ${appInstanceId} should be 32 chars long`,
+            description: `Measurement app_instance_id is expected to be a 32 digit hexadecimal number but was [${appInstanceId.length}] digits.`,
             validationCode: "FormatCheckError",
-            fieldPath: "FormatCheckError"
+            fieldPath: "app_instance_id"
         })
     }
 
-    if (!appInstanceId.match(/[a-f0-9]{32}/)) {
+    if (!appInstanceId.match(/[a-f0-9]/)) {
+        let nonChars = appInstanceId.split('').filter(letter => {
+            if (!/[0-9A-Fa-f]/.test(letter)) {
+                return letter
+            }
+        })
+
         errors.push({
-            description: `app_instance_id: ${appInstanceId} is not a valid RFC 4122 v4 UUID without dashes`,
+            description: `Measurement app_instance_id contains non hexadecimal character [${nonChars[0]}].`,
             validationCode: "FormatCheckError",
-            fieldPath: "FormatCheckError"
+            fieldPath: "app_instance_id"
         })
     }
 
@@ -62,7 +68,7 @@ const isValidEventName = (payload) => {
             errors.push({
                 description: `${ev.name} is a reserved event name`,
                 validationCode: "FormatCheckError",
-                fieldPath: "FormatCheckError"
+                fieldPath: "name"
             })
         }
     })
@@ -79,7 +85,7 @@ const isValidUserPropertyName = (payload) => {
             errors.push({
                 description: `user_property: ${prop} is a reserved user property name`,
                 validationCode: "FormatCheckError",
-                fieldPath: "FormatCheckError"
+                fieldPath: "user_property"
             })
         }
     })
@@ -98,7 +104,7 @@ const isValidCurrencyType = (payload) => {
                 errors.push({
                     description: `currency: ${currency} must be a valid 3-letter ISO 4217 format`,
                     validationCode: "FormatCheckError",
-                    fieldPath: "FormatCheckError"
+                    fieldPath: "currency"
                 })
             }
         }

@@ -124,19 +124,27 @@ const useValidateEvent = (): Requestable<
     }
     setStatus(RequestStatus.InProgress)
     setValidationMessages([])
-    validatePayloadAttributes(payload)
+    let validatorErrors = validatePayloadAttributes(payload)
     validateHit(payload, instanceId, api_secret)
       .then(messages => {
         setTimeout(() => {
-          if (messages.length > 0) {
-            let apiValidationMessages = messages.filter(a =>
+          if (messages.length > 0 || validatorErrors.length > 0) {
+            let apiValidationErrors = messages.filter(a =>
                 a.fieldPath === "measurement_id"
                   ? !useFirebase
                   : a.fieldPath === "firebase_app_id"
                   ? useFirebase
                   : true
               )
-            setValidationMessages(prevState => [...prevState, ...apiValidationMessages])
+            
+            // try to rewrite this using reduce
+            apiValidationErrors.forEach(err => {
+              if (!validatorErrors.map(e => e.description).includes(err.description)) {
+                validatorErrors.push(err)
+              }
+            })
+            
+            setValidationMessages(validatorErrors)
             setStatus(RequestStatus.Failed)
           } else {
             setStatus(RequestStatus.Successful)
@@ -150,24 +158,26 @@ const useValidateEvent = (): Requestable<
 
   const validatePayloadAttributes = (payload) => {
     let validator = new Validator(baseContentSchema)
+    let formatCheckErrors: ValidationMessage[] | [] = formatCheckLib(payload)
 
-    if (!validator.isValid(payload)) {
-      let errors: ValidationMessage[] = validator.getErrors(payload).map((err) => {
-        console.log(err)
+    if (!validator.isValid(payload) || formatCheckErrors) {
+      let validatorErrors: ValidationMessage[] = validator.getErrors(payload).map((err) => {
         return {
           description: err.message,
           validationCode: err.name,
           fieldPath: err.name,
         }
       })
-      setValidationMessages(prevState => [...prevState, ...errors])
+
+      return [...validatorErrors, ...formatCheckErrors]
+      // setValidationMessages(prevState => [
+      //   ...prevState, 
+      //   ...validatorErrors, 
+      //   ...formatCheckErrors,
+      // ])
     }
 
-    let formatCheckErrors: ValidationMessage[] | [] = formatCheckLib(payload)
-
-    if (formatCheckErrors) {
-      setValidationMessages(prevState => [...prevState, ...formatCheckErrors])
-    }
+    return []
   }
 
   if (status === RequestStatus.Successful) {
