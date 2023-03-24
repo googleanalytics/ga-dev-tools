@@ -17,8 +17,8 @@ export class Validator {
     ) {
         this.schema = schema
         this.validator = new Draft07(schema)
-    }
-
+      }
+        
     public isValid = (payload) => {
         return this.validator.isValid(payload)
     }

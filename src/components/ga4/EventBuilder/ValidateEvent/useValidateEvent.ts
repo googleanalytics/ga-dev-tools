@@ -2,6 +2,7 @@ import { useCopy } from "@/hooks"
 import { Requestable, RequestStatus } from "@/types"
 import { Validator } from "./validator"
 import { baseContentSchema } from "./schemas/baseContent"
+import { formatCheckLib } from "./handlers/formatCheckLib"
 import {
   createContext,
   useCallback,
@@ -156,11 +157,16 @@ const useValidateEvent = (): Requestable<
         return {
           description: err.message,
           validationCode: err.name,
-          fieldCode: err.data,
-
+          fieldPath: err.name,
         }
       })
       setValidationMessages(prevState => [...prevState, ...errors])
+    }
+
+    let formatCheckErrors: ValidationMessage[] | [] = formatCheckLib(payload)
+
+    if (formatCheckErrors) {
+      setValidationMessages(prevState => [...prevState, ...formatCheckErrors])
     }
   }
 
