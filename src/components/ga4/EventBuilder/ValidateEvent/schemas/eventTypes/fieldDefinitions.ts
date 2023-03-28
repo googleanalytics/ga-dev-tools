@@ -58,18 +58,3 @@ export const ITEM_FIELDS = {
 }
 
 export const VALUE_CURRENCY_DEPENDENCY = {"currency": ["value"], "value": ["currency"]}
-
-// def get_schema(field_name: str) -> object:
-//   return _EVENT_FIELDS[field_name]
-
-
-// def get_event_fields() -> object:
-//   return _EVENT_FIELDS
-
-
-// def get_item_fields() -> object:
-//   return _ITEM_FIELDS
-
-
-// def get_item_schema(field_name: str) -> object:
-//   return _ITEM_FIELDS[field_name]

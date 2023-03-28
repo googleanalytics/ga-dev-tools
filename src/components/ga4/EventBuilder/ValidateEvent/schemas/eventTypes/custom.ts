@@ -5,7 +5,6 @@
 // ex: if value is provided, value must be number, and valid currency field is
 // required
 
-// from google3.corp.gtech.ads.infrastructure.mapps_s2s_event_validator.schemas.event_types import event_builder
 import { VALUE_CURRENCY_DEPENDENCY } from "./fieldDefinitions"
 import { getAllEventProperties } from "./eventBuilder"
 
