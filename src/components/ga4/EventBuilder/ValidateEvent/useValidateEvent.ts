@@ -124,7 +124,8 @@ const useValidateEvent = (): Requestable<
     }
     setStatus(RequestStatus.InProgress)
     setValidationMessages([])
-    let validatorErrors = validatePayloadAttributes(payload)
+    let validatorErrors = useFirebase ? validatePayloadAttributes(payload) : []
+
     validateHit(payload, instanceId, api_secret)
       .then(messages => {
         setTimeout(() => {
@@ -137,7 +138,6 @@ const useValidateEvent = (): Requestable<
                   : true
               )
             
-            // try to rewrite this using reduce
             apiValidationErrors.forEach(err => {
               if (!validatorErrors.map(e => e.description).includes(err.description)) {
                 validatorErrors.push(err)
@@ -170,11 +170,6 @@ const useValidateEvent = (): Requestable<
       })
 
       return [...validatorErrors, ...formatCheckErrors]
-      // setValidationMessages(prevState => [
-      //   ...prevState, 
-      //   ...validatorErrors, 
-      //   ...formatCheckErrors,
-      // ])
     }
 
     return []
