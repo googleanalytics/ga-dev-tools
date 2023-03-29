@@ -34,7 +34,7 @@ const isValidAppInstanceId = (payload) => {
     let errors: ValidationMessage[] = []
     const appInstanceId = payload.app_instance_id
 
-    if (appInstanceId.length != 32) {
+    if (appInstanceId.length !== 32) {
         errors.push({
             description: `Measurement app_instance_id is expected to be a 32 digit hexadecimal number but was [${appInstanceId.length}] digits.`,
             validationCode: "FormatCheckError",
