@@ -80,15 +80,17 @@ const isValidUserPropertyName = (payload) => {
     let errors: ValidationMessage[] = []
     const userProperties = payload.user_properties
 
-    Object.keys(userProperties).forEach(prop => {
-        if (RESERVED_USER_PROPERTY_NAMES.includes(prop)) {
-            errors.push({
-                description: `user_property: ${prop} is a reserved user property name`,
-                validationCode: "FormatCheckError",
-                fieldPath: "user_property"
-            })
-        }
-    })
+    if (userProperties) {
+        Object.keys(userProperties).forEach(prop => {
+            if (RESERVED_USER_PROPERTY_NAMES.includes(prop)) {
+                errors.push({
+                    description: `user_property: ${prop} is a reserved user property name`,
+                    validationCode: "FormatCheckError",
+                    fieldPath: "user_property"
+                })
+            }
+        })
+    }
 
     return errors
 }
