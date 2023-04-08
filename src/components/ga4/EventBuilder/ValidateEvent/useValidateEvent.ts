@@ -3,6 +3,7 @@ import { Requestable, RequestStatus } from "@/types"
 import { Validator } from "./validator"
 import { baseContentSchema } from "./schemas/baseContent"
 import { formatCheckLib } from "./handlers/formatCheckLib"
+import { formatErrorMessages } from "./handlers/responseUtil"
 import {
   createContext,
   useCallback,
@@ -143,6 +144,8 @@ const useValidateEvent = (): Requestable<
                 validatorErrors.push(err)
               }
             })
+
+            validatorErrors = formatErrorMessages(validatorErrors)
             
             setValidationMessages(validatorErrors)
             setStatus(RequestStatus.Failed)
@@ -158,14 +161,14 @@ const useValidateEvent = (): Requestable<
 
   const validatePayloadAttributes = (payload) => {
     let validator = new Validator(baseContentSchema)
-    let formatCheckErrors: ValidationMessage[] | [] = formatCheckLib(payload)
+    let formatCheckErrors: ValidationMessage[] | [] = formatCheckLib(payload, instanceId.firebase_app_id)
 
     if (!validator.isValid(payload) || formatCheckErrors) {
       let validatorErrors: ValidationMessage[] = validator.getErrors(payload).map((err) => {
         return {
           description: err.message,
-          validationCode: err.name,
-          fieldPath: err.name,
+          validationCode: err.code,
+          fieldPath: err?.data?.key,
         }
       })
 

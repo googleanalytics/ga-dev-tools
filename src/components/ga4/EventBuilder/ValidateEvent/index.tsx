@@ -155,6 +155,8 @@ const Template: React.FC<TemplateProps> = ({
             <li key={idx}>
               {focusFor(message)}
               {message.description}
+              <br/>
+              <a href={message.documentation} target='_blank'>documentation</a>
             </li>
           ))}
         </ul>

@@ -13,13 +13,16 @@ const RESERVED_USER_PROPERTY_NAMES = [
     "first_open_after_install"
 ]
 
-export const formatCheckLib = (payload) => {
+export const formatCheckLib = (payload, firebaseAppId) => {
     let errors: ValidationMessage[] = []
 
     const appInstanceIdErrors = isValidAppInstanceId(payload)
     const eventNameErrors = isValidEventName(payload)
     const userPropertyNameErrors = isValidUserPropertyName(payload)
     const currencyErrors = isValidCurrencyType(payload)
+    const emptyItemsErrors = isItemsEmpty(payload)
+    const itemsRequiredKeyErrors = itemsHaveRequiredKey(payload)
+    const firebaseAppIdErrors = isfirebaseAppIdValid(firebaseAppId)
 
     return [
         ...errors, 
@@ -27,6 +30,9 @@ export const formatCheckLib = (payload) => {
         ...eventNameErrors,
         ...userPropertyNameErrors,
         ...currencyErrors,
+        ...emptyItemsErrors,
+        ...itemsRequiredKeyErrors,
+        ...firebaseAppIdErrors
     ]
 }
 
@@ -34,26 +40,28 @@ const isValidAppInstanceId = (payload) => {
     let errors: ValidationMessage[] = []
     const appInstanceId = payload.app_instance_id
 
-    if (appInstanceId.length !== 32) {
-        errors.push({
-            description: `Measurement app_instance_id is expected to be a 32 digit hexadecimal number but was [${appInstanceId.length}] digits.`,
-            validationCode: "FormatCheckError",
-            fieldPath: "app_instance_id"
-        })
-    }
+    if (appInstanceId) {
+        if (appInstanceId?.length !== 32) {
+            errors.push({
+                description: `Measurement app_instance_id is expected to be a 32 digit hexadecimal number but was [${appInstanceId.length}] digits.`,
+                validationCode: "FormatCheckError",
+                fieldPath: "app_instance_id"
+            })
+        }
 
-    if (!appInstanceId.match(/[a-f0-9]/)) {
-        let nonChars = appInstanceId.split('').filter(letter => {
-            if (!/[0-9A-Fa-f]/.test(letter)) {
-                return letter
-            }
-        })
+        if (!appInstanceId.match(/^[A-Fa-f0-9]+$/)) {
+            let nonChars = appInstanceId.split('').filter(letter => {
+                if (!/[0-9A-Fa-f]/.test(letter)) {
+                    return letter
+                }
+            })
 
-        errors.push({
-            description: `Measurement app_instance_id contains non hexadecimal character [${nonChars[0]}].`,
-            validationCode: "FormatCheckError",
-            fieldPath: "app_instance_id"
-        })
+            errors.push({
+                description: `Measurement app_instance_id contains non hexadecimal character [${nonChars[0]}].`,
+                validationCode: "FormatCheckError",
+                fieldPath: "app_instance_id"
+            })
+        }
     }
 
     return errors
@@ -63,7 +71,7 @@ const isValidAppInstanceId = (payload) => {
 const isValidEventName = (payload) => {
     let errors: ValidationMessage[] = []
 
-    payload.events.forEach(ev => {
+    payload.events?.forEach(ev => {
         if (RESERVED_EVENT_NAMES.includes(ev.name)) {
             errors.push({
                 description: `${ev.name} is a reserved event name`,
@@ -84,7 +92,7 @@ const isValidUserPropertyName = (payload) => {
         Object.keys(userProperties).forEach(prop => {
             if (RESERVED_USER_PROPERTY_NAMES.includes(prop)) {
                 errors.push({
-                    description: `user_property: ${prop} is a reserved user property name`,
+                    description: `user_property: '${prop}' is a reserved user property name`,
                     validationCode: "FormatCheckError",
                     fieldPath: "user_property"
                 })
@@ -98,19 +106,69 @@ const isValidUserPropertyName = (payload) => {
 const isValidCurrencyType = (payload) => {
     let errors: ValidationMessage[] = []
 
-    payload.events.forEach(ev => {
+    payload.events?.forEach(ev => {
         if (ev.params && ev.params.currency) {
             const currency = ev.params.currency
 
             if (currency.length !== 3 || !currency.match(/[A-Z]{3}/)) {
                 errors.push({
-                    description: `currency: ${currency} must be a valid 3-letter ISO 4217 format`,
+                    description: `currency: ${currency} must be a valid uppercase 3-letter ISO 4217 format`,
                     validationCode: "FormatCheckError",
                     fieldPath: "currency"
                 })
             }
         }
     })
+
+    return errors
+}
+
+const isItemsEmpty = (payload) => {
+    let errors: ValidationMessage[] = []
+
+    payload?.events?.forEach(ev => {
+        if (ev?.params?.items && ev?.params?.items?.length < 1){
+            errors.push({
+                description: "'items' should not be empty; One of 'item_id' or 'item_name' is a required key",
+                validationCode: "minItems",
+                fieldPath: "events/0/params/items"
+            })
+        }
+    })
+
+    return errors
+}
+
+const itemsHaveRequiredKey = (payload) => {
+    let errors: ValidationMessage[] = []
+
+    payload?.events?.forEach(ev => {
+        if (ev?.params?.items?.length > 0) {
+            const itemsObj = ev.params.items[0]
+
+            if (!(itemsObj.hasOwnProperty('item_id') || itemsObj.hasOwnProperty('item_name'))) {
+                errors.push({
+                    description: "'items' object must contain one of the following keys: 'item_id' or 'item_name'",
+                    validationCode: "minItems",
+                    fieldPath: "events/0/params/items"
+                })
+            }
+        }
+    })
+
+    return errors
+}
+
+const isfirebaseAppIdValid = (firebaseAppId) => {
+    let errors: ValidationMessage[] = []
+
+    if (!firebaseAppId.match(/[0-9]:[0-9]+:[a-zA-Z]+:[a-zA-Z0-9]+$/)) {
+        errors.push({
+            description: `${firebaseAppId} does not follow firebase_app_id pattern of X:XX:XX:XX at path`,
+            validationCode: "invalid_params",
+            fieldPath: "firebase_app_id"
+        })
+    }
 
     return errors
 }

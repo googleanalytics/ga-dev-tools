@@ -15,8 +15,6 @@ export const buildEvents = () => {
     let allEventTypes: conditionalObject[] = []
 //  Add all recommended event schemas
     for (let eventName in eventDefinitions) {
-        // TODO: Check that this goes through each key in the object
-        // Also check to make sure this if then works
         const cond = {
             "if": {
                 "properties": {
@@ -49,24 +47,25 @@ export const buildEvents = () => {
         }
 
         allEventTypes.push(cond)
+    }
 
-        let knownEventList = "|" + Object.keys(eventDefinitions)
-        let nameNotMatchPattern = "^(?!(" + knownEventList + ")$).*$"
-        let customCond = {
-            "if": {
-                "properties": {
-                    "name": {
-                        "pattern": nameNotMatchPattern
-                    }
-                }
-            },
-            "then": {
-                "properties": {
-                    "params": customSchema,
+    let knownEventList = "|" + Object.keys(eventDefinitions)
+    let nameNotMatchPattern = "^(?!(" + knownEventList + ")$).*$"
+    let customCond = {
+        "if": {
+            "properties": {
+                "name": {
+                    "pattern": nameNotMatchPattern
                 }
             }
+        },
+        "then": {
+            "properties": {
+                "params": customSchema,
+            }
         }
-        allEventTypes.push(customCond)
-        return allEventTypes
     }
+    allEventTypes.push(customCond)
+
+    return allEventTypes
 }
