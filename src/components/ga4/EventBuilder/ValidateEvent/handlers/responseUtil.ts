@@ -11,7 +11,6 @@ const API_DOC_SENDING_EVENTS_URL = 'https://developers.google.com/analytics/devg
 
 const BASE_PAYLOAD_ATTRIBUTES = ['app_instance_id', 'api_secret', 'firebase_app_id', 'user_id', 'timestamp_micros', 'user_properties', 'non_personalized_ads']
 
-
 export const formatErrorMessages = (errors, payload) => {
     const formattedErrors = errors.map(error => {
         let description = error.description
@@ -19,6 +18,7 @@ export const formatErrorMessages = (errors, payload) => {
         if (description.endsWith(CUSTOM_PARAMS_NAME)) {
             error['description'] = ITEM_INVALID_KEY_OVERRIDE
             error['validationCode'] = 'value_invalid'
+            error['fieldPath'] = '#/events/0/params/item_id'
             
             return error
         } else if (description.endsWith(ALPHA_NUMERIC_NAME)) {

@@ -56,6 +56,12 @@ export enum Label {
   NonPersonalizedAds = "non_personalized_ads",
 
   Payload = "payload",
+
+  // event params
+  Coupon = '#/events/0/params/coupon',
+  Currency = '#/events/0/params/currency',
+  Value = '#/events/0/params/value',
+  ItemId = '#/events/0/params/item_id'
 }
 
 const ga4MeasurementProtocol = (

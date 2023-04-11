@@ -118,7 +118,7 @@ const isValidCurrencyType = (payload) => {
                 errors.push({
                     description: `currency: ${currency} must be a valid uppercase 3-letter ISO 4217 format`,
                     validationCode: "value_invalid",
-                    fieldPath: "#/events/params/currency"
+                    fieldPath: "#/events/0/params/currency"
                 })
             }
         }
@@ -135,7 +135,7 @@ const isItemsEmpty = (payload) => {
             errors.push({
                 description: "'items' should not be empty; One of 'item_id' or 'item_name' is a required key",
                 validationCode: "minItems",
-                fieldPath: "#/events/0/params/items"
+                fieldPath: "#/events/0/params/item_id"
             })
         }
     })
@@ -154,7 +154,7 @@ const itemsHaveRequiredKey = (payload) => {
                 errors.push({
                     description: "'items' object must contain one of the following keys: 'item_id' or 'item_name'",
                     validationCode: "limitation",
-                    fieldPath: "#/events/0/params/items"
+                    fieldPath: "#/events/0/params/item_id"
                 })
             }
         }

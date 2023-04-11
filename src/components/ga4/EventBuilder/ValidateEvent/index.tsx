@@ -77,24 +77,13 @@ export interface ValidateEventProps {
 }
 
 const focusFor = (message: ValidationMessage) => {
+  const { fieldPath } = message
   let id: string | undefined
-  switch (message.fieldPath) {
-    case "api_secret":
-      id = Label.APISecret
-      break
-    case "measurement_id":
-      id = Label.MeasurementID
-      break
-    case "firebase_app_id":
-      id = Label.FirebaseAppID
-      break
-    case "app_instance_id":
-      id = Label.AppInstanceID
-      break
-    case "client_id":
-      id = Label.ClientID
-      break
+
+  if (Object.values(Label).includes(fieldPath)) {
+    id = fieldPath
   }
+
   if (id) {
     return (
       <PlainButton
@@ -152,12 +141,16 @@ const Template: React.FC<TemplateProps> = ({
       {validationMessages !== undefined && (
         <ul>
           {validationMessages.map((message, idx) => (
-            <li key={idx}>
-              {focusFor(message)}
-              {message.description}
+            <div>
+              <li key={idx}>
+                {focusFor(message)}
+                {message.description}
+                <br />
+                <a href={message.documentation} target='_blank'>Documentation</a>
+              </li>
               <br/>
-              <a href={message.documentation} target='_blank'>documentation</a>
-            </li>
+              <br/>
+            </div>
           ))}
         </ul>
       )}

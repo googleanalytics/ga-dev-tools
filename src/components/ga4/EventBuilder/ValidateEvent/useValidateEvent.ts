@@ -169,7 +169,7 @@ const useValidateEvent = (): Requestable<
         return {
           description: err.message,
           validationCode: err?.data?.validationError?.code ? err?.data?.validationError?.code : err.code,
-          fieldPath: err?.data?.pointer ? err.data.pointer : err?.data?.key,
+          fieldPath: defineFieldCode(err)
         }
       })
 
@@ -177,6 +177,22 @@ const useValidateEvent = (): Requestable<
     }
 
     return []
+  }
+
+  const defineFieldCode = (error) => {
+    const { data } = error
+
+    if (data?.pointer) {
+      if (data?.key) {
+        return data.pointer + '/' + data.key
+      } else if (data?.missingProperty) {
+        return data.pointer + '/' + data.missingProperty
+      }
+
+      return data.pointer
+    }
+
+    return data.key
   }
 
   if (status === RequestStatus.Successful) {
