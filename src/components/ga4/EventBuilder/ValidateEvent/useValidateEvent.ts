@@ -145,7 +145,7 @@ const useValidateEvent = (): Requestable<
               }
             })
 
-            validatorErrors = formatErrorMessages(validatorErrors)
+            validatorErrors = formatErrorMessages(validatorErrors, payload)
             
             setValidationMessages(validatorErrors)
             setStatus(RequestStatus.Failed)
@@ -165,10 +165,11 @@ const useValidateEvent = (): Requestable<
 
     if (!validator.isValid(payload) || formatCheckErrors) {
       let validatorErrors: ValidationMessage[] = validator.getErrors(payload).map((err) => {
+
         return {
           description: err.message,
-          validationCode: err.code,
-          fieldPath: err?.data?.key,
+          validationCode: err?.data?.validationError?.code ? err?.data?.validationError?.code : err.code,
+          fieldPath: err?.data?.pointer ? err.data.pointer : err?.data?.key,
         }
       })
 

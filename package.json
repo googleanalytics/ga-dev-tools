@@ -36,6 +36,7 @@
     "json-schema-library": "^7.4.7",
     "load-script": "^1.0.0",
     "moment": "^2.29.1",
+    "object-sizeof": "^2.6.1",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
     "react-error-boundary": "^3.1.3",

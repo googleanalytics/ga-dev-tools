@@ -1,4 +1,6 @@
 import { ValidationMessage } from "../../types"
+import 'object-sizeof'
+import sizeof from "object-sizeof"
 
 const RESERVED_EVENT_NAMES = [
     "ad_activeview", "ad_click", "ad_exposure", "ad_impression", "ad_query",
@@ -23,6 +25,7 @@ export const formatCheckLib = (payload, firebaseAppId) => {
     const emptyItemsErrors = isItemsEmpty(payload)
     const itemsRequiredKeyErrors = itemsHaveRequiredKey(payload)
     const firebaseAppIdErrors = isfirebaseAppIdValid(firebaseAppId)
+    const sizeErrors = isTooBig(payload)
 
     return [
         ...errors, 
@@ -32,7 +35,8 @@ export const formatCheckLib = (payload, firebaseAppId) => {
         ...currencyErrors,
         ...emptyItemsErrors,
         ...itemsRequiredKeyErrors,
-        ...firebaseAppIdErrors
+        ...firebaseAppIdErrors,
+        ...sizeErrors
     ]
 }
 
@@ -44,7 +48,7 @@ const isValidAppInstanceId = (payload) => {
         if (appInstanceId?.length !== 32) {
             errors.push({
                 description: `Measurement app_instance_id is expected to be a 32 digit hexadecimal number but was [${appInstanceId.length}] digits.`,
-                validationCode: "FormatCheckError",
+                validationCode: "value_invalid",
                 fieldPath: "app_instance_id"
             })
         }
@@ -58,7 +62,7 @@ const isValidAppInstanceId = (payload) => {
 
             errors.push({
                 description: `Measurement app_instance_id contains non hexadecimal character [${nonChars[0]}].`,
-                validationCode: "FormatCheckError",
+                validationCode: "value_invalid",
                 fieldPath: "app_instance_id"
             })
         }
@@ -75,8 +79,8 @@ const isValidEventName = (payload) => {
         if (RESERVED_EVENT_NAMES.includes(ev.name)) {
             errors.push({
                 description: `${ev.name} is a reserved event name`,
-                validationCode: "FormatCheckError",
-                fieldPath: "name"
+                validationCode: "value_invalid",
+                fieldPath: "#/events/name"
             })
         }
     })
@@ -93,7 +97,7 @@ const isValidUserPropertyName = (payload) => {
             if (RESERVED_USER_PROPERTY_NAMES.includes(prop)) {
                 errors.push({
                     description: `user_property: '${prop}' is a reserved user property name`,
-                    validationCode: "FormatCheckError",
+                    validationCode: "value_invalid",
                     fieldPath: "user_property"
                 })
             }
@@ -113,8 +117,8 @@ const isValidCurrencyType = (payload) => {
             if (currency.length !== 3 || !currency.match(/[A-Z]{3}/)) {
                 errors.push({
                     description: `currency: ${currency} must be a valid uppercase 3-letter ISO 4217 format`,
-                    validationCode: "FormatCheckError",
-                    fieldPath: "currency"
+                    validationCode: "value_invalid",
+                    fieldPath: "#/events/params/currency"
                 })
             }
         }
@@ -131,7 +135,7 @@ const isItemsEmpty = (payload) => {
             errors.push({
                 description: "'items' should not be empty; One of 'item_id' or 'item_name' is a required key",
                 validationCode: "minItems",
-                fieldPath: "events/0/params/items"
+                fieldPath: "#/events/0/params/items"
             })
         }
     })
@@ -149,8 +153,8 @@ const itemsHaveRequiredKey = (payload) => {
             if (!(itemsObj.hasOwnProperty('item_id') || itemsObj.hasOwnProperty('item_name'))) {
                 errors.push({
                     description: "'items' object must contain one of the following keys: 'item_id' or 'item_name'",
-                    validationCode: "minItems",
-                    fieldPath: "events/0/params/items"
+                    validationCode: "limitation",
+                    fieldPath: "#/events/0/params/items"
                 })
             }
         }
@@ -165,8 +169,22 @@ const isfirebaseAppIdValid = (firebaseAppId) => {
     if (!firebaseAppId.match(/[0-9]:[0-9]+:[a-zA-Z]+:[a-zA-Z0-9]+$/)) {
         errors.push({
             description: `${firebaseAppId} does not follow firebase_app_id pattern of X:XX:XX:XX at path`,
-            validationCode: "invalid_params",
+            validationCode: "value_invalid",
             fieldPath: "firebase_app_id"
+        })
+    }
+
+    return errors
+}
+
+const isTooBig = (payload) => {
+    let errors: ValidationMessage[] = []
+
+    if (sizeof(payload) > 130000) {
+        errors.push({
+            description: 'Post body must be smaller than 130kBs',
+            validationCode: "max-body-size",
+            fieldPath: "#"
         })
     }
 

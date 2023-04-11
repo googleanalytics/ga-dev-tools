@@ -30,22 +30,6 @@ describe("eventsSchema", () => {
         expect(validator.isValid(invalidInput)).toEqual(false)
     })
 
-    test("is invalid if items array is empty", () => {
-        const invalidInput = [{'name': 'add_payment_info', 'params': {'value': 8.98, 'items': [], 'currency': 'USD'}}]
-
-        let validator = new Validator(eventsSchema)
-
-        expect(validator.isValid(invalidInput)).toEqual(false)
-    })
-
-    test("is invalid if items does not have item_id or item_name", () => {
-        const invalidInput = [{'name': 'add_payment_info', 'params': {'value': 8.98, 'items': [{'random': '1234'}], 'currency': 'USD'}}]
-
-        let validator = new Validator(eventsSchema)
-
-        expect(validator.isValid(invalidInput)).toEqual(false)
-    })
-
     test("is invalid if add_payment_info event does not include currency", () => {
         const invalidInput = [{'name': 'add_payment_info', 'params': {'value': 8.98, 'items': [{'item_id': 1234}]}}]
 
