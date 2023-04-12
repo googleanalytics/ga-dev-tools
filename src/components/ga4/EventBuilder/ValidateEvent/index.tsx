@@ -79,8 +79,9 @@ export interface ValidateEventProps {
 const focusFor = (message: ValidationMessage) => {
   const { fieldPath } = message
   let id: string | undefined
+  let labelValues: string[] = Object.values(Label)
 
-  if (Object.values(Label).includes(fieldPath)) {
+  if (labelValues.includes(fieldPath)) {
     id = fieldPath
   }
 

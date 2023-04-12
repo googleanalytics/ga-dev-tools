@@ -161,11 +161,10 @@ const useValidateEvent = (): Requestable<
 
   const validatePayloadAttributes = (payload) => {
     let validator = new Validator(baseContentSchema)
-    let formatCheckErrors: ValidationMessage[] | [] = formatCheckLib(payload, instanceId.firebase_app_id)
+    let formatCheckErrors: ValidationMessage[] | [] = formatCheckLib(payload, instanceId?.firebase_app_id)
 
     if (!validator.isValid(payload) || formatCheckErrors) {
       let validatorErrors: ValidationMessage[] = validator.getErrors(payload).map((err) => {
-
         return {
           description: err.message,
           validationCode: err?.data?.validationError?.code ? err?.data?.validationError?.code : err.code,

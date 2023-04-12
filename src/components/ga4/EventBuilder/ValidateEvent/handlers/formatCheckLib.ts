@@ -150,7 +150,7 @@ const itemsHaveRequiredKey = (payload) => {
         if (ev?.params?.items?.length > 0) {
             const itemsObj = ev.params.items[0]
 
-            if (!(itemsObj.hasOwnProperty('item_id') || itemsObj.hasOwnProperty('item_name'))) {
+            if (requiredKeysDontExist(itemsObj) || requiredKeysEmpty(itemsObj)) {
                 errors.push({
                     description: "'items' object must contain one of the following keys: 'item_id' or 'item_name'",
                     validationCode: "limitation",
@@ -161,6 +161,14 @@ const itemsHaveRequiredKey = (payload) => {
     })
 
     return errors
+}
+
+const requiredKeysDontExist = (itemsObj) => {
+    return !(itemsObj.hasOwnProperty('item_id') || itemsObj.hasOwnProperty('item_name'))
+}
+
+const requiredKeysEmpty = (itemsObj) => {
+    return !(itemsObj.item_id || itemsObj.item_name)
 }
 
 const isfirebaseAppIdValid = (firebaseAppId) => {

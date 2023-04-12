@@ -135,6 +135,30 @@ describe("formatCheckLib", () => {
                 "'items' object must contain one of the following keys: 'item_id' or 'item_name'"
             )
         })
+
+        test("returns an error when item_id and item_name keys have empty values", () => {
+            const payload = {
+                events: [
+                    {
+                        params: {
+                            items: [
+                                {
+                                    'item_name': '',
+                                    'item_id': ''
+                                }
+                            ]
+                        }
+                    }
+                ] 
+            }
+            const firebaseAppId = '1:1233455666:android:abcdefgh'
+
+            let errors = formatCheckLib(payload, firebaseAppId)
+
+            expect(errors[0].description).toEqual(
+                "'items' object must contain one of the following keys: 'item_id' or 'item_name'"
+            )
+        })
     })
 
     describe("validates firebase_app_id", () => {
