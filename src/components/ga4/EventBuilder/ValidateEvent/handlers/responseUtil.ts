@@ -11,6 +11,7 @@ const API_DOC_SENDING_EVENTS_URL = 'https://developers.google.com/analytics/devg
 
 const BASE_PAYLOAD_ATTRIBUTES = ['app_instance_id', 'api_secret', 'firebase_app_id', 'user_id', 'timestamp_micros', 'user_properties', 'non_personalized_ads']
 
+// formats error messages for clarity; add documentation to each error
 export const formatErrorMessages = (errors, payload) => {
     const formattedErrors = errors.map(error => {
         let description = error.description

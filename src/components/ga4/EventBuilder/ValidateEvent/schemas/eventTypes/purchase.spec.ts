@@ -88,19 +88,5 @@ describe("eventSchema for purchase", () => {
         expect(validator.isValid(invalidInput)).toEqual(false)
     })
 
-    // #TODO: find currency validator library
-    // test("can be used to validate currency type", () => {
-    //     const invalidInput = {
-    //         'transaction_id': 'A12345',
-    //         'currency': 'XXX',
-    //         'value': 12.00,
-    //         'items': [{
-    //             'item_id': '1234'
-    //         }]
-    //     }
-
-    //     let validator = new Validator(getEventSchema(eventDefinitions['purchase']))
-
-    //     expect(validator.isValid(invalidInput)).toEqual(false)
-    // })
+    // #TODO: validate actual currency values -- find currency validator library
 })

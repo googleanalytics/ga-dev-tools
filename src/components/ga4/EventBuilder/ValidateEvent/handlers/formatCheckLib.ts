@@ -17,6 +17,8 @@ const RESERVED_USER_PROPERTY_NAMES = [
     "first_open_after_install"
 ]
 
+// formatCheckLib provides additional validations for payload not included in 
+// the schema validations. All checks are consistent with Firebase documentation
 export const formatCheckLib = (payload, firebaseAppId) => {
     let errors: ValidationMessage[] = []
 
@@ -60,7 +62,7 @@ const isValidAppInstanceId = (payload) => {
         }
 
         if (!appInstanceId.match(/^[A-Fa-f0-9]+$/)) {
-            let nonChars = appInstanceId.split('').filter(letter => {
+            let nonChars = appInstanceId.split('').forEach(letter => {
                 if (!/[0-9A-Fa-f]/.test(letter)) {
                     return letter
                 }

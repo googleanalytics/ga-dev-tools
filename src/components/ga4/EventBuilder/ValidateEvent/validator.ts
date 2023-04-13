@@ -1,12 +1,12 @@
 import { Draft07 } from "json-schema-library"
 
-// example:
-// const jsonSchema = new Draft07(myJsonSchema);
-// const errors: JSONError[] = jsonSchema.validate(myData);
-
 type schemaObject = {
     [key:string]: any;
 }
+
+// Create a class that instantiates the Draft07 JSON schema validation.
+// Methods .isValid and .getErrors use Draft07 schema to validate provided
+// payload and return errors based on payload schema
 
 export class Validator {
     schema: schemaObject 
