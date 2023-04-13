@@ -31,7 +31,6 @@ describe("formatCheckLib", () => {
 
             let errors = formatCheckLib(payload, firebaseAppId)
 
-            console.log(errors)
             expect(errors[0].description).toEqual(
                 `Measurement app_instance_id contains non hexadecimal character [g].`,
             )
@@ -180,6 +179,158 @@ describe("formatCheckLib", () => {
             expect(errors[0].description).toEqual(
                 `${firebaseAppId} does not follow firebase_app_id pattern of X:XX:XX:XX at path`
             )
+        })
+    })
+
+    describe("validates valid params", () => {
+        test("does not validate if event_name is not provided event name", () => {
+            const payload = {
+                events: [
+                    {
+                        name: 'random_name',
+                        params: {
+                            random_key: '123',
+                            items: [
+                                {
+                                    'item_name': '123',
+                                }
+                            ]
+                        }
+                    }
+                ] 
+            }
+            const firebaseAppId = '1:1233455666:android:abcdefgh'
+
+            let errors = formatCheckLib(payload, firebaseAppId)
+
+            expect(errors).toEqual([])
+        })
+
+        test("if event_name is a provided name, it validates that params are in list of provided params", () => {
+            const payload = {
+                events: [
+                    {
+                        name: 'add_shipping_info',
+                        params: {
+                            random: 123,
+                            currency: 'USD',
+                            value: 123,
+                            items: [
+                                {
+                                    'item_name': '123',
+                                }
+                            ]
+                        }
+                    }
+                ] 
+            }
+            const firebaseAppId = '1:1233455666:android:abcdefgh'
+
+            let errors = formatCheckLib(payload, firebaseAppId)
+
+            expect(errors[0].description).toEqual("random is not a valid param for add_shipping_info")
+        })
+
+        test("if all params are in the valid list of params, it does not return an error", () => {
+            const payload = {
+                events: [
+                    {
+                        name: 'add_shipping_info',
+                        params: {
+                            currency: 'USD',
+                            value: 123,
+                            affiliation: 'Store',
+                            items: [
+                                {
+                                    'item_name': '123',
+                                }
+                            ]
+                        }
+                    }
+                ] 
+            }
+            const firebaseAppId = '1:1233455666:android:abcdefgh'
+
+            let errors = formatCheckLib(payload, firebaseAppId)
+
+            expect(errors).toEqual([])
+        })
+    })
+
+    describe("validates item list", () => {
+        test("does not validate if event_name is not provided event name", () => {
+            const payload = {
+                events: [
+                    {
+                        name: 'random_name',
+                        params: {
+                            items: [
+                                {
+                                    'item_name': '123',
+                                    'random_item': 1234,
+                                }
+                            ]
+                        }
+                    }
+                ] 
+            }
+            const firebaseAppId = '1:1233455666:android:abcdefgh'
+
+            let errors = formatCheckLib(payload, firebaseAppId)
+
+            expect(errors).toEqual([])
+        })
+
+        test("if event_name is a provided name, it validates that item names are in list of provided item names", () => {
+            const payload = {
+                events: [
+                    {
+                        name: 'add_shipping_info',
+                        params: {
+                            currency: 'USD',
+                            value: 123,
+                            items: [
+                                {
+                                    'item_name': '123',
+                                    random: 123,
+                                }
+                            ]
+                        }
+                    }
+                ] 
+            }
+            const firebaseAppId = '1:1233455666:android:abcdefgh'
+
+            let errors = formatCheckLib(payload, firebaseAppId)
+
+            expect(errors[0].description).toEqual("random is not a valid item for add_shipping_info")
+        })
+
+        test("if all params are in the valid list of item names, it does not return an error", () => {
+            const payload = {
+                events: [
+                    {
+                        name: 'add_shipping_info',
+                        params: {
+                            currency: 'USD',
+                            value: 123,
+                            affiliation: 'Store',
+                            items: [
+                                {
+                                    'item_name': '123',
+                                    'item_category3': '1234',
+                                    'location_id': '894389'
+                                }
+                            ]
+                        }
+                    }
+                ] 
+            }
+            const firebaseAppId = '1:1233455666:android:abcdefgh'
+
+            let errors = formatCheckLib(payload, firebaseAppId)
+
+            expect(errors).toEqual([])
         })
     })
 })

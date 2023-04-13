@@ -61,7 +61,11 @@ export enum Label {
   Coupon = '#/events/0/params/coupon',
   Currency = '#/events/0/params/currency',
   Value = '#/events/0/params/value',
-  ItemId = '#/events/0/params/item_id'
+  ItemId = '#/events/0/params/item_id',
+  TransactionId = '#/events/0/params/transaction_id',
+  Affiliation = '#/events/0/params/affiliation',
+  Shipping = '#/events/0/params/shipping',
+  Tax = '#/events/0/params/tax',
 }
 
 const ga4MeasurementProtocol = (

@@ -1,11 +1,11 @@
 // Event and required property mapping
 
 export const eventDefinitions = {
-    "add_payment_info": ["items", "value"],
-    "add_shipping_info": ["items", "value"],
-    "add_to_cart": ["items", "value"],
-    "add_to_wishlist": ["items", "value"],
-    "begin_checkout": ["items", "value"],
+    "add_payment_info": ["value", "items"],
+    "add_shipping_info": ["value", "items"],
+    "add_to_cart": ["value", "items"],
+    "add_to_wishlist": ["value", "items"],
+    "begin_checkout": ["value", "items"],
     "earn_virtual_currency": [],
     "generate_lead": ["value"],
     "join_group": [],

@@ -1,6 +1,8 @@
 import { ValidationMessage } from "../../types"
 import 'object-sizeof'
 import sizeof from "object-sizeof"
+import { eventDefinitions } from "../schemas/eventTypes/eventDefinitions"
+import { EVENT_FIELDS, ITEM_FIELDS} from "../schemas/eventTypes/fieldDefinitions"
 
 const RESERVED_EVENT_NAMES = [
     "ad_activeview", "ad_click", "ad_exposure", "ad_impression", "ad_query",
@@ -26,6 +28,8 @@ export const formatCheckLib = (payload, firebaseAppId) => {
     const itemsRequiredKeyErrors = itemsHaveRequiredKey(payload)
     const firebaseAppIdErrors = isfirebaseAppIdValid(firebaseAppId)
     const sizeErrors = isTooBig(payload)
+    const validParamsErrors = isValidParams(payload)
+    const validItemsErrors = isValidItems(payload)
 
     return [
         ...errors, 
@@ -36,7 +40,9 @@ export const formatCheckLib = (payload, firebaseAppId) => {
         ...emptyItemsErrors,
         ...itemsRequiredKeyErrors,
         ...firebaseAppIdErrors,
-        ...sizeErrors
+        ...sizeErrors,
+        ...validParamsErrors,
+        ...validItemsErrors
     ]
 }
 
@@ -193,6 +199,54 @@ const isTooBig = (payload) => {
             description: 'Post body must be smaller than 130kBs',
             validationCode: "max-body-size",
             fieldPath: "#"
+        })
+    }
+
+    return errors
+}
+
+const isValidParams = (payload) => {
+    let errors: ValidationMessage[] = []
+
+    if (payload?.events) {
+        payload.events.forEach(ev => {
+            if (Object.keys(eventDefinitions).includes(ev?.name)) {
+                if (ev?.params) {
+                    Object.keys(ev?.params).forEach(param => {
+                        if (!Object.keys(EVENT_FIELDS).includes(param) && param != 'items') {
+                            errors.push({
+                                description: `${param} is not a valid param for ${ev.name}`,
+                                validationCode: "invalid_param",
+                                fieldPath: `#/events/0/params/${eventDefinitions[ev.name][0]}`
+                            })
+                        }
+                    })
+                }
+            }
+        })
+    }
+
+    return errors
+}
+
+const isValidItems = (payload) => {
+    let errors: ValidationMessage[] = []
+
+    if (payload?.events) {
+        payload.events.forEach(ev => {
+            if (Object.keys(eventDefinitions).includes(ev?.name)) {
+                if (ev?.params?.items[0]) {
+                    Object.keys(ev?.params?.items[0]).forEach(item => {
+                        if (!Object.keys(ITEM_FIELDS).includes(item)) {
+                            errors.push({
+                                description: `${item} is not a valid item for ${ev.name}`,
+                                validationCode: "invalid_item",
+                                fieldPath: `#/events/0/params/item_id`
+                            })
+                        }
+                    })
+                }
+            }
         })
     }
 
