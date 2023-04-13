@@ -135,7 +135,7 @@ const isItemsEmpty = (payload) => {
     let errors: ValidationMessage[] = []
 
     payload?.events?.forEach(ev => {
-        if (ev?.params?.items && ev?.params?.items?.length < 1){
+        if (ev?.params?.items && ev?.params?.items?.length < 1 && eventRequiresItems(ev?.params?.name)){
             errors.push({
                 description: "'items' should not be empty; One of 'item_id' or 'item_name' is a required key",
                 validationCode: "minItems",
@@ -145,6 +145,14 @@ const isItemsEmpty = (payload) => {
     })
 
     return errors
+}
+
+const eventRequiresItems = (eventName) => {
+    if (eventDefinitions[eventName]) {
+        return eventDefinitions[eventName].includes('items')
+    }
+
+    return false
 }
 
 const itemsHaveRequiredKey = (payload) => {

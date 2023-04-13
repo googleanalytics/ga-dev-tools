@@ -113,17 +113,6 @@ describe("formatCheckLib", () => {
             expect(errors).toEqual([])
         })
 
-        test("returns an error when items array is empty", () => {
-            const payload = {events: [{params: {items: []}}]}
-            const firebaseAppId = '1:1233455666:android:abcdefgh'
-
-            let errors = formatCheckLib(payload, firebaseAppId)
-
-            expect(errors[0].description).toEqual(
-                "'items' should not be empty; One of 'item_id' or 'item_name' is a required key"
-            )
-        })
-
         test("returns an error when items does not have either item_id or item_name", () => {
             const payload = {events: [{params: {items: [{'item_namee': 'test'}]}}]}
             const firebaseAppId = '1:1233455666:android:abcdefgh'
@@ -133,6 +122,35 @@ describe("formatCheckLib", () => {
             expect(errors[0].description).toEqual(
                 "'items' object must contain one of the following keys: 'item_id' or 'item_name'"
             )
+        })
+
+        test("validates empty items array when event requires items", () => {
+            const payload = {events: [{params: {name: 'purchase', items: []}}]}
+            const firebaseAppId = '1:1233455666:android:abcdefgh'
+
+            let errors = formatCheckLib(payload, firebaseAppId)
+
+            expect(errors[0].description).toEqual(
+                "'items' should not be empty; One of 'item_id' or 'item_name' is a required key"
+            )
+        })
+
+        test("does not validate empty items array when event doesn't require items", () => {
+            const payload = {events: [{params: {name: 'random', items: []}}]}
+            const firebaseAppId = '1:1233455666:android:abcdefgh'
+
+            let errors = formatCheckLib(payload, firebaseAppId)
+
+            expect(errors).toEqual([])
+        })
+
+        test("does not validate empty items array when event does not have a name", () => {
+            const payload = {events: [{params: {items: []}}]}
+            const firebaseAppId = '1:1233455666:android:abcdefgh'
+
+            let errors = formatCheckLib(payload, firebaseAppId)
+
+            expect(errors).toEqual([])
         })
 
         test("returns an error when item_id and item_name keys have empty values", () => {
