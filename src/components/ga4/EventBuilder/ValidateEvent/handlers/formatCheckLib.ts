@@ -62,7 +62,7 @@ const isValidAppInstanceId = (payload) => {
         }
 
         if (!appInstanceId.match(/^[A-Fa-f0-9]+$/)) {
-            let nonChars = appInstanceId.split('').forEach(letter => {
+            let nonChars = appInstanceId.split('').filter((letter: string)=> {
                 if (!/[0-9A-Fa-f]/.test(letter)) {
                     return letter
                 }

@@ -146,6 +146,7 @@ const useValidateEvent = (): Requestable<
             })
 
             validatorErrors = formatErrorMessages(validatorErrors, payload)
+            console.log('validatorErrors', validatorErrors)
             
             setValidationMessages(validatorErrors)
             setStatus(RequestStatus.Failed)

@@ -14,7 +14,7 @@ const BASE_PAYLOAD_ATTRIBUTES = ['app_instance_id', 'api_secret', 'firebase_app_
 // formats error messages for clarity; add documentation to each error
 export const formatErrorMessages = (errors, payload) => {
     const formattedErrors = errors.map(error => {
-        let description = error.description
+        const { description, fieldPath } = error
 
         if (description.endsWith(CUSTOM_PARAMS_NAME)) {
             error['description'] = ITEM_INVALID_KEY_OVERRIDE
@@ -25,6 +25,10 @@ export const formatErrorMessages = (errors, payload) => {
         } else if (description.endsWith(ALPHA_NUMERIC_NAME)) {
             let end_index = description.indexOf(ALPHA_NUMERIC_NAME);
             error['description'] = description.slice(0, end_index) + ALPHA_NUMERIC_OVERRIDE
+
+            return error
+        } else if (BASE_PAYLOAD_ATTRIBUTES.includes(fieldPath.slice(2))) {
+            error['fieldPath'] = fieldPath.slice(2)
 
             return error
         }
