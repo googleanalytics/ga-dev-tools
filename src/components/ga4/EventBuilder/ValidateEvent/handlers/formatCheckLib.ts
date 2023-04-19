@@ -2,7 +2,6 @@ import { ValidationMessage } from "../../types"
 import 'object-sizeof'
 import sizeof from "object-sizeof"
 import { eventDefinitions } from "../schemas/eventTypes/eventDefinitions"
-import { EVENT_FIELDS, ITEM_FIELDS} from "../schemas/eventTypes/fieldDefinitions"
 
 const RESERVED_EVENT_NAMES = [
     "ad_activeview", "ad_click", "ad_exposure", "ad_impression", "ad_query",
