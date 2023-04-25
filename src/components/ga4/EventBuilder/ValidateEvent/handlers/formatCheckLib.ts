@@ -17,7 +17,7 @@ const RESERVED_USER_PROPERTY_NAMES = [
 ]
 
 // formatCheckLib provides additional validations for payload not included in 
-// the schema validations. All checks are consistent with Firebase documentation
+// the schema validations. All checks are consistent with Firebase documentation.
 export const formatCheckLib = (payload, firebaseAppId) => {
     let errors: ValidationMessage[] = []
 
