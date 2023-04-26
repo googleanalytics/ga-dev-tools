@@ -83,7 +83,7 @@ export interface Event2 {
 }
 
 // TODO - Add test to ensure url param values are all unique.
-export enum UrlParam {
+export enum QueryParam {
   Parameters = "a",
   Items = "b",
   EventType = "c",
@@ -100,6 +100,9 @@ export enum UrlParam {
   ClientId = "n",
   AppInstanceId = "o",
   Version = "p",
+  Account = "q",
+  Property = "r",
+  Stream = "s",
 }
 
 export enum ValidationStatus {
@@ -134,17 +137,17 @@ export interface InstanceId {
 }
 
 export interface URLParts {
-  [UrlParam.EventName]?: string
-  [UrlParam.UseFirebase]?: boolean
-  [UrlParam.ClientId]?: string
-  [UrlParam.AppInstanceId]?: string
-  [UrlParam.UserId]?: string
-  [UrlParam.Parameters]?: Parameter[]
-  [UrlParam.UserProperties]?: Parameter[]
-  [UrlParam.Items]?: Parameter[][]
-  [UrlParam.MeasurementId]?: string
-  [UrlParam.FirebaseAppId]?: string
-  [UrlParam.APISecret]?: string
-  [UrlParam.TimestampMicros]?: string
-  [UrlParam.NonPersonalizedAds]?: boolean
+  [QueryParam.EventName]?: string
+  [QueryParam.UseFirebase]?: boolean
+  [QueryParam.ClientId]?: string
+  [QueryParam.AppInstanceId]?: string
+  [QueryParam.UserId]?: string
+  [QueryParam.Parameters]?: Parameter[]
+  [QueryParam.UserProperties]?: Parameter[]
+  [QueryParam.Items]?: Parameter[][]
+  [QueryParam.MeasurementId]?: string
+  [QueryParam.FirebaseAppId]?: string
+  [QueryParam.APISecret]?: string
+  [QueryParam.TimestampMicros]?: string
+  [QueryParam.NonPersonalizedAds]?: boolean
 }

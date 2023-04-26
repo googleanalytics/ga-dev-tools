@@ -1,6 +1,6 @@
 import { useContext, useMemo } from "react"
 import { EventCtx, UseFirebaseCtx } from ".."
-import { MobileIds, UrlParam, WebIds } from "../types"
+import { MobileIds, QueryParam, WebIds } from "../types"
 import { encodeObject, ensureVersion } from "@/url"
 import { URLVersion } from "@/types"
 
@@ -21,52 +21,52 @@ const useSharableLink = () => {
 
   return useMemo(() => {
     const params = new URLSearchParams()
-    ensureVersion(params, UrlParam, URLVersion._2)
+    ensureVersion(params, QueryParam, URLVersion._2)
 
-    const addIfTruthy = (p: UrlParam, v: any) => {
+    const addIfTruthy = (p: QueryParam, v: any) => {
       v && params.append(p, v)
     }
 
     useFirebase !== undefined &&
-      params.append(UrlParam.UseFirebase, useFirebase ? "1" : "0")
+      params.append(QueryParam.UseFirebase, useFirebase ? "1" : "0")
 
     non_personalized_ads !== undefined &&
       params.append(
-        UrlParam.NonPersonalizedAds,
+        QueryParam.NonPersonalizedAds,
         non_personalized_ads ? "1" : "0"
       )
 
     addIfTruthy(
-      UrlParam.AppInstanceId,
+      QueryParam.AppInstanceId,
       (clientIds as MobileIds).app_instance_id
     )
 
-    addIfTruthy(UrlParam.EventType, type)
+    addIfTruthy(QueryParam.EventType, type)
 
-    addIfTruthy(UrlParam.EventName, eventName)
+    addIfTruthy(QueryParam.EventName, eventName)
 
-    addIfTruthy(UrlParam.ClientId, (clientIds as WebIds).client_id)
+    addIfTruthy(QueryParam.ClientId, (clientIds as WebIds).client_id)
 
-    addIfTruthy(UrlParam.UserId, clientIds.user_id)
+    addIfTruthy(QueryParam.UserId, clientIds.user_id)
 
-    addIfTruthy(UrlParam.APISecret, api_secret)
+    addIfTruthy(QueryParam.APISecret, api_secret)
 
-    addIfTruthy(UrlParam.MeasurementId, instanceId.measurement_id)
+    addIfTruthy(QueryParam.MeasurementId, instanceId.measurement_id)
 
-    addIfTruthy(UrlParam.FirebaseAppId, instanceId.firebase_app_id)
+    addIfTruthy(QueryParam.FirebaseAppId, instanceId.firebase_app_id)
 
-    addIfTruthy(UrlParam.TimestampMicros, timestamp_micros)
+    addIfTruthy(QueryParam.TimestampMicros, timestamp_micros)
 
     if (userProperties) {
-      params.append(UrlParam.UserProperties, encodeObject(userProperties))
+      params.append(QueryParam.UserProperties, encodeObject(userProperties))
     }
 
     if (items) {
-      params.append(UrlParam.Items, encodeObject(items))
+      params.append(QueryParam.Items, encodeObject(items))
     }
 
     if (parameters.length > 0) {
-      params.append(UrlParam.Parameters, encodeObject(parameters))
+      params.append(QueryParam.Parameters, encodeObject(parameters))
     }
 
     const urlParams = params.toString()

@@ -18,6 +18,7 @@ export interface AccountPropertySetters {
 const useAccountProperty = (
   prefix: StorageKey,
   queryParamKeys: { Account: string; Property: string; Stream: string },
+  autoFill: boolean = false,
   // TODO - This is only here because there seems to be a bug with
   // use-query-params replaceIn functionality where it also removes the anchor.
   // Need to do a minimum repro and file a bug to that repo.
@@ -38,7 +39,7 @@ const useAccountProperty = (
 
   const [
     account,
-    setAccountID,
+    setAccountIDLocal,
   ] = useKeyedHydratedPersistantObject<AccountSummary>(
     `${prefix}-account` as StorageKey,
     queryParamKeys.Account,
@@ -68,6 +69,25 @@ const useAccountProperty = (
     getPropertyByID,
     onSetProperty,
     { keepParam }
+  )
+
+  const setAccountID: Dispatch<string | undefined> = useCallback(
+    v => {
+      setAccountIDLocal(old => {
+        let nu: string | undefined
+        if (typeof v === "function") {
+          nu = v(old)
+        } else {
+          nu = v
+        }
+        if (autoFill) {
+          const nuAccount = getAccountByID(nu)
+          setPropertyID(nuAccount?.propertySummaries?.[0]?.property)
+        }
+        return nu
+      })
+    },
+    [autoFill, setAccountIDLocal, getAccountByID]
   )
 
   return {

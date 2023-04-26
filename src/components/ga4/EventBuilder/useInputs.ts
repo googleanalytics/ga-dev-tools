@@ -4,43 +4,44 @@ import {
   useHydratedPersistantString,
 } from "@/hooks/useHydrated"
 import { useState } from "react"
-import { Category, UrlParam } from "./types"
+import { MPSecret } from "./MPSecret/useMPSecretsRequest"
+import { Category, QueryParam } from "./types"
 
 const useInputs = (categories: Category[]) => {
   const [useFirebase, setUseFirebase] = useHydratedPersistantBoolean(
     StorageKey.eventBuilderUseFirebase,
-    UrlParam.UseFirebase,
+    QueryParam.UseFirebase,
     true
   )
 
   const [api_secret, setAPISecret] = useHydratedPersistantString(
     StorageKey.eventBuilderApiSecret,
-    UrlParam.APISecret
+    QueryParam.APISecret
   )
 
   const [firebase_app_id, setFirebaseAppId] = useHydratedPersistantString(
     StorageKey.eventBuilderFirebaseAppId,
-    UrlParam.FirebaseAppId
+    QueryParam.FirebaseAppId
   )
 
   const [measurement_id, setMeasurementId] = useHydratedPersistantString(
     StorageKey.eventBuilderMeasurementId,
-    UrlParam.MeasurementId
+    QueryParam.MeasurementId
   )
 
   const [client_id, setClientId] = useHydratedPersistantString(
     StorageKey.eventBuilderClientId,
-    UrlParam.ClientId
+    QueryParam.ClientId
   )
 
   const [app_instance_id, setAppInstanceId] = useHydratedPersistantString(
     StorageKey.eventBuilderAppInstanceId,
-    UrlParam.AppInstanceId
+    QueryParam.AppInstanceId
   )
 
   const [user_id, setUserId] = useHydratedPersistantString(
     StorageKey.eventBuilderUserId,
-    UrlParam.UserId
+    QueryParam.UserId
   )
 
   const [category, setCategory] = useState(categories[0])
@@ -50,14 +51,16 @@ const useInputs = (categories: Category[]) => {
     setNonPersonalizedAds,
   ] = useHydratedPersistantBoolean(
     StorageKey.eventBuilderNonPersonalizedAds,
-    UrlParam.NonPersonalizedAds,
+    QueryParam.NonPersonalizedAds,
     false
   )
 
   const [timestamp_micros, setTimestampMicros] = useHydratedPersistantString(
     StorageKey.eventBuilderTimestampMicros,
-    UrlParam.TimestampMicros
+    QueryParam.TimestampMicros
   )
+
+  const [secret, setSecret] = useState<MPSecret>()
 
   return {
     useFirebase,
@@ -80,6 +83,8 @@ const useInputs = (categories: Category[]) => {
     setNonPersonalizedAds,
     timestamp_micros,
     setTimestampMicros,
+    secret,
+    setSecret,
   }
 }
 
