@@ -30,7 +30,6 @@ import Spinner from "../../components/Spinner"
 import { CopyIconButton } from "../../components/CopyButton"
 import { QueryResponse, APIStatus } from "./useDataAPIRequest"
 import TSVDownload from "./TSVDownload"
-import { useState } from "react"
 
 const useStyles = makeStyles(theme => ({
   paper: {},

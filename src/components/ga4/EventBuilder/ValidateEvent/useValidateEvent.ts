@@ -1,5 +1,9 @@
 import { useCopy } from "@/hooks"
 import { Requestable, RequestStatus } from "@/types"
+import { Validator } from "./validator"
+import { baseContentSchema } from "./schemas/baseContent"
+import { formatCheckLib } from "./handlers/formatCheckLib"
+import { formatErrorMessages } from "./handlers/responseUtil"
 import {
   createContext,
   useCallback,
@@ -120,19 +124,31 @@ const useValidateEvent = (): Requestable<
       return
     }
     setStatus(RequestStatus.InProgress)
+    setValidationMessages([])
+    let validatorErrors = useFirebase ? validatePayloadAttributes(payload) : []
+
     validateHit(payload, instanceId, api_secret)
       .then(messages => {
         setTimeout(() => {
-          if (messages.length > 0) {
-            setValidationMessages(
-              messages.filter(a =>
+          if (messages.length > 0 || validatorErrors.length > 0) {
+            let apiValidationErrors = messages.filter(a =>
                 a.fieldPath === "measurement_id"
                   ? !useFirebase
                   : a.fieldPath === "firebase_app_id"
                   ? useFirebase
                   : true
               )
-            )
+            
+            apiValidationErrors.forEach(err => {
+              if (!validatorErrors.map(e => e.description).includes(err.description)) {
+                validatorErrors.push(err)
+              }
+            })
+
+            validatorErrors = formatErrorMessages(validatorErrors, payload)
+            console.log('validatorErrors', validatorErrors)
+            
+            setValidationMessages(validatorErrors)
             setStatus(RequestStatus.Failed)
           } else {
             setStatus(RequestStatus.Successful)
@@ -143,6 +159,41 @@ const useValidateEvent = (): Requestable<
         console.error(e)
       })
   }, [status, payload, api_secret, instanceId, useFirebase])
+
+  const validatePayloadAttributes = (payload) => {
+    let validator = new Validator(baseContentSchema)
+    let formatCheckErrors: ValidationMessage[] | [] = formatCheckLib(payload, instanceId?.firebase_app_id)
+
+    if (!validator.isValid(payload) || formatCheckErrors) {
+      let validatorErrors: ValidationMessage[] = validator.getErrors(payload).map((err) => {
+        return {
+          description: err.message,
+          validationCode: err?.data?.validationError?.code ? err?.data?.validationError?.code : err.code,
+          fieldPath: defineFieldCode(err)
+        }
+      })
+
+      return [...validatorErrors, ...formatCheckErrors]
+    }
+
+    return []
+  }
+
+  const defineFieldCode = (error) => {
+    const { data } = error
+
+    if (data?.pointer) {
+      if (data?.key) {
+        return data.pointer + '/' + data.key
+      } else if (data?.missingProperty) {
+        return data.pointer + '/' + data.missingProperty
+      }
+
+      return data.pointer
+    }
+
+    return data.key
+  }
 
   if (status === RequestStatus.Successful) {
     return { status, sendToGA, copyPayload, copySharableLink, sent }

@@ -113,6 +113,7 @@ export interface ValidationMessage {
   fieldPath: string
   description: string
   validationCode: string
+  documentation?: string
 }
 
 export interface WebIds {
