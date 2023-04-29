@@ -183,7 +183,7 @@ const requiredKeysEmpty = (itemsObj) => {
 const isfirebaseAppIdValid = (firebaseAppId) => {
     let errors: ValidationMessage[] = []
 
-    if (!firebaseAppId.match(/[0-9]:[0-9]+:[a-zA-Z]+:[a-zA-Z0-9]+$/)) {
+    if (firebaseAppId && !firebaseAppId.match(/[0-9]:[0-9]+:[a-zA-Z]+:[a-zA-Z0-9]+$/)) {
         errors.push({
             description: `${firebaseAppId} does not follow firebase_app_id pattern of X:XX:XX:XX at path`,
             validationCode: "value_invalid",

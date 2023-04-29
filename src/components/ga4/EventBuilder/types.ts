@@ -100,6 +100,8 @@ export enum UrlParam {
   ClientId = "n",
   AppInstanceId = "o",
   Version = "p",
+  UseTextBox = "q",
+  Payload = "r"
 }
 
 export enum ValidationStatus {

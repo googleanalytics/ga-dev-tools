@@ -70,6 +70,8 @@ const usePayload = (): {} => {
     non_personalized_ads,
     clientIds,
     type,
+    inputPayload,
+    useTextBox
   } = useContext(EventCtx)!
 
   const eventName = useMemo(() => {
@@ -100,8 +102,16 @@ const usePayload = (): {} => {
     () => userProperties.reduce(objectifyUserProperties, {}),
     [userProperties]
   )
+  
+  const jsonifyPayload = (payload) => {
+    // need to figure out a way not to error if invalid payload...
+    // console.log('payload', payload)
+    // console.log('payload string', String(payload))
 
-  const payload = useMemo(() => {
+    return JSON.parse(String(payload))
+  }
+
+  let payload = useMemo(() => {
     return {
       ...removeUndefined(clientIds),
       ...removeUndefined({ timestamp_micros }),
@@ -120,6 +130,10 @@ const usePayload = (): {} => {
     timestamp_micros,
     user_properties,
   ])
+
+//   if (useTextBox) {
+//     payload = inputPayload ? jsonifyPayload(inputPayload) : undefined
+//   }
 
   return payload
 }

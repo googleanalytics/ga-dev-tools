@@ -126,10 +126,13 @@ const Template: React.FC<TemplateProps> = ({
   error,
   valid,
 }) => {
+  const { instanceId, api_secret, inputPayload, useTextBox } = useContext(EventCtx)!
   const classes = useStyles({ error, valid })
+  // const payload = useTextBox ? inputPayload : usePayload()
   const payload = usePayload()
+  // payload is parsed through usePayload. We can just say payload = usePayload || textbox
+  // must also add formatting of textbox
   const formClasses = useFormStyles()
-  const { instanceId, api_secret } = useContext(EventCtx)!
   return (
     <Card
       className={clsx(formClasses.form, classes.template)}
@@ -217,6 +220,7 @@ const ValidateEvent: React.FC<ValidateEventProps> = () => {
             <>
               <Typography>
                 Update the event using the controls above.
+                # should update this language!
               </Typography>
               <Typography>
                 When you're done editing the event, click "Validate Event" to

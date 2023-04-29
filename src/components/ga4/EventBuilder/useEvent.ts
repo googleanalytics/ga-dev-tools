@@ -117,6 +117,30 @@ export const ParametersParam: QueryParamConfig<
   },
 }
 
+// move this to the index.tsx file for now
+// create a new state for payloadObj and save this to that
+export const formatPayload = (payload) => {
+  console.log('formatPayload', payload)
+  let formattingErrorMessage = '';
+
+  // try {
+  //   const payloadObj: object = JSON.parse(payload) as object;
+  //   if (true) {
+  //     const payloadStringFormatted: string =
+  //         JSON.stringify(payloadObj, null, '\t');
+  //     // this.eventEntryForm.patchValue({'payload': payloadStringFormatted});
+  //   }
+  //   return true;
+  // } catch (ex: unknown) {
+  //   if (ex instanceof Error) {
+  //     if (true) {
+  //     // this.payloadAsJSON = {};
+  //     formattingErrorMessage = ex.message;
+  //   }
+  // }
+  // return false;
+}
+
 const useEvent = (initial?: EventType) => {
   const [typeString, setTypeLocal] = useHydratedPersistantString(
     StorageKey.ga4EventBuilderLastEventType,

@@ -13,6 +13,17 @@ const useInputs = (categories: Category[]) => {
     true
   )
 
+  const [useTextBox, setUseTextBox] = useHydratedPersistantBoolean(
+    StorageKey.eventBuilderUseFirebase,
+    UrlParam.UseTextBox,
+    false
+  )
+
+  const [inputPayload, setInputPayload] = useHydratedPersistantString(
+    StorageKey.ga4EventBuilderPayload,
+    UrlParam.APISecret
+  )
+
   const [api_secret, setAPISecret] = useHydratedPersistantString(
     StorageKey.eventBuilderApiSecret,
     UrlParam.APISecret
@@ -62,6 +73,10 @@ const useInputs = (categories: Category[]) => {
   return {
     useFirebase,
     setUseFirebase,
+    useTextBox,
+    setUseTextBox,
+    inputPayload,
+    setInputPayload,
     category,
     setCategory,
     api_secret,

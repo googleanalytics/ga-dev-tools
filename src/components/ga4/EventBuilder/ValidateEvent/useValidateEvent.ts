@@ -95,13 +95,18 @@ const useValidateEvent = (): Requestable<
   >([])
   const payload = usePayload()
   const [sent, setSent] = useState(false)
+  // figure out how instanceId is parsed. Is it from payload or somewhere else?
+  // this might not actually matter as long as instanceId is added to payload? 
+  // SHould verify. Should only need to enter firebase id in textbox and then 
+  // instance id should be part of payload
   const { instanceId, api_secret } = useContext(EventCtx)!
 
   // Whenever the payload changes, we start the "request" over.
-  useEffect(() => {
-    setStatus(RequestStatus.NotStarted)
-    setSent(false)
-  }, [payload])
+  // THIS IS WHY NOT WORKING FOR PAYLOAD TEXTBOX
+  // useEffect(() => {
+  //   setStatus(RequestStatus.NotStarted)
+  //   setSent(false)
+  // }, [payload])
 
   const sendToGA = useCallback(() => {
     if (status !== RequestStatus.Successful) {
@@ -146,9 +151,9 @@ const useValidateEvent = (): Requestable<
             })
 
             validatorErrors = formatErrorMessages(validatorErrors, payload)
-            console.log('validatorErrors', validatorErrors)
             
             setValidationMessages(validatorErrors)
+            // why isn;t this working?!
             setStatus(RequestStatus.Failed)
           } else {
             setStatus(RequestStatus.Successful)

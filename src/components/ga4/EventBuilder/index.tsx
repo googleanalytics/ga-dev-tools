@@ -23,6 +23,7 @@ import Autocomplete from "@material-ui/lab/Autocomplete"
 import Refresh from "@material-ui/icons/Refresh"
 
 import LinkedTextField from "@/components/LinkedTextField"
+import TextBox from "@/components/TextBox"
 import LabeledCheckbox from "@/components/LabeledCheckbox"
 import Grid from "@material-ui/core/Grid"
 import Switch from "@material-ui/core/Switch"
@@ -31,6 +32,7 @@ import { Url } from "@/constants"
 import WithHelpText from "@/components/WithHelpText"
 import useFormStyles from "@/hooks/useFormStyles"
 import useEvent from "./useEvent"
+import { formatPayload } from "./useEvent"
 import Parameters from "./Parameters"
 import useInputs from "./useInputs"
 import { Category, ClientIds, EventType, InstanceId, Parameter } from "./types"
@@ -38,6 +40,7 @@ import { eventsForCategory } from "./event"
 import useUserProperties from "./useUserProperties"
 import Items from "./Items"
 import ValidateEvent from "./ValidateEvent"
+import { Button } from "@material-ui/core"
 
 export enum Label {
   APISecret = "api_secret",
@@ -118,6 +121,8 @@ export const EventCtx = React.createContext<
       clientIds: ClientIds
       instanceId: InstanceId
       api_secret: string
+      inputPayload: string | undefined
+      useTextBox: boolean
     }
   | undefined
 >(undefined)
@@ -163,6 +168,10 @@ const EventBuilder: React.FC = () => {
   const {
     useFirebase,
     setUseFirebase,
+    useTextBox,
+    setUseTextBox,
+    inputPayload,
+    setInputPayload,
     category,
     setCategory,
     api_secret,
@@ -223,6 +232,54 @@ const EventBuilder: React.FC = () => {
         After choosing a client, fill out the inputs below.
       </Typography>
 
+
+    { 
+      useFirebase && (
+      <WithHelpText
+        notched
+        shrink
+        label="format"
+        className="formatTab"
+      >
+        <Grid component="label" container alignItems="center" spacing={1}>
+          <Grid item>form</Grid>
+          <Grid item>
+            <Switch
+              data-testid="use form"
+              checked={useTextBox}
+              onChange={e => {
+                setUseTextBox(e.target.checked)
+              }}
+              name="use form"
+              color="primary"
+            />
+          </Grid>
+          <Grid item>text box</Grid>
+        </Grid>
+      </WithHelpText>
+      )
+    }
+
+    { useTextBox && 
+      <div>
+        <TextBox
+          required
+          href="https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference#api_secret"
+          linkTitle="Enter payload here"
+          value={inputPayload || ""}
+          label={Label.Payload}
+          helperText="Payload"
+          onChange={setInputPayload}
+        />
+        <Button
+          onClick={() => formatPayload(inputPayload)}
+        >
+          format payload
+        </Button>
+      </div>
+    }
+      { !useTextBox && 
+      <div>
       <section className={formClasses.form}>
         <LinkedTextField
           required
@@ -477,6 +534,8 @@ const EventBuilder: React.FC = () => {
           )}
         </ShowAdvancedCtx.Provider>
       </section>
+      </div>
+      }
 
       <Typography variant="h3" className={classes.validateHeading}>
         Validate & Send event
@@ -494,6 +553,8 @@ const EventBuilder: React.FC = () => {
             userProperties,
             timestamp_micros,
             non_personalized_ads,
+            useTextBox,
+            inputPayload,
             instanceId: useFirebase ? { firebase_app_id } : { measurement_id },
             api_secret: api_secret!,
           }}

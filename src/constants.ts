@@ -248,6 +248,7 @@ export enum StorageKey {
   ga4EventBuilderItems = "ga4/event-builder/items",
   ga4EventBuilderEventName = "ga4/event-builder/event-name",
   ga4EventBuilderUserProperties = "ga4/event-builder/user-properties",
+  ga4EventBuilderPayload = "ga4/event-builder/payload",
 }
 
 export const EventAction = {
