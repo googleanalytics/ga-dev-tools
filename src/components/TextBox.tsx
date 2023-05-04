@@ -5,7 +5,7 @@ import ExternalLink from "./ExternalLink"
 export interface TextBoxProps {
   href: string
   linkTitle: string
-  value: string | undefined
+  value: string | undefined | object
   label: string
   onChange: (e: string) => void
   helperText: string | JSX.Element

@@ -32,7 +32,6 @@ import { Url } from "@/constants"
 import WithHelpText from "@/components/WithHelpText"
 import useFormStyles from "@/hooks/useFormStyles"
 import useEvent from "./useEvent"
-import { formatPayload } from "./useEvent"
 import Parameters from "./Parameters"
 import useInputs from "./useInputs"
 import { Category, ClientIds, EventType, InstanceId, Parameter } from "./types"
@@ -121,8 +120,8 @@ export const EventCtx = React.createContext<
       clientIds: ClientIds
       instanceId: InstanceId
       api_secret: string
-      inputPayload: string | undefined
       useTextBox: boolean
+      payloadObj: object
     }
   | undefined
 >(undefined)
@@ -172,6 +171,10 @@ const EventBuilder: React.FC = () => {
     setUseTextBox,
     inputPayload,
     setInputPayload,
+    payloadObj,
+    setPayloadObj,
+    payloadErrors,
+    setPayloadErrors,
     category,
     setCategory,
     api_secret,
@@ -191,6 +194,24 @@ const EventBuilder: React.FC = () => {
     non_personalized_ads,
     setNonPersonalizedAds,
   } = useInputs(categories)
+
+  const formatPayload = () => {
+    try {
+      if (inputPayload) {
+        let payload = JSON.parse(inputPayload) as object
+        setPayloadObj(JSON.stringify(payload, null, '\t'))
+        setPayloadErrors('')
+      }
+      else {
+        setPayloadErrors('Empty Payload')
+        setPayloadObj({})
+      }
+
+    } catch (err: any) {
+      setPayloadErrors(err.message)
+      setPayloadObj({})
+    }
+  }
 
   return (
     <div>
@@ -266,13 +287,20 @@ const EventBuilder: React.FC = () => {
           required
           href="https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference#api_secret"
           linkTitle="Enter payload here"
-          value={inputPayload || ""}
+          value={Object.keys(payloadObj).length > 0 ? payloadObj : inputPayload}
           label={Label.Payload}
           helperText="Payload"
-          onChange={setInputPayload}
+          onChange={(input) => {
+              setPayloadObj({})
+              setInputPayload(input)
+            }
+          }
         />
+        {payloadErrors}
+        <br/>
+        <br/>
         <Button
-          onClick={() => formatPayload(inputPayload)}
+          onClick={formatPayload}
         >
           format payload
         </Button>
@@ -554,9 +582,9 @@ const EventBuilder: React.FC = () => {
             timestamp_micros,
             non_personalized_ads,
             useTextBox,
-            inputPayload,
             instanceId: useFirebase ? { firebase_app_id } : { measurement_id },
             api_secret: api_secret!,
+            payloadObj,
           }}
         >
           <ValidateEvent
@@ -566,6 +594,7 @@ const EventBuilder: React.FC = () => {
             measurement_id={measurement_id || ""}
             app_instance_id={app_instance_id || ""}
             firebase_app_id={firebase_app_id || ""}
+            payloadObj={payloadObj}
           />
         </EventCtx.Provider>
       </UseFirebaseCtx.Provider>

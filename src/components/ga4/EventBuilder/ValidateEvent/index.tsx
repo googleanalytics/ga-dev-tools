@@ -30,6 +30,8 @@ import Spinner from "@/components/Spinner"
 import { EventCtx, Label } from ".."
 import { Card } from "@material-ui/core"
 import { green, red } from "@material-ui/core/colors"
+import useInputs from "../useInputs" 
+import useEvent from "../useEvent"
 
 interface StyleProps {
   error?: boolean
@@ -74,6 +76,7 @@ export interface ValidateEventProps {
   api_secret: string
   client_id: string
   user_id: string
+  payloadObj: object
 }
 
 const focusFor = (message: ValidationMessage) => {
@@ -113,6 +116,7 @@ interface TemplateProps {
   valid?: boolean
   sent?: boolean
 }
+
 const Template: React.FC<TemplateProps> = ({
   sent,
   heading,
@@ -126,13 +130,14 @@ const Template: React.FC<TemplateProps> = ({
   error,
   valid,
 }) => {
-  const { instanceId, api_secret, inputPayload, useTextBox } = useContext(EventCtx)!
+  const { instanceId, api_secret } = useContext(EventCtx)!
   const classes = useStyles({ error, valid })
   // const payload = useTextBox ? inputPayload : usePayload()
   const payload = usePayload()
   // payload is parsed through usePayload. We can just say payload = usePayload || textbox
   // must also add formatting of textbox
   const formClasses = useFormStyles()
+
   return (
     <Card
       className={clsx(formClasses.form, classes.template)}
@@ -206,8 +211,11 @@ const Template: React.FC<TemplateProps> = ({
   )
 }
 
-const ValidateEvent: React.FC<ValidateEventProps> = () => {
+const ValidateEvent: React.FC<ValidateEventProps> = ({payloadObj}) => {
   const request = useValidateEvent()
+  console.log('payloadObj', payloadObj)
+  // const { categories } = useEvent()
+  // const { inputPayload, payloadObj, setPayloadObj, setPayloadErrors } = useInputs(categories)
 
   return (
     <Loadable
@@ -228,7 +236,12 @@ const ValidateEvent: React.FC<ValidateEventProps> = () => {
               </Typography>
             </>
           }
-          validateEvent={validateEvent}
+          validateEvent={ () => {
+            console.log('here')
+              // formatPayload()
+              validateEvent()
+            }
+          }
         />
       )}
       renderInProgress={() => (

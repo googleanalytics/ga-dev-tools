@@ -4,7 +4,7 @@ import {
   useHydratedPersistantString,
 } from "@/hooks/useHydrated"
 import { useState } from "react"
-import { Category, UrlParam } from "./types"
+import { Category, UrlParam, Parameter } from "./types"
 
 const useInputs = (categories: Category[]) => {
   const [useFirebase, setUseFirebase] = useHydratedPersistantBoolean(
@@ -23,6 +23,9 @@ const useInputs = (categories: Category[]) => {
     StorageKey.ga4EventBuilderPayload,
     UrlParam.APISecret
   )
+
+
+  const [payloadObj, setPayloadObj] = useState({})
 
   const [api_secret, setAPISecret] = useHydratedPersistantString(
     StorageKey.eventBuilderApiSecret,
@@ -54,6 +57,11 @@ const useInputs = (categories: Category[]) => {
     UrlParam.UserId
   )
 
+  const [payloadErrors, setPayloadErrors] = useHydratedPersistantString(
+    StorageKey.ga4EventBuilderPayloadError,
+    UrlParam.PayloadError
+  )
+
   const [category, setCategory] = useState(categories[0])
 
   const [
@@ -77,6 +85,10 @@ const useInputs = (categories: Category[]) => {
     setUseTextBox,
     inputPayload,
     setInputPayload,
+    payloadObj,
+    setPayloadObj,
+    payloadErrors,
+    setPayloadErrors,
     category,
     setCategory,
     api_secret,
