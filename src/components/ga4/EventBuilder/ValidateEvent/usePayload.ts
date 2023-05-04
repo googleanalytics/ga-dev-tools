@@ -102,14 +102,6 @@ const usePayload = (): {} => {
     [userProperties]
   )
   
-  const jsonifyPayload = (payload) => {
-    // need to figure out a way not to error if invalid payload...
-    // console.log('payload', payload)
-    // console.log('payload string', String(payload))
-
-    return JSON.parse(String(payload))
-  }
-
   let payload = useMemo(() => {
     return {
       ...removeUndefined(clientIds),

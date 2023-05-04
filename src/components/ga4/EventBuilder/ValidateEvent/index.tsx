@@ -22,7 +22,7 @@ import useValidateEvent from "./useValidateEvent"
 import Loadable from "@/components/Loadable"
 import Typography from "@material-ui/core/Typography"
 import { PAB, PlainButton } from "@/components/Buttons"
-import { Check, Warning, Error as ErrorIcon } from "@material-ui/icons"
+import { Check, Warning, Error as ErrorIcon, ContactSupportOutlined } from "@material-ui/icons"
 import PrettyJson from "@/components/PrettyJson"
 import usePayload from "./usePayload"
 import { ValidationMessage } from "../types"
@@ -30,13 +30,37 @@ import Spinner from "@/components/Spinner"
 import { EventCtx, Label } from ".."
 import { Card } from "@material-ui/core"
 import { green, red } from "@material-ui/core/colors"
-import useInputs from "../useInputs" 
-import useEvent from "../useEvent"
 
 interface StyleProps {
   error?: boolean
   valid?: boolean
 }
+
+interface TemplateProps {
+  heading: string
+  headingIcon?: JSX.Element
+  body: JSX.Element | string
+  validateEvent?: () => void
+  validationMessages?: ValidationMessage[]
+  sendToGA?: () => void
+  copyPayload?: () => void
+  copySharableLink?: () => void
+  error?: boolean
+  valid?: boolean
+  sent?: boolean
+  formatPayload?: () => void
+}
+
+export interface ValidateEventProps {
+  measurement_id: string
+  app_instance_id: string
+  firebase_app_id: string
+  api_secret: string
+  client_id: string
+  user_id: string
+  formatPayload: () => void
+}
+
 const useStyles = makeStyles(theme => ({
   template: {
     padding: theme.spacing(2),
@@ -69,15 +93,6 @@ const useStyles = makeStyles(theme => ({
   },
 }))
 
-export interface ValidateEventProps {
-  measurement_id: string
-  app_instance_id: string
-  firebase_app_id: string
-  api_secret: string
-  client_id: string
-  user_id: string
-  payloadObj: object
-}
 
 const focusFor = (message: ValidationMessage) => {
   const { fieldPath } = message
@@ -103,19 +118,6 @@ const focusFor = (message: ValidationMessage) => {
   }
 }
 
-interface TemplateProps {
-  heading: string
-  headingIcon?: JSX.Element
-  body: JSX.Element | string
-  validateEvent?: () => void
-  validationMessages?: ValidationMessage[]
-  sendToGA?: () => void
-  copyPayload?: () => void
-  copySharableLink?: () => void
-  error?: boolean
-  valid?: boolean
-  sent?: boolean
-}
 
 const Template: React.FC<TemplateProps> = ({
   sent,
@@ -129,13 +131,13 @@ const Template: React.FC<TemplateProps> = ({
   copySharableLink,
   error,
   valid,
+  formatPayload,
 }) => {
   const { instanceId, api_secret } = useContext(EventCtx)!
   const classes = useStyles({ error, valid })
   // const payload = useTextBox ? inputPayload : usePayload()
   const payload = usePayload()
   // payload is parsed through usePayload. We can just say payload = usePayload || textbox
-  // must also add formatting of textbox
   const formClasses = useFormStyles()
 
   return (
@@ -168,7 +170,15 @@ const Template: React.FC<TemplateProps> = ({
 
       <section className={formClasses.buttonRow}>
         {validateEvent !== undefined && (
-          <PAB small onClick={validateEvent}>
+          <PAB small onClick={() => {
+            console.log('validate second time')
+            // need to format second time here
+            if (formatPayload) {
+              formatPayload()
+            }
+            validateEvent()
+          }
+          }>
             validate event
           </PAB>
         )}
@@ -211,11 +221,8 @@ const Template: React.FC<TemplateProps> = ({
   )
 }
 
-const ValidateEvent: React.FC<ValidateEventProps> = ({payloadObj}) => {
+const ValidateEvent: React.FC<ValidateEventProps> = ({formatPayload}) => {
   const request = useValidateEvent()
-  console.log('payloadObj', payloadObj)
-  // const { categories } = useEvent()
-  // const { inputPayload, payloadObj, setPayloadObj, setPayloadErrors } = useInputs(categories)
 
   return (
     <Loadable
@@ -237,8 +244,8 @@ const ValidateEvent: React.FC<ValidateEventProps> = ({payloadObj}) => {
             </>
           }
           validateEvent={ () => {
-            console.log('here')
-              // formatPayload()
+              console.log('validate first time')
+              formatPayload()
               validateEvent()
             }
           }
@@ -255,6 +262,7 @@ const ValidateEvent: React.FC<ValidateEventProps> = ({payloadObj}) => {
           body=""
           validateEvent={validateEvent}
           validationMessages={validationMessages}
+          formatPayload={formatPayload}
         />
       )}
       renderSuccessful={({ sendToGA, copyPayload, copySharableLink, sent }) => (

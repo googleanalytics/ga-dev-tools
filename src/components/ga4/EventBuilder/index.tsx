@@ -121,7 +121,7 @@ export const EventCtx = React.createContext<
       instanceId: InstanceId
       api_secret: string
       useTextBox: boolean
-      payloadObj: object
+      // payloadObj: object
     }
   | undefined
 >(undefined)
@@ -196,6 +196,7 @@ const EventBuilder: React.FC = () => {
   } = useInputs(categories)
 
   const formatPayload = () => {
+    console.log('formatting')
     try {
       if (inputPayload) {
         let payload = JSON.parse(inputPayload) as object
@@ -584,7 +585,6 @@ const EventBuilder: React.FC = () => {
             useTextBox,
             instanceId: useFirebase ? { firebase_app_id } : { measurement_id },
             api_secret: api_secret!,
-            payloadObj,
           }}
         >
           <ValidateEvent
@@ -594,7 +594,7 @@ const EventBuilder: React.FC = () => {
             measurement_id={measurement_id || ""}
             app_instance_id={app_instance_id || ""}
             firebase_app_id={firebase_app_id || ""}
-            payloadObj={payloadObj}
+            formatPayload={formatPayload}
           />
         </EventCtx.Provider>
       </UseFirebaseCtx.Provider>
