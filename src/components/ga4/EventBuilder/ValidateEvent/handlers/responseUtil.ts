@@ -27,7 +27,7 @@ export const formatErrorMessages = (errors, payload) => {
             error['description'] = description.slice(0, end_index) + ALPHA_NUMERIC_OVERRIDE
 
             return error
-        } else if (BASE_PAYLOAD_ATTRIBUTES.includes(fieldPath.slice(2))) {
+        } else if (BASE_PAYLOAD_ATTRIBUTES.includes(fieldPath?.slice(2))) {
             error['fieldPath'] = fieldPath.slice(2)
 
             return error
@@ -50,7 +50,7 @@ const addDocumentation = (error, payload) => {
 
     if (validationCode === 'max-length-error' || validationCode === 'max-properties-error' || validationCode === 'max-body-size') {
         return API_DOC_LIMITATIONS_URL
-    } else if (fieldPath.startsWith('#/events/')) {
+    } else if (fieldPath?.startsWith('#/events/')) {
         return API_DOC_EVENT_URL + payload?.events[0]?.name
     } else if (BASE_PAYLOAD_ATTRIBUTES.includes(fieldPath)) {
         return API_DOC_BASE_PAYLOAD_URL + fieldPath

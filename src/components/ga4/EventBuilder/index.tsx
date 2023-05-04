@@ -121,7 +121,7 @@ export const EventCtx = React.createContext<
       instanceId: InstanceId
       api_secret: string
       useTextBox: boolean
-      // payloadObj: object
+      payloadObj: object
     }
   | undefined
 >(undefined)
@@ -583,6 +583,7 @@ const EventBuilder: React.FC = () => {
             timestamp_micros,
             non_personalized_ads,
             useTextBox,
+            payloadObj,
             instanceId: useFirebase ? { firebase_app_id } : { measurement_id },
             api_secret: api_secret!,
           }}

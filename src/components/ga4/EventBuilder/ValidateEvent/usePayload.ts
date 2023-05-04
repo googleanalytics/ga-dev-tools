@@ -71,6 +71,7 @@ const usePayload = (): {} => {
     clientIds,
     type,
     useTextBox,
+    payloadObj
   } = useContext(EventCtx)!
 
   const eventName = useMemo(() => {
@@ -123,7 +124,14 @@ const usePayload = (): {} => {
   ])
 
   if (useTextBox) {
-    // payload = payloadO? jsonifyPayload(inputPayload) : undefined
+    console.log(typeof payloadObj)
+    console.log('payo', payloadObj)
+
+    if ((typeof payloadObj) === 'string') {
+      payload = JSON.parse(payloadObj)
+    } else {
+      payload = payloadObj
+    }
   }
 
   return payload

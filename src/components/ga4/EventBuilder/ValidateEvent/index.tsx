@@ -133,9 +133,12 @@ const Template: React.FC<TemplateProps> = ({
   valid,
   formatPayload,
 }) => {
-  const { instanceId, api_secret } = useContext(EventCtx)!
+  const { instanceId, api_secret, useTextBox, payloadObj } = useContext(EventCtx)!
   const classes = useStyles({ error, valid })
-  // const payload = useTextBox ? inputPayload : usePayload()
+  // console.log('useTextbox', useTextBox)
+  // console.log('payloadObj', payloadObj)
+  // const payload = useTextBox ? payloadObj : usePayload()
+  // console.log('payload', payload)
   const payload = usePayload()
   // payload is parsed through usePayload. We can just say payload = usePayload || textbox
   const formClasses = useFormStyles()
@@ -172,10 +175,11 @@ const Template: React.FC<TemplateProps> = ({
         {validateEvent !== undefined && (
           <PAB small onClick={() => {
             console.log('validate second time')
-            // need to format second time here
+            // only do this for textBox
             if (formatPayload) {
               formatPayload()
             }
+            // only validate event if formatted correctly (if is textbox)
             validateEvent()
           }
           }>
