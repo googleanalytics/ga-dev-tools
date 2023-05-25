@@ -13,12 +13,12 @@
 // limitations under the License.
 
 import * as React from "react"
-import { makeStyles } from "@material-ui/core/styles"
+import { makeStyles } from "@material-ui/core"
 import SyntaxHighlighter from "react-syntax-highlighter"
 import { SyntaxHighlighterProps } from "react-syntax-highlighter"
-import Paper from "@material-ui/core/Paper"
-import Tabs from "@material-ui/core/Tabs"
-import Tab from "@material-ui/core/Tab"
+import Paper from "@mui/material/Paper"
+import Tabs from "@mui/material/Tabs"
+import Tab from "@mui/material/Tab"
 import CopyButton from "./CopyButton"
 
 const useStyles = makeStyles(theme => ({

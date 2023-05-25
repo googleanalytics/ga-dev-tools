@@ -13,10 +13,10 @@
 // limitations under the License.
 
 import * as React from "react"
-import { makeStyles } from "@material-ui/core/styles"
-import TextField from "@material-ui/core/TextField"
-import Typography from "@material-ui/core/Typography"
-import Paper from "@material-ui/core/Paper"
+import { makeStyles } from "@material-ui/core"
+import TextField from "@mui/material/TextField"
+import Typography from "@mui/material/Typography"
+import Paper from "@mui/material/Paper"
 import { useDebounce } from "use-debounce"
 
 import ViewSelector from "@/components/ViewSelector"

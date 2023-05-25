@@ -12,10 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import React, { useMemo } from "react"
-import Button from "@material-ui/core/Button"
+import React, { useEffect, useMemo } from "react"
+import Button from '@mui/material/Button';
 import { Link } from "gatsby"
-import { Home } from "@material-ui/icons"
+import { Home } from "@mui/icons-material"
 import clsx from "classnames"
 import { Helmet } from "react-helmet"
 // TODO - Look into whether or not we can fix this.
@@ -24,14 +24,14 @@ import { Helmet } from "react-helmet"
 //
 // eslint-disable-next-line import/no-webpack-loader-syntax
 import Logo from "-!svg-react-loader!../../images/ga-developer-logo.svg"
-import AppBar from "@material-ui/core/AppBar"
-import IconButton from "@material-ui/core/IconButton"
-import Drawer from "@material-ui/core/Drawer"
-import List from "@material-ui/core/List"
-import ListItem from "@material-ui/core/ListItem"
+import AppBar from "@mui/material/AppBar"
+import IconButton from "@mui/material/IconButton"
+import Drawer from "@mui/material/Drawer"
+import List from "@mui/material/List"
+import ListItem from "@mui/material/ListItem"
 import { navigate } from "@reach/router"
-import MenuIcon from "@material-ui/icons/Menu"
-import Typography from "@material-ui/core/Typography"
+import MenuIcon from "@mui/icons-material/Menu"
+import Typography from "@mui/material/Typography"
 
 import Login from "./Login"
 import { useGAVersion } from "../../hooks"
@@ -86,8 +86,22 @@ const Template: React.FC<LayoutProps & TemplateProps> = ({
   usePageView(title)
   const { gaVersion, setGAVersion } = useGAVersion(pathname)
   const classes = useStyles({ disableNav })
+
   const formClasses = useFormStyles()
   const [open, setOpen] = React.useState(false)
+
+  useEffect(() => {
+    //const timeout = setTimeout(() => {
+      // Redirect to the new domain while preserving the path.
+      if( window.location.hostname.indexOf('web.app') !== -1 ) {
+        const newHostname = window.location.hostname.replace('web.app', 'google');
+        const newLocation =  window.location.href.replace( window.location.hostname, newHostname ); 
+        window.location.replace(newLocation);
+      }
+    //}, 1000);
+
+    return;
+  }, []);
 
   const links = useMemo(() => {
     return linkData.filter(linkData =>
@@ -110,6 +124,8 @@ const Template: React.FC<LayoutProps & TemplateProps> = ({
       >
         <meta charSet="utf-8" />
         <meta name="description" content={description} />
+        <link rel="canonical" href="https://ga-dev-tools.google/" />
+
         <title>{title}</title>
       </Helmet>
       <AppBar position="static" className={classes.appBarNav}>

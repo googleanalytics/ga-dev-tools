@@ -1,6 +1,6 @@
 import * as React from "react"
 
-import makeStyles from "@material-ui/core/styles/makeStyles"
+import {makeStyles} from "@material-ui/core"
 
 import { PlainButton, SAB } from "@/components/Buttons"
 import { GA4Dimension, GA4Metric } from "@/components/GA4Pickers"

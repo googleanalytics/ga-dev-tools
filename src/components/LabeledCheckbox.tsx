@@ -1,5 +1,5 @@
 import * as React from "react"
-import { FormControlLabel, Checkbox } from "@material-ui/core"
+import { FormControlLabel, Checkbox } from "@mui/material"
 import { Dispatch } from "../types"
 
 interface LabeledCheckboxProps {

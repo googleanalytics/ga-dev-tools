@@ -9,10 +9,10 @@
     "public": "public",
     "ignore": ["**/.*", "**/node_modules/**"],
     "rewrites": [
-      {
-        "source": "**",
-        "destination": "/index.html"
-      }
+       {
+         "source": "**",
+         "destination": "/index.html"
+       }
     ],
     "headers": [
       // Set up cache headers based on:

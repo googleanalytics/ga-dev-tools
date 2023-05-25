@@ -14,7 +14,7 @@
 
 import * as React from "react"
 
-import Typography from "@material-ui/core/Typography"
+import Typography from "@mui/material/Typography"
 import Explorer from "./Explorer"
 
 export const DimensionsMetricsExplorer = () => {

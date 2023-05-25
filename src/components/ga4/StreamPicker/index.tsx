@@ -1,8 +1,9 @@
 import * as React from "react"
 import { Dispatch, Requestable, successful } from "@/types"
-import Autocomplete from "@material-ui/lab/Autocomplete"
-import { makeStyles, TextField } from "@material-ui/core"
-import Typography from "@material-ui/core/Typography"
+import Autocomplete from "@mui/material/Autocomplete"
+import TextField from "@mui/material/TextField"
+import { makeStyles } from "@material-ui/core"
+import Typography from "@mui/material/Typography"
 import useAccountsAndProperties from "./useAccountsAndProperties"
 import {
   AccountSummary,

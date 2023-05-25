@@ -1,13 +1,13 @@
 import * as React from "react"
 
 import TextField from "@material-ui/core/TextField"
-import makeStyles from "@material-ui/core/styles/makeStyles"
+import {makeStyles} from "@material-ui/core"
 
 import { Parameter as ParameterT } from "./types"
 import { ShowAdvancedCtx } from "."
 import useFormStyles from "@/hooks/useFormStyles"
 import { IconButton, Tooltip } from "@material-ui/core"
-import { Delete } from "@material-ui/icons"
+import { Delete } from "@mui/icons-material"
 
 const useStyles = makeStyles(theme => ({
   parameter: {

@@ -1,7 +1,7 @@
 import * as React from "react"
 
-import makeStyles from "@material-ui/core/styles/makeStyles"
-import Typography from "@material-ui/core/Typography"
+import {makeStyles} from "@material-ui/core"
+import Typography from "@mui/material/Typography"
 
 import { RequestStatus } from "@/types"
 import { Url, StorageKey } from "@/constants"

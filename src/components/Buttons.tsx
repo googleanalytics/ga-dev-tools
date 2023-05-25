@@ -4,10 +4,10 @@ import {
   Tooltip,
   IconButton,
   ButtonProps as MUIButtonProps,
-} from "@material-ui/core"
-import Add from "@material-ui/icons/Add"
-import Delete from "@material-ui/icons/Delete"
-import Check from "@material-ui/icons/Check"
+} from "@mui/material"
+import Add from "@mui/icons-material/Add"
+import Delete from "@mui/icons-material/Delete"
+import Check from "@mui/icons-material/Check"
 
 // Secondary Action Button
 interface Props extends MUIButtonProps {

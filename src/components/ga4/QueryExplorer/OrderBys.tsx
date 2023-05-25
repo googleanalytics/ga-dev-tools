@@ -1,8 +1,8 @@
 import * as React from "react"
 
-import Typography from "@material-ui/core/Typography"
-import Delete from "@material-ui/icons/Delete"
-import makeStyles from "@material-ui/core/styles/makeStyles"
+import Typography from "@mui/material/Typography"
+import Delete from "@mui/icons-material/Delete"
+import {makeStyles} from "@material-ui/core"
 
 import { Dispatch } from "@/types"
 import { SAB, TooltipIconButton } from "@/components/Buttons"
@@ -17,7 +17,7 @@ import {
 } from "@/components/GA4Pickers"
 import ExternalLink from "@/components/ExternalLink"
 import WithHelpText from "@/components/WithHelpText"
-import { ArrowDownward, ArrowUpward } from "@material-ui/icons"
+import { ArrowDownward, ArrowUpward } from "@mui/icons-material"
 
 const orderBysLink = (
   <ExternalLink href="https://developers.google.com/analytics/devguides/reporting/data/v1/rest/v1beta/properties/runReport#body.request_body.FIELDS.order_bys">

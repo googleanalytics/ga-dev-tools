@@ -1,4 +1,4 @@
-import * as execa from "execa"
+import { execa } from "execa";
 import { DeployFunctionsArgs, RuntimeJson, Environment } from "./types"
 import { checkConfig, SKIP_QUESTION } from "./check-config"
 import { configForEnvironment } from "."

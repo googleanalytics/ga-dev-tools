@@ -14,7 +14,7 @@
 
 import React, { useContext } from "react"
 
-import { makeStyles } from "@material-ui/core/styles"
+import { makeStyles } from "@material-ui/core"
 import clsx from "classnames"
 
 import useFormStyles from "@/hooks/useFormStyles"
@@ -22,7 +22,7 @@ import useValidateEvent from "./useValidateEvent"
 import Loadable from "@/components/Loadable"
 import Typography from "@material-ui/core/Typography"
 import { PAB, PlainButton } from "@/components/Buttons"
-import { Check, Warning, Error as ErrorIcon } from "@material-ui/icons"
+import { Check, Warning, Error as ErrorIcon } from "@mui/icons-material"
 import PrettyJson from "@/components/PrettyJson"
 import usePayload from "./usePayload"
 import { ValidationMessage } from "../types"

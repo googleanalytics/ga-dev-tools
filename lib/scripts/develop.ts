@@ -1,6 +1,6 @@
 // yarn check-types && gatsby develop --host=0.0.0.0"
 import { checkConfig, writeEnvFile } from "./check-config"
-import * as execa from "execa"
+import { execa } from "execa";
 import { configForEnvironment } from "."
 import { DevelopArgs } from "./types"
 

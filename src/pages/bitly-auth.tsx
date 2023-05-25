@@ -1,6 +1,6 @@
 import React from "react"
 
-import Typography from "@material-ui/core/Typography"
+import Typography from "@mui/material/Typography"
 import Layout from "@/components/Layout"
 import { useLocation } from "@reach/router"
 import { StorageKey } from "@/constants"

@@ -14,8 +14,8 @@
 
 import * as React from "react"
 
-import Typography from "@material-ui/core/Typography"
-import makeStyles from "@material-ui/core/styles/makeStyles"
+import Typography from "@mui/material/Typography"
+import {makeStyles} from "@material-ui/core"
 
 import ExternalLink from "@/components/ExternalLink"
 import Tool from "./RequestComposer"

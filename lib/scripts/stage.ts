@@ -1,4 +1,4 @@
-import * as execa from "execa"
+import { execa } from "execa";
 import { build } from "./build"
 import { checkConfig, writeEnvFile } from "./check-config"
 import { DeployArgs, Environment } from "./types"

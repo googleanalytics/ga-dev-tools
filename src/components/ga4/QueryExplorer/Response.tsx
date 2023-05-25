@@ -1,11 +1,11 @@
 import React, { useState, useMemo } from "react"
 
-import { DataGrid, GridColumns } from "@material-ui/data-grid"
-import makeStyles from "@material-ui/core/styles/makeStyles"
-import Box from "@material-ui/core/Box"
-import Typography from "@material-ui/core/Typography"
-import Tabs from "@material-ui/core/Tabs"
-import Tab from "@material-ui/core/Tab"
+import { DataGrid, GridColumns } from "@mui/x-data-grid"
+import {makeStyles} from "@material-ui/core"
+import Box from "@mui/material/Box"
+import Typography from "@mui/material/Typography"
+import Tabs from "@mui/material/Tabs"
+import Tab from "@mui/material/Tab"
 
 import { RequestStatus } from "@/types"
 import PrettyJson from "@/components/PrettyJson"

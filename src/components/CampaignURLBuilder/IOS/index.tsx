@@ -1,9 +1,9 @@
 import * as React from "react"
 
-import Autocomplete from "@material-ui/lab/Autocomplete"
-import Typography from "@material-ui/core/Typography"
-import TextField from "@material-ui/core/TextField"
-import Paper from "@material-ui/core/Paper"
+import Autocomplete from "@mui/material/Autocomplete"
+import Typography from "@mui/material/Typography"
+import TextField from "@mui/material/TextField"
+import Paper from "@mui/material/Paper"
 
 import { GAVersion, StorageKey, Url } from "@/constants"
 import useFormStyles from "@/hooks/useFormStyles"

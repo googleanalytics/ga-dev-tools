@@ -1,6 +1,6 @@
 import * as React from "react"
 
-import makeStyles from "@material-ui/core/styles/makeStyles"
+import { makeStyles } from "@material-ui/core"
 
 import { Dispatch } from "@/types"
 import { Url } from "@/constants"

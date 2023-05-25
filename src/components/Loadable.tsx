@@ -1,7 +1,7 @@
 import * as React from "react"
 
 import { Requestable, RequestStatus } from "@/types"
-import { Typography } from "@material-ui/core"
+import { Typography } from "@mui/material"
 import Spinner from "./Spinner"
 
 interface LoadableProps<

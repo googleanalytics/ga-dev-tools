@@ -1,6 +1,6 @@
 import * as React from "react"
 
-import TextField from "@material-ui/core/TextField"
+import TextField from "@mui/material/TextField"
 
 import Select, { SelectOption } from "@/components/Select"
 import { UpdateFilterFn, ExpressionPath } from "../index"

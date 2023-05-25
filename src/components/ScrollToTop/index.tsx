@@ -1,5 +1,6 @@
-import { makeStyles, useScrollTrigger } from "@material-ui/core"
-import { ArrowUpward } from "@material-ui/icons"
+import { useScrollTrigger } from "@mui/material"
+import { makeStyles } from "@material-ui/core"
+import { ArrowUpward } from "@mui/icons-material"
 import * as React from "react"
 import { PlainButton } from "../Buttons"
 

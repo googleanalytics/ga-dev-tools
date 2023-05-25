@@ -2,11 +2,11 @@ import { PropertySummary } from "@/types/ga4/StreamPicker"
 import {
   Chip,
   IconButton,
-  makeStyles,
   Paper,
   Typography,
-} from "@material-ui/core"
-import { Replay } from "@material-ui/icons"
+} from "@mui/material"
+import {makeStyles} from "@material-ui/core"
+import { Replay } from "@mui/icons-material"
 import { navigate } from "gatsby"
 import * as React from "react"
 import QueryExplorerLink from "../QueryExplorer/BasicReport/QueryExplorerLink"

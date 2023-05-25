@@ -14,10 +14,10 @@
 
 import * as React from "react"
 
-import Typography from "@material-ui/core/Typography"
-import TextField from "@material-ui/core/TextField"
-import makeStyles from "@material-ui/core/styles/makeStyles"
-import Autocomplete from "@material-ui/lab/Autocomplete"
+import Typography from "@mui/material/Typography"
+import TextField from "@mui/material/TextField"
+import {makeStyles} from "@material-ui/core"
+import Autocomplete from "@mui/material/Autocomplete"
 
 import { SortableColumn } from "."
 import { Dispatch } from "@/types"

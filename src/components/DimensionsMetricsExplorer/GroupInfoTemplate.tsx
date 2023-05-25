@@ -14,11 +14,11 @@
 
 import * as React from "react"
 
-import makeStyles from "@material-ui/core/styles/makeStyles"
-import Typography from "@material-ui/core/Typography"
-import Chip from "@material-ui/core/Chip"
-import ArrowBack from "@material-ui/icons/ArrowBack"
-import LinkIcon from "@material-ui/icons/Link"
+import {makeStyles} from "@material-ui/core"
+import Typography from "@mui/material/Typography"
+import Chip from "@mui/material/Chip"
+import ArrowBack from "@mui/icons-material/ArrowBack"
+import LinkIcon from "@mui/icons-material/Link"
 import classnames from "classnames"
 import { Link } from "gatsby"
 import { sortBy } from "lodash"

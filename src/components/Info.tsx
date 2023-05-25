@@ -1,8 +1,10 @@
 import * as React from "react"
-import { Paper, makeStyles } from "@material-ui/core"
+import { makeStyles } from "@material-ui/core"
+import { Paper } from "@mui/material"
+
 import classnames from "classnames"
-import { Info as InfoIcon } from "@material-ui/icons"
-import blue from "@material-ui/core/colors/lightBlue"
+import { Info as InfoIcon } from "@mui/icons-material"
+import blue from "@mui/material/colors/lightBlue"
 
 interface InfoProps {
   className?: string

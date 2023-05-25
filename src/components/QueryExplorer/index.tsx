@@ -14,11 +14,11 @@
 
 import * as React from "react"
 
-import Tooltip from "@material-ui/core/Tooltip"
-import Typography from "@material-ui/core/Typography"
-import TextField from "@material-ui/core/TextField"
-import makeStyles from "@material-ui/core/styles/makeStyles"
-import Launch from "@material-ui/icons/Launch"
+import Tooltip from "@mui/material/Tooltip"
+import Typography from "@mui/material/Typography"
+import TextField from "@mui/material/TextField"
+import {makeStyles} from "@material-ui/core"
+import Launch from "@mui/icons-material/Launch"
 
 import useDataAPIRequest from "./useDataAPIRequest"
 import useInputs from "./useInputs"

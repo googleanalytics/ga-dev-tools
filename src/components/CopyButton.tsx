@@ -13,14 +13,14 @@
 // limitations under the License.
 
 import * as React from "react"
-import Button from "@material-ui/core/Button"
-import IconButton, { IconButtonProps } from "@material-ui/core/IconButton"
-import Tooltip from "@material-ui/core/Tooltip"
-import FileCopyIcon from "@material-ui/icons/FileCopy"
-import Snackbar from "@material-ui/core/Snackbar"
-import MuiAlert from "@material-ui/lab/Alert"
+import Button from "@mui/material/Button"
+import IconButton, { IconButtonProps } from "@mui/material/IconButton"
+import Tooltip from "@mui/material/Tooltip"
+import FileCopyIcon from "@mui/icons-material/FileCopy"
+import Snackbar from "@mui/material/Snackbar"
+import MuiAlert from "@mui/material/Alert"
 import copyToClipboard from "copy-to-clipboard"
-import { makeStyles } from "@material-ui/core/styles"
+import { makeStyles } from "@material-ui/core"
 
 const useStyles = makeStyles(theme => ({
   copyIcon: {

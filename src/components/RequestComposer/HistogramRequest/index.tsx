@@ -15,7 +15,7 @@
 import * as React from "react"
 import { useEffect } from "react"
 
-import makeStyles from "@material-ui/core/styles/makeStyles"
+import {makeStyles} from "@material-ui/core"
 
 import { usePersistentBoolean } from "@/hooks"
 import { StorageKey } from "@/constants"
