@@ -1,7 +1,9 @@
 import * as React from "react"
 
-import { makeStyles, Tooltip } from "@material-ui/core"
-import { Launch } from "@material-ui/icons"
+import { makeStyles } from "@material-ui/core"
+import {  Tooltip } from "@mui/material"
+
+import { Launch } from "@mui/icons-material"
 import clsx from "classnames"
 
 const useStyles = makeStyles(_ => ({

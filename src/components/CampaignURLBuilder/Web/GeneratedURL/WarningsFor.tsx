@@ -1,7 +1,7 @@
 import * as React from "react"
 
-import { Warning } from "@material-ui/icons"
-import Typography from "@material-ui/core/Typography"
+import { Warning } from "@mui/icons-material"
+import Typography from "@mui/material/Typography"
 import { v4 as uuid } from "uuid"
 
 import InlineCode from "@/components/InlineCode"

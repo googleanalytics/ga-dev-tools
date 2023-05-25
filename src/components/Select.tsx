@@ -1,8 +1,9 @@
 import * as React from "react"
-import { makeStyles, TextField } from "@material-ui/core"
+import { makeStyles } from "@material-ui/core"
+import { TextField } from "@mui/material"
 import clsx from "classnames"
 import { Dispatch } from "../types"
-import Autocomplete from "@material-ui/lab/Autocomplete"
+import Autocomplete from "@mui/material/Autocomplete"
 
 const useStyles = makeStyles(() => ({
   formControl: {

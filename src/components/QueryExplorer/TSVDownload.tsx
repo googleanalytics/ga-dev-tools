@@ -1,7 +1,7 @@
 import * as React from "react"
 
-import GetApp from "@material-ui/icons/GetApp"
-import makeStyles from "@material-ui/core/styles/makeStyles"
+import GetApp from "@mui/icons-material/GetApp"
+import {makeStyles} from "@material-ui/core"
 
 const useStyles = makeStyles(theme => ({
   download: {

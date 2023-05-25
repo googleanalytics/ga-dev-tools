@@ -1,8 +1,8 @@
 import * as React from "react"
-import PersonOutlineIcon from "@material-ui/icons/PersonOutline"
-import PersonIcon from "@material-ui/icons/Person"
-import Tooltip from "@material-ui/core/Tooltip"
-import IconButton from "@material-ui/core/IconButton"
+import PersonOutlineIcon from "@mui/icons-material/PersonOutline"
+import PersonIcon from "@mui/icons-material/Person"
+import Tooltip from "@mui/material/Tooltip"
+import IconButton from "@mui/material/IconButton"
 import { UserStatus } from "./useLogin"
 
 interface LoginProps {

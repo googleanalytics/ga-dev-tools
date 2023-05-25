@@ -28,7 +28,7 @@ export function ProductListing({products}: ProductListingProps) {
         addEvent('view_item_list', 'View items list (search result).', snippet)
 
 
-    });
+    }, [products]);
     return (
         <div className={listingContainerStyle}>
             {products.map((p) => (

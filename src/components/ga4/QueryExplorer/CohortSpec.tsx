@@ -1,7 +1,7 @@
 import * as React from "react"
 
-import Typography from "@material-ui/core/Typography"
-import Delete from "@material-ui/icons/Delete"
+import Typography from "@mui/material/Typography"
+import Delete from "@mui/icons-material/Delete"
 
 import { Url } from "@/constants"
 import ExternalLink from "@/components/ExternalLink"
@@ -17,7 +17,7 @@ import InlineCode from "@/components/InlineCode"
 import LinkedTextField from "@/components/LinkedTextField"
 import { GADateRange } from "@/components/GADate"
 import { Dispatch } from "@/types"
-import makeStyles from "@material-ui/core/styles/makeStyles"
+import {makeStyles} from "@material-ui/core"
 
 type DateRange = gapi.client.analyticsdata.DateRange
 type CohortsRange = gapi.client.analyticsdata.CohortsRange

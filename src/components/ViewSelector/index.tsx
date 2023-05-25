@@ -1,7 +1,7 @@
 import * as React from "react"
-import { makeStyles, Theme } from "@material-ui/core/styles"
-import TextField from "@material-ui/core/TextField"
-import Autocomplete from "@material-ui/lab/Autocomplete"
+import { makeStyles, Theme } from "@material-ui/core"
+import TextField from "@mui/material/TextField"
+import Autocomplete from "@mui/material//Autocomplete"
 import classnames from "classnames"
 
 import { Dispatch, RequestStatus, successful } from "@/types"
@@ -11,7 +11,7 @@ import {
   WebPropertySummary,
 } from "./useAccountPropertyView"
 import useAccountSummaries from "./useAccountSummaries"
-import Typography from "@material-ui/core/Typography"
+import Typography from "@mui/material/Typography"
 import Warning from "../Warning"
 import InlineCode from "../InlineCode"
 

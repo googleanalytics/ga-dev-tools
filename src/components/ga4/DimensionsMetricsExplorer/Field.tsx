@@ -1,8 +1,8 @@
 import * as React from "react"
 
-import IconLink from "@material-ui/icons/Link"
-import makeStyles from "@material-ui/core/styles/makeStyles"
-import Typography from "@material-ui/core/Typography"
+import IconLink from "@mui/icons-material/Link"
+import {makeStyles} from "@material-ui/core"
+import Typography from "@mui/material/Typography"
 
 import InlineCode from "@/components/InlineCode"
 import { CopyIconButton } from "@/components/CopyButton"

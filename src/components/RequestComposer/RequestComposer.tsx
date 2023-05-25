@@ -15,10 +15,10 @@
 import * as React from "react"
 import { useState } from "react"
 
-import Typography from "@material-ui/core/Typography"
-import Tabs from "@material-ui/core/Tabs"
-import Tab from "@material-ui/core/Tab"
-import makeStyles from "@material-ui/core/styles/makeStyles"
+import Typography from "@mui/material/Typography"
+import Tabs from "@mui/material/Tabs"
+import Tab from "@mui/material/Tab"
+import {makeStyles} from "@material-ui/core"
 
 import { StorageKey } from "@/constants"
 import ViewSelector from "@/components/ViewSelector"

@@ -1,4 +1,4 @@
-import * as execa from "execa"
+import { execa } from "execa";
 import { build } from "./build"
 import { ServeArgs, Environment } from "./types"
 import { checkConfig } from "./check-config"

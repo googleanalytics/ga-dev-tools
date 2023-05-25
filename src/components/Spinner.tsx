@@ -1,7 +1,6 @@
 import * as React from "react"
 import { useTheme, makeStyles } from "@material-ui/core"
-import Loader from "react-loader-spinner"
-import "react-loader-spinner/dist/loader/css/react-spinner-loader.css"
+import {Circles} from "react-loader-spinner"
 
 const useStyles = makeStyles(() => ({
   loadingIndicator: {
@@ -23,7 +22,7 @@ const Spinner: React.FC<SpinnerProps> = ({ children, ellipses }) => {
     <section className={classes.loadingIndicator}>
       {children}
       {ellipses && <>&hellip;</>}
-      <Loader type="Circles" color={theme.palette.primary.main} />
+      <Circles color={theme.palette.primary.main} />
     </section>
   )
 }

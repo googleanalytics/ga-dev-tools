@@ -19,7 +19,7 @@ module.exports = {
   },
   siteMetadata: {
     title: `Discover the Google Analytics Platform`,
-    siteUrl: "https://ga-dev-tools.web.app",
+    siteUrl: "https://ga-dev-tools.google",
     author: `Google Analytics Developer Relations`,
   },
   plugins: [
@@ -58,7 +58,7 @@ module.exports = {
       },
     },
     `gatsby-plugin-use-query-params`,
-    `gatsby-plugin-material-ui`,
+    `gatsby-theme-material-ui`,
     `gatsby-plugin-preload-fonts`,
     {
       resolve: `gatsby-plugin-google-fonts`,

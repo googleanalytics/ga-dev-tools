@@ -1,8 +1,10 @@
-import { makeStyles, Typography } from "@material-ui/core"
-import { FallbackProps } from "react-error-boundary"
+import {Typography} from "@mui/material"
+import {makeStyles} from "@material-ui/core"
+
+import {FallbackProps} from "react-error-boundary"
 import * as React from "react"
 import CodeBlock from "../CodeBlock"
-import { PAB } from "../Buttons"
+import {PAB} from "../Buttons"
 import Warning from "../Warning"
 
 const useStyles = makeStyles(theme => ({

@@ -14,10 +14,12 @@
 
 import * as React from "react"
 
-import { Typography, TextField, makeStyles } from "@material-ui/core"
+import { Typography, TextField } from "@mui/material"
+import { makeStyles } from "@material-ui/core"
+
 import Autocomplete, {
   createFilterOptions,
-} from "@material-ui/lab/Autocomplete"
+} from "@mui/material/Autocomplete"
 import { usePersistentString } from "@/hooks"
 import { StorageKey } from "@/constants"
 import { Column as ColumnT, Segment as SegmentT } from "@/types/ua"

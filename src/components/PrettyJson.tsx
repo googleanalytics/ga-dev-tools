@@ -1,5 +1,7 @@
 import React, { useMemo } from "react"
-import { makeStyles, Paper } from "@material-ui/core"
+import { makeStyles } from "@material-ui/core"
+import {  Paper } from "@mui/material"
+
 import { IS_SSR } from "../hooks"
 import { CopyIconButton } from "./CopyButton"
 import clsx from "classnames"

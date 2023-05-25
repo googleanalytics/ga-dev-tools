@@ -15,7 +15,6 @@
 import * as React from "react"
 
 import {
-  makeStyles,
   Table,
   TableHead,
   TableRow,
@@ -25,7 +24,9 @@ import {
   Paper,
   Typography,
   TextField,
-} from "@material-ui/core"
+} from "@mui/material"
+import {makeStyles} from "@material-ui/core"
+
 import Spinner from "../../components/Spinner"
 import { CopyIconButton } from "../../components/CopyButton"
 import { QueryResponse, APIStatus } from "./useDataAPIRequest"

@@ -1,7 +1,7 @@
 import * as React from "react"
 import { useState, useMemo } from "react"
 
-import makeStyles from "@material-ui/core/styles/makeStyles"
+import {makeStyles} from "@material-ui/core"
 import clsx from "classnames"
 
 import Select, { SelectOption } from "@/components/Select"

@@ -14,10 +14,11 @@
 
 import * as React from "react"
 
-import { Typography, TextField, makeStyles } from "@material-ui/core"
+import { Typography, TextField } from "@mui/material"
+import { makeStyles } from "@material-ui/core"
 import Autocomplete, {
   createFilterOptions,
-} from "@material-ui/lab/Autocomplete"
+} from "@mui/material/Autocomplete"
 import { useState } from "react"
 import { Dispatch, RequestStatus } from "@/types"
 import useAvailableColumns from "./useAvailableColumns"

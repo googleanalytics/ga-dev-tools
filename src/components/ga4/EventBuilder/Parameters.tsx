@@ -1,6 +1,6 @@
 import { DAB, SAB } from "@/components/Buttons"
 import useFormStyles from "@/hooks/useFormStyles"
-import makeStyles from "@material-ui/core/styles/makeStyles"
+import {makeStyles} from "@material-ui/core"
 import * as React from "react"
 import { ShowAdvancedCtx } from "."
 import Parameter from "./Parameter"

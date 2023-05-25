@@ -1,9 +1,9 @@
 import * as React from "react"
 
 import { v4 as uuid } from "uuid"
-import makeStyles from "@material-ui/core/styles/makeStyles"
+import {makeStyles} from "@material-ui/core"
 import TextField from "@material-ui/core/TextField"
-import Delete from "@material-ui/icons/Delete"
+import Delete from "@mui/icons-material/Delete"
 
 import { Dispatch } from "@/types"
 import ExternalLink from "@/components/ExternalLink"

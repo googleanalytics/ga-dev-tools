@@ -1,8 +1,9 @@
 import * as React from "react"
-import { Paper, makeStyles } from "@material-ui/core"
+import { Paper } from "@mui/material"
+import { makeStyles } from "@material-ui/core"
 import classnames from "classnames"
-import { Warning as WarningIcon } from "@material-ui/icons"
-import red from "@material-ui/core/colors/red"
+import { Warning as WarningIcon } from "@mui/icons-material"
+import red from "@mui/material/colors/red"
 
 interface WarningProps {
   className?: string
