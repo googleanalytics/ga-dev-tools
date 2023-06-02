@@ -124,9 +124,6 @@ const usePayload = (): {} => {
   ])
 
   if (useTextBox) {
-    console.log(typeof payloadObj)
-    console.log('payo', payloadObj)
-
     if ((typeof payloadObj) === 'string') {
       payload = JSON.parse(payloadObj)
     } else {

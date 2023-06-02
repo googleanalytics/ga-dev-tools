@@ -89,11 +89,12 @@ const useValidateEvent = (): Requestable<
   ValidationFailed
 > => {
   const useFirebase = useContext(UseFirebaseCtx)
+  const { useTextBox } = useContext(EventCtx)!
   const [status, setStatus] = useState(RequestStatus.NotStarted)
   const [validationMessages, setValidationMessages] = useState<
     ValidationMessage[]
   >([])
-  const payload = usePayload()
+  let payload = usePayload()
   const [sent, setSent] = useState(false)
   // figure out how instanceId is parsed. Is it from payload or somewhere else?
   // this might not actually matter as long as instanceId is added to payload? 
@@ -103,10 +104,12 @@ const useValidateEvent = (): Requestable<
 
   // Whenever the payload changes, we start the "request" over.
   // THIS IS WHY NOT WORKING FOR PAYLOAD TEXTBOX
-  // useEffect(() => {
-  //   setStatus(RequestStatus.NotStarted)
-  //   setSent(false)
-  // }, [payload])
+  useEffect(() => {
+    if (!useTextBox) {
+      setStatus(RequestStatus.NotStarted)
+    }
+    setSent(false)
+  }, [payload])
 
   const sendToGA = useCallback(() => {
     if (status !== RequestStatus.Successful) {
@@ -153,7 +156,7 @@ const useValidateEvent = (): Requestable<
             validatorErrors = formatErrorMessages(validatorErrors, payload)
             
             setValidationMessages(validatorErrors)
-            // why isn;t this working?!
+            // why isn't this working?!
             setStatus(RequestStatus.Failed)
           } else {
             setStatus(RequestStatus.Successful)
@@ -166,6 +169,7 @@ const useValidateEvent = (): Requestable<
   }, [status, payload, api_secret, instanceId, useFirebase])
 
   const validatePayloadAttributes = (payload) => {
+    console.log('payload in validatePayloadAttribute', payload)
     let validator = new Validator(baseContentSchema)
     let formatCheckErrors: ValidationMessage[] | [] = formatCheckLib(payload, instanceId?.firebase_app_id)
 

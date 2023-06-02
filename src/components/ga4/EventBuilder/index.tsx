@@ -292,7 +292,7 @@ const EventBuilder: React.FC = () => {
           label={Label.Payload}
           helperText="Payload"
           onChange={(input) => {
-              setPayloadObj({})
+              setPayloadObj(input)
               setInputPayload(input)
             }
           }
