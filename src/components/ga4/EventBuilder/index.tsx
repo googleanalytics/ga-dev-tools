@@ -122,7 +122,7 @@ export const EventCtx = React.createContext<
       instanceId: InstanceId
       api_secret: string
       useTextBox: boolean
-      payloadObj: object
+      payloadObj: any
     }
   | undefined
 >(undefined)
