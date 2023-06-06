@@ -41,6 +41,7 @@ import Items from "./Items"
 import ValidateEvent from "./ValidateEvent"
 import { Button } from "@material-ui/core"
 import { useEffect } from "react"
+import { RequestStatus } from "@/types"
 
 export enum Label {
   APISecret = "api_secret",
@@ -130,10 +131,6 @@ export const ShowAdvancedCtx = React.createContext(false)
 export const UseFirebaseCtx = React.createContext(false)
 
 const EventBuilder: React.FC = () => {
-  useEffect(() => {
-    formatPayload()
-  }, [])
-
   const formClasses = useFormStyles()
   const classes = useStyles()
   const [showAdvanced, setShowAdvanced] = React.useState(false)
@@ -201,6 +198,14 @@ const EventBuilder: React.FC = () => {
     setNonPersonalizedAds,
   } = useInputs(categories)
 
+  useEffect(() => {
+    formatPayload()
+  }, [])
+
+  useEffect(() => {
+    formatPayload()
+  }, [inputPayload])
+
   const formatPayload = () => {
     console.log('formatting')
 
@@ -216,7 +221,6 @@ const EventBuilder: React.FC = () => {
       }
 
     } catch (err: any) {
-      console.log('errors')
       setPayloadErrors(err.message)
       setPayloadObj({})
     }
@@ -652,6 +656,7 @@ const EventBuilder: React.FC = () => {
             firebase_app_id={firebase_app_id || ""}
             formatPayload={formatPayload}
             payloadErrors={payloadErrors}
+            useTextBox={useTextBox}
           />
         </EventCtx.Provider>
       </UseFirebaseCtx.Provider>

@@ -3,7 +3,7 @@ import { Requestable, RequestStatus } from "@/types"
 import { Validator } from "./validator"
 import { baseContentSchema } from "./schemas/baseContent"
 import { formatCheckLib } from "./handlers/formatCheckLib"
-import { formatErrorMessages } from "./handlers/responseUtil"
+import { formatErrorMessages, formatValidationMessage } from "./handlers/responseUtil"
 import {
   createContext,
   useCallback,
@@ -78,7 +78,6 @@ export type ValidationInProgress = {}
 export type ValidationFailed = {
   validationMessages: ValidationMessage[]
   validateEvent: () => void
-  formatPayload?: () => void
   payloadErrors: string | undefined
 }
 
@@ -100,10 +99,6 @@ const useValidateEvent = (): Requestable<
   >([])
   let payload = usePayload()
   const [sent, setSent] = useState(false)
-  // figure out how instanceId is parsed. Is it from payload or somewhere else?
-  // this might not actually matter as long as instanceId is added to payload? 
-  // SHould verify. Should only need to enter firebase id in textbox and then 
-  // instance id should be part of payload
   const { instanceId, api_secret } = useContext(EventCtx)!
   const { categories } = useEvent()
   const { payloadErrors } = useInputs(categories)
@@ -137,38 +132,47 @@ const useValidateEvent = (): Requestable<
     }
     setStatus(RequestStatus.InProgress)
     setValidationMessages([])
-    let validatorErrors = useFirebase ? validatePayloadAttributes(payload) : []
 
-    validateHit(payload, instanceId, api_secret)
-      .then(messages => {
-        setTimeout(() => {
-          if (messages.length > 0 || validatorErrors.length > 0) {
-            let apiValidationErrors = messages.filter(a =>
-                a.fieldPath === "measurement_id"
-                  ? !useFirebase
-                  : a.fieldPath === "firebase_app_id"
-                  ? useFirebase
-                  : true
-              )
-            
-            apiValidationErrors.forEach(err => {
-              if (!validatorErrors.map(e => e.description).includes(err.description)) {
-                validatorErrors.push(err)
-              }
-            })
+    if (Object.keys(payload).length !== 0) {
+      let validatorErrors = useFirebase ? validatePayloadAttributes(payload) : []
 
-            validatorErrors = formatErrorMessages(validatorErrors, payload)
-            
-            setValidationMessages(validatorErrors)
-            setStatus(RequestStatus.Failed)
-          } else {
-            setStatus(RequestStatus.Successful)
-          }
-        }, 250)
-      })
+      validateHit(payload, instanceId, api_secret)
+        .then(messages => {
+          setTimeout(() => {
+            if (messages.length > 0 || validatorErrors.length > 0) {
+              let apiValidationErrors = messages.filter(a =>
+                  a.fieldPath === "measurement_id"
+                    ? !useFirebase
+                    : a.fieldPath === "firebase_app_id"
+                    ? useFirebase
+                    : true
+                )
+              
+              apiValidationErrors.forEach(err => {
+                if (!validatorErrors.map(e => e.description).includes(err.description)) {
+                  validatorErrors.push(err)
+                }
+              })
+
+              validatorErrors = formatErrorMessages(validatorErrors, payload)
+              
+              setValidationMessages(validatorErrors)
+              console.log('validatorErrors', validatorErrors)
+              setStatus(RequestStatus.Failed)
+            } else {
+              setStatus(RequestStatus.Successful)
+            }
+          }, 250)
+        })
       .catch(e => {
         console.error(e)
       })
+    } else {
+      let validatorErrors = formatValidationMessage()
+      setValidationMessages(validatorErrors)
+      setStatus(RequestStatus.Failed)
+      console.log('FORMAT ERROR')
+    }
   }, [status, payload, api_secret, instanceId, useFirebase, payloadErrors])
 
   const validatePayloadAttributes = (payload) => {

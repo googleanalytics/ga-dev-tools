@@ -8,6 +8,7 @@ const API_DOC_BASE_PAYLOAD_URL = 'https://developers.google.com/analytics/devgui
 const API_DOC_EVENT_URL = 'https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference/events#'
 const API_DOC_USER_PROPERTIES = 'https://developers.google.com/analytics/devguides/collection/protocol/ga4/user-properties?hl=en&client_type=firebase'
 const API_DOC_SENDING_EVENTS_URL = 'https://developers.google.com/analytics/devguides/collection/protocol/ga4/sending-events?hl=en&client_type=firebase'
+const API_DOC_JSON_POST_BODY = 'https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference?hl=en&client_type=firebase#payload_post_body'
 
 const BASE_PAYLOAD_ATTRIBUTES = ['app_instance_id', 'api_secret', 'firebase_app_id', 'user_id', 'timestamp_micros', 'user_properties', 'non_personalized_ads']
 
@@ -59,4 +60,13 @@ const addDocumentation = (error, payload) => {
     }
 
     return API_DOC_SENDING_EVENTS_URL
+}
+
+export const formatValidationMessage = () => {
+    return [{
+        'description': 'Fix formatting issue and re-validate payload by clicking `Validate Event` below',
+        'validationCode': 'format_invalid',
+        'fieldPath': '#',
+        'documentation': API_DOC_JSON_POST_BODY
+    }]
 }

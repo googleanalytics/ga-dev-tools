@@ -51,6 +51,7 @@ interface TemplateProps {
   valid?: boolean
   sent?: boolean
   payloadErrors?: string | undefined
+  useTextBox?: boolean
 }
 
 export interface ValidateEventProps {
@@ -62,6 +63,7 @@ export interface ValidateEventProps {
   user_id: string
   formatPayload: () => void
   payloadErrors: string | undefined
+  useTextBox: boolean
 }
 
 const useStyles = makeStyles(theme => ({
@@ -97,12 +99,12 @@ const useStyles = makeStyles(theme => ({
 }))
 
 
-const focusFor = (message: ValidationMessage) => {
+const focusFor = (message: ValidationMessage, useTextBox) => {
   const { fieldPath } = message
   let id: string | undefined
   let labelValues: string[] = Object.values(Label)
 
-  if (labelValues.includes(fieldPath)) {
+  if (labelValues.includes(fieldPath) && !useTextBox) {
     id = fieldPath
   }
 
@@ -134,7 +136,8 @@ const Template: React.FC<TemplateProps> = ({
   copySharableLink,
   error,
   valid,
-  payloadErrors
+  payloadErrors,
+  useTextBox
 }) => {
   const { instanceId, api_secret } = useContext(EventCtx)!
   const classes = useStyles({ error, valid })
@@ -156,7 +159,7 @@ const Template: React.FC<TemplateProps> = ({
           {validationMessages.map((message, idx) => (
             <div>
               <li key={idx}>
-                {focusFor(message)}
+                {focusFor(message, useTextBox)}
                 {message.description}
                 <br />
                 <a href={message.documentation} target='_blank'>Documentation</a>
@@ -231,7 +234,7 @@ const Template: React.FC<TemplateProps> = ({
   )
 }
 
-const ValidateEvent: React.FC<ValidateEventProps> = ({formatPayload, payloadErrors}) => {
+const ValidateEvent: React.FC<ValidateEventProps> = ({formatPayload, payloadErrors, useTextBox}) => {
   const request = useValidateEvent()
 
   return (
@@ -284,6 +287,7 @@ const ValidateEvent: React.FC<ValidateEventProps> = ({formatPayload, payloadErro
           }
           validationMessages={validationMessages}
           payloadErrors={payloadErrors}
+          useTextBox={useTextBox}
         />
       )}
       renderSuccessful={({ sendToGA, copyPayload, copySharableLink, sent }) => (
