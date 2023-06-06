@@ -40,6 +40,7 @@ import useUserProperties from "./useUserProperties"
 import Items from "./Items"
 import ValidateEvent from "./ValidateEvent"
 import { Button } from "@material-ui/core"
+import { useEffect } from "react"
 
 export enum Label {
   APISecret = "api_secret",
@@ -129,6 +130,10 @@ export const ShowAdvancedCtx = React.createContext(false)
 export const UseFirebaseCtx = React.createContext(false)
 
 const EventBuilder: React.FC = () => {
+  useEffect(() => {
+    formatPayload()
+  }, [])
+
   const formClasses = useFormStyles()
   const classes = useStyles()
   const [showAdvanced, setShowAdvanced] = React.useState(false)
@@ -140,6 +145,7 @@ const EventBuilder: React.FC = () => {
     setUserPropertyName,
     setUserPopertyValue,
   } = useUserProperties()
+
   const {
     parameters,
     items,
@@ -197,6 +203,7 @@ const EventBuilder: React.FC = () => {
 
   const formatPayload = () => {
     console.log('formatting')
+
     try {
       if (inputPayload) {
         let payload = JSON.parse(inputPayload) as object
@@ -209,6 +216,7 @@ const EventBuilder: React.FC = () => {
       }
 
     } catch (err: any) {
+      console.log('errors')
       setPayloadErrors(err.message)
       setPayloadObj({})
     }
@@ -284,6 +292,44 @@ const EventBuilder: React.FC = () => {
 
     { useTextBox && 
       <div>
+        <section className={formClasses.form}>
+          <br/>
+
+          <LinkedTextField
+            required
+            href="https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference#api_secret"
+            linkTitle="See api_secret on devsite."
+            value={api_secret || ""}
+            label={Label.APISecret}
+            id={Label.APISecret}
+            helperText="The API secret for the property to send the event to."
+            onChange={setAPISecret}
+          />
+          {useFirebase ? (
+              <LinkedTextField
+                required
+                href="https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference?client_type=firebase#firebase_app_id"
+                linkTitle="See firebase_app_id on devsite."
+                value={firebase_app_id || ""}
+                label={Label.FirebaseAppID}
+                id={Label.FirebaseAppID}
+                helperText="The identifier for your firebase app."
+                onChange={setFirebaseAppId}
+              />
+          ) : (
+              <LinkedTextField
+                required
+                href="https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference?client_type=gtag#measurement_id"
+                linkTitle="See measurement_id on devsite."
+                value={measurement_id || ""}
+                label={Label.MeasurementID}
+                id={Label.MeasurementID}
+                helperText="The identifier for your data stream."
+                onChange={setMeasurementId}
+              />
+          )}
+        </section>
+
         <TextBox
           required
           href="https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference#api_secret"
@@ -292,14 +338,22 @@ const EventBuilder: React.FC = () => {
           label={Label.Payload}
           helperText="Payload"
           onChange={(input) => {
-              setPayloadObj(input)
               setInputPayload(input)
+              formatPayload()
             }
           }
         />
-        {payloadErrors}
+
+        <h3
+          style={{color: 'red'}}
+        >
+          {payloadErrors}
+        </h3>
+
         <br/>
+
         <br/>
+
         <Button
           onClick={formatPayload}
         >
@@ -307,264 +361,265 @@ const EventBuilder: React.FC = () => {
         </Button>
       </div>
     }
-      { !useTextBox && 
-      <div>
-      <section className={formClasses.form}>
-        <LinkedTextField
-          required
-          href="https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference#api_secret"
-          linkTitle="See api_secret on devsite."
-          value={api_secret || ""}
-          label={Label.APISecret}
-          id={Label.APISecret}
-          helperText="The API secret for the property to send the event to."
-          onChange={setAPISecret}
-        />
-        {useFirebase ? (
-          <>
-            <LinkedTextField
-              required
-              href="https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference?client_type=firebase#firebase_app_id"
-              linkTitle="See firebase_app_id on devsite."
-              value={firebase_app_id || ""}
-              label={Label.FirebaseAppID}
-              id={Label.FirebaseAppID}
-              helperText="The identifier for your firebase app."
-              onChange={setFirebaseAppId}
-            />
-            <LinkedTextField
-              required
-              href="https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference?client_type=firebase#app_instance_id"
-              linkTitle="See app_instance_id on devsite."
-              value={app_instance_id || ""}
-              label={Label.AppInstanceID}
-              id={Label.AppInstanceID}
-              helperText="The unique identifier for a specific Firebase installation."
-              onChange={setAppInstanceId}
-            />
-          </>
-        ) : (
-          <>
-            <LinkedTextField
-              required
-              href="https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference?client_type=gtag#measurement_id"
-              linkTitle="See measurement_id on devsite."
-              value={measurement_id || ""}
-              label={Label.MeasurementID}
-              id={Label.MeasurementID}
-              helperText="The identifier for your data stream."
-              onChange={setMeasurementId}
-            />
-            <LinkedTextField
-              required
-              href="https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference?client_type=gtag#client_id"
-              linkTitle="See client_id on devsite."
-              value={client_id || ""}
-              label={Label.ClientID}
-              id={Label.ClientID}
-              helperText="The unique identifier for an instance of a web client."
-              onChange={setClientId}
-            />
-          </>
-        )}
-        <LinkedTextField
-          href={`https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference?client_type=${
-            useFirebase ? "firebase" : "gtag"
-          }#user_id`}
-          linkTitle="See user_id on devsite."
-          value={user_id || ""}
-          label={Label.UserId}
-          id={Label.UserId}
-          helperText="The unique identifier for a given user."
-          onChange={setUserId}
-        />
 
-        <Autocomplete<Category, false, true, true>
-          data-testid={Label.EventCategory}
-          fullWidth
-          disableClearable
-          autoComplete
-          autoHighlight
-          autoSelect
-          options={Object.values(Category)}
-          getOptionLabel={category => category}
-          value={category}
-          onChange={(_event, value) => {
-            setCategory(value as Category)
-            const events = eventsForCategory(value as Category)
-            if (events.length > 0) {
-              setType(events[0].type)
-            }
-          }}
-          renderInput={params => (
-            <TextField
-              {...params}
-              label={Label.EventCategory}
-              id={Label.EventCategory}
-              size="small"
-              variant="outlined"
-              helperText="The category for the event"
-            />
-          )}
-        />
-        {type === EventType.CustomEvent ? (
-          <TextField
-            fullWidth
-            variant="outlined"
-            size="small"
-            label={Label.EventName}
-            id={Label.EventName}
-            value={eventName}
-            helperText="The name of the event"
-            onChange={e => {
-              setEventName(e.target.value)
-            }}
+    { !useTextBox && 
+      <div>
+        <section className={formClasses.form}>
+          <LinkedTextField
+            required
+            href="https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference#api_secret"
+            linkTitle="See api_secret on devsite."
+            value={api_secret || ""}
+            label={Label.APISecret}
+            id={Label.APISecret}
+            helperText="The API secret for the property to send the event to."
+            onChange={setAPISecret}
           />
-        ) : (
-          <Autocomplete<EventType, false, true, true>
-            data-testid={Label.EventName}
+          {useFirebase ? (
+            <>
+              <LinkedTextField
+                required
+                href="https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference?client_type=firebase#firebase_app_id"
+                linkTitle="See firebase_app_id on devsite."
+                value={firebase_app_id || ""}
+                label={Label.FirebaseAppID}
+                id={Label.FirebaseAppID}
+                helperText="The identifier for your firebase app."
+                onChange={setFirebaseAppId}
+              />
+              <LinkedTextField
+                required
+                href="https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference?client_type=firebase#app_instance_id"
+                linkTitle="See app_instance_id on devsite."
+                value={app_instance_id || ""}
+                label={Label.AppInstanceID}
+                id={Label.AppInstanceID}
+                helperText="The unique identifier for a specific Firebase installation."
+                onChange={setAppInstanceId}
+              />
+            </>
+          ) : (
+            <>
+              <LinkedTextField
+                required
+                href="https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference?client_type=gtag#measurement_id"
+                linkTitle="See measurement_id on devsite."
+                value={measurement_id || ""}
+                label={Label.MeasurementID}
+                id={Label.MeasurementID}
+                helperText="The identifier for your data stream."
+                onChange={setMeasurementId}
+              />
+              <LinkedTextField
+                required
+                href="https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference?client_type=gtag#client_id"
+                linkTitle="See client_id on devsite."
+                value={client_id || ""}
+                label={Label.ClientID}
+                id={Label.ClientID}
+                helperText="The unique identifier for an instance of a web client."
+                onChange={setClientId}
+              />
+            </>
+          )}
+          <LinkedTextField
+            href={`https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference?client_type=${
+              useFirebase ? "firebase" : "gtag"
+            }#user_id`}
+            linkTitle="See user_id on devsite."
+            value={user_id || ""}
+            label={Label.UserId}
+            id={Label.UserId}
+            helperText="The unique identifier for a given user."
+            onChange={setUserId}
+          />
+
+          <Autocomplete<Category, false, true, true>
+            data-testid={Label.EventCategory}
             fullWidth
             disableClearable
             autoComplete
             autoHighlight
             autoSelect
-            options={eventsForCategory(category).map(e => e.type)}
-            getOptionLabel={eventType => eventType}
-            value={type}
+            options={Object.values(Category)}
+            getOptionLabel={category => category}
+            value={category}
             onChange={(_event, value) => {
-              setType(value as EventType)
+              setCategory(value as Category)
+              const events = eventsForCategory(value as Category)
+              if (events.length > 0) {
+                setType(events[0].type)
+              }
             }}
             renderInput={params => (
               <TextField
                 {...params}
-                label={Label.EventName}
-                id={Label.EventName}
+                label={Label.EventCategory}
+                id={Label.EventCategory}
                 size="small"
                 variant="outlined"
-                helperText={
-                  <>
-                    The name of the event. See{" "}
-                    <ExternalLink
-                      href={`https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference/events#${type}`}
-                    >
-                      {type}
-                    </ExternalLink>{" "}
-                    on devsite.
-                  </>
-                }
+                helperText="The category for the event"
               />
             )}
           />
-        )}
-        <LinkedTextField
-          label={Label.TimestampMicros}
-          id={Label.TimestampMicros}
-          linkTitle="See timestamp_micros on devsite."
-          href={`https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference?client_type=${
-            useFirebase ? "firebase" : "gtag"
-          }#timestamp_micros`}
-          value={timestamp_micros || ""}
-          onChange={setTimestampMicros}
-          helperText="The timestamp of the event."
-          extraAction={
-            <Tooltip title="Set to now.">
-              <IconButton
-                size="small"
-                onClick={() => {
-                  setTimestampMicros((new Date().getTime() * 1000).toString())
-                }}
-              >
-                <Refresh />
-              </IconButton>
-            </Tooltip>
-          }
-        />
-
-        <WithHelpText
-          helpText={
-            <>
-              Check to indicate events should not be used for personalized ads.
-              See{" "}
-              <ExternalLink
-                href={`https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference?client_type=${
-                  useFirebase ? "firebase" : "gtag"
-                }#non_personalized_ads`}
-              >
-                non_personalized_ads
-              </ExternalLink>{" "}
-              on devsite.
-            </>
-          }
-        >
-          <LabeledCheckbox
-            checked={non_personalized_ads}
-            setChecked={setNonPersonalizedAds}
-            id={Label.NonPersonalizedAds}
-          >
-            {Label.NonPersonalizedAds}
-          </LabeledCheckbox>
-        </WithHelpText>
-      </section>
-
-      <Typography variant="h4">Event details</Typography>
-      <Typography>
-        Finally, specify the parameters to send with the event. By default, only
-        recommended parameters for the event will appear here. Check "show
-        advanced options" to add custom parameters or user properties.
-      </Typography>
-      <LabeledCheckbox checked={showAdvanced} onChange={setShowAdvanced}>
-        show advanced options
-      </LabeledCheckbox>
-
-      <section className={formClasses.form}>
-        <ShowAdvancedCtx.Provider
-          value={showAdvanced || type === EventType.CustomEvent}
-        >
-          <Typography variant="h5">Parameters</Typography>
-          <Parameters
-            removeParam={removeParam}
-            parameters={parameters}
-            addStringParam={addStringParam}
-            addNumberParam={addNumberParam}
-            setParamName={setParamName}
-            setParamValue={setParamValue}
-            addItemsParam={items === undefined ? addItemsParam : undefined}
+          {type === EventType.CustomEvent ? (
+            <TextField
+              fullWidth
+              variant="outlined"
+              size="small"
+              label={Label.EventName}
+              id={Label.EventName}
+              value={eventName}
+              helperText="The name of the event"
+              onChange={e => {
+                setEventName(e.target.value)
+              }}
+            />
+          ) : (
+            <Autocomplete<EventType, false, true, true>
+              data-testid={Label.EventName}
+              fullWidth
+              disableClearable
+              autoComplete
+              autoHighlight
+              autoSelect
+              options={eventsForCategory(category).map(e => e.type)}
+              getOptionLabel={eventType => eventType}
+              value={type}
+              onChange={(_event, value) => {
+                setType(value as EventType)
+              }}
+              renderInput={params => (
+                <TextField
+                  {...params}
+                  label={Label.EventName}
+                  id={Label.EventName}
+                  size="small"
+                  variant="outlined"
+                  helperText={
+                    <>
+                      The name of the event. See{" "}
+                      <ExternalLink
+                        href={`https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference/events#${type}`}
+                      >
+                        {type}
+                      </ExternalLink>{" "}
+                      on devsite.
+                    </>
+                  }
+                />
+              )}
+            />
+          )}
+          <LinkedTextField
+            label={Label.TimestampMicros}
+            id={Label.TimestampMicros}
+            linkTitle="See timestamp_micros on devsite."
+            href={`https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference?client_type=${
+              useFirebase ? "firebase" : "gtag"
+            }#timestamp_micros`}
+            value={timestamp_micros || ""}
+            onChange={setTimestampMicros}
+            helperText="The timestamp of the event."
+            extraAction={
+              <Tooltip title="Set to now.">
+                <IconButton
+                  size="small"
+                  onClick={() => {
+                    setTimestampMicros((new Date().getTime() * 1000).toString())
+                  }}
+                >
+                  <Refresh />
+                </IconButton>
+              </Tooltip>
+            }
           />
-          {items !== undefined && (
-            <>
-              <Typography variant="h5">Items</Typography>
-              <Items
-                items={items}
-                addItem={addItem}
-                removeItem={removeItem}
-                removeItemParam={removeItemParam}
-                addItemNumberParam={addItemNumberParam}
-                addItemStringParam={addItemStringParam}
-                setItemParamName={setItemParamName}
-                setItemParamValue={setItemParamValue}
-                removeItems={removeItems}
-              />
-            </>
-          )}
 
-          {(showAdvanced ||
-            (userProperties !== undefined && userProperties.length !== 0)) && (
-            <>
-              <Typography variant="h5">User properties</Typography>
-              <Parameters
-                removeParam={removeUserProperty}
-                parameters={userProperties}
-                addStringParam={addStringUserProperty}
-                addNumberParam={addNumberUserProperty}
-                setParamName={setUserPropertyName}
-                setParamValue={setUserPopertyValue}
-              />
-            </>
-          )}
-        </ShowAdvancedCtx.Provider>
-      </section>
+          <WithHelpText
+            helpText={
+              <>
+                Check to indicate events should not be used for personalized ads.
+                See{" "}
+                <ExternalLink
+                  href={`https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference?client_type=${
+                    useFirebase ? "firebase" : "gtag"
+                  }#non_personalized_ads`}
+                >
+                  non_personalized_ads
+                </ExternalLink>{" "}
+                on devsite.
+              </>
+            }
+          >
+            <LabeledCheckbox
+              checked={non_personalized_ads}
+              setChecked={setNonPersonalizedAds}
+              id={Label.NonPersonalizedAds}
+            >
+              {Label.NonPersonalizedAds}
+            </LabeledCheckbox>
+          </WithHelpText>
+        </section>
+
+        <Typography variant="h4">Event details</Typography>
+        <Typography>
+          Finally, specify the parameters to send with the event. By default, only
+          recommended parameters for the event will appear here. Check "show
+          advanced options" to add custom parameters or user properties.
+        </Typography>
+        <LabeledCheckbox checked={showAdvanced} onChange={setShowAdvanced}>
+          show advanced options
+        </LabeledCheckbox>
+
+        <section className={formClasses.form}>
+          <ShowAdvancedCtx.Provider
+            value={showAdvanced || type === EventType.CustomEvent}
+          >
+            <Typography variant="h5">Parameters</Typography>
+            <Parameters
+              removeParam={removeParam}
+              parameters={parameters}
+              addStringParam={addStringParam}
+              addNumberParam={addNumberParam}
+              setParamName={setParamName}
+              setParamValue={setParamValue}
+              addItemsParam={items === undefined ? addItemsParam : undefined}
+            />
+            {items !== undefined && (
+              <>
+                <Typography variant="h5">Items</Typography>
+                <Items
+                  items={items}
+                  addItem={addItem}
+                  removeItem={removeItem}
+                  removeItemParam={removeItemParam}
+                  addItemNumberParam={addItemNumberParam}
+                  addItemStringParam={addItemStringParam}
+                  setItemParamName={setItemParamName}
+                  setItemParamValue={setItemParamValue}
+                  removeItems={removeItems}
+                />
+              </>
+            )}
+
+            {(showAdvanced ||
+              (userProperties !== undefined && userProperties.length !== 0)) && (
+              <>
+                <Typography variant="h5">User properties</Typography>
+                <Parameters
+                  removeParam={removeUserProperty}
+                  parameters={userProperties}
+                  addStringParam={addStringUserProperty}
+                  addNumberParam={addNumberUserProperty}
+                  setParamName={setUserPropertyName}
+                  setParamValue={setUserPopertyValue}
+                />
+              </>
+            )}
+          </ShowAdvancedCtx.Provider>
+        </section>
       </div>
-      }
+    }
 
       <Typography variant="h3" className={classes.validateHeading}>
         Validate & Send event
@@ -596,6 +651,7 @@ const EventBuilder: React.FC = () => {
             app_instance_id={app_instance_id || ""}
             firebase_app_id={firebase_app_id || ""}
             formatPayload={formatPayload}
+            payloadErrors={payloadErrors}
           />
         </EventCtx.Provider>
       </UseFirebaseCtx.Provider>

@@ -25,6 +25,8 @@ import { PAB, PlainButton } from "@/components/Buttons"
 import { Check, Warning, Error as ErrorIcon, ContactSupportOutlined } from "@material-ui/icons"
 import PrettyJson from "@/components/PrettyJson"
 import usePayload from "./usePayload"
+import useInputs from "../useInputs"
+import useEvent from "../useEvent"
 import { ValidationMessage } from "../types"
 import Spinner from "@/components/Spinner"
 import { EventCtx, Label } from ".."
@@ -48,7 +50,7 @@ interface TemplateProps {
   error?: boolean
   valid?: boolean
   sent?: boolean
-  formatPayload?: () => void
+  payloadErrors?: string | undefined
 }
 
 export interface ValidateEventProps {
@@ -59,6 +61,7 @@ export interface ValidateEventProps {
   client_id: string
   user_id: string
   formatPayload: () => void
+  payloadErrors: string | undefined
 }
 
 const useStyles = makeStyles(theme => ({
@@ -131,16 +134,11 @@ const Template: React.FC<TemplateProps> = ({
   copySharableLink,
   error,
   valid,
-  formatPayload,
+  payloadErrors
 }) => {
-  const { instanceId, api_secret, useTextBox, payloadObj } = useContext(EventCtx)!
+  const { instanceId, api_secret } = useContext(EventCtx)!
   const classes = useStyles({ error, valid })
-  // console.log('useTextbox', useTextBox)
-  // console.log('payloadObj', payloadObj)
-  // const payload = useTextBox ? payloadObj : usePayload()
-  // console.log('payload', payload)
   const payload = usePayload()
-  // payload is parsed through usePayload. We can just say payload = usePayload || textbox
   const formClasses = useFormStyles()
 
   return (
@@ -152,7 +150,8 @@ const Template: React.FC<TemplateProps> = ({
         {headingIcon}
         {heading}
       </Typography>
-      {validationMessages !== undefined && (
+
+      {validationMessages !== undefined && !payloadErrors && (
         <ul>
           {validationMessages.map((message, idx) => (
             <div>
@@ -169,17 +168,19 @@ const Template: React.FC<TemplateProps> = ({
         </ul>
       )}
 
+      {validationMessages !== undefined && payloadErrors && (
+        <h3
+          style={{color: 'purple'}}
+        >
+          {payloadErrors}
+        </h3>
+      )}
+
       {body}
 
       <section className={formClasses.buttonRow}>
         {validateEvent !== undefined && (
           <PAB small onClick={() => {
-            console.log('validate second time')
-            // only do this for textBox
-            if (formatPayload) {
-              formatPayload()
-            }
-            // only validate event if formatted correctly (if is textbox)
             validateEvent()
           }
           }>
@@ -200,8 +201,11 @@ const Template: React.FC<TemplateProps> = ({
           </PlainButton>
         )}
       </section>
+
       <br />
+
       <Typography variant="h4">Request info</Typography>
+
       <Typography className={classes.headers}>
         POST /mp/collect?api_secret={api_secret}
         {instanceId.firebase_app_id &&
@@ -212,7 +216,9 @@ const Template: React.FC<TemplateProps> = ({
         HOST: www.google-analytics.com <br />
         Content-Type: application/json
       </Typography>
+
       <Typography variant="h5">Payload</Typography>
+
       <section data-testid="payload">
         <PrettyJson
           className={classes.payload}
@@ -225,7 +231,7 @@ const Template: React.FC<TemplateProps> = ({
   )
 }
 
-const ValidateEvent: React.FC<ValidateEventProps> = ({formatPayload}) => {
+const ValidateEvent: React.FC<ValidateEventProps> = ({formatPayload, payloadErrors}) => {
   const request = useValidateEvent()
 
   return (
@@ -249,7 +255,10 @@ const ValidateEvent: React.FC<ValidateEventProps> = ({formatPayload}) => {
           }
           validateEvent={ () => {
               console.log('validate first time')
-              formatPayload()
+              if (formatPayload) {
+                formatPayload()
+              }
+
               validateEvent()
             }
           }
@@ -258,15 +267,23 @@ const ValidateEvent: React.FC<ValidateEventProps> = ({formatPayload}) => {
       renderInProgress={() => (
         <Template heading="Validating" body={<Spinner ellipses />} />
       )}
-      renderFailed={({ validationMessages, validateEvent }) => (
+      renderFailed={({ validationMessages, validateEvent}) => (
         <Template
           error
           headingIcon={<ErrorIcon />}
           heading="Event is invalid"
           body=""
-          validateEvent={validateEvent}
+          validateEvent={ () => {
+              console.log('validate second time')
+              if (formatPayload) {
+                formatPayload()
+              }
+
+              validateEvent()
+            }
+          }
           validationMessages={validationMessages}
-          formatPayload={formatPayload}
+          payloadErrors={payloadErrors}
         />
       )}
       renderSuccessful={({ sendToGA, copyPayload, copySharableLink, sent }) => (

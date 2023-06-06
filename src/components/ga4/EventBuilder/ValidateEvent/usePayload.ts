@@ -125,7 +125,11 @@ const usePayload = (): {} => {
 
   if (useTextBox) {
     if ((typeof payloadObj) === 'string') {
-      payload = JSON.parse(payloadObj)
+      if (Object.keys(payloadObj).length === 0) {
+        payload = {}
+      } else {
+        payload = JSON.parse(payloadObj)
+      }
     } else {
       payload = payloadObj
     }

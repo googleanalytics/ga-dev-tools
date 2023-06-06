@@ -14,6 +14,8 @@ import {
 import { EventCtx, UseFirebaseCtx } from ".."
 import { InstanceId, ValidationMessage } from "../types"
 import usePayload from "./usePayload"
+import useInputs from "../useInputs"
+import useEvent from "../useEvent"
 import useSharableLink from "./useSharableLink"
 
 // Build the query param for the instance that should be used for the event.
@@ -76,6 +78,8 @@ export type ValidationInProgress = {}
 export type ValidationFailed = {
   validationMessages: ValidationMessage[]
   validateEvent: () => void
+  formatPayload?: () => void
+  payloadErrors: string | undefined
 }
 
 export const ValidationRequestCtx = createContext<
@@ -101,14 +105,14 @@ const useValidateEvent = (): Requestable<
   // SHould verify. Should only need to enter firebase id in textbox and then 
   // instance id should be part of payload
   const { instanceId, api_secret } = useContext(EventCtx)!
+  const { categories } = useEvent()
+  const { payloadErrors } = useInputs(categories)
 
-  // Whenever the payload changes, we start the "request" over.
-  // THIS IS WHY NOT WORKING FOR PAYLOAD TEXTBOX
   useEffect(() => {
     if (!useTextBox) {
       setStatus(RequestStatus.NotStarted)
+      setSent(false)
     }
-    setSent(false)
   }, [payload])
 
   const sendToGA = useCallback(() => {
@@ -156,7 +160,6 @@ const useValidateEvent = (): Requestable<
             validatorErrors = formatErrorMessages(validatorErrors, payload)
             
             setValidationMessages(validatorErrors)
-            // why isn't this working?!
             setStatus(RequestStatus.Failed)
           } else {
             setStatus(RequestStatus.Successful)
@@ -166,10 +169,9 @@ const useValidateEvent = (): Requestable<
       .catch(e => {
         console.error(e)
       })
-  }, [status, payload, api_secret, instanceId, useFirebase])
+  }, [status, payload, api_secret, instanceId, useFirebase, payloadErrors])
 
   const validatePayloadAttributes = (payload) => {
-    console.log('payload in validatePayloadAttribute', payload)
     let validator = new Validator(baseContentSchema)
     let formatCheckErrors: ValidationMessage[] | [] = formatCheckLib(payload, instanceId?.firebase_app_id)
 
@@ -209,7 +211,7 @@ const useValidateEvent = (): Requestable<
   } else if (status === RequestStatus.NotStarted) {
     return { status, validateEvent }
   } else if (status === RequestStatus.Failed) {
-    return { status, validationMessages, validateEvent }
+    return { status, validationMessages, validateEvent, payloadErrors}
   } else {
     return { status }
   }
