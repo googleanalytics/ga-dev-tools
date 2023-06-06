@@ -288,7 +288,7 @@ const ValidateEvent: React.FC<ValidateEventProps> = ({formatPayload, payloadErro
           useTextBox={useTextBox}
         />
       )}
-      renderSuccessful={({ sendToGA, copyPayload, copySharableLink, sent }) => (
+      renderSuccessful={({ sendToGA, copyPayload, copySharableLink, sent}) => (
         <Template
           sent={sent}
           valid

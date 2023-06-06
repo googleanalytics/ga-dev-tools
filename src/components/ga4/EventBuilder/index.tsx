@@ -41,7 +41,6 @@ import Items from "./Items"
 import ValidateEvent from "./ValidateEvent"
 import { Button } from "@material-ui/core"
 import { useEffect } from "react"
-import { RequestStatus } from "@/types"
 
 export enum Label {
   APISecret = "api_secret",
@@ -263,7 +262,6 @@ const EventBuilder: React.FC = () => {
       <Typography>
         After choosing a client, fill out the inputs below.
       </Typography>
-
 
     { 
       useFirebase && (
