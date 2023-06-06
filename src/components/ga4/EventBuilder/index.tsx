@@ -207,8 +207,6 @@ const EventBuilder: React.FC = () => {
   }, [inputPayload])
 
   const formatPayload = () => {
-    console.log('formatting')
-
     try {
       if (inputPayload) {
         let payload = JSON.parse(inputPayload) as object

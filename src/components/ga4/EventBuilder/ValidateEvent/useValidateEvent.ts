@@ -157,7 +157,6 @@ const useValidateEvent = (): Requestable<
               validatorErrors = formatErrorMessages(validatorErrors, payload)
               
               setValidationMessages(validatorErrors)
-              console.log('validatorErrors', validatorErrors)
               setStatus(RequestStatus.Failed)
             } else {
               setStatus(RequestStatus.Successful)
@@ -171,7 +170,6 @@ const useValidateEvent = (): Requestable<
       let validatorErrors = formatValidationMessage()
       setValidationMessages(validatorErrors)
       setStatus(RequestStatus.Failed)
-      console.log('FORMAT ERROR')
     }
   }, [status, payload, api_secret, instanceId, useFirebase, payloadErrors])
 

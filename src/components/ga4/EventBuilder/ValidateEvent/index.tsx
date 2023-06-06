@@ -257,7 +257,6 @@ const ValidateEvent: React.FC<ValidateEventProps> = ({formatPayload, payloadErro
             </>
           }
           validateEvent={ () => {
-              console.log('validate first time')
               if (formatPayload) {
                 formatPayload()
               }
@@ -277,7 +276,6 @@ const ValidateEvent: React.FC<ValidateEventProps> = ({formatPayload, payloadErro
           heading="Event is invalid"
           body=""
           validateEvent={ () => {
-              console.log('validate second time')
               if (formatPayload) {
                 formatPayload()
               }
