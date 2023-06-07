@@ -8,7 +8,7 @@ export interface TextBoxProps {
   value: string | undefined | object
   label: string
   onChange: (e: string) => void
-  helperText: string | JSX.Element
+  helperText?: string | JSX.Element
   extraAction?: JSX.Element
   required?: true
   disabled?: boolean

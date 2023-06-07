@@ -18,6 +18,7 @@ import makeStyles from "@material-ui/core/styles/makeStyles"
 import Typography from "@material-ui/core/Typography"
 import TextField from "@material-ui/core/TextField"
 import IconButton from "@material-ui/core/IconButton"
+import { Error as ErrorIcon } from "@material-ui/icons"
 import Tooltip from "@material-ui/core/Tooltip"
 import Autocomplete from "@material-ui/lab/Autocomplete"
 import Refresh from "@material-ui/icons/Refresh"
@@ -31,6 +32,7 @@ import ExternalLink from "@/components/ExternalLink"
 import { Url } from "@/constants"
 import WithHelpText from "@/components/WithHelpText"
 import useFormStyles from "@/hooks/useFormStyles"
+import { TooltipIconButton } from "@/components/Buttons"
 import useEvent from "./useEvent"
 import Parameters from "./Parameters"
 import useInputs from "./useInputs"
@@ -39,7 +41,7 @@ import { eventsForCategory } from "./event"
 import useUserProperties from "./useUserProperties"
 import Items from "./Items"
 import ValidateEvent from "./ValidateEvent"
-import { Button } from "@material-ui/core"
+import { PlainButton } from "@/components/Buttons"
 import { useEffect } from "react"
 
 export enum Label {
@@ -265,36 +267,38 @@ const EventBuilder: React.FC = () => {
 
     { 
       useFirebase && (
-      <WithHelpText
-        notched
-        shrink
-        label="format"
-        className="formatTab"
-      >
-        <Grid component="label" container alignItems="center" spacing={1}>
-          <Grid item>form</Grid>
-          <Grid item>
-            <Switch
-              data-testid="use form"
-              checked={useTextBox}
-              onChange={e => {
-                setUseTextBox(e.target.checked)
-              }}
-              name="use form"
-              color="primary"
-            />
-          </Grid>
-          <Grid item>text box</Grid>
-        </Grid>
-      </WithHelpText>
+        <>
+          <WithHelpText
+            notched
+            shrink
+            label="Payload Format"
+            className="formatTab"
+          >
+            <Grid component="label" container alignItems="center" spacing={1}>
+              <Grid item>Form</Grid>
+              <Grid item>
+                <Switch
+                  data-testid="use form"
+                  checked={useTextBox}
+                  onChange={e => {
+                    setUseTextBox(e.target.checked)
+                  }}
+                  name="use form"
+                  color="primary"
+                />
+              </Grid>
+              <Grid item>Text Box</Grid>
+            </Grid>
+          </WithHelpText>
+
+          <br/>
+        </>
       )
     }
 
     { useTextBox && 
       <div>
         <section className={formClasses.form}>
-          <br/>
-
           <LinkedTextField
             required
             href="https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference#api_secret"
@@ -336,7 +340,6 @@ const EventBuilder: React.FC = () => {
           linkTitle="Enter payload here"
           value={Object.keys(payloadObj).length > 0 ? payloadObj : inputPayload}
           label={Label.Payload}
-          helperText="Payload"
           onChange={(input) => {
               setInputPayload(input)
               formatPayload()
@@ -344,21 +347,30 @@ const EventBuilder: React.FC = () => {
           }
         />
 
-        <h3
-          style={{color: 'red'}}
-        >
-          {payloadErrors}
-        </h3>
-
         <br/>
 
         <br/>
 
-        <Button
+        <PlainButton small
           onClick={formatPayload}
         >
           format payload
-        </Button>
+        </PlainButton>
+
+        { payloadErrors && (
+            <TooltipIconButton
+              tooltip={
+                <React.Fragment>
+                  <Typography color="inherit">{payloadErrors}</Typography>
+                </React.Fragment>
+              }
+              placement={'top'}
+            >
+              <ErrorIcon
+                style={{color: 'red'}}
+              /> 
+            </TooltipIconButton>
+        )}
       </div>
     }
 

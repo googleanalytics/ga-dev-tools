@@ -4,7 +4,7 @@ import {
   useHydratedPersistantString,
 } from "@/hooks/useHydrated"
 import { useState } from "react"
-import { Category, UrlParam, Parameter } from "./types"
+import { Category, UrlParam } from "./types"
 
 const useInputs = (categories: Category[]) => {
   const [useFirebase, setUseFirebase] = useHydratedPersistantBoolean(

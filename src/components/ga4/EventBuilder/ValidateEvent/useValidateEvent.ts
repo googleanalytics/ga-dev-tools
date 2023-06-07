@@ -108,7 +108,7 @@ const useValidateEvent = (): Requestable<
       setStatus(RequestStatus.NotStarted)
       setSent(false)
     }
-  }, [payload])
+  }, [payload, useTextBox])
 
   const sendToGA = useCallback(() => {
     if (status !== RequestStatus.Successful) {

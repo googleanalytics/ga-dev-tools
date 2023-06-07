@@ -22,11 +22,9 @@ import useValidateEvent from "./useValidateEvent"
 import Loadable from "@/components/Loadable"
 import Typography from "@material-ui/core/Typography"
 import { PAB, PlainButton } from "@/components/Buttons"
-import { Check, Warning, Error as ErrorIcon, ContactSupportOutlined } from "@material-ui/icons"
+import { Check, Warning, Error as ErrorIcon } from "@material-ui/icons"
 import PrettyJson from "@/components/PrettyJson"
 import usePayload from "./usePayload"
-import useInputs from "../useInputs"
-import useEvent from "../useEvent"
 import { ValidationMessage } from "../types"
 import Spinner from "@/components/Spinner"
 import { EventCtx, Label } from ".."
@@ -172,11 +170,15 @@ const Template: React.FC<TemplateProps> = ({
       )}
 
       {validationMessages !== undefined && payloadErrors && (
-        <h3
-          style={{color: 'purple'}}
-        >
-          {payloadErrors}
-        </h3>
+        <div>
+          <ul>
+            <li>
+              JSON formatting error: <i>{payloadErrors}</i>
+            </li>
+          </ul>
+          <br/>
+          <br/>
+        </div>
       )}
 
       {body}
