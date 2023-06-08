@@ -18,7 +18,7 @@ const RESERVED_USER_PROPERTY_NAMES = [
 
 // formatCheckLib provides additional validations for payload not included in 
 // the schema validations. All checks are consistent with Firebase documentation.
-export const formatCheckLib = (payload, firebaseAppId) => {
+export const formatCheckLib = (payload, firebaseAppId, api_secret) => {
     let errors: ValidationMessage[] = []
 
     const appInstanceIdErrors = isValidAppInstanceId(payload)
@@ -28,6 +28,7 @@ export const formatCheckLib = (payload, firebaseAppId) => {
     const emptyItemsErrors = isItemsEmpty(payload)
     const itemsRequiredKeyErrors = itemsHaveRequiredKey(payload)
     const firebaseAppIdErrors = isfirebaseAppIdValid(firebaseAppId)
+    const apiSecretErrors = isApiSecretNotNull(api_secret)
     const sizeErrors = isTooBig(payload)
 
     return [
@@ -39,6 +40,7 @@ export const formatCheckLib = (payload, firebaseAppId) => {
         ...emptyItemsErrors,
         ...itemsRequiredKeyErrors,
         ...firebaseAppIdErrors,
+        ...apiSecretErrors,
         ...sizeErrors,
     ]
 }
@@ -188,6 +190,20 @@ const isfirebaseAppIdValid = (firebaseAppId) => {
             description: `${firebaseAppId} does not follow firebase_app_id pattern of X:XX:XX:XX at path`,
             validationCode: "value_invalid",
             fieldPath: "firebase_app_id"
+        })
+    }
+
+    return errors
+}
+
+const isApiSecretNotNull = (api_secret) => {
+    let errors: ValidationMessage[] = []
+
+    if (!api_secret) {
+        errors.push({
+            description: "Unable to find non-empty parameter [api_secret] value in request.",
+            validationCode: "VALUE_REQUIRED",
+            fieldPath: "api_secret"
         })
     }
 
