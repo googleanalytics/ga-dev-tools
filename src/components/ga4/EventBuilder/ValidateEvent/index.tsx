@@ -152,7 +152,11 @@ const Template: React.FC<TemplateProps> = ({
         {heading}
       </Typography>
 
-      {validationMessages !== undefined && !payloadErrors && (
+      {validationMessages !== undefined && 
+        (
+          (useTextBox && !payloadErrors) ||
+          !useTextBox 
+        ) && (
         <ul>
           {validationMessages.map((message, idx) => (
             <div>
@@ -169,7 +173,7 @@ const Template: React.FC<TemplateProps> = ({
         </ul>
       )}
 
-      {validationMessages !== undefined && payloadErrors && (
+      {useTextBox && payloadErrors && (
         <div>
           <ul>
             <li>

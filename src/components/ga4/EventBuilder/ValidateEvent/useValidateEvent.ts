@@ -110,6 +110,7 @@ const useValidateEvent = (): Requestable<
     }
   }, [payload, useTextBox])
 
+
   const sendToGA = useCallback(() => {
     if (status !== RequestStatus.Successful) {
       return
@@ -133,7 +134,7 @@ const useValidateEvent = (): Requestable<
     setStatus(RequestStatus.InProgress)
     setValidationMessages([])
 
-    if (Object.keys(payload).length !== 0) {
+    if (!useTextBox || Object.keys(payload).length !== 0) {
       let validatorErrors = useFirebase ? validatePayloadAttributes(payload) : []
 
       validateHit(payload, instanceId, api_secret)
