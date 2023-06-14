@@ -127,6 +127,29 @@ const useValidateEvent = (): Requestable<
 
   const copySharableLink = useCopy(url, "copied link to event")
 
+  const validatePayloadAttributes = (payload) => {
+    let validator = new Validator(baseContentSchema)
+    let formatCheckErrors: ValidationMessage[] | [] = formatCheckLib(
+      payload, 
+      instanceId?.firebase_app_id,
+      api_secret
+    )
+
+    if (!validator.isValid(payload) || formatCheckErrors) {
+      let validatorErrors: ValidationMessage[] = validator.getErrors(payload).map((err) => {
+        return {
+          description: err.message,
+          validationCode: err?.data?.validationError?.code ? err?.data?.validationError?.code : err.code,
+          fieldPath: defineFieldCode(err)
+        }
+      })
+
+      return [...validatorErrors, ...formatCheckErrors]
+    }
+
+    return []
+  }
+
   const validateEvent = useCallback(() => {
     if (status === RequestStatus.InProgress) {
       return
@@ -172,30 +195,7 @@ const useValidateEvent = (): Requestable<
       setValidationMessages(validatorErrors)
       setStatus(RequestStatus.Failed)
     }
-  }, [status, payload, api_secret, instanceId, useFirebase, payloadErrors])
-
-  const validatePayloadAttributes = (payload) => {
-    let validator = new Validator(baseContentSchema)
-    let formatCheckErrors: ValidationMessage[] | [] = formatCheckLib(
-      payload, 
-      instanceId?.firebase_app_id,
-      api_secret
-    )
-
-    if (!validator.isValid(payload) || formatCheckErrors) {
-      let validatorErrors: ValidationMessage[] = validator.getErrors(payload).map((err) => {
-        return {
-          description: err.message,
-          validationCode: err?.data?.validationError?.code ? err?.data?.validationError?.code : err.code,
-          fieldPath: defineFieldCode(err)
-        }
-      })
-
-      return [...validatorErrors, ...formatCheckErrors]
-    }
-
-    return []
-  }
+  }, [status, payload, api_secret, instanceId, useFirebase, payloadErrors, useTextBox, validatePayloadAttributes])
 
   const defineFieldCode = (error) => {
     const { data } = error
