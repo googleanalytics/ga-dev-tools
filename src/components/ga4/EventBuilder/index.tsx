@@ -271,7 +271,7 @@ const EventBuilder: React.FC = () => {
           <WithHelpText
             notched
             shrink
-            label="Payload Format"
+            label="Validation Method"
             className="formatTab"
           >
             <Grid component="label" container alignItems="center" spacing={1}>
