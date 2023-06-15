@@ -336,8 +336,8 @@ const EventBuilder: React.FC = () => {
 
         <TextBox
           required
-          href="https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference#api_secret"
-          linkTitle="Enter payload here"
+          href="https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference?client_type=firebase#payload_post_body"
+          linkTitle="JSON Payload Documentation"
           value={Object.keys(payloadObj).length > 0 ? payloadObj : inputPayload}
           label={Label.Payload}
           onChange={(input) => {
