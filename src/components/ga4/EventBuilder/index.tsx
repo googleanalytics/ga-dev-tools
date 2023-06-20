@@ -271,11 +271,11 @@ const EventBuilder: React.FC = () => {
           <WithHelpText
             notched
             shrink
-            label="Validation Method"
+            label="validation method"
             className="formatTab"
           >
             <Grid component="label" container alignItems="center" spacing={1}>
-              <Grid item>Form</Grid>
+              <Grid item>form</Grid>
               <Grid item>
                 <Switch
                   data-testid="use form"
@@ -287,7 +287,7 @@ const EventBuilder: React.FC = () => {
                   color="primary"
                 />
               </Grid>
-              <Grid item>Text Box</Grid>
+              <Grid item>text box</Grid>
             </Grid>
           </WithHelpText>
 
