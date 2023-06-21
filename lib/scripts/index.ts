@@ -1,9 +1,9 @@
 import argparse from "argparse"
-import { checkConfig } from "./check-config"
-import { build } from "./build"
-import { develop } from "./develop"
-import { serve } from "./serve"
-import { stage } from "./stage"
+import { checkConfig } from "./check-config.js"
+import { build } from "./build.js"
+import { develop } from "./develop.js"
+import { serve } from "./serve.js"
+import { stage } from "./stage.js"
 import {
   Command,
   Args,
@@ -11,8 +11,8 @@ import {
   RuntimeJson,
   StagingConfig,
   ProductionConfig,
-} from "./types"
-import { deployFunctions } from "./deploy-functions"
+} from "./types.js"
+import { deployFunctions } from "./deploy-functions.js"
 
 export const configForEnvironment = (
   environment: Environment,

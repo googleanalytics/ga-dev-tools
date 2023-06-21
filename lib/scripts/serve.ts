@@ -1,7 +1,7 @@
 import { execa } from "execa";
-import { build } from "./build"
-import { ServeArgs, Environment } from "./types"
-import { checkConfig } from "./check-config"
+import { build } from "./build.js"
+import { ServeArgs, Environment } from "./types.js"
+import { checkConfig } from "./check-config.js"
 
 export const serve = async (args: ServeArgs) => {
   const config = await checkConfig({ all: false })

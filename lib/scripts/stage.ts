@@ -1,8 +1,8 @@
 import { execa } from "execa";
-import { build } from "./build"
-import { checkConfig, writeEnvFile } from "./check-config"
-import { DeployArgs, Environment } from "./types"
-import { ensureFirebaseLoginStatus } from "./deploy-functions"
+import { build } from "./build.js"
+import { checkConfig, writeEnvFile } from "./check-config.js"
+import { DeployArgs, Environment } from "./types.js"
+import { ensureFirebaseLoginStatus } from "./deploy-functions.js"
 
 export const stage = async (args: DeployArgs) => {
   const config = await checkConfig({

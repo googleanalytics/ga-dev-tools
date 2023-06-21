@@ -11,8 +11,8 @@
     "@types/inquirer": "^9.0.3",
     "typescript": "^5.0.4"
   },
+  "type": "module",
   "scripts": {
     "build": "tsc"
-  },
-  "type": "module"
+  }
 }

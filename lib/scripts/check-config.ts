@@ -1,5 +1,5 @@
 import * as fs from "fs"
-import inquirer, { QuestionCollection } from "inquirer"
+import { default as inquirer, QuestionCollection } from "inquirer"
 import {
   RuntimeJson,
   RuntimeJsonPath,
@@ -12,7 +12,7 @@ import {
   CommonConfig,
   AnswerNames,
   DotEnvDevelopmentPath,
-} from "./types"
+} from "./types.js"
 
 type ConfigQuestionFilter = {
   askAll?: true | undefined

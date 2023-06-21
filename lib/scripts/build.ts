@@ -1,4 +1,4 @@
-import { checkConfig } from "./check-config"
+import { checkConfig } from "./check-config.js"
 import { execa } from "execa";
 
 const checkTypes = async () => {
