@@ -22,7 +22,6 @@ import { GAVersion } from "@/constants"
 import TabPanel from "@/components/TabPanel"
 import WebURLBuilder from "./Web"
 import PlayURLBuilder from "./Play"
-import IOSURLBuilder from "./IOS"
 
 export enum URLBuilderType {
   Web = "web",

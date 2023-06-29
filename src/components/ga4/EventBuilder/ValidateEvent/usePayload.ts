@@ -70,6 +70,8 @@ const usePayload = (): {} => {
     non_personalized_ads,
     clientIds,
     type,
+    useTextBox,
+    payloadObj
   } = useContext(EventCtx)!
 
   const eventName = useMemo(() => {
@@ -100,8 +102,8 @@ const usePayload = (): {} => {
     () => userProperties.reduce(objectifyUserProperties, {}),
     [userProperties]
   )
-
-  const payload = useMemo(() => {
+  
+  let payload = useMemo(() => {
     return {
       ...removeUndefined(clientIds),
       ...removeUndefined({ timestamp_micros }),
@@ -120,6 +122,19 @@ const usePayload = (): {} => {
     timestamp_micros,
     user_properties,
   ])
+
+  if (useTextBox) {
+    if ((typeof payloadObj) === 'string') {
+      if (Object.keys(payloadObj).length === 0) {
+        // @ts-ignore ts[2741]
+        payload = {}
+      } else {
+        payload = JSON.parse(payloadObj)
+      }
+    } else {
+      payload = payloadObj
+    }
+  }
 
   return payload
 }
