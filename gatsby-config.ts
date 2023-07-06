@@ -1,27 +1,16 @@
-// Copyright 2020 Google Inc. All rights reserved.
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-//     http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
+import type { GatsbyConfig } from "gatsby";
 
-module.exports = {
-  flags: {
-    PRESERVE_WEBPACK_CACHE: true,
-    // DEV_SSR: true,
-  },
+// @ts-ignore
+const config: GatsbyConfig = {
   siteMetadata: {
     title: `Discover the Google Analytics Platform`,
     siteUrl: "https://ga-dev-tools.google",
     author: `Google Analytics Developer Relations`,
   },
+  // More easily incorporate content into your pages through automatic TypeScript type generation and better GraphQL IntelliSense.
+  // If you use VSCode you can also use the GraphQL plugin
+  // Learn more at: https://gatsby.dev/graphql-typegen
+  graphqlTypegen: true,
   plugins: [
     {
       resolve: `gatsby-source-filesystem`,
@@ -42,7 +31,8 @@ module.exports = {
     {
       resolve: `gatsby-plugin-sitemap`,
       options: {
-        serialize: ({ path, modifiedGmt }) => {
+        serialize: ({path, modifiedGmt } : {path:string,
+          modifiedGmt:string}) => {
           return {
             url: path,
             lastmod: modifiedGmt,
@@ -58,7 +48,6 @@ module.exports = {
       },
     },
     `gatsby-plugin-use-query-params`,
-    `gatsby-theme-material-ui`,
     `gatsby-plugin-preload-fonts`,
     {
       resolve: `gatsby-plugin-google-fonts`,
@@ -74,8 +63,6 @@ module.exports = {
         },
       },
     },
-    `gatsby-plugin-typescript`,
-    `gatsby-plugin-react-helmet`,
     {
       resolve: `gatsby-source-filesystem`,
       options: {
@@ -87,5 +74,8 @@ module.exports = {
     `gatsby-plugin-sharp`,
     `gatsby-transformer-sharp`,
     `gatsby-transformer-json`,
-  ],
-}
+    `gatsby-plugin-emotion`
+  ]
+};
+
+export default config;

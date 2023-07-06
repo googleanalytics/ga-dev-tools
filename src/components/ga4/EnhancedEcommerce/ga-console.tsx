@@ -1,17 +1,17 @@
 import * as React from "react"
 import {StoreContext} from "./store-context"
 import {emptyEvents, eventDescription, eventLine, eventName, eventSnippet, eventTimestamp, gaConsoleStyle} from "@/components/ga4/EnhancedEcommerce/ga-console.module.css";
-import Dialog from '@material-ui/core/Dialog';
-import Tabs from '@material-ui/core/Tabs';
-import Tab from '@material-ui/core/Tab';
-import DialogActions from '@material-ui/core/DialogActions';
-import DialogContent from '@material-ui/core/DialogContent';
-import DialogContentText from '@material-ui/core/DialogContentText';
-import DialogTitle from '@material-ui/core/DialogTitle';
-import Button from '@material-ui/core/Button';
-import TextField from '@material-ui/core/TextField';
+import Dialog from '@mui/material/Dialog';
+import Tabs from '@mui/material/Tabs';
+import Tab from '@mui/material/Tab';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogContentText from '@mui/material/DialogContentText';
+import DialogTitle from '@mui/material/DialogTitle';
+import Button from '@mui/material/Button';
+import TextField from '@mui/material/TextField';
 import {Link} from "gatsby";
-import {Box, Typography} from "@material-ui/core";
+import {Box, Typography} from "@mui/material";
 
 function TabPanel(props) {
     const {children, value, index, ...other} = props;

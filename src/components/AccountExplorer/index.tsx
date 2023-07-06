@@ -13,7 +13,7 @@
 // limitations under the License.
 
 import * as React from "react"
-import { makeStyles } from "@material-ui/core"
+import { styled } from '@mui/material/styles';
 import TextField from "@mui/material/TextField"
 import Typography from "@mui/material/Typography"
 import Paper from "@mui/material/Paper"
@@ -27,41 +27,65 @@ import useAccountPropertyView, {
 import { StorageKey } from "@/constants"
 import useFlattenedViews from "../ViewSelector/useFlattenedViews"
 
-const useStyles = makeStyles(theme => ({
-  viewSelector: {
+const PREFIX = 'AccountExplorer';
+
+const classes = {
+  viewSelector: `${PREFIX}-viewSelector`,
+  section: `${PREFIX}-section`,
+  paper: `${PREFIX}-paper`,
+  header: `${PREFIX}-header`,
+  heading: `${PREFIX}-heading`,
+  search: `${PREFIX}-search`,
+  searchInput: `${PREFIX}-searchInput`,
+  table: `${PREFIX}-table`
+};
+
+const Root = styled('div')((
+  {
+    theme
+  }
+) => ({
+  [`& .${classes.viewSelector}`]: {
     marginBottom: theme.spacing(1),
   },
-  section: {
+
+  [`& .${classes.section}`]: {
     padding: theme.spacing(1),
   },
-  paper: {
+
+  [`& .${classes.paper}`]: {
     padding: theme.spacing(3),
   },
-  header: {
+
+  [`& .${classes.header}`]: {
     margin: theme.spacing(0, 1, 0),
     padding: theme.spacing(0, 1, 0),
   },
-  heading: {
+
+  [`& .${classes.heading}`]: {
     margin: theme.spacing(2),
     textAlign: "center",
   },
-  search: {
+
+  [`& .${classes.search}`]: {
     display: "flex",
     "flex-direction": "column",
     "align-items": "center",
     padding: theme.spacing(0, 1, 0),
     // Search title Title
   },
-  searchInput: {
+
+  [`& .${classes.searchInput}`]: {
     margin: theme.spacing(1),
     padding: theme.spacing(1, 1),
     width: "100%",
     "max-width": theme.breakpoints.values.sm,
   },
-  table: {
+
+  [`& .${classes.table}`]: {
     "margin-top": theme.spacing(6),
-  },
-}))
+  }
+}));
 
 const containsQuery = (
   searchQuery: string,
@@ -85,7 +109,7 @@ enum QueryParam {
 }
 
 const AccountExplorer = () => {
-  const classes = useStyles()
+
 
   const [searchQuery, setSearchQuery] = React.useState("")
   const [debouncedQuery] = useDebounce(searchQuery, 100, { trailing: true })
@@ -106,7 +130,7 @@ const AccountExplorer = () => {
   )
 
   return (
-    <>
+    (<Root>
       <Typography variant="h2">Overview</Typography>
       <Typography variant="body1">
         Use this tool to search or browse through your accounts, properties, and
@@ -145,8 +169,8 @@ const AccountExplorer = () => {
           </div>
         </header>
       </Paper>
-    </>
-  )
+    </Root>)
+  );
 }
 
 export default AccountExplorer

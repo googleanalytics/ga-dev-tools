@@ -1,23 +1,34 @@
 import * as React from "react"
 
-import GetApp from "@mui/icons-material/GetApp"
-import {makeStyles} from "@material-ui/core"
+import { styled } from '@mui/material/styles';
 
-const useStyles = makeStyles(theme => ({
-  download: {
+import GetApp from "@mui/icons-material/GetApp"
+
+const PREFIX = 'TSVDownload';
+
+const classes = {
+  download: `${PREFIX}-download`
+};
+
+const Root = styled('a')((
+  {
+    theme
+  }
+) => ({
+  [`&.${classes.download}`]: {
     marginTop: theme.spacing(-1),
     marginBottom: theme.spacing(2),
     display: "flex",
     alignItems: "center",
-  },
-}))
+  }
+}));
 
 interface TSVDownloadProps {
   queryResponse: gapi.client.analytics.GaData
 }
 
 const TSVDownload: React.FC<TSVDownloadProps> = ({ queryResponse }) => {
-  const classes = useStyles()
+
 
   const csvContents = React.useMemo(() => {
     const baseUrl = `data:text/tsv;charset=utf8,`
@@ -36,11 +47,11 @@ const TSVDownload: React.FC<TSVDownloadProps> = ({ queryResponse }) => {
   )
 
   return (
-    <a className={classes.download} href={csvContents} download={filename}>
+    <Root className={classes.download} href={csvContents} download={filename}>
       <GetApp />
       download .tsv
-    </a>
-  )
+    </Root>
+  );
 }
 
 export default TSVDownload

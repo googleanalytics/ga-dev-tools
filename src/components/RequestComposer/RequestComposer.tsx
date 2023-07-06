@@ -13,12 +13,12 @@
 // limitations under the License.
 
 import * as React from "react"
+import { styled } from '@mui/material/styles';
 import { useState } from "react"
 
 import Typography from "@mui/material/Typography"
 import Tabs from "@mui/material/Tabs"
 import Tab from "@mui/material/Tab"
-import {makeStyles} from "@material-ui/core"
 
 import { StorageKey } from "@/constants"
 import ViewSelector from "@/components/ViewSelector"
@@ -35,19 +35,33 @@ import { RequestComposerType } from "."
 import useAccountPropertyView from "../ViewSelector/useAccountPropertyView"
 import { navigate } from "gatsby"
 
-const useStyles = makeStyles(theme => ({
-  viewSelector: {
+const PREFIX = 'RequestComposer';
+
+const classes = {
+  viewSelector: `${PREFIX}-viewSelector`,
+  maxControlWidth: `${PREFIX}-maxControlWidth`,
+  makeRequest: `${PREFIX}-makeRequest`
+};
+
+const Root = styled('div')((
+  {
+    theme
+  }
+) => ({
+  [`& .${classes.viewSelector}`]: {
     flexDirection: "column",
     maxWidth: "650px",
   },
-  maxControlWidth: {
+
+  [`& .${classes.maxControlWidth}`]: {
     maxWidth: "600px",
   },
-  makeRequest: {
+
+  [`& .${classes.makeRequest}`]: {
     marginTop: theme.spacing(1),
     marginBottom: theme.spacing(2),
-  },
-}))
+  }
+}));
 
 export type ReportRequest = gapi.client.analyticsreporting.ReportRequest
 export type ReportsRequest = { reportRequests: Array<ReportRequest> }
@@ -69,7 +83,7 @@ interface RequestComposerProps {
 }
 
 const RequestComposer: React.FC<RequestComposerProps> = ({ type }) => {
-  const classes = useStyles()
+
   const tab = React.useMemo(() => {
     switch (type) {
       case RequestComposerType.Histogram:
@@ -108,15 +122,15 @@ const RequestComposer: React.FC<RequestComposerProps> = ({ type }) => {
 
   const button = React.useMemo(() => {
     return (
-      <PAB
-        variant="contained"
-        color="primary"
-        disabled={!canMakeRequest}
-        onClick={makeRequest}
-        className={classes.makeRequest}
-      >
-        Make Request
-      </PAB>
+        <PAB
+          variant="contained"
+          color="primary"
+          disabled={!canMakeRequest}
+          onClick={makeRequest}
+          className={classes.makeRequest}
+        >
+          Make Request
+        </PAB>
     )
   }, [classes, makeRequest, canMakeRequest])
 
@@ -126,80 +140,79 @@ const RequestComposer: React.FC<RequestComposerProps> = ({ type }) => {
   )
 
   return (
-    <>
-      <section>
-        <Typography variant="h3">Select View</Typography>
-        <ViewSelector
-          {...accountPropertyView}
-          autoFill
-          className={classes.viewSelector}
-          variant="outlined"
-          size="small"
-        />
-      </section>
-      <section>
-        <Tabs
-          value={tab}
-          onChange={(_e, newValue) => {
-            const path = `${pathForIdx(newValue)}`
-            navigate(path)
-          }}
-        >
-          <Tab label="Histogram Request" />
-          <Tab label="Pivot Request" />
-          <Tab label="Cohort Request" />
-          <Tab label="Metric Expression" />
-        </Tabs>
-        <TabPanel value={tab} index={0}>
-          <HistogramRequest
-            apv={accountPropertyView}
-            controlWidth={classes.maxControlWidth}
-            setRequestObject={setRequestObject}
+      <Root>
+        <section>
+          <Typography variant="h3">Select View</Typography>
+          <ViewSelector
+            {...accountPropertyView}
+            autoFill
+            className={classes.viewSelector}
+            variant="outlined"
+            size="small"
+          />
+        </section>
+        <section>
+          <Tabs
+            value={tab}
+            onChange={(_e, newValue) => {
+              const path = `${pathForIdx(newValue)}`
+              navigate(path)
+            }}
           >
-            {button}
-          </HistogramRequest>
-        </TabPanel>
-        <TabPanel value={tab} index={1}>
-          <PivotRequest
-            apv={accountPropertyView}
-            controlWidth={classes.maxControlWidth}
-            setRequestObject={setRequestObject}
-          >
-            {button}
-          </PivotRequest>
-        </TabPanel>
-        <TabPanel value={tab} index={2}>
-          <CohortRequest
-            apv={accountPropertyView}
-            controlWidth={classes.maxControlWidth}
-            setRequestObject={setRequestObject}
-          >
-            {button}
-          </CohortRequest>
-        </TabPanel>
-        <TabPanel value={tab} index={3}>
-          <MetricExpression
-            apv={accountPropertyView}
-            controlWidth={classes.maxControlWidth}
-            setRequestObject={setRequestObject}
-          >
-            {button}
-          </MetricExpression>
-        </TabPanel>
-      </section>
-
-      <section className={classes.viewSelector}>
-        <PrettyJson
-          tooltipText="copy request"
-          object={requestObject}
-          shouldCollapse={shouldCollapseRequest}
-        />
-      </section>
-      <section className={classes.viewSelector}>
-        <ReportsTable response={response} longRequest={longRequest} />
-      </section>
-    </>
-  )
+            <Tab label="Histogram Request" />
+            <Tab label="Pivot Request" />
+            <Tab label="Cohort Request" />
+            <Tab label="Metric Expression" />
+          </Tabs>
+          <TabPanel value={tab} index={0}>
+            <HistogramRequest
+              apv={accountPropertyView}
+              controlWidth={classes.maxControlWidth}
+              setRequestObject={setRequestObject}
+            >
+              {button}
+            </HistogramRequest>
+          </TabPanel>
+          <TabPanel value={tab} index={1}>
+            <PivotRequest
+              apv={accountPropertyView}
+              controlWidth={classes.maxControlWidth}
+              setRequestObject={setRequestObject}
+            >
+              {button}
+            </PivotRequest>
+          </TabPanel>
+          <TabPanel value={tab} index={2}>
+            <CohortRequest
+              apv={accountPropertyView}
+              controlWidth={classes.maxControlWidth}
+              setRequestObject={setRequestObject}
+            >
+              {button}
+            </CohortRequest>
+          </TabPanel>
+          <TabPanel value={tab} index={3}>
+            <MetricExpression
+              apv={accountPropertyView}
+              controlWidth={classes.maxControlWidth}
+              setRequestObject={setRequestObject}
+            >
+              {button}
+            </MetricExpression>
+          </TabPanel>
+        </section>
+        <section className={classes.viewSelector}>
+          <PrettyJson
+            tooltipText="copy request"
+            object={requestObject}
+            shouldCollapse={shouldCollapseRequest}
+          />
+        </section>
+        <section className={classes.viewSelector}>
+          <ReportsTable response={response} longRequest={longRequest} />
+        </section>
+      </Root>
+  );
 }
 
 export default RequestComposer

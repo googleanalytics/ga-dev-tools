@@ -1,4 +1,6 @@
-import React, { useState } from "react"
+import React, {PropsWithChildren, useState} from "react"
+
+import { styled } from '@mui/material/styles';
 
 import Typography from "@mui/material/Typography"
 import TableContainer from "@mui/material/TableContainer"
@@ -10,32 +12,50 @@ import TableBody from "@mui/material/TableBody"
 import Tabs from "@mui/material/Tabs"
 import Tab from "@mui/material/Tab"
 import Box from "@mui/material/Box"
-import {makeStyles} from "@material-ui/core"
 
 import PrettyJson, { shouldCollapseResponse } from "@/components/PrettyJson"
 import { GetReportsResponse } from "./api"
 import Spinner from "@/components/Spinner"
 
-const useStyles = makeStyles(theme => ({
-  loadingIndicator: {
+const PREFIX = 'ReportsTable';
+
+const classes = {
+  loadingIndicator: `${PREFIX}-loadingIndicator`,
+  container: `${PREFIX}-container`,
+  makeRequest: `${PREFIX}-makeRequest`,
+  reports: `${PREFIX}-reports`
+};
+
+const Root = styled('section')((
+  {
+    theme
+  }
+) => ({
+  [`& .${classes.loadingIndicator}`]: {
     marginTop: theme.spacing(2),
     display: "flex",
     flexDirection: "column",
     alignItems: "center",
   },
-  container: {
+
+  [`& .${classes.container}`]: {
     maxHeight: 440,
   },
-  makeRequest: {
+
+  [`& .${classes.makeRequest}`]: {
     marginTop: theme.spacing(1),
     marginBottom: theme.spacing(2),
   },
-  reports: {
-    marginTop: theme.spacing(2),
-  },
-}))
 
-const TabPanel: React.FC<{ value: number; index: number }> = ({
+  [`&.${classes.reports}`]: {
+    marginTop: theme.spacing(2),
+  }
+}));
+
+type Props = { value: number,
+  index: number }
+
+const TabPanel: React.FC<PropsWithChildren<Props>> = ({
   value,
   index,
   children,
@@ -61,7 +81,7 @@ const ReportsTable: React.FC<ReportsTableProps> = ({
   response,
   longRequest,
 }) => {
-  const classes = useStyles()
+
   const [tab, setTab] = useState(0)
   // TODO - Add in functionality so this works right with cohort requests (or
   // just make a cohortRequest Table which might be clearer.)
@@ -74,7 +94,7 @@ const ReportsTable: React.FC<ReportsTableProps> = ({
     return null
   }
   return (
-    <section className={classes.reports}>
+    <Root className={classes.reports}>
       <Typography variant="h3">Response</Typography>
       <Tabs
         value={tab}
@@ -133,8 +153,8 @@ const ReportsTable: React.FC<ReportsTableProps> = ({
           shouldCollapse={shouldCollapseResponse}
         />
       </TabPanel>
-    </section>
-  )
+    </Root>
+  );
 }
 
 export default ReportsTable

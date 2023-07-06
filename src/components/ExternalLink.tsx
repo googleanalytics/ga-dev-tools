@@ -1,36 +1,54 @@
 import * as React from "react"
 
-import { makeStyles } from "@material-ui/core"
+import { styled } from '@mui/material/styles';
+
 import {  Tooltip } from "@mui/material"
 
 import { Launch } from "@mui/icons-material"
 import clsx from "classnames"
+import {PropsWithChildren} from 'react';
 
-const useStyles = makeStyles(_ => ({
-  link: {
+const PREFIX = 'ExternalLink';
+
+const classes = {
+  link: `${PREFIX}-link`,
+  icon: `${PREFIX}-icon`,
+  hover: `${PREFIX}-hover`
+};
+
+const StyledTooltip = styled(Tooltip)((
+  {
+    _
+  }
+) => ({
+  [`& .${classes.link}`]: {
     display: "inline-flex",
     alignItems: "center",
   },
-  icon: {
+
+  [`& .${classes.icon}`]: {
     marginLeft: "0.5ch",
     color: "inherit",
   },
-  hover: {
+
+  [`& .${classes.hover}`]: {
     "&:hover": {
       opacity: 1.0,
     },
     opacity: 0.3,
-  },
-}))
+  }
+}));
 
-const ExternalLink: React.FC<{
+type Props = {
   href: string
   title?: string
   hover?: true | undefined
-}> = ({ href, title, children, hover }) => {
-  const classes = useStyles()
+}
+
+const ExternalLink: React.FC<PropsWithChildren<Props>> = ({ href, title, children, hover }) => {
+
   return (
-    <Tooltip title={title || ""}>
+    <StyledTooltip title={title || ""}>
       <a
         className={clsx({ [classes.hover]: hover }, classes.link)}
         href={href}
@@ -44,8 +62,8 @@ const ExternalLink: React.FC<{
           fontSize={children === undefined ? undefined : "inherit"}
         />
       </a>
-    </Tooltip>
-  )
+    </StyledTooltip>
+  );
 }
 
 export default ExternalLink

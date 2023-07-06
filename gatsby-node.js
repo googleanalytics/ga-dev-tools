@@ -14,8 +14,6 @@
 const TsconfigPathsPlugin = require("tsconfig-paths-webpack-plugin")
 const fs = require("fs")
 
-
-
 // typescript files
 //exports.createPages = require("./gatsby/createPages").createPages
 

@@ -21,11 +21,15 @@ import CampaignURLBuilder, {
 import { GAVersion } from "@/constants"
 import { IS_SSR } from "@/hooks"
 
-export default ({ location: { pathname } }) => {
+interface Props {
+  location: { pathname: string }
+}
+
+export default (props: Props) => {
   return (
     <Layout
       title="Play Campaign URL Builder"
-      pathname={pathname}
+      pathname={props.location.pathname}
       description="This tool allows you to easily add campaign parameters to play store URLs so you can measure Custom Campaigns in Google Analytics."
     >
       {IS_SSR ? null : (

@@ -19,19 +19,28 @@ import {graphql} from "gatsby";
 import {Header} from "@/components/ga4/EnhancedEcommerce/header";
 import {ProductListing} from "@/components/ga4/EnhancedEcommerce/product-listing";
 import {Footer} from "@/components/ga4/EnhancedEcommerce/footer";
+import {Product} from "@/components/ga4/EnhancedEcommerce/store-context";
+interface AllProductsJson {
+  nodes: Product[]
+}
 
-export default ({ location: { pathname }, data  }) => {
-    return (
-        <Layout
-            title="Enhanced Ecommerce Demo"
-            pathname={pathname}
-            description=""
-        >
-            <Header />
-            <ProductListing products={data.allProductsJson.nodes} />
-            <Footer />
-        </Layout>
-    )
+interface Props {
+  location: { pathname: string },
+  data: { allProductsJson: AllProductsJson }
+}
+
+export default (props: Props) => {
+  return (
+      <Layout
+          title="Enhanced Ecommerce Demo"
+          pathname={props.location.pathname}
+          description=""
+      >
+        <Header/>
+        <ProductListing products={props.data.allProductsJson.nodes}/>
+        <Footer/>
+      </Layout>
+  )
 }
 
 export const query = graphql`

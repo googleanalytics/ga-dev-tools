@@ -1,18 +1,35 @@
 import { DAB, SAB } from "@/components/Buttons"
-import useFormStyles from "@/hooks/useFormStyles"
-import {makeStyles} from "@material-ui/core"
+import { styled } from '@mui/material/styles';
 import * as React from "react"
 import { ShowAdvancedCtx } from "."
 import Parameter from "./Parameter"
 import { Parameter as ParameterT } from "./types"
 
-const useStyles = makeStyles(theme => ({
-  parameters: {
+const PREFIX = 'Parameters';
+
+const classes = {
+  buttonRow: `${PREFIX}-buttonRow`,
+  parameters: `${PREFIX}-parameters`
+};
+
+const Root = styled('section')((
+  {
+    theme
+  }
+) => ({
+  [`&.${classes.parameters}`]: {
     "&> :not(:first-child)": {
       marginTop: theme.spacing(1),
     },
   },
-}))
+
+  [`& .${classes.buttonRow}`]: {
+    display: "flex",
+    "&> *:not(:last-child)": {
+      marginRight: theme.spacing(1),
+    },
+  }
+}));
 
 interface Props {
   parameters: ParameterT[]
@@ -36,11 +53,9 @@ const Parameters: React.FC<Props> = ({
   removeItem,
 }) => {
   const showAdvanced = React.useContext(ShowAdvancedCtx)
-  const classes = useStyles()
-  const formClasses = useFormStyles()
 
   return (
-    <section className={classes.parameters}>
+    <Root className={classes.parameters}>
       {parameters.map((parameter, idx) => (
         <Parameter
           key={`parameter-${parameter.name}-idx`}
@@ -50,7 +65,7 @@ const Parameters: React.FC<Props> = ({
           removeParam={() => removeParam(idx)}
         />
       ))}
-      <section className={formClasses.buttonRow}>
+      <section className={classes.buttonRow} >
         {showAdvanced && (
           <>
             <SAB
@@ -83,15 +98,15 @@ const Parameters: React.FC<Props> = ({
         )}
         {removeItem !== undefined && (
           <>
-            <div className={formClasses.grow} />
+            <div /* className={formClasses.grow} *//>
             <DAB delete small title="remove item" onClick={removeItem}>
               item
             </DAB>
           </>
         )}
       </section>
-    </section>
-  )
+    </Root>
+  );
 }
 
 export default Parameters

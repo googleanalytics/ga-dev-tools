@@ -17,12 +17,16 @@ import * as React from "react"
 import Layout from "@/components/Layout"
 import QueryExplorer from "@/components/QueryExplorer"
 
-export default ({ location: { pathname } }) => {
+interface Props {
+  location: { pathname: string }
+}
+
+export default (props: Props) => {
   return (
     <Layout
       title="UA Query Explorer"
       requireLogin
-      pathname={pathname}
+      pathname={props.location.pathname}
       description="Interact with the Core Reporting API by building queries to get data from your Google Analytics views."
     >
       <QueryExplorer />

@@ -14,7 +14,8 @@
 
 import React from "react"
 
-import {makeStyles} from "@material-ui/core"
+import { styled } from '@mui/material/styles';
+
 import Typography from "@mui/material/Typography"
 import TextField from "@mui/material/TextField"
 import IconButton from "@mui/material/IconButton"
@@ -29,7 +30,6 @@ import Switch from "@mui/material/Switch"
 import ExternalLink from "@/components/ExternalLink"
 import { Url } from "@/constants"
 import WithHelpText from "@/components/WithHelpText"
-import useFormStyles from "@/hooks/useFormStyles"
 import useEvent from "./useEvent"
 import Parameters from "./Parameters"
 import useInputs from "./useInputs"
@@ -38,6 +38,65 @@ import { eventsForCategory } from "./event"
 import useUserProperties from "./useUserProperties"
 import Items from "./Items"
 import ValidateEvent from "./ValidateEvent"
+
+const PREFIX = 'EventBuilder';
+
+const classes = {
+  clientSwitch: `${PREFIX}-clientSwitch`,
+  unifiedParameters: `${PREFIX}-unifiedParameters`,
+  fullWidth: `${PREFIX}-fullWidth`,
+  parameterPair: `${PREFIX}-parameterPair`,
+  validateHeading: `${PREFIX}-validateHeading`,
+  parameters: `${PREFIX}-parameters`,
+  form: `${PREFIX}-form`,
+  items: `${PREFIX}-items`
+};
+
+const Root = styled('div')((
+  {
+    theme
+  }
+) => ({
+  [`& .${classes.clientSwitch}`]: {
+    marginBottom: theme.spacing(2),
+  },
+
+  [`& .${classes.unifiedParameters}`]: {},
+
+  [`& .${classes.fullWidth}`]: {
+    width: "100%",
+  },
+
+  [`& .${classes.parameterPair}`]: {
+    display: "flex",
+    "& > *:not(:first-child)": {
+      marginLeft: theme.spacing(1),
+    },
+  },
+
+  [`& .${classes.validateHeading}`]: {
+    marginTop: theme.spacing(3),
+  },
+
+  [`& .${classes.parameters}`]: {
+    "&> :not(:first-child)": {
+      marginTop: theme.spacing(1),
+    },
+  },
+
+  [`& .${classes.form}`]: {
+    maxWidth: "80ch",
+  },
+
+  [`& .${classes.items}`]: {
+    "&> :not(:first-child)": {
+      marginTop: theme.spacing(3),
+    },
+    "&> :last-child": {
+      marginTop: theme.spacing(1),
+    },
+  }
+}));
 
 export enum Label {
   APISecret = "api_secret",
@@ -74,59 +133,27 @@ const ga4MeasurementProtocol = (
   </ExternalLink>
 )
 
-const useStyles = makeStyles(theme => ({
-  clientSwitch: {
-    marginBottom: theme.spacing(2),
-  },
-  unifiedParameters: {},
-  fullWidth: {
-    width: "100%",
-  },
-  parameterPair: {
-    display: "flex",
-    "& > *:not(:first-child)": {
-      marginLeft: theme.spacing(1),
-    },
-  },
-  validateHeading: {
-    marginTop: theme.spacing(3),
-  },
-  parameters: {
-    "&> :not(:first-child)": {
-      marginTop: theme.spacing(1),
-    },
-  },
-  items: {
-    "&> :not(:first-child)": {
-      marginTop: theme.spacing(3),
-    },
-    "&> :last-child": {
-      marginTop: theme.spacing(1),
-    },
-  },
-}))
-
+export type EventPayload = {
+  eventName: string
+  type: EventType
+  parameters: Parameter[]
+  items: Parameter[][] | undefined
+  userProperties: Parameter[]
+  timestamp_micros: string | undefined
+  non_personalized_ads: boolean | undefined
+  clientIds: ClientIds
+  instanceId: InstanceId
+  api_secret: string
+}
 export const EventCtx = React.createContext<
-  | {
-      eventName: string
-      type: EventType
-      parameters: Parameter[]
-      items: Parameter[][] | undefined
-      userProperties: Parameter[]
-      timestamp_micros: string | undefined
-      non_personalized_ads: boolean | undefined
-      clientIds: ClientIds
-      instanceId: InstanceId
-      api_secret: string
-    }
+  | EventPayload
   | undefined
 >(undefined)
 export const ShowAdvancedCtx = React.createContext(false)
 export const UseFirebaseCtx = React.createContext(false)
 
 const EventBuilder: React.FC = () => {
-  const formClasses = useFormStyles()
-  const classes = useStyles()
+
   const [showAdvanced, setShowAdvanced] = React.useState(false)
   const {
     userProperties,
@@ -184,7 +211,7 @@ const EventBuilder: React.FC = () => {
   } = useInputs(categories)
 
   return (
-    <div>
+    <Root>
       <Typography variant="h3">Overview</Typography>
       <Typography>
         The GA4 Event Builder allows you to create, validate, and send events
@@ -223,7 +250,7 @@ const EventBuilder: React.FC = () => {
         After choosing a client, fill out the inputs below.
       </Typography>
 
-      <section className={formClasses.form}>
+      <section className={classes.form}>
         <LinkedTextField
           required
           href="https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference#api_secret"
@@ -430,7 +457,7 @@ const EventBuilder: React.FC = () => {
         show advanced options
       </LabeledCheckbox>
 
-      <section className={formClasses.form}>
+      <section className={classes.form}>
         <ShowAdvancedCtx.Provider
           value={showAdvanced || type === EventType.CustomEvent}
         >
@@ -508,8 +535,8 @@ const EventBuilder: React.FC = () => {
           />
         </EventCtx.Provider>
       </UseFirebaseCtx.Provider>
-    </div>
-  )
+    </Root>
+  );
 }
 
 export default EventBuilder

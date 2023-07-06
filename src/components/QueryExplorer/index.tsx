@@ -14,10 +14,11 @@
 
 import * as React from "react"
 
+import { styled } from '@mui/material/styles';
+
 import Tooltip from "@mui/material/Tooltip"
 import Typography from "@mui/material/Typography"
 import TextField from "@mui/material/TextField"
-import {makeStyles} from "@material-ui/core"
 import Launch from "@mui/icons-material/Launch"
 
 import useDataAPIRequest from "./useDataAPIRequest"
@@ -45,47 +46,69 @@ import useAccountPropertyView from "../ViewSelector/useAccountPropertyView"
 import { useHydratedPersistantString } from "@/hooks/useHydrated"
 import { successful } from "@/types"
 
-const coreReportingApi = (
-  <ExternalLink href={Url.coreReportingApi}>Core Reporting API</ExternalLink>
-)
+const PREFIX = 'QueryExplorer';
 
-const useStyles = makeStyles(theme => ({
-  inputs: {
+const classes = {
+  inputs: `${PREFIX}-inputs`,
+  runButton: `${PREFIX}-runButton`,
+  externalReference: `${PREFIX}-externalReference`,
+  viewSelector: `${PREFIX}-viewSelector`,
+  showSegments: `${PREFIX}-showSegments`,
+  includeEmpty: `${PREFIX}-includeEmpty`,
+  conceptOption: `${PREFIX}-conceptOption`
+};
+
+const StyledUADimensionsAndMetricsRequestCtxProvider = styled(UADimensionsAndMetricsRequestCtx.Provider)((
+  {
+    theme
+  }
+) => ({
+  [`& .${classes.inputs}`]: {
     maxWidth: "500px",
     marginBottom: theme.spacing(1),
     display: "flex",
     flexDirection: "column",
   },
-  runButton: {
+
+  [`& .${classes.runButton}`]: {
     alignSelf: "flex-start",
     marginTop: theme.spacing(1),
   },
-  externalReference: {
+
+  [`& .${classes.externalReference}`]: {
     "&:hover": {
       opacity: 1.0,
     },
     opacity: 0.3,
   },
-  viewSelector: {
+
+  [`& .${classes.viewSelector}`]: {
     maxWidth: "500px",
   },
-  showSegments: {
+
+  [`& .${classes.showSegments}`]: {
     marginLeft: theme.spacing(1),
     marginBottom: theme.spacing(1),
   },
-  includeEmpty: {
+
+  [`& .${classes.includeEmpty}`]: {
     marginTop: theme.spacing(2),
     marginBottom: theme.spacing(1),
   },
-  conceptOption: {
+
+  [`& .${classes.conceptOption}`]: {
     display: "flex",
     flexDirection: "column",
     "& > p": {
       margin: 0,
       padding: 0,
     },
-  },
-}))
+  }
+}));
+
+const coreReportingApi = (
+  <ExternalLink href={Url.coreReportingApi}>Core Reporting API</ExternalLink>
+)
 
 const startDateLink = (
   <ExternalLink href="https://developers.google.com/analytics/devguides/reporting/core/v3/reference#startDate">
@@ -102,7 +125,7 @@ const endDateLink = (
 export type SortableColumn = Column & { sort: "ASCENDING" | "DESCENDING" }
 
 const DevsiteLink: React.FC<{ hash: string }> = ({ hash }) => {
-  const classes = useStyles()
+
   return (
     <Tooltip title={`See ${hash} on devsite.`}>
       <a
@@ -137,7 +160,7 @@ export enum QueryParam {
 }
 
 export const QueryExplorer = () => {
-  const classes = useStyles()
+
 
   const [viewID, setViewID] = useHydratedPersistantString(
     StorageKey.queryExplorerViewID,
@@ -238,9 +261,7 @@ export const QueryExplorer = () => {
   }, [permalink, updateLink])
 
   return (
-    <UADimensionsAndMetricsRequestCtx.Provider
-      value={uaDimensionsAndMetricsRequest}
-    >
+    <StyledUADimensionsAndMetricsRequestCtxProvider value={uaDimensionsAndMetricsRequest}>
       <Typography variant="h2">Overview</Typography>
       <Typography variant="body1">
         This tool lets you interact with the {coreReportingApi} by building
@@ -410,8 +431,8 @@ export const QueryExplorer = () => {
         columns={successful(uaDimensionsAndMetricsRequest)?.columns}
         permalink={currentLink}
       />
-    </UADimensionsAndMetricsRequestCtx.Provider>
-  )
+    </StyledUADimensionsAndMetricsRequestCtxProvider>
+  );
 }
 
 export default QueryExplorer

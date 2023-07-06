@@ -1,3 +1,3 @@
-import CustomLayout from "./gatsby/wrapRootElement.js"
+import CustomLayout from "./gatsby/wrapRootElement"
 
 export const wrapPageElement = CustomLayout

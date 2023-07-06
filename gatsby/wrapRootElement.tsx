@@ -1,16 +1,18 @@
 import React from "react"
-import CssBaseline from "@material-ui/core/CssBaseline"
-import { ThemeProvider } from "@material-ui/core"
-import { createTheme, withStyles } from "@material-ui/core/styles"
-import orange from "@material-ui/core/colors/orange"
-import deepOrange from "@material-ui/core/colors/deepOrange"
-import Snackbar from "@material-ui/core/Snackbar"
+import CssBaseline from "@mui/material/CssBaseline"
+import {
+  ThemeProvider,
+  createTheme, styled
+} from "@mui/material/styles"
+import {orange, deepOrange} from "@mui/material/colors"
+import Snackbar from "@mui/material/Snackbar"
 import {
   Provider as ReduxProvider,
   useSelector,
   useDispatch,
 } from "react-redux"
-import { createStore } from "redux"
+import { legacy_createStore as createStore } from "redux"
+import GlobalStyles from '@mui/material/GlobalStyles';
 
 const reducer = (state = {}, action) => {
   switch (action.type) {
@@ -34,7 +36,7 @@ const globalTheme = createTheme({
     secondary: deepOrange,
   },
   typography: palette => ({
-    fontFamily: ['"Roboto"', "sans-serif"].join(", "),
+    fontFamily: ["Roboto", "sans-serif"].join(", "),
     h1: {
       fontSize: "3.0em",
     },
@@ -59,35 +61,28 @@ const globalTheme = createTheme({
       marginBottom: "0.5em",
     },
   }),
-})
+  components: {
+    MuiCssBaseline: {
+      styleOverrides: {
+        "html, body, #gatsby-focus-wrapper, #___gatsby": {
+          height: "100%",
+          margin: 0,
+          padding: 0,
+        },
+        p: ({ ownerState, theme }) => ({
+          ... ({paddingBottom: theme.spacing(2)}),
+        }),
+        a: ({ ownerState, theme }) => ({
+          color: theme.palette.primary[800],
+          textDecoration: "none",
+          "&:hover": {
+            textDecoration: "underline",
+          },
+        }),
 
-const styles = theme => ({
-  "@global": {
-    "html, body, #gatsby-focus-wrapper, #___gatsby": {
-      height: "100%",
-      margin: 0,
-      padding: 0,
-    },
-    p: {
-      paddingBottom: theme.spacing(2),
-    },
-    a: {
-      color: theme.palette.primary[800],
-      textDecoration: "none",
-      "&:hover": {
-        textDecoration: "underline",
       },
     },
-    code: {
-      fontSize: theme.typography.body1.fontSize,
-    },
   },
-})
-
-// This is a bit weird, but it's the easiest way to set global css that can use
-// values from the theme object.
-const MyBaseline = withStyles(styles)(() => {
-  return null
 })
 
 export const makeStore = () => createStore(reducer)
@@ -115,17 +110,40 @@ const Toaster = () => {
   )
 }
 
+const inputGlobalStyles = <GlobalStyles
+    styles={(theme) => ({
+      "html, body, #gatsby-focus-wrapper, #___gatsby": {
+        height: "100%",
+        margin: 0,
+        padding: 0,
+      },
+      p: {
+        paddingBottom: theme.spacing(2),
+      },
+      a: {
+        color: theme.palette.primary[800],
+        textDecoration: "none",
+        "&:hover": {
+          textDecoration: "underline",
+        },
+      },
+      code: {
+        fontSize: theme.typography.body1.fontSize,
+      },
+    })}
+/>;
+
 export default ({ element }) => {
   return (
-    <React.Fragment>
-      <CssBaseline />
       <ThemeProvider theme={globalTheme}>
-        <MyBaseline />
-        <ReduxProvider store={store}>
-          {element}
-          <Toaster />
-        </ReduxProvider>
+        <React.Fragment>
+          <CssBaseline/>
+          {inputGlobalStyles}
+          <ReduxProvider store={store}>
+            {element}
+            <Toaster/>
+          </ReduxProvider>
+        </React.Fragment>
       </ThemeProvider>
-    </React.Fragment>
   )
 }

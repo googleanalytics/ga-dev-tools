@@ -1,12 +1,12 @@
 import * as React from "react"
-import {graphql} from "gatsby"
+import {graphql, PageProps} from "gatsby"
 
 import Layout from "@/components/Layout"
 import {Header} from "@/components/ga4/EnhancedEcommerce/header";
 import {Footer} from "@/components/ga4/EnhancedEcommerce/footer";
 import {AddToCart} from "@/components/ga4/EnhancedEcommerce/add-to-cart"
 import {NumericInput} from "@/components/ga4/EnhancedEcommerce/numeric-input"
-import {GatsbyImage} from "gatsby-plugin-image";
+import {GatsbyImage, GatsbyImageProps, IGatsbyImageData} from "gatsby-plugin-image";
 import {
     productBox,
     container,
@@ -16,22 +16,40 @@ import {
     addToCartStyle,
     productDescription,
 } from "./product-page.module.css"
+import {ChangeEvent} from 'react';
 
-export default ({location: {pathname}, data: {productsJson}}) => {
+type ImageInfo = GatsbyImageProps & {
+    childImageSharp: {gatsbyImageData: IGatsbyImageData};
+}
+type Props = {
+    location: { pathname: string },
+        productsJson: {
+            id: number
+            brand: string
+            category: string
+            price: string,
+            title: string,
+            description: string,
+            image: ImageInfo
+        }
+
+}
+
+export default (props: PageProps<Props>) => {
     const {
         price,
         title,
         description,
         image,
-    } = productsJson
-    const initialVariant = ['Black', 'M']
-    const [variant, setVariant] = React.useState({...initialVariant})
+    } = props.data.productsJson
+    const initialVariant = 'M'
+    const [variant, setVariant] = React.useState(initialVariant)
     const productVariant = variant;
     const [quantity, setQuantity] = React.useState(1)
     return (
         <Layout
             title="Enhanced Ecommerce Demo"
-            pathname={pathname}
+            pathname={props.location.pathname}
             description=""
         >
             <Header/>
@@ -44,7 +62,7 @@ export default ({location: {pathname}, data: {productsJson}}) => {
                         >
                             <GatsbyImage objectFit="contain"
                                          alt={title}
-                                         image={image.childImageSharp.gatsbyImageData}/>
+                                         image={image!.childImageSharp!.gatsbyImageData}/>
                         </div>
                     </div>
                     <div>
@@ -58,7 +76,7 @@ export default ({location: {pathname}, data: {productsJson}}) => {
                                 aria-label="Quantity"
                                 onIncrement={() => setQuantity((q) => Math.min(q + 1, 20))}
                                 onDecrement={() => setQuantity((q) => Math.max(1, q - 1))}
-                                onChange={(event) => setQuantity(event.currentTarget.value)}
+                                onChange={(event: ChangeEvent<HTMLInputElement>) => setQuantity(parseInt(event.currentTarget.value))}
                                 value={quantity}
                                 disabled={false}
                                 min="1"
@@ -67,7 +85,7 @@ export default ({location: {pathname}, data: {productsJson}}) => {
                             <AddToCart
                                 variantId={productVariant}
                                 quantity={quantity}
-                                product={productsJson}
+                                product={props.data.productsJson}
                             />
                         </div>
                     </div>

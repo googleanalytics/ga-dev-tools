@@ -17,11 +17,15 @@ import * as React from "react"
 import Layout from "@/components/Layout"
 import DimensionsMetricsExplorer from "@/components/DimensionsMetricsExplorer"
 
-export default ({ location: { pathname } }) => {
+interface Props {
+  location: { pathname: string }
+}
+
+export default (props: Props) => {
   return (
     <Layout
       title="UA Dimensions & Metrics Explorer"
-      pathname={pathname}
+      pathname={props.location.pathname}
       description="Lists and describes all of the dimensions and metrics available through the Google Analytics Core Reporting API."
     >
       <DimensionsMetricsExplorer />

@@ -8,7 +8,7 @@ import moment from "moment"
 import usePaginatedCallback from "@/hooks/usePaginatedCallback"
 import { useSelector } from "react-redux"
 
-type AccountSummariesResponse = gapi.client.analyticsadmin.GoogleAnalyticsAdminV1alphaListAccountSummariesResponse
+type AccountSummariesResponse = gapi.client.analyticsadmin.GoogleAnalyticsAdminV1betaListAccountSummariesResponse
 const getAccountSummaries = (response: AccountSummariesResponse) =>
   response.accountSummaries
 const getPageToken = (response: AccountSummariesResponse) =>

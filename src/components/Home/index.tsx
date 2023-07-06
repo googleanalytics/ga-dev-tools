@@ -14,19 +14,30 @@
 
 import * as React from "react"
 
+import { styled } from '@mui/material/styles';
+
 import Typography from "@mui/material/Typography"
-import { makeStyles } from "@material-ui/core"
 import { StaticImage } from "gatsby-plugin-image"
 
 import { Url } from "@/constants"
 import ExternalLink from "@/components/ExternalLink"
 
-const useStyles = makeStyles({ partnersImage: { maxWidth: "600px" } })
+const PREFIX = 'IndexPage';
+
+const classes = {
+  partnersImage: `${PREFIX}-partnersImage`
+};
+
+const Root = styled('div')({
+  [`& .${classes.partnersImage}`]: {
+    maxWidth: "600px"
+  }
+});
 
 const IndexPage: React.FC = () => {
-  const classes = useStyles()
+
   return (
-    <>
+    (<Root>
       <StaticImage
         className={classes.partnersImage}
         alt="GA partners logo"
@@ -66,7 +77,7 @@ const IndexPage: React.FC = () => {
       </Typography>
       <Typography variant="h3">Tools</Typography>
       <Typography variant="body1">
-        Tools to showcase how Google Analytics can be extendend with custom
+        Tools to showcase how Google Analytics can be extended with custom
         solutions.
       </Typography>
       <Typography variant="body1" component="ul">
@@ -115,8 +126,8 @@ const IndexPage: React.FC = () => {
           questions answered.
         </li>
       </Typography>
-    </>
-  )
+    </Root>)
+  );
 }
 
 export default IndexPage

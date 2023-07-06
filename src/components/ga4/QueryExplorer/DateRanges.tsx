@@ -1,8 +1,9 @@
 import * as React from "react"
 
+import { styled } from '@mui/material/styles';
+
 import { v4 as uuid } from "uuid"
-import {makeStyles} from "@material-ui/core"
-import TextField from "@material-ui/core/TextField"
+import TextField from "@mui/material/TextField"
 import Delete from "@mui/icons-material/Delete"
 
 import { Dispatch } from "@/types"
@@ -10,6 +11,55 @@ import ExternalLink from "@/components/ExternalLink"
 import WithHelpText from "@/components/WithHelpText"
 import InlineCode from "@/components/InlineCode"
 import { SAB, TooltipIconButton } from "@/components/Buttons"
+
+const PREFIX = 'DateRanges';
+
+const classes = {
+  heading: `${PREFIX}-heading`,
+  pabContainer: `${PREFIX}-pabContainer`,
+  dateRanges: `${PREFIX}-dateRanges`,
+  dateRange: `${PREFIX}-dateRange`,
+  name: `${PREFIX}-name`,
+  from: `${PREFIX}-from`
+};
+
+const StyledWithHelpText = styled(WithHelpText)((
+  {
+    theme
+  }
+) => ({
+  [`& .${classes.heading}`]: {
+    margin: theme.spacing(1, 0),
+    marginTop: theme.spacing(0),
+  },
+
+  [`& .${classes.pabContainer}`]: {
+    display: "flex",
+    "& > *:first-child": {
+      flexGrow: 1,
+    },
+    marginBottom: theme.spacing(1),
+  },
+
+  [`& .${classes.dateRanges}`]: {
+    display: "flex",
+    flexDirection: "column",
+    marginTop: theme.spacing(1),
+  },
+
+  [`& .${classes.dateRange}`]: {
+    // marginLeft: theme.spacing(2),
+    marginBottom: theme.spacing(1),
+    display: "flex",
+  },
+  [`& .${classes.name}`]: {
+    width: "45ch",
+  },
+
+  [`& .${classes.from}`]: {
+    marginRight: theme.spacing(1),
+  }
+}));
 
 export interface DateRange {
   name?: string
@@ -57,7 +107,7 @@ const useDateRanges: UseDateRanges = ({ setDateRanges }) => {
   const setToOneDateRange = React.useCallback(() => {
     setDateRanges((old = []) =>
       old.length > 0
-        ? old.length[0]
+        ? [old[0]]
         : [
             {
               from: "30daysAgo",
@@ -114,35 +164,6 @@ const useDateRanges: UseDateRanges = ({ setDateRanges }) => {
 interface Props {
   advanced: boolean
 }
-const useStyles = makeStyles(theme => ({
-  heading: {
-    margin: theme.spacing(1, 0),
-    marginTop: theme.spacing(0),
-  },
-  pabContainer: {
-    display: "flex",
-    "& > *:first-child": {
-      flexGrow: 1,
-    },
-    marginBottom: theme.spacing(1),
-  },
-  dateRanges: {
-    display: "flex",
-    flexDirection: "column",
-    marginTop: theme.spacing(1),
-  },
-  dateRange: ({ advanced }: Props) => ({
-    // marginLeft: theme.spacing(2),
-    marginBottom: advanced ? theme.spacing(1) : "unset",
-    display: "flex",
-  }),
-  name: {
-    width: "45ch",
-  },
-  from: {
-    marginRight: theme.spacing(1),
-  },
-}))
 
 const dateRange = (
   <ExternalLink href="https://developers.google.com/analytics/devguides/reporting/data/v1/rest/v1beta/DateRange">
@@ -156,7 +177,7 @@ const DateRanges: React.FC<{
   className?: string
   showAdvanced: boolean
 }> = ({ dateRanges, setDateRanges, className, showAdvanced }) => {
-  const classes = useStyles({ advanced: showAdvanced })
+
   const {
     addDateRange,
     removeDateRange,
@@ -174,7 +195,7 @@ const DateRanges: React.FC<{
   }, [dateRanges, showAdvanced, setToOneDateRange])
 
   return (
-    <WithHelpText
+    <StyledWithHelpText
       label={showAdvanced ? "date ranges" : undefined}
       notched={showAdvanced}
       className={className}
@@ -230,8 +251,8 @@ const DateRanges: React.FC<{
           </div>
         )}
       </section>
-    </WithHelpText>
-  )
+    </StyledWithHelpText>
+  );
 }
 
 export default DateRanges

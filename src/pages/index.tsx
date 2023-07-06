@@ -16,10 +16,14 @@ import * as React from "react"
 import Layout from "@/components/Layout"
 import Home from "@/components/Home"
 
-const IndexPage = ({ location: { pathname } }) => (
+interface Props {
+  location: { pathname: string }
+}
+
+const IndexPage = (props: Props) => (
     <Layout
         title="Discover the Google Analytics platform"
-        pathname={pathname}
+        pathname={props.location.pathname}
         description="Google Analytics Demos & Tools is a resource for users and developers to discover what's possible with the Google Analytics Platform. Learn how to implement GA and applications that can be built to take advantage of the flexibility and power of Google Analytics."
     >
       <Home />

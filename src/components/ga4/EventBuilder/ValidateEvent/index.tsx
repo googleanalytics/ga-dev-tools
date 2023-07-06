@@ -14,13 +14,13 @@
 
 import React, { useContext } from "react"
 
-import { makeStyles } from "@material-ui/core"
+import { styled } from '@mui/material/styles';
+
 import clsx from "classnames"
 
-import useFormStyles from "@/hooks/useFormStyles"
 import useValidateEvent from "./useValidateEvent"
 import Loadable from "@/components/Loadable"
-import Typography from "@material-ui/core/Typography"
+import Typography from "@mui/material/Typography"
 import { PAB, PlainButton } from "@/components/Buttons"
 import { Check, Warning, Error as ErrorIcon } from "@mui/icons-material"
 import PrettyJson from "@/components/PrettyJson"
@@ -28,25 +28,40 @@ import usePayload from "./usePayload"
 import { ValidationMessage } from "../types"
 import Spinner from "@/components/Spinner"
 import { EventCtx, Label } from ".."
-import { Card } from "@material-ui/core"
-import { green, red } from "@material-ui/core/colors"
+import { Card } from "@mui/material"
+import { green, red } from "@mui/material/colors"
 
-interface StyleProps {
-  error?: boolean
-  valid?: boolean
-}
-const useStyles = makeStyles(theme => ({
-  template: {
+const PREFIX = 'ValidateEvent';
+
+const classes = {
+  template: `${PREFIX}-template`,
+  payloadTitle: `${PREFIX}-payloadTitle`,
+  headers: `${PREFIX}-headers`,
+  heading: `${PREFIX}-heading`,
+  payload: `${PREFIX}-payload`,
+  form: `${PREFIX}-form`,
+  buttonRow: `${PREFIX}-buttonRow`
+};
+
+const Root = styled('div')((
+  {
+    theme
+  }
+) => ({
+  [`& .${classes.template}`]: {
     padding: theme.spacing(2),
   },
-  payloadTitle: {
+
+  [`& .${classes.payloadTitle}`]: {
     margin: theme.spacing(1, 0),
   },
-  headers: {
+
+  [`& .${classes.headers}`]: {
     ...theme.typography.body2,
     fontFamily: "monospace",
   },
-  heading: ({ error, valid }: StyleProps) => ({
+
+  [`& .${classes.heading}`]: ({ error, valid }: StyleProps) => ({
     backgroundColor: error ? red[300] : valid ? green[300] : "inherit",
     color: error
       ? theme.palette.getContrastText(red[300])
@@ -62,10 +77,27 @@ const useStyles = makeStyles(theme => ({
     },
     marginBottom: theme.spacing(2),
   }),
-  payload: {
-    fontSize: theme.typography.caption.fontSize,
+
+  [`& .${classes.form}`]: {
+    maxWidth: "80ch",
   },
-}))
+
+  [`& .${classes.buttonRow}`]: {
+    display: "flex",
+    "&> *:not(:last-child)": {
+      marginRight: theme.spacing(1),
+    },
+  },
+
+  [`& .${classes.payload}`]: {
+    fontSize: theme.typography.caption.fontSize,
+  }
+}));
+
+interface StyleProps {
+  error?: boolean
+  valid?: boolean
+}
 
 export interface ValidateEventProps {
   measurement_id: string
@@ -126,13 +158,12 @@ const Template: React.FC<TemplateProps> = ({
   error,
   valid,
 }) => {
-  const classes = useStyles({ error, valid })
+
   const payload = usePayload()
-  const formClasses = useFormStyles()
   const { instanceId, api_secret } = useContext(EventCtx)!
   return (
     <Card
-      className={clsx(formClasses.form, classes.template)}
+      className={clsx(classes.form, classes.template)}
       data-testid="validate and send"
     >
       <Typography className={classes.heading} variant="h3">
@@ -147,7 +178,7 @@ const Template: React.FC<TemplateProps> = ({
                 {focusFor(message)}
                 {message.description}
                 <br />
-                <a href={message.documentation} target='_blank'>Documentation</a>
+                <a href={message.documentation} target='_blank' rel="noreferrer">Documentation</a>
               </li>
               <br/>
               <br/>
@@ -158,7 +189,7 @@ const Template: React.FC<TemplateProps> = ({
 
       {body}
 
-      <section className={formClasses.buttonRow}>
+      <section className={classes.buttonRow}>
         {validateEvent !== undefined && (
           <PAB small onClick={validateEvent}>
             validate event
@@ -214,7 +245,7 @@ const ValidateEvent: React.FC<ValidateEventProps> = () => {
           heading="This event has not been validated"
           headingIcon={<Warning />}
           body={
-            <>
+            <Root>
               <Typography>
                 Update the event using the controls above.
               </Typography>
@@ -222,7 +253,7 @@ const ValidateEvent: React.FC<ValidateEventProps> = () => {
                 When you're done editing the event, click "Validate Event" to
                 check if the event is valid.
               </Typography>
-            </>
+            </Root>
           }
           validateEvent={validateEvent}
         />
@@ -264,7 +295,7 @@ const ValidateEvent: React.FC<ValidateEventProps> = () => {
         />
       )}
     />
-  )
+  );
 }
 
 export default ValidateEvent

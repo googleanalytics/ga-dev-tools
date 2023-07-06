@@ -1,7 +1,8 @@
-import React, { useState, useMemo } from "react"
+import React, {useState, useMemo, PropsWithChildren} from "react"
 
-import { DataGrid, GridColumns } from "@mui/x-data-grid"
-import {makeStyles} from "@material-ui/core"
+import { styled } from '@mui/material/styles';
+
+import { DataGrid, GridColDef } from "@mui/x-data-grid"
 import Box from "@mui/material/Box"
 import Typography from "@mui/material/Typography"
 import Tabs from "@mui/material/Tabs"
@@ -12,20 +13,35 @@ import PrettyJson from "@/components/PrettyJson"
 import Spinner from "@/components/Spinner"
 import { RunReportResponse, RunReportError } from "./BasicReport/useMakeRequest"
 
-const useStyles = makeStyles(theme => ({
-  container: {
+const PREFIX = 'Response';
+
+const classes = {
+  container: `${PREFIX}-container`,
+  makeRequest: `${PREFIX}-makeRequest`,
+  reports: `${PREFIX}-reports`
+};
+
+const Root = styled('div')((
+  {
+    theme
+  }
+) => ({
+  [`& .${classes.container}`]: {
     maxHeight: 440,
   },
-  makeRequest: {
+
+  [`& .${classes.makeRequest}`]: {
     marginTop: theme.spacing(1),
     marginBottom: theme.spacing(2),
   },
-  reports: {
-    marginTop: theme.spacing(2),
-  },
-}))
 
-const TabPanel: React.FC<{ value: number; index: number }> = ({
+  [`& .${classes.reports}`]: {
+    marginTop: theme.spacing(2),
+  }
+}));
+
+type TabPanelProps = { value: number; index: number }
+const TabPanel: React.FC<PropsWithChildren<TabPanelProps>> = ({
   value,
   index,
   children,
@@ -55,7 +71,7 @@ const Response: React.FC<ReportsTableProps> = ({
   shouldCollapse,
   error,
 }) => {
-  const classes = useStyles()
+
   const [tab, setTab] = useState(0)
 
   const loading = useMemo(
@@ -162,7 +178,7 @@ const Aggregations: React.FC<{ response: RunReportResponse }> = ({
       (response.maximums?.length || 0) > 1,
     [response]
   )
-  const columns = useMemo(() => {
+  const columns = useMemo<GridColDef[]>(() => {
     const metrics = [{ field: "metric", headerName: "metric", flex: 1 }]
     const dateRange = hasDateRange
       ? [{ field: "dateRange", headerName: "dateRange", flex: 1 }]
@@ -206,19 +222,19 @@ const Aggregations: React.FC<{ response: RunReportResponse }> = ({
   }
 
   return (
-    <>
+    (<Root>
       <Typography variant="h4">Metric aggregations</Typography>
       <div style={{ height: 600, width: "100%" }}>
         <DataGrid rows={rows} columns={columns} autoPageSize />
       </div>
-    </>
-  )
+    </Root>)
+  );
 }
 
 const ResponseTable: React.FC<{ response: RunReportResponse }> = ({
   response,
 }) => {
-  const columns = useMemo<GridColumns>(
+  const columns = useMemo<GridColDef[]>(
     () =>
       (response.dimensionHeaders || [])
         .concat(response.metricHeaders || [])
@@ -230,13 +246,13 @@ const ResponseTable: React.FC<{ response: RunReportResponse }> = ({
     [response]
   )
 
-  const rows = useMemo(
+   const rows = useMemo(
     () =>
       (response.rows || [])
         .map(row => (row.dimensionValues || []).concat(row.metricValues || []))
         .map((row, idx) =>
           row.reduce(
-            (acc, cell, idx) => {
+            (acc: any, cell, idx) => {
               acc[columns[idx].field] = cell.value
               return acc
             },

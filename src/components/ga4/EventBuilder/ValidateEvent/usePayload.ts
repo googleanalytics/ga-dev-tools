@@ -70,6 +70,7 @@ const usePayload = (): {} => {
     non_personalized_ads,
     clientIds,
     type,
+
   } = useContext(EventCtx)!
 
   const eventName = useMemo(() => {

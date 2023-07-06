@@ -13,7 +13,7 @@
 // limitations under the License.
 
 import * as React from "react"
-import { makeStyles } from "@material-ui/core"
+import { styled } from '@mui/material/styles';
 import SyntaxHighlighter from "react-syntax-highlighter"
 import { SyntaxHighlighterProps } from "react-syntax-highlighter"
 import Paper from "@mui/material/Paper"
@@ -21,17 +21,29 @@ import Tabs from "@mui/material/Tabs"
 import Tab from "@mui/material/Tab"
 import CopyButton from "./CopyButton"
 
-const useStyles = makeStyles(theme => ({
-  codeBlock: {
+const PREFIX = 'CodeBlock';
+
+const classes = {
+  codeBlock: `${PREFIX}-codeBlock`,
+  code: `${PREFIX}-code`
+};
+
+const StyledPaper = styled(Paper)((
+  {
+    theme
+  }
+) => ({
+  [`& .${classes.codeBlock}`]: {
     display: "flex",
     padding: theme.spacing(2),
     position: "relative",
     alignItems: "flex-start",
   },
-  code: {
+
+  [`& .${classes.code}`]: {
     "flex-grow": "1",
-  },
-}))
+  }
+}));
 
 interface BlockData {
   code: string
@@ -48,11 +60,11 @@ const CodeBlock: React.FC<CodeBlockProps> = ({
   className,
   ...props
 }) => {
-  const classes = useStyles()
+
   const [selectedTab, setSelectedTab] = React.useState(0)
 
   return (
-    <Paper className={className}>
+    <StyledPaper className={className}>
       <Tabs
         value={selectedTab}
         indicatorColor="primary"
@@ -81,8 +93,8 @@ const CodeBlock: React.FC<CodeBlockProps> = ({
           </Paper>
         )
       )}
-    </Paper>
-  )
+    </StyledPaper>
+  );
 }
 
 export default CodeBlock

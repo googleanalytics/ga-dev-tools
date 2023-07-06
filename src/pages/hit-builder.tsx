@@ -17,12 +17,16 @@ import * as React from "react"
 import Layout from "@/components/Layout"
 import HitBuilder from "@/components/HitBuilder"
 
-export default ({ location: { pathname } }) => {
+interface Props {
+  location: { pathname: string }
+}
+
+export default (props: Props) => {
   return (
     <Layout
       title="Hit Builder"
       requireLogin
-      pathname={pathname}
+      pathname={props.location.pathname}
       description="Allows you to construct and validate Measurement Protocol hits using the Measurement Protocol Validation Server."
     >
       <HitBuilder />

@@ -1,7 +1,8 @@
 import * as React from "react"
 
+import { styled } from '@mui/material/styles';
+
 import {Delete, Refresh} from "@mui/icons-material"
-import {makeStyles} from "@material-ui/core"
 import FormControl from "@mui/material/FormControl"
 import InputLabel from "@mui/material/InputLabel"
 import MenuItem from "@mui/material/MenuItem"
@@ -19,11 +20,25 @@ import {v4 as uuid} from "uuid"
 import {HIT_TYPES, Property} from "./types"
 import {ParametersAPI, Validation} from "./hooks"
 
-const useStyles = makeStyles(theme => ({
-  subdued: {
+const PREFIX = 'Parameters';
+
+const classes = {
+  subdued: `${PREFIX}-subdued`,
+  propertyOption: `${PREFIX}-propertyOption`,
+  inputs: `${PREFIX}-inputs`,
+  addedParam: `${PREFIX}-addedParam`
+};
+
+const Root = styled('section')((
+  {
+    theme
+  }
+) => ({
+  [`& .${classes.subdued}`]: {
     color: theme.palette.grey[500],
   },
-  propertyOption: {
+
+  [`& .${classes.propertyOption}`]: {
     display: "flex",
     width: "100%",
     flexDirection: "column",
@@ -33,7 +48,8 @@ const useStyles = makeStyles(theme => ({
       right: theme.spacing(2),
     },
   },
-  inputs: {
+
+  [`&.${classes.inputs}`]: {
     maxWidth: "600px",
     display: "flex",
     flexDirection: "column",
@@ -46,7 +62,8 @@ const useStyles = makeStyles(theme => ({
       marginRight: theme.spacing(1),
     },
   },
-  addedParam: {
+
+  [`& .${classes.addedParam}`]: {
     display: "flex",
     "& > div:first-child": {
       marginRight: theme.spacing(1),
@@ -54,8 +71,8 @@ const useStyles = makeStyles(theme => ({
     "& > div:nth-child(2)": {
       flexGrow: 1,
     },
-  },
-}))
+  }
+}));
 
 interface ParametersProps {
   updateParameterName: ParametersAPI["updateParameterName"]
@@ -76,26 +93,26 @@ const Parameters: React.FC<ParametersProps> = ({
   parameters,
   properties,
 }) => {
-  const classes = useStyles()
+
   const newParam = React.useRef(null)
   const [v, t, tid, cid, ...otherParams] = parameters
 
   const setHitType = React.useCallback(
-    hitType => {
+      (hitType: string) => {
       updateParameterValue(t.id, hitType)
     },
     [t.id, updateParameterValue]
   )
 
   const setCid = React.useCallback(
-    newId => {
+      (newId: string) => {
       updateParameterValue(cid.id, newId)
     },
     [cid.id, updateParameterValue]
   )
 
   const setTid = React.useCallback(
-    newTid => {
+      (newTid: string) => {
       updateParameterValue(tid.id, newTid)
     },
     [tid.id, updateParameterValue]
@@ -109,7 +126,7 @@ const Parameters: React.FC<ParametersProps> = ({
   }, [tid.value, localPropertyInput])
 
   return (
-    <section className={classes.inputs}>
+    <Root className={classes.inputs}>
       <FormControl size="small">
         <InputLabel id="v-label">v</InputLabel>
         <Select labelId="v-label" value={v.value} variant="outlined">
@@ -128,13 +145,12 @@ const Parameters: React.FC<ParametersProps> = ({
         options={HIT_TYPES}
         freeSolo
         getOptionLabel={a => a}
-        renderOption={e => e}
         value={t.value as string}
         renderInput={params => (
           <TextField {...params} variant="outlined" size="small" label="t" />
         )}
         onChange={(_, value) => {
-          setHitType(value)
+          typeof value === "string" && setHitType(value)
         }}
       />
 
@@ -146,7 +162,7 @@ const Parameters: React.FC<ParametersProps> = ({
         autoHighlight
         multiple={false}
         options={properties}
-        getOptionLabel={a => a.id}
+        getOptionLabel={ (a) => typeof a === "string" ? a : a.id}
         inputValue={localPropertyInput}
         onChange={(_, value) => {
           if (value !== null) {
@@ -168,27 +184,29 @@ const Parameters: React.FC<ParametersProps> = ({
             )
           })
         }}
-        renderOption={a => {
+        renderOption={(props, a) => {
           return (
-            <div className={classes.propertyOption}>
-              <Typography variant="body1" component="div">
-                {a.name}
-              </Typography>
-              <Typography
-                variant="body2"
-                component="div"
-                className={classes.subdued}
-              >
-                {a.id}
-              </Typography>
-              <Typography
-                variant="body2"
-                component="span"
-                className={classes.subdued}
-              >
-                {a.group}
-              </Typography>
-            </div>
+              <Root>
+                <div className={classes.propertyOption}>
+                  <Typography variant="body1" component="div">
+                    {a.name}
+                  </Typography>
+                  <Typography
+                    variant="body2"
+                    component="div"
+                    className={classes.subdued}
+                  >
+                    {a.id}
+                  </Typography>
+                  <Typography
+                    variant="body2"
+                    component="span"
+                    className={classes.subdued}
+                  >
+                    {a.group}
+                  </Typography>
+                </div>
+              </Root>
           )
         }}
         renderInput={params => (
@@ -293,7 +311,7 @@ const Parameters: React.FC<ParametersProps> = ({
       >
         Add parameter
       </Button>
-    </section>
-  )
+    </Root>
+  );
 }
 export default Parameters

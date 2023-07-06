@@ -1,6 +1,6 @@
 import * as React from "react"
 
-import {makeStyles} from "@material-ui/core"
+import { styled } from '@mui/material/styles';
 
 import { PlainButton, SAB } from "@/components/Buttons"
 import { GA4Dimension, GA4Metric } from "@/components/GA4Pickers"
@@ -16,45 +16,19 @@ import {
 import ExpressionList from "./ExpressionList"
 import WithHelpText from "@/components/WithHelpText"
 
-const useStyles = makeStyles(theme => ({
-  not: {
-    "&> *:not(:last-child)": {
-      marginBottom: theme.spacing(1),
-    },
-  },
-  label: {
-    margin: theme.spacing(0),
-  },
-  childrenGroup: {
-    display: "flex",
-  },
-  vrhr: {
-    margin: "unset",
-    marginLeft: theme.spacing(1),
-  },
-  children: {
-    flexGrow: 1,
-    "& > :first-child": {
-      paddingTop: theme.spacing(1),
-    },
-    "& > section": {
-      margin: theme.spacing(1, 0),
-      marginLeft: theme.spacing(1),
-    },
-  },
-  addExpression: {
-    display: "flex",
-    "& > *:not(:first-child)": {
-      marginLeft: theme.spacing(1),
-    },
-  },
-  addSelect: {
-    minWidth: "12ch",
-  },
-  removeNot: {
-    marginTop: theme.spacing(1),
-  },
-}))
+const PREFIX = 'Expression';
+
+const classes = {
+  not: `${PREFIX}-not`,
+  label: `${PREFIX}-label`,
+  childrenGroup: `${PREFIX}-childrenGroup`,
+  vrhr: `${PREFIX}-vrhr`,
+  children: `${PREFIX}-children`,
+  addExpression: `${PREFIX}-addExpression`,
+  addSelect: `${PREFIX}-addSelect`,
+  removeNot: `${PREFIX}-removeNot`
+};
+
 
 export const RemoveExpression: React.FC<{
   removeExpression: RemoveExpressionFn
@@ -88,7 +62,6 @@ export const AddExpression: React.FC<AddExpressionProps> = ({
   addExpression,
   path,
 }) => {
-  const classes = useStyles()
 
   const onClick = React.useCallback(
     (type: ExpressionType) => () => {
@@ -98,22 +71,75 @@ export const AddExpression: React.FC<AddExpressionProps> = ({
   )
 
   return (
-    <section className={classes.addExpression}>
-      <PlainButton onClick={onClick(ExpressionType.Filter)} add small>
-        filter
-      </PlainButton>
-      <PlainButton onClick={onClick(ExpressionType.Not)} add small>
-        not
-      </PlainButton>
-      <PlainButton onClick={onClick(ExpressionType.And)} add small>
-        and
-      </PlainButton>
-      <PlainButton onClick={onClick(ExpressionType.Or)} add small>
-        or
-      </PlainButton>
-    </section>
+      <Root>
+        <section className={classes.addExpression}>
+          <PlainButton onClick={onClick(ExpressionType.Filter)} add small>
+            filter
+          </PlainButton>
+          <PlainButton onClick={onClick(ExpressionType.Not)} add small>
+            not
+          </PlainButton>
+          <PlainButton onClick={onClick(ExpressionType.And)} add small>
+            and
+          </PlainButton>
+          <PlainButton onClick={onClick(ExpressionType.Or)} add small>
+            or
+          </PlainButton>
+        </section>
+      </Root>
   )
 }
+
+export const Root = styled('div')((
+    {
+      theme
+    }
+) => ({
+  [`& .${classes.not}`]: {
+    "&> *:not(:last-child)": {
+      marginBottom: theme.spacing(1),
+    },
+  },
+
+  [`& .${classes.label}`]: {
+    margin: theme.spacing(0),
+  },
+
+  [`& .${classes.childrenGroup}`]: {
+    display: "flex",
+  },
+
+  [`& .${classes.vrhr}`]: {
+    margin: "unset",
+    marginLeft: theme.spacing(1),
+  },
+
+  [`& .${classes.children}`]: {
+    flexGrow: 1,
+    "& > :first-child": {
+      paddingTop: theme.spacing(1),
+    },
+    "& > section": {
+      margin: theme.spacing(1, 0),
+      marginLeft: theme.spacing(1),
+    },
+  },
+
+  [`& .${classes.addExpression}`]: {
+    display: "flex",
+    "& > *:not(:first-child)": {
+      marginLeft: theme.spacing(1),
+    },
+  },
+
+  [`& .${classes.addSelect}`]: {
+    minWidth: "12ch",
+  },
+
+  [`& .${classes.removeNot}`]: {
+    marginTop: theme.spacing(1),
+  }
+}));
 
 const Expression: React.FC<{
   type: FilterType
@@ -136,19 +162,21 @@ const Expression: React.FC<{
   metricFilter,
   updateFilter,
 }) => {
-  const classes = useStyles()
+
   if (expression.filter) {
     return (
-      <Filter
-        removeExpression={removeExpression}
-        type={type}
-        path={path.concat(["filter"])}
-        updateFilter={updateFilter}
-        nesting={nesting + 1}
-        filter={expression.filter}
-        dimensionFilter={dimensionFilter}
-        metricFilter={metricFilter}
-      />
+        <Root>
+          <Filter
+            removeExpression={removeExpression}
+            type={type}
+            path={path.concat(["filter"])}
+            updateFilter={updateFilter}
+            nesting={nesting + 1}
+            filter={expression.filter}
+            dimensionFilter={dimensionFilter}
+            metricFilter={metricFilter}
+          />
+        </Root>
     )
   }
   if (expression.andGroup) {
@@ -185,29 +213,31 @@ const Expression: React.FC<{
   }
   if (expression.notExpression) {
     return (
-      <WithHelpText label="NOT" hrGroup className={classes.not}>
-        <Expression
-          type={type}
-          metricFilter={metricFilter}
-          updateFilter={updateFilter}
-          addExpression={addExpression}
-          removeExpression={removeExpression}
-          path={path.concat(["notExpression"])}
-          nesting={nesting + 1}
-          expression={expression.notExpression}
-          dimensionFilter={dimensionFilter}
-        />
-        <div className={classes.removeNot}>
-          <RemoveExpression
-            path={path.concat("notExpression")}
-            removeExpression={removeExpression}
-            label="not"
-          />
-        </div>
-      </WithHelpText>
+        <Root>
+          <WithHelpText label="NOT" hrGroup className={classes.not}>
+            <Expression
+              type={type}
+              metricFilter={metricFilter}
+              updateFilter={updateFilter}
+              addExpression={addExpression}
+              removeExpression={removeExpression}
+              path={path.concat(["notExpression"])}
+              nesting={nesting + 1}
+              expression={expression.notExpression}
+              dimensionFilter={dimensionFilter}
+            />
+            <div className={classes.removeNot}>
+              <RemoveExpression
+                path={path.concat("notExpression")}
+                removeExpression={removeExpression}
+                label="not"
+              />
+            </div>
+          </WithHelpText>
+          </Root>
     )
   }
-  return <AddExpression path={path} addExpression={addExpression} />
+  return <AddExpression path={path} addExpression={addExpression} />;
 }
 
 export default Expression

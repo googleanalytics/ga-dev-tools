@@ -1,15 +1,23 @@
 import * as React from "react"
-import { makeStyles } from "@material-ui/core"
+import { styled } from '@mui/material/styles';
 import { TextField } from "@mui/material"
 import clsx from "classnames"
 import { Dispatch } from "../types"
 import Autocomplete from "@mui/material/Autocomplete"
 
-const useStyles = makeStyles(() => ({
-  formControl: {
+const PREFIX = 'Select';
+
+const classes = {
+  formControl: `${PREFIX}-formControl`
+};
+
+const StyledTextField
+ = styled(TextField
+)(() => ({
+  [`& .${classes.formControl}`]: {
     minWidth: "15ch",
-  },
-}))
+  }
+}));
 
 export interface SelectOption {
   value: string
@@ -38,7 +46,7 @@ const Select: React.FC<SelectProps> = ({
   onChange,
   helperText,
 }) => {
-  const classes = useStyles()
+
 
   return (
     <Autocomplete<SelectOption, true, true, false>
@@ -48,7 +56,7 @@ const Select: React.FC<SelectProps> = ({
       autoSelect
       options={options}
       getOptionLabel={option => option.displayName}
-      getOptionSelected={(a, b) => a.value === b.value}
+      isOptionEqualToValue={(a, b) => a.value === b.value}
       value={(value || null) as any}
       onChange={(_event, value) => {
         if (onChange !== undefined) {
@@ -58,7 +66,11 @@ const Select: React.FC<SelectProps> = ({
           setValue(value === null ? undefined : (value as SelectOption[]))
         }
       }}
-      renderOption={option => option.displayName}
+      renderOption={(props, option) => (
+          <li {...props}>
+            {option.displayName}
+          </li>
+      )}
       renderInput={params => (
         <TextField
           {...params}

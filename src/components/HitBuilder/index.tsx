@@ -51,7 +51,7 @@ const HitBuilder: React.FC = () => {
   }, [parameters])
 
   return (
-    <>
+    <div>
       <Typography variant="body1">
         This tools allows you to construct and validate{" "}
         <ExternalLink href={Url.measurementProtocol}>
@@ -124,7 +124,7 @@ const HitBuilder: React.FC = () => {
           </ExternalLink>
         </li>
       </Typography>
-    </>
+    </div>
   )
 }
 

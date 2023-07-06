@@ -14,8 +14,8 @@
 
 import * as React from "react"
 
-import Typography from "@material-ui/core/Typography"
-import {makeStyles} from "@material-ui/core"
+import { styled } from "@mui/material/styles";
+import Typography from "@mui/material/Typography"
 import { StaticImage } from "gatsby-plugin-image"
 
 import { Url } from "@/constants"
@@ -23,15 +23,27 @@ import Layout from "@/components/Layout"
 import CodeBlock from "@/components/CodeBlock"
 import ExternalLink from "@/components/ExternalLink"
 
-const useStyles = makeStyles(theme => ({
-  demoScreenshot: {
+const PREFIX = 'EnhancedEcommerce';
+
+const classes = {
+  demoScreenshot: `${PREFIX}-demoScreenshot`,
+  codeBlock: `${PREFIX}-codeBlock`
+};
+
+const StyledLayout = styled(Layout)((
+  {
+    theme
+  }
+) => ({
+  [`& .${classes.demoScreenshot}`]: {
     marginBottom: theme.spacing(2),
     border: `1px solid ${theme.palette.grey[500]}`,
   },
-  codeBlock: {
+
+  [`& .${classes.codeBlock}`]: {
     marginBottom: theme.spacing(2),
-  },
-}))
+  }
+}));
 
 const demoStore = (
   <ExternalLink href={Url.enhancedEcommerceDemo}>
@@ -104,12 +116,17 @@ const codeBlocks = [
   { code: ecJsExampleCode, title: "ec.js" },
 ]
 
-const EnhancedEcommerce = ({ location: { pathname } }) => {
-  const classes = useStyles()
+
+interface Props {
+  location: { pathname: string }
+}
+
+const EnhancedEcommerce = (props: Props) => {
+
   return (
-    <Layout
+    <StyledLayout
       title="Enhanced Ecommerce"
-      pathname={pathname}
+      pathname={props.location.pathname}
       description="Explains how the enhanced ecommerce code works."
     >
       <Typography variant="h2">Overview</Typography>
@@ -143,7 +160,7 @@ const EnhancedEcommerce = ({ location: { pathname } }) => {
         codeBlocks={codeBlocks}
         className={classes.codeBlock}
       />
-    </Layout>
-  )
+    </StyledLayout>
+  );
 }
 export default EnhancedEcommerce

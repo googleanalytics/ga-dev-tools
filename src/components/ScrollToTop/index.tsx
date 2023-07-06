@@ -1,22 +1,32 @@
 import { useScrollTrigger } from "@mui/material"
-import { makeStyles } from "@material-ui/core"
+import { styled } from '@mui/material/styles';
 import { ArrowUpward } from "@mui/icons-material"
 import * as React from "react"
 import { PlainButton } from "../Buttons"
 
-const useStyles = makeStyles(theme => ({
-  scrollToTop: {
+const PREFIX = 'ScrollToTop';
+
+const classes = {
+  scrollToTop: `${PREFIX}-scrollToTop`
+};
+
+const Root = styled('div')((
+  {
+    theme
+  }
+) => ({
+  [`&.${classes.scrollToTop}`]: {
     position: "fixed",
     right: theme.spacing(2),
     bottom: theme.spacing(2),
-  },
-}))
+  }
+}));
 
 const ScrollToTop = () => {
   const shouldScroll = useScrollTrigger({
     threshold: (window.screen.height || 200) / 2,
   })
-  const classes = useStyles()
+
 
   const onClick = React.useCallback(() => {
     document.body.scrollIntoView({ behavior: "smooth" })
@@ -27,12 +37,12 @@ const ScrollToTop = () => {
   }
 
   return (
-    <div className={classes.scrollToTop}>
+    <Root className={classes.scrollToTop}>
       <PlainButton startIcon={<ArrowUpward />} onClick={onClick}>
         Back to Top
       </PlainButton>
-    </div>
-  )
+    </Root>
+  );
 }
 
 export default ScrollToTop

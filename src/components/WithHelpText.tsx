@@ -1,29 +1,36 @@
 import * as React from "react"
-import { makeStyles } from "@material-ui/core"
+import { styled } from '@mui/material/styles';
 import clsx from "classnames"
-import Typography from "@material-ui/core/Typography"
-import useFormStyles from "@/hooks/useFormStyles"
+import Typography from "@mui/material/Typography"
+import {PropsWithChildren} from 'react';
 
-interface WithHelpTextProps {
-  label?: string | JSX.Element | undefined
-  helpText?: string | JSX.Element
-  afterHelp?: JSX.Element
-  className?: string
-  notched?: boolean
-  shrink?: boolean
-  hrGroup?: boolean
-}
+const PREFIX = 'WithHelpText';
 
-interface Props {
-  notched?: boolean
-  shrink?: boolean
-}
-const useStyles = makeStyles(theme => ({
-  withHelpText: ({ notched, shrink }: Props) => ({
-    marginTop: notched ? theme.spacing(1.5) : "unset",
-    ...(shrink ? { display: "flex" } : {}),
-  }),
-  helpText: {
+const classes = {
+  withHelpText: `${PREFIX}-withHelpText`,
+  helpText: `${PREFIX}-helpText`,
+  shrunk: `${PREFIX}-shrunk`,
+  notchedContainer: `${PREFIX}-notchedContainer`,
+  label: `${PREFIX}-label`,
+  legend: `${PREFIX}-legend`,
+  fieldset: `${PREFIX}-fieldset`,
+  notchedChild: `${PREFIX}-notchedChild`,
+  hr: `${PREFIX}-hr`,
+  hrChildren: `${PREFIX}-hrChildren`,
+  verticalHr: `${PREFIX}-verticalHr`
+};
+
+const Root = styled('div')((
+  {
+    theme
+  }
+) => ({
+  [`& .${classes.withHelpText}`]: {
+    marginTop: theme.spacing(1.5),
+    display: "flex",
+  },
+
+  [`& .${classes.helpText}`]: {
     ...theme.typography.caption,
     marginTop: theme.spacing(0.5),
     paddingBottom: theme.spacing(2),
@@ -31,23 +38,27 @@ const useStyles = makeStyles(theme => ({
     marginLeft: theme.spacing(2),
     padding: "unset",
   },
-  shrunk: {
+
+  [`& .${classes.shrunk}`]: {
     flexShrink: 1,
   },
-  notchedContainer: ({ shrink }: Props) => ({
+
+  [`& .${classes.notchedContainer}`]: {
     position: "relative",
-    ...(shrink ? {} : { width: "100%" }),
-  }),
-  label: {
+    width: "100%",
+  },
+  [`& .${classes.label}`]: {
     color: "rgba(0, 0, 0, 0.54)",
     ...theme.typography.caption,
     marginBottom: theme.spacing(1),
   },
-  legend: {
+
+  [`& .${classes.legend}`]: {
     color: "rgba(0, 0, 0, 0.54)",
     ...theme.typography.caption,
   },
-  fieldset: {
+
+  [`& .${classes.fieldset}`]: {
     position: "absolute",
     top: theme.spacing(-1.5),
     left: 0,
@@ -65,20 +76,45 @@ const useStyles = makeStyles(theme => ({
       ...theme.typography.caption,
     },
   },
-  notchedChild: {
+
+  [`& .${classes.notchedChild}`]: {
     padding: theme.spacing(1),
   },
-  hr: ({ shrink }: Props) => ({
-    ...(shrink ? {} : { width: "100%" }),
-  }),
-  hrChildren: {
+  [`& .${classes.verticalHr}`]: {
+    display: "flex",
+    "&> hr": {
+      marginRight: theme.spacing(1),
+    },
+    "&> :not(:first-child)": {
+      flexGrow: 1,
+    },
+  },
+  [`&.${classes.hr}`]: {
+    width: "100%",
+  },
+  [`& .${classes.hrChildren}`]: {
     "&> :last-child": {
       paddingBottom: theme.spacing(2),
     },
-  },
-}))
+  }
+}));
 
-const WithHelpText: React.FC<WithHelpTextProps> = ({
+interface WithHelpTextProps {
+  label?: string | JSX.Element | undefined
+  helpText?: string | JSX.Element
+  afterHelp?: JSX.Element
+  className?: string
+  notched?: boolean
+  shrink?: boolean
+  hrGroup?: boolean
+}
+
+interface Props {
+  notched?: boolean
+  shrink?: boolean
+}
+
+const WithHelpText: React.FC<PropsWithChildren<WithHelpTextProps>> = ({
   label,
   children,
   helpText,
@@ -88,12 +124,11 @@ const WithHelpText: React.FC<WithHelpTextProps> = ({
   className,
   hrGroup,
 }) => {
-  const classes = useStyles({ notched, shrink })
-  const formClasses = useFormStyles()
+
   if (hrGroup) {
     return (
-      <div className={clsx(classes.hr, className)}>
-        <div className={formClasses.verticleHr}>
+      <Root className={clsx(classes.hr, className)}>
+        <div className={classes.verticalHr}>
           <hr />
           <div>
             <legend className={classes.legend}>{label}</legend>
@@ -110,11 +145,11 @@ const WithHelpText: React.FC<WithHelpTextProps> = ({
             </div>
           </div>
         </div>
-      </div>
-    )
+      </Root>
+    );
   }
   return (
-    <div className={clsx(classes.withHelpText, className)}>
+    <Root className={clsx(classes.withHelpText, className)}>
       <div
         className={clsx({
           [classes.notchedContainer]: notched,
@@ -139,7 +174,7 @@ const WithHelpText: React.FC<WithHelpTextProps> = ({
           {afterHelp}
         </div>
       )}
-    </div>
+    </Root>
   )
 }
 

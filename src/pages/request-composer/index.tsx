@@ -19,12 +19,16 @@ import RequestComposer, {
   RequestComposerType,
 } from "@/components/RequestComposer"
 
-export default ({ location: { pathname } }) => {
+interface Props {
+  location: { pathname: string }
+}
+
+export default (props: Props) => {
   return (
     <Layout
       title="Request Composer - Histogram Request"
       requireLogin
-      pathname={pathname}
+      pathname={props.location.pathname}
       description="Demonstrates how to compose a histogram request using the Analytics Reporting API v4."
     >
       <RequestComposer type={RequestComposerType.Histogram} />

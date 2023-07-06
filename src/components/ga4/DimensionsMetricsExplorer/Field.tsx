@@ -1,7 +1,8 @@
 import * as React from "react"
 
+import { styled } from '@mui/material/styles';
+
 import IconLink from "@mui/icons-material/Link"
-import {makeStyles} from "@material-ui/core"
 import Typography from "@mui/material/Typography"
 
 import InlineCode from "@/components/InlineCode"
@@ -12,6 +13,48 @@ import { QueryParam } from "."
 import { AccountSummary, PropertySummary } from "@/types/ga4/StreamPicker"
 import LabeledCheckbox from "@/components/LabeledCheckbox"
 import { CompatibleHook } from "./useCompatibility"
+
+const PREFIX = 'Field';
+
+const classes = {
+  headingUIName: `${PREFIX}-headingUIName`,
+  heading: `${PREFIX}-heading`,
+  apiName: `${PREFIX}-apiName`
+};
+
+const Root = styled('div')((
+  {
+    theme
+  }
+) => ({
+  [`& .${classes.headingUIName}`]: {
+    marginRight: theme.spacing(1),
+    "& > span": {
+      fontSize: "inherit",
+    },
+  },
+
+  [`& .${classes.heading}`]: {
+    display: "flex",
+    flexWrap: "wrap",
+    alignItems: "center",
+    marginBottom: theme.spacing(1),
+    "&> button": {
+      display: "none",
+    },
+    "&:hover": {
+      "&> button": {
+        display: "unset",
+        padding: "unset",
+      },
+    },
+  },
+
+  [`& .${classes.apiName}`]: {
+    margin: theme.spacing(0, 1),
+    fontSize: "0.75em",
+  }
+}));
 
 const knownLinks: [string, JSX.Element][] = [
   [
@@ -75,34 +118,6 @@ const linkifyText = (
   }
 }
 
-const useStyles = makeStyles(theme => ({
-  headingUIName: {
-    marginRight: theme.spacing(1),
-    "& > span": {
-      fontSize: "inherit",
-    },
-  },
-  heading: {
-    display: "flex",
-    flexWrap: "wrap",
-    alignItems: "center",
-    marginBottom: theme.spacing(1),
-    "&> button": {
-      display: "none",
-    },
-    "&:hover": {
-      "&> button": {
-        display: "unset",
-        padding: "unset",
-      },
-    },
-  },
-  apiName: {
-    margin: theme.spacing(0, 1),
-    fontSize: "0.75em",
-  },
-}))
-
 interface FieldProps extends CompatibleHook {
   field:
     | { type: "dimension"; value: Dimension }
@@ -112,7 +127,7 @@ interface FieldProps extends CompatibleHook {
 }
 
 const Field: React.FC<FieldProps> = props => {
-  const classes = useStyles()
+
 
   const {
     field,
@@ -193,7 +208,7 @@ const Field: React.FC<FieldProps> = props => {
   }, [checked, addDimension, addMetric, removeDimension, removeMetric, field])
 
   return (
-    <div id={apiName} key={apiName}>
+    <Root id={apiName} key={apiName}>
       <Typography variant="h4" className={classes.heading}>
         {property === undefined ? (
           uiName
@@ -215,8 +230,8 @@ const Field: React.FC<FieldProps> = props => {
         />
       </Typography>
       <Typography>{withLinks}</Typography>
-    </div>
-  )
+    </Root>
+  );
 }
 
 export default Field

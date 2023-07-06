@@ -1,6 +1,6 @@
 import * as React from "react"
 
-import {makeStyles} from "@material-ui/core"
+import { styled } from '@mui/material/styles';
 
 import { GA4Dimension, GA4Metric } from "@/components/GA4Pickers"
 import {
@@ -14,19 +14,31 @@ import {
 import Expression, { AddExpression, RemoveExpression } from "./Expression"
 import WithHelpText from "@/components/WithHelpText"
 
-const useStyles = makeStyles(theme => ({
-  expressions: {
+const PREFIX = 'ExpressionList';
+
+const classes = {
+  expressions: `${PREFIX}-expressions`,
+  buttons: `${PREFIX}-buttons`
+};
+
+const Root = styled('div')((
+  {
+    theme
+  }
+) => ({
+  [`& .${classes.expressions}`]: {
     "&> *": {
       marginBottom: theme.spacing(3),
     },
   },
-  buttons: {
+
+  [`& .${classes.buttons}`]: {
     display: "flex",
     "& > *:not(:first-child)": {
       marginLeft: theme.spacing(1),
     },
-  },
-}))
+  }
+}));
 
 const ExpressionList: React.FC<{
   type: FilterType
@@ -51,43 +63,45 @@ const ExpressionList: React.FC<{
   metricFilter,
   updateFilter,
 }) => {
-  const classes = useStyles()
+
 
   return (
-    <WithHelpText hrGroup label={variant.toUpperCase()}>
-      <section className={classes.expressions}>
-        {expressionList.expressions?.map((expression, idx) => (
-          <Expression
-            type={type}
-            updateFilter={updateFilter}
-            metricFilter={metricFilter}
-            dimensionFilter={dimensionFilter}
-            path={path.concat(["expressions", idx])}
-            addExpression={addExpression}
-            removeExpression={removeExpression}
-            key={`${variant}-${nesting}-${idx}`}
-            expression={expression}
-            nesting={nesting + 1}
-          />
-        ))}
-      </section>
-      <section className={classes.buttons}>
-        <AddExpression
-          path={path.concat([
-            "expressions",
-            expressionList.expressions!.length,
-          ])}
-          addExpression={addExpression}
-        />
+      <Root>
+        <WithHelpText hrGroup label={variant.toUpperCase()}>
+          <section className={classes.expressions}>
+            {expressionList.expressions?.map((expression, idx) => (
+              <Expression
+                type={type}
+                updateFilter={updateFilter}
+                metricFilter={metricFilter}
+                dimensionFilter={dimensionFilter}
+                path={path.concat(["expressions", idx])}
+                addExpression={addExpression}
+                removeExpression={removeExpression}
+                key={`${variant}-${nesting}-${idx}`}
+                expression={expression}
+                nesting={nesting + 1}
+              />
+            ))}
+          </section>
+          <section className={classes.buttons}>
+            <AddExpression
+              path={path.concat([
+                "expressions",
+                expressionList.expressions!.length,
+              ])}
+              addExpression={addExpression}
+            />
 
-        <RemoveExpression
-          path={path}
-          removeExpression={removeExpression}
-          label={variant}
-        />
-      </section>
-    </WithHelpText>
-  )
+            <RemoveExpression
+              path={path}
+              removeExpression={removeExpression}
+              label={variant}
+            />
+          </section>
+        </WithHelpText>
+      </Root>
+  );
 }
 
 export default ExpressionList

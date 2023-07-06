@@ -13,6 +13,7 @@
 // limitations under the License.
 
 import * as React from "react"
+import { styled } from '@mui/material/styles';
 import Typography from "@mui/material/Typography"
 import TextField from "@mui/material/TextField"
 import Table from "@mui/material/Table"
@@ -23,10 +24,88 @@ import TableRow from "@mui/material/TableRow"
 
 import { Url, GAVersion } from "@/constants"
 import GeneratedURL from "./GeneratedURL"
-import useStyles from "./useStyles"
 import useInputs from "./useInputs"
 import ExternalLink from "../../ExternalLink"
 import InlineCode from "../../InlineCode"
+
+const PREFIX = 'WebURLBuilder';
+
+const classes = {
+  generatedInput: `${PREFIX}-generatedInput`,
+  denseTableCell: `${PREFIX}-denseTableCell`,
+  buttons: `${PREFIX}-buttons`,
+  shortened: `${PREFIX}-shortened`,
+  inputs: `${PREFIX}-inputs`,
+  bold: `${PREFIX}-bold`,
+  share: `${PREFIX}-share`,
+  shareInvalid: `${PREFIX}-shareInvalid`
+};
+
+const Root = styled('div')((
+  {
+    theme
+  }
+) => ({
+  [`& .${classes.generatedInput}`]: {
+    wordBreak: "break-all",
+  },
+
+  [`& .${classes.denseTableCell}`]: {
+    whiteSpace: "nowrap",
+    "& p": {
+      paddingBottom: theme.spacing(0.5),
+    },
+  },
+
+  [`& .${classes.buttons}`]: {
+    display: "flex",
+    "& > button": {
+      margin: theme.spacing(1),
+    },
+  },
+
+  [`& .${classes.shortened}`]: {
+    marginTop: theme.spacing(1),
+    display: "flex",
+    alignItems: "center",
+    "& > :first-child": {
+      flexGrow: 1,
+    },
+    "& > :not(:first-child)": {
+      marginLeft: theme.spacing(1),
+    },
+  },
+
+  [`& .${classes.inputs}`]: {
+    display: "flex",
+    flexDirection: "column",
+    marginBottom: theme.spacing(1),
+    maxWidth: "600px",
+  },
+
+  [`& .${classes.bold}`]: {
+    fontWeight: "bold",
+  },
+
+  [`& .${classes.share}`]: {
+    padding: theme.spacing(3),
+    display: "flex",
+    flexDirection: "column",
+  },
+
+  [`& .${classes.shareInvalid}`]: {
+    display: "flex",
+    flexDirection: "row",
+    paddingTop: theme.spacing(3),
+    alignItems: "center",
+    "& svg": {
+      marginRight: theme.spacing(2),
+    },
+    "& p": {
+      paddingBottom: "unset",
+    },
+  }
+}));
 
 const customCampaigns = (
   <ExternalLink href={Url.aboutCustomCampaigns}>Custom Campaigns</ExternalLink>
@@ -37,7 +116,7 @@ interface WebURLBuilderProps {
 }
 
 export const WebURLBuilder: React.FC<WebURLBuilderProps> = ({ version }) => {
-  const classes = useStyles()
+
 
   const {
     websiteURL,
@@ -57,7 +136,7 @@ export const WebURLBuilder: React.FC<WebURLBuilderProps> = ({ version }) => {
   } = useInputs()
 
   return (
-    <>
+    (<Root>
       <Typography variant="body1">
         This tool allows you to easily add campaign parameters to URLs so you
         can measure {customCampaigns} in Google Analytics.
@@ -69,7 +148,6 @@ export const WebURLBuilder: React.FC<WebURLBuilderProps> = ({ version }) => {
         Fill out all fields marked with an asterisk (*), and the campaign URL
         will be generated for you.
       </Typography>
-
       <section className={classes.inputs}>
         <TextField
           id="website-url"
@@ -341,8 +419,8 @@ export const WebURLBuilder: React.FC<WebURLBuilderProps> = ({ version }) => {
           </ExternalLink>
         </li>
       </Typography>
-    </>
-  )
+    </Root>)
+  );
 }
 
 export default WebURLBuilder

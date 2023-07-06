@@ -9,12 +9,15 @@ import { Url } from "@/constants"
 import ExternalLink from "@/components/ExternalLink"
 import BasicReport from "./BasicReport"
 import { navigate } from "gatsby"
+import {PropsWithChildren} from 'react';
 
 const dataAPI = (
   <ExternalLink href={Url.ga4DataAPI}>Analytics Data API</ExternalLink>
 )
 
-const TabPanel: React.FC<{ value: number; index: number }> = ({
+type Props = { value: number; index: number }
+
+const TabPanel: React.FC<PropsWithChildren<Props>> = ({
   value,
   index,
   children,

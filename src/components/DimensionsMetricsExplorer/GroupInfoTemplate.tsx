@@ -14,7 +14,8 @@
 
 import * as React from "react"
 
-import {makeStyles} from "@material-ui/core"
+import { styled } from '@mui/material/styles';
+
 import Typography from "@mui/material/Typography"
 import Chip from "@mui/material/Chip"
 import ArrowBack from "@mui/icons-material/ArrowBack"
@@ -26,6 +27,55 @@ import { sortBy } from "lodash"
 import Layout from "@/components/Layout"
 import { CopyIconButton } from "@/components/CopyButton"
 import { Column } from "./common-types"
+
+const PREFIX = 'GroupInfoTemplate';
+
+const classes = {
+  deprecatedText: `${PREFIX}-deprecatedText`,
+  returnLink: `${PREFIX}-returnLink`,
+  columnHeading: `${PREFIX}-columnHeading`,
+  chips: `${PREFIX}-chips`,
+  linkIcon: `${PREFIX}-linkIcon`
+};
+
+const StyledLayout = styled(Layout)((
+  {
+    theme
+  }
+) => ({
+  [`& .${classes.deprecatedText}`]: {
+    textDecoration: "line-through",
+  },
+
+  [`& .${classes.returnLink}`]: {
+    display: "flex",
+    alignItems: "center",
+    "& svg": {
+      marginRight: theme.spacing(1),
+    },
+  },
+
+  [`& .${classes.columnHeading}`]: {
+    marginBottom: theme.spacing(1),
+    display: "flex",
+    alignItems: "baseline",
+    "&> span": {
+      marginLeft: theme.spacing(1),
+    },
+  },
+
+  [`& .${classes.chips}`]: {
+    "& div": {
+      marginRight: theme.spacing(1),
+    },
+    marginBottom: theme.spacing(1),
+  },
+
+  [`& .${classes.linkIcon}`]: {
+    alignSelf: "center",
+    marginLeft: theme.spacing(1),
+  }
+}));
 
 type GroupInfoTemplateProps = {
   pageContext: {
@@ -39,43 +89,12 @@ type ColumnProps = {
   column: Column
 }
 
-const useStyles = makeStyles(theme => ({
-  deprecatedText: {
-    textDecoration: "line-through",
-  },
-  returnLink: {
-    display: "flex",
-    alignItems: "center",
-    "& svg": {
-      marginRight: theme.spacing(1),
-    },
-  },
-  columnHeading: {
-    marginBottom: theme.spacing(1),
-    display: "flex",
-    alignItems: "baseline",
-    "&> span": {
-      marginLeft: theme.spacing(1),
-    },
-  },
-  chips: {
-    "& div": {
-      marginRight: theme.spacing(1),
-    },
-    marginBottom: theme.spacing(1),
-  },
-  linkIcon: {
-    alignSelf: "center",
-    marginLeft: theme.spacing(1),
-  },
-}))
-
 const ColumnInfo: React.FC<ColumnProps> = ({
   column: { attributes },
   column,
 }) => {
   // TODO make the uiName be linkAble
-  const classes = useStyles()
+
   return (
     <section id={column.id?.replace("ga:", "")}>
       <Link to={`#${column.id?.replace("ga:", "")}`}>
@@ -124,9 +143,9 @@ const GroupInfoTemplate: React.FC<
   pageContext: { groupName, dimensions, metrics },
   location: { pathname },
 }) => {
-  const classes = useStyles()
+
   return (
-    <Layout
+    <StyledLayout
       title="Dimensions & Metrics Explorer"
       pathname={pathname}
       description={`Contains information on ${groupName} for the Google Analytics API.`}
@@ -152,7 +171,7 @@ const GroupInfoTemplate: React.FC<
       ).map(item => (
         <ColumnInfo key={item.id} column={item} />
       ))}
-    </Layout>
-  )
+    </StyledLayout>
+  );
 }
 export default GroupInfoTemplate

@@ -1,17 +1,25 @@
 import * as React from "react"
-import { makeStyles } from "@material-ui/core"
+import { styled } from '@mui/material/styles';
 import { Paper } from "@mui/material"
 
 import classnames from "classnames"
 import { Info as InfoIcon } from "@mui/icons-material"
 import blue from "@mui/material/colors/lightBlue"
+import {PropsWithChildren} from 'react';
 
-interface InfoProps {
-  className?: string
-}
+const PREFIX = 'Info';
 
-const useStyles = makeStyles(theme => ({
-  info: {
+const classes = {
+  info: `${PREFIX}-info`,
+  infoIcon: `${PREFIX}-infoIcon`
+};
+
+const StyledPaper = styled(Paper)((
+  {
+    theme
+  }
+) => ({
+  [`&.${classes.info}`]: {
     margin: theme.spacing(2, 0),
     padding: theme.spacing(1),
     display: "flex",
@@ -21,20 +29,25 @@ const useStyles = makeStyles(theme => ({
     backgroundColor: blue[100],
     // maxWidth: 930,
   },
-  infoIcon: {
-    margin: theme.spacing(0, 2),
-  },
-}))
 
-const Info: React.FC<InfoProps> = ({ children, className }) => {
-  const classes = useStyles()
+  [`& .${classes.infoIcon}`]: {
+    margin: theme.spacing(0, 2),
+  }
+}));
+
+interface InfoProps {
+  className?: string
+}
+
+const Info: React.FC<PropsWithChildren<InfoProps>> = ({ children, className }) => {
+
 
   return (
-    <Paper className={classnames(classes.info, className)}>
+    <StyledPaper className={classnames(classes.info, className)}>
       <InfoIcon className={classes.infoIcon} />
       <section>{children}</section>
-    </Paper>
-  )
+    </StyledPaper>
+  );
 }
 
 export default Info

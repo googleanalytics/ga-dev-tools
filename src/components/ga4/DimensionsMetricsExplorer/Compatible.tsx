@@ -1,42 +1,60 @@
 import { PropertySummary } from "@/types/ga4/StreamPicker"
+import { styled } from '@mui/material/styles';
 import {
   Chip,
   IconButton,
   Paper,
   Typography,
 } from "@mui/material"
-import {makeStyles} from "@material-ui/core"
 import { Replay } from "@mui/icons-material"
 import { navigate } from "gatsby"
 import * as React from "react"
 import QueryExplorerLink from "../QueryExplorer/BasicReport/QueryExplorerLink"
 import { CompatibleHook } from "./useCompatibility"
 
-const useStyles = makeStyles(theme => ({
-  compatible: {
+const PREFIX = 'Compatible';
+
+const classes = {
+  compatible: `${PREFIX}-compatible`,
+  chipGrid: `${PREFIX}-chipGrid`,
+  chipLabel: `${PREFIX}-chipLabel`,
+  chips: `${PREFIX}-chips`,
+  removeButton: `${PREFIX}-removeButton`
+};
+
+const StyledPaper = styled(Paper)((
+  {
+    theme
+  }
+) => ({
+  [`&.${classes.compatible}`]: {
     padding: theme.spacing(2),
     marginTop: theme.spacing(2),
     marginBottom: theme.spacing(1),
   },
-  chipGrid: {
+
+  [`& .${classes.chipGrid}`]: {
     display: "grid",
     gridTemplateColumns: "min-content 1fr",
     alignItems: "baseline",
   },
-  chipLabel: {
+
+  [`& .${classes.chipLabel}`]: {
     justifySelf: "end",
     marginRight: theme.spacing(1),
   },
-  chips: {
+
+  [`& .${classes.chips}`]: {
     "&> :not(:first-child)": {
       marginLeft: theme.spacing(1),
     },
   },
-  removeButton: {
+
+  [`& .${classes.removeButton}`]: {
     marginTop: theme.spacing(1),
     marginBottom: theme.spacing(1),
-  },
-}))
+  }
+}));
 
 const WithProperty: React.FC<
   CompatibleHook & { property: PropertySummary | undefined }
@@ -48,7 +66,7 @@ const WithProperty: React.FC<
   property,
   hasFieldSelected,
 }) => {
-  const classes = useStyles()
+
 
   if (property === undefined) {
     return null
@@ -103,11 +121,11 @@ const WithProperty: React.FC<
 const Compatible: React.FC<
   CompatibleHook & { property: PropertySummary | undefined }
 > = props => {
-  const classes = useStyles()
+
   const { reset, property, hasFieldSelected } = props
 
   return (
-    <Paper className={classes.compatible}>
+    <StyledPaper className={classes.compatible}>
       <Typography variant="h3">
         Compatible Fields
         <IconButton disabled={!hasFieldSelected} onClick={reset}>
@@ -120,8 +138,8 @@ const Compatible: React.FC<
           Pick a property above to enable this functionality.
         </Typography>
       )}
-    </Paper>
-  )
+    </StyledPaper>
+  );
 }
 
 export default Compatible

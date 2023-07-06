@@ -2,6 +2,7 @@ import { Dispatch } from "@/types"
 import * as React from "react"
 import { PAB, PlainButton, SAB } from "../Buttons"
 import useShortenLink from "./useShortenLink"
+import {PropsWithChildren} from 'react';
 
 interface ShortenLinkProps {
   url: string | undefined
@@ -13,7 +14,7 @@ interface ShortenLinkProps {
   disabled?: boolean
 }
 
-const ShortenLink: React.FC<ShortenLinkProps> = ({
+const ShortenLink: React.FC<PropsWithChildren<ShortenLinkProps>> = ({
   disabled,
   children = "Shorten link",
   pab,

@@ -96,7 +96,7 @@ export function convertHitToParams(
   query.delete(RequiredParams.C_Id)
 
   // Create optional params after required params.
-  const others: ParamOptional[] = query.entries().map(([name, v]) => {
+  const others: ParamOptional[] = Array.from(query).map(([name, v]) => {
     const value = v === undefined ? "" : v
     return {
       name,
@@ -114,15 +114,23 @@ export function convertHitToParams(
  * @param params An array of param objects.
  */
 export function convertParamsToHit(params: Param[]): string {
-  const query: { [name: string]: any } = {}
+  const searchParams = new URLSearchParams()
+
+  //const query: { [name: string]: any } = {}
   for (const { name, value } of params) {
     if (value === "") {
       continue
     }
-    query[name] = value
+    searchParams.append(name, value)
+    //query[name] = value
   }
 
-  return querystring.stringify(query)
+  // Convert the URLSearchParams object to a string.
+  const searchParamsString = searchParams.toString()
+  // Replace the encoded commas with commas.
+  const decodedSearchParamsString = searchParamsString.replace(/%2C/g, ',')
+
+  return decodedSearchParamsString
 }
 
 export interface ValidationResult {

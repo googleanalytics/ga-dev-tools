@@ -21,11 +21,15 @@ import { Url } from "@/constants"
 import Layout from "@/components/Layout"
 import ExternalLink from "@/components/ExternalLink"
 
-const SpreadsheetAddOn = ({ location: { pathname } }) => {
+interface Props {
+  location: { pathname: string }
+}
+
+const SpreadsheetAddOn = (props: Props) => {
   return (
     <Layout
       title="Spreadsheet Add-on"
-      pathname={pathname}
+      pathname={props.location.pathname}
       description="The Google Analytics Spreadsheet Add-on makes it easier for Google Analytics users to access, visualize, share, and manipulate their data in Google Spreadsheets."
     >
       <Typography variant="h2">Overview</Typography>

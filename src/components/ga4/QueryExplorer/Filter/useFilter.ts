@@ -45,10 +45,12 @@ const useFilter: UseFilter = (storageKey, showAdvanced) => {
         let last = butLast.pop()
 
         const navigated = butLast.reduce(
+            // @ts-ignore
           (ref, pathEntry) => ref[pathEntry],
           cloned
         )
 
+        // @ts-ignore
         navigated[last as any] = update(navigated[last as any])
 
         return cloned
@@ -70,6 +72,7 @@ const useFilter: UseFilter = (storageKey, showAdvanced) => {
         last = butLast.pop()
 
         let navigated = butLast.reduce(
+            // @ts-ignore
           (ref, pathEntry) => ref[pathEntry],
           cloned
         )
@@ -78,13 +81,16 @@ const useFilter: UseFilter = (storageKey, showAdvanced) => {
         if (Array.isArray(navigated)) {
           const index = last
           last = butLast.pop()
+          // @ts-ignore
           navigated = butLast.reduce((ref, pathEntry) => ref[pathEntry], cloned)
+          // @ts-ignore
           navigated[last as any] = navigated[last as any].filter(
             (_: any, idx: number) => idx !== index
           )
           return cloned
         }
 
+        // @ts-ignore
         navigated[last as any] = {}
 
         return cloned
@@ -108,9 +114,11 @@ const useFilter: UseFilter = (storageKey, showAdvanced) => {
         }
 
         const navigated = butLast.reduce(
+            // @ts-ignore
           (ref, pathEntry) => ref[pathEntry],
           cloned
         )
+        // @ts-ignore
         navigated[last] = sub
 
         return cloned

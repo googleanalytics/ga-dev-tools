@@ -8,6 +8,7 @@ import {
 import Add from "@mui/icons-material/Add"
 import Delete from "@mui/icons-material/Delete"
 import Check from "@mui/icons-material/Check"
+import {PropsWithChildren} from 'react';
 
 // Secondary Action Button
 interface Props extends MUIButtonProps {
@@ -64,13 +65,15 @@ export const PlainButton: React.FC<Props> = ({ ...props }) => {
   return <BaseButton {...props} variant="contained" />
 }
 
-export const TooltipIconButton: React.FC<{
+type TooltipIconButtonProps = {
   tooltip: string
   size?: "small" | "medium"
   className?: string
   disabled?: boolean
   onClick?: () => void
-}> = ({ tooltip, children, onClick, className, disabled, size = "small" }) => {
+}
+
+export const TooltipIconButton: React.FC<PropsWithChildren<TooltipIconButtonProps>> = ({ tooltip, children, onClick, className, disabled, size = "small" }) => {
   if (disabled) {
     return (
       <IconButton
