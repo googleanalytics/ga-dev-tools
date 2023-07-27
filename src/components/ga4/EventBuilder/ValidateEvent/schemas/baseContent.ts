@@ -1,6 +1,5 @@
 // Base JSON Body Content Schema.
 
-// from google3.corp.gtech.ads.infrastructure.mapps_s2s_event_validator.schemas import events
 import { userPropertiesSchema } from './userProperties'
 import { eventsSchema } from './events'
 

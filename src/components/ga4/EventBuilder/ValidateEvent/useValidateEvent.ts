@@ -131,8 +131,9 @@ const useValidateEvent = (): Requestable<
     let validator = new Validator(baseContentSchema)
     let formatCheckErrors: ValidationMessage[] | [] = formatCheckLib(
       payload, 
-      instanceId?.firebase_app_id,
-      api_secret
+      instanceId,
+      api_secret,
+      useFirebase
     )
 
     if (!validator.isValid(payload) || formatCheckErrors) {
@@ -158,7 +159,7 @@ const useValidateEvent = (): Requestable<
     setValidationMessages([])
 
     if (!useTextBox || Object.keys(payload).length !== 0) {
-      let validatorErrors = useFirebase ? validatePayloadAttributes(payload) : []
+      let validatorErrors = validatePayloadAttributes(payload)
 
       validateHit(payload, instanceId, api_secret)
         .then(messages => {

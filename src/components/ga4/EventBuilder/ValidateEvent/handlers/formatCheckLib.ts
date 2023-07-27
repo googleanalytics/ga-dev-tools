@@ -18,7 +18,7 @@ const RESERVED_USER_PROPERTY_NAMES = [
 
 // formatCheckLib provides additional validations for payload not included in 
 // the schema validations. All checks are consistent with Firebase documentation.
-export const formatCheckLib = (payload, firebaseAppId, api_secret) => {
+export const formatCheckLib = (payload, instanceId, api_secret, useFirebase) => {
     let errors: ValidationMessage[] = []
 
     const appInstanceIdErrors = isValidAppInstanceId(payload)
@@ -27,7 +27,7 @@ export const formatCheckLib = (payload, firebaseAppId, api_secret) => {
     const currencyErrors = isValidCurrencyType(payload)
     const emptyItemsErrors = isItemsEmpty(payload)
     const itemsRequiredKeyErrors = itemsHaveRequiredKey(payload)
-    const firebaseAppIdErrors = isfirebaseAppIdValid(firebaseAppId)
+    const instanceIdErrors = isInstanceIdValid(instanceId, useFirebase)
     const apiSecretErrors = isApiSecretNotNull(api_secret)
     const sizeErrors = isTooBig(payload)
 
@@ -39,7 +39,7 @@ export const formatCheckLib = (payload, firebaseAppId, api_secret) => {
         ...currencyErrors,
         ...emptyItemsErrors,
         ...itemsRequiredKeyErrors,
-        ...firebaseAppIdErrors,
+        ...instanceIdErrors,
         ...apiSecretErrors,
         ...sizeErrors,
     ]
@@ -182,15 +182,27 @@ const requiredKeysEmpty = (itemsObj) => {
     return !(itemsObj.item_id || itemsObj.item_name)
 }
 
-const isfirebaseAppIdValid = (firebaseAppId) => {
+const isInstanceIdValid = (instanceId, useFirebase) => {
     let errors: ValidationMessage[] = []
+    const firebaseAppId = instanceId?.firebase_app_id
+    const measurementId = instanceId?.measurement_id
 
-    if (firebaseAppId && !firebaseAppId.match(/[0-9]:[0-9]+:[a-zA-Z]+:[a-zA-Z0-9]+$/)) {
-        errors.push({
-            description: `${firebaseAppId} does not follow firebase_app_id pattern of X:XX:XX:XX at path`,
-            validationCode: "value_invalid",
-            fieldPath: "firebase_app_id"
-        })
+    if (useFirebase) {
+        if (firebaseAppId && !firebaseAppId.match(/[0-9]:[0-9]+:[a-zA-Z]+:[a-zA-Z0-9]+$/)) {
+            errors.push({
+                description: `${firebaseAppId} does not follow firebase_app_id pattern of X:XX:XX:XX at path`,
+                validationCode: "value_invalid",
+                fieldPath: "firebase_app_id"
+            })
+        }
+    } else {
+        if (!measurementId) {
+            errors.push({
+                description: "Unable to find non-empty parameter [measurement_id] value in request.",
+                validationCode: "value_invalid",
+                fieldPath: "measurement_id"
+            })
+        }
     }
 
     return errors
