@@ -21,7 +21,7 @@ const RESERVED_USER_PROPERTY_NAMES = [
 export const formatCheckLib = (payload, instanceId, api_secret, useFirebase) => {
     let errors: ValidationMessage[] = []
 
-    const appInstanceIdErrors = isValidAppInstanceId(payload)
+    const appOrClientErrors = isValidAppOrClientId(payload, useFirebase)
     const eventNameErrors = isValidEventName(payload)
     const userPropertyNameErrors = isValidUserPropertyName(payload)
     const currencyErrors = isValidCurrencyType(payload)
@@ -33,7 +33,7 @@ export const formatCheckLib = (payload, instanceId, api_secret, useFirebase) => 
 
     return [
         ...errors, 
-        ...appInstanceIdErrors, 
+        ...appOrClientErrors, 
         ...eventNameErrors,
         ...userPropertyNameErrors,
         ...currencyErrors,
@@ -45,28 +45,45 @@ export const formatCheckLib = (payload, instanceId, api_secret, useFirebase) => 
     ]
 }
 
-const isValidAppInstanceId = (payload) => {
+const isValidAppOrClientId = (payload, useFirebase) => {
     let errors: ValidationMessage[] = []
     const appInstanceId = payload.app_instance_id
+    const clientId = payload.client_id
 
-    if (appInstanceId) {
-        if (appInstanceId?.length !== 32) {
+    if (useFirebase) {
+        if (appInstanceId) {
+            if (appInstanceId?.length !== 32) {
+                errors.push({
+                    description: `Measurement app_instance_id is expected to be a 32 digit hexadecimal number but was [${appInstanceId.length}] digits.`,
+                    validationCode: "value_invalid",
+                    fieldPath: "app_instance_id"
+                })
+            }
+
+            if (!appInstanceId.match(/^[A-Fa-f0-9]+$/)) {
+                let nonChars = appInstanceId.split('').filter((letter: string)=> {
+                    return (!/[0-9A-Fa-f]/.test(letter))
+                })
+
+                errors.push({
+                    description: `Measurement app_instance_id contains non hexadecimal character [${nonChars[0]}].`,
+                    validationCode: "value_invalid",
+                    fieldPath: "app_instance_id"
+                })
+            }
+        } else {
             errors.push({
-                description: `Measurement app_instance_id is expected to be a 32 digit hexadecimal number but was [${appInstanceId.length}] digits.`,
+                description: "Measurement requires an app_instance_id.",
                 validationCode: "value_invalid",
                 fieldPath: "app_instance_id"
             })
         }
-
-        if (!appInstanceId.match(/^[A-Fa-f0-9]+$/)) {
-            let nonChars = appInstanceId.split('').filter((letter: string)=> {
-                return (!/[0-9A-Fa-f]/.test(letter))
-            })
-
+    } else {
+        if (!clientId) {
             errors.push({
-                description: `Measurement app_instance_id contains non hexadecimal character [${nonChars[0]}].`,
+                description: "Measurement requires a client_id.",
                 validationCode: "value_invalid",
-                fieldPath: "app_instance_id"
+                fieldPath: "client_id"
             })
         }
     }
