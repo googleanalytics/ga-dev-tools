@@ -172,14 +172,14 @@ const useValidateEvent = (): Requestable<
                     ? useFirebase
                     : true
                 )
-              
+
               apiValidationErrors.forEach(err => {
                 if (!validatorErrors.map(e => e.description).includes(err.description)) {
                   validatorErrors.push(err)
                 }
               })
 
-              validatorErrors = formatErrorMessages(validatorErrors, payload)
+              validatorErrors = formatErrorMessages(validatorErrors, payload, useFirebase)
               
               setValidationMessages(validatorErrors)
               setStatus(RequestStatus.Failed)

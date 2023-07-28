@@ -2,6 +2,10 @@ const ALPHA_NUMERIC_NAME = "does not match '^(?!ga_|google_|firebase_)[A-Za-z][A
 const ALPHA_NUMERIC_OVERRIDE = " may only contain alpha-numeric characters and underscores,start with an alphabetic character, and cannot contain google_, ga_, firebase_"
 const CUSTOM_PARAMS_NAME = "can have at most [10] custom params."
 const ITEM_INVALID_KEY_OVERRIDE = "Item array has invalid key"
+const ONEOF_SCHEMA_ERROR = "does not match any given oneof schema"
+const ONEOF_SCHEMA_ERROR_OVERRIDE_CLIENT_ID = "Measurement requires a client_id."
+const ONEOF_SCHEMA_ERROR_OVERRIDE_APP_INSTANCE_ID = "Measurement requires an app_instance_id."
+
 
 const API_DOC_LIMITATIONS_URL = 'https://developers.google.com/analytics/devguides/collection/protocol/ga4/sending-events?hl=en&client_type=firebase#limitations'
 const API_DOC_BASE_PAYLOAD_URL = 'https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference#'
@@ -13,7 +17,7 @@ const API_DOC_JSON_POST_BODY = 'https://developers.google.com/analytics/devguide
 const BASE_PAYLOAD_ATTRIBUTES = ['app_instance_id', 'api_secret', 'firebase_app_id', 'user_id', 'timestamp_micros', 'user_properties', 'non_personalized_ads']
 
 // formats error messages for clarity; add documentation to each error
-export const formatErrorMessages = (errors, payload) => {
+export const formatErrorMessages = (errors, payload, useFirebase) => {
     const formattedErrors = errors.map(error => {
         const { description, fieldPath } = error
 
@@ -26,6 +30,19 @@ export const formatErrorMessages = (errors, payload) => {
         } else if (description.endsWith(ALPHA_NUMERIC_NAME)) {
             let end_index = description.indexOf(ALPHA_NUMERIC_NAME);
             error['description'] = description.slice(0, end_index) + ALPHA_NUMERIC_OVERRIDE
+
+            return error
+        
+        } else if (description.endsWith(ONEOF_SCHEMA_ERROR)) {
+            if (useFirebase) {
+                error['description'] = ONEOF_SCHEMA_ERROR_OVERRIDE_APP_INSTANCE_ID
+                error['fieldPath'] = 'app_instance_id'
+            } else {
+                error['description'] = ONEOF_SCHEMA_ERROR_OVERRIDE_CLIENT_ID
+                error['fieldPath'] = 'client_id'
+            }
+
+            error['validationCode'] = 'VALUE_REQUIRED'
 
             return error
         } else if (BASE_PAYLOAD_ATTRIBUTES.includes(fieldPath?.slice(2))) {
