@@ -44,6 +44,7 @@ const Parameter: React.FC<Props> = ({
   const inputs = (
     <section className={classes.parameter}>
       <TextField
+        id={`#/events/0/params/${name}`}
         variant="outlined"
         size="small"
         value={name}

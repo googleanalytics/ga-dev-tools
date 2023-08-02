@@ -1,0 +1,33 @@
+// Event and required property mapping
+
+export const eventDefinitions = {
+    "add_payment_info": ["value", "items"],
+    "add_shipping_info": ["value", "items"],
+    "add_to_cart": ["value", "items"],
+    "add_to_wishlist": ["value", "items"],
+    "begin_checkout": ["value", "items"],
+    "earn_virtual_currency": [],
+    "generate_lead": ["value"],
+    "join_group": [],
+    "level_up": [],
+    "login": [],
+    "post_score": ["score"],
+    "purchase": ["transaction_id", "items", "value"],
+    "refund": ["transaction_id", "value"],
+    "remove_from_cart": ["items", "value"],
+    "search": ["search_term"],
+    "select_content": [],
+    "select_item": ["items"],
+    "select_promotion": [],
+    "share": [],
+    "sign_up": [],
+    "spend_virtual_currency": ["value", "virtual_currency_name"],
+    "tutorial_begin": [],
+    "tutorial_complete": [],
+    "unlock_achievement": ["achievement_id"],
+    "view_cart": ["items", "value"],
+    "view_item": ["items", "value"],
+    "view_item_list": ["items"],
+    "view_promotion": ["items"],
+    "view_search_results": []
+}

@@ -100,6 +100,10 @@ export enum UrlParam {
   ClientId = "n",
   AppInstanceId = "o",
   Version = "p",
+  UseTextBox = "q",
+  Payload = "r",
+  PayloadObj = "s",
+  PayloadError = "t"
 }
 
 export enum ValidationStatus {
@@ -113,6 +117,7 @@ export interface ValidationMessage {
   fieldPath: string
   description: string
   validationCode: string
+  documentation?: string
 }
 
 export interface WebIds {

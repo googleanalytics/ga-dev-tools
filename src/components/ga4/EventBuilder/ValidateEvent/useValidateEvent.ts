@@ -1,5 +1,9 @@
 import { useCopy } from "@/hooks"
 import { Requestable, RequestStatus } from "@/types"
+import { Validator } from "./validator"
+import { baseContentSchema } from "./schemas/baseContent"
+import { formatCheckLib } from "./handlers/formatCheckLib"
+import { formatErrorMessages, formatValidationMessage } from "./handlers/responseUtil"
 import {
   createContext,
   useCallback,
@@ -10,6 +14,8 @@ import {
 import { EventCtx, UseFirebaseCtx } from ".."
 import { InstanceId, ValidationMessage } from "../types"
 import usePayload from "./usePayload"
+import useInputs from "../useInputs"
+import useEvent from "../useEvent"
 import useSharableLink from "./useSharableLink"
 
 // Build the query param for the instance that should be used for the event.
@@ -72,6 +78,7 @@ export type ValidationInProgress = {}
 export type ValidationFailed = {
   validationMessages: ValidationMessage[]
   validateEvent: () => void
+  payloadErrors: string | undefined
 }
 
 export const ValidationRequestCtx = createContext<
@@ -85,19 +92,24 @@ const useValidateEvent = (): Requestable<
   ValidationFailed
 > => {
   const useFirebase = useContext(UseFirebaseCtx)
+  const { useTextBox } = useContext(EventCtx)!
   const [status, setStatus] = useState(RequestStatus.NotStarted)
   const [validationMessages, setValidationMessages] = useState<
     ValidationMessage[]
   >([])
-  const payload = usePayload()
+  let payload = usePayload()
   const [sent, setSent] = useState(false)
   const { instanceId, api_secret } = useContext(EventCtx)!
+  const { categories } = useEvent()
+  const { payloadErrors } = useInputs(categories)
 
-  // Whenever the payload changes, we start the "request" over.
   useEffect(() => {
-    setStatus(RequestStatus.NotStarted)
-    setSent(false)
-  }, [payload])
+    if (!useTextBox) {
+      setStatus(RequestStatus.NotStarted)
+      setSent(false)
+    }
+  }, [payload, useTextBox])
+
 
   const sendToGA = useCallback(() => {
     if (status !== RequestStatus.Successful) {
@@ -115,41 +127,99 @@ const useValidateEvent = (): Requestable<
 
   const copySharableLink = useCopy(url, "copied link to event")
 
+  const validatePayloadAttributes = (payload) => {
+    let validator = new Validator(baseContentSchema)
+    let formatCheckErrors: ValidationMessage[] | [] = formatCheckLib(
+      payload, 
+      instanceId,
+      api_secret,
+      useFirebase
+    )
+
+    if (!validator.isValid(payload) || formatCheckErrors) {
+      let validatorErrors: ValidationMessage[] = validator.getErrors(payload).map((err) => {
+        return {
+          description: err.message,
+          validationCode: err?.data?.validationError?.code ? err?.data?.validationError?.code : err.code,
+          fieldPath: defineFieldCode(err)
+        }
+      })
+
+      return [...validatorErrors, ...formatCheckErrors]
+    }
+
+    return []
+  }
+
   const validateEvent = useCallback(() => {
     if (status === RequestStatus.InProgress) {
       return
     }
     setStatus(RequestStatus.InProgress)
-    validateHit(payload, instanceId, api_secret)
-      .then(messages => {
-        setTimeout(() => {
-          if (messages.length > 0) {
-            setValidationMessages(
-              messages.filter(a =>
-                a.fieldPath === "measurement_id"
-                  ? !useFirebase
-                  : a.fieldPath === "firebase_app_id"
-                  ? useFirebase
-                  : true
-              )
-            )
-            setStatus(RequestStatus.Failed)
-          } else {
-            setStatus(RequestStatus.Successful)
-          }
-        }, 250)
-      })
+    setValidationMessages([])
+
+    if (!useTextBox || Object.keys(payload).length !== 0) {
+      let validatorErrors = validatePayloadAttributes(payload)
+
+      validateHit(payload, instanceId, api_secret)
+        .then(messages => {
+          setTimeout(() => {
+            if (messages.length > 0 || validatorErrors.length > 0) {
+              let apiValidationErrors = messages.filter(a =>
+                  a.fieldPath === "measurement_id"
+                    ? !useFirebase
+                    : a.fieldPath === "firebase_app_id"
+                    ? useFirebase
+                    : true
+                )
+
+              apiValidationErrors.forEach(err => {
+                if (!validatorErrors.map(e => e.description).includes(err.description)) {
+                  validatorErrors.push(err)
+                }
+              })
+
+              validatorErrors = formatErrorMessages(validatorErrors, payload, useFirebase)
+              
+              setValidationMessages(validatorErrors)
+              setStatus(RequestStatus.Failed)
+            } else {
+              setStatus(RequestStatus.Successful)
+            }
+          }, 250)
+        })
       .catch(e => {
         console.error(e)
       })
-  }, [status, payload, api_secret, instanceId, useFirebase])
+    } else {
+      let validatorErrors = formatValidationMessage()
+      setValidationMessages(validatorErrors)
+      setStatus(RequestStatus.Failed)
+    }
+  }, [status, payload, api_secret, instanceId, useFirebase, payloadErrors, useTextBox, validatePayloadAttributes])
+
+  const defineFieldCode = (error) => {
+    const { data } = error
+
+    if (data?.pointer) {
+      if (data?.key) {
+        return data.pointer + '/' + data.key
+      } else if (data?.missingProperty) {
+        return data.pointer + '/' + data.missingProperty
+      }
+
+      return data.pointer
+    }
+
+    return data.key
+  }
 
   if (status === RequestStatus.Successful) {
     return { status, sendToGA, copyPayload, copySharableLink, sent }
   } else if (status === RequestStatus.NotStarted) {
     return { status, validateEvent }
   } else if (status === RequestStatus.Failed) {
-    return { status, validationMessages, validateEvent }
+    return { status, validationMessages, validateEvent, payloadErrors}
   } else {
     return { status }
   }

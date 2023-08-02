@@ -65,12 +65,13 @@ export const PlainButton: React.FC<Props> = ({ ...props }) => {
 }
 
 export const TooltipIconButton: React.FC<{
-  tooltip: string
+  tooltip: any
   size?: "small" | "medium"
   className?: string
   disabled?: boolean
+  placement?: "bottom" | "left" | "right" | "top" | "bottom-end" | "bottom-start" | "left-end" | "left-start" | "right-end" | "right-start" | "top-end" | "top-start" | undefined
   onClick?: () => void
-}> = ({ tooltip, children, onClick, className, disabled, size = "small" }) => {
+}> = ({ tooltip, children, onClick, className, disabled, size = "small", placement='bottom'}) => {
   if (disabled) {
     return (
       <IconButton
@@ -84,7 +85,7 @@ export const TooltipIconButton: React.FC<{
     )
   }
   return (
-    <Tooltip title={tooltip}>
+    <Tooltip title={tooltip} placement={placement} leaveDelay={2000}>
       <IconButton onClick={onClick} size={size} className={className}>
         {children}
       </IconButton>

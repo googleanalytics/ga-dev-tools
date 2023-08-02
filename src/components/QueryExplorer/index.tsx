@@ -195,7 +195,6 @@ export const QueryExplorer = () => {
     runQuery,
     requiredParameters,
     queryResponse,
-    accessToken,
   } = useDataAPIRequest({
     viewID,
     startDate,
@@ -407,7 +406,6 @@ export const QueryExplorer = () => {
         </LabeledCheckbox>
       </section>
       <Report
-        accessToken={accessToken}
         queryResponse={queryResponse}
         columns={successful(uaDimensionsAndMetricsRequest)?.columns}
         permalink={currentLink}

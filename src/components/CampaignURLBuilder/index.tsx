@@ -22,7 +22,6 @@ import { GAVersion } from "@/constants"
 import TabPanel from "@/components/TabPanel"
 import WebURLBuilder from "./Web"
 import PlayURLBuilder from "./Play"
-import IOSURLBuilder from "./IOS"
 
 export enum URLBuilderType {
   Web = "web",
@@ -45,8 +44,8 @@ export const CampaignURLBuilder: React.FC<CampaignURLBuilderProps> = ({
         return 0
       case URLBuilderType.Play:
         return 1
-      case URLBuilderType.Ios:
-        return 2
+      default:
+        return 0
     }
   }, [type])
 
@@ -56,8 +55,6 @@ export const CampaignURLBuilder: React.FC<CampaignURLBuilderProps> = ({
         return `/campaign-url-builder/`
       case 1:
         return `/campaign-url-builder/play/`
-      case 2:
-        return `/campaign-url-builder/ios/`
       default:
         throw new Error("No matching idx")
     }
@@ -76,7 +73,6 @@ export const CampaignURLBuilder: React.FC<CampaignURLBuilderProps> = ({
       >
         <Tab label="Web" />
         <Tab label="Play" />
-        <Tab label="iOS" />
       </Tabs>
 
       <TabPanel value={tab} index={0}>
@@ -84,9 +80,6 @@ export const CampaignURLBuilder: React.FC<CampaignURLBuilderProps> = ({
       </TabPanel>
       <TabPanel value={tab} index={1}>
         <PlayURLBuilder version={version} />
-      </TabPanel>
-      <TabPanel value={tab} index={2}>
-        <IOSURLBuilder version={version} />
       </TabPanel>
     </>
   )
