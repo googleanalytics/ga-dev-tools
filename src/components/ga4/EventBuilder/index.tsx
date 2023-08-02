@@ -252,6 +252,10 @@ const EventBuilder: React.FC = () => {
               checked={useFirebase}
               onChange={e => {
                 setUseFirebase(e.target.checked)
+
+                if (!e.target.checked) {
+                  setUseTextBox(false)
+                }
               }}
               name="use firebase"
               color="primary"

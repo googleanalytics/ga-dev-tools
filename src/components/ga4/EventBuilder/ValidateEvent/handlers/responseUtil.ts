@@ -9,11 +9,12 @@ const API_DOC_EVENT_URL = 'https://developers.google.com/analytics/devguides/col
 const API_DOC_USER_PROPERTIES = 'https://developers.google.com/analytics/devguides/collection/protocol/ga4/user-properties?hl=en&client_type=firebase'
 const API_DOC_SENDING_EVENTS_URL = 'https://developers.google.com/analytics/devguides/collection/protocol/ga4/sending-events?hl=en&client_type=firebase'
 const API_DOC_JSON_POST_BODY = 'https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference?hl=en&client_type=firebase#payload_post_body'
+const API_DOC_GTAG = 'https://developers.google.com/analytics/devguides/collection/protocol/ga4/sending-events?client_type=gtag#required_parameters'
 
 const BASE_PAYLOAD_ATTRIBUTES = ['app_instance_id', 'api_secret', 'firebase_app_id', 'user_id', 'timestamp_micros', 'user_properties', 'non_personalized_ads']
 
 // formats error messages for clarity; add documentation to each error
-export const formatErrorMessages = (errors, payload) => {
+export const formatErrorMessages = (errors, payload, useFirebase) => {
     const formattedErrors = errors.map(error => {
         const { description, fieldPath } = error
 
@@ -28,6 +29,7 @@ export const formatErrorMessages = (errors, payload) => {
             error['description'] = description.slice(0, end_index) + ALPHA_NUMERIC_OVERRIDE
 
             return error
+        
         } else if (BASE_PAYLOAD_ATTRIBUTES.includes(fieldPath?.slice(2))) {
             error['fieldPath'] = fieldPath.slice(2)
 
@@ -39,20 +41,22 @@ export const formatErrorMessages = (errors, payload) => {
     })
 
     const documentedErrors = formattedErrors.map(error => {
-        error['documentation'] = addDocumentation(error, payload)
+        error['documentation'] = addDocumentation(error, payload, useFirebase)
         return error
     })
 
     return documentedErrors
 }
 
-const addDocumentation = (error, payload) => {
+const addDocumentation = (error, payload, useFirebase) => {
     const { fieldPath, validationCode } = error
 
     if (validationCode === 'max-length-error' || validationCode === 'max-properties-error' || validationCode === 'max-body-size') {
         return API_DOC_LIMITATIONS_URL
     } else if (fieldPath?.startsWith('#/events/')) {
         return API_DOC_EVENT_URL + payload?.events[0]?.name
+    } else if (!useFirebase && (fieldPath === 'client_id' || fieldPath === 'measurement_id')) {
+        return API_DOC_GTAG
     } else if (BASE_PAYLOAD_ATTRIBUTES.includes(fieldPath)) {
         return API_DOC_BASE_PAYLOAD_URL + fieldPath
     } else if (fieldPath === '#/user_properties') {
