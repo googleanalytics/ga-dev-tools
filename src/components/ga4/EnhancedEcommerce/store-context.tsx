@@ -1,5 +1,6 @@
 import * as React from "react"
 import {ReactNode} from 'react';
+import {GatsbyImageProps, IGatsbyImageData} from 'gatsby-plugin-image';
 
 interface GAEvent {
   key: number
@@ -9,12 +10,20 @@ interface GAEvent {
   snippet: string
 }
 
+type ImageInfo = GatsbyImageProps & {
+  childImageSharp: {gatsbyImageData: IGatsbyImageData};
+}
+
 export interface Product {
   id: number
   title: string
   brand: string
+  variant?: string
   category: string
   price: string
+  slug?: string
+  image: ImageInfo
+  thumbnail?: ImageInfo
 }
 
 export interface CartItem {

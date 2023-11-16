@@ -1,3 +1,5 @@
+import { ValidationMessage } from "../../types"
+
 const ALPHA_NUMERIC_NAME = "does not match '^(?!ga_|google_|firebase_)[A-Za-z][A-Za-z0-9_]*$'"
 const ALPHA_NUMERIC_OVERRIDE = " may only contain alpha-numeric characters and underscores,start with an alphabetic character, and cannot contain google_, ga_, firebase_"
 const CUSTOM_PARAMS_NAME = "can have at most [10] custom params."
@@ -12,7 +14,7 @@ const API_DOC_SENDING_EVENTS_URL = 'https://developers.google.com/analytics/devg
 const BASE_PAYLOAD_ATTRIBUTES = ['app_instance_id', 'api_secret', 'firebase_app_id', 'user_id', 'timestamp_micros', 'user_properties', 'non_personalized_ads']
 
 // formats error messages for clarity; add documentation to each error
-export const formatErrorMessages = (errors, payload) => {
+export const formatErrorMessages = (errors: ValidationMessage[], payload:any) => {
     const formattedErrors = errors.map(error => {
         const { description, fieldPath } = error
 
@@ -45,7 +47,7 @@ export const formatErrorMessages = (errors, payload) => {
     return documentedErrors
 }
 
-const addDocumentation = (error, payload) => {
+const addDocumentation = (error: ValidationMessage, payload: any) => {
     const { fieldPath, validationCode } = error
 
     if (validationCode === 'max-length-error' || validationCode === 'max-properties-error' || validationCode === 'max-body-size') {

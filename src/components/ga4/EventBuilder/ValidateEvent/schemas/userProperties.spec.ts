@@ -14,6 +14,7 @@ describe("userPropertiesSchema", () => {
     test("is invalid for events with more than 25 items", () => {
         let invalidInput = {}
         for (let i=0; i<= 25; i++) {
+            // @ts-ignore
             invalidInput['property_' + i] = {'value': '123456'}
         }
 

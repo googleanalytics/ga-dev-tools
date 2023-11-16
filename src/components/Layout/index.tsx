@@ -13,7 +13,7 @@
 // limitations under the License.
 
 import React, {PropsWithChildren, useEffect, useMemo} from "react"
-import { Theme} from '@mui/material/styles';
+import {Theme} from '@mui/material/styles';
 import {styled} from '@mui/material/styles';
 
 import Button from '@mui/material/Button';

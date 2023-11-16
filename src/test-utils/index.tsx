@@ -53,7 +53,7 @@ export const wrapperFor = ({
   }
 
   const gapi = testGapi(gapiMocks)
-  store.dispatch({ type: "setGapi", gapi })
+  store.dispatch({ type: "setGapi", gapi: gapi })
 
   const Wrapper: React.FC<PropsWithChildren> = ({ children }) => (
     <Provider store={store}>

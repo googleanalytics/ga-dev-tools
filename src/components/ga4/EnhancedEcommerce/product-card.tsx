@@ -3,9 +3,12 @@ import {Link} from "gatsby"
 import {GatsbyImage} from "gatsby-plugin-image"
 
 import {productCardStyle, productDetailsStyle, productHeadingStyle, productImageStyle, productPrice,} from "./product-card.module.css"
-import {StoreContext} from "@/components/ga4/EnhancedEcommerce/store-context";
+import {Product, StoreContext} from "@/components/ga4/EnhancedEcommerce/store-context";
 
-export function ProductCard({product}) {
+interface Props {
+    product: Product
+}
+export function ProductCard({product}: Props) {
     const {
         title,
         image,

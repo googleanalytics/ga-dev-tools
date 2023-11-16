@@ -16,11 +16,7 @@ const classes = {
   hover: `${PREFIX}-hover`
 };
 
-const StyledTooltip = styled(Tooltip)((
-  {
-    _
-  }
-) => ({
+const Root = styled('div')(() => ({
   [`& .${classes.link}`]: {
     display: "inline-flex",
     alignItems: "center",
@@ -48,21 +44,23 @@ type Props = {
 const ExternalLink: React.FC<PropsWithChildren<Props>> = ({ href, title, children, hover }) => {
 
   return (
-    <StyledTooltip title={title || ""}>
-      <a
-        className={clsx({ [classes.hover]: hover }, classes.link)}
-        href={href}
-        target="_blank"
-        rel="noreferrer"
-      >
-        {children}
-        <Launch
-          className={clsx({ [classes.icon]: children !== undefined })}
-          color="action"
-          fontSize={children === undefined ? undefined : "inherit"}
-        />
-      </a>
-    </StyledTooltip>
+      <Root>
+        <Tooltip title={title || ""}>
+          <a
+            className={clsx({ [classes.hover]: hover }, classes.link)}
+            href={href}
+            target="_blank"
+            rel="noreferrer"
+          >
+            {children}
+            <Launch
+              className={clsx({ [classes.icon]: children !== undefined })}
+              color="action"
+              fontSize={children === undefined ? undefined : "inherit"}
+            />
+          </a>
+        </Tooltip>
+      </Root>
   );
 }
 

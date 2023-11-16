@@ -3,14 +3,14 @@
 import { EVENT_FIELDS, VALUE_CURRENCY_DEPENDENCY } from "./fieldDefinitions"
 import { itemsSchema } from "./items"
 
-
 export const getAllEventProperties = () => {
   let knownFields = EVENT_FIELDS
+  // @ts-ignore
   knownFields["items"] = itemsSchema
   return knownFields
 }
 
-export const getEventSchema = (requiredFields) => {
+export const getEventSchema = (requiredFields: any) => {
     return {
         "type": "object",
         "required": requiredFields,

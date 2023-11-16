@@ -18,7 +18,7 @@ const RESERVED_USER_PROPERTY_NAMES = [
 
 // formatCheckLib provides additional validations for payload not included in 
 // the schema validations. All checks are consistent with Firebase documentation
-export const formatCheckLib = (payload, firebaseAppId) => {
+export const formatCheckLib = (payload: any, firebaseAppId: string | undefined) => {
     let errors: ValidationMessage[] = []
 
     const appInstanceIdErrors = isValidAppInstanceId(payload)
@@ -43,7 +43,7 @@ export const formatCheckLib = (payload, firebaseAppId) => {
     ]
 }
 
-const isValidAppInstanceId = (payload) => {
+const isValidAppInstanceId = (payload: any) => {
     let errors: ValidationMessage[] = []
     const appInstanceId = payload.app_instance_id
 
@@ -73,10 +73,10 @@ const isValidAppInstanceId = (payload) => {
 }
 
 
-const isValidEventName = (payload) => {
+const isValidEventName = (payload: any) => {
     let errors: ValidationMessage[] = []
 
-    payload.events?.forEach(ev => {
+    payload.events?.forEach((ev: any) => {
         if (RESERVED_EVENT_NAMES.includes(ev.name)) {
             errors.push({
                 description: `${ev.name} is a reserved event name`,
@@ -89,7 +89,7 @@ const isValidEventName = (payload) => {
     return errors
 }
 
-const isValidUserPropertyName = (payload) => {
+const isValidUserPropertyName = (payload:any) => {
     let errors: ValidationMessage[] = []
     const userProperties = payload.user_properties
 
@@ -108,10 +108,10 @@ const isValidUserPropertyName = (payload) => {
     return errors
 }
 
-const isValidCurrencyType = (payload) => {
+const isValidCurrencyType = (payload:any) => {
     let errors: ValidationMessage[] = []
 
-    payload.events?.forEach(ev => {
+    payload.events?.forEach((ev:any) => {
         if (ev.params && ev.params.currency) {
             const currency = ev.params.currency
 
@@ -128,10 +128,10 @@ const isValidCurrencyType = (payload) => {
     return errors
 }
 
-const isItemsEmpty = (payload) => {
+const isItemsEmpty = (payload:any) => {
     let errors: ValidationMessage[] = []
 
-    payload?.events?.forEach(ev => {
+    payload?.events?.forEach((ev:any) => {
         if (ev?.params?.items && ev?.params?.items?.length < 1 && eventRequiresItems(ev?.params?.name)){
             errors.push({
                 description: "'items' should not be empty; One of 'item_id' or 'item_name' is a required key",
@@ -144,18 +144,20 @@ const isItemsEmpty = (payload) => {
     return errors
 }
 
-const eventRequiresItems = (eventName) => {
+const eventRequiresItems = (eventName: string) => {
+    // @ts-ignore
     if (eventDefinitions[eventName]) {
+        // @ts-ignore
         return eventDefinitions[eventName].includes('items')
     }
 
     return false
 }
 
-const itemsHaveRequiredKey = (payload) => {
+const itemsHaveRequiredKey = (payload:any) => {
     let errors: ValidationMessage[] = []
 
-    payload?.events?.forEach(ev => {
+    payload?.events?.forEach((ev: any) => {
         if (ev?.params?.items?.length > 0) {
             const itemsObj = ev.params.items[0]
 
@@ -172,18 +174,18 @@ const itemsHaveRequiredKey = (payload) => {
     return errors
 }
 
-const requiredKeysDontExist = (itemsObj) => {
+const requiredKeysDontExist = (itemsObj: any) => {
     return !(itemsObj.hasOwnProperty('item_id') || itemsObj.hasOwnProperty('item_name'))
 }
 
-const requiredKeysEmpty = (itemsObj) => {
+const requiredKeysEmpty = (itemsObj: any) => {
     return !(itemsObj.item_id || itemsObj.item_name)
 }
 
-const isfirebaseAppIdValid = (firebaseAppId) => {
+const isfirebaseAppIdValid = (firebaseAppId:string | undefined) => {
     let errors: ValidationMessage[] = []
 
-    if (!firebaseAppId.match(/[0-9]:[0-9]+:[a-zA-Z]+:[a-zA-Z0-9]+$/)) {
+    if (firebaseAppId !== undefined && !firebaseAppId.match(/[0-9]:[0-9]+:[a-zA-Z]+:[a-zA-Z0-9]+$/)) {
         errors.push({
             description: `${firebaseAppId} does not follow firebase_app_id pattern of X:XX:XX:XX at path`,
             validationCode: "value_invalid",
@@ -194,7 +196,7 @@ const isfirebaseAppIdValid = (firebaseAppId) => {
     return errors
 }
 
-const isTooBig = (payload) => {
+const isTooBig = (payload:any) => {
     let errors: ValidationMessage[] = []
 
     if (sizeof(payload) > 130000) {

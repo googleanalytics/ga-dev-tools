@@ -87,7 +87,7 @@ const useCompatibility = (ap: AccountProperty): CompatibleHook => {
 
   const hasFieldSelected = useMemo(
     () =>
-      (dimensions !== undefined && dimensions!.length) > 0 ||
+      (dimensions !== undefined && dimensions!.length > 0) ||
       (metrics !== undefined && metrics!.length > 0),
     [dimensions, metrics]
   )

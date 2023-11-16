@@ -2,7 +2,7 @@ import {Link} from "gatsby"
 import * as React from "react"
 import {navStyle, navLink, activeLink} from "./navigation.module.css"
 
-export function Navigation({className}) {
+export function Navigation({className=''}) {
     return (
         <nav className={[navStyle, className].join(" ")}>
             <Link

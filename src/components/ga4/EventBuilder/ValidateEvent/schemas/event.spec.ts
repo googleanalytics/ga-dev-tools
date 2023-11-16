@@ -2,7 +2,7 @@ import "jest"
 import { Validator } from "../validator"
 import { eventSchema } from "./event"
 
-const appendProperties = (obj, num) => {
+const appendProperties = (obj: any, num: number) => {
     for (let i=0; i < num; i++) {
         let key = 'property_' + i.toString()
         obj[key] = true

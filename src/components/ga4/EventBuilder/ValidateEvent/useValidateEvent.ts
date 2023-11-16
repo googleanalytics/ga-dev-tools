@@ -15,6 +15,7 @@ import { EventCtx, UseFirebaseCtx } from ".."
 import { InstanceId, ValidationMessage } from "../types"
 import usePayload from "./usePayload"
 import useSharableLink from "./useSharableLink"
+import {JSONError} from 'json-schema-library';
 
 // Build the query param for the instance that should be used for the event.
 // Defaults to an empty measurement_id if neither one is set.
@@ -160,7 +161,7 @@ const useValidateEvent = (): Requestable<
       })
   }, [status, payload, api_secret, instanceId, useFirebase])
 
-  const validatePayloadAttributes = (payload) => {
+  const validatePayloadAttributes = (payload: any) => {
     let validator = new Validator(baseContentSchema)
     let formatCheckErrors: ValidationMessage[] | [] = formatCheckLib(payload, instanceId?.firebase_app_id)
 
@@ -179,7 +180,7 @@ const useValidateEvent = (): Requestable<
     return []
   }
 
-  const defineFieldCode = (error) => {
+  const defineFieldCode = (error: JSONError) => {
     const { data } = error
 
     if (data?.pointer) {
@@ -189,10 +190,10 @@ const useValidateEvent = (): Requestable<
         return data.pointer + '/' + data.missingProperty
       }
 
-      return data.pointer
+      return data?.pointer
     }
 
-    return data.key
+    return data?.key
   }
 
   if (status === RequestStatus.Successful) {

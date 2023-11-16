@@ -22,7 +22,8 @@ const classes = {
   generatedInput: `${PREFIX}-generatedInput`,
   share: `${PREFIX}-share`,
   form: `${PREFIX}-form`,
-  shareInvalid: `${PREFIX}-shareInvalid`
+  shareInvalid: `${PREFIX}-shareInvalid`,
+  shortened: `${PREFIX}-shortened`
 };
 
 const StyledPaper = styled(Paper)((
@@ -55,7 +56,19 @@ const StyledPaper = styled(Paper)((
     "& p": {
       paddingBottom: "unset",
     },
-  }
+  },
+
+  [`& .${classes.shortened}`]: {
+    marginTop: theme.spacing(1),
+    display: "flex",
+    alignItems: "center",
+    "& > :first-child": {
+      flexGrow: 1,
+    },
+    "& > :not(:first-child)": {
+      marginLeft: theme.spacing(1),
+    },
+  },
 }));
 
 interface GeneratedURLProps {

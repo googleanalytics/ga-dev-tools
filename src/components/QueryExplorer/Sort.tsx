@@ -32,13 +32,8 @@ const classes = {
   group: `${PREFIX}-group`
 };
 
-const StyledTextField
- = styled(TextField
-)((
-  {
-    _
-  }
-) => ({
+const Root
+ = styled('div')(() => ({
   [`& .${classes.conceptOption}`]: {
     display: "flex",
     width: "100%",
@@ -98,57 +93,59 @@ const Sort: React.FC<SortProps> = ({ columns, sort, setSortIDs }) => {
   // TODO renderOption={...} should be extracted since this and
   // _ConceptMultiSelect use the same styling.
   return (
-    <Autocomplete<SortableColumn, true, undefined, true>
-      fullWidth
-      autoComplete
-      autoHighlight
-      multiple
-      noOptionsText="A Metric or Dimension is required in order to sort."
-      options={sortableColumns}
-      filterOptions={a =>
-        a.filter(column => sort?.find(c => c.id === column.id) === undefined)
-      }
-      getOptionLabel={option => typeof option === "string" ? option :
-        `${option.sort === "ASCENDING" ? "" : "-"}${option.id}`
-      }
-      isOptionEqualToValue={(a, b) => a.id === b.id && a.sort === b.sort}
-      value={sort}
-      onChange={(_event, value, _state) =>
-        setSortIDs((value as SortableColumn[]).map(s => `${s.id}@@@${s.sort}`))
-      }
-      renderOption={(props, option) => (
-          <li {...props}>
-            <div className={classes.conceptOption}>
-            <div className={classes.nameId}>
-              <Typography variant="body1">
-                {`${option.attributes!.uiName} (${
-                  option.sort === "ASCENDING" ? "Ascending" : "Descending"
-                })`}
-              </Typography>
-              <Typography variant="subtitle2" color="primary">
-                {`${option.sort === "ASCENDING" ? "" : "-"}${option.id}`}
-              </Typography>
-            </div>
-            <Typography
-              className={classes.group}
-              variant="subtitle1"
-              color="textSecondary"
-            >
-              {option.attributes!.group}
-            </Typography>
-          </div>
-        </li>
-      )}
-      renderInput={params => (
-        <TextField
-          {...params}
-          size="small"
-          variant="outlined"
-          label="sort"
-          helperText="Dimensions and Metrics to sort query by."
+      <Root>
+        <Autocomplete<SortableColumn, true, undefined, true>
+          fullWidth
+          autoComplete
+          autoHighlight
+          multiple
+          noOptionsText="A Metric or Dimension is required in order to sort."
+          options={sortableColumns}
+          filterOptions={a =>
+            a.filter(column => sort?.find(c => c.id === column.id) === undefined)
+          }
+          getOptionLabel={option => typeof option === "string" ? option :
+            `${option.sort === "ASCENDING" ? "" : "-"}${option.id}`
+          }
+          isOptionEqualToValue={(a, b) => a.id === b.id && a.sort === b.sort}
+          value={sort}
+          onChange={(_event, value, _state) =>
+            setSortIDs((value as SortableColumn[]).map(s => `${s.id}@@@${s.sort}`))
+          }
+          renderOption={(props, option) => (
+              <li {...props}>
+                <div className={classes.conceptOption}>
+                <div className={classes.nameId}>
+                  <Typography variant="body1">
+                    {`${option.attributes!.uiName} (${
+                      option.sort === "ASCENDING" ? "Ascending" : "Descending"
+                    })`}
+                  </Typography>
+                  <Typography variant="subtitle2" color="primary">
+                    {`${option.sort === "ASCENDING" ? "" : "-"}${option.id}`}
+                  </Typography>
+                </div>
+                <Typography
+                  className={classes.group}
+                  variant="subtitle1"
+                  color="textSecondary"
+                >
+                  {option.attributes!.group}
+                </Typography>
+              </div>
+            </li>
+          )}
+          renderInput={params => (
+            <TextField
+              {...params}
+              size="small"
+              variant="outlined"
+              label="sort"
+              helperText="Dimensions and Metrics to sort query by."
+            />
+          )}
         />
-      )}
-    />
+      </Root>
   )
 }
 

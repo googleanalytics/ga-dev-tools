@@ -2,7 +2,8 @@ import React from "react"
 import CssBaseline from "@mui/material/CssBaseline"
 import {
   ThemeProvider,
-  createTheme, styled
+  Theme,
+  createTheme
 } from "@mui/material/styles"
 import {orange, deepOrange} from "@mui/material/colors"
 import Snackbar from "@mui/material/Snackbar"
@@ -11,10 +12,24 @@ import {
   useSelector,
   useDispatch,
 } from "react-redux"
-import { legacy_createStore as createStore } from "redux"
+import {legacy_createStore as createStore} from "redux"
 import GlobalStyles from '@mui/material/GlobalStyles';
+import {PartialDeep} from 'type-fest';
 
-const reducer = (state = {}, action) => {
+type State =
+    {
+      user?: {},
+      gapi?: PartialDeep<typeof gapi>,
+      toast?: string,
+      status?: string
+    }
+
+type Action =
+    | { type: 'setUser', user: {} | undefined  }
+    | { type: 'setGapi', gapi: PartialDeep<typeof gapi>  | undefined }
+    | { type: 'setToast', toast: string | undefined }
+    | { type: 'gapiStatus', status: string | undefined };
+const reducer = (state: State = {}, action: Action) => {
   switch (action.type) {
     case "setUser":
       return { ...state, user: action.user }
@@ -69,11 +84,11 @@ const globalTheme = createTheme({
           margin: 0,
           padding: 0,
         },
-        p: ({ ownerState, theme }) => ({
+        p: (theme: Theme) => ({
           ... ({paddingBottom: theme.spacing(2)}),
         }),
-        a: ({ ownerState, theme }) => ({
-          color: theme.palette.primary[800],
+        a: (theme: Theme) => ({
+          color: theme.palette.primary.dark,
           textDecoration: "none",
           "&:hover": {
             textDecoration: "underline",
@@ -88,8 +103,9 @@ const globalTheme = createTheme({
 export const makeStore = () => createStore(reducer)
 export const store = makeStore()
 
+
 const Toaster = () => {
-  const toast = useSelector(a => a.toast)
+  const toast = useSelector((a: State) => a.toast)
   const dispatch = useDispatch()
   if (toast === undefined) {
     return null
@@ -121,7 +137,7 @@ const inputGlobalStyles = <GlobalStyles
         paddingBottom: theme.spacing(2),
       },
       a: {
-        color: theme.palette.primary[800],
+        color: theme.palette.primary.dark,
         textDecoration: "none",
         "&:hover": {
           textDecoration: "underline",
@@ -133,7 +149,7 @@ const inputGlobalStyles = <GlobalStyles
     })}
 />;
 
-export default ({ element }) => {
+export default ({ element }: any) => {
   return (
       <ThemeProvider theme={globalTheme}>
         <React.Fragment>

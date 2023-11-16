@@ -12,16 +12,21 @@ import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
 import {Link} from "gatsby";
 import {Box, Typography} from "@mui/material";
+import {ChangeEvent, ReactNode, SyntheticEvent} from 'react';
 
-function TabPanel(props) {
-    const {children, value, index, ...other} = props;
+type Props = {
+    children: ReactNode,
+    value?: number,
+    index: number
+}
+function TabPanel(props: Props) {
+    const {children, value, index} = props;
 
     return (
         <div
             role="tabpanel"
             hidden={value !== index}
             id={`simple-tabpanel-${index}`}
-            {...other}
         >
             {value === index && (
                 <Box p={3}>
@@ -32,7 +37,7 @@ function TabPanel(props) {
     );
 }
 
-export function GaConsole({className}) {
+export function GaConsole({className = ''}) {
     const {events} = React.useContext(StoreContext)
     const [open, setOpen] = React.useState(false);
 
@@ -46,14 +51,14 @@ export function GaConsole({className}) {
 
     const [value, setValue] = React.useState(0);
 
-    const handleClickOpen = (eventKey) => () => {
+    const handleClickOpen = (eventKey: number) => () => {
         setSelectedEvent(events[events.length - eventKey - 1])
         setOpen(true);
     };
     const handleClose = () => {
         setOpen(false);
     };
-    const handleChange = (event, newValue) => {
+    const handleChange = (event: SyntheticEvent, newValue: any) => {
         setValue(newValue);
     };
 
