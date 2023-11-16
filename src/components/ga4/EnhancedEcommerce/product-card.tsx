@@ -37,7 +37,7 @@ export function ProductCard({product}: Props) {
     return (
         <Link
             className={productCardStyle}
-            to={slug}
+            to={slug || ''}
             aria-label={`View ${title} product page`}
             onClick={selectProduct}
         >
