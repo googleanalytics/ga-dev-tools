@@ -88,7 +88,7 @@ export enum StorageKey {
   ga4AccountSummaries = "//ga4-account-summaries",
   ga4WebStreams = "//ga4-web-streams",
 
-  // Acount Explorer
+  // Account Explorer
   accountExplorerAPV = "/account-explorer/apv",
 
   // GA4 Dimensions and metrics explorer
