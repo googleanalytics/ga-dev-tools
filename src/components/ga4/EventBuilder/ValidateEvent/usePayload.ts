@@ -70,7 +70,8 @@ const usePayload = (): {} => {
     non_personalized_ads,
     clientIds,
     type,
-
+    useTextBox,
+    payloadObj
   } = useContext(EventCtx)!
 
   const eventName = useMemo(() => {
@@ -121,6 +122,19 @@ const usePayload = (): {} => {
     timestamp_micros,
     user_properties,
   ])
+
+  if (useTextBox) {
+    if ((typeof payloadObj) === 'string') {
+      if (Object.keys(payloadObj).length === 0) {
+        // @ts-ignore ts[2741]
+        payload = {}
+      } else {
+        payload = JSON.parse(payloadObj)
+      }
+    } else {
+      payload = payloadObj
+    }
+  }
 
   return payload
 }

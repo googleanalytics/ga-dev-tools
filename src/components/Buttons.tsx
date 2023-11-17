@@ -70,10 +70,12 @@ type TooltipIconButtonProps = {
   size?: "small" | "medium"
   className?: string
   disabled?: boolean
+  placement?: "bottom" | "left" | "right" | "top" | "bottom-end" | "bottom-start" | "left-end" | "left-start" | "right-end" | "right-start" | "top-end" | "top-start" | undefined
   onClick?: () => void
 }
 
-export const TooltipIconButton: React.FC<PropsWithChildren<TooltipIconButtonProps>> = ({ tooltip, children, onClick, className, disabled, size = "small" }) => {
+export const TooltipIconButton: React.FC<PropsWithChildren<TooltipIconButtonProps>> =
+    ({ tooltip, children, onClick, className, disabled, size = "small", placement='bottom'}) => {
   if (disabled) {
     return (
       <IconButton
@@ -87,7 +89,7 @@ export const TooltipIconButton: React.FC<PropsWithChildren<TooltipIconButtonProp
     )
   }
   return (
-    <Tooltip title={tooltip}>
+    <Tooltip title={tooltip} placement={placement} leaveDelay={2000}>
       <IconButton onClick={onClick} size={size} className={className}>
         {children}
       </IconButton>

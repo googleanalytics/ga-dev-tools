@@ -33,6 +33,34 @@ import { green, red } from "@mui/material/colors"
 
 const PREFIX = 'ValidateEvent';
 
+interface TemplateProps {
+  heading: string
+  headingIcon?: JSX.Element
+  body: JSX.Element | string
+  validateEvent?: () => void
+  validationMessages?: ValidationMessage[]
+  sendToGA?: () => void
+  copyPayload?: () => void
+  copySharableLink?: () => void
+  error?: boolean
+  valid?: boolean
+  sent?: boolean
+  payloadErrors?: string | undefined
+  useTextBox?: boolean
+}
+
+export interface ValidateEventProps {
+  measurement_id: string
+  app_instance_id: string
+  firebase_app_id: string
+  api_secret: string
+  client_id: string
+  user_id: string
+  formatPayload: () => void
+  payloadErrors: string | undefined
+  useTextBox: boolean
+}
+
 const classes = {
   template: `${PREFIX}-template`,
   payloadTitle: `${PREFIX}-payloadTitle`,
@@ -99,21 +127,13 @@ interface StyleProps {
   valid?: boolean
 }
 
-export interface ValidateEventProps {
-  measurement_id: string
-  app_instance_id: string
-  firebase_app_id: string
-  api_secret: string
-  client_id: string
-  user_id: string
-}
 
-const focusFor = (message: ValidationMessage) => {
+const focusFor = (message: ValidationMessage, useTextBox: boolean) => {
   const { fieldPath } = message
   let id: string | undefined
   let labelValues: string[] = Object.values(Label)
 
-  if (labelValues.includes(fieldPath)) {
+  if (labelValues.includes(fieldPath) && !useTextBox) {
     id = fieldPath
   }
 
@@ -132,19 +152,7 @@ const focusFor = (message: ValidationMessage) => {
   }
 }
 
-interface TemplateProps {
-  heading: string
-  headingIcon?: JSX.Element
-  body: JSX.Element | string
-  validateEvent?: () => void
-  validationMessages?: ValidationMessage[]
-  sendToGA?: () => void
-  copyPayload?: () => void
-  copySharableLink?: () => void
-  error?: boolean
-  valid?: boolean
-  sent?: boolean
-}
+
 const Template: React.FC<TemplateProps> = ({
   sent,
   heading,
@@ -157,8 +165,12 @@ const Template: React.FC<TemplateProps> = ({
   copySharableLink,
   error,
   valid,
+  payloadErrors,
+  useTextBox
 }) => {
 
+  const { instanceId, api_secret } = useContext(EventCtx)!
+  const classes = useStyles({ error, valid })
   const payload = usePayload()
   const { instanceId, api_secret } = useContext(EventCtx)!
   return (
@@ -170,12 +182,17 @@ const Template: React.FC<TemplateProps> = ({
         {headingIcon}
         {heading}
       </Typography>
-      {validationMessages !== undefined && (
+
+      {validationMessages !== undefined &&
+        (
+          (useTextBox && !payloadErrors) ||
+          !useTextBox
+        ) && (
         <ul>
           {validationMessages.map((message, idx) => (
             <div>
               <li key={idx}>
-                {focusFor(message)}
+                {focusFor(message, useTextBox)}
                 {message.description}
                 <br />
                 <a href={message.documentation} target='_blank' rel="noreferrer">Documentation</a>
@@ -187,11 +204,26 @@ const Template: React.FC<TemplateProps> = ({
         </ul>
       )}
 
+      {useTextBox && payloadErrors && (
+        <div>
+          <ul>
+            <li>
+              JSON formatting error: <i>{payloadErrors}</i>
+            </li>
+          </ul>
+          <br/>
+          <br/>
+        </div>
+      )}
+
       {body}
 
       <section className={classes.buttonRow}>
         {validateEvent !== undefined && (
-          <PAB small onClick={validateEvent}>
+          <PAB small onClick={() => {
+            validateEvent()
+          }
+          }>
             validate event
           </PAB>
         )}
@@ -209,8 +241,11 @@ const Template: React.FC<TemplateProps> = ({
           </PlainButton>
         )}
       </section>
+
       <br />
+
       <Typography variant="h4">Request info</Typography>
+
       <Typography className={classes.headers}>
         POST /mp/collect?api_secret={api_secret}
         {instanceId.firebase_app_id &&
@@ -221,7 +256,9 @@ const Template: React.FC<TemplateProps> = ({
         HOST: www.google-analytics.com <br />
         Content-Type: application/json
       </Typography>
+
       <Typography variant="h5">Payload</Typography>
+
       <section data-testid="payload">
         <PrettyJson
           className={classes.payload}
@@ -234,7 +271,7 @@ const Template: React.FC<TemplateProps> = ({
   )
 }
 
-const ValidateEvent: React.FC<ValidateEventProps> = () => {
+const ValidateEvent: React.FC<ValidateEventProps> = ({formatPayload, payloadErrors, useTextBox}) => {
   const request = useValidateEvent()
 
   return (
@@ -255,23 +292,39 @@ const ValidateEvent: React.FC<ValidateEventProps> = () => {
               </Typography>
             </Root>
           }
-          validateEvent={validateEvent}
+          validateEvent={ () => {
+              if (formatPayload) {
+                formatPayload()
+              }
+
+              validateEvent()
+            }
+          }
         />
       )}
       renderInProgress={() => (
         <Template heading="Validating" body={<Spinner ellipses />} />
       )}
-      renderFailed={({ validationMessages, validateEvent }) => (
+      renderFailed={({ validationMessages, validateEvent}) => (
         <Template
           error
           headingIcon={<ErrorIcon />}
           heading="Event is invalid"
           body=""
-          validateEvent={validateEvent}
+          validateEvent={ () => {
+              if (formatPayload) {
+                formatPayload()
+              }
+
+              validateEvent()
+            }
+          }
           validationMessages={validationMessages}
+          payloadErrors={payloadErrors}
+          useTextBox={useTextBox}
         />
       )}
-      renderSuccessful={({ sendToGA, copyPayload, copySharableLink, sent }) => (
+      renderSuccessful={({ sendToGA, copyPayload, copySharableLink, sent}) => (
         <Template
           sent={sent}
           valid

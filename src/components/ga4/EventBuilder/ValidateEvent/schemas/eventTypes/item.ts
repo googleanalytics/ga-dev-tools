@@ -12,7 +12,9 @@ export const itemSchema = {
         }
     },
     "propertyNames": {
-        "maxLength": 40
+        "maxLength": 40,
+        "pattern":
+            "^(?!ga_|google_|firebase_)[A-Za-z][A-Za-z0-9_]*$",
     },
     "properties": ITEM_FIELDS,
     "anyOf": [{

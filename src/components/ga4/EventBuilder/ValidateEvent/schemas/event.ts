@@ -1,4 +1,5 @@
 import { buildEvents } from "./schemaBuilder"
+import { itemsSchema } from "./eventTypes/items"
 
 export const eventSchema = {
     "type": "object",
@@ -12,7 +13,8 @@ export const eventSchema = {
             "pattern": "^[A-Za-z][A-Za-z0-9_]*$",
             "maxLength": 40
         },
-        "params": {"type": "object"}
+        "params": {"type": "object"},
+        "items": itemsSchema
     },
     "allOf": buildEvents()
 }

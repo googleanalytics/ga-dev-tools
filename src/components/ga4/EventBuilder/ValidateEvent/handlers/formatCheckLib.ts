@@ -17,54 +17,73 @@ const RESERVED_USER_PROPERTY_NAMES = [
 ]
 
 // formatCheckLib provides additional validations for payload not included in 
-// the schema validations. All checks are consistent with Firebase documentation
-export const formatCheckLib = (payload: any, firebaseAppId: string | undefined) => {
+// the schema validations. All checks are consistent with Firebase documentation.
+export const formatCheckLib = (payload: any, instanceId: InstanceId, api_secret: string, useFirebase: boolean) => {
     let errors: ValidationMessage[] = []
 
-    const appInstanceIdErrors = isValidAppInstanceId(payload)
+    const appOrClientErrors = isValidAppOrClientId(payload, useFirebase)
     const eventNameErrors = isValidEventName(payload)
     const userPropertyNameErrors = isValidUserPropertyName(payload)
     const currencyErrors = isValidCurrencyType(payload)
     const emptyItemsErrors = isItemsEmpty(payload)
     const itemsRequiredKeyErrors = itemsHaveRequiredKey(payload)
-    const firebaseAppIdErrors = isfirebaseAppIdValid(firebaseAppId)
+    const instanceIdErrors = isInstanceIdValid(instanceId, useFirebase)
+    const apiSecretErrors = isApiSecretNotNull(api_secret)
     const sizeErrors = isTooBig(payload)
 
     return [
         ...errors, 
-        ...appInstanceIdErrors, 
+        ...appOrClientErrors,
         ...eventNameErrors,
         ...userPropertyNameErrors,
         ...currencyErrors,
         ...emptyItemsErrors,
         ...itemsRequiredKeyErrors,
-        ...firebaseAppIdErrors,
+        ...instanceIdErrors,
+        ...apiSecretErrors,
         ...sizeErrors,
     ]
 }
 
-const isValidAppInstanceId = (payload: any) => {
-    let errors: ValidationMessage[] = []
+const isValidAppOrClientId = (payload: any, useFirebase: boolean) => {
+    const errors: ValidationMessage[] = []
     const appInstanceId = payload.app_instance_id
+    const clientId = payload.client_id
 
-    if (appInstanceId) {
-        if (appInstanceId?.length !== 32) {
+    if (useFirebase) {
+        if (appInstanceId) {
+            if (appInstanceId?.length !== 32) {
+                errors.push({
+                    description: `Measurement app_instance_id is expected to be a 32 digit hexadecimal number but was [${appInstanceId.length}] digits.`,
+                    validationCode: "value_invalid",
+                    fieldPath: "app_instance_id"
+                })
+            }
+
+            if (!appInstanceId.match(/^[A-Fa-f0-9]+$/)) {
+                let nonChars = appInstanceId.split('').filter((letter: string)=> {
+                    return (!/[0-9A-Fa-f]/.test(letter))
+                })
+
+                errors.push({
+                    description: `Measurement app_instance_id contains non hexadecimal character [${nonChars[0]}].`,
+                    validationCode: "value_invalid",
+                    fieldPath: "app_instance_id"
+                })
+            }
+        } else {
             errors.push({
-                description: `Measurement app_instance_id is expected to be a 32 digit hexadecimal number but was [${appInstanceId.length}] digits.`,
+                description: "Measurement requires an app_instance_id.",
                 validationCode: "value_invalid",
                 fieldPath: "app_instance_id"
             })
         }
-
-        if (!appInstanceId.match(/^[A-Fa-f0-9]+$/)) {
-            let nonChars = appInstanceId.split('').filter((letter: string)=> {
-                return (!/[0-9A-Fa-f]/.test(letter))
-            })
-
+    } else {
+        if (!clientId) {
             errors.push({
-                description: `Measurement app_instance_id contains non hexadecimal character [${nonChars[0]}].`,
+                description: "Measurement requires a client_id.",
                 validationCode: "value_invalid",
-                fieldPath: "app_instance_id"
+                fieldPath: "client_id"
             })
         }
     }
@@ -89,8 +108,8 @@ const isValidEventName = (payload: any) => {
     return errors
 }
 
-const isValidUserPropertyName = (payload:any) => {
-    let errors: ValidationMessage[] = []
+const isValidUserPropertyName = (payload: any) => {
+    const errors: ValidationMessage[] = []
     const userProperties = payload.user_properties
 
     if (userProperties) {
@@ -108,8 +127,8 @@ const isValidUserPropertyName = (payload:any) => {
     return errors
 }
 
-const isValidCurrencyType = (payload:any) => {
-    let errors: ValidationMessage[] = []
+const isValidCurrencyType = (payload: any) => {
+    const errors: ValidationMessage[] = []
 
     payload.events?.forEach((ev:any) => {
         if (ev.params && ev.params.currency) {
@@ -128,10 +147,10 @@ const isValidCurrencyType = (payload:any) => {
     return errors
 }
 
-const isItemsEmpty = (payload:any) => {
-    let errors: ValidationMessage[] = []
+const isItemsEmpty = (payload: any) => {
+    const errors: ValidationMessage[] = []
 
-    payload?.events?.forEach((ev:any) => {
+    payload?.events?.forEach((ev: any) => {
         if (ev?.params?.items && ev?.params?.items?.length < 1 && eventRequiresItems(ev?.params?.name)){
             errors.push({
                 description: "'items' should not be empty; One of 'item_id' or 'item_name' is a required key",
@@ -154,8 +173,8 @@ const eventRequiresItems = (eventName: string) => {
     return false
 }
 
-const itemsHaveRequiredKey = (payload:any) => {
-    let errors: ValidationMessage[] = []
+const itemsHaveRequiredKey = (payload: any) => {
+    const errors: ValidationMessage[] = []
 
     payload?.events?.forEach((ev: any) => {
         if (ev?.params?.items?.length > 0) {
@@ -182,22 +201,48 @@ const requiredKeysEmpty = (itemsObj: any) => {
     return !(itemsObj.item_id || itemsObj.item_name)
 }
 
-const isfirebaseAppIdValid = (firebaseAppId:string | undefined) => {
-    let errors: ValidationMessage[] = []
+const isInstanceIdValid = (instanceId: InstanceId, useFirebase: boolean) => {
+    const errors: ValidationMessage[] = []
+    const firebaseAppId = instanceId?.firebase_app_id
+    const measurementId = instanceId?.measurement_id
 
-    if (firebaseAppId !== undefined && !firebaseAppId.match(/[0-9]:[0-9]+:[a-zA-Z]+:[a-zA-Z0-9]+$/)) {
+    if (useFirebase) {
+        if (firebaseAppId && !firebaseAppId.match(/[0-9]:[0-9]+:[a-zA-Z]+:[a-zA-Z0-9]+$/)) {
+            errors.push({
+                description: `${firebaseAppId} does not follow firebase_app_id pattern of X:XX:XX:XX at path`,
+                validationCode: "value_invalid",
+                fieldPath: "firebase_app_id"
+            })
+        }
+    } else {
+        if (!measurementId) {
+            errors.push({
+                description: "Unable to find non-empty parameter [measurement_id] value in request.",
+                validationCode: "value_invalid",
+                fieldPath: "measurement_id"
+            })
+        }
+    }
+
+    return errors
+}
+
+const isApiSecretNotNull = (api_secret: string) => {
+    const errors: ValidationMessage[] = []
+
+    if (!api_secret) {
         errors.push({
-            description: `${firebaseAppId} does not follow firebase_app_id pattern of X:XX:XX:XX at path`,
-            validationCode: "value_invalid",
-            fieldPath: "firebase_app_id"
+            description: "Unable to find non-empty parameter [api_secret] value in request.",
+            validationCode: "VALUE_REQUIRED",
+            fieldPath: "api_secret"
         })
     }
 
     return errors
 }
 
-const isTooBig = (payload:any) => {
-    let errors: ValidationMessage[] = []
+const isTooBig = (payload: any) => {
+    const errors: ValidationMessage[] = []
 
     if (sizeof(payload) > 130000) {
         errors.push({
