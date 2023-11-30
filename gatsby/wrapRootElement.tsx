@@ -85,7 +85,7 @@ const globalTheme = createTheme({
           padding: 0,
         },
         p: (theme: Theme) => ({
-          ... ({paddingBottom: theme.spacing(2)}),
+          ...({paddingBottom: theme.spacing(2)}),
         }),
         a: (theme: Theme) => ({
           color: theme.palette.primary.dark,

@@ -131,7 +131,7 @@ interface StyleProps {
 const focusFor = (message: ValidationMessage, useTextBox: boolean) => {
   const { fieldPath } = message
   let id: string | undefined
-  let labelValues: string[] = Object.values(Label)
+  const labelValues: string[] = Object.values(Label)
 
   if (labelValues.includes(fieldPath) && !useTextBox) {
     id = fieldPath
@@ -170,9 +170,7 @@ const Template: React.FC<TemplateProps> = ({
 }) => {
 
   const { instanceId, api_secret } = useContext(EventCtx)!
-  const classes = useStyles({ error, valid })
   const payload = usePayload()
-  const { instanceId, api_secret } = useContext(EventCtx)!
   return (
     <Card
       className={clsx(classes.form, classes.template)}
@@ -192,7 +190,7 @@ const Template: React.FC<TemplateProps> = ({
           {validationMessages.map((message, idx) => (
             <div>
               <li key={idx}>
-                {focusFor(message, useTextBox)}
+                {focusFor(message, useTextBox !== undefined && useTextBox)}
                 {message.description}
                 <br />
                 <a href={message.documentation} target='_blank' rel="noreferrer">Documentation</a>

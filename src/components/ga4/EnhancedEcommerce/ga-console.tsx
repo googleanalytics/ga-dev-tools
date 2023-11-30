@@ -12,7 +12,7 @@ import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
 import {Link} from "gatsby";
 import {Box, Typography} from "@mui/material";
-import {ChangeEvent, ReactNode, SyntheticEvent} from 'react';
+import {ReactNode, SyntheticEvent} from 'react';
 
 type Props = {
     children: ReactNode,

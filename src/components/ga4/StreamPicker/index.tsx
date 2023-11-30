@@ -1,6 +1,6 @@
 import * as React from "react"
 import { styled } from '@mui/material/styles';
-import { Dispatch, Requestable, successful } from "@/types"
+import { Dispatch, successful } from "@/types"
 import Autocomplete from "@mui/material/Autocomplete"
 import TextField from "@mui/material/TextField"
 import Typography from "@mui/material/Typography"

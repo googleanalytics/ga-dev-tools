@@ -103,7 +103,7 @@ const usePayload = (): {} => {
     [userProperties]
   )
 
-  const payload = useMemo(() => {
+  let payload = useMemo(() => {
     return {
       ...removeUndefined(clientIds),
       ...removeUndefined({ timestamp_micros }),

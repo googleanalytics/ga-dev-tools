@@ -1,23 +1,8 @@
 import * as React from "react"
-import { styled } from '@mui/material/styles';
 import { TextField } from "@mui/material"
 import clsx from "classnames"
 import { Dispatch } from "../types"
 import Autocomplete from "@mui/material/Autocomplete"
-
-const PREFIX = 'Select';
-
-const classes = {
-  formControl: `${PREFIX}-formControl`
-};
-
-const StyledTextField
- = styled(TextField
-)(() => ({
-  [`& .${classes.formControl}`]: {
-    minWidth: "15ch",
-  }
-}));
 
 export interface SelectOption {
   value: string
@@ -52,7 +37,7 @@ const Select: React.FC<SelectProps> = ({
   return (
     <Autocomplete<SelectOption, false, true, false>
       disableClearable
-      className={clsx(classes.formControl, className)}
+      className={className}
       autoHighlight
       autoSelect
       options={options}

@@ -226,15 +226,7 @@ const EventBuilder: React.FC = () => {
     setNonPersonalizedAds,
   } = useInputs(categories)
 
-  useEffect(() => {
-    formatPayload()
-  }, [])
-
-  useEffect(() => {
-    formatPayload()
-  }, [inputPayload])
-
-  const formatPayload = () => {
+  const formatPayload = React.useCallback( () => {
     try {
       if (inputPayload) {
         let payload = JSON.parse(inputPayload) as object
@@ -250,7 +242,11 @@ const EventBuilder: React.FC = () => {
       setPayloadErrors(err.message)
       setPayloadObj({})
     }
-  }
+  }, [inputPayload, setPayloadErrors, setPayloadObj])
+
+  useEffect(() => {
+    formatPayload()
+  }, [inputPayload, formatPayload])
 
   return (
     <Root>
@@ -296,7 +292,6 @@ const EventBuilder: React.FC = () => {
         After choosing a client, fill out the inputs below.
       </Typography>
 
-      <section className={classes.form}>
         <LinkedTextField
           required
           href="https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference#api_secret"
@@ -397,8 +392,7 @@ const EventBuilder: React.FC = () => {
     }
 
     { useTextBox &&
-      <div>
-        <section className={formClasses.form}>
+        <>
           <LinkedTextField
             required
             href="https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference#api_secret"
@@ -432,7 +426,6 @@ const EventBuilder: React.FC = () => {
                 onChange={setMeasurementId}
               />
           )}
-        </section>
 
         <TextBox
           required
@@ -459,11 +452,7 @@ const EventBuilder: React.FC = () => {
 
         { payloadErrors && (
             <TooltipIconButton
-              tooltip={
-                <React.Fragment>
-                  <Typography color="inherit">{payloadErrors}</Typography>
-                </React.Fragment>
-              }
+              tooltip={payloadErrors}
               placement={'top'}
             >
               <ErrorIcon
@@ -471,12 +460,12 @@ const EventBuilder: React.FC = () => {
               />
             </TooltipIconButton>
         )}
-      </div>
+      </>
     }
 
     { !useTextBox &&
       <div>
-        <section className={formClasses.form}>
+        <section className={classes.form}>
           <LinkedTextField
             required
             href="https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference#api_secret"
@@ -713,37 +702,6 @@ const EventBuilder: React.FC = () => {
               />
             </>
           )}
-        <section className={classes.form}>
-          <ShowAdvancedCtx.Provider
-            value={showAdvanced || type === EventType.CustomEvent}
-          >
-            <Typography variant="h5">Parameters</Typography>
-            <Parameters
-              removeParam={removeParam}
-              parameters={parameters}
-              addStringParam={addStringParam}
-              addNumberParam={addNumberParam}
-              setParamName={setParamName}
-              setParamValue={setParamValue}
-              addItemsParam={items === undefined ? addItemsParam : undefined}
-            />
-            {items !== undefined && (
-              <>
-                <Typography variant="h5">Items</Typography>
-                <Items
-                  items={items}
-                  addItem={addItem}
-                  removeItem={removeItem}
-                  removeItemParam={removeItemParam}
-                  addItemNumberParam={addItemNumberParam}
-                  addItemStringParam={addItemStringParam}
-                  setItemParamName={setItemParamName}
-                  setItemParamValue={setItemParamValue}
-                  removeItems={removeItems}
-                />
-              </>
-            )}
-
             {(showAdvanced ||
               (userProperties !== undefined && userProperties.length !== 0)) && (
               <>
@@ -762,7 +720,6 @@ const EventBuilder: React.FC = () => {
         </section>
       </div>
     }
-
       <Typography variant="h3" className={classes.validateHeading}>
         Validate & Send event
       </Typography>

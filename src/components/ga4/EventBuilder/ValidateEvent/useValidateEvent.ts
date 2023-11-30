@@ -128,7 +128,7 @@ const useValidateEvent = (): Requestable<
 
   const copySharableLink = useCopy(url, "copied link to event")
 
-  const validatePayloadAttributes = (payload: any) => {
+  const validatePayloadAttributes = useCallback((payload: any) => {
     const validator = new Validator(baseContentSchema)
     const formatCheckErrors: ValidationMessage[] | [] = formatCheckLib(
           payload,
@@ -150,7 +150,7 @@ const useValidateEvent = (): Requestable<
       }
 
       return []
-    }
+  }, [api_secret, instanceId, useFirebase])
 
     const validateEvent = useCallback(() => {
       if (status === RequestStatus.InProgress) {
@@ -197,7 +197,7 @@ const useValidateEvent = (): Requestable<
         setValidationMessages(validatorErrors)
         setStatus(RequestStatus.Failed)
       }
-    }, [status, payload, api_secret, instanceId, useFirebase, payloadErrors, useTextBox, validatePayloadAttributes])
+    }, [status, payload, api_secret, instanceId, useFirebase, useTextBox, validatePayloadAttributes])
 
   const defineFieldCode = (error: JSONError) => {
     const { data } = error

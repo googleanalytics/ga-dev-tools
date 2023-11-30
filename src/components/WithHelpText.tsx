@@ -108,12 +108,6 @@ interface WithHelpTextProps {
   shrink?: boolean
   hrGroup?: boolean
 }
-
-interface Props {
-  notched?: boolean
-  shrink?: boolean
-}
-
 const WithHelpText: React.FC<PropsWithChildren<WithHelpTextProps>> = ({
   label,
   children,

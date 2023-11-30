@@ -132,7 +132,7 @@ const RequestComposer: React.FC<RequestComposerProps> = ({ type }) => {
           Make Request
         </PAB>
     )
-  }, [classes, makeRequest, canMakeRequest])
+  }, [makeRequest, canMakeRequest])
 
   const accountPropertyView = useAccountPropertyView(
     StorageKey.requestComposerAPV,

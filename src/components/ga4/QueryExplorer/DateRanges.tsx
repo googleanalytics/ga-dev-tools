@@ -161,10 +161,6 @@ const useDateRanges: UseDateRanges = ({ setDateRanges }) => {
   }
 }
 
-interface Props {
-  advanced: boolean
-}
-
 const dateRange = (
   <ExternalLink href="https://developers.google.com/analytics/devguides/reporting/data/v1/rest/v1beta/DateRange">
     DateRange

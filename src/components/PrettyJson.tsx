@@ -114,7 +114,7 @@ const PrettyJson: React.FC<PrettyJsonProps> = ({
         />
       </>
     )
-  }, [object, classes.json, shouldCollapse, tooltipText])
+  }, [object, shouldCollapse, tooltipText])
 
   if (object === undefined) {
     return null

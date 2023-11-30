@@ -126,7 +126,7 @@ export const DimensionsPicker: React.FC<{
           </li>
       )}
       renderInput={params => (
-        <TextField
+        <StyledTextField
           {...params}
           required={required}
           label={label}
@@ -198,7 +198,7 @@ export const MetricsPicker: React.FC<{
           </li>
       )}
       renderInput={params => (
-        <TextField
+        <StyledTextField
           {...params}
           required={required}
           label={label}
@@ -292,7 +292,7 @@ export const DimensionPicker: React.FC<{
         </li>
       )}
       renderInput={params => (
-        <TextField
+        <StyledTextField
           {...params}
           required={required}
           label={label}
@@ -383,7 +383,7 @@ export const MetricPicker: React.FC<{
         </li>
       )}
       renderInput={params => (
-        <TextField
+        <StyledTextField
           {...params}
           required={required}
           label={label}

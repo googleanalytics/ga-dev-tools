@@ -20,23 +20,7 @@ import {Footer} from "@/components/ga4/EnhancedEcommerce/footer";
 import {LineItem} from "@/components/ga4/EnhancedEcommerce/line-item";
 
 import {StoreContext} from '@/components/ga4/EnhancedEcommerce/store-context';
-import {Link} from 'gatsby';
-import {
-  table,
-  wrap,
-  totals,
-  grandTotal,
-  summary,
-  checkoutButton,
-  collapseColumn,
-  labelColumn,
-  imageHeader,
-  productHeader,
-  emptyStateContainer,
-  emptyStateHeading,
-  emptyStateLink,
-  title,
-} from "./cart.module.css"
+import {collapseColumn, emptyStateContainer, emptyStateHeading, grandTotal, imageHeader, labelColumn, productHeader, summary, table, title, totals, wrap,} from "./cart.module.css"
 
 interface Props {
   location: { pathname: string },
@@ -45,7 +29,7 @@ interface Props {
 export default (props: Props) => {
   const {cart, getCartSubtotal, addEvent} = React.useContext(StoreContext)
 
-  const lineItems = cart ? cart : [];
+  const lineItems = React.useMemo( () => cart ? cart : [], [cart]);
   const emptyCart = cart.length === 0;
 
   const taxes = 0;
@@ -69,7 +53,7 @@ export default (props: Props) => {
     addEvent('view_cart', 'View cart.', snippet)
 
 
-  }, []);
+  }, [addEvent, lineItems]);
   return (
       <Layout
           title="Enhanced Ecommerce Demo"

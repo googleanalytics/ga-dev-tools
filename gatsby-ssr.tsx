@@ -7,7 +7,6 @@ import CustomLayout from "./gatsby/wrapRootElement"
 // TODO - look into making this work like gatsby-node & use typescript for the
 // things that are imported/exported.
 
-export { onInitialClientRender } from "./gatsby/onInitialClientRender"
 export const wrapPageElement: GatsbySSR["wrapPageElement"] = CustomLayout
 
 // Wrap every page using a StoreProvider object used by eCommerce demo.
