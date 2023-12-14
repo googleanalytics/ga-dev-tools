@@ -106,11 +106,14 @@ const usePayload = (): {} => {
   let payload = useMemo(() => {
     return {
       ...removeUndefined(clientIds),
-      ...removeUndefined({ timestamp_micros }),
       ...removeUndefined({ non_personalized_ads }),
       ...removeUndefined(removeEmptyObject({ user_properties })),
       events: [
-        { name: eventName, ...(parameters.length > 0 ? { params } : {}) },
+        {
+          name: eventName,
+          ...(parameters.length > 0 ? { params } : {}),
+          ...removeUndefined({ timestamp_micros })
+        },
       ],
     }
   }, [
