@@ -44,7 +44,6 @@ cd ..
 
 Then run the following (from the top level directory) and answer all prompts:
 
-
 ```shell
 yarn start:app:production
 ```
@@ -93,7 +92,7 @@ Of note, we use:
 
 - [`onInitialClientRender`](https://www.gatsbyjs.org/docs/browser-apis/#onInitialClientRender)
 
-  Any code that should run once after the client renders goes here. 
+  Any code that should run once after the client renders goes here.
 
   This code pulls in and configures
   [gapi](https://github.com/google/google-api-javascript-client), a Google

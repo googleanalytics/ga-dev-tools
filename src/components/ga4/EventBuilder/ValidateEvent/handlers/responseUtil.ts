@@ -1,3 +1,5 @@
+import { ValidationMessage } from "../../types"
+
 const ALPHA_NUMERIC_NAME = "does not match '^(?!ga_|google_|firebase_)[A-Za-z][A-Za-z0-9_]*$'"
 const ALPHA_NUMERIC_OVERRIDE = " may only contain alpha-numeric characters and underscores,start with an alphabetic character, and cannot contain google_, ga_, firebase_"
 const CUSTOM_PARAMS_NAME = "can have at most [10] custom params."
@@ -14,7 +16,7 @@ const API_DOC_GTAG = 'https://developers.google.com/analytics/devguides/collecti
 const BASE_PAYLOAD_ATTRIBUTES = ['app_instance_id', 'api_secret', 'firebase_app_id', 'user_id', 'timestamp_micros', 'user_properties', 'non_personalized_ads']
 
 // formats error messages for clarity; add documentation to each error
-export const formatErrorMessages = (errors, payload, useFirebase) => {
+export const formatErrorMessages = (errors: ValidationMessage[], payload: any, useFirebase: boolean) => {
     const formattedErrors = errors.map(error => {
         const { description, fieldPath } = error
 
@@ -29,15 +31,11 @@ export const formatErrorMessages = (errors, payload, useFirebase) => {
             error['description'] = description.slice(0, end_index) + ALPHA_NUMERIC_OVERRIDE
 
             return error
-        
         } else if (BASE_PAYLOAD_ATTRIBUTES.includes(fieldPath?.slice(2))) {
             error['fieldPath'] = fieldPath.slice(2)
-
             return error
         }
-
         return error
-
     })
 
     const documentedErrors = formattedErrors.map(error => {
@@ -48,7 +46,7 @@ export const formatErrorMessages = (errors, payload, useFirebase) => {
     return documentedErrors
 }
 
-const addDocumentation = (error, payload, useFirebase) => {
+const addDocumentation = (error: ValidationMessage, payload: any, useFirebase: boolean) => {
     const { fieldPath, validationCode } = error
 
     if (validationCode === 'max-length-error' || validationCode === 'max-properties-error' || validationCode === 'max-body-size') {

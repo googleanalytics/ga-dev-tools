@@ -24,7 +24,7 @@ describe("useCached", () => {
       const requestReady = true
       const makeRequest = async () => {
         if (madeRequest) {
-          fail("This should only have been called once.")
+          throw new Error("This should only have been called once.")
         } else {
           madeRequest = true
           throw new Error(expectedMessage)
@@ -57,7 +57,7 @@ describe("useCached", () => {
       const { result, waitForNextUpdate } = renderHook(() => {
         const makeRequest = useCallback(async () => {
           if (madeRequest) {
-            fail("This function should be called exactly once.")
+            throw new Error("This function should be called exactly once.")
           } else {
             madeRequest = true
             return expected
@@ -97,7 +97,7 @@ describe("useCached", () => {
 
       const { result } = renderHook(() => {
         const makeRequest = useCallback(async () => {
-          fail("should not be called if value is in localStorage")
+          throw new Error("should not be called if value is in localStorage")
         }, [])
         const requestReady = useMemo(() => true, [])
         return useCached(key, makeRequest, expirey, requestReady)

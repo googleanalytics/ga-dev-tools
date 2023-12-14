@@ -1,19 +1,103 @@
 import * as React from "react"
 
-import Autocomplete from "@material-ui/lab/Autocomplete"
-import Typography from "@material-ui/core/Typography"
-import TextField from "@material-ui/core/TextField"
-import Paper from "@material-ui/core/Paper"
+import { styled } from '@mui/material/styles';
+
+import Autocomplete from "@mui/material/Autocomplete"
+import Typography from "@mui/material/Typography"
+import TextField from "@mui/material/TextField"
+import Paper from "@mui/material/Paper"
 
 import { GAVersion, Url } from "@/constants"
-import useFormStyles from "@/hooks/useFormStyles"
 import InlineCode from "@/components/InlineCode"
 import { CopyIconButton } from "@/components/CopyButton"
 import useInputs from "./useInputs"
 import useGenerateURL from "./useGenerateURL"
-import useStyles from "../Web/useStyles"
 import ExternalLink from "@/components/ExternalLink"
 import { AdNetwork, supportedAdNetworks } from "../adNetworks"
+
+const PREFIX = 'PlayURLBuilder';
+
+const classes = {
+  generatedInput: `${PREFIX}-generatedInput`,
+  denseTableCell: `${PREFIX}-denseTableCell`,
+  buttons: `${PREFIX}-buttons`,
+  shortened: `${PREFIX}-shortened`,
+  inputs: `${PREFIX}-inputs`,
+  bold: `${PREFIX}-bold`,
+  share: `${PREFIX}-share`,
+  shareInvalid: `${PREFIX}-shareInvalid`,
+  form: `${PREFIX}-form`
+};
+
+const Root = styled('section')((
+  {
+    theme
+  }
+) => ({
+  [`& .${classes.generatedInput}`]: {
+    wordBreak: "break-all",
+  },
+
+  [`& .${classes.denseTableCell}`]: {
+    whiteSpace: "nowrap",
+    "& p": {
+      paddingBottom: theme.spacing(0.5),
+    },
+  },
+
+  [`& .${classes.buttons}`]: {
+    display: "flex",
+    "& > button": {
+      margin: theme.spacing(1),
+    },
+  },
+
+  [`& .${classes.shortened}`]: {
+    marginTop: theme.spacing(1),
+    display: "flex",
+    alignItems: "center",
+    "& > :first-child": {
+      flexGrow: 1,
+    },
+    "& > :not(:first-child)": {
+      marginLeft: theme.spacing(1),
+    },
+  },
+
+  [`& .${classes.inputs}`]: {
+    display: "flex",
+    flexDirection: "column",
+    marginBottom: theme.spacing(1),
+    maxWidth: "600px",
+  },
+
+  [`& .${classes.bold}`]: {
+    fontWeight: "bold",
+  },
+
+  [`& .${classes.share}`]: {
+    padding: theme.spacing(3),
+    display: "flex",
+    flexDirection: "column",
+  },
+
+  [`& .${classes.shareInvalid}`]: {
+    display: "flex",
+    flexDirection: "row",
+    paddingTop: theme.spacing(3),
+    alignItems: "center",
+    "& svg": {
+      marginRight: theme.spacing(2),
+    },
+    "& p": {
+      paddingBottom: "unset",
+    },
+  },
+
+  [`& .${classes.form}`]: {
+    maxWidth: "80ch",
+  }
+}));
 
 interface PlayURLBuilderProps {
   version: GAVersion
@@ -24,8 +108,7 @@ const customCampaigns = (
 )
 
 const PlayURLBuilder: React.FC<PlayURLBuilderProps> = () => {
-  const classes = useStyles()
-  const formClasses = useFormStyles()
+
 
   const {
     setAdNetwork,
@@ -52,7 +135,7 @@ const PlayURLBuilder: React.FC<PlayURLBuilderProps> = () => {
   }, [url])
 
   return (
-    <section className={formClasses.form}>
+    <Root className={classes.form}>
       <Typography variant="body1">
         This tool allows you to easily add campaign parameters to URLs so you
         can measure {customCampaigns} in Google Analytics.
@@ -65,10 +148,9 @@ const PlayURLBuilder: React.FC<PlayURLBuilderProps> = () => {
         autoHighlight
         options={Object.values(supportedAdNetworks)}
         getOptionLabel={a => a.label}
-        getOptionSelected={(a, b) => a.networkID === b.networkID}
+        isOptionEqualToValue={(a, b) => a.networkID === b.networkID}
         value={adNetwork}
         onChange={(_event, value) => setAdNetwork(value)}
-        renderOption={a => a.label}
         renderInput={params => (
           <TextField
             {...params}
@@ -180,8 +262,8 @@ const PlayURLBuilder: React.FC<PlayURLBuilderProps> = () => {
           </div>
         )}
       </Paper>
-    </section>
-  )
+    </Root>
+  );
 }
 
 export default PlayURLBuilder

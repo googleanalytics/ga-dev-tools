@@ -1,31 +1,38 @@
 import * as React from "react"
-import { useTheme, makeStyles } from "@material-ui/core"
-import Loader from "react-loader-spinner"
-import "react-loader-spinner/dist/loader/css/react-spinner-loader.css"
+import { styled } from '@mui/material/styles';
+import { useTheme } from "@mui/material"
+import {Circles} from "react-loader-spinner"
+import {PropsWithChildren} from 'react';
 
-const useStyles = makeStyles(() => ({
-  loadingIndicator: {
+const PREFIX = 'Spinner';
+
+const classes = {
+  loadingIndicator: `${PREFIX}-loadingIndicator`
+};
+
+const Root = styled('section')(() => ({
+  [`&.${classes.loadingIndicator}`]: {
     display: "flex",
     flexDirection: "column",
     alignItems: "center",
-  },
-}))
+  }
+}));
 
 interface SpinnerProps {
   ellipses?: boolean
 }
 
-const Spinner: React.FC<SpinnerProps> = ({ children, ellipses }) => {
-  const classes = useStyles()
+const Spinner: React.FC<PropsWithChildren<SpinnerProps>> = ({ children, ellipses }) => {
+
   const theme = useTheme()
 
   return (
-    <section className={classes.loadingIndicator}>
+    <Root className={classes.loadingIndicator}>
       {children}
       {ellipses && <>&hellip;</>}
-      <Loader type="Circles" color={theme.palette.primary.main} />
-    </section>
-  )
+      <Circles color={theme.palette.primary.main} />
+    </Root>
+  );
 }
 
 export default Spinner

@@ -1,13 +1,40 @@
 import * as React from "react"
 
-import { Warning } from "@material-ui/icons"
-import Typography from "@material-ui/core/Typography"
+import { styled } from '@mui/material/styles';
+
+import { Warning } from "@mui/icons-material"
+import Typography from "@mui/material/Typography"
 import { v4 as uuid } from "uuid"
 
 import InlineCode from "@/components/InlineCode"
 import { Url } from "@/constants"
-import useStyles from "../useStyles"
 import { Dispatch } from "@/types"
+import {PropsWithChildren} from 'react';
+
+const PREFIX = 'WarningsFor';
+
+const classes = {
+  shareInvalid: `${PREFIX}-shareInvalid`
+};
+
+const Root = styled('section')((
+  {
+    theme
+  }
+) => ({
+  [`&.${classes.shareInvalid}`]: {
+    display: "flex",
+    flexDirection: "row",
+    paddingTop: theme.spacing(3),
+    alignItems: "center",
+    "& svg": {
+      marginRight: theme.spacing(2),
+    },
+    "& p": {
+      paddingBottom: "unset",
+    },
+  }
+}));
 
 const iosCampaignTracking = (
   <a href={Url.iosCampaignMeasurement}>iOS Campaign Tracking URL Builder</a>
@@ -25,7 +52,7 @@ const WarningsFor: React.FC<WarningsForProps> = ({
   websiteURL,
   setHasWarning,
 }) => {
-  const classes = useStyles()
+
   const asURL = React.useMemo<URL | undefined>(() => {
     try {
       return new URL(websiteURL)
@@ -34,13 +61,13 @@ const WarningsFor: React.FC<WarningsForProps> = ({
     }
   }, [websiteURL])
 
-  const BaseWarning: React.FC = ({ children }) => {
+  const BaseWarning: React.FC<PropsWithChildren> = ({ children }) => {
     return (
-      <section className={classes.shareInvalid}>
+      <Root className={classes.shareInvalid}>
         <Warning />
         <Typography variant="body1">{children}</Typography>
-      </section>
-    )
+      </Root>
+    );
   }
 
   const warnings = React.useMemo(() => {

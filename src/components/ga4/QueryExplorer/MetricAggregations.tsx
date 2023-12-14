@@ -1,12 +1,28 @@
 import * as React from "react"
 
-import makeStyles from "@material-ui/core/styles/makeStyles"
+import { styled } from '@mui/material/styles';
 
 import { Dispatch } from "@/types"
 import { Url } from "@/constants"
 import SelectMultiple, { SelectOption } from "@/components/SelectMultiple"
 import ExternalLink from "@/components/ExternalLink"
 import WithHelpText from "@/components/WithHelpText"
+
+const PREFIX = 'MetricAggregations';
+
+const classes = {
+  aggregations: `${PREFIX}-aggregations`
+};
+
+const StyledWithHelpText = styled(WithHelpText)((
+  {
+    theme
+  }
+) => ({
+  [`&.${classes.aggregations}`]: {
+    marginTop: theme.spacing(1),
+  }
+}));
 
 export enum MetricAggregation {
   Total = "TOTAL",
@@ -45,25 +61,19 @@ const metricAggregationsLink = (
   </ExternalLink>
 )
 
-const useStyles = makeStyles(theme => ({
-  aggregations: {
-    marginTop: theme.spacing(1),
-  },
-}))
-
 const MetricAggregations: React.FC<{
   metricAggregations: MetricAggregation[] | undefined
   setMetricAggregations: Dispatch<MetricAggregation[] | undefined>
   count?: true | undefined
 }> = ({ metricAggregations, setMetricAggregations, count }) => {
-  const classes = useStyles()
+
   const metricAggregationOptions = [
     totalOption,
     minimumOption,
     maximumOption,
   ].concat(count ? [countOption] : [])
   return (
-    <WithHelpText
+    <StyledWithHelpText
       className={classes.aggregations}
       helpText={
         <>
@@ -84,8 +94,8 @@ const MetricAggregations: React.FC<{
         }
         value={(metricAggregations || []).map(metricAggregationFor)}
       />
-    </WithHelpText>
-  )
+    </StyledWithHelpText>
+  );
 }
 
 export default MetricAggregations

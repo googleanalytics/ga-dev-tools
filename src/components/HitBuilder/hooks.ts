@@ -67,7 +67,7 @@ export const useValidationServer: UseValidationServer = parameters => {
     setHitStatus(HitStatus.Validating)
     try {
       const hit = hitUtils.convertParamsToHit(parameters)
-      Promise.all<hitUtils.ValidationResult, void>([
+      Promise.all([
         hitUtils.getHitValidationResult(hit),
         sleep(500),
       ]).then(([validationResult, _]) => {
@@ -143,7 +143,7 @@ export const useParameters: UseParameters = () => {
   }, [])
 
   // Sets the focus to a particular param/value combo
-  const setFocus = React.useCallback((id, value = false) => {
+  const setFocus = React.useCallback((id: number, value = false) => {
     setFocusData({ id, value })
   }, [])
 

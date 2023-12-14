@@ -1,7 +1,9 @@
 import * as React from "react"
 
-import Typography from "@material-ui/core/Typography"
-import Delete from "@material-ui/icons/Delete"
+import { styled } from '@mui/material/styles';
+
+import Typography from "@mui/material/Typography"
+import Delete from "@mui/icons-material/Delete"
 
 import { Url } from "@/constants"
 import ExternalLink from "@/components/ExternalLink"
@@ -17,7 +19,48 @@ import InlineCode from "@/components/InlineCode"
 import LinkedTextField from "@/components/LinkedTextField"
 import { GADateRange } from "@/components/GADate"
 import { Dispatch } from "@/types"
-import makeStyles from "@material-ui/core/styles/makeStyles"
+
+const PREFIX = 'CohortSpec';
+
+const classes = {
+  cohortRange: `${PREFIX}-cohortRange`,
+  cohort: `${PREFIX}-cohort`,
+  warnings: `${PREFIX}-warnings`
+};
+
+const StyledWithHelpText = styled(WithHelpText)((
+  {
+    theme
+  }
+) => ({
+  [`& .${classes.cohortRange}`]: {
+    display: "flex",
+    marginTop: theme.spacing(1),
+    "&> :not(:first-child)": {
+      marginLeft: theme.spacing(1),
+      flexGrow: 1,
+    },
+    marginBottom: theme.spacing(1),
+  },
+
+  [`& .${classes.cohort}`]: {
+    display: "flex",
+    "&> :not(:first-child)": {
+      marginLeft: theme.spacing(1),
+      flexGrow: 1,
+    },
+    marginBottom: theme.spacing(1),
+  },
+
+  [`& .${classes.warnings}`]: {
+    // display: "flex",
+    // alignContent: "center",
+    marginTop: theme.spacing(1),
+    "&> *:last-child": {
+      marginBottom: theme.spacing(2),
+    },
+  }
+}));
 
 type DateRange = gapi.client.analyticsdata.DateRange
 type CohortsRange = gapi.client.analyticsdata.CohortsRange
@@ -119,7 +162,7 @@ const useCohortSpec: UseCohortSpec = ({
   )
   const addCohort: ReturnType<UseCohortSpec>["addCohort"] = React.useCallback(() => {
     setCohortSpec((old = {}) => {
-      const defaults = {}
+      const defaults = {} as {granularity?: Granularity, startOffset?: number, endOffset: number}
       if (old.cohorts === undefined || old.cohorts.length === 0) {
         defaults["granularity"] = Granularity.Daily
         defaults["startOffset"] = 0
@@ -213,34 +256,6 @@ const useCohortSpec: UseCohortSpec = ({
   }
 }
 
-const useStyles = makeStyles(theme => ({
-  cohortRange: {
-    display: "flex",
-    marginTop: theme.spacing(1),
-    "&> :not(:first-child)": {
-      marginLeft: theme.spacing(1),
-      flexGrow: 1,
-    },
-    marginBottom: theme.spacing(1),
-  },
-  cohort: {
-    display: "flex",
-    "&> :not(:first-child)": {
-      marginLeft: theme.spacing(1),
-      flexGrow: 1,
-    },
-    marginBottom: theme.spacing(1),
-  },
-  warnings: {
-    // display: "flex",
-    // alignContent: "center",
-    marginTop: theme.spacing(1),
-    "&> *:last-child": {
-      marginBottom: theme.spacing(2),
-    },
-  },
-}))
-
 type CohortSpecType = gapi.client.analyticsdata.CohortSpec
 
 interface CohortSpecProps {
@@ -259,7 +274,7 @@ const CohortSpec: React.FC<CohortSpecProps> = ({
   dateRanges,
   removeDateRanges,
 }) => {
-  const classes = useStyles()
+
   const {
     addCohort,
     removeCohort,
@@ -293,7 +308,7 @@ const CohortSpec: React.FC<CohortSpecProps> = ({
   }, [warnings, addFirstSessionDate, removeDateRanges])
 
   return (
-    <WithHelpText
+    <StyledWithHelpText
       notched
       label="cohort"
       helpText={
@@ -368,8 +383,8 @@ const CohortSpec: React.FC<CohortSpecProps> = ({
       <SAB add small onClick={addCohort}>
         cohort
       </SAB>
-    </WithHelpText>
-  )
+    </StyledWithHelpText>
+  );
 }
 
 export default CohortSpec

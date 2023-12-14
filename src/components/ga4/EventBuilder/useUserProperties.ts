@@ -36,7 +36,7 @@ const useUserProperties = () => {
     [updateUserProperty]
   )
 
-  const setUserPopertyValue = useCallback(
+  const setUserPropertyValue = useCallback(
     (idx: number, value: string) => {
       updateUserProperty(idx, old => ({ ...old, value }))
     },
@@ -48,7 +48,7 @@ const useUserProperties = () => {
     addStringUserProperty,
     addNumberUserProperty,
     removeUserProperty,
-    setUserPopertyValue,
+    setUserPropertyValue,
     setUserPropertyName,
   }
 }

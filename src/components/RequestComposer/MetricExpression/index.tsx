@@ -13,9 +13,8 @@
 // limitations under the License.
 
 import * as React from "react"
-import { useEffect } from "react"
-
-import makeStyles from "@material-ui/core/styles/makeStyles"
+import { styled } from '@mui/material/styles';
+import {PropsWithChildren, useEffect} from "react"
 
 import { usePersistentBoolean } from "@/hooks"
 import { StorageKey } from "@/constants"
@@ -41,26 +40,36 @@ import {
   useUASegments,
 } from "@/components/UAPickers/useUASegments"
 
+const PREFIX = 'MetricExpression';
+
+const classes = {
+  showSegments: `${PREFIX}-showSegments`
+};
+
+const StyledUADimensionsAndMetricsRequestCtxProvider = styled(UADimensionsAndMetricsRequestCtx.Provider)((
+  {
+    theme
+  }
+) => ({
+  [`& .${classes.showSegments}`]: {
+    marginLeft: theme.spacing(1),
+    marginBottom: theme.spacing(1),
+  }
+}));
+
 interface MetricExpressionRequestProps {
   apv: UAAccountPropertyView
   controlWidth: string
   setRequestObject: (request: ReportsRequest | undefined) => void
 }
 
-const useStyles = makeStyles(theme => ({
-  showSegments: {
-    marginLeft: theme.spacing(1),
-    marginBottom: theme.spacing(1),
-  },
-}))
-
-const MetricExpression: React.FC<MetricExpressionRequestProps> = ({
+const MetricExpression: React.FC<PropsWithChildren<MetricExpressionRequestProps>> = ({
   apv,
   controlWidth,
   setRequestObject,
   children,
 }) => {
-  const classes = useStyles()
+
   const [
     showSegmentDefinition,
     setShowSegmentDefinition,
@@ -117,9 +126,7 @@ const MetricExpression: React.FC<MetricExpressionRequestProps> = ({
   }, [requestObject, setRequestObject])
 
   return (
-    <UADimensionsAndMetricsRequestCtx.Provider
-      value={uaDimensionsAndMetricsRequest}
-    >
+    <StyledUADimensionsAndMetricsRequestCtxProvider value={uaDimensionsAndMetricsRequest}>
       <section className={controlWidth}>
         <LinkedTextField
           href={linkFor("ReportRequest.FIELDS.view_id")}
@@ -216,8 +223,8 @@ const MetricExpression: React.FC<MetricExpressionRequestProps> = ({
         />
         {children}
       </section>
-    </UADimensionsAndMetricsRequestCtx.Provider>
-  )
+    </StyledUADimensionsAndMetricsRequestCtxProvider>
+  );
 }
 
 export default MetricExpression

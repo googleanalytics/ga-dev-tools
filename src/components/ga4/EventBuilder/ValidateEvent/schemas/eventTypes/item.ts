@@ -5,6 +5,7 @@ import { ITEM_FIELDS } from "./fieldDefinitions"
 
 export const itemSchema = {
     "type": "object",
+    "required": [],
     "patternProperties": {
         ".": {
             "maxLength": 100

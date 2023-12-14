@@ -14,21 +14,32 @@
 
 import * as React from "react"
 
-import Typography from "@material-ui/core/Typography"
-import TextField from "@material-ui/core/TextField"
-import makeStyles from "@material-ui/core/styles/makeStyles"
-import Autocomplete from "@material-ui/lab/Autocomplete"
+import { styled } from '@mui/material/styles';
+
+import Typography from "@mui/material/Typography"
+import TextField from "@mui/material/TextField"
+import Autocomplete from "@mui/material/Autocomplete"
 
 import { SortableColumn } from "."
 import { Dispatch } from "@/types"
 import { Column } from "@/types/ua"
 
-const useStyles = makeStyles(_ => ({
-  conceptOption: {
+const PREFIX = 'Sort';
+
+const classes = {
+  conceptOption: `${PREFIX}-conceptOption`,
+  nameId: `${PREFIX}-nameId`,
+  group: `${PREFIX}-group`
+};
+
+const Root
+ = styled('div')(() => ({
+  [`& .${classes.conceptOption}`]: {
     display: "flex",
     width: "100%",
   },
-  nameId: {
+
+  [`& .${classes.nameId}`]: {
     flexGrow: 1,
     display: "flex",
     flexDirection: "column",
@@ -37,8 +48,9 @@ const useStyles = makeStyles(_ => ({
       padding: 0,
     },
   },
-  group: {},
-}))
+
+  [`& .${classes.group}`]: {}
+}));
 
 interface SortProps {
   columns: Column[]
@@ -47,7 +59,7 @@ interface SortProps {
 }
 
 const Sort: React.FC<SortProps> = ({ columns, sort, setSortIDs }) => {
-  const classes = useStyles()
+
   const sortableColumns = React.useMemo<SortableColumn[]>(
     () =>
       columns
@@ -81,56 +93,59 @@ const Sort: React.FC<SortProps> = ({ columns, sort, setSortIDs }) => {
   // TODO renderOption={...} should be extracted since this and
   // _ConceptMultiSelect use the same styling.
   return (
-    <Autocomplete<SortableColumn, true, undefined, true>
-      fullWidth
-      autoComplete
-      autoHighlight
-      multiple
-      debug
-      noOptionsText="A Metric or Dimension is required in order to sort."
-      options={sortableColumns}
-      filterOptions={a =>
-        a.filter(column => sort?.find(c => c.id === column.id) === undefined)
-      }
-      getOptionLabel={option =>
-        `${option.sort === "ASCENDING" ? "" : "-"}${option.id}`
-      }
-      getOptionSelected={(a, b) => a.id === b.id && a.sort === b.sort}
-      value={sort}
-      onChange={(_event, value, _state) =>
-        setSortIDs((value as SortableColumn[]).map(s => `${s.id}@@@${s.sort}`))
-      }
-      renderOption={option => (
-        <div className={classes.conceptOption}>
-          <div className={classes.nameId}>
-            <Typography variant="body1">
-              {`${option.attributes!.uiName} (${
-                option.sort === "ASCENDING" ? "Ascending" : "Descending"
-              })`}
-            </Typography>
-            <Typography variant="subtitle2" color="primary">
-              {`${option.sort === "ASCENDING" ? "" : "-"}${option.id}`}
-            </Typography>
-          </div>
-          <Typography
-            className={classes.group}
-            variant="subtitle1"
-            color="textSecondary"
-          >
-            {option.attributes!.group}
-          </Typography>
-        </div>
-      )}
-      renderInput={params => (
-        <TextField
-          {...params}
-          size="small"
-          variant="outlined"
-          label="sort"
-          helperText="Dimensions and Metrics to sort query by."
+      <Root>
+        <Autocomplete<SortableColumn, true, undefined, true>
+          fullWidth
+          autoComplete
+          autoHighlight
+          multiple
+          noOptionsText="A Metric or Dimension is required in order to sort."
+          options={sortableColumns}
+          filterOptions={a =>
+            a.filter(column => sort?.find(c => c.id === column.id) === undefined)
+          }
+          getOptionLabel={option => typeof option === "string" ? option :
+            `${option.sort === "ASCENDING" ? "" : "-"}${option.id}`
+          }
+          isOptionEqualToValue={(a, b) => a.id === b.id && a.sort === b.sort}
+          value={sort}
+          onChange={(_event, value, _state) =>
+            setSortIDs((value as SortableColumn[]).map(s => `${s.id}@@@${s.sort}`))
+          }
+          renderOption={(props, option) => (
+              <li {...props}>
+                <div className={classes.conceptOption}>
+                <div className={classes.nameId}>
+                  <Typography variant="body1">
+                    {`${option.attributes!.uiName} (${
+                      option.sort === "ASCENDING" ? "Ascending" : "Descending"
+                    })`}
+                  </Typography>
+                  <Typography variant="subtitle2" color="primary">
+                    {`${option.sort === "ASCENDING" ? "" : "-"}${option.id}`}
+                  </Typography>
+                </div>
+                <Typography
+                  className={classes.group}
+                  variant="subtitle1"
+                  color="textSecondary"
+                >
+                  {option.attributes!.group}
+                </Typography>
+              </div>
+            </li>
+          )}
+          renderInput={params => (
+            <TextField
+              {...params}
+              size="small"
+              variant="outlined"
+              label="sort"
+              helperText="Dimensions and Metrics to sort query by."
+            />
+          )}
         />
-      )}
-    />
+      </Root>
   )
 }
 

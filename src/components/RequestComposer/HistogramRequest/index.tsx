@@ -13,9 +13,8 @@
 // limitations under the License.
 
 import * as React from "react"
-import { useEffect } from "react"
-
-import makeStyles from "@material-ui/core/styles/makeStyles"
+import { styled } from '@mui/material/styles';
+import {PropsWithChildren, useEffect} from "react"
 
 import { usePersistentBoolean } from "@/hooks"
 import { StorageKey } from "@/constants"
@@ -41,6 +40,23 @@ import {
   useUASegments,
 } from "@/components/UAPickers/useUASegments"
 
+const PREFIX = 'HistogramRequest';
+
+const classes = {
+  showSegments: `${PREFIX}-showSegments`
+};
+
+const StyledUADimensionsAndMetricsRequestCtxProvider = styled(UADimensionsAndMetricsRequestCtx.Provider)((
+  {
+    theme
+  }
+) => ({
+  [`& .${classes.showSegments}`]: {
+    marginLeft: theme.spacing(1),
+    marginBottom: theme.spacing(1),
+  }
+}));
+
 export const linkFor = (hash: string) =>
   `https://developers.google.com/analytics/devguides/reporting/core/v4/rest/v4/reports/batchGet#${hash}`
 
@@ -52,20 +68,13 @@ interface HistogramRequestProps {
   setRequestObject: (request: ReportsRequest | undefined) => void
 }
 
-const useStyles = makeStyles(theme => ({
-  showSegments: {
-    marginLeft: theme.spacing(1),
-    marginBottom: theme.spacing(1),
-  },
-}))
-
-const HistogramRequest: React.FC<HistogramRequestProps> = ({
+const HistogramRequest: React.FC<PropsWithChildren<HistogramRequestProps>> = ({
   apv,
   controlWidth,
   setRequestObject,
   children,
 }) => {
-  const classes = useStyles()
+
   const [
     showSegmentDefinition,
     setShowSegmentDefinition,
@@ -116,9 +125,7 @@ const HistogramRequest: React.FC<HistogramRequestProps> = ({
   }, [requestObject, setRequestObject])
 
   return (
-    <UADimensionsAndMetricsRequestCtx.Provider
-      value={uaDimensionsAndMetricsRequest}
-    >
+    <StyledUADimensionsAndMetricsRequestCtxProvider value={uaDimensionsAndMetricsRequest}>
       <section className={controlWidth}>
         <LinkedTextField
           href={linkFor("ReportRequest.FIELDS.view_id")}
@@ -197,8 +204,8 @@ const HistogramRequest: React.FC<HistogramRequestProps> = ({
         />
         {children}
       </section>
-    </UADimensionsAndMetricsRequestCtx.Provider>
-  )
+    </StyledUADimensionsAndMetricsRequestCtxProvider>
+  );
 }
 
 export default HistogramRequest

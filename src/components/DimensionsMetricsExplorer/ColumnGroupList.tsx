@@ -14,36 +14,65 @@
 
 import * as React from "react"
 
-import Typography from "@material-ui/core/Typography"
-import IconButton from "@material-ui/core/IconButton"
-import Tooltip from "@material-ui/core/Tooltip"
-import LinkIcon from "@material-ui/icons/Link"
-import Button from "@material-ui/core/Button"
-import RemoveCircle from "@material-ui/icons/RemoveCircle"
-import AddCircle from "@material-ui/icons/AddCircle"
-import Info from "@material-ui/icons/Info"
-import makeStyles from "@material-ui/core/styles/makeStyles"
-import { groupBy, map, sortBy } from "lodash"
-import { Set } from "immutable"
-import { navigate } from "gatsby"
+import { styled } from '@mui/material/styles';
+
+import Typography from "@mui/material/Typography"
+import IconButton from "@mui/material/IconButton"
+import Tooltip from "@mui/material/Tooltip"
+import LinkIcon from "@mui/icons-material/Link"
+import Button from "@mui/material/Button"
+import RemoveCircle from "@mui/icons-material/RemoveCircle"
+import AddCircle from "@mui/icons-material/AddCircle"
+import Info from "@mui/icons-material/Info"
+import {groupBy, map, sortBy} from "lodash"
+import {Set} from "immutable"
+import {navigate} from "gatsby"
 import classnames from "classnames"
 
-import { CopyIconButton } from "@/components/CopyButton"
+import {CopyIconButton} from "@/components/CopyButton"
 import LabeledCheckbox from "@/components/LabeledCheckbox"
-import { CUBES_BY_COLUMN_NAME, CUBE_NAMES, CubesByColumnName } from "./cubes"
-import { Column } from "@/types/ua"
+import {CUBE_NAMES, CUBES_BY_COLUMN_NAME, CubesByColumnName} from "./cubes"
+import {Column} from "@/types/ua"
 
-const useStyles = makeStyles(theme => ({
-  accordionTitle: { margin: 0 },
-  expandContract: {
+const PREFIX = 'ColumnGroupList';
+
+const classes = {
+  accordionTitle: `${PREFIX}-accordionTitle`,
+  expandContract: `${PREFIX}-expandContract`,
+  column: `${PREFIX}-column`,
+  columnSubgroupTitle: `${PREFIX}-columnSubgroupTitle`,
+  columnSubgroup: `${PREFIX}-columnSubgroup`,
+  deprecatedColumn: `${PREFIX}-deprecatedColumn`,
+  checkbox: `${PREFIX}-checkbox`,
+  deprecatedCheckbox: `${PREFIX}-deprecatedCheckbox`,
+  columnDetails: `${PREFIX}-columnDetails`,
+  columnLabel: `${PREFIX}-columnLabel`,
+  columnButton: `${PREFIX}-columnButton`,
+  name: `${PREFIX}-name`,
+  id: `${PREFIX}-id`,
+  popover: `${PREFIX}-popover`,
+  paper: `${PREFIX}-paper`,
+  labelText: `${PREFIX}-labelText`
+};
+
+const Root = styled('div')((
+  {
+    theme
+  }
+) => ({
+  [`& .${classes.accordionTitle}`]: { margin: 0 },
+
+  [`& .${classes.expandContract}`]: {
     margin: theme.spacing(1),
   },
-  column: {
+
+  [`& .${classes.column}`]: {
     display: "flex",
     alignItems: "baseline",
     padding: "unset",
   },
-  columnSubgroupTitle: {
+
+  [`& .${classes.columnSubgroupTitle}`]: {
     marginBottom: theme.spacing(1),
     marginTop: theme.spacing(0.5),
     marginLeft: theme.spacing(-1),
@@ -55,39 +84,48 @@ const useStyles = makeStyles(theme => ({
     },
     display: "flex",
   },
-  columnSubgroup: {
+
+  [`& .${classes.columnSubgroup}`]: {
     marginLeft: theme.spacing(4),
     marginBottom: theme.spacing(1),
   },
-  deprecatedColumn: {
+
+  [`&.${classes.deprecatedColumn}`]: {
     textDecoration: "line-through",
   },
-  checkbox: {
+
+  [`& .${classes.checkbox}`]: {
     padding: "unset",
     paddingRight: theme.spacing(1),
   },
-  deprecatedCheckbox: {
+
+  [`& .${classes.deprecatedCheckbox}`]: {
     padding: "unset",
     paddingRight: theme.spacing(1),
     visibility: "hidden",
   },
-  columnDetails: {
+
+  [`& .${classes.columnDetails}`]: {
     display: "flex",
     flexDirection: "column",
   },
-  columnLabel: {
+
+  [`&.${classes.columnLabel}`]: {
     display: "flex",
     alignItems: "flex-start",
     flexWrap: "wrap",
     position: "relative",
     top: theme.spacing(-1),
   },
-  columnButton: {
+
+  [`& .${classes.columnButton}`]: {
     padding: "unset",
     paddingLeft: theme.spacing(1),
   },
-  name: { marginRight: theme.spacing(1) },
-  id: {
+
+  [`& .${classes.name}`]: { marginRight: theme.spacing(1) },
+
+  [`& .${classes.id}`]: {
     "& > button": {
       // display: "none",
       padding: "unset",
@@ -99,25 +137,28 @@ const useStyles = makeStyles(theme => ({
     //   },
     // },
   },
-  popover: {
+
+  [`& .${classes.popover}`]: {
     pointerEvents: "none",
   },
-  paper: {
+
+  [`& .${classes.paper}`]: {
     padding: theme.spacing(1),
   },
-  labelText: {
+
+  [`& .${classes.labelText}`]: {
     display: "flex",
     flexDirection: "row",
     alignItems: "center",
-  },
-}))
+  }
+}));
 
 type ColumnLabelProps = {
   column: Column
   isDeprecated: boolean
 }
 const ColumnLabel: React.FC<ColumnLabelProps> = ({ column, isDeprecated }) => {
-  const classes = useStyles()
+
   const slug = React.useMemo(
     () =>
       `/dimensions-metrics-explorer/${
@@ -127,7 +168,7 @@ const ColumnLabel: React.FC<ColumnLabelProps> = ({ column, isDeprecated }) => {
   )
 
   return (
-    <div
+    <Root
       className={classnames(classes.columnLabel, {
         [classes.deprecatedColumn]: isDeprecated,
       })}
@@ -157,8 +198,8 @@ const ColumnLabel: React.FC<ColumnLabelProps> = ({ column, isDeprecated }) => {
           </IconButton>
         </Tooltip>
       </div>
-    </div>
-  )
+    </Root>
+  );
 }
 
 const SelectableColumn: React.FC<{
@@ -167,7 +208,7 @@ const SelectableColumn: React.FC<{
   disabled: boolean
   setSelected: (selected: boolean) => void
 }> = ({ column, selected, disabled, setSelected }) => {
-  const classes = useStyles()
+
   const isDeprecated = React.useMemo(
     () => column.attributes?.status !== "PUBLIC",
     [column.attributes]
@@ -207,7 +248,7 @@ const ColumnSubgroup: React.FC<{
   onlySegments,
   cubesByColumnName,
 }) => {
-  const classes = useStyles()
+
   // Move deprecated columns to the bottom
   const sortedColumns = React.useMemo(
     () =>
@@ -281,7 +322,7 @@ const ColumnGroup: React.FC<{
   selectedColumns,
   selectColumn,
 }) => {
-  const classes = useStyles()
+
 
   if (!open) {
     return (
@@ -348,7 +389,7 @@ const ColumnGroupList: React.FC<{
   columns: Column[]
   searchTerms: string[]
 }> = ({ allowDeprecated, onlySegments, columns, searchTerms }) => {
-  const classes = useStyles()
+
   const filteredColumns = React.useMemo(() => {
     let filtered: Column[] = columns
 
@@ -433,56 +474,58 @@ const ColumnGroupList: React.FC<{
       selectedColumns
         .map(
           columnId =>
-            CUBES_BY_COLUMN_NAME.get(columnId) || (Set() as Set<string>)
+            CUBES_BY_COLUMN_NAME.get(columnId!) || (Set() as Set<string>)
         )
-        .reduce((cubes1, cubes2) => cubes1.intersect(cubes2), CUBE_NAMES),
+        .reduce((cubes1, cubes2) => cubes1!.intersect(cubes2!), CUBE_NAMES),
     [selectedColumns]
   )
 
-  const showExpandAll = open.size < Object.keys(groupedColumns).length
-  const showCollapseAll = open.size > 0
+  let showExpandAll = open.size < Object.keys(groupedColumns).length
+  let showCollapseAll = open.size > 0
   return (
-    <div>
-      <div>
-        {showExpandAll ? (
-          <Button
-            variant="outlined"
-            className={classes.expandContract}
-            endIcon={<AddCircle />}
-            onClick={expandAll}
-          >
-            Expand All
-          </Button>
-        ) : null}
-        {showCollapseAll ? (
-          <Button
-            variant="outlined"
-            className={classes.expandContract}
-            endIcon={<RemoveCircle />}
-            onClick={collapseAll}
-          >
-            Hide All
-          </Button>
-        ) : null}
-      </div>
-      <div>
-        {map(groupedColumns, (columns, groupName) => (
-          <ColumnGroup
-            open={open.contains(groupName)}
-            onlySegments={onlySegments}
-            allowDeprecated={allowDeprecated}
-            columns={columns}
-            name={groupName}
-            key={groupName}
-            toggleOpen={() => toggleGroupOpen(groupName)}
-            allowableCubes={allowableCubes}
-            cubesByColumnName={CUBES_BY_COLUMN_NAME}
-            selectedColumns={selectedColumns}
-            selectColumn={selectColumn}
-          />
-        ))}
-      </div>
-    </div>
+      <Root>
+        <div>
+          <div>
+            {showExpandAll ? (
+              <Button
+                variant="outlined"
+                className={classes.expandContract}
+                endIcon={<AddCircle />}
+                onClick={expandAll}
+              >
+                Expand All
+              </Button>
+            ) : null}
+            {showCollapseAll ? (
+              <Button
+                variant="outlined"
+                className={classes.expandContract}
+                endIcon={<RemoveCircle />}
+                onClick={collapseAll}
+              >
+                Hide All
+              </Button>
+            ) : null}
+          </div>
+          <div>
+            {map(groupedColumns, (columns, groupName) => (
+              <ColumnGroup
+                open={open.contains(groupName)}
+                onlySegments={onlySegments}
+                allowDeprecated={allowDeprecated}
+                columns={columns}
+                name={groupName}
+                key={groupName}
+                toggleOpen={() => toggleGroupOpen(groupName)}
+                allowableCubes={allowableCubes}
+                cubesByColumnName={CUBES_BY_COLUMN_NAME}
+                selectedColumns={selectedColumns}
+                selectColumn={selectColumn}
+              />
+            ))}
+          </div>
+        </div>
+      </Root>
   )
 }
 

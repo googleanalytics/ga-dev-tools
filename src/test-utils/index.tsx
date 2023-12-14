@@ -14,6 +14,7 @@
 
 import * as React from "react"
 import { Provider } from "react-redux"
+// @ts-ignore
 import { makeStore } from "../../gatsby/wrapRootElement"
 import {
   createHistory,
@@ -23,6 +24,7 @@ import {
 } from "@reach/router"
 import { QueryParamProvider } from "use-query-params"
 import { GapiMocks, testGapi } from "./gapi"
+import {PropsWithChildren} from 'react';
 
 export { testGapi } from "./gapi"
 
@@ -51,9 +53,9 @@ export const wrapperFor = ({
   }
 
   const gapi = testGapi(gapiMocks)
-  store.dispatch({ type: "setGapi", gapi })
+  store.dispatch({ type: "setGapi", gapi: gapi })
 
-  const Wrapper: React.FC = ({ children }) => (
+  const Wrapper: React.FC<PropsWithChildren> = ({ children }) => (
     <Provider store={store}>
       <LocationProvider history={history}>
         <QueryParamProvider {...{ default: true }} reachHistory={history}>

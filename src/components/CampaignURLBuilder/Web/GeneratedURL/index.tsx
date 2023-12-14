@@ -1,13 +1,13 @@
 import * as React from "react"
 
+import { styled } from '@mui/material/styles';
+
 import clsx from "classnames"
-import Paper from "@material-ui/core/Paper"
-import { Error as ErrorIcon } from "@material-ui/icons"
-import Typography from "@material-ui/core/Typography"
-import TextField from "@material-ui/core/TextField"
+import Paper from "@mui/material/Paper"
+import { Error as ErrorIcon } from "@mui/icons-material"
+import Typography from "@mui/material/Typography"
+import TextField from "@mui/material/TextField"
 import { GAVersion } from "@/constants"
-import useFormStyles from "@/hooks/useFormStyles"
-import useStyles from "../useStyles"
 import WarningsFor from "./WarningsFor"
 import useGenerateURL from "./useGenerateURL"
 import ShortenLink from "@/components/ShortenLink"
@@ -15,6 +15,61 @@ import useInputs from "./useInputs"
 import LabeledCheckbox from "@/components/LabeledCheckbox"
 import { CopyIconButton } from "@/components/CopyButton"
 import Warning from "@/components/Warning"
+
+const PREFIX = 'GeneratedURL';
+
+const classes = {
+  generatedInput: `${PREFIX}-generatedInput`,
+  share: `${PREFIX}-share`,
+  form: `${PREFIX}-form`,
+  shareInvalid: `${PREFIX}-shareInvalid`,
+  shortened: `${PREFIX}-shortened`
+};
+
+const StyledPaper = styled(Paper)((
+  {
+    theme
+  }
+) => ({
+  [`& .${classes.generatedInput}`]: {
+    wordBreak: "break-all",
+  },
+
+  [`& .${classes.form}`]: {
+    maxWidth: "80ch",
+  },
+
+  [`&.${classes.share}`]: {
+    padding: theme.spacing(3),
+    display: "flex",
+    flexDirection: "column",
+  },
+
+  [`& .${classes.shareInvalid}`]: {
+    display: "flex",
+    flexDirection: "row",
+    paddingTop: theme.spacing(3),
+    alignItems: "center",
+    "& svg": {
+      marginRight: theme.spacing(2),
+    },
+    "& p": {
+      paddingBottom: "unset",
+    },
+  },
+
+  [`& .${classes.shortened}`]: {
+    marginTop: theme.spacing(1),
+    display: "flex",
+    alignItems: "center",
+    "& > :first-child": {
+      flexGrow: 1,
+    },
+    "& > :not(:first-child)": {
+      marginLeft: theme.spacing(1),
+    },
+  },
+}));
 
 interface GeneratedURLProps {
   version: GAVersion
@@ -37,8 +92,7 @@ const GeneratedURL: React.FC<GeneratedURLProps> = ({
   term,
   content,
 }) => {
-  const classes = useStyles()
-  const formClasses = useFormStyles()
+
 
   const {
     useFragment,
@@ -74,7 +128,7 @@ const GeneratedURL: React.FC<GeneratedURLProps> = ({
   })
 
   return (
-    <Paper className={clsx(classes.share, formClasses.form)}>
+    <StyledPaper className={clsx(classes.share, classes.form)}>
       <WarningsFor websiteURL={websiteURL} setHasWarning={setHasWarning} />
       {!hasWarning &&
         (hasRequiredFields ? (
@@ -160,8 +214,8 @@ const GeneratedURL: React.FC<GeneratedURLProps> = ({
             </Typography>
           </section>
         ))}
-    </Paper>
-  )
+    </StyledPaper>
+  );
 }
 
 export default GeneratedURL

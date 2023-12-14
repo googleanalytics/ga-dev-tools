@@ -102,7 +102,7 @@ const usePayload = (): {} => {
     () => userProperties.reduce(objectifyUserProperties, {}),
     [userProperties]
   )
-  
+
   let payload = useMemo(() => {
     return {
       ...removeUndefined(clientIds),

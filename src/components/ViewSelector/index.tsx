@@ -1,7 +1,7 @@
 import * as React from "react"
-import { makeStyles, Theme } from "@material-ui/core/styles"
-import TextField from "@material-ui/core/TextField"
-import Autocomplete from "@material-ui/lab/Autocomplete"
+import { styled } from '@mui/material/styles';
+import TextField from "@mui/material/TextField"
+import Autocomplete from "@mui/material//Autocomplete"
 import classnames from "classnames"
 
 import { Dispatch, RequestStatus, successful } from "@/types"
@@ -11,23 +11,34 @@ import {
   WebPropertySummary,
 } from "./useAccountPropertyView"
 import useAccountSummaries from "./useAccountSummaries"
-import Typography from "@material-ui/core/Typography"
+import Typography from "@mui/material/Typography"
 import Warning from "../Warning"
 import InlineCode from "../InlineCode"
 
-const useStyles = makeStyles<Theme, ViewSelectorProps>(theme => ({
-  root: props => ({
+const PREFIX = 'ViewSelector';
+
+const classes = {
+  root: `${PREFIX}-root`,
+  formControl: `${PREFIX}-formControl`
+};
+
+const Root = styled('div')((
+  {
+    theme
+  }
+) => ({
+  [`&.${classes.root}`]: {
     display: "flex",
-    flexDirection: props.vertical ? "column" : "unset",
-    ...(props.vertical ? { marginBottom: theme.spacing(1) } : {}),
+    flexDirection: "unset",
     width: "100%",
-  }),
-  formControl: {
+  },
+
+  [`& .${classes.formControl}`]: {
     width: "100%",
     margin: theme.spacing(1),
     marginLeft: "unset",
-  },
-}))
+  }
+}));
 
 interface CommonProps {
   account?: AccountSummary
@@ -76,7 +87,7 @@ const ViewSelector: React.FC<ViewSelectorProps> = props => {
     size = "medium",
     variant = "standard",
   } = props
-  const classes = useStyles(props)
+
 
   const request = useAccountSummaries(account, property)
 
@@ -96,7 +107,7 @@ const ViewSelector: React.FC<ViewSelectorProps> = props => {
   }
 
   return (
-    <div className={classnames(classes.root, className)}>
+    <Root className={classnames(classes.root, className)}>
       <Autocomplete<AccountSummary>
         data-testid={TestID.AccountAutocomplete}
         blurOnSelect
@@ -120,7 +131,7 @@ const ViewSelector: React.FC<ViewSelectorProps> = props => {
             !props.onlyProperty && props.setViewID(firstView?.id || undefined)
           }
         }}
-        getOptionSelected={(a, b) => a.id === b.id}
+        isOptionEqualToValue={(a, b) => a.id === b.id}
         getOptionLabel={account => account.name || ""}
         renderInput={params => (
           <TextField
@@ -154,7 +165,7 @@ const ViewSelector: React.FC<ViewSelectorProps> = props => {
             !props.onlyProperty && props.setViewID(firstView?.id || undefined)
           }
         }}
-        getOptionSelected={(a, b) => a.id === b.id}
+        isOptionEqualToValue={(a, b) => a.id === b.id}
         getOptionLabel={property => property.name || ""}
         renderInput={params => (
           <TextField
@@ -182,7 +193,7 @@ const ViewSelector: React.FC<ViewSelectorProps> = props => {
               : "You don't have any views for this property."
           }
           value={props.view || null}
-          getOptionSelected={(a, b) => a.id === b.id}
+          isOptionEqualToValue={(a, b) => a.id === b.id}
           onChange={(_, v: ProfileSummary | null) => {
             props.setViewID(v?.id || undefined)
           }}
@@ -197,8 +208,8 @@ const ViewSelector: React.FC<ViewSelectorProps> = props => {
           )}
         />
       )}
-    </div>
-  )
+    </Root>
+  );
 }
 
 export default ViewSelector

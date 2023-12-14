@@ -19,12 +19,16 @@ import QueryExplorer, {
   QueryExplorerType,
 } from "@/components/ga4/QueryExplorer"
 
-export default ({ location: { pathname } }) => {
+interface Props {
+  location: { pathname: string }
+}
+
+export default (props: Props) => {
   return (
     <Layout
       title="GA4 Query Explorer"
       requireLogin
-      pathname={pathname}
+      pathname={props.location.pathname}
       description="The GA4 Query Explorer helps you to create valid requests for the Analytics Data API."
     >
       <QueryExplorer type={QueryExplorerType.Basic} />

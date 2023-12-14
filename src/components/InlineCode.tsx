@@ -1,6 +1,6 @@
 import * as React from "react"
-import { useTheme } from "@material-ui/core"
-// import { makeStyles } from "@material-ui/core"
+import { useTheme } from "@mui/material"
+import {PropsWithChildren} from 'react';
 
 // TODO I'm not sure why, but if I use this makeStyles, it somehow conflicts
 // somewhere and messes up formatting during SSR. Good luck to anybody that
@@ -16,12 +16,13 @@ import { useTheme } from "@material-ui/core"
 //   },
 // }))
 
-const InlineCode: React.FC<{ className?: string }> = ({
+type Props = { className?: string }
+
+const InlineCode: React.FC<PropsWithChildren<Props>> = ({
   children,
   className,
 }) => {
   const theme = useTheme()
-  // const classes = useStyles()
   return (
     <span
       className={className}

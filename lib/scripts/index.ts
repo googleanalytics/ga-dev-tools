@@ -1,9 +1,9 @@
-import * as argparse from "argparse"
-import { checkConfig } from "./check-config"
-import { build } from "./build"
-import { develop } from "./develop"
-import { serve } from "./serve"
-import { stage } from "./stage"
+import argparse from "argparse"
+import { checkConfig } from "./check-config.js"
+import { build } from "./build.js"
+import { develop } from "./develop.js"
+import { serve } from "./serve.js"
+import { stage } from "./stage.js"
 import {
   Command,
   Args,
@@ -11,8 +11,8 @@ import {
   RuntimeJson,
   StagingConfig,
   ProductionConfig,
-} from "./types"
-import { deployFunctions } from "./deploy-functions"
+} from "./types.js"
+import { deployFunctions } from "./deploy-functions.js"
 
 export const configForEnvironment = (
   environment: Environment,
@@ -38,60 +38,59 @@ export const configForEnvironment = (
 
 const getParser = async (): Promise<argparse.ArgumentParser> => {
   const parser = new argparse.ArgumentParser({
-    version: "1.0",
-    addHelp: true,
+    add_help: true,
     description: "Scripts for managing ga-dev-tools development.",
   })
 
-  const subparsers = parser.addSubparsers({
+  const subparsers = parser.add_subparsers({
     title: "Sub command",
     dest: "cmd",
   })
 
-  const checkConfigParser = subparsers.addParser(Command.CheckConfig, {
+  const checkConfigParser = subparsers.add_parser(Command.CheckConfig, {
     help:
       "Ensures that all necessary configuration files exist & have required values.",
   })
-  checkConfigParser.addArgument("--all", {
-    defaultValue: false,
+  checkConfigParser.add_argument("--all", {
+    default: false,
     dest: "all",
     action: "storeTrue",
   })
 
-  const buildParser = subparsers.addParser(Command.Build, {
+  const buildParser = subparsers.add_parser(Command.Build, {
     help: "Builds the project. Runs any necessary validation before building.",
   })
 
   // TODO - It's probably worth implementing a workaround so this can be built
   // using the development environment variables. Right now, this works great
   // for local development, but it's less useful for the staging site.
-  const deployParser = subparsers.addParser(Command.Deploy, {
+  const deployParser = subparsers.add_parser(Command.Deploy, {
     help: "Builds the project and deploys it to `--environment`.",
   })
 
-  const deployFunctionsParser = subparsers.addParser(Command.DeployFunctions, {
+  const deployFunctionsParser = subparsers.add_parser(Command.DeployFunctions, {
     help: "Builds ./functions project and deploys it to `--environment`.",
   })
 
   ;[deployParser, deployFunctionsParser].map(parser =>
-    parser.addArgument("--no-localhost", {
-      defaultValue: false,
+    parser.add_argument("--no-localhost", {
+      default: false,
       dest: "noLocalhost",
       action: "storeTrue",
     })
   )
 
-  const developParser = subparsers.addParser(Command.Develop, {
+  const developParser = subparsers.add_parser(Command.Develop, {
     help:
       "Runs a local dev server. Runs any necessary validation before serving.",
   })
 
-  const serveParser = subparsers.addParser(Command.Serve, {
+  const serveParser = subparsers.add_parser(Command.Serve, {
     help:
       "Serves the content in the build directory locally through the Firebase cli.",
   })
-  serveParser.addArgument("--skip_build", {
-    defaultValue: false,
+  serveParser.add_argument("--skip_build", {
+    default: false,
     dest: "skipBuild",
     action: "storeTrue",
   })
@@ -104,7 +103,7 @@ const getParser = async (): Promise<argparse.ArgumentParser> => {
     deployFunctionsParser,
     developParser,
   ].forEach(parser => {
-    parser.addArgument("--environment", {
+    parser.add_argument("--environment", {
       required: true,
       dest: "environment",
       choices: Object.values(Environment),
@@ -116,7 +115,7 @@ const getParser = async (): Promise<argparse.ArgumentParser> => {
 
 const scripts = async () => {
   const parser = await getParser()
-  const args = parser.parseArgs() as Args
+  const args = parser.parse_args() as Args
 
   switch (args.cmd) {
     case Command.CheckConfig: {

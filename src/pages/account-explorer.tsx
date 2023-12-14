@@ -16,12 +16,16 @@ import * as React from "react"
 import Layout from "@/components/Layout"
 import AccountExplorer from "@/components/AccountExplorer"
 
-export default ({ location: { pathname } }) => {
+interface Props {
+  location: { pathname: string }
+}
+
+export default (props: Props) => {
   return (
     <Layout
       title="Account Explorer"
       requireLogin
-      pathname={pathname}
+      pathname={props.location.pathname}
       description="Use this tool to search or browse through your google analytics accounts, properties, and views."
     >
       <AccountExplorer />

@@ -14,35 +14,46 @@
 
 import * as React from "react"
 
-import { Typography, TextField, makeStyles } from "@material-ui/core"
+import { styled } from '@mui/material/styles';
+
+import { Typography, TextField } from "@mui/material"
 import Autocomplete, {
   createFilterOptions,
-} from "@material-ui/lab/Autocomplete"
+} from "@mui/material/Autocomplete"
 import { useState } from "react"
 import { Dispatch, RequestStatus } from "@/types"
 import useAvailableColumns from "./useAvailableColumns"
 import { DimensionsAndMetricsRequestCtx } from "../ga4/DimensionsMetricsExplorer/useDimensionsAndMetrics"
 
-const useColumnStyles = makeStyles(() => ({
-  option: {
+const PREFIX = 'DimensionsPicker';
+
+const classes = {
+  option: `${PREFIX}-option`,
+  left: `${PREFIX}-left`
+};
+
+const StyledTextField
+ = styled(TextField
+)(() => ({
+  [`& .${classes.option}`]: {
     display: "flex",
     width: "100%",
   },
-  left: {
+
+  [`& .${classes.left}`]: {
     flexGrow: 1,
     display: "flex",
     flexDirection: "column",
-  },
-}))
+  }
+}));
 
 export type GA4Dimension = gapi.client.analyticsdata.DimensionMetadata
 export type GA4Dimensions = GA4Dimension[] | undefined
 export type GA4Metric = gapi.client.analyticsdata.MetricMetadata
 export type GA4Metrics = GA4Metric[] | undefined
-type GA4Column = GA4Dimension | GA4Dimension
+type GA4Column = GA4Dimension | GA4Metric
 
 const Column: React.FC<{ column: GA4Column }> = ({ column }) => {
-  const classes = useColumnStyles()
   return (
     <div className={classes.option}>
       <div className={classes.left}>
@@ -95,7 +106,7 @@ export const DimensionsPicker: React.FC<{
       multiple
       loading={request.status === RequestStatus.InProgress}
       options={dimensionOptionsLessSelected || []}
-      getOptionLabel={dimension => dimension.apiName!}
+      getOptionLabel={ (dimension) => typeof dimension === "string" ? dimension : dimension.apiName!}
       value={dimensions || []}
       onChange={(_event, value) => {
         if (setDimensions !== undefined) {
@@ -109,9 +120,13 @@ export const DimensionsPicker: React.FC<{
             : setDimensionIDs((value as GA4Dimension[]).map(m => m.apiName!))
         }
       }}
-      renderOption={column => <Column column={column} />}
+      renderOption={(props, column) => (
+          <li {...props}>
+            <Column column={column} />
+          </li>
+      )}
       renderInput={params => (
-        <TextField
+        <StyledTextField
           {...params}
           required={required}
           label={label}
@@ -163,7 +178,7 @@ export const MetricsPicker: React.FC<{
       multiple
       loading={request.status === RequestStatus.InProgress}
       options={metricOptionsLessSelected || []}
-      getOptionLabel={metric => metric.apiName!}
+      getOptionLabel={ (metric) => typeof metric === "string" ? metric : metric.apiName!}
       value={metrics || []}
       onChange={(_event, value) => {
         if (setMetrics !== undefined) {
@@ -177,9 +192,13 @@ export const MetricsPicker: React.FC<{
             : setMetricsIDs((value as GA4Metric[]).map(m => m.apiName!))
         }
       }}
-      renderOption={column => <Column column={column} />}
+      renderOption={(props, column) => (
+          <li {...props}>
+            <Column column={column} />
+          </li>
+      )}
       renderInput={params => (
-        <TextField
+        <StyledTextField
           {...params}
           required={required}
           label={label}
@@ -262,14 +281,18 @@ export const DimensionPicker: React.FC<{
       freeSolo
       loading={request.status === RequestStatus.InProgress}
       options={dimensionOptionsLessSelected || []}
-      getOptionLabel={dimension => dimension.apiName!}
+      getOptionLabel={ (dimension) => typeof dimension === "string" ? dimension : dimension.apiName!}
       value={selected === undefined ? null : selected}
       onChange={(_event, value) =>
         setSelected(value === null ? undefined : (value as GA4Dimension))
       }
-      renderOption={column => <Column column={column} />}
+      renderOption={(props, column) => (
+        <li {...props}>
+          <Column column={column} />
+        </li>
+      )}
       renderInput={params => (
-        <TextField
+        <StyledTextField
           {...params}
           required={required}
           label={label}
@@ -314,7 +337,7 @@ export const MetricPicker: React.FC<{
     }
   }, [selected, setMetric])
 
-  // If there is only one option, and autoSelectIfOne is choosen and nothing
+  // If there is only one option, and autoSelectIfOne is chosen and nothing
   // has been selected yet.
   React.useEffect(() => {
     if (
@@ -349,14 +372,18 @@ export const MetricPicker: React.FC<{
       freeSolo
       loading={request.status === RequestStatus.InProgress}
       options={metricOptionsLessSelected || []}
-      getOptionLabel={metric => metric.apiName!}
+      getOptionLabel={ (metric) => typeof metric === "string" ? metric : metric.apiName!}
       value={selected === undefined ? null : selected}
       onChange={(_event, value) =>
         setSelected(value === null ? undefined : (value as GA4Metric))
       }
-      renderOption={column => <Column column={column} />}
+      renderOption={(props, column) => (
+        <li {...props}>
+          <Column column={column} />
+        </li>
+      )}
       renderInput={params => (
-        <TextField
+        <StyledTextField
           {...params}
           required={required}
           label={label}

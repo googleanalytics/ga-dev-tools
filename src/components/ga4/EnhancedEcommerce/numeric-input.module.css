@@ -1,0 +1,100 @@
+.wrap {
+  display: inline-grid;
+  grid-template-columns: 1fr min-content;
+  grid-template-areas: "input increment" "input decrement";
+  background-color: var(--input-background);
+  border-radius: var(--radius-md);
+  height: var(--size-input);
+  overflow: hidden;
+}
+
+.wrap button span {
+  display: none;
+}
+
+.input {
+  grid-area: input;
+  background: none;
+  border: none;
+  padding: var(--space-sm) var(--space-lg);
+  align-self: stretch;
+  width: 6ch;
+  border-color: var(--input-border);
+  border-width: 0 1px 0 0;
+  font-weight: var(--medium);
+  color: var(--input-text);
+}
+
+.input:disabled {
+  color: var(--input-text-disabled);
+}
+
+.wrap button {
+  background: none;
+  border: none;
+  padding: 0 var(--space-sm);
+  display: grid;
+  place-items: center;
+  color: var(--input-ui);
+}
+
+.wrap button:hover {
+  background-color: var(--input-background-hover);
+  color: var(--input-ui-active);
+}
+
+.wrap button:disabled:hover,
+.wrap button:disabled {
+  background: none;
+  color: var(--input-text-disabled);
+}
+
+.wrap button.increment {
+  grid-area: increment;
+  border-bottom: 1px var(--input-border) solid;
+}
+
+.decrement {
+  grid-area: decrement;
+}
+
+/* On mobile, make the buttons easier to press */
+@media (pointer: coarse) {
+  .wrap {
+    grid-template-columns: var(--size-input) 1fr var(--size-input);
+    grid-template-areas: "decrement input increment";
+  }
+
+  .input {
+    text-align: center;
+    border-width: 0 1px;
+  }
+
+  .wrap button {
+    padding: 0 var(--space-md);
+    font-size: var(--text-lg);
+    font-weight: var(--bold);
+  }
+
+  .wrap button span {
+    display: inline;
+  }
+
+  .wrap button svg {
+    display: none;
+  }
+
+  .wrap button.increment {
+    border: none;
+  }
+
+  .wrap button:active {
+    background-color: var(--input-background-hover);
+    color: var(--input-ui-active);
+  }
+
+  .wrap button:hover {
+    background-color: inherit;
+    color: inherit;
+  }
+}

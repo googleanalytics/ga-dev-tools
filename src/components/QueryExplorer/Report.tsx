@@ -14,8 +14,9 @@
 
 import * as React from "react"
 
+import { styled } from '@mui/material/styles';
+
 import {
-  makeStyles,
   Table,
   TableHead,
   TableRow,
@@ -25,35 +26,54 @@ import {
   Paper,
   Typography,
   TextField,
-} from "@material-ui/core"
+} from "@mui/material"
+
 import Spinner from "../../components/Spinner"
 import { CopyIconButton } from "../../components/CopyButton"
 import { QueryResponse, APIStatus } from "./useDataAPIRequest"
 import TSVDownload from "./TSVDownload"
 
-const useStyles = makeStyles(theme => ({
-  paper: {},
-  preamble: {
+const PREFIX = 'Report';
+
+const classes = {
+  paper: `${PREFIX}-paper`,
+  preamble: `${PREFIX}-preamble`,
+  container: `${PREFIX}-container`,
+  breakAll: `${PREFIX}-breakAll`,
+  reportLink: `${PREFIX}-reportLink`
+};
+
+const StyledPaper = styled(Paper)((
+  {
+    theme
+  }
+) => ({
+  [`&.${classes.paper}`]: {},
+
+  [`& .${classes.preamble}`]: {
     padding: theme.spacing(2, 2, 0, 2),
     margin: "unset",
   },
-  container: {
+
+  [`& .${classes.container}`]: {
     maxHeight: 440,
   },
-  breakAll: {
+
+  [`& .${classes.breakAll}`]: {
     wordBreak: "break-all",
   },
-  reportLink: {
+
+  [`& .${classes.reportLink}`]: {
     marginTop: theme.spacing(1),
     marginBottom: theme.spacing(1),
-  },
-}))
+  }
+}));
 
 const ReportTable: React.FC<{
   queryResponse: gapi.client.analytics.GaData
   columns: gapi.client.analytics.Column[] | undefined
 }> = ({ queryResponse, columns }) => {
-  const classes = useStyles()
+
 
   if (queryResponse === undefined) {
     return null
@@ -98,7 +118,7 @@ const Report: React.FC<ReportProps> = ({
   columns,
   permalink,
 }) => {
-  const classes = useStyles()
+
 
   const requestURL = React.useMemo(() => {
     if (
@@ -126,7 +146,7 @@ const Report: React.FC<ReportProps> = ({
 
   if (queryResponse.status === APIStatus.Error) {
     return (
-      <Paper className={classes.paper}>
+      <StyledPaper className={classes.paper}>
         <Typography variant="h4" className={classes.preamble}>
           An error has occured
         </Typography>
@@ -134,8 +154,8 @@ const Report: React.FC<ReportProps> = ({
           <Typography>Error code: {queryResponse.error.code}</Typography>
           <Typography>Error message: {queryResponse.error.message}</Typography>
         </section>
-      </Paper>
-    )
+      </StyledPaper>
+    );
   }
 
   return (

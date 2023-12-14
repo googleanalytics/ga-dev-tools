@@ -14,44 +14,73 @@
 
 import React from "react"
 
-import Warning from "@material-ui/icons/Warning"
-import ErrorIcon from "@material-ui/icons/Error"
-import Button from "@material-ui/core/Button"
-import TextField from "@material-ui/core/TextField"
-import Check from "@material-ui/icons/Check"
-import Send from "@material-ui/icons/Send"
-import Cached from "@material-ui/icons/Cached"
-import Paper from "@material-ui/core/Paper"
-import Typography from "@material-ui/core/Typography"
-import makeStyles from "@material-ui/core/styles/makeStyles"
-import orange from "@material-ui/core/colors/orange"
-import green from "@material-ui/core/colors/green"
-import yellow from "@material-ui/core/colors/yellow"
-import red from "@material-ui/core/colors/red"
+import { styled } from '@mui/material/styles';
+
+import Warning from "@mui/icons-material/Warning"
+import ErrorIcon from "@mui/icons-material/Error"
+import Button from "@mui/material/Button"
+import TextField from "@mui/material/TextField"
+import Check from "@mui/icons-material/Check"
+import Send from "@mui/icons-material/Send"
+import Cached from "@mui/icons-material/Cached"
+import Paper from "@mui/material/Paper"
+import Typography from "@mui/material/Typography"
+import {orange, green, yellow, red} from "@mui/material/colors"
 import classnames from "classnames"
 
 import { PAB } from "@/components/Buttons"
 import CopyButton from "@/components/CopyButton"
 import { ParametersAPI, Validation } from "./hooks"
-import { HitStatus } from "./types"
+const PREFIX = 'HitCard';
 
-const useStyles = makeStyles(theme => ({
-  hitElement: {
+enum HitStatus {
+  Unvalidated = "UNVALIDATED",
+  Validating = "VALIDATING",
+  Valid = "VALID",
+  Invalid = "INVALID",
+  Sent = "Sent",
+  Sending = "Sending",
+}
+
+const classes = {
+  hitElement: `${PREFIX}-hitElement`,
+  hitElementActions: `${PREFIX}-hitElementActions`,
+  addParameterButton: `${PREFIX}-addParameterButton`,
+  validationStatus: `${PREFIX}-validationStatus`,
+  httpInfo: `${PREFIX}-httpInfo`,
+  payload: `${PREFIX}-payload`,
+  hitStatusValidating: `${PREFIX}-hitStatus-${HitStatus.Validating}`,
+  hitStatusSending: `${PREFIX}-hitStatus-${HitStatus.Sending}`,
+  hitStatusInvalid: `${PREFIX}-hitStatus-${HitStatus.Invalid}`,
+  hitStatusSent: `${PREFIX}-hitStatus-${HitStatus.Sent}`,
+  hitStatusValid: `${PREFIX}-hitStatus-${HitStatus.Valid}`,
+  hitStatusUnvalidated: `${PREFIX}-hitStatus-${HitStatus.Unvalidated}`
+};
+
+const Root = styled('div')((
+    {
+      theme
+    }
+) => ({
+  [`& .${classes.hitElement}`]: {
     padding: theme.spacing(2, 3),
     display: "flex",
     flexDirection: "column",
   },
-  hitElementActions: {
+
+  [`&.${classes.hitElementActions}`]: {
     marginTop: theme.spacing(2),
     display: "flex",
     "& > button": {
       marginRight: theme.spacing(1),
     },
   },
-  addParameterButton: {
+
+  [`& .${classes.addParameterButton}`]: {
     marginLeft: theme.spacing(1),
   },
-  validationStatus: {
+
+  [`& .${classes.validationStatus}`]: {
     // Picked this value through a bit of trial and error, but having a
     // minHeight makes this not jump around during the "sending" and
     // "validating" states.
@@ -71,40 +100,42 @@ const useStyles = makeStyles(theme => ({
       marginTop: theme.spacing(1),
     },
   },
-  [HitStatus.Validating]: {
-    backgroundColor: orange[100],
-    color: orange[900],
-  },
-  [HitStatus.Sending]: {
-    backgroundColor: orange[100],
-    color: orange[900],
-  },
-  [HitStatus.Invalid]: {
-    backgroundColor: red[100],
-    color: red[900],
-  },
-  [HitStatus.Sent]: {
-    backgroundColor: green[100],
-    color: green[900],
-  },
-  [HitStatus.Valid]: {
-    backgroundColor: green[100],
-    color: green[900],
-  },
-  [HitStatus.Unvalidated]: {
-    backgroundColor: yellow[100],
-    color: yellow[900],
-  },
-  httpInfo: {
+
+  [`& .${classes.httpInfo}`]: {
     margin: theme.spacing(1, 0, 2, 0),
     "& > span": {
       fontFamily: "'Source Code Pro', monospace",
     },
   },
-  payload: {
+
+  [`& .${classes.payload}`]: {
     flexGrow: 1,
   },
-}))
+  [`& .${classes.hitStatusValidating}`]: {
+    backgroundColor: orange[100],
+    color: orange[900],
+  },
+  [`& .${classes.hitStatusSending}`]: {
+    backgroundColor: orange[100],
+    color: orange[900],
+  },
+  [`& .${classes.hitStatusInvalid}`]: {
+    backgroundColor: red[100],
+    color: red[900],
+  },
+  [`& .${classes.hitStatusSent}`]: {
+    backgroundColor: green[100],
+    color: green[900],
+  },
+  [`& .${classes.hitStatusValid}`]: {
+    backgroundColor: green[100],
+    color: green[900],
+  },
+  [`& .${classes.hitStatusUnvalidated}`]: {
+    backgroundColor: yellow[100],
+    color: yellow[900],
+  },
+}));
 
 interface HitCardProps {
   hitPayload: string
@@ -127,7 +158,7 @@ const HitCard: React.FC<HitCardProps> = ({
   hasParameter,
   setParametersFromString,
 }) => {
-  const classes = useStyles()
+
   const [value, setValue] = React.useState(hitPayload)
 
   // Update the localState of then input when the hitPayload changes.
@@ -143,38 +174,40 @@ const HitCard: React.FC<HitCardProps> = ({
     [setParametersFromString]
   )
   return (
-    <Paper className={classes.hitElement}>
-      <ValidationStatus
-        hasParameter={hasParameter}
-        addParameter={addParameter}
-        hitStatus={hitStatus}
-        validationMessages={validationMessages}
-      />
-      <section className={classes.httpInfo}>
-        <Typography variant="body2" component="span">
-          POST /collect HTTP/1.1
-        </Typography>
-        <br />
-        <Typography variant="body2" component="span">
-          Host: www.google-analytics.com
-        </Typography>
-      </section>
-      <TextField
-        multiline
-        variant="outlined"
-        label="Hit payload"
-        id="hit-payload"
-        className={classes.payload}
-        value={value}
-        onChange={onChange}
-      />
-      <HitActions
-        hitPayload={hitPayload}
-        hitStatus={hitStatus}
-        validateHit={validateHit}
-        sendHit={sendHit}
-      />
-    </Paper>
+      <Root>
+        <Paper className={classes.hitElement}>
+          <ValidationStatus
+            hasParameter={hasParameter}
+            addParameter={addParameter}
+            hitStatus={hitStatus}
+            validationMessages={validationMessages}
+          />
+          <section className={classes.httpInfo}>
+            <Typography variant="body2" component="span">
+              POST /collect HTTP/1.1
+            </Typography>
+            <br />
+            <Typography variant="body2" component="span">
+              Host: www.google-analytics.com
+            </Typography>
+          </section>
+          <TextField
+            multiline
+            variant="outlined"
+            label="Hit payload"
+            id="hit-payload"
+            className={classes.payload}
+            value={value}
+            onChange={onChange}
+          />
+          <HitActions
+            hitPayload={hitPayload}
+            hitStatus={hitStatus}
+            validateHit={validateHit}
+            sendHit={sendHit}
+          />
+        </Paper>
+      </Root>
   )
 }
 
@@ -191,7 +224,7 @@ const ValidationStatus: React.FC<ValidationStatusProps> = ({
   addParameter,
   hasParameter,
 }) => {
-  const classes = useStyles()
+
 
   let headerIcon: JSX.Element | null = null
   let hitHeading: JSX.Element | null = null
@@ -284,7 +317,7 @@ const ValidationStatus: React.FC<ValidationStatusProps> = ({
   return (
     <Paper
       square
-      className={classnames(classes[hitStatus], classes.validationStatus)}
+      className={classnames(`${PREFIX}-hitStatus-${hitStatus}`, classes.validationStatus)}
     >
       <Typography component="span">
         {headerIcon}
@@ -308,20 +341,22 @@ const HitActions: React.FC<HitActionsProps> = ({
   validateHit,
   sendHit,
 }) => {
-  const classes = useStyles()
+
 
   switch (hitStatus) {
     case HitStatus.Sent:
     case HitStatus.Valid: {
       const sendHitButton = (
-        <PAB
-          startIcon={hitStatus === HitStatus.Sent ? <Check /> : <Send />}
-          onClick={sendHit}
-          className="Button Button--success Button-withIcon"
-          variant="contained"
-        >
-          Send to GA
-        </PAB>
+          <Root>
+            <PAB
+              startIcon={hitStatus === HitStatus.Sent ? <Check /> : <Send />}
+              onClick={sendHit}
+              className="Button Button--success Button-withIcon"
+              variant="contained"
+            >
+              Send to GA
+            </PAB>
+          </Root>
       )
 
       const sharableLinkToHit =
@@ -332,7 +367,7 @@ const HitActions: React.FC<HitActionsProps> = ({
         "?" +
         hitPayload
       return (
-        <div className={classes.hitElementActions}>
+        <Root className={classes.hitElementActions}>
           {sendHitButton}
           <CopyButton
             toCopy={hitPayload}
@@ -344,22 +379,24 @@ const HitActions: React.FC<HitActionsProps> = ({
             text="Copy link to this hit"
             variant="contained"
           />
-        </div>
-      )
+        </Root>
+      );
     }
     default: {
       return (
-        <div className={classes.hitElementActions}>
-          <PAB
-            variant="contained"
-            disabled={hitStatus === "VALIDATING"}
-            onClick={validateHit}
-          >
-            {hitStatus === HitStatus.Validating
-              ? "Validating..."
-              : "Validate hit"}
-          </PAB>
-        </div>
+          <Root>
+            <div className={classes.hitElementActions}>
+              <PAB
+                variant="contained"
+                disabled={hitStatus === "VALIDATING"}
+                onClick={validateHit}
+              >
+                {hitStatus === HitStatus.Validating
+                  ? "Validating..."
+                  : "Validate hit"}
+              </PAB>
+            </div>
+          </Root>
       )
     }
   }

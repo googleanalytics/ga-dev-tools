@@ -1,6 +1,6 @@
 import React from "react"
 
-import Typography from "@material-ui/core/Typography"
+import Typography from "@mui/material/Typography"
 import Layout from "@/components/Layout"
 import { useLocation } from "@reach/router"
 import { StorageKey } from "@/constants"
@@ -37,8 +37,12 @@ export const useBitlyAPIKey = () => {
   return usePersistentString(StorageKey.bitlyAccessToken)
 }
 
+interface Props {
+  location: { pathname: string }
+}
+
 // TODO - Consider adding a settings page for revoking access_tokens.
-export default ({ location: { pathname } }) => {
+export default (props: Props) => {
   const location = useLocation()
   const params = React.useMemo(() => {
     return new URLSearchParams(location.search)
@@ -62,7 +66,7 @@ export default ({ location: { pathname } }) => {
       <Layout
         disableNav
         title="Bitly Auth"
-        pathname={pathname}
+        pathname={props.location.pathname}
         description="Only used for authentication."
       >
         <Typography variant="body1">Not found.</Typography>
@@ -74,7 +78,7 @@ export default ({ location: { pathname } }) => {
     <Layout
       disableNav
       title="Bitly Auth"
-      pathname={pathname}
+      pathname={props.location.pathname}
       description="Only used for authentication."
     >
       <Typography variant="body1">

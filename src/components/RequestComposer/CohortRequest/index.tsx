@@ -13,9 +13,8 @@
 // limitations under the License.
 
 import * as React from "react"
+import { styled } from '@mui/material/styles';
 import { useEffect } from "react"
-
-import makeStyles from "@material-ui/core/styles/makeStyles"
 
 import { usePersistentBoolean } from "@/hooks"
 import { StorageKey } from "@/constants"
@@ -41,6 +40,24 @@ import {
   UASegmentsRequestCtx,
   useUASegments,
 } from "@/components/UAPickers/useUASegments"
+import { PropsWithChildren } from 'react'
+
+const PREFIX = 'CohortRequest';
+
+const classes = {
+  showSegments: `${PREFIX}-showSegments`
+};
+
+const StyledUADimensionsAndMetricsRequestCtxProvider = styled(UADimensionsAndMetricsRequestCtx.Provider)((
+  {
+    theme
+  }
+) => ({
+  [`& .${classes.showSegments}`]: {
+    marginLeft: theme.spacing(1),
+    marginBottom: theme.spacing(1),
+  }
+}));
 
 interface CohortRequestProps {
   apv: UAAccountPropertyView
@@ -48,20 +65,13 @@ interface CohortRequestProps {
   setRequestObject: (request: ReportsRequest | undefined) => void
 }
 
-const useStyles = makeStyles(theme => ({
-  showSegments: {
-    marginLeft: theme.spacing(1),
-    marginBottom: theme.spacing(1),
-  },
-}))
-
-const CohortRequest: React.FC<CohortRequestProps> = ({
+const CohortRequest: React.FC<PropsWithChildren<CohortRequestProps>> = ({
   apv,
   controlWidth,
   setRequestObject,
   children,
 }) => {
-  const classes = useStyles()
+
   const [
     showSegmentDefinition,
     setShowSegmentDefinition,
@@ -103,9 +113,7 @@ const CohortRequest: React.FC<CohortRequestProps> = ({
   )
 
   return (
-    <UADimensionsAndMetricsRequestCtx.Provider
-      value={uaDimensionsAndMetricsRequest}
-    >
+    <StyledUADimensionsAndMetricsRequestCtxProvider value={uaDimensionsAndMetricsRequest}>
       <section className={controlWidth}>
         <LinkedTextField
           href={linkFor("ReportRequest.FIELDS.view_id")}
@@ -148,8 +156,8 @@ const CohortRequest: React.FC<CohortRequestProps> = ({
         />
         {children}
       </section>
-    </UADimensionsAndMetricsRequestCtx.Provider>
-  )
+    </StyledUADimensionsAndMetricsRequestCtxProvider>
+  );
 }
 
 export default CohortRequest

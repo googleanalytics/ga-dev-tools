@@ -1,7 +1,8 @@
-import { ValidationMessage } from "../../types"
+import {ValidationMessage} from "../../types"
 import 'object-sizeof'
 import sizeof from "object-sizeof"
-import { eventDefinitions } from "../schemas/eventTypes/eventDefinitions"
+import {eventDefinitions} from "../schemas/eventTypes/eventDefinitions"
+import {InstanceId} from "../../types"
 
 const RESERVED_EVENT_NAMES = [
     "ad_activeview", "ad_click", "ad_exposure", "ad_impression", "ad_query",
@@ -18,7 +19,7 @@ const RESERVED_USER_PROPERTY_NAMES = [
 
 // formatCheckLib provides additional validations for payload not included in 
 // the schema validations. All checks are consistent with Firebase documentation.
-export const formatCheckLib = (payload, instanceId, api_secret, useFirebase) => {
+export const formatCheckLib = (payload: any, instanceId: InstanceId, api_secret: string, useFirebase: boolean) => {
     let errors: ValidationMessage[] = []
 
     const appOrClientErrors = isValidAppOrClientId(payload, useFirebase)
@@ -33,7 +34,7 @@ export const formatCheckLib = (payload, instanceId, api_secret, useFirebase) => 
 
     return [
         ...errors, 
-        ...appOrClientErrors, 
+        ...appOrClientErrors,
         ...eventNameErrors,
         ...userPropertyNameErrors,
         ...currencyErrors,
@@ -45,8 +46,8 @@ export const formatCheckLib = (payload, instanceId, api_secret, useFirebase) => 
     ]
 }
 
-const isValidAppOrClientId = (payload, useFirebase) => {
-    let errors: ValidationMessage[] = []
+const isValidAppOrClientId = (payload: any, useFirebase: boolean) => {
+    const errors: ValidationMessage[] = []
     const appInstanceId = payload.app_instance_id
     const clientId = payload.client_id
 
@@ -92,10 +93,10 @@ const isValidAppOrClientId = (payload, useFirebase) => {
 }
 
 
-const isValidEventName = (payload) => {
+const isValidEventName = (payload: any) => {
     let errors: ValidationMessage[] = []
 
-    payload.events?.forEach(ev => {
+    payload.events?.forEach((ev: any) => {
         if (RESERVED_EVENT_NAMES.includes(ev.name)) {
             errors.push({
                 description: `${ev.name} is a reserved event name`,
@@ -108,8 +109,8 @@ const isValidEventName = (payload) => {
     return errors
 }
 
-const isValidUserPropertyName = (payload) => {
-    let errors: ValidationMessage[] = []
+const isValidUserPropertyName = (payload: any) => {
+    const errors: ValidationMessage[] = []
     const userProperties = payload.user_properties
 
     if (userProperties) {
@@ -127,10 +128,10 @@ const isValidUserPropertyName = (payload) => {
     return errors
 }
 
-const isValidCurrencyType = (payload) => {
-    let errors: ValidationMessage[] = []
+const isValidCurrencyType = (payload: any) => {
+    const errors: ValidationMessage[] = []
 
-    payload.events?.forEach(ev => {
+    payload.events?.forEach((ev:any) => {
         if (ev.params && ev.params.currency) {
             const currency = ev.params.currency
 
@@ -147,10 +148,10 @@ const isValidCurrencyType = (payload) => {
     return errors
 }
 
-const isItemsEmpty = (payload) => {
-    let errors: ValidationMessage[] = []
+const isItemsEmpty = (payload: any) => {
+    const errors: ValidationMessage[] = []
 
-    payload?.events?.forEach(ev => {
+    payload?.events?.forEach((ev: any) => {
         if (ev?.params?.items && ev?.params?.items?.length < 1 && eventRequiresItems(ev?.params?.name)){
             errors.push({
                 description: "'items' should not be empty; One of 'item_id' or 'item_name' is a required key",
@@ -163,18 +164,20 @@ const isItemsEmpty = (payload) => {
     return errors
 }
 
-const eventRequiresItems = (eventName) => {
+const eventRequiresItems = (eventName: string) => {
+    // @ts-ignore
     if (eventDefinitions[eventName]) {
+        // @ts-ignore
         return eventDefinitions[eventName].includes('items')
     }
 
     return false
 }
 
-const itemsHaveRequiredKey = (payload) => {
-    let errors: ValidationMessage[] = []
+const itemsHaveRequiredKey = (payload: any) => {
+    const errors: ValidationMessage[] = []
 
-    payload?.events?.forEach(ev => {
+    payload?.events?.forEach((ev: any) => {
         if (ev?.params?.items?.length > 0) {
             const itemsObj = ev.params.items[0]
 
@@ -191,16 +194,16 @@ const itemsHaveRequiredKey = (payload) => {
     return errors
 }
 
-const requiredKeysDontExist = (itemsObj) => {
+const requiredKeysDontExist = (itemsObj: any) => {
     return !(itemsObj.hasOwnProperty('item_id') || itemsObj.hasOwnProperty('item_name'))
 }
 
-const requiredKeysEmpty = (itemsObj) => {
+const requiredKeysEmpty = (itemsObj: any) => {
     return !(itemsObj.item_id || itemsObj.item_name)
 }
 
-const isInstanceIdValid = (instanceId, useFirebase) => {
-    let errors: ValidationMessage[] = []
+const isInstanceIdValid = (instanceId: InstanceId, useFirebase: boolean) => {
+    const errors: ValidationMessage[] = []
     const firebaseAppId = instanceId?.firebase_app_id
     const measurementId = instanceId?.measurement_id
 
@@ -225,8 +228,8 @@ const isInstanceIdValid = (instanceId, useFirebase) => {
     return errors
 }
 
-const isApiSecretNotNull = (api_secret) => {
-    let errors: ValidationMessage[] = []
+const isApiSecretNotNull = (api_secret: string) => {
+    const errors: ValidationMessage[] = []
 
     if (!api_secret) {
         errors.push({
@@ -239,8 +242,8 @@ const isApiSecretNotNull = (api_secret) => {
     return errors
 }
 
-const isTooBig = (payload) => {
-    let errors: ValidationMessage[] = []
+const isTooBig = (payload: any) => {
+    const errors: ValidationMessage[] = []
 
     if (sizeof(payload) > 130000) {
         errors.push({

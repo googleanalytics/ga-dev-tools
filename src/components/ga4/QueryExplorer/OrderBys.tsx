@@ -1,8 +1,9 @@
 import * as React from "react"
 
-import Typography from "@material-ui/core/Typography"
-import Delete from "@material-ui/icons/Delete"
-import makeStyles from "@material-ui/core/styles/makeStyles"
+import { styled } from '@mui/material/styles';
+
+import Typography from "@mui/material/Typography"
+import Delete from "@mui/icons-material/Delete"
 
 import { Dispatch } from "@/types"
 import { SAB, TooltipIconButton } from "@/components/Buttons"
@@ -17,7 +18,79 @@ import {
 } from "@/components/GA4Pickers"
 import ExternalLink from "@/components/ExternalLink"
 import WithHelpText from "@/components/WithHelpText"
-import { ArrowDownward, ArrowUpward } from "@material-ui/icons"
+import { ArrowDownward, ArrowUpward } from "@mui/icons-material"
+
+const PREFIX = 'OrderBys';
+
+const classes = {
+  heading: `${PREFIX}-heading`,
+  orderType: `${PREFIX}-orderType`,
+  grouped: `${PREFIX}-grouped`,
+  orderBy: `${PREFIX}-orderBy`,
+  type: `${PREFIX}-type`,
+  column: `${PREFIX}-column`,
+  direction: `${PREFIX}-direction`,
+  pabContainer: `${PREFIX}-pabContainer`,
+  buttons: `${PREFIX}-buttons`,
+  add: `${PREFIX}-add`
+};
+
+const Root = styled('div')((
+  {
+    theme
+  }
+) => ({
+  [`& .${classes.heading}`]: {},
+
+  [`& .${classes.orderType}`]: {
+    width: "30ch",
+    marginRight: theme.spacing(1),
+  },
+
+  [`& .${classes.grouped}`]: {
+    flexGrow: 1,
+    margin: theme.spacing(1, 0, 1, 1),
+  },
+
+  [`& .${classes.orderBy}`]: {
+    display: "flex",
+    margin: theme.spacing(1, 0),
+    "& > :first-child": {
+      marginRight: theme.spacing(1),
+    },
+  },
+
+  [`& .${classes.type}`]: {
+    width: "20ch",
+    marginRight: theme.spacing(1),
+  },
+
+  [`& .${classes.column}`]: {
+    marginRight: theme.spacing(1),
+  },
+
+  [`& .${classes.direction}`]: {
+    width: "30ch",
+  },
+
+  [`& .${classes.pabContainer}`]: {
+    display: "flex",
+    "& > *:first-child": {
+      flexGrow: 1,
+    },
+    "& > *:not(:first-child)": {
+      marginLeft: theme.spacing(1),
+    },
+  },
+
+  [`& .${classes.buttons}`]: {
+    "&> *:not(:first-child)": {
+      marginLeft: theme.spacing(1),
+    },
+  },
+
+  [`& .${classes.add}`]: {}
+}));
 
 const orderBysLink = (
   <ExternalLink href="https://developers.google.com/analytics/devguides/reporting/data/v1/rest/v1beta/properties/runReport#body.request_body.FIELDS.order_bys">
@@ -146,50 +219,6 @@ const useOrderBys: UseOrderBys = ({ setOrderBys }) => {
   }
 }
 
-const useStyles = makeStyles(theme => ({
-  heading: {},
-  orderType: {
-    width: "30ch",
-    marginRight: theme.spacing(1),
-  },
-  grouped: {
-    flexGrow: 1,
-    margin: theme.spacing(1, 0, 1, 1),
-  },
-  orderBy: {
-    display: "flex",
-    margin: theme.spacing(1, 0),
-    "& > :first-child": {
-      marginRight: theme.spacing(1),
-    },
-  },
-  type: {
-    width: "20ch",
-    marginRight: theme.spacing(1),
-  },
-  column: {
-    marginRight: theme.spacing(1),
-  },
-  direction: {
-    width: "30ch",
-  },
-  pabContainer: {
-    display: "flex",
-    "& > *:first-child": {
-      flexGrow: 1,
-    },
-    "& > *:not(:first-child)": {
-      marginLeft: theme.spacing(1),
-    },
-  },
-  buttons: {
-    "&> *:not(:first-child)": {
-      marginLeft: theme.spacing(1),
-    },
-  },
-  add: {},
-}))
-
 const pivotOption = { value: "pivot", displayName: "pivot" }
 const dimensionOption = { value: "dimension", displayName: "dimension" }
 const metricOption = { value: "metric", displayName: "metric" }
@@ -246,7 +275,7 @@ const DimensionSort: React.FC<{
   id,
   orderType,
 }) => {
-  const classes = useStyles()
+
   const [dimension, setDimensionLocal] = React.useState<GA4Dimension>()
 
   React.useEffect(() => {
@@ -299,7 +328,7 @@ const OrderBys: React.FC<OrderBysProps> = ({
   className,
   ...props
 }) => {
-  const classes = useStyles()
+
   const {
     addOrderBy,
     removeOrderBy,
@@ -342,84 +371,86 @@ const OrderBys: React.FC<OrderBysProps> = ({
         </Typography>
       }
     >
-      <section>
-        {orderBys !== undefined && orderBys.length > 0 && (
-          <section className={classes.grouped}>
-            {orderBys.map((orderBy, idx) => {
-              const selectedType = optionFor(orderBy)
-              const selectedOrderType = orderTypeFor(orderBy)
-              return (
-                <section key={idx} className={classes.orderBy}>
-                  <TooltipIconButton
-                    tooltip="remove ordering clause"
-                    onClick={() => removeOrderBy(idx)}
-                  >
-                    <Delete />
-                  </TooltipIconButton>
-                  {selectedType?.value === "metric" && props.metric ? (
-                    <MetricSort
-                      className={classes.column}
-                      metricFilter={metricFilter}
-                      setMetric={setMetric}
-                      id={idx}
-                    />
-                  ) : null}
-                  {selectedType?.value === "dimension" && props.dimension ? (
-                    <DimensionSort
-                      className={classes.column}
-                      dimensionFilter={dimensionFilter}
-                      setDimension={setDimension}
-                      setDimensionOrderType={setDimensionOrderType}
-                      id={idx}
-                      orderType={selectedOrderType}
-                    />
-                  ) : null}
-                  {selectedType?.value !== undefined ? (
+      <Root>
+        <section>
+          {orderBys !== undefined && orderBys.length > 0 && (
+            <section className={classes.grouped}>
+              {orderBys.map((orderBy, idx) => {
+                const selectedType = optionFor(orderBy)
+                const selectedOrderType = orderTypeFor(orderBy)
+                return (
+                  <section key={idx} className={classes.orderBy}>
                     <TooltipIconButton
-                      tooltip={orderBy.desc ? "descending" : "ascending"}
-                      onClick={() => {
-                        setDirection(
-                          idx,
-                          orderBy.desc
-                            ? Direction.Ascending
-                            : Direction.Descending
-                        )
-                      }}
+                      tooltip="remove ordering clause"
+                      onClick={() => removeOrderBy(idx)}
                     >
-                      {orderBy.desc ? <ArrowDownward /> : <ArrowUpward />}
+                      <Delete />
                     </TooltipIconButton>
-                  ) : null}
-                </section>
-              )
-            })}
+                    {selectedType?.value === "metric" && props.metric ? (
+                      <MetricSort
+                        className={classes.column}
+                        metricFilter={metricFilter}
+                        setMetric={setMetric}
+                        id={idx}
+                      />
+                    ) : null}
+                    {selectedType?.value === "dimension" && props.dimension ? (
+                      <DimensionSort
+                        className={classes.column}
+                        dimensionFilter={dimensionFilter}
+                        setDimension={setDimension}
+                        setDimensionOrderType={setDimensionOrderType}
+                        id={idx}
+                        orderType={selectedOrderType}
+                      />
+                    ) : null}
+                    {selectedType?.value !== undefined ? (
+                      <TooltipIconButton
+                        tooltip={orderBy.desc ? "descending" : "ascending"}
+                        onClick={() => {
+                          setDirection(
+                            idx,
+                            orderBy.desc
+                              ? Direction.Ascending
+                              : Direction.Descending
+                          )
+                        }}
+                      >
+                        {orderBy.desc ? <ArrowDownward /> : <ArrowUpward />}
+                      </TooltipIconButton>
+                    ) : null}
+                  </section>
+                )
+              })}
+            </section>
+          )}
+          <section className={classes.buttons}>
+            {props.metric ? (
+              <SAB
+                add
+                small
+                className={classes.add}
+                onClick={() => addOrderBy("metric")}
+              >
+                metric
+              </SAB>
+            ) : null}
+            {props.dimension ? (
+              <SAB
+                add
+                small
+                className={classes.add}
+                onClick={() => addOrderBy("dimension")}
+              >
+                dimension
+              </SAB>
+            ) : null}
           </section>
-        )}
-        <section className={classes.buttons}>
-          {props.metric ? (
-            <SAB
-              add
-              small
-              className={classes.add}
-              onClick={() => addOrderBy("metric")}
-            >
-              metric
-            </SAB>
-          ) : null}
-          {props.dimension ? (
-            <SAB
-              add
-              small
-              className={classes.add}
-              onClick={() => addOrderBy("dimension")}
-            >
-              dimension
-            </SAB>
-          ) : null}
         </section>
-      </section>
-      <section className={classes.pabContainer}></section>
-    </WithHelpText>
-  )
+        <section className={classes.pabContainer}></section>
+      </Root>
+  </WithHelpText>
+  );
 }
 
 const optionFor = (orderBy: OrderBy): SelectOption | undefined => {

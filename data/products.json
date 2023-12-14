@@ -1,0 +1,68 @@
+[
+  {
+    "id": "1",
+    "title": "Compton T-Shirt",
+    "description": "Sint occaecat deserunt ex incididunt qui sint. Id minim magna labore pariatur nulla quis.",
+    "price": 15,
+    "brand": "Compton",
+    "category": "T-shirt",
+    "image": "images/yellowT.png",
+    "colors": ["Red", "Green", "Blue"],
+    "sizes": ["Small", "Medium", "Large"]
+  },
+  {
+    "id": "2",
+    "title": "Comverges T-Shirt",
+    "description": "Sint occaecat deserunt ex incididunt qui sint. Id minim magna labore pariatur nulla quis.",
+    "price": 20,
+    "brand": "Comverges",
+    "category": "T-shirt",
+    "image": "images/greyT.png",
+    "colors": ["Red", "Green", "Blue"],
+    "sizes": ["Small", "Medium", "Large"]
+  },
+  {
+    "id": "3",
+    "title": "Flexigen T-Shirt",
+    "description": "Sint occaecat deserunt ex incididunt qui sint. Id minim magna labore pariatur nulla quis.",
+    "price": 30,
+    "brand": "Flexigen",
+    "category": "T-shirt",
+    "image": "images/pinkT.png",
+    "colors": ["Red", "Green", "Blue"],
+    "sizes": ["Small", "Medium", "Large"]
+  },
+  {
+    "id": "4",
+    "title": "Fuelworks T-Shirt",
+    "description": "Sint occaecat deserunt ex incididunt qui sint. Id minim magna labore pariatur nulla quis.",
+    "price": 40,
+    "brand": "Fuelworks",
+    "category": "T-shirt",
+    "image": "images/blackT2.png",
+    "colors": ["Red", "Green", "Blue"],
+    "sizes": ["Small", "Medium", "Large"]
+  },
+  {
+    "id": "5",
+    "title": "Futuris T-Shirt",
+    "description": "Sint occaecat deserunt ex incididunt qui sint. Id minim magna labore pariatur nulla quis.",
+    "price": 50,
+    "brand": "Futuris",
+    "category": "T-shirt",
+    "image": "images/pinkT.png",
+    "colors": ["Red", "Green", "Blue"],
+    "sizes": ["Small", "Medium", "Large"]
+  },
+  {
+    "id": "6",
+    "title": "Isoternia T-Shirt",
+    "description": "Sint occaecat deserunt ex incididunt qui sint. Id minim magna labore pariatur nulla quis.",
+    "price": 44,
+    "brand": "Isoternia",
+    "category": "T-shirt",
+    "image": "images/brownT.png",
+    "colors": ["Red", "Green", "Blue"],
+    "sizes": ["Small", "Medium", "Large"]
+  }
+]

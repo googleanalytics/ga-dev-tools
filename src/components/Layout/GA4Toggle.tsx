@@ -1,8 +1,8 @@
 import * as React from "react"
 
-import Grid from "@material-ui/core/Grid/Grid"
-import Switch from "@material-ui/core/Switch"
-import Tooltip from "@material-ui/core/Tooltip"
+import Grid from "@mui/material/Grid/Grid"
+import Switch from '@mui/material/Switch';
+import Tooltip from '@mui/material/Tooltip';
 
 import { GAVersion } from "@/constants"
 

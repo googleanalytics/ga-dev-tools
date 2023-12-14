@@ -118,7 +118,7 @@ export type Param =
 interface ParamType<T> {
   id: number
   name: T
-  value: string | string[]
+  value: string
   required?: true
   isOptional?: true
 }

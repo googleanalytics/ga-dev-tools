@@ -1,13 +1,14 @@
 import * as React from "react"
 
-import Box from "@material-ui/core/Box"
+import Box from "@mui/material/Box"
+import {PropsWithChildren} from 'react';
 
 interface TabPanelProps {
   value: number
   index: number
 }
 
-const TabPanel: React.FC<TabPanelProps> = ({ value, index, children }) => {
+const TabPanel: React.FC<PropsWithChildren<TabPanelProps>> = ({ value, index, children }) => {
   return (
     <div
       role="tabpanel"

@@ -14,10 +14,11 @@
 
 import * as React from "react"
 
-import TextField from "@material-ui/core/TextField"
-import IconButton from "@material-ui/core/IconButton"
-import Clear from "@material-ui/icons/Clear"
-import makeStyles from "@material-ui/core/styles/makeStyles"
+import { styled } from '@mui/material/styles';
+
+import TextField from "@mui/material/TextField"
+import IconButton from "@mui/material/IconButton"
+import Clear from "@mui/icons-material/Clear"
 import { useDebounce } from "use-debounce"
 
 import { StorageKey } from "@/constants"
@@ -27,11 +28,22 @@ import { usePersistentBoolean, usePersistentString } from "../../hooks"
 import ColumnGroupList from "./ColumnGroupList"
 import useAnchorRedirects from "./useAnchorRedirects"
 import useColumns from "./useColumns"
-import { Typography } from "@material-ui/core"
+import { Typography } from "@mui/material"
 import PrettyJson from "../PrettyJson"
 
-const useStyles = makeStyles(theme => ({
-  search: {
+const PREFIX = 'Explorer';
+
+const classes = {
+  search: `${PREFIX}-search`,
+  searchInput: `${PREFIX}-searchInput`
+};
+
+const Root = styled('div')((
+  {
+    theme
+  }
+) => ({
+  [`& .${classes.search}`]: {
     display: "flex",
     flexDirection: "column",
     "&> label": {
@@ -40,10 +52,11 @@ const useStyles = makeStyles(theme => ({
       marginBottom: theme.spacing(-1),
     },
   },
-  searchInput: {
+
+  [`& .${classes.searchInput}`]: {
     maxWidth: theme.spacing(60),
-  },
-}))
+  }
+}));
 
 const Search: React.FC<{
   searchText: string | undefined
@@ -60,7 +73,7 @@ const Search: React.FC<{
   allowDeprecated,
   setAllowDeprecated,
 }) => {
-  const classes = useStyles()
+
   return (
     <section className={classes.search}>
       <TextField
@@ -121,7 +134,7 @@ const Explorer: React.FC = () => {
   useAnchorRedirects(successful(columnsRequest)?.columns)
 
   return (
-    <div>
+    <Root>
       <Search
         searchText={searchText}
         setSearchText={setSearchText}
@@ -151,8 +164,8 @@ const Explorer: React.FC = () => {
           />
         </div>
       )}
-    </div>
-  )
+    </Root>
+  );
 }
 
 export default Explorer

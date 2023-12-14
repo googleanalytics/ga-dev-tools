@@ -2,19 +2,23 @@ import * as React from "react"
 import {Link} from "gatsby"
 import {badge, cartButton} from "./cart-button.module.css"
 import {MdShoppingCart} from 'react-icons/md';
-import IconButton from "@material-ui/core/IconButton"
+import IconButton from "@mui/material/IconButton"
 
-export function CartButton({quantity}) {
+interface Props
+{
+    quantity:number
+}
+export function CartButton(props:Props) {
     return (
         <Link
-            aria-label={`Shopping Cart with ${quantity} items`}
+            aria-label={`Shopping Cart with ${props.quantity} items`}
             to="/ga4/enhanced-ecommerce/cart"
             className={cartButton}
         >
             <IconButton>
                 <MdShoppingCart/>
             </IconButton>
-            {quantity > 0 && <div className={badge}>{quantity}</div>}
+            {props.quantity > 0 && <div className={badge}>{props.quantity}</div>}
         </Link>
     )
 }

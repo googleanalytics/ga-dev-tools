@@ -3,6 +3,7 @@ import { useCallback, useEffect, useMemo, useState } from "react"
 import { useSelector } from "react-redux"
 import { AccountProperty } from "../StreamPicker/useAccountProperty"
 import { Dimension, Metric } from "./useDimensionsAndMetrics"
+type CheckCompatibilityResponse = gapi.client.analyticsdata.CheckCompatibilityResponse
 
 export interface CompatibleHook {
   dimensions: Dimension[] | undefined
@@ -56,6 +57,7 @@ const useCompatibility = (ap: AccountProperty): CompatibleHook => {
       setIncompatibleDimensions(undefined)
       return
     }
+
     gapi.client
       .request({
         path: `https://content-analyticsdata.googleapis.com/v1beta/${ap.property?.property}:checkCompatibility`,
@@ -66,17 +68,17 @@ const useCompatibility = (ap: AccountProperty): CompatibleHook => {
           metrics: metrics?.map(m => ({ name: m.apiName })),
         }),
       })
-      .then(response => {
+      .then((response) => {
         const {
           dimensionCompatibilities,
           metricCompatibilities,
-        } = response.result
-        const d = dimensionCompatibilities
+        } = (response.result as CheckCompatibilityResponse)
+        const d = dimensionCompatibilities!
           .filter(d => d.compatibility === "INCOMPATIBLE")
-          .map(d => d.dimensionMetadata)
-        const m = metricCompatibilities
+          .map(d => d.dimensionMetadata!)
+        const m = metricCompatibilities!
           .filter(m => m.compatibility === "INCOMPATIBLE")
-          .map(m => m.metricMetadata)
+          .map(m => m.metricMetadata!)
         setIncompatibleMetrics(m)
         setIncompatibleDimensions(d)
       })
@@ -85,8 +87,8 @@ const useCompatibility = (ap: AccountProperty): CompatibleHook => {
 
   const hasFieldSelected = useMemo(
     () =>
-      (dimensions !== undefined && dimensions.length) > 0 ||
-      (metrics !== undefined && metrics.length > 0),
+      (dimensions !== undefined && dimensions!.length > 0) ||
+      (metrics !== undefined && metrics!.length > 0),
     [dimensions, metrics]
   )
 

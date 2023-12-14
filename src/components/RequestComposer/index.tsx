@@ -14,17 +14,28 @@
 
 import * as React from "react"
 
-import Typography from "@material-ui/core/Typography"
-import makeStyles from "@material-ui/core/styles/makeStyles"
+import { styled } from '@mui/material/styles';
+
+import Typography from "@mui/material/Typography"
 
 import ExternalLink from "@/components/ExternalLink"
 import Tool from "./RequestComposer"
 
-const useStyles = makeStyles(theme => ({
-  list: {
+const PREFIX = 'RequestComposer';
+
+const classes = {
+  list: `${PREFIX}-list`
+};
+
+const Root = styled('div')((
+  {
+    theme
+  }
+) => ({
+  [`& .${classes.list}`]: {
     marginTop: theme.spacing(0),
-  },
-}))
+  }
+}));
 
 export enum RequestComposerType {
   Histogram = "histogram",
@@ -38,9 +49,9 @@ interface RequestComposerProps {
 }
 
 const RequestComposer: React.FC<RequestComposerProps> = ({ type }) => {
-  const classes = useStyles()
+
   return (
-    <>
+    (<Root>
       <Typography variant="h3">Overview</Typography>
       <Typography>
         The Request Composer demonstrates how to compose the following Analytics
@@ -68,7 +79,6 @@ const RequestComposer: React.FC<RequestComposerProps> = ({ type }) => {
           </ExternalLink>
         </li>
       </ul>
-
       <Typography>
         This version of Request Composer does not support the following
         features:
@@ -90,7 +100,6 @@ const RequestComposer: React.FC<RequestComposerProps> = ({ type }) => {
           </ExternalLink>
         </li>
       </ul>
-
       <Typography>To compose a request:</Typography>
       <ol className={classes.list}>
         <li>Select an account, a property, and a view.</li>
@@ -98,10 +107,9 @@ const RequestComposer: React.FC<RequestComposerProps> = ({ type }) => {
         <li>Set query parameters.</li>
         <li>Click Make Request.</li>
       </ol>
-
       <Tool type={type} />
-    </>
-  )
+    </Root>)
+  );
 }
 
 export default RequestComposer

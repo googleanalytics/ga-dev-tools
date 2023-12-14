@@ -13,7 +13,6 @@
 // limitations under the License.
 
 import { WindowLocation } from "@reach/router"
-import querystring from "querystring"
 
 import {
   Param,
@@ -58,9 +57,9 @@ export function convertHitToParams(
   const searchIndex = hit.indexOf("?")
   if (searchIndex > -1) hit = hit.slice(searchIndex + 1)
 
-  let query: querystring.ParsedUrlQuery = {}
+  let query = new URLSearchParams()
   try {
-    query = querystring.parse(hit)
+    query =  new URLSearchParams(hit)
   } catch (e) {
     // It's common to paste in a string that's invalid, but we can easily
     // recover from here.
@@ -70,34 +69,34 @@ export function convertHitToParams(
   const v: ParamV = {
     id: nextId(),
     name: RequiredParams.V,
-    value: query[RequiredParams.V] || "1",
+    value: query.get(RequiredParams.V) || "1",
     required: true,
   }
   const t: ParamT = {
     id: nextId(),
     name: RequiredParams.T,
-    value: query[RequiredParams.T] || HIT_TYPES[0],
+    value: query.get(RequiredParams.T) || HIT_TYPES[0],
     required: true,
   }
   const tid: ParamTId = {
     id: nextId(),
     name: RequiredParams.T_Id,
-    value: query[RequiredParams.T_Id] || "",
+    value: query.get(RequiredParams.T_Id) || "",
     required: true,
   }
   const cid: ParamCId = {
     id: nextId(),
     name: RequiredParams.C_Id,
-    value: query[RequiredParams.C_Id] || "",
+    value: query.get(RequiredParams.C_Id) || "",
     required: true,
   }
-  delete query[RequiredParams.V]
-  delete query[RequiredParams.T]
-  delete query[RequiredParams.T_Id]
-  delete query[RequiredParams.C_Id]
+  query.delete(RequiredParams.V)
+  query.delete(RequiredParams.T)
+  query.delete(RequiredParams.T_Id)
+  query.delete(RequiredParams.C_Id)
 
   // Create optional params after required params.
-  const others: ParamOptional[] = Object.entries(query).map(([name, v]) => {
+  const others: ParamOptional[] = Array.from(query).map(([name, v]) => {
     const value = v === undefined ? "" : v
     return {
       name,
@@ -115,15 +114,23 @@ export function convertHitToParams(
  * @param params An array of param objects.
  */
 export function convertParamsToHit(params: Param[]): string {
-  const query: { [name: string]: any } = {}
+  const searchParams = new URLSearchParams()
+
+  //const query: { [name: string]: any } = {}
   for (const { name, value } of params) {
     if (value === "") {
       continue
     }
-    query[name] = value
+    searchParams.append(name, value)
+    //query[name] = value
   }
 
-  return querystring.stringify(query)
+  // Convert the URLSearchParams object to a string.
+  const searchParamsString = searchParams.toString()
+  // Replace the encoded commas with commas.
+  const decodedSearchParamsString = searchParamsString.replace(/%2C/g, ',')
+
+  return decodedSearchParamsString
 }
 
 export interface ValidationResult {

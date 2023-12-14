@@ -14,7 +14,7 @@
 
 import * as React from "react"
 
-import Typography from "@material-ui/core/Typography"
+import Typography from "@mui/material/Typography"
 
 import { Url } from "@/constants"
 import ExternalLink from "@/components/ExternalLink"
@@ -51,7 +51,7 @@ const HitBuilder: React.FC = () => {
   }, [parameters])
 
   return (
-    <>
+    <div>
       <Typography variant="body1">
         This tools allows you to construct and validate{" "}
         <ExternalLink href={Url.measurementProtocol}>
@@ -124,7 +124,7 @@ const HitBuilder: React.FC = () => {
           </ExternalLink>
         </li>
       </Typography>
-    </>
+    </div>
   )
 }
 

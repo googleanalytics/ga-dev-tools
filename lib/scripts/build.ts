@@ -1,5 +1,5 @@
-import { checkConfig } from "./check-config"
-import * as execa from "execa"
+import { checkConfig } from "./check-config.js"
+import { execa } from "execa";
 
 const checkTypes = async () => {
   console.log("Checking typescript types...")

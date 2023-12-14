@@ -14,17 +14,21 @@
 
 import * as React from "react"
 
-import Typography from "@material-ui/core/Typography"
+import Typography from "@mui/material/Typography"
 
 import { Url } from "@/constants"
 import Layout from "@/components/Layout"
 import ExternalLink from "@/components/ExternalLink"
 
-const TagAssistant = ({ location: { pathname } }) => {
+interface Props {
+  location: { pathname: string }
+}
+
+const TagAssistant = (props: Props) => {
   return (
     <Layout
       title="Tag Assistant"
-      pathname={pathname}
+      pathname={props.location.pathname}
       description="Google Tag Assistant is a Chrome Extension that helps you validate the measurement code on your website and troubleshoot common problems."
     >
       <Typography variant="body1">

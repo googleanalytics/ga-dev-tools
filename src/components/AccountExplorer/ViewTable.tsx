@@ -1,12 +1,12 @@
 import * as React from "react"
 
-import makeStyles from "@material-ui/core/styles/makeStyles"
-import Table from "@material-ui/core/Table"
-import TableBody from "@material-ui/core/TableBody"
-import TableCell from "@material-ui/core/TableCell"
-import TableHead from "@material-ui/core/TableHead"
-import TableRow from "@material-ui/core/TableRow"
-import Typography from "@material-ui/core/Typography"
+import { styled } from '@mui/material/styles';
+import Table from "@mui/material/Table"
+import TableBody from "@mui/material/TableBody"
+import TableCell from "@mui/material/TableCell"
+import TableHead from "@mui/material/TableHead"
+import TableRow from "@mui/material/TableRow"
+import Typography from "@mui/material/Typography"
 
 import { CopyIconButton } from "@/components/CopyButton"
 import HighlightText from "./HighlightText"
@@ -15,25 +15,43 @@ import { RequestStatus } from "@/types"
 import useFlattenedViews from "../ViewSelector/useFlattenedViews"
 import { AccountSummary, ProfileSummary, WebPropertySummary } from "@/types/ua"
 
-const useStyles = makeStyles(theme => ({
-  id: {
+const PREFIX = 'ViewsTable';
+
+const classes = {
+  id: `${PREFIX}-id`,
+  mark: `${PREFIX}-mark`,
+  link: `${PREFIX}-link`,
+  tableCell: `${PREFIX}-tableCell`,
+  copyIconButton: `${PREFIX}-copyIconButton`
+};
+
+const StyledTable = styled(Table)((
+  {
+    theme
+  }
+) => ({
+  [`& .${classes.id}`]: {
     color: theme.palette.text.secondary,
   },
-  mark: {
+
+  [`& .${classes.mark}`]: {
     backgroundColor: theme.palette.success.light,
   },
-  link: {
+
+  [`& .${classes.link}`]: {
     color: theme.palette.info.main,
   },
-  tableCell: {
+
+  [`& .${classes.tableCell}`]: {
     display: "flex",
     justifyContent: "space-between",
     alignItems: "center",
   },
-  copyIconButton: {
+
+  [`& .${classes.copyIconButton}`]: {
     color: theme.palette.text.secondary,
-  },
-}))
+  }
+}));
 
 interface ViewTableProps {
   flattenedViewsRequest: ReturnType<typeof useFlattenedViews>
@@ -53,7 +71,7 @@ const APVCell: React.FC<ViewCellProps> = ({
   copyToolTip,
   textToCopy,
 }) => {
-  const classes = useStyles()
+
   return (
     <TableCell>
       <div className={classes.tableCell}>
@@ -83,9 +101,9 @@ const textClamp = (text: string, maxWidth: number) => {
 
 const AccountCell: React.FC<{
   account: AccountSummary | undefined
-  classes: ReturnType<typeof useStyles>
+
   search: string | undefined
-}> = ({ account, classes, search }) => {
+}> = ({ account, search }) => {
   if (account === undefined) {
     return null
   }
@@ -113,9 +131,9 @@ const AccountCell: React.FC<{
 
 const PropertyCell: React.FC<{
   property: WebPropertySummary | undefined
-  classes: ReturnType<typeof useStyles>
+
   search: string | undefined
-}> = ({ property, classes, search }) => {
+}> = ({ property,  search }) => {
   if (property === undefined) {
     return <TableCell>No UA properties for account.</TableCell>
   }
@@ -146,9 +164,9 @@ const ViewCell: React.FC<{
   account: AccountSummary | undefined
   property: WebPropertySummary | undefined
   view: ProfileSummary | undefined
-  classes: ReturnType<typeof useStyles>
+
   search: string | undefined
-}> = ({ account, property, view, classes, search }) => {
+}> = ({ account, property, view,  search }) => {
   if (view === undefined) {
     return <TableCell colSpan={2}>No UA views for account.</TableCell>
   }
@@ -201,9 +219,9 @@ const ViewsTable: React.FC<ViewTableProps> = ({
   className,
   search,
 }) => {
-  const classes = useStyles()
+
   return (
-    <Table
+    <StyledTable
       size="small"
       data-testid="components/ViewTable"
       className={className}
@@ -230,19 +248,16 @@ const ViewsTable: React.FC<ViewTableProps> = ({
                 >
                   <AccountCell
                     account={apv.account}
-                    classes={classes}
                     search={search}
                   />
                   <PropertyCell
                     property={apv.property}
-                    classes={classes}
                     search={search}
                   />
                   <ViewCell
                     account={apv.account}
                     property={apv.property}
                     view={apv.view}
-                    classes={classes}
                     search={search}
                   />
                 </TableRow>
@@ -259,8 +274,8 @@ const ViewsTable: React.FC<ViewTableProps> = ({
           </TableRow>
         )}
       </TableBody>
-    </Table>
-  )
+    </StyledTable>
+  );
 }
 
 export default ViewsTable

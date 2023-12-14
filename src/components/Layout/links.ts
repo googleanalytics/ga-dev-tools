@@ -85,6 +85,12 @@ export const linkData: LinkData[] = [
     versions: [GAVersion.GoogleAnalytics4],
   },
   {
+    text: "Enhanced Ecommerce",
+    href: "/ga4/enhanced-ecommerce/",
+    type: "link",
+    versions: [GAVersion.GoogleAnalytics4],
+  },
+  {
     text: "Query Explorer",
     href: "/query-explorer/",
     type: "link",

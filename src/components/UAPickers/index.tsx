@@ -14,16 +14,40 @@
 
 import * as React from "react"
 
-import { Typography, TextField, makeStyles } from "@material-ui/core"
+import { styled } from '@mui/material/styles';
+
+import { Typography, TextField } from "@mui/material"
+
 import Autocomplete, {
   createFilterOptions,
-} from "@material-ui/lab/Autocomplete"
+} from "@mui/material/Autocomplete"
 import { usePersistentString } from "@/hooks"
 import { StorageKey } from "@/constants"
 import { Column as ColumnT, Segment as SegmentT } from "@/types/ua"
 import { Dispatch, RequestStatus, successful } from "@/types"
 import { UADimensionsAndMetricsRequestCtx } from "./useDimensionsAndMetrics"
 import { UASegmentsRequestCtx } from "./useUASegments"
+
+
+const PREFIX = 'DimensionPicker';
+
+const classes = {
+  option: `${PREFIX}-option`,
+  left: `${PREFIX}-left`
+};
+
+const Root = styled('div')(() => ({
+  [`& .${classes.option}`]: {
+    display: "flex",
+    width: "100%",
+  },
+
+  [`& .${classes.left}`]: {
+    flexGrow: 1,
+    display: "flex",
+    flexDirection: "column",
+  }
+}));
 
 export enum V4SamplingLevel {
   Default = "DEFAULT",
@@ -44,34 +68,22 @@ export enum CohortSize {
 const removeDeprecatedColumns = (column: ColumnT): true | false =>
   column.attributes?.status !== "DEPRECATED"
 
-const useColumnStyles = makeStyles(() => ({
-  option: {
-    display: "flex",
-    width: "100%",
-  },
-  left: {
-    flexGrow: 1,
-    display: "flex",
-    flexDirection: "column",
-  },
-}))
 
 const Column: React.FC<{ column: ColumnT }> = ({ column }) => {
-  const classes = useColumnStyles()
   return (
-    <div className={classes.option}>
-      <div className={classes.left}>
-        <Typography variant="body1" component="div">
-          {column.attributes!.uiName}
-        </Typography>
-        <Typography variant="subtitle2" color="primary">
-          {column.id}
+      <div className={classes.option}>
+        <div className={classes.left}>
+          <Typography variant="body1" component="div">
+            {column.attributes!.uiName}
+          </Typography>
+          <Typography variant="subtitle2" color="primary">
+            {column.id}
+          </Typography>
+        </div>
+        <Typography variant="subtitle1" color="textSecondary">
+          {column.attributes!.group}
         </Typography>
       </div>
-      <Typography variant="subtitle1" color="textSecondary">
-        {column.attributes!.group}
-      </Typography>
-    </div>
   )
 }
 
@@ -98,12 +110,16 @@ export const DimensionPicker: React.FC<{
       options={
         successful(request)?.dimensions.filter(removeDeprecatedColumns) || []
       }
-      getOptionLabel={dimension => dimension.id!}
+      getOptionLabel={(dimension) => typeof dimension === "string" ? dimension : dimension.id!}
       value={selectedDimension || null}
       onChange={(_event, value) =>
         setDimensionID(value === null ? undefined : (value as ColumnT).id)
       }
-      renderOption={column => <Column column={column} />}
+      renderOption={(props, column) => (
+          <li {...props}>
+            <Column column={column} />
+          </li>
+      )}
       renderInput={params => (
         <TextField
           {...params}
@@ -151,12 +167,16 @@ export const DimensionsPicker: React.FC<{
               undefined
           ) || []
       }
-      getOptionLabel={dimension => dimension.id!}
+      getOptionLabel={(dimension) => typeof dimension === "string" ? dimension : dimension.id!}
       value={selectedDimensions || []}
       onChange={(_event, value) =>
         setDimensionIDs((value as ColumnT[])?.map(c => c.id!))
       }
-      renderOption={column => <Column column={column} />}
+      renderOption={(props, column) => (
+          <li {...props}>
+            <Column column={column} />
+          </li>
+      )}
       renderInput={params => (
         <TextField
           {...params}
@@ -193,12 +213,16 @@ export const MetricPicker: React.FC<{
           ?.metrics.filter(removeDeprecatedColumns)
           .filter(filter !== undefined ? filter : () => true) || []
       }
-      getOptionLabel={metric => metric.id!}
+      getOptionLabel={(metric) => typeof metric === "string" ? metric : metric.id!}
       value={selectedMetric || null}
       onChange={(_event, value) =>
         setMetricID(value === null ? undefined : (value as ColumnT).id)
       }
-      renderOption={column => <Column column={column} />}
+      renderOption={(props, column) => (
+          <li {...props}>
+            <Column column={column} />
+          </li>
+      )}
       renderInput={params => (
         <TextField
           {...params}
@@ -246,12 +270,16 @@ export const MetricsPicker: React.FC<{
               undefined
           ) || []
       }
-      getOptionLabel={metric => metric.id!}
+      getOptionLabel={(metric) => typeof metric === "string" ? metric : metric.id!}
       value={selectedMetrics || []}
       onChange={(_event, value) =>
         setMetricIDs((value as ColumnT[])?.map(c => c.id!))
       }
-      renderOption={column => <Column column={column} />}
+      renderOption={(props, column) => (
+          <li {...props}>
+            <Column column={column} />
+          </li>
+      )}
       renderInput={params => (
         <TextField
           {...params}
@@ -270,7 +298,6 @@ const Segment: React.FC<{
   segment: SegmentT
   showSegmentDefinition: boolean
 }> = ({ segment, showSegmentDefinition }) => {
-  const classes = useColumnStyles()
   const subtitleText = showSegmentDefinition
     ? segment.definition || `${segment.name} has no segment definition.`
     : segment.segmentId || ""
@@ -279,23 +306,25 @@ const Segment: React.FC<{
       ? subtitleText.substring(0, 40) + "..."
       : subtitleText
   return (
-    <div className={classes.option}>
-      <div className={classes.left}>
-        <Typography variant="body1" component="div">
-          {segment.name}
-        </Typography>
-        <Typography variant="subtitle2" color="primary">
-          {abbreviatedText}
+    <Root>
+      <div className={classes.option}>
+        <div className={classes.left}>
+          <Typography variant="body1" component="div">
+            {segment.name}
+          </Typography>
+          <Typography variant="subtitle2" color="primary">
+            {abbreviatedText}
+          </Typography>
+        </div>
+        <Typography variant="subtitle1" color="textSecondary">
+          {segment.type === "CUSTOM"
+            ? "Custom Segment"
+            : segment.type === "DYNAMIC"
+            ? "Dynamic Segment"
+            : "Built In Segment"}
         </Typography>
       </div>
-      <Typography variant="subtitle1" color="textSecondary">
-        {segment.type === "CUSTOM"
-          ? "Custom Segment"
-          : segment.type === "DYNAMIC"
-          ? "Dynamic Segment"
-          : "Built In Segment"}
-      </Typography>
-    </div>
+    </Root>
   )
 }
 
@@ -318,10 +347,10 @@ export const SegmentPicker: React.FC<{
   const request = React.useContext(UASegmentsRequestCtx)
 
   const getOptionLabel = React.useCallback(
-    (segment: SegmentT) =>
-      (showSegmentDefinition
+    (segment: SegmentT | string) =>
+      typeof segment === "string" ? segment : (showSegmentDefinition
         ? segment.definition ||
-          (segment.name && `${segment.name} has no segment definiton.`)
+          (segment.name && `${segment.name} has no segment definition.`)
         : segment.segmentId!) || "",
     [showSegmentDefinition]
   )
@@ -334,7 +363,7 @@ export const SegmentPicker: React.FC<{
       freeSolo
       loading={request.status === RequestStatus.InProgress}
       options={successful(request)?.segments || []}
-      getOptionSelected={(a, b) =>
+      isOptionEqualToValue={(a, b) =>
         a.id === b.id || a.definition === b.definition
       }
       getOptionLabel={getOptionLabel}
@@ -357,11 +386,13 @@ export const SegmentPicker: React.FC<{
       onChange={(_event, value) => {
         setSegmentID(value === null ? undefined : (value as SegmentT).id)
       }}
-      renderOption={column => (
-        <Segment
-          showSegmentDefinition={showSegmentDefinition}
-          segment={column}
-        />
+      renderOption={(props, column) => (
+          <li {...props}>
+            <Segment
+            showSegmentDefinition={showSegmentDefinition}
+            segment={column}
+           />
+          </li>
       )}
       renderInput={params => (
         <TextField
@@ -403,7 +434,11 @@ export const V4SamplingLevelPicker: React.FC<{
       onChange={(_event, value) =>
         setSelected(value === null ? undefined : (value as V4SamplingLevel))
       }
-      renderOption={column => column}
+      renderOption={(props, column) => (
+          <li {...props}>
+            {column}
+          </li>
+      )}
       renderInput={params => (
         <TextField
           {...params}
@@ -438,7 +473,11 @@ export const V3SamplingLevelPicker: React.FC<{
           value === null ? undefined : (value as V3SamplingLevel)
         )
       }
-      renderOption={column => column}
+      renderOption={(props, column) => (
+          <li {...props}>
+            {column}
+          </li>
+      )}
       renderInput={params => (
         <TextField
           {...params}
@@ -477,7 +516,11 @@ export const CohortSizePicker: React.FC<{
       onChange={(_event, value) =>
         setSelected(value === null ? undefined : (value as CohortSize))
       }
-      renderOption={column => column}
+      renderOption={(props, column) => (
+          <li {...props}>
+            {column}
+          </li>
+      )}
       renderInput={params => (
         <TextField
           {...params}

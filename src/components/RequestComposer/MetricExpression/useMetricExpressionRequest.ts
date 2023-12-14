@@ -55,7 +55,12 @@ const useMetricExpressionRequest = ({
     const aliases = (metricAliases || "").split(",")
     const metrics = baseMetricExpressions.map((expression, idx) => {
       const alias = aliases[idx]
-      const metric = {
+
+      type MetricType = {
+        expression: string,
+        alias?: string
+      }
+      const metric: MetricType = {
         expression,
       }
       if (alias !== undefined) {
