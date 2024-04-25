@@ -28,12 +28,13 @@ export enum Category {
 
 export enum EventType {
   CustomEvent = "custom_event",
-
+  AdImpression = "ad_impression",
   AddPaymentInfo = "add_payment_info",
   AddShippingInfo = "add_shipping_info",
   AddToCart = "add_to_cart",
   AddToWishlist = "add_to_wishlist",
   BeginCheckout = "begin_checkout",
+  CampaignDetails = "campaign_details",
   EarnVirtualCurrency = "earn_virtual_currency",
   GenerateLead = "generate_lead",
   JoinGroup = "join_group",
@@ -43,6 +44,7 @@ export enum EventType {
   Purchase = "purchase",
   Refund = "refund",
   RemoveFromCart = "remove_from_cart",
+  ScreenView = "screen_view",
   Search = "search",
   SelectContent = "select_content",
   SelectItem = "select_item",
