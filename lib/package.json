@@ -2,7 +2,7 @@
   "dependencies": {
     "argparse": "^2.0.1",
     "execa": "^7.1.1",
-    "firebase-tools": "^12.2.1",
+    "firebase-tools": "^13.6.0",
     "inquirer": "^9.2.6"
   },
   "devDependencies": {
