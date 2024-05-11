@@ -1,4 +1,4 @@
-# GA Demos & Tools
+## GA Demos & Tools
 
 A showcase of demos and tools built with the various Google Analytics APIs and
 Libraries. **[View the Site]**
