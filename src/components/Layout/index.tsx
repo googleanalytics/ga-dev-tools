@@ -130,7 +130,7 @@ const Template: React.FC<PropsWithChildren<LayoutProps & TemplateProps>> = ({
       window.location.replace(newLocation);
     }
 
-    if( window.location.pathname.indexOf('ga4') == -1 ) {
+    if( !window.location.search && window.location.pathname === '/' ) {
       const newLocation = window.location.pathname = '/ga4/';
       window.location.replace(newLocation);
     }
