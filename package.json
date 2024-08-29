@@ -44,7 +44,7 @@
     "react-helmet": "^6.1.0",
     "react-icons": "^4.8.0",
     "react-json-view": "^1.21.3",
-    "react-loader-spinner": "^5.3.4",
+    "react-loader-spinner": "^6.1.6",
     "react-redux": "^8.0.5",
     "react-syntax-highlighter": "^15.5.0",
     "redux": "^4.2.1",
