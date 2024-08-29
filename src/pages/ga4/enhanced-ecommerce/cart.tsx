@@ -17,7 +17,6 @@ import * as React from "react"
 import Layout from "@/components/Layout"
 import {Header} from "@/components/ga4/EnhancedEcommerce/header";
 import {Footer} from "@/components/ga4/EnhancedEcommerce/footer";
-import {LineItem} from "@/components/ga4/EnhancedEcommerce/line-item";
 
 import {StoreContext} from '@/components/ga4/EnhancedEcommerce/store-context';
 import {collapseColumn, emptyStateContainer, emptyStateHeading, grandTotal, imageHeader, labelColumn, productHeader, summary, table, title, totals, wrap,} from "./cart.module.css"
@@ -80,9 +79,6 @@ export default (props: Props) => {
                   </tr>
                   </thead>
                   <tbody>
-                  {lineItems.map((item) => (
-                      <LineItem item={item} key={item.id} editable={false}/>
-                  ))}
 
                   <tr className={summary}>
                     <td className={collapseColumn}></td>
