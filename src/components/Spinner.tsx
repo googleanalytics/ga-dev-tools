@@ -1,7 +1,7 @@
 import * as React from "react"
 import { styled } from '@mui/material/styles';
 import { useTheme } from "@mui/material"
-import Circles from "react-loader-spinner"
+import { Circles } from 'react-loader-spinner'
 import {PropsWithChildren} from 'react';
 
 const PREFIX = 'Spinner';
