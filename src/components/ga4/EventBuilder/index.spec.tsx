@@ -109,17 +109,11 @@ describe("Event Builder", () => {
             // change the expected values.
             const ecInput = within(eventCategory).getByRole("combobox")
             eventCategory.focus()
-            renderer.fireEvent.change(ecInput, { target: { value: "" } })
-            renderer.fireEvent.keyDown(eventCategory, { key: "ArrowDown" })
-            renderer.fireEvent.keyDown(eventCategory, { key: "ArrowDown" })
-            renderer.fireEvent.keyDown(eventCategory, { key: "Enter" })
+            renderer.fireEvent.change(ecInput, { target: { value: "All apps" } })
 
             const enInput = within(eventName).getByRole("combobox")
             eventCategory.focus()
-            renderer.fireEvent.change(enInput, { target: { value: "" } })
-            renderer.fireEvent.keyDown(eventName, { key: "ArrowDown" })
-            renderer.fireEvent.keyDown(eventName, { key: "ArrowDown" })
-            renderer.fireEvent.keyDown(eventName, { key: "Enter" })
+            renderer.fireEvent.change(enInput, { target: { value: "select_content" } })
 
             await userEvent.type(timestampMicros, "1234", { delay: 1 })
             nonPersonalizedAds.click()
@@ -190,16 +184,10 @@ describe("Event Builder", () => {
             const ecInput = within(eventCategory).getByRole("combobox")
             //eventCategory.focus()
             renderer.fireEvent.change(ecInput, { target: { value: "All apps" } })
-           //  renderer.fireEvent.keyDown(eventCategory, { key: "ArrowDown" })
-           // // renderer.fireEvent.keyDown(eventCategory, { key: "ArrowDown" })
-           //  renderer.fireEvent.keyDown(eventCategory, { key: "Enter" })
 
             const enInput = within(eventName).getByRole("combobox")
             //eventCategory.focus()
-            renderer.fireEvent.change(enInput, { target: { value: "add_shipping_info" } })
-           //  renderer.fireEvent.keyDown(eventName, { key: "ArrowDown" })
-           // // renderer.fireEvent.keyDown(eventName, { key: "ArrowDown" })
-           //  renderer.fireEvent.keyDown(eventName, { key: "Enter" })
+            renderer.fireEvent.change(enInput, { target: { value: "select_content" } })
 
             await userEvent.type(
               timestampMicros,
