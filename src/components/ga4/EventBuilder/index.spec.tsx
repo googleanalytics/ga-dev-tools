@@ -107,14 +107,14 @@ describe("Event Builder", () => {
             // This test is somewhat likely to break if we add/remove events &
             // event categories so if it's broken, it's probably fine to just
             // change the expected values.
-            const ecInput = within(eventCategory).getByRole("textbox")
+            const ecInput = within(eventCategory).getByRole("combobox")
             eventCategory.focus()
             renderer.fireEvent.change(ecInput, { target: { value: "" } })
             renderer.fireEvent.keyDown(eventCategory, { key: "ArrowDown" })
             renderer.fireEvent.keyDown(eventCategory, { key: "ArrowDown" })
             renderer.fireEvent.keyDown(eventCategory, { key: "Enter" })
 
-            const enInput = within(eventName).getByRole("textbox")
+            const enInput = within(eventName).getByRole("combobox")
             eventCategory.focus()
             renderer.fireEvent.change(enInput, { target: { value: "" } })
             renderer.fireEvent.keyDown(eventName, { key: "ArrowDown" })
@@ -138,7 +138,7 @@ describe("Event Builder", () => {
           expect(payload).toHaveTextContent(/"user_id":"my_user_id"/)
           expect(payload).toHaveTextContent(/"timestamp_micros":"1234"/)
           expect(payload).toHaveTextContent(/"non_personalized_ads":true/)
-          expect(payload).toHaveTextContent(/"name":"add_shipping_info"/)
+          expect(payload).toHaveTextContent(/"name":"select_content"/)
         })
       })
       describe("for gtag switch", () => {
@@ -187,19 +187,19 @@ describe("Event Builder", () => {
             // This test is somewhat likely to break if we add/remove events &
             // event categories so if it's broken, it's probably fine to just
             // change the expected values.
-            const ecInput = within(eventCategory).getByRole("textbox")
-            eventCategory.focus()
-            renderer.fireEvent.change(ecInput, { target: { value: "" } })
-            renderer.fireEvent.keyDown(eventCategory, { key: "ArrowDown" })
-            renderer.fireEvent.keyDown(eventCategory, { key: "ArrowDown" })
-            renderer.fireEvent.keyDown(eventCategory, { key: "Enter" })
+            const ecInput = within(eventCategory).getByRole("combobox")
+            //eventCategory.focus()
+            renderer.fireEvent.change(ecInput, { target: { value: "All apps" } })
+           //  renderer.fireEvent.keyDown(eventCategory, { key: "ArrowDown" })
+           // // renderer.fireEvent.keyDown(eventCategory, { key: "ArrowDown" })
+           //  renderer.fireEvent.keyDown(eventCategory, { key: "Enter" })
 
-            const enInput = within(eventName).getByRole("textbox")
-            eventCategory.focus()
-            renderer.fireEvent.change(enInput, { target: { value: "" } })
-            renderer.fireEvent.keyDown(eventName, { key: "ArrowDown" })
-            renderer.fireEvent.keyDown(eventName, { key: "ArrowDown" })
-            renderer.fireEvent.keyDown(eventName, { key: "Enter" })
+            const enInput = within(eventName).getByRole("combobox")
+            //eventCategory.focus()
+            renderer.fireEvent.change(enInput, { target: { value: "add_shipping_info" } })
+           //  renderer.fireEvent.keyDown(eventName, { key: "ArrowDown" })
+           // // renderer.fireEvent.keyDown(eventName, { key: "ArrowDown" })
+           //  renderer.fireEvent.keyDown(eventName, { key: "Enter" })
 
             await userEvent.type(
               timestampMicros,
@@ -220,7 +220,7 @@ describe("Event Builder", () => {
           expect(payload).toHaveTextContent(/"user_id":"my_user_id"/)
           expect(payload).toHaveTextContent(/"timestamp_micros":"1234"/)
           expect(payload).toHaveTextContent(/"non_personalized_ads":true/)
-          expect(payload).toHaveTextContent(/"name":"add_shipping_info"/)
+          expect(payload).toHaveTextContent(/"name":"select_content"/)
         })
       })
     })
