@@ -82,8 +82,8 @@ const RenderSuccessful: React.FC<Successful & { aps: AccountProperty }> = ({
                 d.apiName === c.apiName) === undefined &&
             compatibility.incompatibleMetrics?.find(d =>
                 d.apiName === c.apiName) === undefined
-        return viewMode === 'all' || viewMode === 'compatible' &&
-            isCompatible || viewMode === 'incompatible' && !isCompatible;
+        return viewMode === 'all' || (viewMode === 'compatible' &&
+            isCompatible) || (viewMode === 'incompatible' && !isCompatible);
       },
       [viewMode,
         compatibility.incompatibleDimensions,
