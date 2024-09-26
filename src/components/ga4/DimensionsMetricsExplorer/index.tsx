@@ -1,33 +1,29 @@
 import * as React from "react"
-import { styled } from '@mui/material/styles';
-import { useMemo } from "react"
+
+import {Link} from "gatsby"
+
+import {styled} from '@mui/material/styles';
+import Typography from "@mui/material/Typography"
+import MenuItem from '@mui/material/MenuItem';
+import FormControl from '@mui/material/FormControl';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import Accordion from '@mui/material/Accordion';
+import AccordionDetails from '@mui/material/AccordionDetails';
+import AccordionSummary from '@mui/material/AccordionSummary';
+import {Button, InputLabel, Select, SelectChangeEvent} from '@mui/material';
 
 import ExternalLink from "@/components/ExternalLink"
-import Typography from "@mui/material/Typography"
-import TextField from "@mui/material/TextField"
-import IconButton from "@mui/material/IconButton"
-import Clear from "@mui/icons-material/Clear"
-
-import { Url, StorageKey } from "@/constants"
-import { useScrollTo } from "@/hooks"
+import {StorageKey, Url} from "@/constants"
+import {useScrollTo} from "@/hooks"
 import Loadable from "@/components/Loadable"
-import Info from "@/components/Info"
+import ScrollToTop from "@/components/ScrollToTop"
+
 import Field from "./Field"
-import useInputs from "./useInputs"
-import {
-  useDimensionsAndMetrics,
-  Successful,
-  Dimension,
-  Metric,
-} from "./useDimensionsAndMetrics"
+import {Dimension, Metric, Successful, useDimensionsAndMetrics,} from "./useDimensionsAndMetrics"
 import StreamPicker from "../StreamPicker"
-import useAccountProperty, {
-  AccountProperty,
-} from "../StreamPicker/useAccountProperty"
-import { Link } from "gatsby"
+import useAccountProperty, {AccountProperty} from "../StreamPicker/useAccountProperty"
 import useCompatibility from "./useCompatibility"
 import Compatible from "./Compatible"
-import ScrollToTop from "@/components/ScrollToTop"
 
 const PREFIX = 'DimensionsMetricsExplorer';
 
@@ -64,132 +60,168 @@ const dataAPI = (
 )
 
 const RenderSuccessful: React.FC<Successful & { aps: AccountProperty }> = ({
-  categories,
-  aps,
-}) => {
+                                                                             categories,
+                                                                             metrics,
+                                                                             dimensions,
+                                                                             aps,
+                                                                           }) => {
 
-  const { search, setSearch } = useInputs()
-  const searchRegex = useMemo(
-    () =>
-      search
-        ? new RegExp(
-            // Escape all "special" regex characters. We're only creating a regex
-            // here to make the testing code more simple.
-            search.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&"),
-            "gi"
-          )
-        : undefined,
-    [search]
-  )
+  type ViewMode = 'all' | 'compatible' | 'incompatible'
+  const [viewMode, setViewMode] = React.useState<ViewMode>('all')
 
-  const compability = useCompatibility(aps)
+  const compatibility = useCompatibility(aps)
 
-  const searchFilter = React.useCallback(
-    (c: Dimension | Metric) => {
-      if (searchRegex === undefined) {
-        return true
-      }
-      return searchRegex.test(c.uiName!) || searchRegex.test(c.apiName!)
-    },
-    [searchRegex]
+  useScrollTo()
+  const handleViewModeChange = (event: SelectChangeEvent) => {
+    setViewMode(event.target.value as ViewMode);
+  };
+
+  const fieldDisplayFilter = React.useCallback(
+      (c: Dimension | Metric) => {
+        const isCompatible = compatibility.incompatibleDimensions?.find(d =>
+                d.apiName === c.apiName) === undefined &&
+            compatibility.incompatibleMetrics?.find(d =>
+                d.apiName === c.apiName) === undefined
+        return viewMode === 'all' || viewMode === 'compatible' &&
+            isCompatible || viewMode === 'incompatible' && !isCompatible;
+      },
+      [viewMode,
+        compatibility.incompatibleDimensions,
+        compatibility.incompatibleMetrics]
   )
 
   const filteredCategories = React.useMemo(
-    () =>
-      categories.map(c => ({
-        ...c,
-        dimensions: c.dimensions.filter(searchFilter),
-        metrics: c.metrics.filter(searchFilter),
-      })),
-    [searchFilter, categories]
+      () =>
+          categories.map(c => ({
+            ...c,
+            dimensions: c.dimensions.filter(fieldDisplayFilter),
+            metrics: c.metrics.filter(fieldDisplayFilter),
+          })),
+      [viewMode, compatibility.metrics,
+        compatibility.dimensions, compatibility.incompatibleDimensions,
+        compatibility.incompatibleMetrics, categories]
   )
 
-  const notAllFields = useMemo(() => {
-    if (searchRegex !== undefined) {
-      return (
-        <Info>
-          You are only viewing a subset of the available metrics and dimensions.
-        </Info>
-      )
-    }
-  }, [searchRegex])
+  const resetAllCategoryAccordions = (expanded: boolean) =>
+  {
+    const initialCategoryAccordionState = {}
+    categories.forEach( (x) => initialCategoryAccordionState[x.category]=expanded )
+    return initialCategoryAccordionState
+  }
 
-  useScrollTo()
+  const [categoryAccordionState,
+    setCategoryAccordionState] = React.useState(resetAllCategoryAccordions(true));
+
+  const handleCategoryAccordionStateChange =
+      (category: string) => (event: React.SyntheticEvent, isExpanded: boolean) => {
+        const newState = {
+          ...categoryAccordionState
+        }
+        newState[category] = isExpanded
+        setCategoryAccordionState(newState);
+      };
 
   return (
-    (<Root>
-      <Compatible property={aps.property} {...compability} />
-      <TextField
-        className={classes.search}
-        label="Search for a dimension or metric"
-        variant="outlined"
-        fullWidth
-        size="small"
-        value={search || ""}
-        onChange={e => setSearch(e.target.value)}
-        InputProps={{
-          endAdornment: (
-            <IconButton size="small" onClick={() => setSearch("")}>
-              <Clear />
-            </IconButton>
-          ),
-        }}
-      />
-      {notAllFields}
-      {filteredCategories.map(({ category, dimensions, metrics }) => {
-        if (dimensions.length === 0 && metrics.length === 0) {
-          return null
-        }
-        const baseAnchor = encodeURIComponent(category)
-        return (
-          <React.Fragment key={category}>
-            <Typography
-              variant="h2"
-              id={baseAnchor}
-              className={classes.headingLinks}
-            >
-              <Link to={`#${baseAnchor}`}>{category}</Link>
-            </Typography>
-            {dimensions.length > 0 && (
-              <>
-                <Typography
-                  variant="h3"
-                  id={`${baseAnchor}_dimensions`}
-                  className={classes.headingLinks}
-                >
-                  <Link to={`#${baseAnchor}_dimensions`}>Dimensions</Link>
-                </Typography>
-                {dimensions.map(dimension => (
-                  <Field
-                    {...compability}
-                    {...aps}
-                    key={dimension.apiName}
-                    field={{ type: "dimension", value: dimension }}
-                  />
-                ))}
-              </>
-            )}
-            {metrics.length > 0 && (
-              <>
-                <Typography
-                  variant="h3"
-                  id={`${baseAnchor}_metrics`}
-                  className={classes.headingLinks}
-                >
-                  <Link to={`#${baseAnchor}_metrics`}>Metrics</Link>
-                </Typography>
-                {metrics.map(metric => (
-                  <Field
-                    {...compability}
-                    {...aps}
-                    key={metric.apiName}
-                    field={{ type: "metric", value: metric }}
-                  />
-                ))}
-              </>
-            )}
-          </React.Fragment>
-        )
+      (<Root>
+        <Compatible allDimensions={dimensions} allMetrics={metrics}
+                    property={aps.property} {...compatibility}  />
+
+        <FormControl sx={{m: 1, minWidth: 120}} size="small">
+          <InputLabel>View mode</InputLabel>
+          <Select
+              value={viewMode}
+              onChange={handleViewModeChange}
+              label="Show fields"
+          >
+            <MenuItem value="all">All</MenuItem>
+            <MenuItem value="compatible">Compatible only</MenuItem>
+            <MenuItem value="incompatible">Incompatible only</MenuItem>
+          </Select>
+        </FormControl>
+
+        <Typography variant="h3">
+          Dimensions & Metrics
+        </Typography>
+
+        <Button
+            onClick={() => {
+              setCategoryAccordionState(resetAllCategoryAccordions(true))
+            }}
+        >
+          Expand all
+        </Button>
+        <Button
+            onClick={() => {
+              setCategoryAccordionState(resetAllCategoryAccordions(false))
+            }}
+        >
+          Collapse all
+        </Button>
+
+        {filteredCategories.map(({category, dimensions, metrics}) => {
+          if (dimensions.length === 0 && metrics.length === 0) {
+            return null
+          }
+          const baseAnchor = encodeURIComponent(category)
+          return (
+              <React.Fragment key={category}>
+                <Accordion expanded={categoryAccordionState[category]}
+                           onChange={handleCategoryAccordionStateChange(category)}>
+                  <AccordionSummary
+                      expandIcon={<ExpandMoreIcon/>}
+                  >
+                    <Typography
+                        variant="h2"
+                        id={baseAnchor}
+                        className={classes.headingLinks}
+                    >
+                      <Link to={`#${baseAnchor}`}>{category}</Link>
+                    </Typography>
+                  </AccordionSummary>
+                  <AccordionDetails>
+                    {dimensions.length > 0 && (
+                        <>
+                          <Typography
+                              variant="h3"
+                              id={`${baseAnchor}_dimensions`}
+                              className={classes.headingLinks}
+                          >
+                            <Link
+                                to={`#${baseAnchor}_dimensions`}>Dimensions</Link>
+                          </Typography>
+                          {dimensions.map(dimension => (
+                              <Field
+                                  {...compatibility}
+                                  {...aps}
+                                  key={dimension.apiName}
+                                  field={{type: "dimension", value: dimension}}
+                              />
+                          ))}
+                        </>
+                    )}
+                    {metrics.length > 0 && (
+                        <>
+                          <Typography
+                              variant="h3"
+                              id={`${baseAnchor}_metrics`}
+                              className={classes.headingLinks}
+                          >
+                            <Link to={`#${baseAnchor}_metrics`}>Metrics</Link>
+                          </Typography>
+                          {metrics.map(metric => (
+                              <Field
+                                  {...compatibility}
+                                  {...aps}
+                                  key={metric.apiName}
+                                  field={{type: "metric", value: metric}}
+                              />
+                          ))}
+                        </>
+                    )}
+                  </AccordionDetails>
+                </Accordion>
+              </React.Fragment>
+          )
       })}
     </Root>)
   );

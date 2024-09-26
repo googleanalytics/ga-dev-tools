@@ -10,6 +10,8 @@ import { AccountProperty } from "../StreamPicker/useAccountProperty"
 
 export type Dimension = gapi.client.analyticsdata.DimensionMetadata
 export type Metric = gapi.client.analyticsdata.MetricMetadata
+export type DimensionOrMetric = Dimension | Metric
+
 export type Successful = {
   dimensions: Dimension[]
   metrics: Metric[]
