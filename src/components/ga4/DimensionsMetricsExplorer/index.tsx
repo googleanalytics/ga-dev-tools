@@ -104,7 +104,7 @@ const RenderSuccessful: React.FC<Successful & { aps: AccountProperty }> = ({
 
   const resetAllCategoryAccordions = (expanded: boolean) =>
   {
-    const initialCategoryAccordionState = {}
+    const initialCategoryAccordionState = {} as any
     categories.forEach( (x) => initialCategoryAccordionState[x.category]=expanded )
     return initialCategoryAccordionState
   }

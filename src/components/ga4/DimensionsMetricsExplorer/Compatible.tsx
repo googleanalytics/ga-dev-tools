@@ -59,12 +59,16 @@ const StyledPaper = styled(Paper)((
   }
 }));
 
-const WithProperty: React.FC<
-    CompatibleHook & { property: PropertySummary | undefined }
-> = ({
+type CompatibleProps =
+    CompatibleHook
+    & {
+  property: PropertySummary | undefined,
+  allMetrics: Metric[],
+  allDimensions: Dimension[]
+}
+const WithProperty: React.FC<CompatibleProps> = ({
        dimensions,
        metrics,
-       addDimension,
        removeMetric,
        removeDimension, setDimensions, setMetrics,
        property,
