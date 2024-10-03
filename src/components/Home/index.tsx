@@ -60,12 +60,6 @@ const IndexPage: React.FC = () => {
         . We encourage you to take a look if you'd like to see how anything is
         done.
       </Typography>
-      <Typography variant="h3">Support for UA & GA4</Typography>
-      <Typography variant="body1">
-        There is support for both Universal Analytics (UA) and Google Analytics
-        4 (GA4). Click the toggle in the nav bar to switch between the UA and
-        GA4 versions of the site.
-      </Typography>
       <Typography variant="h3">Demos</Typography>
       <Typography variant="body1">
         Live demos to help you learn about Google Analytics features.
