@@ -1,15 +1,24 @@
 import * as React from "react"
-import { Paper, makeStyles } from "@material-ui/core"
+import { styled } from '@mui/material/styles';
+import { Paper } from "@mui/material"
 import classnames from "classnames"
-import { Warning as WarningIcon } from "@material-ui/icons"
-import red from "@material-ui/core/colors/red"
+import { Warning as WarningIcon } from "@mui/icons-material"
+import { red } from "@mui/material/colors"
+import {PropsWithChildren} from 'react';
 
-interface WarningProps {
-  className?: string
-}
+const PREFIX = 'Warning';
 
-const useStyles = makeStyles(theme => ({
-  warning: {
+const classes = {
+  warning: `${PREFIX}-warning`,
+  warningIcon: `${PREFIX}-warningIcon`
+};
+
+const StyledPaper = styled(Paper)((
+  {
+    theme
+  }
+) => ({
+  [`&.${classes.warning}`]: {
     margin: theme.spacing(2, 0),
     marginRight: theme.spacing(1),
     padding: theme.spacing(1),
@@ -19,20 +28,25 @@ const useStyles = makeStyles(theme => ({
     alignItems: "center",
     backgroundColor: red[100],
   },
-  warningIcon: {
-    margin: theme.spacing(0, 2),
-  },
-}))
 
-const Warning: React.FC<WarningProps> = ({ children, className }) => {
-  const classes = useStyles()
+  [`& .${classes.warningIcon}`]: {
+    margin: theme.spacing(0, 2),
+  }
+}));
+
+interface WarningProps {
+  className?: string
+}
+
+const Warning: React.FC<PropsWithChildren<WarningProps>> = ({ children, className }) => {
+
 
   return (
-    <Paper className={classnames(classes.warning, className)}>
+    <StyledPaper className={classnames(classes.warning, className)}>
       <WarningIcon className={classes.warningIcon} />
       <section>{children}</section>
-    </Paper>
-  )
+    </StyledPaper>
+  );
 }
 
 export default Warning

@@ -1,7 +1,8 @@
 import * as React from "react"
 
-import makeStyles from "@material-ui/core/styles/makeStyles"
-import Typography from "@material-ui/core/Typography"
+import { styled } from '@mui/material/styles';
+
+import Typography from "@mui/material/Typography"
 
 import { RequestStatus } from "@/types"
 import { Url, StorageKey } from "@/constants"
@@ -21,7 +22,6 @@ import Filter from "../Filter"
 import Response from "../Response"
 import useMakeRequest from "./useMakeRequest"
 import useInputs from "./useInputs"
-import useFormStyles from "@/hooks/useFormStyles"
 import StreamPicker from "../../StreamPicker"
 import useAccountProperty from "../../StreamPicker/useAccountProperty"
 import {
@@ -29,14 +29,31 @@ import {
   useDimensionsAndMetrics,
 } from "../../DimensionsMetricsExplorer/useDimensionsAndMetrics"
 
-const useStyles = makeStyles(theme => ({
-  showRequestJSON: {
+const PREFIX = 'BasicReport';
+
+const classes = {
+  showRequestJSON: `${PREFIX}-showRequestJSON`,
+  requestJSON: `${PREFIX}-requestJSON`,
+  form: `${PREFIX}-form`
+};
+
+const StyledDimensionsAndMetricsRequestCtxProvider = styled(DimensionsAndMetricsRequestCtx.Provider)((
+  {
+    theme
+  }
+) => ({
+  [`& .${classes.showRequestJSON}`]: {
     marginLeft: theme.spacing(1),
   },
-  requestJSON: {
-    marginTop: theme.spacing(2),
+
+  [`& .${classes.form}`]: {
+    maxWidth: "80ch",
   },
-}))
+
+  [`& .${classes.requestJSON}`]: {
+    marginTop: theme.spacing(2),
+  }
+}));
 
 const shouldCollapseRequest = ({ namespace }: any) => {
   // The number 4 refers to the number of levels to show by default, this value
@@ -103,8 +120,7 @@ export enum QueryParam {
 }
 
 const BasicReport = () => {
-  const classes = useStyles()
-  const formClasses = useFormStyles()
+
   const aps = useAccountProperty(StorageKey.ga4QueryExplorerAPS, QueryParam)
   const dimensionsAndMetricsRequest = useDimensionsAndMetrics(aps)
   const { property } = aps
@@ -169,9 +185,7 @@ const BasicReport = () => {
   }, [metrics, dimensions])
 
   return (
-    <DimensionsAndMetricsRequestCtx.Provider
-      value={dimensionsAndMetricsRequest}
-    >
+    <StyledDimensionsAndMetricsRequestCtxProvider value={dimensionsAndMetricsRequest}>
       <ShowAdvancedCtx.Provider value={showAdvanced}>
         <Typography>
           Returns a customized report of your Google Analytics event data.
@@ -179,7 +193,7 @@ const BasicReport = () => {
           Analytics measurement code. Basic Report uses the {runReportLink} API
           endpoint.
         </Typography>
-        <section className={formClasses.form}>
+        <section className={classes.form}>
           <Typography variant="h3">Select property</Typography>
           <StreamPicker autoFill {...aps} />
           <Typography variant="h3">Set parameters</Typography>
@@ -336,8 +350,8 @@ const BasicReport = () => {
           shouldCollapse={shouldCollapseRequest}
         />
       </ShowAdvancedCtx.Provider>
-    </DimensionsAndMetricsRequestCtx.Provider>
-  )
+    </StyledDimensionsAndMetricsRequestCtxProvider>
+  );
 }
 
 export default BasicReport

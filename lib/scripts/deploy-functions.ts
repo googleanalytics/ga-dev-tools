@@ -1,7 +1,7 @@
-import * as execa from "execa"
-import { DeployFunctionsArgs, RuntimeJson, Environment } from "./types"
-import { checkConfig, SKIP_QUESTION } from "./check-config"
-import { configForEnvironment } from "."
+import { execa } from "execa";
+import { DeployFunctionsArgs, RuntimeJson, Environment } from "./types.js"
+import { checkConfig, SKIP_QUESTION } from "./check-config.js"
+import { configForEnvironment } from "./index.js"
 
 export const ensureFirebaseLoginStatus = async ({
   noLocalhost,

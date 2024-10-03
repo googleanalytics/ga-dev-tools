@@ -1,16 +1,24 @@
 import * as React from "react"
 
-import TextField from "@material-ui/core/TextField"
-import makeStyles from "@material-ui/core/styles/makeStyles"
-
+import { styled } from '@mui/material/styles';
+import TextField from "@mui/material/TextField"
 import { Parameter as ParameterT } from "./types"
 import { ShowAdvancedCtx } from "."
-import useFormStyles from "@/hooks/useFormStyles"
-import { IconButton, Tooltip } from "@material-ui/core"
-import { Delete } from "@material-ui/icons"
+import { IconButton, Tooltip } from "@mui/material"
+import { Delete } from "@mui/icons-material"
 
-const useStyles = makeStyles(theme => ({
-  parameter: {
+const PREFIX = 'Parameter';
+
+const classes = {
+  parameter: `${PREFIX}-parameter`
+};
+
+const Root = styled('section')((
+  {
+    theme
+  }
+) => ({
+  [`&.${classes.parameter}`]: {
     display: "flex",
     "&> *": {
       flexGrow: 1,
@@ -18,8 +26,8 @@ const useStyles = makeStyles(theme => ({
     "&> :not(:first-child)": {
       marginLeft: theme.spacing(1),
     },
-  },
-}))
+  }
+}));
 
 interface Props {
   parameter: ParameterT
@@ -34,15 +42,14 @@ const Parameter: React.FC<Props> = ({
   setParamValue,
   removeParam,
 }) => {
-  const classes = useStyles()
-  const formClasses = useFormStyles()
+
   const showAdvanced = React.useContext(ShowAdvancedCtx)
 
   const [name, setName] = React.useState(parameter.name)
   const [value, setValue] = React.useState(parameter.value || "")
 
   const inputs = (
-    <section className={classes.parameter}>
+    <Root className={classes.parameter}>
       <TextField
         id={`#/events/0/params/${name}`}
         variant="outlined"
@@ -64,11 +71,11 @@ const Parameter: React.FC<Props> = ({
         label={`${parameter.type} value`}
         placeholder={parameter.exampleValue?.toString()}
       />
-    </section>
+    </Root>
   )
   if (showAdvanced) {
     return (
-      <section className={formClasses.trashRow}>
+      <section /* className={formClasses.trashRow} */>
         <Tooltip title="remove parameter">
           <IconButton onClick={removeParam}>
             <Delete />

@@ -1,8 +1,8 @@
 import * as React from "react"
+import { styled } from '@mui/material/styles';
 import { useCallback } from "react"
 
-import Typography from "@material-ui/core/Typography"
-import makeStyles from "@material-ui/core/styles/makeStyles"
+import Typography from "@mui/material/Typography"
 
 import { Dispatch } from "@/types"
 import { StorageKey } from "@/constants"
@@ -14,17 +14,30 @@ import {
 import Expression, { ExpressionType } from "./Expression"
 import useFilter, { UseFilterContext } from "./useFilter"
 
+const PREFIX = 'Filter';
+
+const classes = {
+  filter: `${PREFIX}-filter`,
+  title: `${PREFIX}-title`
+};
+
+const StyledUseFilterContextProvider = styled(UseFilterContext.Provider)((
+  {
+    theme
+  }
+) => ({
+  [`& .${classes.filter}`]: ({ notched }: Props) => ({
+    marginTop: notched ? theme.spacing(1) : "unset",
+  }),
+
+  [`& .${classes.title}`]: {
+    margin: theme.spacing(1, 0),
+  }
+}));
+
 interface Props {
   notched: boolean
 }
-const useStyles = makeStyles(theme => ({
-  filter: ({ notched }: Props) => ({
-    marginTop: notched ? theme.spacing(1) : "unset",
-  }),
-  title: {
-    margin: theme.spacing(1, 0),
-  },
-}))
 
 export enum FilterType {
   Metric = "metric",
@@ -62,7 +75,7 @@ const Filter: React.FC<FilterProps> = ({
   type,
   storageKey,
 }) => {
-  const classes = useStyles({ notched: showAdvanced })
+
   const useFilterValue = useFilter(storageKey, showAdvanced)
   const {
     expression,
@@ -103,7 +116,7 @@ const Filter: React.FC<FilterProps> = ({
   }, [expression])
 
   return (
-    <UseFilterContext.Provider value={{ ...useFilterValue }}>
+    <StyledUseFilterContextProvider value={{ ...useFilterValue }}>
       <section className={classes.filter}>
         {noFiltersConfigured}
         <Expression
@@ -118,8 +131,8 @@ const Filter: React.FC<FilterProps> = ({
           nesting={-1}
         />
       </section>
-    </UseFilterContext.Provider>
-  )
+    </StyledUseFilterContextProvider>
+  );
 }
 
 export default Filter

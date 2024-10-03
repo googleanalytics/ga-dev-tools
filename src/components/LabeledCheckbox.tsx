@@ -1,6 +1,7 @@
 import * as React from "react"
-import { FormControlLabel, Checkbox } from "@material-ui/core"
+import { FormControlLabel, Checkbox } from "@mui/material"
 import { Dispatch } from "../types"
+import {PropsWithChildren} from 'react';
 
 interface LabeledCheckboxProps {
   checked: boolean
@@ -12,7 +13,7 @@ interface LabeledCheckboxProps {
   id?: string
 }
 
-const LabeledCheckbox: React.FC<LabeledCheckboxProps> = ({
+const LabeledCheckbox: React.FC<PropsWithChildren<LabeledCheckboxProps>> = ({
   checked,
   setChecked,
   onChange,

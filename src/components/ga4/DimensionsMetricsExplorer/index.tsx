@@ -1,11 +1,12 @@
 import * as React from "react"
+import { styled } from '@mui/material/styles';
 import { useMemo } from "react"
 
 import ExternalLink from "@/components/ExternalLink"
-import Typography from "@material-ui/core/Typography"
-import TextField from "@material-ui/core/TextField"
-import IconButton from "@material-ui/core/IconButton"
-import Clear from "@material-ui/icons/Clear"
+import Typography from "@mui/material/Typography"
+import TextField from "@mui/material/TextField"
+import IconButton from "@mui/material/IconButton"
+import Clear from "@mui/icons-material/Clear"
 
 import { Url, StorageKey } from "@/constants"
 import { useScrollTo } from "@/hooks"
@@ -19,16 +20,42 @@ import {
   Dimension,
   Metric,
 } from "./useDimensionsAndMetrics"
-import useFormStyles from "@/hooks/useFormStyles"
 import StreamPicker from "../StreamPicker"
 import useAccountProperty, {
   AccountProperty,
 } from "../StreamPicker/useAccountProperty"
 import { Link } from "gatsby"
-import { makeStyles } from "@material-ui/core"
 import useCompatibility from "./useCompatibility"
 import Compatible from "./Compatible"
 import ScrollToTop from "@/components/ScrollToTop"
+
+const PREFIX = 'DimensionsMetricsExplorer';
+
+const classes = {
+  headingLinks: `${PREFIX}-headingLinks`,
+  form: `${PREFIX}-form`,
+  search: `${PREFIX}-search`
+};
+
+const Root = styled('div')((
+  {
+    theme
+  }
+) => ({
+  [`& .${classes.headingLinks}`]: {
+    "& > a": {
+      color: theme.palette.text.primary,
+    },
+  },
+
+  [`& .${classes.search}`]: {
+    marginTop: theme.spacing(1),
+  },
+
+  [`& .${classes.form}`]: {
+    maxWidth: "80ch",
+  }
+}));
 
 const dataAPI = (
   <ExternalLink href={Url.ga4DataAPIGetMetadata}>
@@ -36,27 +63,11 @@ const dataAPI = (
   </ExternalLink>
 )
 
-// TODO - add back in once this api is public.
-// const checkCompatibility = (
-//   <ExternalLink href="#todo">checkCompatibility</ExternalLink>
-// )
-
-const useStyles = makeStyles(theme => ({
-  headingLinks: {
-    "& > a": {
-      color: theme.palette.text.primary,
-    },
-  },
-  search: {
-    marginTop: theme.spacing(1),
-  },
-}))
-
 const RenderSuccessful: React.FC<Successful & { aps: AccountProperty }> = ({
   categories,
   aps,
 }) => {
-  const classes = useStyles()
+
   const { search, setSearch } = useInputs()
   const searchRegex = useMemo(
     () =>
@@ -106,7 +117,7 @@ const RenderSuccessful: React.FC<Successful & { aps: AccountProperty }> = ({
   useScrollTo()
 
   return (
-    <>
+    (<Root>
       <Compatible property={aps.property} {...compability} />
       <TextField
         className={classes.search}
@@ -180,8 +191,8 @@ const RenderSuccessful: React.FC<Successful & { aps: AccountProperty }> = ({
           </React.Fragment>
         )
       })}
-    </>
-  )
+    </Root>)
+  );
 }
 
 export enum QueryParam {
@@ -191,7 +202,6 @@ export enum QueryParam {
 }
 
 const DimensionsMetricsExplorer: React.FC = () => {
-  const formClasses = useFormStyles()
   const aps = useAccountProperty(
     StorageKey.ga4DimensionsMetricsExplorerAPS,
     QueryParam,
@@ -219,7 +229,7 @@ const DimensionsMetricsExplorer: React.FC = () => {
           This demo is a catalog of all dimensions and metrics available for a
           given property with linkable descriptions for all fields.
         </Typography>
-        <section className={formClasses.form}>
+        <section className={classes.form}>
           <Typography variant="h3">Select property</Typography>
           <StreamPicker autoFill {...aps} />
         </section>

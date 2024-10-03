@@ -60,7 +60,7 @@ const useCached = <T, E = any>(
       setSuccessful()
     } catch (e) {
       hasThrown.current = true
-      setError(e)
+      setError(e as E)
       setFailed()
     }
   }, [

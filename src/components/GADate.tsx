@@ -1,6 +1,31 @@
 import React from "react"
+import { styled } from '@mui/material/styles';
 import LinkedTextField, { LinkedTextFieldProps } from "./LinkedTextField"
-import { TextField, makeStyles } from "@material-ui/core"
+import { TextField } from "@mui/material"
+
+const PREFIX = 'GADate';
+
+const classes = {
+  dateRange: `${PREFIX}-dateRange`,
+  wideInput: `${PREFIX}-wideInput`
+};
+
+const Root = styled('span')((
+  {
+    theme
+  }
+) => ({
+  [`&.${classes.dateRange}`]: {
+    display: "inline-flex",
+    "&> :not(:first-child)": {
+      marginLeft: theme.spacing(1),
+    },
+  },
+
+  [`& .${classes.wideInput}`]: {
+    flexGrow: 1,
+  }
+}));
 
 interface GADateProps extends LinkedTextFieldProps {}
 
@@ -26,18 +51,6 @@ export const GADate: React.FC<GADateProps> = ({
   )
 }
 
-const useStyles = makeStyles(theme => ({
-  dateRange: {
-    display: "inline-flex",
-    "&> :not(:first-child)": {
-      marginLeft: theme.spacing(1),
-    },
-  },
-  wideInput: {
-    flexGrow: 1,
-  },
-}))
-
 type DateRange = gapi.client.analyticsdata.DateRange
 interface GADateRangeProps {
   value: DateRange
@@ -49,10 +62,10 @@ export const GADateRange: React.FC<GADateRangeProps> = ({
   setValue,
   showName,
 }) => {
-  const classes = useStyles()
+
 
   return (
-    <span className={classes.dateRange}>
+    <Root className={classes.dateRange}>
       {showName && (
         <TextField
           label="name"
@@ -87,8 +100,8 @@ export const GADateRange: React.FC<GADateRangeProps> = ({
           setValue(old => ({ ...old, endDate }))
         }}
       />
-    </span>
-  )
+    </Root>
+  );
 }
 
 export default GADate

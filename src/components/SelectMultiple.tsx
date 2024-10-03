@@ -1,14 +1,8 @@
 import * as React from "react"
-import { makeStyles, TextField } from "@material-ui/core"
+import { TextField } from "@mui/material"
 import clsx from "classnames"
 import { Dispatch } from "../types"
-import Autocomplete from "@material-ui/lab/Autocomplete"
-
-const useStyles = makeStyles(() => ({
-  formControl: {
-    minWidth: "15ch",
-  },
-}))
+import Autocomplete from "@mui/material/Autocomplete"
 
 export interface SelectOption {
   value: string
@@ -37,17 +31,17 @@ const Select: React.FC<SelectProps> = ({
   onChange,
   helperText,
 }) => {
-  const classes = useStyles()
+
 
   return (
     <Autocomplete<SelectOption, true, true, false>
       multiple
-      className={clsx(classes.formControl, className)}
+      className={className}
       autoHighlight
       autoSelect
       options={options}
       getOptionLabel={option => option.displayName}
-      getOptionSelected={(a, b) => a.value === b.value}
+      isOptionEqualToValue={(a, b) => a.value === b.value}
       value={(value || null) as any}
       onChange={(_event, value) => {
         if (onChange !== undefined) {
@@ -57,7 +51,11 @@ const Select: React.FC<SelectProps> = ({
           setValue(value === null ? undefined : (value as SelectOption[]))
         }
       }}
-      renderOption={option => option.displayName}
+      renderOption={(props, option) => (
+          <li {...props}>
+            {option.displayName}
+          </li>
+      )}
       renderInput={params => (
         <TextField
           {...params}

@@ -13,21 +13,13 @@ interface LinkT {
   href: string
 }
 
-interface ToggleT {
-  type: "ga4toggle"
-  versions: GAVersion[]
-}
-export type LinkData = LinkT | Heading | ToggleT
+export type LinkData = LinkT | Heading
 
 // TODO - Add an enum for the slugs so they aren't magic strings.
 export const linkData: LinkData[] = [
   {
     text: "Demos & Tools",
     type: "heading",
-    versions: [GAVersion.GoogleAnalytics4, GAVersion.UniversalAnalytics],
-  },
-  {
-    type: "ga4toggle",
     versions: [GAVersion.GoogleAnalytics4, GAVersion.UniversalAnalytics],
   },
   {
@@ -81,6 +73,12 @@ export const linkData: LinkData[] = [
   {
     text: "Query Explorer",
     href: "/ga4/query-explorer/",
+    type: "link",
+    versions: [GAVersion.GoogleAnalytics4],
+  },
+  {
+    text: "Enhanced Ecommerce",
+    href: "/ga4/enhanced-ecommerce/",
     type: "link",
     versions: [GAVersion.GoogleAnalytics4],
   },

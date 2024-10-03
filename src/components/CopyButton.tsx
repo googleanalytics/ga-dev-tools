@@ -13,20 +13,30 @@
 // limitations under the License.
 
 import * as React from "react"
-import Button from "@material-ui/core/Button"
-import IconButton, { IconButtonProps } from "@material-ui/core/IconButton"
-import Tooltip from "@material-ui/core/Tooltip"
-import FileCopyIcon from "@material-ui/icons/FileCopy"
-import Snackbar from "@material-ui/core/Snackbar"
-import MuiAlert from "@material-ui/lab/Alert"
+import { styled } from '@mui/material/styles';
+import Button from "@mui/material/Button"
+import IconButton, { IconButtonProps } from "@mui/material/IconButton"
+import Tooltip from "@mui/material/Tooltip"
+import FileCopyIcon from "@mui/icons-material/FileCopy"
+import Snackbar from "@mui/material/Snackbar"
+import MuiAlert from "@mui/material/Alert"
 import copyToClipboard from "copy-to-clipboard"
-import { makeStyles } from "@material-ui/core/styles"
 
-const useStyles = makeStyles(theme => ({
-  copyIcon: {
+const PREFIX = 'CopyButton';
+
+const classes = {
+  copyIcon: `${PREFIX}-copyIcon`
+};
+
+const Root = styled('div')((
+  {
+    theme
+  }
+) => ({
+  [`& .${classes.copyIcon}`]: {
     marginRight: theme.spacing(1),
-  },
-}))
+  }
+}));
 
 interface BaseCopyButtonProps {
   toCopy: string
@@ -47,7 +57,7 @@ interface CopyButtonPropsButton extends BaseCopyButtonProps {
 type CopyButtonProps = CopyButtonPropsIconButton | CopyButtonPropsButton
 
 const CopyButton: React.FC<CopyButtonProps> = props => {
-  const classes = useStyles()
+
   const [showAlert, setShowAlert] = React.useState(false)
 
   const { toCopy } = props
@@ -58,7 +68,7 @@ const CopyButton: React.FC<CopyButtonProps> = props => {
   }, [toCopy])
 
   return (
-    <>
+    (<Root>
       {props.useIconButton === true ? (
         <Tooltip title="Copy">
           <IconButton onClick={copyCode}>
@@ -84,8 +94,8 @@ const CopyButton: React.FC<CopyButtonProps> = props => {
           Copied to clipboard.
         </MuiAlert>
       </Snackbar>
-    </>
-  )
+    </Root>)
+  );
 }
 
 interface CopyIconButtonProps {

@@ -10,7 +10,7 @@ type schemaObject = {
 
 export class Validator {
     schema: schemaObject 
-    validator: any
+    validator: Draft07
 
     constructor(
         schema: schemaObject
@@ -19,11 +19,11 @@ export class Validator {
         this.validator = new Draft07(schema)
       }
         
-    public isValid = (payload) => {
+    public isValid = (payload: any) => {
         return this.validator.isValid(payload)
     }
 
-    public getErrors = (payload) => {
+    public getErrors = (payload: any) => {
         return this.validator.validate(payload)
     }
 }

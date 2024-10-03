@@ -1,4 +1,4 @@
-import { useCallback } from "react"
+import React, { useCallback } from "react"
 
 import { usePersistentString } from "@/hooks"
 import { StorageKey } from "@/constants"
@@ -32,7 +32,7 @@ const useInputs = () => {
   )
 
   const onWebsiteChange = useCallback(
-    e => {
+      (e: React.ChangeEvent<HTMLInputElement>) => {
       const extractedParams = extractParamsFromWebsiteURL(e.target.value)
       if (extractedParams !== undefined) {
         const {

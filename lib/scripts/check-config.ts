@@ -1,5 +1,5 @@
 import * as fs from "fs"
-import * as inquirer from "inquirer"
+import { default as inquirer, QuestionCollection } from "inquirer"
 import {
   RuntimeJson,
   RuntimeJsonPath,
@@ -12,7 +12,7 @@ import {
   CommonConfig,
   AnswerNames,
   DotEnvDevelopmentPath,
-} from "./types"
+} from "./types.js"
 
 type ConfigQuestionFilter = {
   askAll?: true | undefined
@@ -77,7 +77,7 @@ export const SKIP_QUESTION = "Leave blank to skip"
 // be skipped if already provided.
 const configQuestions = (
   filter: ConfigQuestionFilter
-): inquirer.QuestionCollection<ConfigAnswers> => {
+): QuestionCollection<ConfigAnswers> => {
   // TODO the `?.`s can be removed once this has stabilized. They're here now to
   // be friendly as the runtimeJson type evolves.
   return [
@@ -310,7 +310,7 @@ const toRuntimeJson = (
   let asserted: RuntimeJson
   try {
     asserted = assertAllValues(fullConfig)
-  } catch (e) {
+  } catch (e: any) {
     console.error(e.message)
     process.exit(1)
   }

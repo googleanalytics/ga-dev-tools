@@ -1,8 +1,39 @@
 import React, { useMemo } from "react"
-import { makeStyles, Paper } from "@material-ui/core"
+import { styled } from '@mui/material/styles';
+import {  Paper } from "@mui/material"
+
 import { IS_SSR } from "../hooks"
 import { CopyIconButton } from "./CopyButton"
 import clsx from "classnames"
+
+const PREFIX = 'PrettyJson';
+
+const classes = {
+  jsonWrapper: `${PREFIX}-jsonWrapper`,
+  jsonPaper: `${PREFIX}-jsonPaper`,
+  json: `${PREFIX}-json`
+};
+
+const StyledPaper = styled(Paper)((
+  {
+    theme
+  }
+) => ({
+  [`& .${classes.jsonWrapper}`]: {
+    display: "flex",
+    alignItems: "flex-start",
+  },
+
+  [`&.${classes.jsonPaper}`]: {
+    padding: theme.spacing(2),
+    display: "flex",
+    alignItems: "flex-start",
+  },
+
+  [`& .${classes.json}`]: {
+    "flex-grow": "1",
+  }
+}));
 
 interface PrettyJsonProps {
   object: object | undefined
@@ -43,21 +74,6 @@ export const shouldCollapseResponse = ({ namespace }: any) => {
   return true
 }
 
-const useStyles = makeStyles(theme => ({
-  jsonWrapper: {
-    display: "flex",
-    alignItems: "flex-start",
-  },
-  jsonPaper: {
-    padding: theme.spacing(2),
-    display: "flex",
-    alignItems: "flex-start",
-  },
-  json: {
-    "flex-grow": "1",
-  },
-}))
-
 const PrettyJson: React.FC<PrettyJsonProps> = ({
   object,
   shouldCollapse,
@@ -65,7 +81,7 @@ const PrettyJson: React.FC<PrettyJsonProps> = ({
   tooltipText,
   noPaper,
 }) => {
-  const classes = useStyles()
+
 
   const inner = useMemo(() => {
     if (object === undefined || IS_SSR) {
@@ -98,7 +114,7 @@ const PrettyJson: React.FC<PrettyJsonProps> = ({
         />
       </>
     )
-  }, [object, classes.json, shouldCollapse, tooltipText])
+  }, [object, shouldCollapse, tooltipText])
 
   if (object === undefined) {
     return null
@@ -111,7 +127,7 @@ const PrettyJson: React.FC<PrettyJsonProps> = ({
   if (noPaper) {
     return <div className={clsx(classes.jsonWrapper, className)}>{inner}</div>
   } else {
-    return <Paper className={clsx(classes.jsonPaper, className)}>{inner}</Paper>
+    return <StyledPaper className={clsx(classes.jsonPaper, className)}>{inner}</StyledPaper>;
   }
 }
 

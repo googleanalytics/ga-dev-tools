@@ -1,15 +1,26 @@
 import * as React from "react"
 
-import makeStyles from "@material-ui/core/styles/makeStyles"
+import { styled } from '@mui/material/styles';
+
 import { Parameter } from "./types"
 import WithHelpText from "@/components/WithHelpText"
 import { DAB, SAB } from "@/components/Buttons"
 import { ShowAdvancedCtx } from "."
 import Parameters from "./Parameters"
-import useFormStyles from "@/hooks/useFormStyles"
 
-const useStyles = makeStyles(theme => ({
-  items: {
+const PREFIX = 'Items';
+
+const classes = {
+  items: `${PREFIX}-items`,
+  buttonRow: `${PREFIX}-buttonRow`
+};
+
+const Root = styled('section')((
+  {
+    theme
+  }
+) => ({
+  [`&.${classes.items}`]: {
     "&> :not(:first-child)": {
       marginTop: theme.spacing(3),
     },
@@ -17,7 +28,13 @@ const useStyles = makeStyles(theme => ({
       marginTop: theme.spacing(1),
     },
   },
-}))
+  [`& .${classes.buttonRow}`]: {
+    display: "flex",
+    "&> *:not(:last-child)": {
+      marginRight: theme.spacing(1),
+    },
+  }
+}));
 
 interface Props {
   items: Parameter[][]
@@ -43,10 +60,9 @@ const Items: React.FC<Props> = ({
   removeItems,
 }) => {
   const showAdvanced = React.useContext(ShowAdvancedCtx)
-  const classes = useStyles()
-  const formClasses = useFormStyles()
+
   return (
-    <section className={classes.items}>
+    <Root className={classes.items}>
       {items.map((item, idx) => (
         <WithHelpText
           hrGroup={!showAdvanced}
@@ -69,19 +85,19 @@ const Items: React.FC<Props> = ({
           />
         </WithHelpText>
       ))}
-      <div className={formClasses.buttonRow}>
+      <div className={classes.buttonRow} >
         <SAB add title="add item" small onClick={addItem}>
           item
         </SAB>
-        <div className={formClasses.grow} />
+        <div /* className={formClasses.grow} */ />
         {showAdvanced && (
           <DAB delete title="remove item parameter" small onClick={removeItems}>
             item
           </DAB>
         )}
       </div>
-    </section>
-  )
+    </Root>
+  );
 }
 
 export default Items

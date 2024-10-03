@@ -1,7 +1,7 @@
 import * as React from "react"
 import { useState } from "react"
-import Autocomplete from "@material-ui/lab/Autocomplete"
-import TextField from "@material-ui/core/TextField"
+import Autocomplete from "@mui/material/Autocomplete"
+import TextField from "@mui/material/TextField"
 import { Dispatch } from "../types"
 
 interface SeparatedInputProps {

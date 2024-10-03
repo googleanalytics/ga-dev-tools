@@ -17,15 +17,6 @@ export const testGapi = (mocks?: GapiMocks): PartialDeep<typeof gapi> => {
     client: {
       analyticsadmin: {
         properties: {
-          iosAppDataStreams: {
-            list: jest.fn(),
-          },
-          androidAppDataStreams: {
-            list: jest.fn(),
-          },
-          webDataStreams: {
-            list: jest.fn(),
-          },
         },
         accountSummaries: {
           list: mocks?.ga4?.listAccountSummaries

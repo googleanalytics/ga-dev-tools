@@ -1,9 +1,9 @@
 import * as React from "react"
 import { navigate } from "gatsby"
 
-import Tooltip from "@material-ui/core/Tooltip"
-import IconButton from "@material-ui/core/IconButton"
-import BugIcon from "@material-ui/icons/BugReport"
+import Tooltip from "@mui/material/Tooltip"
+import IconButton from "@mui/material/IconButton"
+import BugIcon from "@mui/icons-material/BugReport"
 
 const BugReport: React.FC = () => {
   const onClick = React.useCallback(() => {

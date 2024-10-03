@@ -1,6 +1,4 @@
 import "jest"
-import { invalid } from "moment"
-import { ValidationStatus } from "../../types"
 import { Validator } from "../validator"
 import { baseContentSchema } from "./baseContent" 
 

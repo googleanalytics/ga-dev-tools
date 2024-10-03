@@ -1,8 +1,8 @@
 // yarn check-types && gatsby develop --host=0.0.0.0"
-import { checkConfig, writeEnvFile } from "./check-config"
-import * as execa from "execa"
-import { configForEnvironment } from "."
-import { DevelopArgs } from "./types"
+import { checkConfig, writeEnvFile } from "./check-config.js"
+import { execa } from "execa";
+import { configForEnvironment } from "./index.js"
+import { DevelopArgs } from "./types.js"
 
 export const develop = async (args: DevelopArgs) => {
   const config = await checkConfig({ all: false })

@@ -12,9 +12,9 @@ type conditionalObject = {
 
 // Build condition list of event to schema mapping.
 export const buildEvents = () => {
-    let allEventTypes: conditionalObject[] = []
+    const allEventTypes: conditionalObject[] = []
 //  Add all recommended event schemas
-    for (let eventName in eventDefinitions) {
+    for (const eventName in eventDefinitions) {
         const cond = {
             "if": {
                 "properties": {
@@ -27,7 +27,9 @@ export const buildEvents = () => {
                 "properties": {
                     "params": {
                         "type": "object",
-                        "required": eventDefinitions[eventName],
+                        "required":
+                            // @ts-ignore
+                            eventDefinitions[eventName],
                         "properties": getAllEventProperties(),
                         "dependencies": VALUE_CURRENCY_DEPENDENCY,
                         "propertyNames": {
@@ -49,9 +51,9 @@ export const buildEvents = () => {
         allEventTypes.push(cond)
     }
 
-    let knownEventList = "|" + Object.keys(eventDefinitions)
-    let nameNotMatchPattern = "^(?!(" + knownEventList + ")$).*$"
-    let customCond = {
+    const knownEventList = "|" + Object.keys(eventDefinitions)
+    const nameNotMatchPattern = "^(?!(" + knownEventList + ")$).*$"
+    const customCond = {
         "if": {
             "properties": {
                 "name": {

@@ -1,0 +1,31 @@
+.productCardStyle {
+  max-width: 400px;
+  cursor: pointer;
+  text-decoration: none;
+  padding-bottom: var(--space-md);
+}
+
+.productImageStyle {
+  margin-bottom: var(--space-md);
+}
+
+.productDetailsStyle {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-weight: var(--semibold);
+}
+
+.productHeadingStyle {
+  width: 100%;
+  font-size: var(--text-lg);
+  text-align: center;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: var(--dense);
+}
+
+.productPrice {
+  color: var(--text-color-secondary);
+}

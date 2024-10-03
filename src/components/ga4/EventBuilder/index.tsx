@@ -14,24 +14,24 @@
 
 import React from "react"
 
-import makeStyles from "@material-ui/core/styles/makeStyles"
-import Typography from "@material-ui/core/Typography"
-import TextField from "@material-ui/core/TextField"
-import IconButton from "@material-ui/core/IconButton"
-import { Error as ErrorIcon } from "@material-ui/icons"
-import Tooltip from "@material-ui/core/Tooltip"
-import Autocomplete from "@material-ui/lab/Autocomplete"
-import Refresh from "@material-ui/icons/Refresh"
+import { styled } from '@mui/material/styles';
+
+import Typography from "@mui/material/Typography"
+import TextField from "@mui/material/TextField"
+import IconButton from "@mui/material/IconButton"
+import Tooltip from "@mui/material/Tooltip"
+import Autocomplete from "@mui/material/Autocomplete"
+import Refresh from "@mui/icons-material/Refresh"
+import { Error as ErrorIcon } from "@mui/icons-material"
 
 import LinkedTextField from "@/components/LinkedTextField"
 import TextBox from "@/components/TextBox"
 import LabeledCheckbox from "@/components/LabeledCheckbox"
-import Grid from "@material-ui/core/Grid"
-import Switch from "@material-ui/core/Switch"
+import Grid from "@mui/material/Grid"
+import Switch from "@mui/material/Switch"
 import ExternalLink from "@/components/ExternalLink"
 import { Url } from "@/constants"
 import WithHelpText from "@/components/WithHelpText"
-import useFormStyles from "@/hooks/useFormStyles"
 import { TooltipIconButton } from "@/components/Buttons"
 import useEvent from "./useEvent"
 import Parameters from "./Parameters"
@@ -44,21 +44,80 @@ import ValidateEvent from "./ValidateEvent"
 import { PlainButton } from "@/components/Buttons"
 import { useEffect } from "react"
 
+const PREFIX = 'EventBuilder';
+
+const classes = {
+  clientSwitch: `${PREFIX}-clientSwitch`,
+  unifiedParameters: `${PREFIX}-unifiedParameters`,
+  fullWidth: `${PREFIX}-fullWidth`,
+  parameterPair: `${PREFIX}-parameterPair`,
+  validateHeading: `${PREFIX}-validateHeading`,
+  parameters: `${PREFIX}-parameters`,
+  form: `${PREFIX}-form`,
+  items: `${PREFIX}-items`
+};
+
+const Root = styled('div')((
+  {
+    theme
+  }
+) => ({
+  [`& .${classes.clientSwitch}`]: {
+    marginBottom: theme.spacing(2),
+  },
+
+  [`& .${classes.unifiedParameters}`]: {},
+
+  [`& .${classes.fullWidth}`]: {
+    width: "100%",
+  },
+
+  [`& .${classes.parameterPair}`]: {
+    display: "flex",
+    "& > *:not(:first-child)": {
+      marginLeft: theme.spacing(1),
+    },
+  },
+
+  [`& .${classes.validateHeading}`]: {
+    marginTop: theme.spacing(3),
+  },
+
+  [`& .${classes.parameters}`]: {
+    "&> :not(:first-child)": {
+      marginTop: theme.spacing(1),
+    },
+  },
+
+  [`& .${classes.form}`]: {
+    maxWidth: "80ch",
+  },
+
+  [`& .${classes.items}`]: {
+    "&> :not(:first-child)": {
+      marginTop: theme.spacing(3),
+    },
+    "&> :last-child": {
+      marginTop: theme.spacing(1),
+    },
+  }
+}));
+
 export enum Label {
-  APISecret = "api_secret",
+  APISecret = "api secret",
 
-  FirebaseAppID = "firebase_app_id",
-  AppInstanceID = "app_instance_id",
+  FirebaseAppID = "firebase app id",
+  AppInstanceID = "app instance id",
 
-  MeasurementID = "measurement_id",
-  ClientID = "client_id",
+  MeasurementID = "measurement id",
+  ClientID = "client id",
 
-  UserId = "user_id",
+  UserId = "user id",
 
-  EventCategory = "event_category",
-  EventName = "event_name",
-  TimestampMicros = "timestamp_micros",
-  NonPersonalizedAds = "non_personalized_ads",
+  EventCategory = "event category",
+  EventName = "event name",
+  TimestampMicros = "timestamp micros",
+  NonPersonalizedAds = "non personalized ads",
 
   Payload = "payload",
 
@@ -79,61 +138,29 @@ const ga4MeasurementProtocol = (
   </ExternalLink>
 )
 
-const useStyles = makeStyles(theme => ({
-  clientSwitch: {
-    marginBottom: theme.spacing(2),
-  },
-  unifiedParameters: {},
-  fullWidth: {
-    width: "100%",
-  },
-  parameterPair: {
-    display: "flex",
-    "& > *:not(:first-child)": {
-      marginLeft: theme.spacing(1),
-    },
-  },
-  validateHeading: {
-    marginTop: theme.spacing(3),
-  },
-  parameters: {
-    "&> :not(:first-child)": {
-      marginTop: theme.spacing(1),
-    },
-  },
-  items: {
-    "&> :not(:first-child)": {
-      marginTop: theme.spacing(3),
-    },
-    "&> :last-child": {
-      marginTop: theme.spacing(1),
-    },
-  },
-}))
-
+export type EventPayload = {
+  eventName: string
+  type: EventType
+  parameters: Parameter[]
+  items: Parameter[][] | undefined
+  userProperties: Parameter[]
+  timestamp_micros: string | undefined
+  non_personalized_ads: boolean | undefined
+  clientIds: ClientIds
+  instanceId: InstanceId
+  api_secret: string
+  useTextBox: boolean
+  payloadObj: any
+}
 export const EventCtx = React.createContext<
-  | {
-      eventName: string
-      type: EventType
-      parameters: Parameter[]
-      items: Parameter[][] | undefined
-      userProperties: Parameter[]
-      timestamp_micros: string | undefined
-      non_personalized_ads: boolean | undefined
-      clientIds: ClientIds
-      instanceId: InstanceId
-      api_secret: string
-      useTextBox: boolean
-      payloadObj: any
-    }
+  | EventPayload
   | undefined
 >(undefined)
 export const ShowAdvancedCtx = React.createContext(false)
 export const UseFirebaseCtx = React.createContext(false)
 
 const EventBuilder: React.FC = () => {
-  const formClasses = useFormStyles()
-  const classes = useStyles()
+
   const [showAdvanced, setShowAdvanced] = React.useState(false)
   const {
     userProperties,
@@ -141,7 +168,7 @@ const EventBuilder: React.FC = () => {
     addStringUserProperty,
     removeUserProperty,
     setUserPropertyName,
-    setUserPopertyValue,
+    setUserPropertyValue,
   } = useUserProperties()
 
   const {
@@ -199,15 +226,7 @@ const EventBuilder: React.FC = () => {
     setNonPersonalizedAds,
   } = useInputs(categories)
 
-  useEffect(() => {
-    formatPayload()
-  }, [])
-
-  useEffect(() => {
-    formatPayload()
-  }, [inputPayload])
-
-  const formatPayload = () => {
+  const formatPayload = React.useCallback( () => {
     try {
       if (inputPayload) {
         let payload = JSON.parse(inputPayload) as object
@@ -223,12 +242,16 @@ const EventBuilder: React.FC = () => {
       setPayloadErrors(err.message)
       setPayloadObj({})
     }
-  }
+  }, [inputPayload, setPayloadErrors, setPayloadObj])
+
+  useEffect(() => {
+    formatPayload()
+  }, [inputPayload, formatPayload])
 
   return (
-    <div>
+    <Root>
       <Typography variant="h3">Overview</Typography>
-      <Typography>
+      <Typography component={'span'}>
         The GA4 Event Builder allows you to create, validate, and send events
         using the {ga4MeasurementProtocol}.
       </Typography>
@@ -269,8 +292,76 @@ const EventBuilder: React.FC = () => {
         After choosing a client, fill out the inputs below.
       </Typography>
 
-    { 
-      useFirebase && (
+        <LinkedTextField
+          required
+          href="https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference#api_secret"
+          linkTitle="See api_secret on devsite."
+          value={api_secret || ""}
+          label={Label.APISecret}
+          id={Label.APISecret}
+          helperText="The API secret for the property to send the event to."
+          onChange={setAPISecret}
+        />
+        {useFirebase ? (
+          <>
+            <LinkedTextField
+              required
+              href="https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference?client_type=firebase#firebase_app_id"
+              linkTitle="See firebase_app_id on devsite."
+              value={firebase_app_id || ""}
+              label={Label.FirebaseAppID}
+              id={Label.FirebaseAppID}
+              helperText="The identifier for your firebase app."
+              onChange={setFirebaseAppId}
+            />
+            <LinkedTextField
+              required
+              href="https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference?client_type=firebase#app_instance_id"
+              linkTitle="See app_instance_id on devsite."
+              value={app_instance_id || ""}
+              label={Label.AppInstanceID}
+              id={Label.AppInstanceID}
+              helperText="The unique identifier for a specific Firebase installation."
+              onChange={setAppInstanceId}
+            />
+          </>
+        ) : (
+          <>
+            <LinkedTextField
+              required
+              href="https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference?client_type=gtag#measurement_id"
+              linkTitle="See measurement_id on devsite."
+              value={measurement_id || ""}
+              label={Label.MeasurementID}
+              id={Label.MeasurementID}
+              helperText="The identifier for your data stream."
+              onChange={setMeasurementId}
+            />
+            <LinkedTextField
+              required
+              href="https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference?client_type=gtag#client_id"
+              linkTitle="See client_id on devsite."
+              value={client_id || ""}
+              label={Label.ClientID}
+              id={Label.ClientID}
+              helperText="The unique identifier for an instance of a web client."
+              onChange={setClientId}
+            />
+          </>
+        )}
+        <LinkedTextField
+          href={`https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference?client_type=${
+            useFirebase ? "firebase" : "gtag"
+          }#user_id`}
+          linkTitle="See user_id on devsite."
+          value={user_id || ""}
+          label={Label.UserId}
+          id={Label.UserId}
+          helperText="The unique identifier for a given user."
+          onChange={setUserId}
+        />
+    {
+
         <>
           <WithHelpText
             notched
@@ -297,47 +388,11 @@ const EventBuilder: React.FC = () => {
 
           <br/>
         </>
-      )
+
     }
 
-    { useTextBox && 
-      <div>
-        <section className={formClasses.form}>
-          <LinkedTextField
-            required
-            href="https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference#api_secret"
-            linkTitle="See api_secret on devsite."
-            value={api_secret || ""}
-            label={Label.APISecret}
-            id={Label.APISecret}
-            helperText="The API secret for the property to send the event to."
-            onChange={setAPISecret}
-          />
-          {useFirebase ? (
-              <LinkedTextField
-                required
-                href="https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference?client_type=firebase#firebase_app_id"
-                linkTitle="See firebase_app_id on devsite."
-                value={firebase_app_id || ""}
-                label={Label.FirebaseAppID}
-                id={Label.FirebaseAppID}
-                helperText="The identifier for your firebase app."
-                onChange={setFirebaseAppId}
-              />
-          ) : (
-              <LinkedTextField
-                required
-                href="https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference?client_type=gtag#measurement_id"
-                linkTitle="See measurement_id on devsite."
-                value={measurement_id || ""}
-                label={Label.MeasurementID}
-                id={Label.MeasurementID}
-                helperText="The identifier for your data stream."
-                onChange={setMeasurementId}
-              />
-          )}
-        </section>
-
+    { useTextBox &&
+        <>
         <TextBox
           required
           href="https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference?client_type=firebase#payload_post_body"
@@ -363,92 +418,21 @@ const EventBuilder: React.FC = () => {
 
         { payloadErrors && (
             <TooltipIconButton
-              tooltip={
-                <React.Fragment>
-                  <Typography color="inherit">{payloadErrors}</Typography>
-                </React.Fragment>
-              }
+              tooltip={payloadErrors}
               placement={'top'}
             >
               <ErrorIcon
                 style={{color: 'red'}}
-              /> 
+              />
             </TooltipIconButton>
         )}
-      </div>
+      </>
     }
 
-    { !useTextBox && 
+    { !useTextBox &&
       <div>
-        <section className={formClasses.form}>
-          <LinkedTextField
-            required
-            href="https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference#api_secret"
-            linkTitle="See api_secret on devsite."
-            value={api_secret || ""}
-            label={Label.APISecret}
-            id={Label.APISecret}
-            helperText="The API secret for the property to send the event to."
-            onChange={setAPISecret}
-          />
-          {useFirebase ? (
-            <>
-              <LinkedTextField
-                required
-                href="https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference?client_type=firebase#firebase_app_id"
-                linkTitle="See firebase_app_id on devsite."
-                value={firebase_app_id || ""}
-                label={Label.FirebaseAppID}
-                id={Label.FirebaseAppID}
-                helperText="The identifier for your firebase app."
-                onChange={setFirebaseAppId}
-              />
-              <LinkedTextField
-                required
-                href="https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference?client_type=firebase#app_instance_id"
-                linkTitle="See app_instance_id on devsite."
-                value={app_instance_id || ""}
-                label={Label.AppInstanceID}
-                id={Label.AppInstanceID}
-                helperText="The unique identifier for a specific Firebase installation."
-                onChange={setAppInstanceId}
-              />
-            </>
-          ) : (
-            <>
-              <LinkedTextField
-                required
-                href="https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference?client_type=gtag#measurement_id"
-                linkTitle="See measurement_id on devsite."
-                value={measurement_id || ""}
-                label={Label.MeasurementID}
-                id={Label.MeasurementID}
-                helperText="The identifier for your data stream."
-                onChange={setMeasurementId}
-              />
-              <LinkedTextField
-                required
-                href="https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference?client_type=gtag#client_id"
-                linkTitle="See client_id on devsite."
-                value={client_id || ""}
-                label={Label.ClientID}
-                id={Label.ClientID}
-                helperText="The unique identifier for an instance of a web client."
-                onChange={setClientId}
-              />
-            </>
-          )}
-          <LinkedTextField
-            href={`https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference?client_type=${
-              useFirebase ? "firebase" : "gtag"
-            }#user_id`}
-            linkTitle="See user_id on devsite."
-            value={user_id || ""}
-            label={Label.UserId}
-            id={Label.UserId}
-            helperText="The unique identifier for a given user."
-            onChange={setUserId}
-          />
+        <section className={classes.form}>
+
 
           <Autocomplete<Category, false, true, true>
             data-testid={Label.EventCategory}
@@ -514,13 +498,7 @@ const EventBuilder: React.FC = () => {
                   variant="outlined"
                   helperText={
                     <>
-                      The name of the event. See{" "}
-                      <ExternalLink
-                        href={`https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference/events#${type}`}
-                      >
-                        {type}
-                      </ExternalLink>{" "}
-                      on devsite.
+                      The name of the event.
                     </>
                   }
                 />
@@ -555,15 +533,6 @@ const EventBuilder: React.FC = () => {
             helpText={
               <>
                 Check to indicate events should not be used for personalized ads.
-                See{" "}
-                <ExternalLink
-                  href={`https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference?client_type=${
-                    useFirebase ? "firebase" : "gtag"
-                  }#non_personalized_ads`}
-                >
-                  non_personalized_ads
-                </ExternalLink>{" "}
-                on devsite.
               </>
             }
           >
@@ -587,37 +556,36 @@ const EventBuilder: React.FC = () => {
           show advanced options
         </LabeledCheckbox>
 
-        <section className={formClasses.form}>
-          <ShowAdvancedCtx.Provider
-            value={showAdvanced || type === EventType.CustomEvent}
-          >
-            <Typography variant="h5">Parameters</Typography>
-            <Parameters
-              removeParam={removeParam}
-              parameters={parameters}
-              addStringParam={addStringParam}
-              addNumberParam={addNumberParam}
-              setParamName={setParamName}
-              setParamValue={setParamValue}
-              addItemsParam={items === undefined ? addItemsParam : undefined}
-            />
-            {items !== undefined && (
-              <>
-                <Typography variant="h5">Items</Typography>
-                <Items
-                  items={items}
-                  addItem={addItem}
-                  removeItem={removeItem}
-                  removeItemParam={removeItemParam}
-                  addItemNumberParam={addItemNumberParam}
-                  addItemStringParam={addItemStringParam}
-                  setItemParamName={setItemParamName}
-                  setItemParamValue={setItemParamValue}
-                  removeItems={removeItems}
-                />
-              </>
-            )}
-
+      <section className={classes.form}>
+        <ShowAdvancedCtx.Provider
+          value={showAdvanced || type === EventType.CustomEvent}
+        >
+          <Typography variant="h5">Parameters</Typography>
+          <Parameters
+            removeParam={removeParam}
+            parameters={parameters}
+            addStringParam={addStringParam}
+            addNumberParam={addNumberParam}
+            setParamName={setParamName}
+            setParamValue={setParamValue}
+            addItemsParam={items === undefined ? addItemsParam : undefined}
+          />
+          {items !== undefined && (
+            <>
+              <Typography variant="h5">Items</Typography>
+              <Items
+                items={items}
+                addItem={addItem}
+                removeItem={removeItem}
+                removeItemParam={removeItemParam}
+                addItemNumberParam={addItemNumberParam}
+                addItemStringParam={addItemStringParam}
+                setItemParamName={setItemParamName}
+                setItemParamValue={setItemParamValue}
+                removeItems={removeItems}
+              />
+            </>
+          )}
             {(showAdvanced ||
               (userProperties !== undefined && userProperties.length !== 0)) && (
               <>
@@ -628,7 +596,7 @@ const EventBuilder: React.FC = () => {
                   addStringParam={addStringUserProperty}
                   addNumberParam={addNumberUserProperty}
                   setParamName={setUserPropertyName}
-                  setParamValue={setUserPopertyValue}
+                  setParamValue={setUserPropertyValue}
                 />
               </>
             )}
@@ -636,7 +604,6 @@ const EventBuilder: React.FC = () => {
         </section>
       </div>
     }
-
       <Typography variant="h3" className={classes.validateHeading}>
         Validate & Send event
       </Typography>
@@ -672,8 +639,8 @@ const EventBuilder: React.FC = () => {
           />
         </EventCtx.Provider>
       </UseFirebaseCtx.Provider>
-    </div>
-  )
+    </Root>
+  );
 }
 
 export default EventBuilder

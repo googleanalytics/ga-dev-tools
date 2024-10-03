@@ -14,15 +14,8 @@
 const TsconfigPathsPlugin = require("tsconfig-paths-webpack-plugin")
 const fs = require("fs")
 
-require("ts-node").register({
-  compilerOptions: {
-    module: "commonjs",
-    target: "es2017",
-  },
-})
-
 // typescript files
-exports.createPages = require("./gatsby/createPages").createPages
+//exports.createPages = require("./gatsby/createPages").createPages
 
 exports.onCreateWebpackConfig = ({ actions }) => {
   actions.setWebpackConfig({
