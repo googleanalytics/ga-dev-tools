@@ -11,6 +11,9 @@ import { navigate } from "gatsby"
 import * as React from "react"
 import QueryExplorerLink from "../QueryExplorer/BasicReport/QueryExplorerLink"
 import { CompatibleHook } from "./useCompatibility"
+import Autocomplete from '@mui/material/Autocomplete';
+import {Dimension, Metric} from '@/components/ga4/DimensionsMetricsExplorer/useDimensionsAndMetrics';
+import TextField from '@mui/material/TextField';
 
 const PREFIX = 'Compatible';
 
@@ -23,9 +26,9 @@ const classes = {
 };
 
 const StyledPaper = styled(Paper)((
-  {
-    theme
-  }
+    {
+      theme
+    }
 ) => ({
   [`&.${classes.compatible}`]: {
     padding: theme.spacing(2),
@@ -56,16 +59,23 @@ const StyledPaper = styled(Paper)((
   }
 }));
 
-const WithProperty: React.FC<
-  CompatibleHook & { property: PropertySummary | undefined }
-> = ({
-  dimensions,
-  metrics,
-  removeMetric,
-  removeDimension,
-  property,
-  hasFieldSelected,
-}) => {
+type CompatibleProps =
+    CompatibleHook
+    & {
+  property: PropertySummary | undefined,
+  allMetrics: Metric[],
+  allDimensions: Dimension[]
+}
+const WithProperty: React.FC<CompatibleProps> = ({
+       dimensions,
+       metrics,
+       removeMetric,
+       removeDimension, setDimensions, setMetrics,
+       property,
+       hasFieldSelected, incompatibleDimensions, incompatibleMetrics,
+       allDimensions,
+       allMetrics,
+     }) => {
 
 
   if (property === undefined) {
@@ -73,72 +83,124 @@ const WithProperty: React.FC<
   }
 
   return (
-    <>
-      <Typography>
-        As you choose dimensions & metrics (by clicking the checkbox next to
-        their name), they will be added here. Incompatible dimensions & metrics
-        will be grayed out.
-      </Typography>
-      <div className={classes.chipGrid}>
-        <Typography className={classes.chipLabel}>Dimensions:</Typography>
-        <div className={classes.chips}>
-          {dimensions !== undefined && dimensions.length > 0
-            ? dimensions.map(d => (
-                <Chip
-                  variant="outlined"
-                  key={d.apiName}
-                  label={d.apiName}
-                  onClick={() => navigate(`#${d.apiName}`)}
-                  onDelete={() => removeDimension(d)}
-                />
-              ))
-            : "No dimensions selected."}
-        </div>
-        <Typography className={classes.chipLabel}>Metrics:</Typography>
-        <div className={classes.chips}>
-          {metrics !== undefined && metrics.length > 0
-            ? metrics?.map(m => (
-                <Chip
-                  variant="outlined"
-                  key={m.apiName}
-                  label={m.apiName}
-                  onDelete={() => removeMetric(m)}
-                />
-              ))
-            : "No metrics selected."}
-        </div>
-      </div>
-      {hasFieldSelected && (
+      <>
         <Typography>
-          Use these fields in the{" "}
-          <QueryExplorerLink dimensions={dimensions} metrics={metrics} />
+          As you choose dimensions & metrics, they will be added here.
+          Incompatible dimensions & metrics will be grayed out.
         </Typography>
-      )}
-    </>
+        <div className={classes.chipGrid}>
+          <Typography className={classes.chipLabel}>Dimensions:</Typography>
+          <div className={classes.chips}>
+            <Autocomplete<Dimension, true>
+                fullWidth
+                autoComplete
+                multiple
+                isOptionEqualToValue={(a, b) => a.apiName === b.apiName}
+                onChange={(event, value) => setDimensions(value)}
+                value={dimensions || []}
+                options={allDimensions}
+                getOptionDisabled={(option) =>
+                     incompatibleDimensions?.find(d => d.apiName === option.apiName) !== undefined
+                }
+                getOptionLabel={dimension => `${dimension.apiName}: ${dimension.uiName}` || ""}
+                renderInput={params => (
+                    <TextField
+                        {...params}
+                        size="small"
+                        variant="outlined"
+                        helperText={
+                          <>
+                            Select dimensions.
+                          </>
+                        }
+                    />
+                )}
+                renderTags={(tagValue, getTagProps) =>
+                    tagValue.map((option, index) => {
+                      return (
+                          <Chip
+                              key={option.apiName}
+                              label={option.apiName}
+                              onClick={() => navigate(`#${option.apiName}`)}
+                              onDelete={() => removeDimension(option)}
+                          />
+                      );
+                    })
+                }
+            />
+          </div>
+          <Typography className={classes.chipLabel}>Metrics:</Typography>
+          <div className={classes.chips}>
+            <Autocomplete<Metric, true>
+                fullWidth
+                autoComplete
+                multiple
+                isOptionEqualToValue={(a, b) => a.apiName === b.apiName}
+                onChange={(event, value) => setMetrics(value)}
+                value={metrics || []}
+                options={allMetrics}
+                getOptionDisabled={(option) =>
+                    incompatibleMetrics?.find(d => d.apiName === option.apiName) !== undefined
+                }
+                getOptionLabel={metric => `${metric.apiName}: ${metric.uiName}` || ""}
+                renderInput={params => (
+                    <TextField
+                        {...params}
+                        size="small"
+                        variant="outlined"
+                        helperText={
+                          <>
+                            Select metrics.
+                          </>
+                        }
+                    />
+                )}
+                renderTags={(tagValue, getTagProps) =>
+                    tagValue.map((option, index) => {
+                      return (
+                          <Chip
+                              key={option.apiName}
+                              label={option.apiName}
+                              onClick={() => navigate(`#${option.apiName}`)}
+                              onDelete={() => removeMetric(option)}
+                          />
+                      );
+                    })
+                }
+            />
+          </div>
+        </div>
+        {hasFieldSelected && (
+            <Typography>
+              Use these fields in the{" "}
+              <QueryExplorerLink dimensions={dimensions} metrics={metrics} />
+            </Typography>
+        )}
+      </>
   )
 }
 
 const Compatible: React.FC<
-  CompatibleHook & { property: PropertySummary | undefined }
+    CompatibleHook & {  allDimensions: Dimension[], allMetrics: Metric[], property: PropertySummary | undefined }
 > = props => {
 
   const { reset, property, hasFieldSelected } = props
 
   return (
-    <StyledPaper className={classes.compatible}>
-      <Typography variant="h3">
-        Compatible Fields
-        <IconButton disabled={!hasFieldSelected} onClick={reset}>
-          <Replay />
-        </IconButton>
-      </Typography>
-      <WithProperty {...props} property={property} />
-      {property === undefined && (
-        <Typography>
-          Pick a property above to enable this functionality.
+      <StyledPaper className={classes.compatible}>
+        <Typography variant="h3">
+          Compatible Fields
+          <IconButton disabled={!hasFieldSelected} onClick={reset}>
+            <Replay />
+          </IconButton>
         </Typography>
-      )}
-    </StyledPaper>
+        <WithProperty {...props} property={property} />
+        {property === undefined && (
+            <Typography>
+              Pick a property above to enable this functionality.
+            </Typography>
+        )}
+      </StyledPaper>
   );
 }
 

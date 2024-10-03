@@ -94,7 +94,6 @@ export enum StorageKey {
   // GA4 Dimensions and metrics explorer
   ga4DimensionsMetrics = "/ga4/dimensions-metrics/",
   ga4DimensionsMetricsExplorerAPS = "/ga4/dimensions-metrics-explorer/aps",
-  ga4DimensionsMetricsSearch = "/ga4/dimensions-metrics-explorer/search",
   ga4DimensionsMetricsFields = "/ga4/dimensions-metrics-explorer/fields",
   ga4DimensionsMetricsAccountSummaries = "/ga4/dimensions-metrics-explorer/account-summaries",
   ga4DimensionsMetricsSelectedAccount = "/ga4/dimensions-metrics-explorer/selected-account",
