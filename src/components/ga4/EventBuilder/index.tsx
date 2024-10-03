@@ -104,20 +104,20 @@ const Root = styled('div')((
 }));
 
 export enum Label {
-  APISecret = "api_secret",
+  APISecret = "api secret",
 
-  FirebaseAppID = "firebase_app_id",
-  AppInstanceID = "app_instance_id",
+  FirebaseAppID = "firebase app id",
+  AppInstanceID = "app instance id",
 
-  MeasurementID = "measurement_id",
-  ClientID = "client_id",
+  MeasurementID = "measurement id",
+  ClientID = "client id",
 
-  UserId = "user_id",
+  UserId = "user id",
 
-  EventCategory = "event_category",
-  EventName = "event_name",
-  TimestampMicros = "timestamp_micros",
-  NonPersonalizedAds = "non_personalized_ads",
+  EventCategory = "event category",
+  EventName = "event name",
+  TimestampMicros = "timestamp micros",
+  NonPersonalizedAds = "non personalized ads",
 
   Payload = "payload",
 
@@ -251,7 +251,7 @@ const EventBuilder: React.FC = () => {
   return (
     <Root>
       <Typography variant="h3">Overview</Typography>
-      <Typography>
+      <Typography component={'span'}>
         The GA4 Event Builder allows you to create, validate, and send events
         using the {ga4MeasurementProtocol}.
       </Typography>
@@ -361,7 +361,7 @@ const EventBuilder: React.FC = () => {
           onChange={setUserId}
         />
     {
-      useFirebase && (
+
         <>
           <WithHelpText
             notched
@@ -388,45 +388,11 @@ const EventBuilder: React.FC = () => {
 
           <br/>
         </>
-      )
+
     }
 
     { useTextBox &&
         <>
-          <LinkedTextField
-            required
-            href="https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference#api_secret"
-            linkTitle="See api_secret on devsite."
-            value={api_secret || ""}
-            label={Label.APISecret}
-            id={Label.APISecret}
-            helperText="The API secret for the property to send the event to."
-            onChange={setAPISecret}
-          />
-          {useFirebase ? (
-              <LinkedTextField
-                required
-                href="https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference?client_type=firebase#firebase_app_id"
-                linkTitle="See firebase_app_id on devsite."
-                value={firebase_app_id || ""}
-                label={Label.FirebaseAppID}
-                id={Label.FirebaseAppID}
-                helperText="The identifier for your firebase app."
-                onChange={setFirebaseAppId}
-              />
-          ) : (
-              <LinkedTextField
-                required
-                href="https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference?client_type=gtag#measurement_id"
-                linkTitle="See measurement_id on devsite."
-                value={measurement_id || ""}
-                label={Label.MeasurementID}
-                id={Label.MeasurementID}
-                helperText="The identifier for your data stream."
-                onChange={setMeasurementId}
-              />
-          )}
-
         <TextBox
           required
           href="https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference?client_type=firebase#payload_post_body"
@@ -466,74 +432,7 @@ const EventBuilder: React.FC = () => {
     { !useTextBox &&
       <div>
         <section className={classes.form}>
-          <LinkedTextField
-            required
-            href="https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference#api_secret"
-            linkTitle="See api_secret on devsite."
-            value={api_secret || ""}
-            label={Label.APISecret}
-            id={Label.APISecret}
-            helperText="The API secret for the property to send the event to."
-            onChange={setAPISecret}
-          />
-          {useFirebase ? (
-            <>
-              <LinkedTextField
-                required
-                href="https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference?client_type=firebase#firebase_app_id"
-                linkTitle="See firebase_app_id on devsite."
-                value={firebase_app_id || ""}
-                label={Label.FirebaseAppID}
-                id={Label.FirebaseAppID}
-                helperText="The identifier for your firebase app."
-                onChange={setFirebaseAppId}
-              />
-              <LinkedTextField
-                required
-                href="https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference?client_type=firebase#app_instance_id"
-                linkTitle="See app_instance_id on devsite."
-                value={app_instance_id || ""}
-                label={Label.AppInstanceID}
-                id={Label.AppInstanceID}
-                helperText="The unique identifier for a specific Firebase installation."
-                onChange={setAppInstanceId}
-              />
-            </>
-          ) : (
-            <>
-              <LinkedTextField
-                required
-                href="https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference?client_type=gtag#measurement_id"
-                linkTitle="See measurement_id on devsite."
-                value={measurement_id || ""}
-                label={Label.MeasurementID}
-                id={Label.MeasurementID}
-                helperText="The identifier for your data stream."
-                onChange={setMeasurementId}
-              />
-              <LinkedTextField
-                required
-                href="https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference?client_type=gtag#client_id"
-                linkTitle="See client_id on devsite."
-                value={client_id || ""}
-                label={Label.ClientID}
-                id={Label.ClientID}
-                helperText="The unique identifier for an instance of a web client."
-                onChange={setClientId}
-              />
-            </>
-          )}
-          <LinkedTextField
-            href={`https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference?client_type=${
-              useFirebase ? "firebase" : "gtag"
-            }#user_id`}
-            linkTitle="See user_id on devsite."
-            value={user_id || ""}
-            label={Label.UserId}
-            id={Label.UserId}
-            helperText="The unique identifier for a given user."
-            onChange={setUserId}
-          />
+
 
           <Autocomplete<Category, false, true, true>
             data-testid={Label.EventCategory}
@@ -599,13 +498,7 @@ const EventBuilder: React.FC = () => {
                   variant="outlined"
                   helperText={
                     <>
-                      The name of the event. See{" "}
-                      <ExternalLink
-                        href={`https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference/events#${type}`}
-                      >
-                        {type}
-                      </ExternalLink>{" "}
-                      on devsite.
+                      The name of the event.
                     </>
                   }
                 />
@@ -640,15 +533,6 @@ const EventBuilder: React.FC = () => {
             helpText={
               <>
                 Check to indicate events should not be used for personalized ads.
-                See{" "}
-                <ExternalLink
-                  href={`https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference?client_type=${
-                    useFirebase ? "firebase" : "gtag"
-                  }#non_personalized_ads`}
-                >
-                  non_personalized_ads
-                </ExternalLink>{" "}
-                on devsite.
               </>
             }
           >
