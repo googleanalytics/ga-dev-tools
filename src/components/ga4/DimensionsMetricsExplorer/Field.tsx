@@ -58,68 +58,6 @@ const Root = styled('div')((
   }
 }));
 
-const knownLinks: [string, JSX.Element][] = [
-  [
-    "<https://support.google.com/analytics/answer/9267568>",
-    <ExternalLink href="https://support.google.com/analytics/answer/9267568">
-      Set up and manage conversion events
-    </ExternalLink>,
-  ],
-  [
-    "<https://support.google.com/google-ads/answer/6323>",
-    <ExternalLink href="https://support.google.com/google-ads/answer/6323">
-      Keywords: Definition
-    </ExternalLink>,
-  ],
-  [
-    "<https://support.google.com/analytics/answer/9213390>",
-    <ExternalLink href="https://support.google.com/analytics/answer/9213390">
-      User-ID for cross-platform analysis
-    </ExternalLink>,
-  ],
-  [
-    "<https://support.google.com/analytics/answer/10108813>",
-    <ExternalLink href="https://support.google.com/analytics/answer/10108813">
-      Data filters
-    </ExternalLink>,
-  ],
-]
-
-const linkifyText = (
-  remainingString: string,
-  elements: (JSX.Element | string)[]
-): [string, (JSX.Element | string)[]] => {
-  const firstMatch = knownLinks.reduce(
-    (acc, [inText], idx) => {
-      const { matchIndex } = acc
-      const currentMatchIndex = remainingString.indexOf(inText)
-      if (currentMatchIndex !== -1) {
-        if (currentMatchIndex < matchIndex || matchIndex === -1) {
-          return {
-            matchIndex: currentMatchIndex,
-            knownLinksIndex: idx,
-          }
-        }
-      }
-      return acc
-    },
-    { knownLinksIndex: -1, matchIndex: -1 }
-  )
-  if (firstMatch.matchIndex === -1) {
-    elements.push(remainingString)
-    return ["", elements]
-  } else {
-    const [inText, link] = knownLinks[firstMatch.knownLinksIndex]
-    const before = remainingString.substring(0, firstMatch.matchIndex)
-    const after = remainingString.substring(
-      firstMatch.matchIndex + inText.length
-    )
-    elements.push(before)
-    elements.push(link)
-    return [after, elements]
-  }
-}
-
 interface FieldProps extends CompatibleHook {
   field:
     | { type: "dimension"; value: Dimension }

@@ -82,8 +82,8 @@ const RenderSuccessful: React.FC<Successful & { aps: AccountProperty }> = ({
                 d.apiName === c.apiName) === undefined &&
             compatibility.incompatibleMetrics?.find(d =>
                 d.apiName === c.apiName) === undefined
-        return viewMode === 'all' || viewMode === 'compatible' &&
-            isCompatible || viewMode === 'incompatible' && !isCompatible;
+        return viewMode === 'all' || (viewMode === 'compatible' &&
+            isCompatible) || (viewMode === 'incompatible' && !isCompatible);
       },
       [viewMode,
         compatibility.incompatibleDimensions,
@@ -97,9 +97,7 @@ const RenderSuccessful: React.FC<Successful & { aps: AccountProperty }> = ({
             dimensions: c.dimensions.filter(fieldDisplayFilter),
             metrics: c.metrics.filter(fieldDisplayFilter),
           })),
-      [viewMode, compatibility.metrics,
-        compatibility.dimensions, compatibility.incompatibleDimensions,
-        compatibility.incompatibleMetrics, categories]
+      [categories, fieldDisplayFilter]
   )
 
   const resetAllCategoryAccordions = (expanded: boolean) =>
