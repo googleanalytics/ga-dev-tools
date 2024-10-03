@@ -97,9 +97,7 @@ const RenderSuccessful: React.FC<Successful & { aps: AccountProperty }> = ({
             dimensions: c.dimensions.filter(fieldDisplayFilter),
             metrics: c.metrics.filter(fieldDisplayFilter),
           })),
-      [viewMode, compatibility.metrics,
-        compatibility.dimensions, compatibility.incompatibleDimensions,
-        compatibility.incompatibleMetrics, categories, fieldDisplayFilter]
+      [categories, fieldDisplayFilter]
   )
 
   const resetAllCategoryAccordions = (expanded: boolean) =>

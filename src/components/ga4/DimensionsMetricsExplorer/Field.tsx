@@ -58,33 +58,6 @@ const Root = styled('div')((
   }
 }));
 
-const knownLinks: [string, JSX.Element][] = [
-  [
-    "<https://support.google.com/analytics/answer/9267568>",
-    <ExternalLink href="https://support.google.com/analytics/answer/9267568">
-      Set up and manage conversion events
-    </ExternalLink>,
-  ],
-  [
-    "<https://support.google.com/google-ads/answer/6323>",
-    <ExternalLink href="https://support.google.com/google-ads/answer/6323">
-      Keywords: Definition
-    </ExternalLink>,
-  ],
-  [
-    "<https://support.google.com/analytics/answer/9213390>",
-    <ExternalLink href="https://support.google.com/analytics/answer/9213390">
-      User-ID for cross-platform analysis
-    </ExternalLink>,
-  ],
-  [
-    "<https://support.google.com/analytics/answer/10108813>",
-    <ExternalLink href="https://support.google.com/analytics/answer/10108813">
-      Data filters
-    </ExternalLink>,
-  ],
-]
-
 interface FieldProps extends CompatibleHook {
   field:
     | { type: "dimension"; value: Dimension }
