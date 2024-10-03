@@ -52,6 +52,8 @@ export enum Url {
   enhancedEcommerceDemo = "https://enhancedecommerce.appspot.com/",
   gaDevToolsGitHub = "https://github.com/googleanalytics/ga-dev-tools",
   gaDevToolsGitHubNewIssue = "https://github.com/googleanalytics/ga-dev-tools/issues/new?assignees=&labels=&template=bug_report.md&title=",
+
+  gaDevToolsHatsSurvey = "https://forms.gle/khM6TxwTpjRfkPk69",
   gaDevToolsGitHubNewFeatureRequest = "https://github.com/googleanalytics/ga-dev-tools/issues/new?assignees=&labels=&template=feature_request.md&title=",
   gaDevsite = "http://developers.google.com/analytics",
   gaDevsiteHelp = "http://developers.google.com/analytics/help/",
