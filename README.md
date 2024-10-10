@@ -55,6 +55,14 @@ yarn start:app:production
 This will set up a local hot-reloading instance of the app that can try out at
 `http://localhost:5000`
 
+### Deployment
+
+Make sure to install all the dependencies as described in the previous step. Then run the following (from the top level directory) and answer all prompts:
+
+```shell
+yarn deploy:app:production
+```
+
 ### Testing
 
 To run tests, first make sure you have all the dependencies installed:
