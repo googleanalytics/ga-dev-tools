@@ -70,19 +70,19 @@ const add_payment_info = eventFor(
     stringParam("coupon", "SUMMER_FUN"),
     stringParam("currency", "USD"),
     stringParam("payment_type", "Credit Card"),
-    numberParam("value", 7.77),
+    numberParam("value", 30.03),
   ],
   [
     stringParam("item_id", "SKU_12345"),
     stringParam("item_name", "jeggings"),
-    numberParam("quantity", 1),
+    numberParam("quantity", 3),
     stringParam("affiliation", "Google Store"),
     stringParam("coupon", "SUMMER_FUN"),
     numberParam("discount", 2.22),
     stringParam("item_brand", "Gucci"),
     stringParam("item_category", "pants"),
     stringParam("item_variant", "Black"),
-    numberParam("price", 9.99),
+    numberParam("price", 10.01),
     stringParam("currency", "USD"),
   ]
 )
@@ -94,19 +94,19 @@ const add_shipping_info = eventFor(
     stringParam("coupon", "SUMMER_FUN"),
     stringParam("currency", "USD"),
     stringParam("shipping_tier", "Ground"),
-    numberParam("value", 7.77),
+    numberParam("value", 30.03),
   ],
   [
     stringParam("item_id", "SKU_12345"),
     stringParam("item_name", "jeggings"),
-    numberParam("quantity", 1),
+    numberParam("quantity", 3),
     stringParam("affiliation", "Google Store"),
     stringParam("coupon", "SUMMER_FUN"),
     numberParam("discount", 2.22),
     stringParam("item_brand", "Gucci"),
     stringParam("item_category", "pants"),
     stringParam("item_variant", "Black"),
-    numberParam("price", 9.99),
+    numberParam("price", 10.01),
     stringParam("currency", "USD"),
   ]
 )
@@ -114,18 +114,18 @@ const add_shipping_info = eventFor(
 const add_to_cart = eventFor(
   EventType.AddToCart,
   [Category.RetailEcommerce],
-  [stringParam("currency", "USD"), numberParam("value", 7.77)],
+  [stringParam("currency", "USD"), numberParam("value", 30.03)],
   [
     stringParam("item_id", "SKU_12345"),
     stringParam("item_name", "jeggings"),
-    numberParam("quantity", 1),
+    numberParam("quantity", 3),
     stringParam("affiliation", "Google Store"),
     stringParam("coupon", "SUMMER_FUN"),
     numberParam("discount", 2.22),
     stringParam("item_brand", "Gucci"),
     stringParam("item_category", "pants"),
     stringParam("item_variant", "Black"),
-    numberParam("price", 9.99),
+    numberParam("price", 10.01),
     stringParam("currency", "USD"),
   ]
 )
@@ -133,18 +133,18 @@ const add_to_cart = eventFor(
 const add_to_wishlist = eventFor(
   EventType.AddToWishlist,
   [Category.RetailEcommerce],
-  [stringParam("currency", "USD"), numberParam("value", 7.77)],
+  [stringParam("currency", "USD"), numberParam("value", 30.03)],
   [
     stringParam("item_id", "SKU_12345"),
     stringParam("item_name", "jeggings"),
-    numberParam("quantity", 1),
+    numberParam("quantity", 3),
     stringParam("affiliation", "Google Store"),
     stringParam("coupon", "SUMMER_FUN"),
     numberParam("discount", 2.22),
     stringParam("item_brand", "Gucci"),
     stringParam("item_category", "pants"),
     stringParam("item_variant", "Black"),
-    numberParam("price", 9.99),
+    numberParam("price", 10.01),
     stringParam("currency", "USD"),
   ]
 )
@@ -155,19 +155,19 @@ const begin_checkout = eventFor(
   [
     stringParam("coupon", "SUMMER_FUN"),
     stringParam("currency", "USD"),
-    numberParam("value", 7.77),
+    numberParam("value", 30.03),
   ],
   [
     stringParam("item_id", "SKU_12345"),
     stringParam("item_name", "jeggings"),
-    numberParam("quantity", 1),
+    numberParam("quantity", 3),
     stringParam("affiliation", "Google Store"),
     stringParam("coupon", "SUMMER_FUN"),
     numberParam("discount", 2.22),
     stringParam("item_brand", "Gucci"),
     stringParam("item_category", "pants"),
     stringParam("item_variant", "Black"),
-    numberParam("price", 9.99),
+    numberParam("price", 10.01),
     stringParam("currency", "USD"),
   ]
 )
@@ -235,12 +235,12 @@ const purchase = eventFor(
     stringParam("transaction_id", "T_12345"),
     numberParam("shipping", 3.33),
     numberParam("tax", 1.11),
-    numberParam("value", 12.21),
+    numberParam("value", 30.03),
   ],
   [
     stringParam("item_id", "SKU_12345"),
     stringParam("item_name", "jeggings"),
-    numberParam("quantity", 1),
+    numberParam("quantity", 3),
     stringParam("affiliation", "Google Store"),
     stringParam("coupon", "SUMMER_FUN"),
     numberParam("discount", 2.22),
@@ -248,7 +248,7 @@ const purchase = eventFor(
     stringParam("item_category", "pants"),
     stringParam("item_variant", "Black"),
     numberParam("tax", 1.11),
-    numberParam("price", 9.99),
+    numberParam("price", 10.01),
     stringParam("currency", "USD"),
   ]
 )
@@ -263,12 +263,12 @@ const refund = eventFor(
     stringParam("transaction_id", "T_12345"),
     numberParam("shipping", 3.33),
     numberParam("tax", 1.11),
-    numberParam("value", 12.21),
+    numberParam("value", 30.03),
   ],
   [
     stringParam("item_id", "SKU_12345"),
     stringParam("item_name", "jeggings"),
-    numberParam("quantity", 1),
+    numberParam("quantity", 3),
     stringParam("affiliation", "Google Store"),
     stringParam("coupon", "SUMMER_FUN"),
     numberParam("discount", 2.22),
@@ -276,7 +276,7 @@ const refund = eventFor(
     stringParam("item_category", "pants"),
     stringParam("item_variant", "Black"),
     numberParam("tax", 1.11),
-    numberParam("price", 9.99),
+    numberParam("price", 10.01),
     stringParam("currency", "USD"),
   ]
 )
@@ -284,18 +284,18 @@ const refund = eventFor(
 const remove_from_cart = eventFor(
   EventType.RemoveFromCart,
   [Category.RetailEcommerce],
-  [stringParam("currency", "USD"), numberParam("value", 7.77)],
+  [stringParam("currency", "USD"), numberParam("value", 30.03)],
   [
     stringParam("item_id", "SKU_12345"),
     stringParam("item_name", "jeggings"),
-    numberParam("quantity", 1),
+    numberParam("quantity", 3),
     stringParam("affiliation", "Google Store"),
     stringParam("coupon", "SUMMER_FUN"),
     numberParam("discount", 2.22),
     stringParam("item_brand", "Gucci"),
     stringParam("item_category", "pants"),
     stringParam("item_variant", "Black"),
-    numberParam("price", 9.99),
+    numberParam("price", 10.01),
     stringParam("currency", "USD"),
   ]
 )
@@ -331,7 +331,7 @@ const select_item = eventFor(
   [
     stringParam("item_id", "SKU_12345"),
     stringParam("item_name", "jeggings"),
-    numberParam("quantity", 1),
+    numberParam("quantity", 3),
     stringParam("affiliation", "Google Store"),
     stringParam("coupon", "SUMMER_FUN"),
     numberParam("discount", 2.22),
@@ -341,7 +341,7 @@ const select_item = eventFor(
     stringParam("item_list_name", "Related products"),
     stringParam("item_list_id", "related_products"),
     stringParam("item_variant", "Black"),
-    numberParam("price", 9.99),
+    numberParam("price", 10.01),
     stringParam("currency", "USD"),
   ]
 )
@@ -353,7 +353,7 @@ const select_promotion = eventFor(
   [
     stringParam("item_id", "SKU_12345"),
     stringParam("item_name", "jeggings"),
-    numberParam("quantity", 1),
+    numberParam("quantity", 3),
     stringParam("promotion_id", "P_12345"),
     stringParam("promotion_name", "Summer Sale"),
     stringParam("affiliation", "Google Store"),
@@ -365,7 +365,7 @@ const select_promotion = eventFor(
     stringParam("item_category", "pants"),
     stringParam("item_variant", "Black"),
     stringParam("location_id", "L_12345"),
-    numberParam("price", 9.99),
+    numberParam("price", 10.01),
     stringParam("currency", "USD"),
   ]
 )
@@ -413,18 +413,18 @@ const unlock_achievement = eventFor(
 const view_cart = eventFor(
   EventType.ViewCart,
   [Category.RetailEcommerce],
-  [stringParam("currency", "USD"), numberParam("value", 7.77)],
+  [stringParam("currency", "USD"), numberParam("value", 30.03)],
   [
     stringParam("item_id", "SKU_12345"),
     stringParam("item_name", "jeggings"),
-    numberParam("quantity", 1),
+    numberParam("quantity", 3),
     stringParam("affiliation", "Google Store"),
     stringParam("coupon", "SUMMER_FUN"),
     numberParam("discount", 2.22),
     stringParam("item_brand", "Gucci"),
     stringParam("item_category", "pants"),
     stringParam("item_variant", "Black"),
-    numberParam("price", 9.99),
+    numberParam("price", 10.01),
     stringParam("currency", "USD"),
   ]
 )
@@ -432,18 +432,18 @@ const view_cart = eventFor(
 const view_item = eventFor(
   EventType.ViewItem,
   [Category.RetailEcommerce],
-  [stringParam("currency", "USD"), numberParam("value", 7.77)],
+  [stringParam("currency", "USD"), numberParam("value", 30.03)],
   [
     stringParam("item_id", "SKU_12345"),
     stringParam("item_name", "jeggings"),
-    numberParam("quantity", 1),
+    numberParam("quantity", 3),
     stringParam("affiliation", "Google Store"),
     stringParam("coupon", "SUMMER_FUN"),
     numberParam("discount", 2.22),
     stringParam("item_brand", "Gucci"),
     stringParam("item_category", "pants"),
     stringParam("item_variant", "Black"),
-    numberParam("price", 9.99),
+    numberParam("price", 10.01),
     stringParam("currency", "USD"),
   ]
 )
@@ -458,7 +458,7 @@ const view_item_list = eventFor(
   [
     stringParam("item_id", "SKU_12345"),
     stringParam("item_name", "jeggings"),
-    numberParam("quantity", 1),
+    numberParam("quantity", 3),
     stringParam("affiliation", "Google Store"),
     stringParam("coupon", "SUMMER_FUN"),
     numberParam("discount", 2.22),
@@ -468,7 +468,7 @@ const view_item_list = eventFor(
     stringParam("item_list_name", "Related products"),
     stringParam("item_list_id", "related_products"),
     stringParam("item_variant", "Black"),
-    numberParam("price", 9.99),
+    numberParam("price", 10.01),
     stringParam("currency", "USD"),
   ]
 )
@@ -480,7 +480,7 @@ const view_promotion = eventFor(
   [
     stringParam("item_id", "SKU_12345"),
     stringParam("item_name", "jeggings"),
-    numberParam("quantity", 1),
+    numberParam("quantity", 3),
     stringParam("promotion_id", "P_12345"),
     stringParam("promotion_name", "Summer Sale"),
     stringParam("affiliation", "Google Store"),
@@ -492,7 +492,7 @@ const view_promotion = eventFor(
     stringParam("item_category", "pants"),
     stringParam("item_variant", "Black"),
     stringParam("location_id", "L_12345"),
-    numberParam("price", 9.99),
+    numberParam("price", 10.01),
     stringParam("currency", "USD"),
   ]
 )
@@ -504,7 +504,7 @@ const view_search_results = eventFor(
   [
     stringParam("item_id", "SKU_12345"),
     stringParam("item_name", "jeggings"),
-    numberParam("quantity", 1),
+    numberParam("quantity", 3),
     stringParam("affiliation", "Google Store"),
     stringParam("coupon", "SUMMER_FUN"),
     numberParam("discount", 2.22),
@@ -514,7 +514,7 @@ const view_search_results = eventFor(
     stringParam("item_list_name", "Related products"),
     stringParam("item_list_id", "related_products"),
     stringParam("item_variant", "Black"),
-    numberParam("price", 9.99),
+    numberParam("price", 10.01),
     stringParam("currency", "USD"),
   ]
 )
