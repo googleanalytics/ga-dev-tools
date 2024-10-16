@@ -89,6 +89,13 @@ const IndexPage: React.FC = () => {
       <Typography variant="h3">For this site</Typography>
       <Typography variant="body1" component="ul">
         <li>
+          Fill out a{" "}
+          <ExternalLink href={Url.gaDevToolsHatsSurvey}>
+            brief customer survey
+          </ExternalLink>{" "}
+          and let us know what you think!
+        </li>
+        <li>
           You may report bugs by{" "}
           <ExternalLink href={Url.gaDevToolsGitHubNewIssue}>
             submitting an issue

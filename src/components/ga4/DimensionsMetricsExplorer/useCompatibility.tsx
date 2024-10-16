@@ -6,10 +6,13 @@ import { Dimension, Metric } from "./useDimensionsAndMetrics"
 type CheckCompatibilityResponse = gapi.client.analyticsdata.CheckCompatibilityResponse
 
 export interface CompatibleHook {
-  dimensions: Dimension[] | undefined
-  incompatibleDimensions: Dimension[] | undefined
+  dimensions?: Dimension[]
   metrics: Metric[] | undefined
+  incompatibleDimensions: Dimension[] | undefined
   incompatibleMetrics: Metric[] | undefined
+  setDimensions:  (value: (((prevState: (Dimension[] | undefined)) => (Dimension[] | undefined)) | Dimension[] | undefined)) => void
+  setMetrics:  (value: (((prevState: (Metric[] | undefined)) => (Metric[] | undefined)) | Metric[] | undefined)) => void
+
   addDimension: (d: Dimension) => void
   removeDimension: (d: Dimension) => void
   addMetric: (m: Metric) => void
@@ -95,6 +98,8 @@ const useCompatibility = (ap: AccountProperty): CompatibleHook => {
   return {
     dimensions,
     metrics,
+    setDimensions,
+    setMetrics,
     addDimension,
     removeDimension,
     addMetric,
