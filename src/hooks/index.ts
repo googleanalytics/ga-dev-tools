@@ -197,13 +197,13 @@ const getRedirectInfo = (
           }
         case "/ga4/":
           return {
-            redirectPath: "/account-explorer/",
-            toast: "Redirecting to the UA Account Explorer.",
+            redirectPath: "/",
+            toast: "Redirecting to the UA home page.",
           }
         default:
           return {
-            redirectPath: "/account-explorer/",
-            toast: "Redirecting to the UA Account Explorer page.",
+            redirectPath: "/",
+            toast: "No UA demo. Redirecting to the UA home page.",
           }
       }
     }

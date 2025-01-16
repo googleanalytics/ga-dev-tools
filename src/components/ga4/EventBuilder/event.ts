@@ -50,19 +50,6 @@ const eventFor = (
 
 const custom_event = eventFor(EventType.CustomEvent, [Category.Custom], [], [])
 
-const ad_impression = eventFor(
-    EventType.AdImpression,
-    [Category.AllApps],
-    [
-      stringParam("ad_platform", "MoPub"),
-      stringParam("ad_source", "AdColony"),
-      stringParam("ad_format", "Banner"),
-      stringParam("ad_unit_name", "Banner_03"),
-      stringParam("currency", "USD"),
-      numberParam("value", 	3.99),
-    ]
-)
-
 const add_payment_info = eventFor(
   EventType.AddPaymentInfo,
   [Category.RetailEcommerce],
@@ -170,19 +157,6 @@ const begin_checkout = eventFor(
     numberParam("price", 9.99),
     stringParam("currency", "USD"),
   ]
-)
-
-const campaign_details = eventFor(
-    EventType.CampaignDetails,
-    [Category.AllApps],
-    [
-      stringParam("campaign_id", "SUMMER_FUN"),
-      stringParam("campaign", "Summer_fun"),
-      stringParam("source", "google"),
-      stringParam("medium", "cpc"),
-      stringParam("term", "summer+travel"),
-      stringParam("content", "logolink"),
-    ]
 )
 
 const earn_virtual_currency = eventFor(
@@ -524,8 +498,6 @@ export const suggestedEventFor = (eventType: EventType): Event2 => {
     case EventType.CustomEvent:
       return custom_event
 
-    case EventType.AdImpression:
-      return ad_impression
     case EventType.AddPaymentInfo:
       return add_payment_info
     case EventType.AddShippingInfo:
@@ -536,8 +508,6 @@ export const suggestedEventFor = (eventType: EventType): Event2 => {
       return add_to_wishlist
     case EventType.BeginCheckout:
       return begin_checkout
-    case EventType.CampaignDetails:
-      return campaign_details
     case EventType.EarnVirtualCurrency:
       return earn_virtual_currency
     case EventType.GenerateLead:
