@@ -204,16 +204,6 @@ const Template: React.FC<PropsWithChildren<LayoutProps & TemplateProps>> = ({
                       </Typography>
                   )
                 }
-                if (linkData.type === "ga4toggle") {
-                  return (
-                      <li key={linkData.type} className={classes.innerNav}>
-                        <GA4Toggle
-                            setGAVersion={setGAVersion}
-                            gaVersion={gaVersion}
-                        />
-                      </li>
-                  )
-                }
                 return (
                     <ListItem
                         button
@@ -252,16 +242,6 @@ const Template: React.FC<PropsWithChildren<LayoutProps & TemplateProps>> = ({
                       <Typography className={clsx(classes.subHeading)} variant="h6">
                         {linkData.text}
                       </Typography>
-                    </li>
-                )
-              }
-              if (linkData.type === "ga4toggle") {
-                return (
-                    <li key={linkData.type} className={classes.innerNav}>
-                      <GA4Toggle
-                          setGAVersion={setGAVersion}
-                          gaVersion={gaVersion}
-                      />
                     </li>
                 )
               }

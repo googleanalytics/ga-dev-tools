@@ -137,7 +137,7 @@ export const WebURLBuilder: React.FC<WebURLBuilderProps> = ({ version }) => {
 
   return (
     (<Root>
-      <Typography variant="body1">
+      <Typography component={'span'} variant="body1">
         This tool allows you to easily add campaign parameters to URLs so you
         can measure {customCampaigns} in Google Analytics.
       </Typography>
