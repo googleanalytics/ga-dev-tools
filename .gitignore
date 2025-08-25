@@ -62,6 +62,7 @@ public
 .DS_Store
 
 # Yarn
+yarn.lock
 yarn-error.log
 .pnp/
 .pnp.js
@@ -69,3 +70,6 @@ yarn-error.log
 .yarn-integrity
 /runtime.json
 .firebase/
+
+# Build files
+lib/build/

@@ -13,7 +13,7 @@
 // limitations under the License.
 
 import * as React from "react"
-import { styled } from '@mui/material/styles';
+import { styled } from "@mui/material/styles"
 import SyntaxHighlighter from "react-syntax-highlighter"
 import { SyntaxHighlighterProps } from "react-syntax-highlighter"
 import Paper from "@mui/material/Paper"
@@ -21,18 +21,14 @@ import Tabs from "@mui/material/Tabs"
 import Tab from "@mui/material/Tab"
 import CopyButton from "./CopyButton"
 
-const PREFIX = 'CodeBlock';
+const PREFIX = "CodeBlock"
 
 const classes = {
   codeBlock: `${PREFIX}-codeBlock`,
-  code: `${PREFIX}-code`
-};
+  code: `${PREFIX}-code`,
+}
 
-const StyledPaper = styled(Paper)((
-  {
-    theme
-  }
-) => ({
+const StyledPaper = styled(Paper)(({ theme }) => ({
   [`& .${classes.codeBlock}`]: {
     display: "flex",
     padding: theme.spacing(2),
@@ -42,15 +38,15 @@ const StyledPaper = styled(Paper)((
 
   [`& .${classes.code}`]: {
     "flex-grow": "1",
-  }
-}));
+  },
+}))
 
 interface BlockData {
   code: string
   title: string
 }
 
-interface CodeBlockProps extends SyntaxHighlighterProps {
+interface CodeBlockProps extends Omit<SyntaxHighlighterProps, "children"> {
   codeBlocks: BlockData[]
   className?: string
 }
@@ -60,7 +56,6 @@ const CodeBlock: React.FC<CodeBlockProps> = ({
   className,
   ...props
 }) => {
-
   const [selectedTab, setSelectedTab] = React.useState(0)
 
   return (
@@ -94,7 +89,7 @@ const CodeBlock: React.FC<CodeBlockProps> = ({
         )
       )}
     </StyledPaper>
-  );
+  )
 }
 
 export default CodeBlock
