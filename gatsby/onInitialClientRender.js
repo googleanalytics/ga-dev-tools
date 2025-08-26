@@ -16,9 +16,6 @@ export const onInitialClientRender = () => {
     window.gapi.load("client:auth2:analytics", () => {
       Promise.all([
         window.gapi.client.load(
-          "https://analyticsreporting.googleapis.com/$discovery/rest?version=v4"
-        ),
-        window.gapi.client.load(
           "https://analyticsdata.googleapis.com/$discovery/rest"
         ),
         window.gapi.client.load(
