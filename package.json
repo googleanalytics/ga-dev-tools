@@ -72,7 +72,7 @@
     "@types/react-dom": "^18.2.0",
     "@types/react-helmet": "^6.1.1",
     "@types/react-redux": "^7.1.9",
-    "@types/react-syntax-highlighter": "^15.5.3",
+    "@types/react-syntax-highlighter": "^13.5.0",
     "@types/react-test-renderer": "^18.0.0",
     "@types/uuid": "^8.3.0",
     "@typescript-eslint/eslint-plugin": "^4.0.0",
@@ -102,8 +102,6 @@
     "typescript": "^5.0.4"
   },
   "overrides": {
-    "@types/react": "^18.2.0",
-    "@types/react-dom": "^18.2.0",
     "react-server-dom-webpack@0.0.0-experimental-c8b778b7f-20220825": {
       "react": "^18.2.0"
     }
