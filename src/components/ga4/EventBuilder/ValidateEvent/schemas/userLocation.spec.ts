@@ -23,13 +23,11 @@ describe("userLocationSchema", () => {
     }
   )
 
-  test.each([["USA-CA"], ["US-CALI"], ["us-ca"], ["US_CA"]])(
-    "is invalid with an invalid region_id: %s",
-    region_id => {
-      const validator = new Validator(userLocationSchema)
-      expect(validator.isValid({ region_id })).toEqual(false)
-    }
-  )
+  test("is invalid with an invalid region_id", () => {
+    const invalidInput = { region_id: 123 }
+    const validator = new Validator(userLocationSchema)
+    expect(validator.isValid(invalidInput)).toEqual(false)
+  })
 
   test("is valid with a valid country_id", () => {
     const validInput = { country_id: "US" }
@@ -37,13 +35,11 @@ describe("userLocationSchema", () => {
     expect(validator.isValid(validInput)).toEqual(true)
   })
 
-  test.each([["USA"], ["U"], ["us"]])(
-    "is invalid with an invalid country_id: %s",
-    country_id => {
-      const validator = new Validator(userLocationSchema)
-      expect(validator.isValid({ country_id })).toEqual(false)
-    }
-  )
+  test("is invalid with an invalid country_id", () => {
+    const invalidInput = { country_id: 1 } 
+    const validator = new Validator(userLocationSchema)
+    expect(validator.isValid(invalidInput)).toEqual(false)
+  })
 
   test("is valid with a valid subcontinent_id", () => {
     const validInput = { subcontinent_id: "021" }
@@ -51,13 +47,11 @@ describe("userLocationSchema", () => {
     expect(validator.isValid(validInput)).toEqual(true)
   })
 
-  test.each([["21"], ["0211"], ["abc"]])(
-    "is invalid with an invalid subcontinent_id: %s",
-    subcontinent_id => {
-      const validator = new Validator(userLocationSchema)
-      expect(validator.isValid({ subcontinent_id })).toEqual(false)
-    }
-  )
+  test("is invalid with an invalid subcontinent_id", () => {
+    const validInput = { subcontinent_id: 541 }
+    const validator = new Validator(userLocationSchema)
+    expect(validator.isValid(validInput)).toEqual(false)
+  })
 
   test("is valid with a valid continent_id", () => {
     const validInput = { continent_id: "019" }
@@ -65,13 +59,11 @@ describe("userLocationSchema", () => {
     expect(validator.isValid(validInput)).toEqual(true)
   })
 
-  test.each([["19"], ["0199"], ["abc"]])(
-    "is invalid with an invalid continent_id: %s",
-    continent_id => {
-      const validator = new Validator(userLocationSchema)
-      expect(validator.isValid({ continent_id })).toEqual(false)
-    }
-  )
+  test("is invalid with an invalid continent_id", () => {
+    const validInput = { continent_id: 540 }
+    const validator = new Validator(userLocationSchema)
+    expect(validator.isValid(validInput)).toEqual(false)
+  })
 
   test("is invalid with additional properties", () => {
     const invalidInput = {

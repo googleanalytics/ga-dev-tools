@@ -71,7 +71,9 @@ const usePayload = (): {} => {
     clientIds,
     type,
     useTextBox,
-    payloadObj
+    payloadObj,
+    ip_override,
+    user_location,
   } = useContext(EventCtx)!
 
   const eventName = useMemo(() => {
@@ -93,15 +95,26 @@ const usePayload = (): {} => {
     [items]
   )
 
-  const params = useMemo(() => parameters.reduce(objectify, itemsParameter), [
-    parameters,
-    itemsParameter,
-  ])
+  const params = useMemo(
+    () => parameters.reduce(objectify, itemsParameter),
+    [parameters, itemsParameter]
+  )
 
   const user_properties = useMemo(
     () => userProperties.reduce(objectifyUserProperties, {}),
     [userProperties]
   )
+
+  const final_user_location = useMemo(() => {
+    if (user_location === undefined) {
+      return undefined
+    }
+    const cleaned_location = removeUndefined(user_location)
+    if (Object.keys(cleaned_location).length === 0) {
+      return undefined
+    }
+    return cleaned_location
+  }, [user_location])
 
   let payload = useMemo(() => {
     return {
@@ -109,6 +122,7 @@ const usePayload = (): {} => {
       ...removeUndefined({ timestamp_micros }),
       ...removeUndefined({ non_personalized_ads }),
       ...removeUndefined(removeEmptyObject({ user_properties })),
+      ...removeUndefined({ ip_override, user_location: final_user_location }),
       events: [
         { name: eventName, ...(parameters.length > 0 ? { params } : {}) },
       ],
@@ -121,6 +135,8 @@ const usePayload = (): {} => {
     params,
     timestamp_micros,
     user_properties,
+    ip_override,
+    final_user_location,
   ])
 
   if (useTextBox) {

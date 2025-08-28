@@ -36,13 +36,14 @@ import { TooltipIconButton } from "@/components/Buttons"
 import useEvent from "./useEvent"
 import Parameters from "./Parameters"
 import useInputs from "./useInputs"
-import { Category, ClientIds, EventType, InstanceId, Parameter } from "./types"
+import { Category, ClientIds, EventType, InstanceId, Parameter, Label } from "./types"
 import { eventsForCategory } from "./event"
 import useUserProperties from "./useUserProperties"
 import Items from "./Items"
 import ValidateEvent from "./ValidateEvent"
 import { PlainButton } from "@/components/Buttons"
 import { useEffect } from "react"
+import GeographicInformation from "./GeographicInformation";
 
 const PREFIX = 'EventBuilder';
 
@@ -103,35 +104,6 @@ const Root = styled('div')((
   }
 }));
 
-export enum Label {
-  APISecret = "api secret",
-
-  FirebaseAppID = "firebase app id",
-  AppInstanceID = "app instance id",
-
-  MeasurementID = "measurement id",
-  ClientID = "client id",
-
-  UserId = "user id",
-
-  EventCategory = "event category",
-  EventName = "event name",
-  TimestampMicros = "timestamp micros",
-  NonPersonalizedAds = "non personalized ads",
-
-  Payload = "payload",
-
-  // event params
-  Coupon = '#/events/0/params/coupon',
-  Currency = '#/events/0/params/currency',
-  Value = '#/events/0/params/value',
-  ItemId = '#/events/0/params/item_id',
-  TransactionId = '#/events/0/params/transaction_id',
-  Affiliation = '#/events/0/params/affiliation',
-  Shipping = '#/events/0/params/shipping',
-  Tax = '#/events/0/params/tax',
-}
-
 const ga4MeasurementProtocol = (
   <ExternalLink href={Url.ga4MeasurementProtocol}>
     GA4 Measurement Protocol
@@ -151,16 +123,20 @@ export type EventPayload = {
   api_secret: string
   useTextBox: boolean
   payloadObj: any
+  ip_override: string | undefined
+  user_location: {
+    city: string | undefined
+    region_id: string | undefined
+    country_id: string | undefined
+    subcontinent_id: string | undefined
+    continent_id: string | undefined
+  }
 }
-export const EventCtx = React.createContext<
-  | EventPayload
-  | undefined
->(undefined)
+export const EventCtx = React.createContext<EventPayload | undefined>(undefined)
 export const ShowAdvancedCtx = React.createContext(false)
 export const UseFirebaseCtx = React.createContext(false)
 
 const EventBuilder: React.FC = () => {
-
   const [showAdvanced, setShowAdvanced] = React.useState(false)
   const {
     userProperties,
@@ -224,20 +200,30 @@ const EventBuilder: React.FC = () => {
     setTimestampMicros,
     non_personalized_ads,
     setNonPersonalizedAds,
+    ip_override,
+    setIpOverride,
+    user_location_city,
+    setUserLocationCity,
+    user_location_region_id,
+    setUserLocationRegionId,
+    user_location_country_id,
+    setUserLocationCountryId,
+    user_location_subcontinent_id,
+    setUserLocationSubcontinentId,
+    user_location_continent_id,
+    setUserLocationContinentId,
   } = useInputs(categories)
 
-  const formatPayload = React.useCallback( () => {
+  const formatPayload = React.useCallback(() => {
     try {
       if (inputPayload) {
         let payload = JSON.parse(inputPayload) as object
-        setPayloadObj(JSON.stringify(payload, null, '\t'))
-        setPayloadErrors('')
-      }
-      else {
-        setPayloadErrors('Empty Payload')
+        setPayloadObj(JSON.stringify(payload, null, "\t"))
+        setPayloadErrors("")
+      } else {
+        setPayloadErrors("Empty Payload")
         setPayloadObj({})
       }
-
     } catch (err: any) {
       setPayloadErrors(err.message)
       setPayloadObj({})
@@ -248,10 +234,27 @@ const EventBuilder: React.FC = () => {
     formatPayload()
   }, [inputPayload, formatPayload])
 
+  useEffect(() => {
+    // Clear geographic information on page load.
+    setIpOverride("")
+    setUserLocationCity("")
+    setUserLocationRegionId("")
+    setUserLocationCountryId("")
+    setUserLocationSubcontinentId("")
+    setUserLocationContinentId("")
+  }, [
+    setIpOverride,
+    setUserLocationCity,
+    setUserLocationRegionId,
+    setUserLocationCountryId,
+    setUserLocationSubcontinentId,
+    setUserLocationContinentId,
+  ])
+
   return (
     <Root>
       <Typography variant="h3">Overview</Typography>
-      <Typography component={'span'}>
+      <Typography component={"span"}>
         The GA4 Event Builder allows you to create, validate, and send events
         using the {ga4MeasurementProtocol}.
       </Typography>
@@ -292,76 +295,75 @@ const EventBuilder: React.FC = () => {
         After choosing a client, fill out the inputs below.
       </Typography>
 
-        <LinkedTextField
-          required
-          href="https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference#api_secret"
-          linkTitle="See api_secret on devsite."
-          value={api_secret || ""}
-          label={Label.APISecret}
-          id={Label.APISecret}
-          helperText="The API secret for the property to send the event to."
-          onChange={setAPISecret}
-        />
-        {useFirebase ? (
-          <>
-            <LinkedTextField
-              required
-              href="https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference?client_type=firebase#firebase_app_id"
-              linkTitle="See firebase_app_id on devsite."
-              value={firebase_app_id || ""}
-              label={Label.FirebaseAppID}
-              id={Label.FirebaseAppID}
-              helperText="The identifier for your firebase app."
-              onChange={setFirebaseAppId}
-            />
-            <LinkedTextField
-              required
-              href="https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference?client_type=firebase#app_instance_id"
-              linkTitle="See app_instance_id on devsite."
-              value={app_instance_id || ""}
-              label={Label.AppInstanceID}
-              id={Label.AppInstanceID}
-              helperText="The unique identifier for a specific Firebase installation."
-              onChange={setAppInstanceId}
-            />
-          </>
-        ) : (
-          <>
-            <LinkedTextField
-              required
-              href="https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference?client_type=gtag#measurement_id"
-              linkTitle="See measurement_id on devsite."
-              value={measurement_id || ""}
-              label={Label.MeasurementID}
-              id={Label.MeasurementID}
-              helperText="The identifier for your data stream."
-              onChange={setMeasurementId}
-            />
-            <LinkedTextField
-              required
-              href="https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference?client_type=gtag#client_id"
-              linkTitle="See client_id on devsite."
-              value={client_id || ""}
-              label={Label.ClientID}
-              id={Label.ClientID}
-              helperText="The unique identifier for an instance of a web client."
-              onChange={setClientId}
-            />
-          </>
-        )}
-        <LinkedTextField
-          href={`https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference?client_type=${
-            useFirebase ? "firebase" : "gtag"
-          }#user_id`}
-          linkTitle="See user_id on devsite."
-          value={user_id || ""}
-          label={Label.UserId}
-          id={Label.UserId}
-          helperText="The unique identifier for a given user."
-          onChange={setUserId}
-        />
-    {
-
+      <LinkedTextField
+        required
+        href="https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference#api_secret"
+        linkTitle="See api_secret on devsite."
+        value={api_secret || ""}
+        label={Label.APISecret}
+        id={Label.APISecret}
+        helperText="The API secret for the property to send the event to."
+        onChange={setAPISecret}
+      />
+      {useFirebase ? (
+        <>
+          <LinkedTextField
+            required
+            href="https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference?client_type=firebase#firebase_app_id"
+            linkTitle="See firebase_app_id on devsite."
+            value={firebase_app_id || ""}
+            label={Label.FirebaseAppID}
+            id={Label.FirebaseAppID}
+            helperText="The identifier for your firebase app."
+            onChange={setFirebaseAppId}
+          />
+          <LinkedTextField
+            required
+            href="https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference?client_type=firebase#app_instance_id"
+            linkTitle="See app_instance_id on devsite."
+            value={app_instance_id || ""}
+            label={Label.AppInstanceID}
+            id={Label.AppInstanceID}
+            helperText="The unique identifier for a specific Firebase installation."
+            onChange={setAppInstanceId}
+          />
+        </>
+      ) : (
+        <>
+          <LinkedTextField
+            required
+            href="https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference?client_type=gtag#measurement_id"
+            linkTitle="See measurement_id on devsite."
+            value={measurement_id || ""}
+            label={Label.MeasurementID}
+            id={Label.MeasurementID}
+            helperText="The identifier for your data stream."
+            onChange={setMeasurementId}
+          />
+          <LinkedTextField
+            required
+            href="https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference?client_type=gtag#client_id"
+            linkTitle="See client_id on devsite."
+            value={client_id || ""}
+            label={Label.ClientID}
+            id={Label.ClientID}
+            helperText="The unique identifier for an instance of a web client."
+            onChange={setClientId}
+          />
+        </>
+      )}
+      <LinkedTextField
+        href={`https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference?client_type=${
+          useFirebase ? "firebase" : "gtag"
+        }#user_id`}
+        linkTitle="See user_id on devsite."
+        value={user_id || ""}
+        label={Label.UserId}
+        id={Label.UserId}
+        helperText="The unique identifier for a given user."
+        onChange={setUserId}
+      />
+      {
         <>
           <WithHelpText
             notched
@@ -386,224 +388,238 @@ const EventBuilder: React.FC = () => {
             </Grid>
           </WithHelpText>
 
-          <br/>
+          <br />
         </>
+      }
 
-    }
-
-    { useTextBox &&
+      {useTextBox && (
         <>
-        <TextBox
-          required
-          href="https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference?client_type=firebase#payload_post_body"
-          linkTitle="JSON Payload Documentation"
-          value={Object.keys(payloadObj).length > 0 ? payloadObj : inputPayload}
-          label={Label.Payload}
-          onChange={(input) => {
+          <TextBox
+            required
+            href="https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference?client_type=firebase#payload_post_body"
+            linkTitle="JSON Payload Documentation"
+            value={
+              Object.keys(payloadObj).length > 0 ? payloadObj : inputPayload
+            }
+            label={Label.Payload}
+            onChange={input => {
               setInputPayload(input)
               formatPayload()
-            }
-          }
-        />
-
-        <br/>
-
-        <br/>
-
-        <PlainButton small
-          onClick={formatPayload}
-        >
-          format payload
-        </PlainButton>
-
-        { payloadErrors && (
-            <TooltipIconButton
-              tooltip={payloadErrors}
-              placement={'top'}
-            >
-              <ErrorIcon
-                style={{color: 'red'}}
-              />
-            </TooltipIconButton>
-        )}
-      </>
-    }
-
-    { !useTextBox &&
-      <div>
-        <section className={classes.form}>
-
-
-          <Autocomplete<Category, false, true, true>
-            data-testid={Label.EventCategory}
-            fullWidth
-            disableClearable
-            autoComplete
-            autoHighlight
-            autoSelect
-            options={Object.values(Category)}
-            getOptionLabel={category => category}
-            value={category}
-            onChange={(_event, value) => {
-              setCategory(value as Category)
-              const events = eventsForCategory(value as Category)
-              if (events.length > 0) {
-                setType(events[0].type)
-              }
             }}
-            renderInput={params => (
-              <TextField
-                {...params}
-                label={Label.EventCategory}
-                id={Label.EventCategory}
-                size="small"
-                variant="outlined"
-                helperText="The category for the event"
-              />
-            )}
           />
-          {type === EventType.CustomEvent ? (
-            <TextField
-              fullWidth
-              variant="outlined"
-              size="small"
-              label={Label.EventName}
-              id={Label.EventName}
-              value={eventName}
-              helperText="The name of the event"
-              onChange={e => {
-                setEventName(e.target.value)
-              }}
-            />
-          ) : (
-            <Autocomplete<EventType, false, true, true>
-              data-testid={Label.EventName}
+
+          <br />
+
+          <br />
+
+          <PlainButton small onClick={formatPayload}>
+            format payload
+          </PlainButton>
+
+          {payloadErrors && (
+            <TooltipIconButton tooltip={payloadErrors} placement={"top"}>
+              <ErrorIcon style={{ color: "red" }} />
+            </TooltipIconButton>
+          )}
+        </>
+      )}
+
+      {!useTextBox && (
+        <div>
+          <section className={classes.form}>
+            <Autocomplete<Category, false, true, true>
+              data-testid={Label.EventCategory}
               fullWidth
               disableClearable
               autoComplete
               autoHighlight
               autoSelect
-              options={eventsForCategory(category).map(e => e.type)}
-              getOptionLabel={eventType => eventType}
-              value={type}
+              options={Object.values(Category)}
+              getOptionLabel={category => category}
+              value={category}
               onChange={(_event, value) => {
-                setType(value as EventType)
+                setCategory(value as Category)
+                const events = eventsForCategory(value as Category)
+                if (events.length > 0) {
+                  setType(events[0].type)
+                }
               }}
               renderInput={params => (
                 <TextField
                   {...params}
-                  label={Label.EventName}
-                  id={Label.EventName}
+                  label={Label.EventCategory}
+                  id={Label.EventCategory}
                   size="small"
                   variant="outlined"
-                  helperText={
-                    <>
-                      The name of the event.
-                    </>
-                  }
+                  helperText="The category for the event"
                 />
               )}
             />
-          )}
-          <LinkedTextField
-            label={Label.TimestampMicros}
-            id={Label.TimestampMicros}
-            linkTitle="See timestamp_micros on devsite."
-            href={`https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference?client_type=${
-              useFirebase ? "firebase" : "gtag"
-            }#timestamp_micros`}
-            value={timestamp_micros || ""}
-            onChange={setTimestampMicros}
-            helperText="The timestamp of the event."
-            extraAction={
-              <Tooltip title="Set to now.">
-                <IconButton
-                  size="small"
-                  onClick={() => {
-                    setTimestampMicros((new Date().getTime() * 1000).toString())
-                  }}
-                >
-                  <Refresh />
-                </IconButton>
-              </Tooltip>
-            }
-          />
-
-          <WithHelpText
-            helpText={
-              <>
-                Check to indicate events should not be used for personalized ads.
-              </>
-            }
-          >
-            <LabeledCheckbox
-              checked={non_personalized_ads}
-              setChecked={setNonPersonalizedAds}
-              id={Label.NonPersonalizedAds}
-            >
-              {Label.NonPersonalizedAds}
-            </LabeledCheckbox>
-          </WithHelpText>
-        </section>
-
-        <Typography variant="h4">Event details</Typography>
-        <Typography>
-          Finally, specify the parameters to send with the event. By default, only
-          recommended parameters for the event will appear here. Check "show
-          advanced options" to add custom parameters or user properties.
-        </Typography>
-        <LabeledCheckbox checked={showAdvanced} onChange={setShowAdvanced}>
-          show advanced options
-        </LabeledCheckbox>
-
-      <section className={classes.form}>
-        <ShowAdvancedCtx.Provider
-          value={showAdvanced || type === EventType.CustomEvent}
-        >
-          <Typography variant="h5">Parameters</Typography>
-          <Parameters
-            removeParam={removeParam}
-            parameters={parameters}
-            addStringParam={addStringParam}
-            addNumberParam={addNumberParam}
-            setParamName={setParamName}
-            setParamValue={setParamValue}
-            addItemsParam={items === undefined ? addItemsParam : undefined}
-          />
-          {items !== undefined && (
-            <>
-              <Typography variant="h5">Items</Typography>
-              <Items
-                items={items}
-                addItem={addItem}
-                removeItem={removeItem}
-                removeItemParam={removeItemParam}
-                addItemNumberParam={addItemNumberParam}
-                addItemStringParam={addItemStringParam}
-                setItemParamName={setItemParamName}
-                setItemParamValue={setItemParamValue}
-                removeItems={removeItems}
+            {type === EventType.CustomEvent ? (
+              <TextField
+                fullWidth
+                variant="outlined"
+                size="small"
+                label={Label.EventName}
+                id={Label.EventName}
+                value={eventName}
+                helperText="The name of the event"
+                onChange={e => {
+                  setEventName(e.target.value)
+                }}
               />
-            </>
-          )}
-            {(showAdvanced ||
-              (userProperties !== undefined && userProperties.length !== 0)) && (
-              <>
-                <Typography variant="h5">User properties</Typography>
-                <Parameters
-                  removeParam={removeUserProperty}
-                  parameters={userProperties}
-                  addStringParam={addStringUserProperty}
-                  addNumberParam={addNumberUserProperty}
-                  setParamName={setUserPropertyName}
-                  setParamValue={setUserPropertyValue}
-                />
-              </>
+            ) : (
+              <Autocomplete<EventType, false, true, true>
+                data-testid={Label.EventName}
+                fullWidth
+                disableClearable
+                autoComplete
+                autoHighlight
+                autoSelect
+                options={eventsForCategory(category).map(e => e.type)}
+                getOptionLabel={eventType => eventType}
+                value={type}
+                onChange={(_event, value) => {
+                  setType(value as EventType)
+                }}
+                renderInput={params => (
+                  <TextField
+                    {...params}
+                    label={Label.EventName}
+                    id={Label.EventName}
+                    size="small"
+                    variant="outlined"
+                    helperText={<>The name of the event.</>}
+                  />
+                )}
+              />
             )}
-          </ShowAdvancedCtx.Provider>
-        </section>
-      </div>
-    }
+            <LinkedTextField
+              label={Label.TimestampMicros}
+              id={Label.TimestampMicros}
+              linkTitle="See timestamp_micros on devsite."
+              href={`https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference?client_type=${
+                useFirebase ? "firebase" : "gtag"
+              }#timestamp_micros`}
+              value={timestamp_micros || ""}
+              onChange={setTimestampMicros}
+              helperText="The timestamp of the event."
+              extraAction={
+                <Tooltip title="Set to now.">
+                  <IconButton
+                    size="small"
+                    onClick={() => {
+                      setTimestampMicros(
+                        (new Date().getTime() * 1000).toString()
+                      )
+                    }}
+                  >
+                    <Refresh />
+                  </IconButton>
+                </Tooltip>
+              }
+            />
+
+            <WithHelpText
+              helpText={
+                <>
+                  Check to indicate events should not be used for personalized
+                  ads.
+                </>
+              }
+            >
+              <LabeledCheckbox
+                checked={non_personalized_ads}
+                setChecked={setNonPersonalizedAds}
+                id={Label.NonPersonalizedAds}
+              >
+                {Label.NonPersonalizedAds}
+              </LabeledCheckbox>
+            </WithHelpText>
+          </section>
+
+          <Typography variant="h4">Event details</Typography>
+          <Typography>
+            Finally, specify the parameters to send with the event. By default,
+            only recommended parameters for the event will appear here. Check
+            "show advanced options" to add custom parameters, user properties,
+            or geographic information.
+          </Typography>
+          <LabeledCheckbox checked={showAdvanced} onChange={setShowAdvanced}>
+            show advanced options
+          </LabeledCheckbox>
+
+          <section className={classes.form}>
+            <ShowAdvancedCtx.Provider
+              value={showAdvanced || type === EventType.CustomEvent}
+            >
+              <Typography variant="h5">Parameters</Typography>
+              <Parameters
+                removeParam={removeParam}
+                parameters={parameters}
+                addStringParam={addStringParam}
+                addNumberParam={addNumberParam}
+                setParamName={setParamName}
+                setParamValue={setParamValue}
+                addItemsParam={items === undefined ? addItemsParam : undefined}
+              />
+              {items !== undefined && (
+                <>
+                  <Typography variant="h5">Items</Typography>
+                  <Items
+                    items={items}
+                    addItem={addItem}
+                    removeItem={removeItem}
+                    removeItemParam={removeItemParam}
+                    addItemNumberParam={addItemNumberParam}
+                    addItemStringParam={addItemStringParam}
+                    setItemParamName={setItemParamName}
+                    setItemParamValue={setItemParamValue}
+                    removeItems={removeItems}
+                  />
+                </>
+              )}
+              {(showAdvanced ||
+                (userProperties !== undefined &&
+                  userProperties.length !== 0)) && (
+                <>
+                  <Typography variant="h5">User properties</Typography>
+                  <Parameters
+                    removeParam={removeUserProperty}
+                    parameters={userProperties}
+                    addStringParam={addStringUserProperty}
+                    addNumberParam={addNumberUserProperty}
+                    setParamName={setUserPropertyName}
+                    setParamValue={setUserPropertyValue}
+                  />
+                </>
+              )}
+              {showAdvanced && (
+                <>
+                  <GeographicInformation
+                    user_location_city={user_location_city}
+                    setUserLocationCity={setUserLocationCity}
+                    user_location_region_id={user_location_region_id}
+                    setUserLocationRegionId={setUserLocationRegionId}
+                    user_location_country_id={user_location_country_id}
+                    setUserLocationCountryId={setUserLocationCountryId}
+                    user_location_subcontinent_id={
+                      user_location_subcontinent_id
+                    }
+                    setUserLocationSubcontinentId={
+                      setUserLocationSubcontinentId
+                    }
+                    user_location_continent_id={user_location_continent_id}
+                    setUserLocationContinentId={setUserLocationContinentId}
+                    ip_override={ip_override}
+                    setIpOverride={setIpOverride}
+                  />
+                </>
+              )}
+            </ShowAdvancedCtx.Provider>
+          </section>
+        </div>
+      )}
       <Typography variant="h3" className={classes.validateHeading}>
         Validate & Send event
       </Typography>
@@ -624,6 +640,14 @@ const EventBuilder: React.FC = () => {
             payloadObj,
             instanceId: useFirebase ? { firebase_app_id } : { measurement_id },
             api_secret: api_secret!,
+            ip_override,
+            user_location: {
+              city: user_location_city,
+              region_id: user_location_region_id,
+              country_id: user_location_country_id,
+              subcontinent_id: user_location_subcontinent_id,
+              continent_id: user_location_continent_id,
+            },
           }}
         >
           <ValidateEvent
@@ -640,7 +664,7 @@ const EventBuilder: React.FC = () => {
         </EventCtx.Provider>
       </UseFirebaseCtx.Provider>
     </Root>
-  );
+  )
 }
 
 export default EventBuilder
