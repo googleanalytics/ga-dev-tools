@@ -134,8 +134,7 @@ const GeographicInformation: React.FC<GeographicInformationProps> = ({
       </Grid>
       <Typography variant="h6">IP Override</Typography>
       <Typography>
-        Specify an IP address as an alternative to sending user location. This
-        IP address will be used to derive the user's geographic information. If
+        Provide an IP address to derive the user's geographic location. If
         both an IP override and user location are provided, user location will
         be used.
       </Typography>
