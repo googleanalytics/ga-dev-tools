@@ -55,9 +55,9 @@ const sendHit = async (
   instanceId: InstanceId,
   api_secret: string
 ): Promise<void> => {
-  const url = `https://www.google-analytics.com/mp/collect?${instanceQueryParamFor(
+  const url = `https://www.google-analytics.com/mp/collect?api_secret=${api_secret}${instanceQueryParamFor(
     instanceId
-  )}&api_secret=${api_secret}`
+  )}`
   const body = Object.assign({}, payload, {
     validationBehavior: "ENFORCE_RECOMMENDATIONS",
   })
