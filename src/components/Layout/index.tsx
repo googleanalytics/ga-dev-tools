@@ -41,7 +41,6 @@ import { useGAVersion } from "../../hooks"
 import { GAVersion, Url } from "../../constants"
 import Spinner from "../Spinner"
 import { linkData } from "./links"
-import GA4Toggle from "./GA4Toggle"
 import BugReport from "./BugReport"
 import Loadable from "../Loadable"
 import useLogin2, { UserStatus } from "./useLogin"
@@ -130,7 +129,12 @@ const Template: React.FC<PropsWithChildren<LayoutProps & TemplateProps>> = ({
       const newLocation =  window.location.href.replace( window.location.hostname, newHostname );
       window.location.replace(newLocation);
     }
-    //}, 1000);
+
+    if( !window.location.search && window.location.pathname === '/' ) {
+      const newLocation = window.location.pathname = '/ga4/';
+      window.location.replace(newLocation);
+    }
+      //}, 1000);
 
     return;
   }, []);
