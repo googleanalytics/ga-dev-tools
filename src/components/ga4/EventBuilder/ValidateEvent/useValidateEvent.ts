@@ -123,7 +123,7 @@ const useValidateEvent = (): Requestable<
       return
     }
     sendHit(payload, instanceId, api_secret, getEndpoint(useEuEndpoint)).then(() => setSent(true))
-  }, [status, payload, instanceId, api_secret])
+  }, [status, payload, instanceId, api_secret, useEuEndpoint])
 
   const copyPayload = useCopy(
     JSON.stringify(payload, undefined, "  "),
@@ -203,7 +203,7 @@ const useValidateEvent = (): Requestable<
         setValidationMessages(validatorErrors)
         setStatus(RequestStatus.Failed)
       }
-    }, [status, payload, api_secret, instanceId, useFirebase, useTextBox, validatePayloadAttributes])
+    }, [status, payload, api_secret, instanceId, useFirebase, useTextBox, validatePayloadAttributes, useEuEndpoint])
 
   const defineFieldCode = (error: JSONError) => {
     const { data } = error
