@@ -11,7 +11,7 @@ import {
   useEffect,
   useState,
 } from "react"
-import { EventCtx, UseEuEndpointCtx, UseFirebaseCtx } from ".."
+import { EventCtx, UseFirebaseCtx } from ".."
 import { InstanceId, ValidationMessage } from "../types"
 import usePayload from "./usePayload"
 import useInputs from "../useInputs"
@@ -91,14 +91,13 @@ export const ValidationRequestCtx = createContext<
   ReturnType<typeof useValidateEvent> | undefined
 >(undefined)
 
-const useValidateEvent = (): Requestable<
+const useValidateEvent = (useEuEndpoint: boolean): Requestable<
   ValidationSuccessful,
   ValidationNotStarted,
   ValidationInProgress,
   ValidationFailed
 > => {
   const useFirebase = useContext(UseFirebaseCtx)
-  const useEuEndpoint = useContext(UseEuEndpointCtx)
   const { useTextBox } = useContext(EventCtx)!
   const [status, setStatus] = useState(RequestStatus.NotStarted)
   const [validationMessages, setValidationMessages] = useState<

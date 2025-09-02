@@ -21,15 +21,18 @@ import clsx from "classnames"
 import useValidateEvent from "./useValidateEvent"
 import Loadable from "@/components/Loadable"
 import Typography from "@mui/material/Typography"
+import Grid from "@mui/material/Grid"
+import Switch from "@mui/material/Switch"
 import { PAB, PlainButton } from "@/components/Buttons"
 import { Check, Warning, Error as ErrorIcon } from "@mui/icons-material"
 import PrettyJson from "@/components/PrettyJson"
 import usePayload from "./usePayload"
 import { ValidationMessage } from "../types"
 import Spinner from "@/components/Spinner"
-import { EventCtx, Label, UseEuEndpointCtx } from ".."
+import { EventCtx, Label } from ".."
 import { Card } from "@mui/material"
 import { green, red } from "@mui/material/colors"
+import WithHelpText from "@/components/WithHelpText"
 
 const PREFIX = 'ValidateEvent';
 
@@ -47,6 +50,7 @@ interface TemplateProps {
   sent?: boolean
   payloadErrors?: string | undefined
   useTextBox?: boolean
+  useEuEndpoint: boolean
 }
 
 export interface ValidateEventProps {
@@ -68,7 +72,8 @@ const classes = {
   heading: `${PREFIX}-heading`,
   payload: `${PREFIX}-payload`,
   form: `${PREFIX}-form`,
-  buttonRow: `${PREFIX}-buttonRow`
+  buttonRow: `${PREFIX}-buttonRow`,
+  endpointSwitch: `${PREFIX}-endpointSwitch`,
 };
 
 const Root = styled('div')((
@@ -78,6 +83,10 @@ const Root = styled('div')((
 ) => ({
   [`& .${classes.template}`]: {
     padding: theme.spacing(2),
+  },
+
+  [`& .${classes.endpointSwitch}`]: {
+    marginBottom: theme.spacing(2),
   },
 
   [`& .${classes.payloadTitle}`]: {
@@ -166,11 +175,11 @@ const Template: React.FC<TemplateProps> = ({
   error,
   valid,
   payloadErrors,
-  useTextBox
+  useTextBox,
+  useEuEndpoint,
 }) => {
 
   const { instanceId, api_secret } = useContext(EventCtx)!
-  const useEuEndpoint = useContext(UseEuEndpointCtx)
   const payload = usePayload()
   return (
     <Card
@@ -271,82 +280,118 @@ const Template: React.FC<TemplateProps> = ({
 }
 
 const ValidateEvent: React.FC<ValidateEventProps> = ({formatPayload, payloadErrors, useTextBox}) => {
-  const request = useValidateEvent()
+  const [useEuEndpoint, setUseEuEndpoint] = React.useState(false)
+  const request = useValidateEvent(useEuEndpoint)
 
   return (
-    <Loadable
-      request={request}
-      renderNotStarted={({ validateEvent }) => (
-        <Template
-          heading="This event has not been validated"
-          headingIcon={<Warning />}
-          body={
-            <Root>
-              <Typography>
-                Update the event using the controls above.
-              </Typography>
-              <Typography>
-                When you're done editing the event, click "Validate Event" to
-                check if the event is valid.
-              </Typography>
-            </Root>
-          }
-          validateEvent={ () => {
+    <div className={classes.form}>
+      <WithHelpText
+        notched
+        shrink
+        label="server endpoint"
+        className={classes.endpointSwitch}
+        helpText="Collect data in the European Union. If enabled, the https://region1.google-analytics.com endpoint will be used to validate and send events."
+      >
+        <Grid component="label" container alignItems="center" spacing={1}>
+          <Grid item>Default</Grid>
+          <Grid item>
+            <Switch
+              data-testid="use-eu-endpoint"
+              checked={useEuEndpoint}
+              onChange={e => {
+                setUseEuEndpoint(e.target.checked)
+              }}
+              name="use-eu-endpoint"
+              color="primary"
+            />
+          </Grid>
+          <Grid item>EU</Grid>
+        </Grid>
+      </WithHelpText>
+      <Loadable
+        request={request}
+        renderNotStarted={({ validateEvent }) => (
+          <Template
+            useEuEndpoint={useEuEndpoint}
+            heading="This event has not been validated"
+            headingIcon={<Warning />}
+            body={
+              <Root>
+                <Typography>
+                  Update the event using the controls above.
+                </Typography>
+                <Typography>
+                  When you're done editing the event, click "Validate Event" to
+                  check if the event is valid.
+                </Typography>
+              </Root>
+            }
+            validateEvent={() => {
               if (formatPayload) {
                 formatPayload()
               }
 
               validateEvent()
-            }
-          }
-        />
-      )}
-      renderInProgress={() => (
-        <Template heading="Validating" body={<Spinner ellipses />} />
-      )}
-      renderFailed={({ validationMessages, validateEvent}) => (
-        <Template
-          error
-          headingIcon={<ErrorIcon />}
-          heading="Event is invalid"
-          body=""
-          validateEvent={ () => {
+            }}
+          />
+        )}
+        renderInProgress={() => (
+          <Template
+            useEuEndpoint={useEuEndpoint}
+            heading="Validating"
+            body={<Spinner ellipses />}
+          />
+        )}
+        renderFailed={({ validationMessages, validateEvent }) => (
+          <Template
+            useEuEndpoint={useEuEndpoint}
+            error
+            headingIcon={<ErrorIcon />}
+            heading="Event is invalid"
+            body=""
+            validateEvent={() => {
               if (formatPayload) {
                 formatPayload()
               }
 
               validateEvent()
+            }}
+            validationMessages={validationMessages}
+            payloadErrors={payloadErrors}
+            useTextBox={useTextBox}
+          />
+        )}
+        renderSuccessful={({
+          sendToGA,
+          copyPayload,
+          copySharableLink,
+          sent,
+        }) => (
+          <Template
+            useEuEndpoint={useEuEndpoint}
+            sent={sent}
+            valid
+            heading="Event is valid"
+            headingIcon={<Check />}
+            sendToGA={sendToGA}
+            copyPayload={copyPayload}
+            copySharableLink={copySharableLink}
+            body={
+              <>
+                <Typography>
+                  Use the controls below to copy the event payload or share it
+                  with coworkers.
+                </Typography>
+                <Typography>
+                  You can also send the event to Google Analytics and watch it in
+                  action in the Real Time view.
+                </Typography>
+              </>
             }
-          }
-          validationMessages={validationMessages}
-          payloadErrors={payloadErrors}
-          useTextBox={useTextBox}
-        />
-      )}
-      renderSuccessful={({ sendToGA, copyPayload, copySharableLink, sent}) => (
-        <Template
-          sent={sent}
-          valid
-          heading="Event is valid"
-          headingIcon={<Check />}
-          sendToGA={sendToGA}
-          copyPayload={copyPayload}
-          copySharableLink={copySharableLink}
-          body={
-            <>
-              <Typography>
-                Use the controls below to copy the event payload or share it
-                with coworkers.
-              </Typography>
-              <Typography>
-                You can also send the event to Google Analytics and watch it in
-                action in the Real Time view.
-              </Typography>
-            </>
-          }
-        />
-      )}
-    />
+          />
+        )}
+      />
+    </div>
   );
 }
 
