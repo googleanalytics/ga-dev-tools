@@ -158,8 +158,10 @@ export const EventCtx = React.createContext<
 >(undefined)
 export const ShowAdvancedCtx = React.createContext(false)
 export const UseFirebaseCtx = React.createContext(false)
+export const UseEuEndpointCtx = React.createContext(false)
 
 const EventBuilder: React.FC = () => {
+  const [useEuEndpoint, setUseEuEndpoint] = React.useState(false)
 
   const [showAdvanced, setShowAdvanced] = React.useState(false)
   const {
@@ -291,6 +293,29 @@ const EventBuilder: React.FC = () => {
       <Typography>
         After choosing a client, fill out the inputs below.
       </Typography>
+
+      <WithHelpText
+        notched
+        shrink
+        label="server endpoint"
+        className={classes.clientSwitch}
+      >
+        <Grid component="label" container alignItems="center" spacing={1}>
+          <Grid item>Default</Grid>
+          <Grid item>
+            <Switch
+              data-testid="use-eu-endpoint"
+              checked={useEuEndpoint}
+              onChange={e => {
+                setUseEuEndpoint(e.target.checked)
+              }}
+              name="use-eu-endpoint"
+              color="primary"
+            />
+          </Grid>
+          <Grid item>EU</Grid>
+        </Grid>
+      </WithHelpText>
 
         <LinkedTextField
           required
@@ -607,38 +632,40 @@ const EventBuilder: React.FC = () => {
       <Typography variant="h3" className={classes.validateHeading}>
         Validate & Send event
       </Typography>
-      <UseFirebaseCtx.Provider value={useFirebase}>
-        <EventCtx.Provider
-          value={{
-            type,
-            clientIds: useFirebase
-              ? { app_instance_id, user_id }
-              : { client_id, user_id },
-            items,
-            parameters,
-            eventName,
-            userProperties,
-            timestamp_micros,
-            non_personalized_ads,
-            useTextBox,
-            payloadObj,
-            instanceId: useFirebase ? { firebase_app_id } : { measurement_id },
-            api_secret: api_secret!,
-          }}
-        >
-          <ValidateEvent
-            client_id={client_id || ""}
-            user_id={user_id || ""}
-            api_secret={api_secret || ""}
-            measurement_id={measurement_id || ""}
-            app_instance_id={app_instance_id || ""}
-            firebase_app_id={firebase_app_id || ""}
-            formatPayload={formatPayload}
-            payloadErrors={payloadErrors}
-            useTextBox={useTextBox}
-          />
-        </EventCtx.Provider>
-      </UseFirebaseCtx.Provider>
+      <UseEuEndpointCtx.Provider value={useEuEndpoint}>
+        <UseFirebaseCtx.Provider value={useFirebase}>
+          <EventCtx.Provider
+            value={{
+              type,
+              clientIds: useFirebase
+                ? { app_instance_id, user_id }
+                : { client_id, user_id },
+              items,
+              parameters,
+              eventName,
+              userProperties,
+              timestamp_micros,
+              non_personalized_ads,
+              useTextBox,
+              payloadObj,
+              instanceId: useFirebase ? { firebase_app_id } : { measurement_id },
+              api_secret: api_secret!,
+            }}
+          >
+            <ValidateEvent
+              client_id={client_id || ""}
+              user_id={user_id || ""}
+              api_secret={api_secret || ""}
+              measurement_id={measurement_id || ""}
+              app_instance_id={app_instance_id || ""}
+              firebase_app_id={firebase_app_id || ""}
+              formatPayload={formatPayload}
+              payloadErrors={payloadErrors}
+              useTextBox={useTextBox}
+            />
+          </EventCtx.Provider>
+        </UseFirebaseCtx.Provider>
+      </UseEuEndpointCtx.Provider>
     </Root>
   );
 }

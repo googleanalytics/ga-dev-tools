@@ -27,7 +27,7 @@ import PrettyJson from "@/components/PrettyJson"
 import usePayload from "./usePayload"
 import { ValidationMessage } from "../types"
 import Spinner from "@/components/Spinner"
-import { EventCtx, Label } from ".."
+import { EventCtx, Label, UseEuEndpointCtx } from ".."
 import { Card } from "@mui/material"
 import { green, red } from "@mui/material/colors"
 
@@ -170,6 +170,7 @@ const Template: React.FC<TemplateProps> = ({
 }) => {
 
   const { instanceId, api_secret } = useContext(EventCtx)!
+  const useEuEndpoint = useContext(UseEuEndpointCtx)
   const payload = usePayload()
   return (
     <Card
@@ -251,7 +252,7 @@ const Template: React.FC<TemplateProps> = ({
         {instanceId.measurement_id &&
           `&measurement_id=${instanceId.measurement_id}`}{" "}
         HTTP/1.1 <br />
-        HOST: www.google-analytics.com <br />
+        HOST: {useEuEndpoint ? "region1.google-analytics.com" : "www.google-analytics.com"} <br />
         Content-Type: application/json
       </Typography>
 
