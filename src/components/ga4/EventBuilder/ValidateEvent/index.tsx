@@ -73,7 +73,6 @@ const classes = {
   payload: `${PREFIX}-payload`,
   form: `${PREFIX}-form`,
   buttonRow: `${PREFIX}-buttonRow`,
-  endpointSwitch: `${PREFIX}-endpointSwitch`,
 };
 
 const Root = styled('div')((
@@ -83,10 +82,6 @@ const Root = styled('div')((
 ) => ({
   [`& .${classes.template}`]: {
     padding: theme.spacing(2),
-  },
-
-  [`& .${classes.endpointSwitch}`]: {
-    marginBottom: theme.spacing(2),
   },
 
   [`& .${classes.payloadTitle}`]: {
