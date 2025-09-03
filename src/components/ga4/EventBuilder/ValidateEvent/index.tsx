@@ -72,7 +72,7 @@ const classes = {
   heading: `${PREFIX}-heading`,
   payload: `${PREFIX}-payload`,
   form: `${PREFIX}-form`,
-  buttonRow: `${PREFIX}-buttonRow`,
+  buttonRow: `${PREFIX}-buttonRow`
 };
 
 const Root = styled('div')((
