@@ -1,17 +1,17 @@
 import React from "react"
 import { render, screen, fireEvent, within } from "@testing-library/react"
 import "@testing-library/jest-dom"
-
 import ValidateEvent, { ValidateEventProps } from "."
 import { EventCtx, EventPayload } from ".."
+import useValidateEvent from "./useValidateEvent"
+import { EventType } from "../types"
 
 // Mock the useValidateEvent hook. This allows us to control its output and check if it's called correctly.
 jest.mock("./useValidateEvent", () => ({
   __esModule: true,
   default: jest.fn(),
 }))
-import useValidateEvent from "./useValidateEvent"
-import { EventType } from "../types"
+
 const mockedUseValidateEvent = useValidateEvent as jest.Mock
 
 // Mock child components that are not relevant to this test.
