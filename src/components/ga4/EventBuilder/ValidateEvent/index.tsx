@@ -30,7 +30,7 @@ import usePayload from "./usePayload"
 import { ValidationMessage } from "../types"
 import Spinner from "@/components/Spinner"
 import { EventCtx, Label } from ".."
-import { Card } from "@mui/material"
+import { Box, Card } from "@mui/material"
 import { green, red } from "@mui/material/colors"
 import WithHelpText from "@/components/WithHelpText"
 
@@ -285,29 +285,30 @@ const ValidateEvent: React.FC<ValidateEventProps> = ({formatPayload, payloadErro
 
   return (
     <div className={classes.form}>
-      <WithHelpText
-        notched
-        shrink
-        label="server endpoint"
-        className={classes.endpointSwitch}
-        helpText="Collect data in the European Union. If enabled, the https://region1.google-analytics.com endpoint will be used to validate and send events."
-      >
-        <Grid component="label" container alignItems="center" spacing={1}>
-          <Grid item>Default</Grid>
-          <Grid item>
-            <Switch
-              data-testid="use-eu-endpoint"
-              checked={useEuEndpoint}
-              onChange={e => {
-                setUseEuEndpoint(e.target.checked)
-              }}
-              name="use-eu-endpoint"
-              color="primary"
-            />
+      <Box mb={1}>
+        <WithHelpText
+          notched
+          shrink
+          label="server endpoint"
+          helpText="Collect data in the European Union. If enabled, the https://region1.google-analytics.com endpoint will be used to validate and send events."
+        >
+          <Grid component="label" container alignItems="center" spacing={1}>
+            <Grid item>Default</Grid>
+            <Grid item>
+              <Switch
+                data-testid="use-eu-endpoint"
+                checked={useEuEndpoint}
+                onChange={e => {
+                  setUseEuEndpoint(e.target.checked)
+                }}
+                name="use-eu-endpoint"
+                color="primary"
+              />
+            </Grid>
+            <Grid item>EU</Grid>
           </Grid>
-          <Grid item>EU</Grid>
-        </Grid>
-      </WithHelpText>
+        </WithHelpText>
+      </Box>
       <Loadable
         request={request}
         renderNotStarted={({ validateEvent }) => (
