@@ -42,9 +42,9 @@ const validateHit = async (
   payload: {},
   instanceId: InstanceId,
   api_secret: string,
-  base_url: string
+  baseUrl: string
 ): Promise<ValidationMessage[]> => {
-  const url = `${base_url}/debug/mp/collect?api_secret=${api_secret}${instanceQueryParamFor(instanceId)}`
+  const url = `${baseUrl}/debug/mp/collect?api_secret=${api_secret}${instanceQueryParamFor(instanceId)}`
   const body = Object.assign({}, payload, {
     validationBehavior: "ENFORCE_RECOMMENDATIONS",
   })
@@ -60,9 +60,9 @@ const sendHit = async (
   payload: {},
   instanceId: InstanceId,
   api_secret: string,
-  base_url: string
+  baseUrl: string
 ): Promise<void> => {
-  const url = `${base_url}/mp/collect?api_secret=${api_secret}${instanceQueryParamFor(instanceId)}`
+  const url = `${baseUrl}/mp/collect?api_secret=${api_secret}${instanceQueryParamFor(instanceId)}`
   const body = Object.assign({}, payload, {
     validationBehavior: "ENFORCE_RECOMMENDATIONS",
   })
