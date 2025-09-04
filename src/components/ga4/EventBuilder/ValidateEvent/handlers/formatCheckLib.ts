@@ -5,11 +5,12 @@ import {eventDefinitions} from "../schemas/eventTypes/eventDefinitions"
 import {InstanceId} from "../../types"
 
 const RESERVED_EVENT_NAMES = [
-    "ad_activeview", "ad_click", "ad_exposure", "ad_query",
+    "ad_activeview", "ad_click", "ad_exposure", "ad_impression", "ad_query",
     "adunit_exposure", "app_clear_data", "app_install", "app_update",
     "app_remove", "error", "first_open", "first_visit", "in_app_purchase",
     "notification_dismiss", "notification_foreground", "notification_open",
-    "notification_receive", "os_update", "session_start", "user_engagement"
+    "notification_receive", "os_update", "screen_view", "session_start",
+    "user_engagement"
 ]
 const RESERVED_USER_PROPERTY_NAMES = [
     "first_open_time", "first_visit_time", "last_deep_link_referrer", "user_id",
