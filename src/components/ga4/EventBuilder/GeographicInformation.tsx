@@ -110,18 +110,6 @@ const GeographicInformation: React.FC<GeographicInformationProps> = ({
         <Grid item xs={12} sm={6}>
           <TextField
             fullWidth
-            label={Label.SubcontinentId}
-            id={Label.SubcontinentId}
-            variant="outlined"
-            size="small"
-            value={user_location_subcontinent_id || ""}
-            onChange={e => setUserLocationSubcontinentId(e.target.value)}
-            helperText="The subcontinent of the user. E.g. '021'."
-          />
-        </Grid>
-        <Grid item xs={12} sm={6}>
-          <TextField
-            fullWidth
             label={Label.ContinentId}
             id={Label.ContinentId}
             variant="outlined"
@@ -129,6 +117,18 @@ const GeographicInformation: React.FC<GeographicInformationProps> = ({
             value={user_location_continent_id || ""}
             onChange={e => setUserLocationContinentId(e.target.value)}
             helperText="The continent of the user. E.g. '019'."
+          />
+        </Grid>
+        <Grid item xs={12} sm={6}>
+          <TextField
+            fullWidth
+            label={Label.SubcontinentId}
+            id={Label.SubcontinentId}
+            variant="outlined"
+            size="small"
+            value={user_location_subcontinent_id || ""}
+            onChange={e => setUserLocationSubcontinentId(e.target.value)}
+            helperText="The subcontinent of the user. E.g. '021'."
           />
         </Grid>
       </Grid>
