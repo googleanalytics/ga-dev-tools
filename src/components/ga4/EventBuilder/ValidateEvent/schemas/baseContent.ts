@@ -3,6 +3,7 @@
 import { userPropertiesSchema } from './userProperties'
 import { eventsSchema } from './events'
 import { userLocationSchema } from "./userLocation"
+import { deviceSchema } from "./deviceSchema"
 
 export const baseContentSchema = {
   type: "object",
@@ -31,5 +32,6 @@ export const baseContentSchema = {
     ip_override: {
       type: "string",
     },
+    device: deviceSchema,
   },
 }

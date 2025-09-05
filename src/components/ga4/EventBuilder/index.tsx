@@ -44,6 +44,7 @@ import ValidateEvent from "./ValidateEvent"
 import { PlainButton } from "@/components/Buttons"
 import { useEffect } from "react"
 import GeographicInformation from "./GeographicInformation";
+import DeviceInformation from "./DeviceInformation";
 
 const PREFIX = 'EventBuilder';
 
@@ -131,6 +132,17 @@ export type EventPayload = {
     subcontinent_id: string | undefined
     continent_id: string | undefined
   }
+  device: {
+    category: string | undefined
+    language: string | undefined
+    screen_resolution: string | undefined
+    operating_system: string | undefined
+    operating_system_version: string | undefined
+    model: string | undefined
+    brand: string | undefined
+    browser: string | undefined
+    browser_version: string | undefined
+  }
 }
 export const EventCtx = React.createContext<
   | EventPayload
@@ -214,8 +226,18 @@ const EventBuilder: React.FC = () => {
     user_location_subcontinent_id,
     setUserLocationSubcontinentId,
     user_location_continent_id,
-    setUserLocationContinentId,
+    setUserLocationContinentId
   } = useInputs(categories)
+
+  const [device_category, setDeviceCategory] = React.useState("")
+  const [device_language, setDeviceLanguage] = React.useState("")
+  const [device_screen_resolution, setDeviceScreenResolution] = React.useState("")
+  const [device_operating_system, setDeviceOperatingSystem] = React.useState("")
+  const [device_operating_system_version, setDeviceOperatingSystemVersion] = React.useState("")
+  const [device_model, setDeviceModel] = React.useState("")
+  const [device_brand, setDeviceBrand] = React.useState("")
+  const [device_browser, setDeviceBrowser] = React.useState("")
+  const [device_browser_version, setDeviceBrowserVersion] = React.useState("")
 
   const formatPayload = React.useCallback(() => {
     try {
@@ -628,6 +650,30 @@ const EventBuilder: React.FC = () => {
                 ip_override={ip_override}
                 setIpOverride={setIpOverride}
               />
+              <DeviceInformation
+                device_category={device_category}
+                setDeviceCategory={setDeviceCategory}
+                device_language={device_language}
+                setDeviceLanguage={setDeviceLanguage}
+                device_screen_resolution={device_screen_resolution}
+                setDeviceScreenResolution={setDeviceScreenResolution}
+                device_operating_system={device_operating_system}
+                setDeviceOperatingSystem={setDeviceOperatingSystem}
+                device_operating_system_version={
+                  device_operating_system_version
+                }
+                setDeviceOperatingSystemVersion={
+                  setDeviceOperatingSystemVersion
+                }
+                device_model={device_model}
+                setDeviceModel={setDeviceModel}
+                device_brand={device_brand}
+                setDeviceBrand={setDeviceBrand}
+                device_browser={device_browser}
+                setDeviceBrowser={setDeviceBrowser}
+                device_browser_version={device_browser_version}
+                setDeviceBrowserVersion={setDeviceBrowserVersion}
+              />
             </>
           )}
             </ShowAdvancedCtx.Provider>
@@ -661,6 +707,17 @@ const EventBuilder: React.FC = () => {
               country_id: user_location_country_id,
               subcontinent_id: user_location_subcontinent_id,
               continent_id: user_location_continent_id,
+            },
+            device: {
+              category: device_category,
+              language: device_language,
+              screen_resolution: device_screen_resolution,
+              operating_system: device_operating_system,
+              operating_system_version: device_operating_system_version,
+              model: device_model,
+              brand: device_brand,
+              browser: device_browser,
+              browser_version: device_browser_version,
             },
           }}
         >
