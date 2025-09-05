@@ -17,8 +17,6 @@ const useSharableLink = () => {
     parameters,
     eventName,
     type,
-    ip_override,
-    user_location,
   } = useContext(EventCtx)!
 
   return useMemo(() => {
@@ -59,8 +57,6 @@ const useSharableLink = () => {
 
     addIfTruthy(UrlParam.TimestampMicros, timestamp_micros)
 
-    addIfTruthy(UrlParam.IpOverride, ip_override)
-
     if (userProperties) {
       params.append(UrlParam.UserProperties, encodeObject(userProperties))
     }
@@ -87,7 +83,7 @@ const useSharableLink = () => {
     instanceId,
     api_secret,
     timestamp_micros,
-    non_personalized_ads
+    non_personalized_ads,
   ])
 }
 

@@ -111,44 +111,30 @@ export enum Label {
   Affiliation = "#/events/0/params/affiliation",
   Shipping = "#/events/0/params/shipping",
   Tax = "#/events/0/params/tax",
-
-  // Geographic Information
-  IpOverride = "ip address",
-  City = "city",
-  RegionId = "region id",
-  CountryId = "country id",
-  SubcontinentId = "subcontinent id",
-  ContinentId = "continent id",
 }
 
 // TODO - Add test to ensure url param values are all unique.
 export enum UrlParam {
-  Parameters = "parameters",
-  Items = "items",
-  EventType = "event_type",
-  UseFirebase = "use_firebase",
-  TimestampMicros = "timestamp_micros",
-  NonPersonalizedAds = "non_personalized_ads",
-  EventData = "event_data",
-  FirebaseAppId = "firebase_app_id",
-  MeasurementId = "measurement_id",
-  EventName = "event_name",
-  APISecret = "api_secret",
-  UserId = "user_id",
-  UserProperties = "user_properties",
-  ClientId = "client_id",
-  AppInstanceId = "app_instance_id",
-  Version = "version",
-  UseTextBox = "use_text_box",
-  Payload = "payload",
-  PayloadObj = "payload_obj",
-  PayloadError = "payload_error",
-  IpOverride = "ip_override",
-  UserLocationCity = "user_location_city",
-  UserLocationRegionId = "user_location_region_id",
-  UserLocationCountryId = "user_location_country_id",
-  UserLocationSubcontinentId = "user_location_subcontinent_id",
-  UserLocationContinentId = "user_location_continent_id",
+  Parameters = "a",
+  Items = "b",
+  EventType = "c",
+  UseFirebase = "d",
+  TimestampMicros = "e",
+  NonPersonalizedAds = "f",
+  EventData = "g",
+  FirebaseAppId = "h",
+  MeasurementId = "i",
+  EventName = "j",
+  APISecret = "k",
+  UserId = "l",
+  UserProperties = "m",
+  ClientId = "n",
+  AppInstanceId = "o",
+  Version = "p",
+  UseTextBox = "q",
+  Payload = "r",
+  PayloadObj = "s",
+  PayloadError = "t"
 }
 
 export enum ValidationStatus {
@@ -196,10 +182,4 @@ export interface URLParts {
   [UrlParam.APISecret]?: string
   [UrlParam.TimestampMicros]?: string
   [UrlParam.NonPersonalizedAds]?: boolean
-  [UrlParam.IpOverride]?: string
-  [UrlParam.UserLocationCity]?: string
-  [UrlParam.UserLocationRegionId]?: string
-  [UrlParam.UserLocationCountryId]?: string
-  [UrlParam.UserLocationSubcontinentId]?: string
-  [UrlParam.UserLocationContinentId]?: string
 }
