@@ -253,12 +253,6 @@ export enum StorageKey {
   ga4EventBuilderPayload = "ga4/event-builder/payload",
   ga4EventBuilderPayloadObj = "ga4/event-builder/payload-obj",
   ga4EventBuilderPayloadError = "ga4/event-builder/payload-error",
-  ga4EventBuilderIpOverride = "ga4/event-builder/ip-override",
-  ga4EventBuilderUserLocationCity = "ga4/event-builder/user-location-city",
-  ga4EventBuilderUserLocationRegionId = "ga4/event-builder/user-location-region-id",
-  ga4EventBuilderUserLocationCountryId = "ga4/event-builder/user-location-country-id",
-  ga4EventBuilderUserLocationSubcontinentId = "ga4/event-builder/user-location-subcontinent-id",
-  ga4EventBuilderUserLocationContinentId = "ga4/event-builder/user-location-continent-id",
 }
 
 export const EventAction = {

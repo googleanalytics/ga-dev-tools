@@ -78,36 +78,6 @@ const useInputs = (categories: Category[]) => {
     UrlParam.TimestampMicros
   )
 
-  const [ip_override, setIpOverride] = useHydratedPersistantString(
-    StorageKey.ga4EventBuilderIpOverride,
-    UrlParam.IpOverride
-  )
-
-  const [user_location_city, setUserLocationCity] = useHydratedPersistantString(
-    StorageKey.ga4EventBuilderUserLocationCity,
-    UrlParam.UserLocationCity
-  )
-  const [user_location_region_id, setUserLocationRegionId] =
-    useHydratedPersistantString(
-      StorageKey.ga4EventBuilderUserLocationRegionId,
-      UrlParam.UserLocationRegionId
-    )
-  const [user_location_country_id, setUserLocationCountryId] =
-    useHydratedPersistantString(
-      StorageKey.ga4EventBuilderUserLocationCountryId,
-      UrlParam.UserLocationCountryId
-    )
-  const [user_location_subcontinent_id, setUserLocationSubcontinentId] =
-    useHydratedPersistantString(
-      StorageKey.ga4EventBuilderUserLocationSubcontinentId,
-      UrlParam.UserLocationSubcontinentId
-    )
-  const [user_location_continent_id, setUserLocationContinentId] =
-    useHydratedPersistantString(
-      StorageKey.ga4EventBuilderUserLocationContinentId,
-      UrlParam.UserLocationContinentId
-    )
-
   return {
     useFirebase,
     setUseFirebase,
@@ -137,18 +107,6 @@ const useInputs = (categories: Category[]) => {
     setNonPersonalizedAds,
     timestamp_micros,
     setTimestampMicros,
-    ip_override,
-    setIpOverride,
-    user_location_city,
-    setUserLocationCity,
-    user_location_region_id,
-    setUserLocationRegionId,
-    user_location_country_id,
-    setUserLocationCountryId,
-    user_location_subcontinent_id,
-    setUserLocationSubcontinentId,
-    user_location_continent_id,
-    setUserLocationContinentId,
   }
 }
 
