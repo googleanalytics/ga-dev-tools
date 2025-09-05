@@ -215,19 +215,15 @@ const EventBuilder: React.FC = () => {
     setTimestampMicros,
     non_personalized_ads,
     setNonPersonalizedAds,
-    ip_override,
-    setIpOverride,
-    user_location_city,
-    setUserLocationCity,
-    user_location_region_id,
-    setUserLocationRegionId,
-    user_location_country_id,
-    setUserLocationCountryId,
-    user_location_subcontinent_id,
-    setUserLocationSubcontinentId,
-    user_location_continent_id,
-    setUserLocationContinentId
   } = useInputs(categories)
+
+
+  const [user_location_city, setUserLocationCity] = React.useState("")
+  const [user_location_region_id, setUserLocationRegionId] = React.useState("")
+  const [user_location_country_id, setUserLocationCountryId] = React.useState("")
+  const [user_location_subcontinent_id, setUserLocationSubcontinentId] = React.useState("")
+  const [user_location_continent_id, setUserLocationContinentId] = React.useState("")
+  const [ip_override, setIpOverride] = React.useState("")
 
   const [device_category, setDeviceCategory] = React.useState("")
   const [device_language, setDeviceLanguage] = React.useState("")
@@ -258,23 +254,6 @@ const EventBuilder: React.FC = () => {
   useEffect(() => {
     formatPayload()
   }, [inputPayload, formatPayload])
-
-  useEffect(() => {
-    // Clear geographic information on page load.
-    setIpOverride("")
-    setUserLocationCity("")
-    setUserLocationRegionId("")
-    setUserLocationCountryId("")
-    setUserLocationSubcontinentId("")
-    setUserLocationContinentId("")
-  }, [
-    setIpOverride,
-    setUserLocationCity,
-    setUserLocationRegionId,
-    setUserLocationCountryId,
-    setUserLocationSubcontinentId,
-    setUserLocationContinentId,
-  ])
 
   return (
     <Root>

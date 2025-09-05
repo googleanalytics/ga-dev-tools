@@ -17,8 +17,6 @@ const useSharableLink = () => {
     parameters,
     eventName,
     type,
-    ip_override,
-    user_location,
   } = useContext(EventCtx)!
 
   return useMemo(() => {
@@ -59,19 +57,6 @@ const useSharableLink = () => {
 
     addIfTruthy(UrlParam.TimestampMicros, timestamp_micros)
 
-    addIfTruthy(UrlParam.IpOverride, ip_override)
-
-    if (user_location) {
-      addIfTruthy(UrlParam.UserLocationCity, user_location.city)
-      addIfTruthy(UrlParam.UserLocationRegionId, user_location.region_id)
-      addIfTruthy(UrlParam.UserLocationCountryId, user_location.country_id)
-      addIfTruthy(
-        UrlParam.UserLocationSubcontinentId,
-        user_location.subcontinent_id
-      )
-      addIfTruthy(UrlParam.UserLocationContinentId, user_location.continent_id)
-    }
-
     if (userProperties) {
       params.append(UrlParam.UserProperties, encodeObject(userProperties))
     }
@@ -99,8 +84,6 @@ const useSharableLink = () => {
     api_secret,
     timestamp_micros,
     non_personalized_ads,
-    ip_override,
-    user_location,
   ])
 }
 

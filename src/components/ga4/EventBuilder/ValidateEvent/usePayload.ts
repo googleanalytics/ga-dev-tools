@@ -106,7 +106,7 @@ const usePayload = (): {} => {
     [userProperties]
   )
 
-  const final_user_location = useMemo(() => {
+  const user_location_info = useMemo(() => {
     if (user_location === undefined) {
       return undefined
     }
@@ -134,7 +134,7 @@ const usePayload = (): {} => {
       ...removeUndefined({ timestamp_micros }),
       ...removeUndefined({ non_personalized_ads }),
       ...removeUndefined(removeEmptyObject({ user_properties })),
-      ...removeUndefined({ ip_override, user_location: final_user_location, device: device_info }),
+      ...removeUndefined({ ip_override, user_location: user_location_info, device: device_info }),
       events: [
         { name: eventName, ...(parameters.length > 0 ? { params } : {}) },
       ],
@@ -148,8 +148,8 @@ const usePayload = (): {} => {
     timestamp_micros,
     user_properties,
     ip_override,
-    final_user_location,
-    final_device_info
+    user_location_info,
+    device_info
   ])
 
   if (useTextBox) {
