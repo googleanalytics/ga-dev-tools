@@ -7,6 +7,7 @@ import TextField from "@mui/material/TextField"
 import Grid from "@mui/material/Grid"
 
 import ExternalLink from "@/components/ExternalLink"
+import { Label } from "./types"
 
 const Root = styled("div")(({ theme }) => ({
   marginTop: theme.spacing(1),
@@ -71,108 +72,108 @@ const DeviceInformation: React.FC<DeviceInformationProps> = ({
           <TextField
             fullWidth
             id="device-category"
-            label="Device category"
+            label={Label.DeviceCategory}
             variant="outlined"
             size="small"
             value={device_category || ""}
             onChange={e => setDeviceCategory(e.target.value)}
-            helperText="The device category. E.g., 'mobile', 'desktop'."
+            helperText="The category of the device, e.g., 'mobile', 'desktop'"
           />
         </Grid>
         <Grid item xs={12} sm={6}>
           <TextField
             fullWidth
             id="device-language"
-            label="Device language"
+            label={Label.DeviceLanguage}
             variant="outlined"
             size="small"
             value={device_language || ""}
             onChange={e => setDeviceLanguage(e.target.value)}
-            helperText="The language of the device. E.g., 'en-us'."
+            helperText="The language of the device in ISO 639-1 format, e.g., 'en', 'en-us'"
           />
         </Grid>
         <Grid item xs={12} sm={6}>
           <TextField
             fullWidth
             id="device-screen-resolution"
-            label="Device screen resolution"
+            label={Label.DeviceScreenResolution}
             variant="outlined"
             size="small"
             value={device_screen_resolution || ""}
             onChange={e => setDeviceScreenResolution(e.target.value)}
-            helperText="The screen resolution of the device. E.g., '1920x1080'."
+            helperText="The resolution of the device, e.g., '1920x1080'."
           />
         </Grid>
         <Grid item xs={12} sm={6}>
           <TextField
             fullWidth
             id="device-operating-system"
-            label="Device operating system"
+            label={Label.DeviceOperatingSystem}
             variant="outlined"
             size="small"
             value={device_operating_system || ""}
             onChange={e => setDeviceOperatingSystem(e.target.value)}
-            helperText="The operating system of the device. E.g., 'Windows'."
+            helperText="The operating system of the device, e.g., 'MacOS', 'Windows'."
           />
         </Grid>
         <Grid item xs={12} sm={6}>
           <TextField
             fullWidth
             id="device-operating-system-version"
-            label="Device operating system version"
+            label={Label.DeviceOperatingSystemVersion}
             variant="outlined"
             size="small"
             value={device_operating_system_version || ""}
             onChange={e => setDeviceOperatingSystemVersion(e.target.value)}
-            helperText="The operating system version of the device. E.g., '10'."
+            helperText="The version of the device's operating system, e.g., '13.5'."
           />
         </Grid>
         <Grid item xs={12} sm={6}>
           <TextField
             fullWidth
             id="device-model"
-            label="Device model"
+            label={Label.DeviceModel}
             variant="outlined"
             size="small"
             value={device_model || ""}
             onChange={e => setDeviceModel(e.target.value)}
-            helperText="The device model. E.g., 'Pixel 6'."
+            helperText="The model of the device, e.g., 'Pixel 6'."
           />
         </Grid>
         <Grid item xs={12} sm={6}>
           <TextField
             fullWidth
             id="device-brand"
-            label="Device brand"
+            label={Label.DeviceBrand}
             variant="outlined"
             size="small"
             value={device_brand || ""}
             onChange={e => setDeviceBrand(e.target.value)}
-            helperText="The device brand. E.g., 'Google'."
+            helperText="The brand of the device, e.g., 'Google'."
           />
         </Grid>
         <Grid item xs={12} sm={6}>
           <TextField
             fullWidth
             id="device-browser"
-            label="Device browser"
+            label={Label.DeviceBrowser}
             variant="outlined"
             size="small"
             value={device_browser || ""}
             onChange={e => setDeviceBrowser(e.target.value)}
-            helperText="The browser name. E.g., 'Chrome'."
+            helperText="The brand or type of browser, e.g., 'Chrome'."
           />
         </Grid>
         <Grid item xs={12} sm={6}>
           <TextField
             fullWidth
             id="device-browser-version"
-            label="Device browser version"
+            label={Label.DeviceBrowserVersion}
             variant="outlined"
             size="small"
             value={device_browser_version || ""}
             onChange={e => setDeviceBrowserVersion(e.target.value)}
-            helperText="The browser version. E.g., '108.0.0.0'."
+            helperText="The version of the browser, e.g., '136.0.7103.60, 5.0'."
           />
         </Grid>
       </Grid>

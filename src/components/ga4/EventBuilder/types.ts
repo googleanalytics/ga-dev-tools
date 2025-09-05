@@ -119,6 +119,17 @@ export enum Label {
   CountryId = "country id",
   SubcontinentId = "subcontinent id",
   ContinentId = "continent id",
+
+  // Device Information
+  DeviceCategory = "device category",
+  DeviceLanguage = "device language",
+  DeviceScreenResolution = "device screen resolution",
+  DeviceOperatingSystem = "device operating system",
+  DeviceOperatingSystemVersion = "device operating system version",
+  DeviceModel = "device model",
+  DeviceBrand = "device brand",
+  DeviceBrowser = "device browser",
+  DeviceBrowserVersion = "device browser version",
 }
 
 // TODO - Add test to ensure url param values are all unique.

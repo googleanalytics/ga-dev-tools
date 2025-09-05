@@ -217,7 +217,6 @@ const EventBuilder: React.FC = () => {
     setNonPersonalizedAds,
   } = useInputs(categories)
 
-
   const [user_location_city, setUserLocationCity] = React.useState("")
   const [user_location_region_id, setUserLocationRegionId] = React.useState("")
   const [user_location_country_id, setUserLocationCountryId] = React.useState("")
