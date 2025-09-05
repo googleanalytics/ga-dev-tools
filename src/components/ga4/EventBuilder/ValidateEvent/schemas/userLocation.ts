@@ -1,4 +1,4 @@
-// User Location Schema
+// User location schema
 
 export const userLocationSchema = {
   type: "object",

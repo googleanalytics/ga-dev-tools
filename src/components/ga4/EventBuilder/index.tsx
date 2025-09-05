@@ -202,7 +202,7 @@ const EventBuilder: React.FC = () => {
     timestamp_micros,
     setTimestampMicros,
     non_personalized_ads,
-    setNonPersonalizedAds
+    setNonPersonalizedAds,
   } = useInputs(categories)
 
   const [user_location_city, setUserLocationCity] = React.useState("")
