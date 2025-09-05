@@ -111,6 +111,14 @@ export enum Label {
   Affiliation = "#/events/0/params/affiliation",
   Shipping = "#/events/0/params/shipping",
   Tax = "#/events/0/params/tax",
+
+  // Geographic Information
+  IpOverride = "ip address",
+  City = "city",
+  RegionId = "region id",
+  CountryId = "country id",
+  SubcontinentId = "subcontinent id",
+  ContinentId = "continent id",
 }
 
 // TODO - Add test to ensure url param values are all unique.
