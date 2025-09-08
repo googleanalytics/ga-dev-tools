@@ -130,6 +130,7 @@ export enum Label {
   DeviceBrand = "device brand",
   DeviceBrowser = "device browser",
   DeviceBrowserVersion = "device browser version",
+  UserAgent = "user agent",
 }
 
 // TODO - Add test to ensure url param values are all unique.

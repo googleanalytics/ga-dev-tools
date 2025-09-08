@@ -233,6 +233,7 @@ const EventBuilder: React.FC = () => {
   const [device_brand, setDeviceBrand] = React.useState("")
   const [device_browser, setDeviceBrowser] = React.useState("")
   const [device_browser_version, setDeviceBrowserVersion] = React.useState("")
+  const [user_agent, setUserAgent] = React.useState("")
 
   const formatPayload = React.useCallback(() => {
     try {
@@ -609,7 +610,7 @@ const EventBuilder: React.FC = () => {
             </>
           )}
           {showAdvanced && (
-            <>
+            <UseFirebaseCtx.Provider value={useFirebase}>
               <GeographicInformation
                 user_location_city={user_location_city}
                 setUserLocationCity={setUserLocationCity}
@@ -651,8 +652,10 @@ const EventBuilder: React.FC = () => {
                 setDeviceBrowser={setDeviceBrowser}
                 device_browser_version={device_browser_version}
                 setDeviceBrowserVersion={setDeviceBrowserVersion}
+                user_agent={user_agent}
+                setUserAgent={setUserAgent}
               />
-            </>
+            </UseFirebaseCtx.Provider>
           )}
             </ShowAdvancedCtx.Provider>
           </section>

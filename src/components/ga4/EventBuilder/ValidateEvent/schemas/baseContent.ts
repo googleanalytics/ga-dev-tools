@@ -33,5 +33,8 @@ export const baseContentSchema = {
       type: "string",
     },
     device: deviceSchema,
+    user_agent: {
+      type: "string",
+    }
   },
 }

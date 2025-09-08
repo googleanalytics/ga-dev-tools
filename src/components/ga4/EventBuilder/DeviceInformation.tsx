@@ -1,4 +1,4 @@
-import React from "react"
+import React, { useContext } from "react"
 import Chip from "@mui/material/Chip"
 import Divider from "@mui/material/Divider"
 import { styled } from "@mui/material/styles"
@@ -8,6 +8,7 @@ import Grid from "@mui/material/Grid"
 
 import ExternalLink from "@/components/ExternalLink"
 import { Label } from "./types"
+import { UseFirebaseCtx } from "."
 
 const Root = styled("div")(({ theme }) => ({
   marginTop: theme.spacing(1),
@@ -32,6 +33,8 @@ type DeviceInformationProps = {
   setDeviceBrowser: (value: string) => void
   device_browser_version: string | undefined
   setDeviceBrowserVersion: (value: string) => void
+  user_agent: string | undefined
+  setUserAgent: (value: string) => void
 }
 
 const DeviceInformation: React.FC<DeviceInformationProps> = ({
@@ -53,7 +56,10 @@ const DeviceInformation: React.FC<DeviceInformationProps> = ({
   setDeviceBrowser,
   device_browser_version,
   setDeviceBrowserVersion,
+  user_agent,
+  setUserAgent,
 }) => {
+  const useFirebase = useContext(UseFirebaseCtx)
   const docHref =
     "https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference#device"
   return (
@@ -61,7 +67,7 @@ const DeviceInformation: React.FC<DeviceInformationProps> = ({
       <Divider>
         <Chip label="DEVICE INFORMATION" size="small" />
       </Divider>
-      <Typography variant="h6">Device</Typography>
+      <Typography variant="h6">Device Attributes</Typography>
       <Typography>
         See the{" "}
         <ExternalLink href={docHref}>documentation</ExternalLink> for more
@@ -89,7 +95,7 @@ const DeviceInformation: React.FC<DeviceInformationProps> = ({
             size="small"
             value={device_language || ""}
             onChange={e => setDeviceLanguage(e.target.value)}
-            helperText="The language of the device in ISO 639-1 format, e.g., 'en', 'en-us'"
+            helperText="The language of the device in ISO 639-1 format, e.g., 'en'"
           />
         </Grid>
         <Grid item xs={12} sm={6}>
@@ -177,6 +183,29 @@ const DeviceInformation: React.FC<DeviceInformationProps> = ({
           />
         </Grid>
       </Grid>
+      {!useFirebase && (
+        <>
+          <Typography variant="h6">User Agent</Typography>
+          <Typography>
+            Specify a user agent string for Google Analytics to use to derive device information. 
+            This field is ignored if device information is provided.
+          </Typography>
+          <Grid container spacing={1}>
+            <Grid item xs={12} sm={6}>
+              <TextField
+                fullWidth
+                id="user-agent"
+                label={Label.UserAgent}
+                variant="outlined"
+                size="small"
+                value={user_agent || ""}
+                onChange={e => setUserAgent(e.target.value)}
+                helperText="The user agent string."
+              />
+            </Grid>
+          </Grid>
+        </>
+      )}
     </Root>
   )
 }
