@@ -187,7 +187,7 @@ describe("Event Builder", () => {
 
             const enInput = within(eventName).getByRole("combobox")
             //eventCategory.focus()
-            renderer.fireEvent.change(enInput, { target: { value: "select_content" } })
+            renderer.fireEvent.change(enInput, { target: { value: "campaign_details" } })
 
             await userEvent.type(
               timestampMicros,
@@ -208,7 +208,7 @@ describe("Event Builder", () => {
           expect(payload).toHaveTextContent(/"user_id":"my_user_id"/)
           expect(payload).toHaveTextContent(/"timestamp_micros":"1234"/)
           expect(payload).toHaveTextContent(/"non_personalized_ads":true/)
-          expect(payload).toHaveTextContent(/"name":"select_content"/)
+          expect(payload).toHaveTextContent(/"name":"campaign_details"/)
         })
       })
     })
