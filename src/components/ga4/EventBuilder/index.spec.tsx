@@ -49,7 +49,7 @@ describe("Event Builder", () => {
         const { wrapped } = withProviders(<Sut />, { isLoggedIn: false })
         const { findByLabelText, findByTestId } = renderer.render(wrapped)
 
-        await renderer.act(async () => {
+        await React.act(async () => {
           // Choose the second view in the list
           const clientToggle = await findByTestId("use firebase")
           clientToggle.click()
@@ -94,7 +94,7 @@ describe("Event Builder", () => {
             exact: false,
           })
 
-          await renderer.act(async () => {
+          await React.act(async () => {
             await userEvent.type(apiSecret, "my_secret", { delay: 1 })
             await userEvent.type(firebaseAppId, "my_firebase_app_id", {
               delay: 1,
@@ -145,7 +145,7 @@ describe("Event Builder", () => {
             wrapped
           )
 
-          await renderer.act(async () => {
+          await React.act(async () => {
             // Choose the second view in the list
             const clientToggle = await findByTestId("use firebase")
             clientToggle.click()
@@ -166,7 +166,7 @@ describe("Event Builder", () => {
             exact: false,
           })
 
-          await renderer.act(async () => {
+          await React.act(async () => {
             await userEvent.type(apiSecret, "my_secret", { delay: 1 })
             await userEvent.type(measurementId, "my_measurement_id", {
               delay: 1,
@@ -211,6 +211,25 @@ describe("Event Builder", () => {
           expect(payload).toHaveTextContent(/"name":"campaign_details"/)
         })
       })
+    })
+  })
+  describe("for firebase switch", () => {
+    test("app only event ad_impression is not available", async () => {
+      const { wrapped } = withProviders(<Sut />, { isLoggedIn: false })
+      const { findByTestId } = renderer.render(wrapped)
+
+      await React.act(async () => {
+        const clientToggle = await findByTestId("use firebase")
+        clientToggle.click()
+      })
+
+      const eventName = await findByTestId(Label.EventName)
+      const enInput = within(eventName).getByRole("combobox")
+      eventName.focus()
+      renderer.fireEvent.change(enInput, { target: { value: "ad" } })
+
+      const adImpression = renderer.screen.queryByText("ad_impression")
+      expect(adImpression).toBeNull()
     })
   })
 })
