@@ -14,7 +14,7 @@ const useInputs = (categories: Category[]) => {
   )
 
   const [useTextBox, setUseTextBox] = useHydratedPersistantBoolean(
-    StorageKey.eventBuilderUseTextBox,
+    StorageKey.eventBuilderUseFirebase,
     UrlParam.UseTextBox,
     false
   )

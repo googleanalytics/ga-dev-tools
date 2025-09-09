@@ -243,7 +243,6 @@ export enum StorageKey {
   eventBuilderTimestampMicros = "ga4/event-builder/timestamp-micros",
   eventBuilderNonPersonalizedAds = "ga4/event-builder/non-personalized-ads",
   eventBuilderUseFirebase = "ga4/event-builder/use-firebase",
-  eventBuilderUseTextBox = "ga4/event-builder/use-text-box",
   ga4EventBuilderEvents = "ga4/event-builder/events",
   ga4EventBuilderLastEventType = "ga4/event-builder/last-event-type",
   ga4EventBuilderParameters = "ga4/event-builder/parameters",
