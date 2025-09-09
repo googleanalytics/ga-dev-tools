@@ -278,7 +278,7 @@ const EventBuilder: React.FC = () => {
             <Switch
               data-testid="use firebase"
               checked={useFirebase}
-                            onChange={e => {
+              onChange={e => {
                 const newUseFirebase = e.target.checked
                 setUseFirebase(newUseFirebase)
 
