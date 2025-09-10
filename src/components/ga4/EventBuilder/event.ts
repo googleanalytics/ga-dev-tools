@@ -40,12 +40,14 @@ const eventFor = (
   type: EventType,
   categories: Category[],
   parameters: Parameter[],
-  firstItem?: Parameter[]
+  firstItem?: Parameter[],
+  clients: ("web" | "app")[] = ["web", "app"]
 ) => ({
   type,
   categories,
   parameters,
   items: firstItem === undefined ? undefined : [firstItem],
+  clients,
 })
 
 const custom_event = eventFor(EventType.CustomEvent, [Category.Custom], [], [])
@@ -60,7 +62,9 @@ const ad_impression = eventFor(
       stringParam("ad_unit_name", "Banner_03"),
       stringParam("currency", "USD"),
       numberParam("value", 	3.99),
-    ]
+    ],
+    undefined,
+    ["app"]
 )
 
 const add_payment_info = eventFor(
@@ -306,7 +310,9 @@ const screen_view = eventFor(
     [
       stringParam("screen_class", "MainActivity"),
       stringParam("screen_name", "About"),
-    ]
+    ],
+    undefined,
+    ["app"]
 )
 
 const search = eventFor(
@@ -598,5 +604,11 @@ const events = Object.values(EventType).map(eventType =>
   suggestedEventFor(eventType)
 )
 
-export const eventsForCategory = (category: Category) =>
-  events.filter(event => event.categories.find(c => c === category))
+export const eventsForCategory = (category: Category, useFirebase?: boolean) => {
+  const client = useFirebase ? "app" : "web"
+  return events.filter(
+    (event: any) =>
+      event.categories.find((c: any) => c === category) &&
+      event.clients.includes(client)
+  )
+}
