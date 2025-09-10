@@ -177,10 +177,7 @@ const Template: React.FC<TemplateProps> = ({
   const { instanceId, api_secret } = useContext(EventCtx)!
   const payload = usePayload()
   return (
-    <Card
-      className={clsx(classes.form, classes.template)}
-      data-testid="validate and send"
-    >
+    <>
       <Typography className={classes.heading} variant="h3">
         {headingIcon}
         {heading}
@@ -254,7 +251,7 @@ const Template: React.FC<TemplateProps> = ({
         {instanceId.firebase_app_id &&
           `&firebase_app_id=${instanceId.firebase_app_id}`}
         {instanceId.measurement_id &&
-          `&measurement_id=${instanceId.measurement_id}`}{" "}
+          `&measurement_id=${instanceId.measurement_id}`}{" "} <br />
         HTTP/1.1 <br />
         HOST: {useEuEndpoint ? "region1.google-analytics.com" : "www.google-analytics.com"} <br />
         Content-Type: application/json
@@ -270,7 +267,7 @@ const Template: React.FC<TemplateProps> = ({
           tooltipText="Copy payload"
         />
       </section>
-    </Card>
+    </>
   )
 }
 
@@ -279,8 +276,8 @@ const ValidateEvent: React.FC<ValidateEventProps> = ({formatPayload, payloadErro
   const request = useValidateEvent(useEuEndpoint)
 
   return (
-    <div className={classes.form}>
-      <Box mb={1}>
+    <Root className={classes.form}>
+      <Box mb={1} className={clsx(classes.form, classes.template)}>
         <WithHelpText
           notched
           shrink
@@ -293,9 +290,7 @@ const ValidateEvent: React.FC<ValidateEventProps> = ({formatPayload, payloadErro
               <Switch
                 data-testid="use-eu-endpoint"
                 checked={useEuEndpoint}
-                onChange={e => {
-                  setUseEuEndpoint(e.target.checked)
-                }}
+                onChange={e => setUseEuEndpoint(e.target.checked)}
                 name="use-eu-endpoint"
                 color="primary"
               />
@@ -304,15 +299,16 @@ const ValidateEvent: React.FC<ValidateEventProps> = ({formatPayload, payloadErro
           </Grid>
         </WithHelpText>
       </Box>
-      <Loadable
-        request={request}
+      <Card className={clsx(classes.form, classes.template)} data-testid="validate and send">
+        <Loadable
+          request={request}
         renderNotStarted={({ validateEvent }) => (
           <Template
             useEuEndpoint={useEuEndpoint}
             heading="This event has not been validated"
             headingIcon={<Warning />}
             body={
-              <Root>
+              <>
                 <Typography>
                   Update the event using the controls above.
                 </Typography>
@@ -320,7 +316,7 @@ const ValidateEvent: React.FC<ValidateEventProps> = ({formatPayload, payloadErro
                   When you're done editing the event, click "Validate Event" to
                   check if the event is valid.
                 </Typography>
-              </Root>
+              </>
             }
             validateEvent={() => {
               if (formatPayload) {
@@ -386,8 +382,9 @@ const ValidateEvent: React.FC<ValidateEventProps> = ({formatPayload, payloadErro
             }
           />
         )}
-      />
-    </div>
+        />
+      </Card>
+    </Root>
   );
 }
 
