@@ -125,6 +125,7 @@ export type EventPayload = {
   useTextBox: boolean
   payloadObj: any
   ip_override: string | undefined
+  user_agent: string | undefined
   user_location: {
     city: string | undefined
     region_id: string | undefined
@@ -703,6 +704,7 @@ const EventBuilder: React.FC = () => {
             payloadObj,
             instanceId: useFirebase ? { firebase_app_id } : { measurement_id },
             api_secret: api_secret!,
+            user_agent,
             ip_override,
             user_location: {
               city: user_location_city,

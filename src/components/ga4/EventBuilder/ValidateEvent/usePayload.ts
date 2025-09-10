@@ -74,7 +74,8 @@ const usePayload = (): {} => {
     payloadObj,
     ip_override,
     user_location,
-    device
+    device,
+    user_agent
   } = useContext(EventCtx)!
 
   const eventName = useMemo(() => {
@@ -134,7 +135,7 @@ const usePayload = (): {} => {
       ...removeUndefined({ timestamp_micros }),
       ...removeUndefined({ non_personalized_ads }),
       ...removeUndefined(removeEmptyObject({ user_properties })),
-      ...removeUndefined({ ip_override, user_location: user_location_info, device: device_info }),
+      ...removeUndefined({ ip_override, user_location: user_location_info, device: device_info, user_agent }),
       events: [
         { name: eventName, ...(parameters.length > 0 ? { params } : {}) },
       ],
@@ -149,7 +150,8 @@ const usePayload = (): {} => {
     user_properties,
     ip_override,
     user_location_info,
-    device_info
+    device_info,
+    user_agent
   ])
 
   if (useTextBox) {
