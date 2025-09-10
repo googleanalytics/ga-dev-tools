@@ -226,6 +226,11 @@ const EventBuilder: React.FC = () => {
     setNonPersonalizedAds,
   } = useInputs(categories)
 
+  const eventOptions = React.useMemo(
+    () => eventsForCategory(category, useFirebase),
+    [category, useFirebase]
+  )
+
   const formatPayload = React.useCallback( () => {
     try {
       if (inputPayload) {
@@ -274,10 +279,21 @@ const EventBuilder: React.FC = () => {
               data-testid="use firebase"
               checked={useFirebase}
               onChange={e => {
-                setUseFirebase(e.target.checked)
+                const newUseFirebase = e.target.checked
+                setUseFirebase(newUseFirebase)
 
                 if (!e.target.checked) {
                   setUseTextBox(false)
+                }
+
+                // Always reset the event type when the client changes.
+                const newOptions = eventsForCategory(category, newUseFirebase)
+                if (newOptions.length > 0) {
+                  setType(newOptions[0].type)
+                } else {
+                  // If the new client has no events for this category, switch to Custom.
+                  setCategory(Category.Custom)
+                  setType(EventType.CustomEvent)
                 }
               }}
               name="use firebase"
@@ -446,9 +462,15 @@ const EventBuilder: React.FC = () => {
             value={category}
             onChange={(_event, value) => {
               setCategory(value as Category)
-              const events = eventsForCategory(value as Category)
-              if (events.length > 0) {
-                setType(events[0].type)
+              const newOptions = eventsForCategory(
+                value as Category,
+                useFirebase
+              )
+              if (newOptions.length > 0) {
+                setType(newOptions[0].type)
+              } else {
+                setCategory(Category.Custom)
+                setType(EventType.CustomEvent)
               }
             }}
             renderInput={params => (
@@ -483,7 +505,7 @@ const EventBuilder: React.FC = () => {
               autoComplete
               autoHighlight
               autoSelect
-              options={eventsForCategory(category).map(e => e.type)}
+              options={eventOptions.map(e => e.type)}
               getOptionLabel={eventType => eventType}
               value={type}
               onChange={(_event, value) => {
