@@ -147,7 +147,7 @@ export type EventPayload = {
   parameters: Parameter[]
   items: Parameter[][] | undefined
   userProperties: Parameter[]
-  timestamp_micros: string | undefined
+  timestamp_micros: number | undefined
   non_personalized_ads: boolean | undefined
   clientIds: ClientIds
   instanceId: InstanceId
@@ -648,7 +648,7 @@ const EventBuilder: React.FC = () => {
             parameters,
             eventName,
             userProperties,
-            timestamp_micros,
+            timestamp_micros: (num => isNaN(num) ? undefined : num)(parseFloat(timestamp_micros || '')),
             non_personalized_ads,
             useTextBox,
             payloadObj,
