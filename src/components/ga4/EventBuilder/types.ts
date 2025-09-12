@@ -67,12 +67,14 @@ export interface NumberParameter {
   name: string
   value: string | undefined
   exampleValue?: number
+  timestamp_micros?: number
 }
 export interface StringParameter {
   type: ParameterType.String
   name: string
   value: string | undefined
   exampleValue?: string
+  timestamp_micros?: number
 }
 
 export type Parameter = NumberParameter | StringParameter

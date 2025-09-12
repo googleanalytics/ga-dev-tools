@@ -35,22 +35,26 @@ interface Props {
   parameters: ParameterT[]
   setParamName: (idx: number, name: string) => void
   setParamValue: (idx: number, value: string) => void
+  setParamTimestamp: (idx: number, value: number) => void
   addStringParam: () => void
   addNumberParam: () => void
   removeParam: (idx: number) => void
   removeItem?: () => void
   addItemsParam?: () => void
+  isUserProperty: boolean
 }
 
 const Parameters: React.FC<Props> = ({
   parameters,
   setParamName,
   setParamValue,
+  setParamTimestamp,
   addStringParam,
   addNumberParam,
   removeParam,
   addItemsParam,
   removeItem,
+  isUserProperty,
 }) => {
   const showAdvanced = React.useContext(ShowAdvancedCtx)
 
@@ -62,7 +66,9 @@ const Parameters: React.FC<Props> = ({
           parameter={parameter}
           setParamName={name => setParamName(idx, name)}
           setParamValue={value => setParamValue(idx, value)}
+          setParamTimestamp={timestamp => setParamTimestamp(idx, timestamp)}
           removeParam={() => removeParam(idx)}
+          isUserProperty={isUserProperty}
         />
       ))}
       <section className={classes.buttonRow} >

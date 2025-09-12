@@ -28,15 +28,19 @@ const objectifyUserProperties = (acc: {}, p: Parameter) => {
   if (p.type === ParameterType.Number) {
     value = tryParseNum(value)
   }
+
+  if (p.name === "" || value === "" || value === undefined) {
+    return acc
+  }
+
+  const newProp: { value: any; timestamp_micros?: number } = { value }
+  if (p.timestamp_micros) {
+    newProp.timestamp_micros = p.timestamp_micros
+  }
+
   return {
     ...acc,
-    ...(p.name !== "" && value !== "" && value !== undefined
-      ? {
-          [p.name]: {
-            value,
-          },
-        }
-      : {}),
+    [p.name]: newProp,
   }
 }
 
