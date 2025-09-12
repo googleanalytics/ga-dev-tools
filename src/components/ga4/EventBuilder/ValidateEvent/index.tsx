@@ -282,7 +282,7 @@ const ValidateEvent: React.FC<ValidateEventProps> = ({formatPayload, payloadErro
           notched
           shrink
           label="server endpoint"
-          helpText="Collect data in the European Union. If enabled, the https://region1.google-analytics.com endpoint will be used to validate and send events."
+          helpText="The default endpoint is https://www.google-analytics.com. If 'EU' is selected, the https://region1.google-analytics.com endpoint will be used to validate and send events."
         >
           <Grid component="label" container alignItems="center" spacing={1}>
             <Grid item>Default</Grid>
