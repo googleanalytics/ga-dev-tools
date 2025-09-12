@@ -91,6 +91,9 @@ const Root = styled('div')((
 
   [`& .${classes.form}`]: {
     maxWidth: "80ch",
+    "& h5:not(:first-of-type)": {
+      marginTop: theme.spacing(4),
+    },
   },
 
   [`& .${classes.items}`]: {
