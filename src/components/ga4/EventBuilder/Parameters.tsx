@@ -41,7 +41,7 @@ interface Props {
   removeParam: (idx: number) => void
   removeItem?: () => void
   addItemsParam?: () => void
-  isUserProperty: boolean
+  allowTimestampOverride: boolean
 }
 
 const Parameters: React.FC<Props> = ({
@@ -54,7 +54,7 @@ const Parameters: React.FC<Props> = ({
   removeParam,
   addItemsParam,
   removeItem,
-  isUserProperty,
+  allowTimestampOverride: allowTimestampOverride,
 }) => {
   const showAdvanced = React.useContext(ShowAdvancedCtx)
 
@@ -69,7 +69,7 @@ const Parameters: React.FC<Props> = ({
           setParamTimestamp={setParamTimestamp}
           idx={idx}
           removeParam={() => removeParam(idx)}
-          isUserProperty={isUserProperty}
+          allowTimestampOverride={allowTimestampOverride}
         />
       ))}
       <section className={classes.buttonRow} >

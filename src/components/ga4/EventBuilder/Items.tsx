@@ -83,7 +83,7 @@ const Items: React.FC<Props> = ({
             removeParam={(itemIdx: number) => removeItemParam(idx, itemIdx)}
             removeItem={() => removeItem(idx)}
             setParamTimestamp={() => {}}
-            isUserProperty={false}
+            allowTimestampOverride={false}
           />
         </WithHelpText>
       ))}

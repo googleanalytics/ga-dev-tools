@@ -19,7 +19,7 @@ interface Props {
   setParamValue: (value: string) => void
   setParamTimestamp: (idx: number, value: number | undefined) => void
   removeParam: () => void
-  isUserProperty: boolean
+  allowTimestampOverride: boolean
 }
 
 const Parameter: React.FC<Props> = ({
@@ -29,7 +29,7 @@ const Parameter: React.FC<Props> = ({
   setParamValue,
   setParamTimestamp,
   removeParam,
-  isUserProperty,
+  allowTimestampOverride,
 }) => {
   const showAdvanced = React.useContext(ShowAdvancedCtx)
 
@@ -73,7 +73,7 @@ const Parameter: React.FC<Props> = ({
           fullWidth
         />
       </Grid>
-      {isUserProperty && (
+      {allowTimestampOverride && (
         <Grid item xs={12}>
             <TimestampPicker
               timestamp={timestamp}

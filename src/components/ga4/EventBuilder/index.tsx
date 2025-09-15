@@ -577,7 +577,7 @@ const EventBuilder: React.FC = () => {
             setParamValue={setParamValue}
             addItemsParam={items === undefined ? addItemsParam : undefined}
             setParamTimestamp={() => {}}
-            isUserProperty={false}
+            allowTimestampOverride={false}
           />
           {items !== undefined && (
             <>
@@ -607,7 +607,7 @@ const EventBuilder: React.FC = () => {
                   setParamName={setUserPropertyName}
                   setParamValue={setUserPropertyValue}
                   setParamTimestamp={setUserPropertyTimestamp}
-                  isUserProperty={true}
+                  allowTimestampOverride={true}
                 />
               </>
             )}
