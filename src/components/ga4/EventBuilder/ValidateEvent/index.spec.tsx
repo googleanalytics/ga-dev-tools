@@ -53,6 +53,14 @@ const renderComponent = (props: Partial<ValidateEventProps> = {}) => {
     payloadObj: [],
     api_secret: "secret123",
     clientIds: {},
+    ip_override: "",
+    user_location: {
+      city: "Mountain View",
+      region_id: "CA",
+      country_id: "US",
+      subcontinent_id: "021",
+      continent_id: "019"
+    }
   }
 
   return render(
