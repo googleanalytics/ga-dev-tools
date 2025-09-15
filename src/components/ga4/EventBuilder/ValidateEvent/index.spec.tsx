@@ -47,7 +47,7 @@ const renderComponent = (props: Partial<ValidateEventProps> = {}) => {
     parameters: [],
     items: [],
     userProperties: [],
-    timestamp_micros: "",
+    timestamp_micros: undefined,
     non_personalized_ads: false,
     useTextBox: false,
     payloadObj: [],
