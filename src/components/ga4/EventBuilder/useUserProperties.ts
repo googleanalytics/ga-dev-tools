@@ -44,7 +44,7 @@ const useUserProperties = () => {
   )
 
   const setUserPropertyTimestamp = useCallback(
-    (idx: number, timestamp_micros: number) => {
+    (idx: number, timestamp_micros: number | undefined) => {
       updateUserProperty(idx, old => ({ ...old, timestamp_micros }))
     },
     [updateUserProperty]

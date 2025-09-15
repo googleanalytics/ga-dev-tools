@@ -3,20 +3,28 @@ import * as React from "react"
 import TextField from "@mui/material/TextField"
 import { Parameter as ParameterT } from "./types"
 import { ShowAdvancedCtx } from "."
-import { IconButton, Tooltip, Grid } from "@mui/material"
-import { Delete } from "@mui/icons-material"
+import {
+  IconButton,
+  Tooltip,
+  Grid
+} from "@mui/material"
+import { Delete, ExpandMore } from "@mui/icons-material"
+import TimestampPicker from "./TimestampPicker"
+import { TimestampScope } from "@/constants"
 
 interface Props {
   parameter: ParameterT
+  idx: number
   setParamName: (name: string) => void
   setParamValue: (value: string) => void
-  setParamTimestamp: (value: number) => void
+  setParamTimestamp: (idx: number, value: number | undefined) => void
   removeParam: () => void
   isUserProperty: boolean
 }
 
 const Parameter: React.FC<Props> = ({
   parameter,
+  idx,
   setParamName,
   setParamValue,
   setParamTimestamp,
@@ -30,6 +38,11 @@ const Parameter: React.FC<Props> = ({
   const [timestamp, setTimestamp] = React.useState(
     parameter.timestamp_micros?.toString() || ""
   )
+
+  React.useEffect(() => {
+    const num = parseInt(timestamp, 10)
+    setParamTimestamp(idx, isNaN(num) ? undefined : num)
+  }, [timestamp, setParamTimestamp, idx])
 
   const inputs = (
     <Grid container spacing={1}>
@@ -61,17 +74,12 @@ const Parameter: React.FC<Props> = ({
         />
       </Grid>
       {isUserProperty && (
-        <Grid item xs>
-          <TextField
-            variant="outlined"
-            size="small"
-            value={timestamp}
-            onChange={e => setTimestamp(e.target.value)}
-            onBlur={() => setParamTimestamp(parseInt(timestamp, 10))}
-            label="timestamp micros"
-            helperText="The timestamp to be applied to the user property. Optional."
-            fullWidth
-          />
+        <Grid item xs={12}>
+            <TimestampPicker
+              timestamp={timestamp}
+              scope={TimestampScope.USER_PROPERTY}
+              setTimestamp={setTimestamp}
+            />
         </Grid>
       )}
     </Grid>

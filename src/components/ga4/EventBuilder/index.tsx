@@ -18,10 +18,7 @@ import { styled } from '@mui/material/styles';
 
 import Typography from "@mui/material/Typography"
 import TextField from "@mui/material/TextField"
-import IconButton from "@mui/material/IconButton"
-import Tooltip from "@mui/material/Tooltip"
 import Autocomplete from "@mui/material/Autocomplete"
-import Refresh from "@mui/icons-material/Refresh"
 import { Error as ErrorIcon } from "@mui/icons-material"
 
 import LinkedTextField from "@/components/LinkedTextField"
@@ -30,7 +27,7 @@ import LabeledCheckbox from "@/components/LabeledCheckbox"
 import Grid from "@mui/material/Grid"
 import Switch from "@mui/material/Switch"
 import ExternalLink from "@/components/ExternalLink"
-import { Url } from "@/constants"
+import { TimestampScope, Url } from "@/constants"
 import WithHelpText from "@/components/WithHelpText"
 import { TooltipIconButton } from "@/components/Buttons"
 import useEvent from "./useEvent"
@@ -43,6 +40,7 @@ import Items from "./Items"
 import ValidateEvent from "./ValidateEvent"
 import { PlainButton } from "@/components/Buttons"
 import { useEffect } from "react"
+import TimestampPicker from "./TimestampPicker"
 
 const PREFIX = 'EventBuilder';
 
@@ -119,7 +117,8 @@ export enum Label {
 
   EventCategory = "event category",
   EventName = "event name",
-  TimestampMicros = "timestamp micros",
+  TimestampMicros = "UNIX timestamp in microseconds",
+  TimezoneSelect = "Timezone",
   NonPersonalizedAds = "non personalized ads",
 
   Payload = "payload",
@@ -155,7 +154,7 @@ export type EventPayload = {
   useTextBox: boolean
   payloadObj: any
 }
-export const EventCtx = React.createContext<
+export const EventCtx = React.createContext< 
   | EventPayload
   | undefined
 >(undefined)
@@ -370,7 +369,7 @@ const EventBuilder: React.FC = () => {
           </>
         )}
         <LinkedTextField
-          href={`https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference?client_type=${
+          href={`https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference?client_type=${ 
             useFirebase ? "firebase" : "gtag"
           }#user_id`}
           linkTitle="See user_id on devsite."
@@ -451,7 +450,7 @@ const EventBuilder: React.FC = () => {
 
     { !useTextBox &&
       <div>
-        <section className={classes.form}>
+        <section className={classes.form}> 
 
 
           <Autocomplete<Category, false, true, true>
@@ -531,28 +530,10 @@ const EventBuilder: React.FC = () => {
               )}
             />
           )}
-          <LinkedTextField
-            label={Label.TimestampMicros}
-            id={Label.TimestampMicros}
-            linkTitle="See timestamp_micros on devsite."
-            href={`https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference?client_type=${
-              useFirebase ? "firebase" : "gtag"
-            }#timestamp_micros`}
-            value={timestamp_micros || ""}
-            onChange={setTimestampMicros}
-            helperText="The timestamp of the event."
-            extraAction={
-              <Tooltip title="Set to now.">
-                <IconButton
-                  size="small"
-                  onClick={() => {
-                    setTimestampMicros((new Date().getTime() * 1000).toString())
-                  }}
-                >
-                  <Refresh />
-                </IconButton>
-              </Tooltip>
-            }
+          <TimestampPicker
+            timestamp={timestamp_micros || ""}
+            scope={TimestampScope.REQUEST}
+            setTimestamp={setTimestampMicros}
           />
 
           <WithHelpText
@@ -648,7 +629,9 @@ const EventBuilder: React.FC = () => {
             parameters,
             eventName,
             userProperties,
-            timestamp_micros: (num => isNaN(num) ? undefined : num)(parseFloat(timestamp_micros || '')),
+            timestamp_micros: ((num) => (isNaN(num) ? undefined : num))(
+              parseInt(timestamp_micros || "", 10)
+            ),
             non_personalized_ads,
             useTextBox,
             payloadObj,

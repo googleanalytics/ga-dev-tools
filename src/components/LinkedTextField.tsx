@@ -8,11 +8,14 @@ export interface LinkedTextFieldProps {
   value: string | undefined
   label: string
   onChange: (e: string) => void
+  onBlur?: () => void
   helperText: string | JSX.Element
   extraAction?: JSX.Element
   required?: true
   disabled?: boolean
   id?: string
+  error?: boolean
+  size?: "small" | "medium"
 }
 
 const LinkedTextField: React.FC<LinkedTextFieldProps> = ({
@@ -21,11 +24,14 @@ const LinkedTextField: React.FC<LinkedTextFieldProps> = ({
   label,
   value,
   onChange,
+  onBlur,
   required,
   helperText,
   disabled,
   extraAction,
   id,
+  error,
+  size = "small",
 }) => {
   return (
     <TextField
@@ -42,15 +48,17 @@ const LinkedTextField: React.FC<LinkedTextFieldProps> = ({
         ),
       }}
       id={id}
-      size="small"
+      size={size}
       variant="outlined"
       fullWidth
       label={label}
       value={value === undefined ? "" : value}
       onChange={e => onChange(e.target.value)}
+      onBlur={onBlur}
       required={required}
       helperText={helperText}
       disabled={disabled}
+      error={error}
     />
   )
 }

@@ -35,7 +35,7 @@ interface Props {
   parameters: ParameterT[]
   setParamName: (idx: number, name: string) => void
   setParamValue: (idx: number, value: string) => void
-  setParamTimestamp: (idx: number, value: number) => void
+  setParamTimestamp: (idx: number, value: number | undefined) => void
   addStringParam: () => void
   addNumberParam: () => void
   removeParam: (idx: number) => void
@@ -66,7 +66,8 @@ const Parameters: React.FC<Props> = ({
           parameter={parameter}
           setParamName={name => setParamName(idx, name)}
           setParamValue={value => setParamValue(idx, value)}
-          setParamTimestamp={timestamp => setParamTimestamp(idx, timestamp)}
+          setParamTimestamp={setParamTimestamp}
+          idx={idx}
           removeParam={() => removeParam(idx)}
           isUserProperty={isUserProperty}
         />

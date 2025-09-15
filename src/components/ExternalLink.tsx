@@ -11,29 +11,25 @@ import { PropsWithChildren } from "react"
 const PREFIX = "ExternalLink"
 
 const classes = {
-  link: `${PREFIX}-link`,
   icon: `${PREFIX}-icon`,
   hover: `${PREFIX}-hover`,
 }
 
-const Root = styled("span")(() => ({
-  [`& .${classes.link}`]: {
-    display: "inline-flex",
-    alignItems: "center",
-  },
-
+const StyledLink = styled("a")({
+  display: "inline-flex",
+  alignItems: "center",
   [`& .${classes.icon}`]: {
     marginLeft: "0.5ch",
     color: "inherit",
   },
 
-  [`& .${classes.hover}`]: {
+  [`&.${classes.hover}`]: {
     "&:hover": {
       opacity: 1.0,
     },
     opacity: 0.3,
   },
-}))
+})
 
 type Props = {
   href: string
@@ -48,23 +44,21 @@ const ExternalLink: React.FC<PropsWithChildren<Props>> = ({
   hover,
 }) => {
   return (
-    <Root>
-      <Tooltip title={title || ""}>
-        <a
-          className={clsx({ [classes.hover]: hover }, classes.link)}
-          href={href}
-          target="_blank"
-          rel="noreferrer"
-        >
-          {children}
-          <Launch
-            className={clsx({ [classes.icon]: children !== undefined })}
-            color="action"
-            fontSize={children === undefined ? undefined : "inherit"}
-          />
-        </a>
-      </Tooltip>
-    </Root>
+    <Tooltip title={title || ""}>
+      <StyledLink
+        className={clsx({ [classes.hover]: hover })}
+        href={href}
+        target="_blank"
+        rel="noreferrer"
+      >
+        {children}
+        <Launch
+          className={clsx({ [classes.icon]: children !== undefined })}
+          color="action"
+          fontSize={children === undefined ? undefined : "inherit"}
+        />
+      </StyledLink>
+    </Tooltip>
   )
 }
 
