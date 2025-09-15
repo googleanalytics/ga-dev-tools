@@ -78,7 +78,7 @@ const Root = styled('div')((
   },
 
   [`& .${classes.notchedChild}`]: {
-    padding: theme.spacing(1),
+    padding: theme.spacing(1, 1.75),
   },
   [`& .${classes.verticalHr}`]: {
     display: "flex",
