@@ -31,14 +31,20 @@ const instanceQueryParamFor = (instanceId: InstanceId) => {
   return ``
 }
 
+const getEndpoint = (useEuEndpoint: boolean) => {
+  if (useEuEndpoint) {
+    return "https://region1.google-analytics.com"
+  }
+  return "https://www.google-analytics.com"
+}
+
 const validateHit = async (
   payload: {},
   instanceId: InstanceId,
-  api_secret: string
+  api_secret: string,
+  baseUrl: string
 ): Promise<ValidationMessage[]> => {
-  const url = `https://www.google-analytics.com/debug/mp/collect?api_secret=${api_secret}${instanceQueryParamFor(
-    instanceId
-  )}`
+  const url = `${baseUrl}/debug/mp/collect?api_secret=${api_secret}${instanceQueryParamFor(instanceId)}`
   const body = Object.assign({}, payload, {
     validationBehavior: "ENFORCE_RECOMMENDATIONS",
   })
@@ -53,11 +59,10 @@ const validateHit = async (
 const sendHit = async (
   payload: {},
   instanceId: InstanceId,
-  api_secret: string
+  api_secret: string,
+  baseUrl: string
 ): Promise<void> => {
-  const url = `https://www.google-analytics.com/mp/collect?api_secret=${api_secret}${instanceQueryParamFor(
-    instanceId
-  )}`
+  const url = `${baseUrl}/mp/collect?api_secret=${api_secret}${instanceQueryParamFor(instanceId)}`
   const body = Object.assign({}, payload, {
     validationBehavior: "ENFORCE_RECOMMENDATIONS",
   })
@@ -86,7 +91,7 @@ export const ValidationRequestCtx = createContext<
   ReturnType<typeof useValidateEvent> | undefined
 >(undefined)
 
-const useValidateEvent = (): Requestable<
+const useValidateEvent = (useEuEndpoint: boolean): Requestable<
   ValidationSuccessful,
   ValidationNotStarted,
   ValidationInProgress,
@@ -116,8 +121,8 @@ const useValidateEvent = (): Requestable<
     if (status !== RequestStatus.Successful) {
       return
     }
-    sendHit(payload, instanceId, api_secret).then(() => setSent(true))
-  }, [status, payload, instanceId, api_secret])
+    sendHit(payload, instanceId, api_secret, getEndpoint(useEuEndpoint)).then(() => setSent(true))
+  }, [status, payload, instanceId, api_secret, useEuEndpoint])
 
   const copyPayload = useCopy(
     JSON.stringify(payload, undefined, "  "),
@@ -162,7 +167,7 @@ const useValidateEvent = (): Requestable<
       if (!useTextBox || Object.keys(payload).length !== 0) {
         let validatorErrors = validatePayloadAttributes(payload)
 
-        validateHit(payload, instanceId, api_secret)
+        validateHit(payload, instanceId, api_secret, getEndpoint(useEuEndpoint))
             .then(messages => {
               setTimeout(() => {
                 if (messages.length > 0 || validatorErrors.length > 0) {
@@ -197,7 +202,7 @@ const useValidateEvent = (): Requestable<
         setValidationMessages(validatorErrors)
         setStatus(RequestStatus.Failed)
       }
-    }, [status, payload, api_secret, instanceId, useFirebase, useTextBox, validatePayloadAttributes])
+    }, [status, payload, api_secret, instanceId, useFirebase, useTextBox, validatePayloadAttributes, useEuEndpoint])
 
   const defineFieldCode = (error: JSONError) => {
     const { data } = error

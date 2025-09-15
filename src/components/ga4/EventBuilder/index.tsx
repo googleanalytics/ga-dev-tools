@@ -160,7 +160,6 @@ export const ShowAdvancedCtx = React.createContext(false)
 export const UseFirebaseCtx = React.createContext(false)
 
 const EventBuilder: React.FC = () => {
-
   const [showAdvanced, setShowAdvanced] = React.useState(false)
   const {
     userProperties,
