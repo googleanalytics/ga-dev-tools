@@ -124,7 +124,7 @@ const Template: React.FC<PropsWithChildren<LayoutProps & TemplateProps>> = ({
   useEffect(() => {
     //const timeout = setTimeout(() => {
     // Redirect to the new domain while preserving the path.
-    if( window.location.hostname.indexOf('web.app') !== -1 ) {
+    if( window.location.hostname.indexOf('web.app') !== -1 && !window.location.hostname.includes('staging')) {
       const newHostname = window.location.hostname.replace('web.app', 'google');
       const newLocation =  window.location.href.replace( window.location.hostname, newHostname );
       window.location.replace(newLocation);
