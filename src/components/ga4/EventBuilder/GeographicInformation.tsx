@@ -45,7 +45,6 @@ const GeographicInformation: React.FC<GeographicInformationProps> = ({
 }) => {
   return (
     <Root>
-      {/* <Typography variant="h4">Geographic Information</Typography> */}
       <Divider><Chip label="GEOGRAPHIC INFORMATION" size="small" /></Divider>
       <Typography variant="h6">User Location</Typography>
       <Typography>
