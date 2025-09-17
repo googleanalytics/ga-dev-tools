@@ -59,7 +59,7 @@ export enum Url {
   gaDevsiteHelp = "http://developers.google.com/analytics/help/",
   reportingApis = "https://developers.google.com/analytics/devguides/reporting/",
   spreadsheetAddOn = "https://developers.google.com/analytics/solutions/google-analytics-spreadsheet-add-on",
-  spreadsheetAddOnExternal = "https://gsuite.google.com/marketplace/app/google_analytics/477988381226",
+  spreadsheetAddOnExternal = "https://workspace.google.com/marketplace/app/ga4_reports_builder_for_google_analytics/589269949355",
   tagAssistantExternal = "https://chrome.google.com/webstore/detail/tag-assistant-by-google/kejbdjndbnbjgmefkgdddjlbokphdefk",
   crossDomainMeasurement = "https://developers.google.com/analytics/devguides/collection/analyticsjs/cross-domain",
   protocolParameters = "https://developers.google.com/analytics/devguides/collection/protocol/v1/parameters",
