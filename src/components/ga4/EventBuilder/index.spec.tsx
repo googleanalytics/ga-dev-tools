@@ -18,7 +18,8 @@ import * as renderer from "@testing-library/react"
 import "@testing-library/jest-dom"
 
 import { withProviders } from "@/test-utils"
-import Sut, { Label } from "./index"
+import Sut from "./index"
+import { Label } from "./types"
 import userEvent from "@testing-library/user-event"
 import { within } from "@testing-library/react"
 

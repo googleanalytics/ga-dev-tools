@@ -142,4 +142,16 @@ describe("baseContentSchema", () => {
 
         expect(validator.isValid(validInput)).toEqual(false)
     })
+
+    describe("with ip_override", () => {
+      test("is valid with a valid IPv4 address", () => {
+        const validInput = {
+          events: [{ name: "something", params: {} }],
+          ip_override: "127.0.0.1",
+        }
+        const validator = new Validator(baseContentSchema)
+        expect(validator.isValid(validInput)).toEqual(true)
+      })
+    })
+  
 })
