@@ -249,6 +249,10 @@ const EventBuilder: React.FC = () => {
         setPayloadErrors("")
       } else {
         setPayloadErrors("Empty Payload")
+        setPayloadObj(JSON.stringify(payload, null, "\t"))
+        setPayloadErrors("")
+      } else {
+        setPayloadErrors("Empty Payload")
         setPayloadObj({})
       }
     } catch (err: any) {
