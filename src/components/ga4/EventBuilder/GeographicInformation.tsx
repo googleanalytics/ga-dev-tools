@@ -64,7 +64,7 @@ const GeographicInformation: React.FC<GeographicInformationProps> = ({
             size="small"
             value={user_location_city || ""}
             onChange={e => setUserLocationCity(e.target.value)}
-            helperText="The city of the user. E.g. 'Mountain View'."
+            helperText="The city name, e.g., Mountain View"
           />
         </Grid>
         <Grid item xs={12} sm={6}>
@@ -76,7 +76,7 @@ const GeographicInformation: React.FC<GeographicInformationProps> = ({
             size="small"
             value={user_location_region_id || ""}
             onChange={e => setUserLocationRegionId(e.target.value)}
-            helperText="The region of the user. E.g. 'US-CA'."
+            helperText="The country and subdivision, e.g., US-CA"
           />
         </Grid>
         <Grid item xs={12} sm={6}>
@@ -88,7 +88,7 @@ const GeographicInformation: React.FC<GeographicInformationProps> = ({
             size="small"
             value={user_location_country_id || ""}
             onChange={e => setUserLocationCountryId(e.target.value)}
-            helperText="The country of the user. E.g. 'US'."
+            helperText="The country code, e.g., US"
           />
         </Grid>
         <Grid item xs={12} sm={6}>
@@ -100,7 +100,7 @@ const GeographicInformation: React.FC<GeographicInformationProps> = ({
             size="small"
             value={user_location_continent_id || ""}
             onChange={e => setUserLocationContinentId(e.target.value)}
-            helperText="The continent of the user. E.g. '019'."
+            helperText="The continent code, e.g., 019"
           />
         </Grid>
         <Grid item xs={12} sm={6}>
@@ -112,7 +112,7 @@ const GeographicInformation: React.FC<GeographicInformationProps> = ({
             size="small"
             value={user_location_subcontinent_id || ""}
             onChange={e => setUserLocationSubcontinentId(e.target.value)}
-            helperText="The subcontinent of the user. E.g. '021'."
+            helperText="The subcontinent code, e.g., 021"
           />
         </Grid>
       </Grid>
