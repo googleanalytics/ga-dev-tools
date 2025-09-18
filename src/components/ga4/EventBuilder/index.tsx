@@ -651,15 +651,7 @@ const EventBuilder: React.FC = () => {
               country_id: user_location_country_id,
               subcontinent_id: user_location_subcontinent_id,
               continent_id: user_location_continent_id,
-            },
-            ip_override,
-            user_location: {
-              city: user_location_city,
-              region_id: user_location_region_id,
-              country_id: user_location_country_id,
-              subcontinent_id: user_location_subcontinent_id,
-              continent_id: user_location_continent_id,
-            },
+            }
           }}
         >
           <ValidateEvent
