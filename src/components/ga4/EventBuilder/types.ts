@@ -86,6 +86,44 @@ export interface Event2 {
   items?: Parameter[][]
 }
 
+export enum Label {
+  APISecret = "api secret",
+
+  FirebaseAppID = "firebase app id",
+  AppInstanceID = "app instance id",
+
+  MeasurementID = "measurement id",
+  ClientID = "client id",
+
+  UserId = "user id",
+
+  EventCategory = "event category",
+  EventName = "event name",
+  TimestampMicros = "UNIX timestamp in microseconds",
+  TimezoneSelect = "Timezone",
+  NonPersonalizedAds = "non personalized ads",
+
+  Payload = "payload",
+
+  // event params
+  Coupon = "#/events/0/params/coupon",
+  Currency = "#/events/0/params/currency",
+  Value = "#/events/0/params/value",
+  ItemId = "#/events/0/params/item_id",
+  TransactionId = "#/events/0/params/transaction_id",
+  Affiliation = "#/events/0/params/affiliation",
+  Shipping = "#/events/0/params/shipping",
+  Tax = "#/events/0/params/tax",
+
+  // Geographic Information
+  IpOverride = "ip address",
+  City = "city",
+  RegionId = "region id",
+  CountryId = "country id",
+  SubcontinentId = "subcontinent id",
+  ContinentId = "continent id",
+}
+
 // TODO - Add test to ensure url param values are all unique.
 export enum UrlParam {
   Parameters = "a",

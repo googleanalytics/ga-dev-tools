@@ -2,8 +2,9 @@ import * as React from "react"
 import { render, fireEvent, screen } from "@testing-library/react"
 import userEvent from "@testing-library/user-event"
 import "@testing-library/jest-dom"
-import TimestampPicker from "./TimestampPicker"
-import { UseFirebaseCtx, Label } from "."
+import TimestampPicker from './TimestampPicker';
+import { UseFirebaseCtx } from '.';
+import { Label } from './types';
 
 describe("TimestampPicker", () => {
   const setTimestamp = jest.fn()
@@ -198,4 +199,3 @@ describe("TimestampPicker", () => {
     jest.restoreAllMocks()
   })
 })
-

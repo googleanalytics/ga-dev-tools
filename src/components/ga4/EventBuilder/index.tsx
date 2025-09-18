@@ -33,7 +33,7 @@ import { TooltipIconButton } from "@/components/Buttons"
 import useEvent from "./useEvent"
 import Parameters from "./Parameters"
 import useInputs from "./useInputs"
-import { Category, ClientIds, EventType, InstanceId, Parameter } from "./types"
+import { Category, ClientIds, EventType, InstanceId, Parameter, Label } from "./types"
 import { eventsForCategory } from "./event"
 import useUserProperties from "./useUserProperties"
 import Items from "./Items"
@@ -41,6 +41,7 @@ import ValidateEvent from "./ValidateEvent"
 import { PlainButton } from "@/components/Buttons"
 import { useEffect } from "react"
 import TimestampPicker from "./TimestampPicker"
+import GeographicInformation from "./GeographicInformation";
 
 const PREFIX = 'EventBuilder';
 
@@ -104,36 +105,6 @@ const Root = styled('div')((
   }
 }));
 
-export enum Label {
-  APISecret = "api secret",
-
-  FirebaseAppID = "firebase app id",
-  AppInstanceID = "app instance id",
-
-  MeasurementID = "measurement id",
-  ClientID = "client id",
-
-  UserId = "user id",
-
-  EventCategory = "event category",
-  EventName = "event name",
-  TimestampMicros = "UNIX timestamp in microseconds",
-  TimezoneSelect = "Timezone",
-  NonPersonalizedAds = "non personalized ads",
-
-  Payload = "payload",
-
-  // event params
-  Coupon = '#/events/0/params/coupon',
-  Currency = '#/events/0/params/currency',
-  Value = '#/events/0/params/value',
-  ItemId = '#/events/0/params/item_id',
-  TransactionId = '#/events/0/params/transaction_id',
-  Affiliation = '#/events/0/params/affiliation',
-  Shipping = '#/events/0/params/shipping',
-  Tax = '#/events/0/params/tax',
-}
-
 const ga4MeasurementProtocol = (
   <ExternalLink href={Url.ga4MeasurementProtocol}>
     GA4 Measurement Protocol
@@ -153,6 +124,14 @@ export type EventPayload = {
   api_secret: string
   useTextBox: boolean
   payloadObj: any
+  ip_override: string | undefined
+  user_location: {
+    city: string | undefined
+    region_id: string | undefined
+    country_id: string | undefined
+    subcontinent_id: string | undefined
+    continent_id: string | undefined
+  }
 }
 export const EventCtx = React.createContext< 
   | EventPayload
@@ -233,18 +212,23 @@ const EventBuilder: React.FC = () => {
     [category, useFirebase]
   )
 
-  const formatPayload = React.useCallback( () => {
+  const [user_location_city, setUserLocationCity] = React.useState("")
+  const [user_location_region_id, setUserLocationRegionId] = React.useState("")
+  const [user_location_country_id, setUserLocationCountryId] = React.useState("")
+  const [user_location_subcontinent_id, setUserLocationSubcontinentId] = React.useState("")
+  const [user_location_continent_id, setUserLocationContinentId] = React.useState("")
+  const [ip_override, setIpOverride] = React.useState("")
+
+  const formatPayload = React.useCallback(() => {
     try {
       if (inputPayload) {
         let payload = JSON.parse(inputPayload) as object
-        setPayloadObj(JSON.stringify(payload, null, '\t'))
-        setPayloadErrors('')
-      }
-      else {
-        setPayloadErrors('Empty Payload')
+        setPayloadObj(JSON.stringify(payload, null, "\t"))
+        setPayloadErrors("")
+      } else {
+        setPayloadErrors("Empty Payload")
         setPayloadObj({})
       }
-
     } catch (err: any) {
       setPayloadErrors(err.message)
       setPayloadObj({})
@@ -556,7 +540,8 @@ const EventBuilder: React.FC = () => {
         <Typography>
           Finally, specify the parameters to send with the event. By default, only
           recommended parameters for the event will appear here. Check "show
-          advanced options" to add custom parameters or user properties.
+          advanced options" to add custom parameters, user properties, or geographic 
+          information.
         </Typography>
         <LabeledCheckbox checked={showAdvanced} onChange={setShowAdvanced}>
           show advanced options
@@ -594,26 +579,49 @@ const EventBuilder: React.FC = () => {
               />
             </>
           )}
-            {(showAdvanced ||
-              (userProperties !== undefined && userProperties.length !== 0)) && (
-              <>
-                <Typography variant="h5">User properties</Typography>
-                <Parameters
-                  removeParam={removeUserProperty}
-                  parameters={userProperties}
-                  addStringParam={addStringUserProperty}
-                  addNumberParam={addNumberUserProperty}
-                  setParamName={setUserPropertyName}
-                  setParamValue={setUserPropertyValue}
+          {(showAdvanced ||
+            (userProperties !== undefined &&
+              userProperties.length !== 0)) && (
+            <>
+              <Typography variant="h5">User properties</Typography>
+              <Parameters
+                removeParam={removeUserProperty}
+                parameters={userProperties}
+                addStringParam={addStringUserProperty}
+                addNumberParam={addNumberUserProperty}
+                setParamName={setUserPropertyName}
+                setParamValue={setUserPropertyValue}
                   setParamTimestamp={setUserPropertyTimestamp}
                   allowTimestampOverride={true}
-                />
-              </>
-            )}
-          </ShowAdvancedCtx.Provider>
-        </section>
-      </div>
-    }
+              />
+            </>
+          )}
+          {showAdvanced && (
+            <>
+              <GeographicInformation
+                user_location_city={user_location_city}
+                setUserLocationCity={setUserLocationCity}
+                user_location_region_id={user_location_region_id}
+                setUserLocationRegionId={setUserLocationRegionId}
+                user_location_country_id={user_location_country_id}
+                setUserLocationCountryId={setUserLocationCountryId}
+                user_location_subcontinent_id={
+                  user_location_subcontinent_id
+                }
+                setUserLocationSubcontinentId={
+                  setUserLocationSubcontinentId
+                }
+                user_location_continent_id={user_location_continent_id}
+                setUserLocationContinentId={setUserLocationContinentId}
+                ip_override={ip_override}
+                setIpOverride={setIpOverride}
+              />
+            </>
+          )}
+            </ShowAdvancedCtx.Provider>
+          </section>
+        </div>
+      }
       <Typography variant="h3" className={classes.validateHeading}>
         Validate & Send event
       </Typography>
@@ -636,6 +644,14 @@ const EventBuilder: React.FC = () => {
             payloadObj,
             instanceId: useFirebase ? { firebase_app_id } : { measurement_id },
             api_secret: api_secret!,
+            ip_override,
+            user_location: {
+              city: user_location_city,
+              region_id: user_location_region_id,
+              country_id: user_location_country_id,
+              subcontinent_id: user_location_subcontinent_id,
+              continent_id: user_location_continent_id,
+            },
           }}
         >
           <ValidateEvent
@@ -652,7 +668,7 @@ const EventBuilder: React.FC = () => {
         </EventCtx.Provider>
       </UseFirebaseCtx.Provider>
     </Root>
-  );
+  )
 }
 
 export default EventBuilder

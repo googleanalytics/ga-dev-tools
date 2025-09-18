@@ -1,6 +1,6 @@
 import * as React from "react"
 import { Autocomplete, TextField } from "@mui/material"
-import { Label } from "."
+import { Label } from "./types"
 
 const timezones = Intl.supportedValuesOf("timeZone")
 
