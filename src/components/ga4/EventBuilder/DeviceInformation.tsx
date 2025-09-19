@@ -83,7 +83,7 @@ const DeviceInformation: React.FC<DeviceInformationProps> = ({
             size="small"
             value={device_category || ""}
             onChange={e => setDeviceCategory(e.target.value)}
-            helperText="The category of the device, e.g., 'mobile', 'desktop'"
+            helperText="The category of the device, e.g., mobile, desktop"
           />
         </Grid>
         <Grid item xs={12} sm={6}>
@@ -95,7 +95,7 @@ const DeviceInformation: React.FC<DeviceInformationProps> = ({
             size="small"
             value={device_language || ""}
             onChange={e => setDeviceLanguage(e.target.value)}
-            helperText="The language of the device in ISO 639-1 format, e.g., 'en'"
+            helperText="The language of the device in ISO 639-1 format, e.g., en"
           />
         </Grid>
         <Grid item xs={12} sm={6}>
@@ -107,7 +107,7 @@ const DeviceInformation: React.FC<DeviceInformationProps> = ({
             size="small"
             value={device_screen_resolution || ""}
             onChange={e => setDeviceScreenResolution(e.target.value)}
-            helperText="The resolution of the device, e.g., '1920x1080'."
+            helperText="The screen resolution of the device, e.g., 1920x1080"
           />
         </Grid>
         <Grid item xs={12} sm={6}>
@@ -119,7 +119,7 @@ const DeviceInformation: React.FC<DeviceInformationProps> = ({
             size="small"
             value={device_operating_system || ""}
             onChange={e => setDeviceOperatingSystem(e.target.value)}
-            helperText="The operating system of the device, e.g., 'MacOS', 'Windows'."
+            helperText="The device's operating system, e.g., MacOS, Windows"
           />
         </Grid>
         <Grid item xs={12} sm={6}>
@@ -131,7 +131,7 @@ const DeviceInformation: React.FC<DeviceInformationProps> = ({
             size="small"
             value={device_operating_system_version || ""}
             onChange={e => setDeviceOperatingSystemVersion(e.target.value)}
-            helperText="The version of the device's operating system, e.g., '13.5'."
+            helperText="The version of the device's operating system, e.g., 13.5"
           />
         </Grid>
         <Grid item xs={12} sm={6}>
@@ -143,7 +143,7 @@ const DeviceInformation: React.FC<DeviceInformationProps> = ({
             size="small"
             value={device_model || ""}
             onChange={e => setDeviceModel(e.target.value)}
-            helperText="The model of the device, e.g., 'Pixel 6'."
+            helperText="The model of the device, e.g., Pixel 6"
           />
         </Grid>
         <Grid item xs={12} sm={6}>
@@ -155,7 +155,7 @@ const DeviceInformation: React.FC<DeviceInformationProps> = ({
             size="small"
             value={device_brand || ""}
             onChange={e => setDeviceBrand(e.target.value)}
-            helperText="The brand of the device, e.g., 'Google'."
+            helperText="The brand of the device, e.g., Google"
           />
         </Grid>
         <Grid item xs={12} sm={6}>
@@ -167,7 +167,7 @@ const DeviceInformation: React.FC<DeviceInformationProps> = ({
             size="small"
             value={device_browser || ""}
             onChange={e => setDeviceBrowser(e.target.value)}
-            helperText="The brand or type of browser, e.g., 'Chrome'."
+            helperText="The brand or type of browser, e.g., Chrome"
           />
         </Grid>
         <Grid item xs={12} sm={6}>
@@ -179,7 +179,7 @@ const DeviceInformation: React.FC<DeviceInformationProps> = ({
             size="small"
             value={device_browser_version || ""}
             onChange={e => setDeviceBrowserVersion(e.target.value)}
-            helperText="The version of the browser, e.g., '136.0.7103.60, 5.0'."
+            helperText="The browser version, e.g., 136.0.7103.60"
           />
         </Grid>
       </Grid>
