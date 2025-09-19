@@ -187,8 +187,9 @@ const DeviceInformation: React.FC<DeviceInformationProps> = ({
         <>
           <Typography variant="h6">User Agent</Typography>
           <Typography>
-            Specify a user agent string for Google Analytics to use to derive device information. 
-            This field is ignored if device information is provided.
+            Provide a custom user agent string. Google Analytics will use this to derive information
+            about the user's device, operating system, and browser. This field is ignored if device 
+            attributes are provided.
           </Typography>
           <Grid container spacing={1}>
             <Grid item xs={12} sm={6}>
@@ -200,7 +201,7 @@ const DeviceInformation: React.FC<DeviceInformationProps> = ({
                 size="small"
                 value={user_agent || ""}
                 onChange={e => setUserAgent(e.target.value)}
-                helperText="The user agent string."
+                helperText="The user agent string identifying the client"
               />
             </Grid>
           </Grid>
