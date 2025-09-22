@@ -7,7 +7,7 @@ import { UserStatus } from "./useLogin"
 
 interface LoginProps {
   className?: string
-  user: gapi.auth2.GoogleUser | undefined
+  user: User | undefined
   userStatus: UserStatus
   login: () => void
   logout: () => void
@@ -20,7 +20,7 @@ const Login: React.FC<LoginProps> = ({
   login,
   logout,
 }) => {
-  if (userStatus === UserStatus.Pending) {
+  if (userStatus === undefined) {
     return null
   }
   return (

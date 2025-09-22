@@ -20,11 +20,20 @@ declare module "*.svg" {
   export default value
 }
 
-declare module "*.module.css";
+declare module "*.module.css"
 
+interface User {
+  name: string
+  email: string
+  picture: string
+}
+
+// Define the global AppState.
 declare interface AppState {
-  user?: gapi.auth2.GoogleUser
-  gapi?: typeof gapi
-  gapiStatus?: string
+  gapi: typeof gapi | undefined
+  google: typeof google | undefined
+  gapiStatus: string | undefined
+  user: User | undefined
   measurementID: string
+  tokenClient: google.accounts.oauth2.TokenClient | undefined
 }

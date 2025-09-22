@@ -1,85 +1,57 @@
 import { Requestable, RequestStatus } from "@/types"
-import { useState, useEffect, useCallback } from "react"
-
-import { useSelector } from "react-redux"
+import { useSelector, useDispatch } from "react-redux"
+import { useCallback } from "react"
 
 export enum UserStatus {
   SignedIn,
   SignedOut,
-  Pending,
 }
 
 interface Successful {
   userStatus: UserStatus
-  user: gapi.auth2.GoogleUser | undefined
+  user: User | undefined
   logout: () => void
   login: () => void
 }
+
 interface InProgress {}
 interface Failed {
   message: string
 }
+
 const useLogin = (): Requestable<Successful, {}, InProgress, Failed> => {
-  const [requestStatus, setRequestStatus] = useState(RequestStatus.NotStarted)
   const user = useSelector((state: AppState) => state.user)
-  const gapi = useSelector((state: AppState) => state.gapi)
+  const tokenClient = useSelector((state: AppState) => state.tokenClient)
   const gapiStatus = useSelector((state: AppState) => state.gapiStatus)
-  const [userStatus, setUserStatus] = useState<UserStatus>(UserStatus.Pending)
+  const gapi = useSelector((state: AppState) => state.gapi)
+  const google = useSelector((state: AppState) => state.google)
+
+  const userStatus = user ? UserStatus.SignedIn : UserStatus.SignedOut
 
   const login = useCallback(() => {
-    if (gapi === undefined) {
-      return
+    if (tokenClient) {
+      tokenClient.requestAccessToken({})
     }
-    gapi.auth2.getAuthInstance().signIn()
-  }, [gapi])
+  }, [tokenClient])
 
   const logout = useCallback(() => {
-    if (gapi === undefined) {
-      return
+    const token = gapi?.client.getToken()
+    if (token !== null && token !== undefined) {
+      google.accounts.auth2.revoke(token.access_token, () => {
+        gapi?.client.setToken(null)
+      })
     }
-    gapi.auth2.getAuthInstance().signOut()
   }, [gapi])
 
-  useEffect(() => {
-    if (gapiStatus === "cannot initialize") {
-      setRequestStatus(RequestStatus.Failed)
-      return
-    }
-    if (gapi === undefined) {
-      return
-    }
-
-    if (
-      requestStatus === RequestStatus.Successful ||
-      requestStatus === RequestStatus.Failed ||
-      requestStatus === RequestStatus.InProgress
-    ) {
-      return
-    }
-
-    if (requestStatus === RequestStatus.NotStarted) {
-      setRequestStatus(RequestStatus.InProgress)
-    }
-
-    gapi.auth2.getAuthInstance().isSignedIn.listen(signedIn => {
-      setUserStatus(signedIn ? UserStatus.SignedIn : UserStatus.SignedOut)
-    })
-
-    gapi.auth2.getAuthInstance().isSignedIn.get()
-      ? setUserStatus(UserStatus.SignedIn)
-      : setUserStatus(UserStatus.SignedOut)
-
-    setRequestStatus(RequestStatus.Successful)
-  }, [gapi, requestStatus, gapiStatus])
-
-  if (requestStatus === RequestStatus.Successful) {
-    return { status: requestStatus, userStatus, user, login, logout }
-  }
-  if (requestStatus === RequestStatus.Failed) {
-    return { status: requestStatus, message: gapiStatus || "unknown" }
+  if (gapiStatus === "cannot initialize") {
+    return { status: RequestStatus.Failed, message: "gapi failed to initialize" }
   }
 
-  return { status: requestStatus }
+  if (gapiStatus !== "initialized" || !tokenClient) {
+    return { status: RequestStatus.InProgress }
+  }
+
+  return { status: RequestStatus.Successful, userStatus, user, login, logout }
 }
 
 export default useLogin

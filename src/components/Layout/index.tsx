@@ -49,7 +49,6 @@ import { ErrorBoundary } from "react-error-boundary"
 import ErrorFallback from "../ErrorFallback"
 
 
-
 const notMobile = (theme: Theme) => theme.breakpoints.up("md")
 const mobile = (theme: Theme) => theme.breakpoints.between(0, "sm")
 
@@ -69,7 +68,7 @@ interface TemplateProps {
   userStatus?: UserStatus
   login?: () => void
   logout?: () => void
-  user?: gapi.auth2.GoogleUser
+  user?: User
 }
 
 const PREFIX = 'Layout2';
