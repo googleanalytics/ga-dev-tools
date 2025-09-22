@@ -51,7 +51,7 @@ export const onInitialClientRender = () => {
   Promise.all([gapiPromise, gisPromise])
     .then(([gapi, google]) => {
       const SCOPES = "https://www.googleapis.com/auth/analytics.readonly"
-      const clientId = process.env.GATSBY_GAPI_CLIENT_ID
+      const clientId = process.env.GAPI_CLIENT_ID
 
       if (!clientId) {
         console.error(

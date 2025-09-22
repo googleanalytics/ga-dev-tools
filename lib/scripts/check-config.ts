@@ -27,7 +27,7 @@ export const writeEnvFile = async (
   const gapiLine =
     config.gapiClientId === SKIP_QUESTION
       ? undefined
-      : `GATSBY_GAPI_CLIENT_ID=${config.gapiClientId}`
+      : `GAPI_CLIENT_ID=${config.gapiClientId}`
   const bitlyLine =
     config.bitlyClientId === SKIP_QUESTION
       ? undefined
