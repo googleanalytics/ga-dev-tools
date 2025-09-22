@@ -1,5 +1,5 @@
 import { Requestable, RequestStatus } from "@/types"
-import { useSelector, useDispatch } from "react-redux"
+import { useSelector } from "react-redux"
 import { useCallback } from "react"
 
 export enum UserStatus {
