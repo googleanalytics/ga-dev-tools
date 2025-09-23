@@ -41,6 +41,12 @@ const TimestampPicker: React.FC<TimestampPickerProps> = ({
   const [timezoneAnchorEl, setTimezoneAnchorEl] =
     React.useState<HTMLButtonElement | null>(null)
 
+  const datetimeValue = React.useMemo(() => {
+    return timestamp && !isNaN(parseInt(timestamp, 10))
+      ? dayjs.utc(parseInt(timestamp, 10) / 1000).tz(selectedTimezone)
+      : null
+  }, [timestamp, selectedTimezone])
+
   const handleTimezoneOpen = (event: React.MouseEvent<HTMLButtonElement>) => {
     setTimezoneAnchorEl(event.currentTarget)
   }
@@ -52,18 +58,17 @@ const TimestampPicker: React.FC<TimestampPickerProps> = ({
   const timezonePopoverOpen = Boolean(timezoneAnchorEl)
   const timezonePopoverId = timezonePopoverOpen ? "timezone-popover" : undefined
 
-  const handleTimezoneChange = (newTimezone: string) => {
-    if (timestamp && !isNaN(parseInt(timestamp, 10))) {
-      const currentTime = dayjs
-        .utc(parseInt(timestamp, 10) / 1000)
-        .tz(selectedTimezone)
-
-      const newTime = currentTime.tz(newTimezone, true)
-      const newTimestamp = newTime.valueOf() * 1000
-      setTimestamp(newTimestamp.toString())
-    }
-    setSelectedTimezone(newTimezone)
-  }
+  const handleTimezoneChange = React.useCallback(
+    (newTimezone: string) => {
+      if (datetimeValue) {
+        const newTime = datetimeValue.tz(newTimezone, true)
+        const newTimestamp = newTime.valueOf() * 1000
+        setTimestamp(newTimestamp.toString())
+      }
+      setSelectedTimezone(newTimezone)
+    },
+    [datetimeValue, setTimestamp, setSelectedTimezone]
+  )
 
   const validate = (value: string) => {
     if (value === "") {
@@ -91,10 +96,7 @@ const TimestampPicker: React.FC<TimestampPickerProps> = ({
       : `${docsBaseUrl}/sending-events?client_type=${clientType}#override_timestamp`
 
   return (
-    <LocalizationProvider
-      dateAdapter={AdapterDayjs}
-      adapterLocale={selectedTimezone}
-    >
+    <LocalizationProvider dateAdapter={AdapterDayjs}>
       <Box sx={{ border: "1px solid", borderColor: "divider", p: 2, borderRadius: 1 }}>
         <Grid container alignItems="flex-start" spacing={2}>
           <Grid item xs>
@@ -132,15 +134,10 @@ const TimestampPicker: React.FC<TimestampPickerProps> = ({
           </Grid>
           <Grid item>
           <DateTimePicker
+            format="YYYY-MM-DD[T]HH:mm:ss"
             ampm={false}
             views={["year", "month", "day", "hours", "minutes", "seconds"]}
-            value={
-              timestamp && !isNaN(parseInt(timestamp, 10))
-                ? dayjs
-                    .utc(parseInt(timestamp, 10) / 1000)
-                    .tz(selectedTimezone)
-                : null
-            }
+            value={datetimeValue}
             onChange={newValue => {
               if (newValue) {
                 const newTimestamp = newValue.valueOf() * 1000
@@ -148,7 +145,7 @@ const TimestampPicker: React.FC<TimestampPickerProps> = ({
                 setError("")
               }
             }}
-            slotProps={{ textField: { helperText: " " } }}
+            slotProps={{ textField: { helperText: `In ${selectedTimezone}` } }}
           />
           </Grid>
           <Grid item sx={{ mt: 1 }}>
