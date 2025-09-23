@@ -8,7 +8,7 @@ import {
   Tooltip,
   Grid
 } from "@mui/material"
-import { Delete, ExpandMore } from "@mui/icons-material"
+import { Delete } from "@mui/icons-material"
 import TimestampPicker from "./TimestampPicker"
 import { TimestampScope } from "@/constants"
 
