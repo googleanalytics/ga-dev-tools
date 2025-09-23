@@ -48,7 +48,6 @@ import usePageView from "@/hooks/usePageView"
 import { ErrorBoundary } from "react-error-boundary"
 import ErrorFallback from "../ErrorFallback"
 
-
 const notMobile = (theme: Theme) => theme.breakpoints.up("md")
 const mobile = (theme: Theme) => theme.breakpoints.between(0, "sm")
 
@@ -303,9 +302,7 @@ const Template: React.FC<PropsWithChildren<LayoutProps & TemplateProps>> = ({
                           <Typography>
                             You must be logged in with Google for this demo.
                           </Typography>
-                          <Button variant="contained" color="primary" onClick={login}>
-                            Login
-                          </Button>
+                          <div id="signInButton"></div>
                         </div>
                     ))}
                 {requireLogin && failed && (

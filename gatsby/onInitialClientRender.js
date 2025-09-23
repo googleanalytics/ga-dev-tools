@@ -18,15 +18,11 @@ const addTokenListener = gapi => {
   }
 }
 
-const handleCredentialResponse = response => {
-  // The response object contains the JWT ID token in the `credential` field.
-  // We can decode it to get user information.
-  const user = JSON.parse(atob(response.credential.split(".")[1]))
-  console.log("user", user)
-  store.dispatch({ type: "setUser", user })
-}
+
 
 export const onInitialClientRender = () => {
+  console.log("Origin:", window.location.origin);
+  console.log("onInitialClientRender called");
   const gapiPromise = new Promise((resolve, reject) => {
     loadScript("https://apis.google.com/js/api.js", err => {
       if (err) {
@@ -50,12 +46,13 @@ export const onInitialClientRender = () => {
 
   Promise.all([gapiPromise, gisPromise])
     .then(([gapi, google]) => {
-      const SCOPES = "https://www.googleapis.com/auth/analytics.readonly"
+      const SCOPES = "https://www.googleapis.com/auth/analytics"
       const clientId = process.env.GAPI_CLIENT_ID
+      console.log("Client ID:", clientId);
 
       if (!clientId) {
         console.error(
-          "GATSBY_GAPI_CLIENT_ID is not defined. Please check your .env file."
+          "GAPI_CLIENT_ID is not defined. Please check your .env file."
         )
         store.dispatch({ type: "gapiStatus", status: "cannot initialize" })
         return
@@ -76,11 +73,6 @@ export const onInitialClientRender = () => {
             callback: tokenResponse => {
               gapi.client.setToken(tokenResponse)
             },
-          })
-
-          google.accounts.id.initialize({
-            client_id: clientId,
-            callback: handleCredentialResponse,
           })
 
           gapi.client.setTokenListener(token => {
