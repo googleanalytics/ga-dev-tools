@@ -2,7 +2,6 @@ import loadScript from "load-script"
 import { store } from "./wrapRootElement"
 
 export const onInitialClientRender = () => {
-
   const gapiPromise = new Promise((resolve, reject) => {
     loadScript("https://apis.google.com/js/api.js", err => {
       if (err) {
@@ -36,6 +35,22 @@ export const onInitialClientRender = () => {
         return
       }
 
+      try {
+        const storedTokenString = localStorage.getItem("google_token")
+        if (storedTokenString) {
+          const storedToken = JSON.parse(storedTokenString)
+          if (storedToken.expires_at > Date.now()) {
+            gapi.client.setToken(storedToken)
+            store.dispatch({ type: "setToken", token: storedToken })
+          } else {
+            localStorage.removeItem("google_token")
+          }
+        }
+      } catch (e) {
+        console.error("Unable to restore token from localStorage:", e)
+        localStorage.removeItem("google_token")
+      }
+
       Promise.all([
         gapi.client.load(
           "https://analyticsdata.googleapis.com/$discovery/rest"
@@ -51,17 +66,32 @@ export const onInitialClientRender = () => {
             client_id: clientId,
             scope: SCOPES.join(" "),
             callback: tokenResponse => {
-              console.log("onInitialClientRender: callback invoked", tokenResponse)
+              console.log(
+                "onInitialClientRender: callback invoked",
+                tokenResponse
+              )
               if (tokenResponse && tokenResponse.access_token) {
-                gapi.client.setToken(tokenResponse.access_token)
-                console.log("onInitialClientRender: setUser", tokenResponse);
-                store.dispatch({ type: "setUser", user: tokenResponse })
+                const tokenWithExpiry = {
+                  ...tokenResponse,
+                  expires_at: Date.now() + tokenResponse.expires_in * 1000,
+                }
+                localStorage.setItem(
+                  "google_token",
+                  JSON.stringify(tokenWithExpiry)
+                )
+                gapi.client.setToken(tokenResponse)
+                console.log("onInitialClientRender: setToken", tokenResponse)
+                store.dispatch({ type: "setToken", token: tokenResponse })
               } else {
-                console.error("onInitialClientRender: tokenResponse did not contain access_token.", tokenResponse);
-                store.dispatch({ type: "setUser", user: undefined })
+                console.error(
+                  "onInitialClientRender: tokenResponse did not contain access_token.",
+                  tokenResponse
+                )
+                store.dispatch({ type: "setToken", token: undefined })
               }
-            }, error_callback: (error) => {
-              console.error("GIS Error:", error);
+            },
+            error_callback: error => {
+              console.error("GIS Error:", error)
             },
           })
 
@@ -69,10 +99,10 @@ export const onInitialClientRender = () => {
           store.dispatch({ type: "gapiStatus", status: "initialized" })
           store.dispatch({ type: "setGoogle", google })
           store.dispatch({ type: "setTokenClient", tokenClient })
-        })    
+        })
         .catch(e => {
           store.dispatch({ type: "setGapi", gapi })
-          store.dispatch({ type: "setUser", user: undefined })
+          store.dispatch({ type: "setToken", token: undefined })
           store.dispatch({ type: "gapiStatus", status: "cannot initialize" })
           console.error(e)
         })

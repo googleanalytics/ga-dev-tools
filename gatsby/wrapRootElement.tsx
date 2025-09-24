@@ -18,7 +18,7 @@ import {PartialDeep} from 'type-fest';
 
 type State =
     {
-      user?: {},
+      token?: {},
       gapi?: PartialDeep<typeof gapi>,
       google?: any,
       tokenClient?: any,
@@ -27,7 +27,7 @@ type State =
     }
 
 type Action =
-    | { type: 'setUser', user: {} | undefined  }
+    | { type: 'setToken', token: {} | undefined  }
     | { type: 'setGapi', gapi: PartialDeep<typeof gapi>  | undefined }
     | { type: 'setGoogle', google: any }
     | { type: 'setTokenClient', tokenClient: any }
@@ -35,8 +35,8 @@ type Action =
     | { type: 'gapiStatus', status: string | undefined };
 const reducer = (state: State = {}, action: Action) => {
   switch (action.type) {
-    case "setUser":
-      return { ...state, user: action.user }
+    case "setToken":
+      return { ...state, user: action.token }
     case "setGapi":
       return { ...state, gapi: action.gapi }
     case "setGoogle":
