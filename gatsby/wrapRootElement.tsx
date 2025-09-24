@@ -36,7 +36,7 @@ type Action =
 const reducer = (state: State = {}, action: Action) => {
   switch (action.type) {
     case "setToken":
-      return { ...state, user: action.token }
+      return { ...state, token: action.token }
     case "setGapi":
       return { ...state, gapi: action.gapi }
     case "setGoogle":

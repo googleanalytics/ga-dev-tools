@@ -35,11 +35,15 @@ export const onInitialClientRender = () => {
         return
       }
 
+      // Google Sign-In previously helped manage user signed-in status
+      // With GIS we are responsible for managing sign-in state
       try {
         const storedTokenString = localStorage.getItem("google_token")
         if (storedTokenString) {
+          console.log("Restoring token from localStorage...")
           const storedToken = JSON.parse(storedTokenString)
           if (storedToken.expires_at > Date.now()) {
+            console.log("Token is still valid, using it...")
             gapi.client.setToken(storedToken)
             store.dispatch({ type: "setToken", token: storedToken })
           } else {
@@ -66,33 +70,18 @@ export const onInitialClientRender = () => {
             client_id: clientId,
             scope: SCOPES.join(" "),
             callback: tokenResponse => {
-              console.log(
-                "onInitialClientRender: callback invoked",
-                tokenResponse
-              )
               if (tokenResponse && tokenResponse.access_token) {
                 const tokenWithExpiry = {
                   ...tokenResponse,
                   expires_at: Date.now() + tokenResponse.expires_in * 1000,
                 }
-                localStorage.setItem(
-                  "google_token",
-                  JSON.stringify(tokenWithExpiry)
-                )
+                localStorage.setItem("google_token", JSON.stringify(tokenWithExpiry))
                 gapi.client.setToken(tokenResponse)
-                console.log("onInitialClientRender: setToken", tokenResponse)
                 store.dispatch({ type: "setToken", token: tokenResponse })
               } else {
-                console.error(
-                  "onInitialClientRender: tokenResponse did not contain access_token.",
-                  tokenResponse
-                )
                 store.dispatch({ type: "setToken", token: undefined })
               }
-            },
-            error_callback: error => {
-              console.error("GIS Error:", error)
-            },
+            }
           })
 
           store.dispatch({ type: "setGapi", gapi })

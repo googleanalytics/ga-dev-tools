@@ -27,15 +27,10 @@ const useLogin = (): Requestable<Successful, {}, InProgress, Failed> => {
   const tokenClient = useSelector((state: AppState) => state.tokenClient)
   const google = useSelector((state: AppState) => state.google)
   const dispatch = useDispatch()
-
-  console.log("useLogin: token", token);
-  console.log("useLogin: gapiStatus", gapiStatus);
   const userStatus = token ? UserStatus.SignedIn : UserStatus.SignedOut
 
   const login = useCallback(() => {
-    console.log("login called. tokenClient:", tokenClient)
     if (tokenClient) {
-      console.log("requesting access token")
       tokenClient.requestAccessToken()
     }
   }, [tokenClient])
@@ -45,7 +40,7 @@ const useLogin = (): Requestable<Successful, {}, InProgress, Failed> => {
     if (token && google) {
       google.accounts.oauth2.revoke(token.access_token, () => {
         gapi?.client.setToken(null)
-        dispatch({ type: "setUser", user: undefined })
+        dispatch({ type: "setToken", token: undefined })
         localStorage.removeItem("google_token")
       })
     }
