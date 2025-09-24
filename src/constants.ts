@@ -58,6 +58,7 @@ export enum Url {
   gaDevsite = "http://developers.google.com/analytics",
   gaDevsiteHelp = "http://developers.google.com/analytics/help/",
   reportingApis = "https://developers.google.com/analytics/devguides/reporting/",
+  // TODO: Update spreadsheetAddOn link once documentation is available
   spreadsheetAddOn = "https://developers.google.com/analytics/solutions/google-analytics-spreadsheet-add-on",
   spreadsheetAddOnExternal = "https://workspace.google.com/marketplace/app/ga4_reports_builder_for_google_analytics/589269949355",
   tagAssistantExternal = "https://chrome.google.com/webstore/detail/tag-assistant-by-google/kejbdjndbnbjgmefkgdddjlbokphdefk",
