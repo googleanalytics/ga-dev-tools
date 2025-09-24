@@ -40,10 +40,8 @@ export const onInitialClientRender = () => {
       try {
         const storedTokenString = localStorage.getItem("google_token")
         if (storedTokenString) {
-          console.log("Restoring token from localStorage...")
           const storedToken = JSON.parse(storedTokenString)
           if (storedToken.expires_at > Date.now()) {
-            console.log("Token is still valid, using it...")
             gapi.client.setToken(storedToken)
             store.dispatch({ type: "setToken", token: storedToken })
           } else {
@@ -64,7 +62,6 @@ export const onInitialClientRender = () => {
         ),
       ])
         .then(() => {
-          console.log("Initializing token client...")
           // Replace gapi.auth2.init() with google.accounts.oauth2.initTokenClient()
           const tokenClient = google.accounts.oauth2.initTokenClient({
             client_id: clientId,
