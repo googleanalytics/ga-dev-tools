@@ -34,3 +34,10 @@ exports.onPostBuild = () => {
     }
   })
 }
+
+exports.onCreateDevServer = ({ app }) => {
+  app.use((req, res, next) => {
+    res.setHeader("Cross-Origin-Opener-Policy", "unsafe-none")
+    next()
+  })
+}
