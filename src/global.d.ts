@@ -23,8 +23,10 @@ declare module "*.svg" {
 declare module "*.module.css";
 
 declare interface AppState {
-  user?: gapi.auth2.GoogleUser
+  token?: Token
   gapi?: typeof gapi
   gapiStatus?: string
   measurementID: string
+  tokenClient?: any
+  google?: typeof google
 }
