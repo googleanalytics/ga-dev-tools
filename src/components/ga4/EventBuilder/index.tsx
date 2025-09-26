@@ -42,6 +42,7 @@ import { PlainButton } from "@/components/Buttons"
 import { useEffect } from "react"
 import TimestampPicker from "./TimestampPicker"
 import GeographicInformation from "./GeographicInformation";
+import DeviceInformation from "./DeviceInformation";
 
 const PREFIX = 'EventBuilder';
 
@@ -125,12 +126,24 @@ export type EventPayload = {
   useTextBox: boolean
   payloadObj: any
   ip_override: string | undefined
+  user_agent: string | undefined
   user_location: {
     city: string | undefined
     region_id: string | undefined
     country_id: string | undefined
     subcontinent_id: string | undefined
     continent_id: string | undefined
+  }
+  device: {
+    category: string | undefined
+    language: string | undefined
+    screen_resolution: string | undefined
+    operating_system: string | undefined
+    operating_system_version: string | undefined
+    model: string | undefined
+    brand: string | undefined
+    browser: string | undefined
+    browser_version: string | undefined
   }
 }
 export const EventCtx = React.createContext< 
@@ -219,6 +232,17 @@ const EventBuilder: React.FC = () => {
   const [user_location_continent_id, setUserLocationContinentId] = React.useState("")
   const [ip_override, setIpOverride] = React.useState("")
 
+  const [device_category, setDeviceCategory] = React.useState("")
+  const [device_language, setDeviceLanguage] = React.useState("")
+  const [device_screen_resolution, setDeviceScreenResolution] = React.useState("")
+  const [device_operating_system, setDeviceOperatingSystem] = React.useState("")
+  const [device_operating_system_version, setDeviceOperatingSystemVersion] = React.useState("")
+  const [device_model, setDeviceModel] = React.useState("")
+  const [device_brand, setDeviceBrand] = React.useState("")
+  const [device_browser, setDeviceBrowser] = React.useState("")
+  const [device_browser_version, setDeviceBrowserVersion] = React.useState("")
+  const [user_agent, setUserAgent] = React.useState("")
+
   const formatPayload = React.useCallback(() => {
     try {
       if (inputPayload) {
@@ -228,6 +252,7 @@ const EventBuilder: React.FC = () => {
       } else {
         setPayloadErrors("Empty Payload")
         setPayloadObj({})
+        setPayloadErrors("")
       }
     } catch (err: any) {
       setPayloadErrors(err.message)
@@ -597,7 +622,7 @@ const EventBuilder: React.FC = () => {
             </>
           )}
           {showAdvanced && (
-            <>
+            <UseFirebaseCtx.Provider value={useFirebase}>
               <GeographicInformation
                 user_location_city={user_location_city}
                 setUserLocationCity={setUserLocationCity}
@@ -616,7 +641,33 @@ const EventBuilder: React.FC = () => {
                 ip_override={ip_override}
                 setIpOverride={setIpOverride}
               />
-            </>
+              <DeviceInformation
+                device_category={device_category}
+                setDeviceCategory={setDeviceCategory}
+                device_language={device_language}
+                setDeviceLanguage={setDeviceLanguage}
+                device_screen_resolution={device_screen_resolution}
+                setDeviceScreenResolution={setDeviceScreenResolution}
+                device_operating_system={device_operating_system}
+                setDeviceOperatingSystem={setDeviceOperatingSystem}
+                device_operating_system_version={
+                  device_operating_system_version
+                }
+                setDeviceOperatingSystemVersion={
+                  setDeviceOperatingSystemVersion
+                }
+                device_model={device_model}
+                setDeviceModel={setDeviceModel}
+                device_brand={device_brand}
+                setDeviceBrand={setDeviceBrand}
+                device_browser={device_browser}
+                setDeviceBrowser={setDeviceBrowser}
+                device_browser_version={device_browser_version}
+                setDeviceBrowserVersion={setDeviceBrowserVersion}
+                user_agent={user_agent}
+                setUserAgent={setUserAgent}
+              />
+            </UseFirebaseCtx.Provider>
           )}
             </ShowAdvancedCtx.Provider>
           </section>
@@ -644,6 +695,7 @@ const EventBuilder: React.FC = () => {
             payloadObj,
             instanceId: useFirebase ? { firebase_app_id } : { measurement_id },
             api_secret: api_secret!,
+            user_agent,
             ip_override,
             user_location: {
               city: user_location_city,
@@ -651,7 +703,18 @@ const EventBuilder: React.FC = () => {
               country_id: user_location_country_id,
               subcontinent_id: user_location_subcontinent_id,
               continent_id: user_location_continent_id,
-            }
+            },
+            device: {
+              category: device_category,
+              language: device_language,
+              screen_resolution: device_screen_resolution,
+              operating_system: device_operating_system,
+              operating_system_version: device_operating_system_version,
+              model: device_model,
+              brand: device_brand,
+              browser: device_browser,
+              browser_version: device_browser_version,
+            },
           }}
         >
           <ValidateEvent

@@ -7,7 +7,7 @@ import { UserStatus } from "./useLogin"
 
 interface LoginProps {
   className?: string
-  user: gapi.auth2.GoogleUser | undefined
+  user: any
   userStatus: UserStatus
   login: () => void
   logout: () => void
