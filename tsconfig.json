@@ -40,11 +40,9 @@
       "jest",
       "@testing-library/jest-dom",
       "@types/gapi",
-      "@types/gapi.auth2",
       "@types/gapi.client.analytics",
       "@types/gapi.client.analyticsadmin",
       "@types/gapi.client.analyticsdata",
-      "@types/gapi.client.analyticsreporting",
       "@types/gtag.js"
     ],
     // "allowUmdGlobalAccess": true,                     /* Allow accessing UMD globals from modules. */

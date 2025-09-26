@@ -1,7 +1,7 @@
 import { Requestable, RequestStatus } from "@/types"
 import { useState, useEffect, useCallback } from "react"
 
-import { useSelector } from "react-redux"
+import { useSelector, useDispatch } from "react-redux"
 
 export enum UserStatus {
   SignedIn,
@@ -11,7 +11,7 @@ export enum UserStatus {
 
 interface Successful {
   userStatus: UserStatus
-  user: gapi.auth2.GoogleUser | undefined
+  user: any
   logout: () => void
   login: () => void
 }
@@ -21,24 +21,30 @@ interface Failed {
 }
 const useLogin = (): Requestable<Successful, {}, InProgress, Failed> => {
   const [requestStatus, setRequestStatus] = useState(RequestStatus.NotStarted)
-  const user = useSelector((state: AppState) => state.user)
+  const token = useSelector((state: AppState) => state.token)
   const gapi = useSelector((state: AppState) => state.gapi)
   const gapiStatus = useSelector((state: AppState) => state.gapiStatus)
-  const [userStatus, setUserStatus] = useState<UserStatus>(UserStatus.Pending)
+  const tokenClient = useSelector((state: AppState) => state.tokenClient)
+  const google = useSelector((state: AppState) => state.google)
+  const dispatch = useDispatch()
+  const userStatus = token ? UserStatus.SignedIn : UserStatus.SignedOut
 
   const login = useCallback(() => {
-    if (gapi === undefined) {
-      return
+    if (tokenClient) {
+      tokenClient.requestAccessToken()
     }
-    gapi.auth2.getAuthInstance().signIn()
-  }, [gapi])
+  }, [tokenClient])
 
   const logout = useCallback(() => {
-    if (gapi === undefined) {
-      return
+    const token = gapi?.client.getToken()
+    if (token && google) {
+      google.accounts.oauth2.revoke(token.access_token, () => {
+        gapi?.client.setToken(null)
+        dispatch({ type: "setToken", token: undefined })
+        localStorage.removeItem("google_token")
+      })
     }
-    gapi.auth2.getAuthInstance().signOut()
-  }, [gapi])
+  }, [gapi, google, dispatch])
 
   useEffect(() => {
     if (gapiStatus === "cannot initialize") {
@@ -61,19 +67,11 @@ const useLogin = (): Requestable<Successful, {}, InProgress, Failed> => {
       setRequestStatus(RequestStatus.InProgress)
     }
 
-    gapi.auth2.getAuthInstance().isSignedIn.listen(signedIn => {
-      setUserStatus(signedIn ? UserStatus.SignedIn : UserStatus.SignedOut)
-    })
-
-    gapi.auth2.getAuthInstance().isSignedIn.get()
-      ? setUserStatus(UserStatus.SignedIn)
-      : setUserStatus(UserStatus.SignedOut)
-
     setRequestStatus(RequestStatus.Successful)
   }, [gapi, requestStatus, gapiStatus])
 
   if (requestStatus === RequestStatus.Successful) {
-    return { status: requestStatus, userStatus, user, login, logout }
+    return { status: requestStatus, userStatus, user: token, login, logout }
   }
   if (requestStatus === RequestStatus.Failed) {
     return { status: requestStatus, message: gapiStatus || "unknown" }
