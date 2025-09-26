@@ -25,7 +25,6 @@ const useLogin = (): Requestable<Successful, {}, InProgress, Failed> => {
   const gapi = useSelector((state: AppState) => state.gapi)
   const gapiStatus = useSelector((state: AppState) => state.gapiStatus)
   const tokenClient = useSelector((state: AppState) => state.tokenClient)
-  const google = useSelector((state: AppState) => state.google)
   const dispatch = useDispatch()
   const userStatus = token ? UserStatus.SignedIn : UserStatus.SignedOut
 
