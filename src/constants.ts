@@ -263,3 +263,8 @@ export const EventAction = {
 export const EventCategory = {
   campaignUrlBuilder: "Campaign URL Builder",
 }
+
+export const TimestampScope = {
+  USER_PROPERTY: "user property",
+  REQUEST: "event",
+}

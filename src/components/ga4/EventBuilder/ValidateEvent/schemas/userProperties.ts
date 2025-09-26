@@ -8,15 +8,11 @@ export const userPropertiesSchema = {
             "type": "object",
             "required": ["value"],
             "additionalProperties": false,
-
             "properties": {
                 "value": {
                     "maxLength": 36
                 },
-                "timestamp_micros": {
-                    "type": "number",
-                    "maxLength": 36
-                }
+                "timestamp_micros": {}
             }
         }
     },
