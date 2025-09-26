@@ -83,7 +83,6 @@ export const onInitialClientRender = () => {
 
           store.dispatch({ type: "setGapi", gapi })
           store.dispatch({ type: "gapiStatus", status: "initialized" })
-          store.dispatch({ type: "setGoogle", google })
           store.dispatch({ type: "setTokenClient", tokenClient })
         })
         .catch(e => {

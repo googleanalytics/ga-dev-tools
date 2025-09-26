@@ -28,5 +28,4 @@ declare interface AppState {
   gapiStatus?: string
   measurementID: string
   tokenClient?: any
-  google?: typeof google
 }
