@@ -69,7 +69,7 @@ interface TemplateProps {
   userStatus?: UserStatus
   login?: () => void
   logout?: () => void
-  user?: gapi.auth2.GoogleUser
+  user?: any
 }
 
 const PREFIX = 'Layout2';

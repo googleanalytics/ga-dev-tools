@@ -47,9 +47,9 @@ export const wrapperFor = ({
   const store = makeStore()
 
   if (isLoggedIn) {
-    store.dispatch({ type: "setUser", user: {} })
+    store.dispatch({ type: "setToken", token: {} })
   } else {
-    store.dispatch({ type: "setUser", user: undefined })
+    store.dispatch({ type: "setToken", token: undefined })
   }
 
   const gapi = testGapi(gapiMocks)
@@ -91,9 +91,9 @@ export const withProviders = (
   const store = makeStore()
 
   if (isLoggedIn) {
-    store.dispatch({ type: "setUser", user: {} })
+    store.dispatch({ type: "setToken", token: {} })
   } else {
-    store.dispatch({ type: "setUser", user: undefined })
+    store.dispatch({ type: "setToken", token: undefined })
   }
 
   const gapi = testGapi(gapiMocks)
