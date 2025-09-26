@@ -36,15 +36,10 @@ const useLogin = (): Requestable<Successful, {}, InProgress, Failed> => {
   }, [tokenClient])
 
   const logout = useCallback(() => {
-    const token = gapi?.client.getToken()
-    if (token && google) {
-      google.accounts.oauth2.revoke(token.access_token, () => {
-        gapi?.client.setToken(null)
-        dispatch({ type: "setToken", token: undefined })
-        localStorage.removeItem("google_token")
-      })
-    }
-  }, [gapi, google, dispatch])
+    gapi?.client.setToken(null)
+    dispatch({ type: "setToken", token: undefined })
+    localStorage.removeItem("google_token")
+  }, [gapi, dispatch])
 
   useEffect(() => {
     if (gapiStatus === "cannot initialize") {
