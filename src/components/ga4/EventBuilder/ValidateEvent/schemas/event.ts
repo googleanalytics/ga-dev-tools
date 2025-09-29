@@ -14,7 +14,8 @@ export const eventSchema = {
             "maxLength": 40
         },
         "params": {"type": "object"},
-        "items": itemsSchema
+        "items": itemsSchema,
+        "timestamp_micros": {}
     },
     "allOf": buildEvents()
 }

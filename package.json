@@ -13,11 +13,13 @@
     "@mui/material": "^5.13.0",
     "@mui/styles": "^5.14.15",
     "@mui/x-data-grid": "^6.4.0",
+    "@mui/x-date-pickers": "^8.11.2",
     "@typescript-eslint/eslint-plugin": "^4.0.0",
     "@typescript-eslint/parser": "^4.0.0",
     "babel-eslint": "^10.0.0",
     "classnames": "^2.3.2",
     "copy-to-clipboard": "^3.3.3",
+    "dayjs": "^1.11.18",
     "eslint": "^7.0.0",
     "gatsby": "^5.9.1",
     "gatsby-plugin-emotion": "^8.9.0",
@@ -44,8 +46,8 @@
     "react-helmet": "^6.1.0",
     "react-icons": "^4.8.0",
     "react-json-view": "^1.21.3",
-    "react-markdown": "^9.0.1",
     "react-loader-spinner": "^6.1.6",
+    "react-markdown": "^9.0.1",
     "react-redux": "^8.0.5",
     "react-syntax-highlighter": "^15.5.0",
     "redux": "^4.2.1",
@@ -104,7 +106,7 @@
       "react": "^18.2.0"
     }
   },
-   "resolutions": {
+  "resolutions": {
     "@types/react": "^18.2.0",
     "@types/react-dom": "^18.2.0"
   },
