@@ -7,7 +7,6 @@ import Typography from "@mui/material/Typography"
 
 import InlineCode from "@/components/InlineCode"
 import {CopyIconButton} from "@/components/CopyButton"
-import ExternalLink from "@/components/ExternalLink"
 import {Dimension, Metric} from "./useDimensionsAndMetrics"
 import {QueryParam} from "."
 import {AccountSummary, PropertySummary} from "@/types/ga4/StreamPicker"
