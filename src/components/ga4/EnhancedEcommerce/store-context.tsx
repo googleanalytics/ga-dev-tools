@@ -140,6 +140,8 @@ export const StoreProvider = (props: Props) => {
   const [cart, setCart] = React.useState(defaultValues.cart)
   const [lastCart, setLastCart] = React.useState(defaultValues.lastCart)
 
+  // TODO: Implement checkout flow, which will use setCheckoutState.
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [checkoutState, setCheckoutState] = React.useState(defaultValues.checkoutState)
   const [events, setEvents] = React.useState(defaultValues.events)
 

@@ -43,6 +43,8 @@ export default (props: PageProps<Props>) => {
         image,
     } = props.data.productsJson
     const initialVariant = 'M'
+    // TODO: Implement variant selection functionality, which will use setVariant.
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const [variant, setVariant] = React.useState(initialVariant)
     const productVariant = variant;
     const [quantity, setQuantity] = React.useState(1)
