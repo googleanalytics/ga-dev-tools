@@ -18,10 +18,7 @@ import { styled } from '@mui/material/styles';
 
 import Typography from "@mui/material/Typography"
 import TextField from "@mui/material/TextField"
-import IconButton from "@mui/material/IconButton"
-import Tooltip from "@mui/material/Tooltip"
 import Autocomplete from "@mui/material/Autocomplete"
-import Refresh from "@mui/icons-material/Refresh"
 import { Error as ErrorIcon } from "@mui/icons-material"
 
 import LinkedTextField from "@/components/LinkedTextField"
@@ -30,7 +27,7 @@ import LabeledCheckbox from "@/components/LabeledCheckbox"
 import Grid from "@mui/material/Grid"
 import Switch from "@mui/material/Switch"
 import ExternalLink from "@/components/ExternalLink"
-import { Url } from "@/constants"
+import { TimestampScope, Url } from "@/constants"
 import WithHelpText from "@/components/WithHelpText"
 import { TooltipIconButton } from "@/components/Buttons"
 import useEvent from "./useEvent"
@@ -43,7 +40,9 @@ import Items from "./Items"
 import ValidateEvent from "./ValidateEvent"
 import { PlainButton } from "@/components/Buttons"
 import { useEffect } from "react"
+import TimestampPicker from "./TimestampPicker"
 import GeographicInformation from "./GeographicInformation";
+import DeviceInformation from "./DeviceInformation";
 
 const PREFIX = 'EventBuilder';
 
@@ -92,6 +91,9 @@ const Root = styled('div')((
 
   [`& .${classes.form}`]: {
     maxWidth: "80ch",
+    "& h5:not(:first-of-type)": {
+      marginTop: theme.spacing(4),
+    },
   },
 
   [`& .${classes.items}`]: {
@@ -116,7 +118,7 @@ export type EventPayload = {
   parameters: Parameter[]
   items: Parameter[][] | undefined
   userProperties: Parameter[]
-  timestamp_micros: string | undefined
+  timestamp_micros: number | undefined
   non_personalized_ads: boolean | undefined
   clientIds: ClientIds
   instanceId: InstanceId
@@ -124,6 +126,7 @@ export type EventPayload = {
   useTextBox: boolean
   payloadObj: any
   ip_override: string | undefined
+  user_agent: string | undefined
   user_location: {
     city: string | undefined
     region_id: string | undefined
@@ -131,8 +134,19 @@ export type EventPayload = {
     subcontinent_id: string | undefined
     continent_id: string | undefined
   }
+  device: {
+    category: string | undefined
+    language: string | undefined
+    screen_resolution: string | undefined
+    operating_system: string | undefined
+    operating_system_version: string | undefined
+    model: string | undefined
+    brand: string | undefined
+    browser: string | undefined
+    browser_version: string | undefined
+  }
 }
-export const EventCtx = React.createContext<
+export const EventCtx = React.createContext< 
   | EventPayload
   | undefined
 >(undefined)
@@ -148,6 +162,7 @@ const EventBuilder: React.FC = () => {
     removeUserProperty,
     setUserPropertyName,
     setUserPropertyValue,
+    setUserPropertyTimestamp,
   } = useUserProperties()
 
   const {
@@ -217,6 +232,17 @@ const EventBuilder: React.FC = () => {
   const [user_location_continent_id, setUserLocationContinentId] = React.useState("")
   const [ip_override, setIpOverride] = React.useState("")
 
+  const [device_category, setDeviceCategory] = React.useState("")
+  const [device_language, setDeviceLanguage] = React.useState("")
+  const [device_screen_resolution, setDeviceScreenResolution] = React.useState("")
+  const [device_operating_system, setDeviceOperatingSystem] = React.useState("")
+  const [device_operating_system_version, setDeviceOperatingSystemVersion] = React.useState("")
+  const [device_model, setDeviceModel] = React.useState("")
+  const [device_brand, setDeviceBrand] = React.useState("")
+  const [device_browser, setDeviceBrowser] = React.useState("")
+  const [device_browser_version, setDeviceBrowserVersion] = React.useState("")
+  const [user_agent, setUserAgent] = React.useState("")
+
   const formatPayload = React.useCallback(() => {
     try {
       if (inputPayload) {
@@ -226,6 +252,7 @@ const EventBuilder: React.FC = () => {
       } else {
         setPayloadErrors("Empty Payload")
         setPayloadObj({})
+        setPayloadErrors("")
       }
     } catch (err: any) {
       setPayloadErrors(err.message)
@@ -350,7 +377,7 @@ const EventBuilder: React.FC = () => {
           </>
         )}
         <LinkedTextField
-          href={`https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference?client_type=${
+          href={`https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference?client_type=${ 
             useFirebase ? "firebase" : "gtag"
           }#user_id`}
           linkTitle="See user_id on devsite."
@@ -431,7 +458,7 @@ const EventBuilder: React.FC = () => {
 
     { !useTextBox &&
       <div>
-        <section className={classes.form}>
+        <section className={classes.form}> 
 
 
           <Autocomplete<Category, false, true, true>
@@ -511,28 +538,10 @@ const EventBuilder: React.FC = () => {
               )}
             />
           )}
-          <LinkedTextField
-            label={Label.TimestampMicros}
-            id={Label.TimestampMicros}
-            linkTitle="See timestamp_micros on devsite."
-            href={`https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference?client_type=${
-              useFirebase ? "firebase" : "gtag"
-            }#timestamp_micros`}
-            value={timestamp_micros || ""}
-            onChange={setTimestampMicros}
-            helperText="The timestamp of the event."
-            extraAction={
-              <Tooltip title="Set to now.">
-                <IconButton
-                  size="small"
-                  onClick={() => {
-                    setTimestampMicros((new Date().getTime() * 1000).toString())
-                  }}
-                >
-                  <Refresh />
-                </IconButton>
-              </Tooltip>
-            }
+          <TimestampPicker
+            timestamp={timestamp_micros || ""}
+            scope={TimestampScope.REQUEST}
+            setTimestamp={setTimestampMicros}
           />
 
           <WithHelpText
@@ -576,6 +585,8 @@ const EventBuilder: React.FC = () => {
             setParamName={setParamName}
             setParamValue={setParamValue}
             addItemsParam={items === undefined ? addItemsParam : undefined}
+            setParamTimestamp={() => {}}
+            allowTimestampOverride={false}
           />
           {items !== undefined && (
             <>
@@ -605,11 +616,13 @@ const EventBuilder: React.FC = () => {
                 addNumberParam={addNumberUserProperty}
                 setParamName={setUserPropertyName}
                 setParamValue={setUserPropertyValue}
+                  setParamTimestamp={setUserPropertyTimestamp}
+                  allowTimestampOverride={true}
               />
             </>
           )}
           {showAdvanced && (
-            <>
+            <UseFirebaseCtx.Provider value={useFirebase}>
               <GeographicInformation
                 user_location_city={user_location_city}
                 setUserLocationCity={setUserLocationCity}
@@ -628,7 +641,33 @@ const EventBuilder: React.FC = () => {
                 ip_override={ip_override}
                 setIpOverride={setIpOverride}
               />
-            </>
+              <DeviceInformation
+                device_category={device_category}
+                setDeviceCategory={setDeviceCategory}
+                device_language={device_language}
+                setDeviceLanguage={setDeviceLanguage}
+                device_screen_resolution={device_screen_resolution}
+                setDeviceScreenResolution={setDeviceScreenResolution}
+                device_operating_system={device_operating_system}
+                setDeviceOperatingSystem={setDeviceOperatingSystem}
+                device_operating_system_version={
+                  device_operating_system_version
+                }
+                setDeviceOperatingSystemVersion={
+                  setDeviceOperatingSystemVersion
+                }
+                device_model={device_model}
+                setDeviceModel={setDeviceModel}
+                device_brand={device_brand}
+                setDeviceBrand={setDeviceBrand}
+                device_browser={device_browser}
+                setDeviceBrowser={setDeviceBrowser}
+                device_browser_version={device_browser_version}
+                setDeviceBrowserVersion={setDeviceBrowserVersion}
+                user_agent={user_agent}
+                setUserAgent={setUserAgent}
+              />
+            </UseFirebaseCtx.Provider>
           )}
             </ShowAdvancedCtx.Provider>
           </section>
@@ -648,12 +687,15 @@ const EventBuilder: React.FC = () => {
             parameters,
             eventName,
             userProperties,
-            timestamp_micros,
+            timestamp_micros: ((num) => (isNaN(num) ? undefined : num))(
+              parseInt(timestamp_micros || "", 10)
+            ),
             non_personalized_ads,
             useTextBox,
             payloadObj,
             instanceId: useFirebase ? { firebase_app_id } : { measurement_id },
             api_secret: api_secret!,
+            user_agent,
             ip_override,
             user_location: {
               city: user_location_city,
@@ -661,6 +703,17 @@ const EventBuilder: React.FC = () => {
               country_id: user_location_country_id,
               subcontinent_id: user_location_subcontinent_id,
               continent_id: user_location_continent_id,
+            },
+            device: {
+              category: device_category,
+              language: device_language,
+              screen_resolution: device_screen_resolution,
+              operating_system: device_operating_system,
+              operating_system_version: device_operating_system_version,
+              model: device_model,
+              brand: device_brand,
+              browser: device_browser,
+              browser_version: device_browser_version,
             },
           }}
         >

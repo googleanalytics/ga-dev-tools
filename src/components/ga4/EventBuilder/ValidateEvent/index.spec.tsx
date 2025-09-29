@@ -47,7 +47,7 @@ const renderComponent = (props: Partial<ValidateEventProps> = {}) => {
     parameters: [],
     items: [],
     userProperties: [],
-    timestamp_micros: "",
+    timestamp_micros: undefined,
     non_personalized_ads: false,
     useTextBox: false,
     payloadObj: [],
@@ -60,7 +60,19 @@ const renderComponent = (props: Partial<ValidateEventProps> = {}) => {
       country_id: "US",
       subcontinent_id: "021",
       continent_id: "019"
-    }
+    },
+    user_agent: "",
+    device: {
+      category: "mobile",
+      language: "en",
+      screen_resolution: "1280x2856",
+      operating_system: "Android",
+      operating_system_version: "14",
+      model: "Pixel 9 Pro",
+      brand: "Google",
+      browser: "Chrome",
+      browser_version: "136.0.7103.60"
+   }
   }
 
   return render(

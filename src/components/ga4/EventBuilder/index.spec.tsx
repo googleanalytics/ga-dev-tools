@@ -131,7 +131,7 @@ describe("Event Builder", () => {
             /"app_instance_id":"my_instance_id"/
           )
           expect(payload).toHaveTextContent(/"user_id":"my_user_id"/)
-          expect(payload).toHaveTextContent(/"timestamp_micros":"1234"/)
+          expect(payload).toHaveTextContent(/"timestamp_micros":1234/)
           expect(payload).toHaveTextContent(/"non_personalized_ads":true/)
           expect(payload).toHaveTextContent(/"name":"select_content"/)
         })
@@ -207,7 +207,7 @@ describe("Event Builder", () => {
           const payload = await findByTestId("payload")
           expect(payload).toHaveTextContent(/"client_id":"my_client_id"/)
           expect(payload).toHaveTextContent(/"user_id":"my_user_id"/)
-          expect(payload).toHaveTextContent(/"timestamp_micros":"1234"/)
+          expect(payload).toHaveTextContent(/"timestamp_micros":1234/)
           expect(payload).toHaveTextContent(/"non_personalized_ads":true/)
           expect(payload).toHaveTextContent(/"name":"campaign_details"/)
         })

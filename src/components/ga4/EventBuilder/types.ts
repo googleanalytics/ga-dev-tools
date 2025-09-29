@@ -67,12 +67,14 @@ export interface NumberParameter {
   name: string
   value: string | undefined
   exampleValue?: number
+  timestamp_micros?: number
 }
 export interface StringParameter {
   type: ParameterType.String
   name: string
   value: string | undefined
   exampleValue?: string
+  timestamp_micros?: number
 }
 
 export type Parameter = NumberParameter | StringParameter
@@ -97,7 +99,8 @@ export enum Label {
 
   EventCategory = "event category",
   EventName = "event name",
-  TimestampMicros = "timestamp micros",
+  TimestampMicros = "UNIX timestamp in microseconds",
+  TimezoneSelect = "Timezone",
   NonPersonalizedAds = "non personalized ads",
 
   Payload = "payload",
@@ -119,6 +122,18 @@ export enum Label {
   CountryId = "country id",
   SubcontinentId = "subcontinent id",
   ContinentId = "continent id",
+
+  // Device Information
+  DeviceCategory = "device category",
+  DeviceLanguage = "device language",
+  DeviceScreenResolution = "device screen resolution",
+  DeviceOperatingSystem = "device operating system",
+  DeviceOperatingSystemVersion = "device operating system version",
+  DeviceModel = "device model",
+  DeviceBrand = "device brand",
+  DeviceBrowser = "device browser",
+  DeviceBrowserVersion = "device browser version",
+  UserAgent = "user agent",
 }
 
 // TODO - Add test to ensure url param values are all unique.
