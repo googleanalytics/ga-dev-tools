@@ -54,7 +54,7 @@ const Parameters: React.FC<Props> = ({
   removeParam,
   addItemsParam,
   removeItem,
-  allowTimestampOverride: allowTimestampOverride,
+  allowTimestampOverride,
 }) => {
   const showAdvanced = React.useContext(ShowAdvancedCtx)
 
