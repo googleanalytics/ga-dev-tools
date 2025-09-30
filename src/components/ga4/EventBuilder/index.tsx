@@ -564,12 +564,12 @@ const EventBuilder: React.FC = () => {
         <Typography variant="h4">Event details</Typography>
         <Typography>
           Finally, specify the parameters to send with the event. By default, only
-          recommended parameters for the event will appear here. Check "show
-          advanced options" to add custom parameters, user properties, or geographic 
-          information.
+          recommended parameters for the event will appear here. Select 'Show advanced
+          options' to add custom parameters, user properties, and to provide geographic 
+          and device information.
         </Typography>
         <LabeledCheckbox checked={showAdvanced} onChange={setShowAdvanced}>
-          show advanced options
+          Show advanced options
         </LabeledCheckbox>
 
       <section className={classes.form}>
