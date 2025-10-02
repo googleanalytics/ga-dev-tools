@@ -37,7 +37,6 @@ import MenuIcon from "@mui/icons-material/Menu"
 import Typography from "@mui/material/Typography"
 
 import Login from "./Login"
-import { useGAVersion } from "../../hooks"
 import { GAVersion, Url } from "../../constants"
 import Spinner from "../Spinner"
 import { linkData } from "./links"
@@ -117,24 +116,28 @@ const Template: React.FC<PropsWithChildren<LayoutProps & TemplateProps>> = ({
                                                                               user,
                                                                             }) => {
   usePageView(title)
-  const { gaVersion, setGAVersion } = useGAVersion(pathname)
+  const gaVersion = GAVersion.GoogleAnalytics4
 
   const [open, setOpen] = React.useState(false)
 
   useEffect(() => {
-    //const timeout = setTimeout(() => {
+    const uaToGa4Redirects: { [key: string]: string } = {
+      "/campaign-url-builder/": "/ga4/campaign-url-builder/",
+      "/enhanced-ecommerce/": "/ga4/enhanced-ecommerce/",
+      "/": "/ga4/",
+    }
+
+    const redirectPath = uaToGa4Redirects[window.location.pathname]
+    if (redirectPath) {
+      window.location.replace(redirectPath)
+    }
+
     // Redirect to the new domain while preserving the path.
     if( window.location.hostname.indexOf('web.app') !== -1 && !window.location.hostname.includes('staging')) {
       const newHostname = window.location.hostname.replace('web.app', 'google');
       const newLocation =  window.location.href.replace( window.location.hostname, newHostname );
       window.location.replace(newLocation);
     }
-
-    if( !window.location.search && window.location.pathname === '/' ) {
-      const newLocation = window.location.pathname = '/ga4/';
-      window.location.replace(newLocation);
-    }
-      //}, 1000);
 
     return;
   }, []);
@@ -186,7 +189,7 @@ const Template: React.FC<PropsWithChildren<LayoutProps & TemplateProps>> = ({
           <Drawer open={open} onClose={() => setOpen(false)}>
             <List className={classes.mobileNav}>
               <Link
-                  to={gaVersion === GAVersion.UniversalAnalytics ? "/" : "/ga4/"}
+                  to="/ga4/"
                   className={classes.noColor}
               >
                 <Typography
@@ -229,7 +232,7 @@ const Template: React.FC<PropsWithChildren<LayoutProps & TemplateProps>> = ({
           <ol>
             <li>
               <Link
-                  to={gaVersion === GAVersion.UniversalAnalytics ? "/" : "/ga4/"}
+                  to="/ga4/"
               >
                 <Typography
                     className={clsx(classes.innerNav, classes.home)}

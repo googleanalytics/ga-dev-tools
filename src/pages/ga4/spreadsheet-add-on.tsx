@@ -51,7 +51,7 @@ const SpreadsheetAddOn = (props: Props) => {
       <a href={Url.spreadsheetAddOnExternal}>
         <StaticImage
           alt="screenshot of the add-on"
-          src="../images/screenshots/spreadsheet-add-on-2x.png"
+          src="../../images/screenshots/spreadsheet-add-on-2x.png"
         />
       </a>
 
