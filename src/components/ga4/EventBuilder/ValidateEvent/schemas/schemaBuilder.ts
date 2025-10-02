@@ -39,7 +39,8 @@ export const buildEvents = () => {
                                 40
                         },
                         "patternProperties": {
-                            ".": {
+                            "^(session_id|session_number)$": {},
+                            "^(?!(session_id|session_number)$).*$": {
                                 "maxLength": 100
                             }
                         }
