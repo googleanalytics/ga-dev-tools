@@ -62,7 +62,7 @@ describe("customSchema", () => {
         expect(validator.isValid(validInput)).toEqual(true)
     })
 
-    test("does not allow other properties to exceed 100 characters", () => {
+    test("does not allow other parameter values to exceed 100 characters", () => {
         const longString = "a".repeat(101)
         const invalidInput = { other_param: longString }
 

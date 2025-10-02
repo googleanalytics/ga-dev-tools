@@ -31,7 +31,7 @@ describe("schemaBuilder", () => {
     expect(validator.isValid(event)).toBe(true)
   })
 
-  it("does not allow other properties to exceed 100 characters for recommended events", () => {
+  it("does not allow other parameter values to exceed 100 characters for recommended events", () => {
     const validator = new Validator(schema)
     const event = {
       name: "login",
