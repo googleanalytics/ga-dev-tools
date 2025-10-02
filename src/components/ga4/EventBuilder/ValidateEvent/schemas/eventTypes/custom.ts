@@ -14,7 +14,8 @@ export const customSchema = {
     "required": [],
     "maxProperties": 25,
     "patternProperties": {
-        ".": {
+       "^(session_id|session_number)$": {},
+        "^(?!(session_id|session_number)$).*$": {
             "maxLength": 100
         }
     },
