@@ -50,11 +50,8 @@ describe("Event Builder", () => {
         const { wrapped } = withProviders(<Sut />, { isLoggedIn: false })
         const { findByLabelText, findByTestId } = renderer.render(wrapped)
 
-        await React.act(async () => {
-          // Choose the second view in the list
-          const clientToggle = await findByTestId("use firebase")
-          clientToggle.click()
-        })
+        const clientToggle = await findByTestId("use firebase")
+        userEvent.click(clientToggle)
 
         await findByLabelText(Label.APISecret, { exact: false })
 
@@ -95,45 +92,49 @@ describe("Event Builder", () => {
             exact: false,
           })
 
-          await React.act(async () => {
-            await userEvent.type(apiSecret, "my_secret", { delay: 1 })
-            await userEvent.type(firebaseAppId, "my_firebase_app_id", {
-              delay: 1,
-            })
-            await userEvent.type(appInstanceId, "my_instance_id", { delay: 1 })
-            await userEvent.type(userId, "my_user_id", { delay: 1 })
+          userEvent.type(apiSecret, "my_secret")
+          userEvent.type(firebaseAppId, "my_firebase_app_id")
+          userEvent.type(appInstanceId, "my_instance_id")
+          userEvent.type(userId, "my_user_id")
 
-            // TODO - I'm pretty unhappy with this, but I'm having a lot of
-            // trouble testing the Autocomplete component without doing this.
-            // This test is somewhat likely to break if we add/remove events &
-            // event categories so if it's broken, it's probably fine to just
-            // change the expected values.
-            const ecInput = within(eventCategory).getByRole("combobox")
-            eventCategory.focus()
-            renderer.fireEvent.change(ecInput, { target: { value: "All apps" } })
-
-            const enInput = within(eventName).getByRole("combobox")
-            eventCategory.focus()
-            renderer.fireEvent.change(enInput, { target: { value: "select_content" } })
-
-            await userEvent.type(timestampMicros, "1234", { delay: 1 })
-            nonPersonalizedAds.click()
+          // TODO - I'm pretty unhappy with this, but I'm having a lot of
+          // trouble testing the Autocomplete component without doing this.
+          // This test is somewhat likely to break if we add/remove events &
+          // event categories so if it's broken, it's probably fine to just
+          // change the expected values.
+          const ecInput = within(eventCategory).getByRole("combobox")
+          eventCategory.focus()
+          renderer.fireEvent.change(ecInput, {
+            target: { value: "All apps" },
           })
 
+          const enInput = within(eventName).getByRole("combobox")
+          eventCategory.focus()
+          renderer.fireEvent.change(enInput, {
+            target: { value: "select_content" },
+          })
+
+          userEvent.type(timestampMicros, "1234")
+          userEvent.click(nonPersonalizedAds)
+
           const validatePaper = await findByTestId("validate and send")
-          expect(validatePaper).toHaveTextContent(/api_secret=my_secret/)
-          expect(validatePaper).toHaveTextContent(
-            /firebase_app_id=my_firebase_app_id/
-          )
+          await renderer.waitFor(() => {
+            expect(validatePaper).toHaveTextContent(/api_secret=my_secret/)
+            expect(validatePaper).toHaveTextContent(
+              /firebase_app_id=my_firebase_app_id/
+            )
+          })
 
           const payload = await findByTestId("payload")
-          expect(payload).toHaveTextContent(
-            /"app_instance_id":"my_instance_id"/
-          )
-          expect(payload).toHaveTextContent(/"user_id":"my_user_id"/)
-          expect(payload).toHaveTextContent(/"timestamp_micros":1234/)
-          expect(payload).toHaveTextContent(/"non_personalized_ads":true/)
-          expect(payload).toHaveTextContent(/"name":"select_content"/)
+          await renderer.waitFor(() => {
+            expect(payload).toHaveTextContent(
+              /"app_instance_id":"my_instance_id"/
+            )
+            expect(payload).toHaveTextContent(/"user_id":"my_user_id"/)
+            expect(payload).toHaveTextContent(/"timestamp_micros":1234/)
+            expect(payload).toHaveTextContent(/"non_personalized_ads":true/)
+            expect(payload).toHaveTextContent(/"name":"select_content"/)
+          })
         })
       })
       describe("for gtag switch", () => {
@@ -146,11 +147,8 @@ describe("Event Builder", () => {
             wrapped
           )
 
-          await React.act(async () => {
-            // Choose the second view in the list
-            const clientToggle = await findByTestId("use firebase")
-            clientToggle.click()
-          })
+          const clientToggle = await findByTestId("use firebase")
+          userEvent.click(clientToggle)
 
           const apiSecret = await find(Label.APISecret, { exact: false })
           const measurementId = await find(Label.MeasurementID, {
@@ -167,49 +165,47 @@ describe("Event Builder", () => {
             exact: false,
           })
 
-          await React.act(async () => {
-            await userEvent.type(apiSecret, "my_secret", { delay: 1 })
-            await userEvent.type(measurementId, "my_measurement_id", {
-              delay: 1,
-            })
-            await userEvent.type(clientId, "my_client_id", { delay: 1 })
-            await userEvent.type(userId, "{selectall}{backspace}my_user_id", {
-              delay: 1,
-            })
+          userEvent.type(apiSecret, "my_secret")
+          userEvent.type(measurementId, "my_measurement_id")
+          userEvent.type(clientId, "my_client_id")
+          userEvent.type(userId, "{selectall}{backspace}my_user_id")
 
-            // TODO - I'm pretty unhappy with this, but I'm having a lot of
-            // trouble testing the Autocomplete component without doing this.
-            // This test is somewhat likely to break if we add/remove events &
-            // event categories so if it's broken, it's probably fine to just
-            // change the expected values.
-            const ecInput = within(eventCategory).getByRole("combobox")
-            //eventCategory.focus()
-            renderer.fireEvent.change(ecInput, { target: { value: "All apps" } })
-
-            const enInput = within(eventName).getByRole("combobox")
-            //eventCategory.focus()
-            renderer.fireEvent.change(enInput, { target: { value: "campaign_details" } })
-
-            await userEvent.type(
-              timestampMicros,
-              "{selectall}{backspace}1234",
-              { delay: 1 }
-            )
-            nonPersonalizedAds.click()
+          // TODO - I'm pretty unhappy with this, but I'm having a lot of
+          // trouble testing the Autocomplete component without doing this.
+          // This test is somewhat likely to break if we add/remove events &
+          // event categories so if it's broken, it's probably fine to just
+          // change the expected values.
+          const ecInput = within(eventCategory).getByRole("combobox")
+          //eventCategory.focus()
+          renderer.fireEvent.change(ecInput, {
+            target: { value: "All apps" },
           })
 
+          const enInput = within(eventName).getByRole("combobox")
+          //eventCategory.focus()
+          renderer.fireEvent.change(enInput, {
+            target: { value: "campaign_details" },
+          })
+
+          userEvent.type(timestampMicros, "{selectall}{backspace}1234")
+          userEvent.click(nonPersonalizedAds)
+
           const validatePaper = await findByTestId("validate and send")
-          expect(validatePaper).toHaveTextContent(/api_secret=my_secret/)
-          expect(validatePaper).toHaveTextContent(
-            /measurement_id=my_measurement_id/
-          )
+          await renderer.waitFor(() => {
+            expect(validatePaper).toHaveTextContent(/api_secret=my_secret/)
+            expect(validatePaper).toHaveTextContent(
+              /measurement_id=my_measurement_id/
+            )
+          })
 
           const payload = await findByTestId("payload")
-          expect(payload).toHaveTextContent(/"client_id":"my_client_id"/)
-          expect(payload).toHaveTextContent(/"user_id":"my_user_id"/)
-          expect(payload).toHaveTextContent(/"timestamp_micros":1234/)
-          expect(payload).toHaveTextContent(/"non_personalized_ads":true/)
-          expect(payload).toHaveTextContent(/"name":"campaign_details"/)
+          await renderer.waitFor(() => {
+            expect(payload).toHaveTextContent(/"client_id":"my_client_id"/)
+            expect(payload).toHaveTextContent(/"user_id":"my_user_id"/)
+            expect(payload).toHaveTextContent(/"timestamp_micros":1234/)
+            expect(payload).toHaveTextContent(/"non_personalized_ads":true/)
+            expect(payload).toHaveTextContent(/"name":"campaign_details"/)
+          })
         })
       })
     })
@@ -219,10 +215,8 @@ describe("Event Builder", () => {
       const { wrapped } = withProviders(<Sut />, { isLoggedIn: false })
       const { findByTestId } = renderer.render(wrapped)
 
-      await React.act(async () => {
-        const clientToggle = await findByTestId("use firebase")
-        clientToggle.click()
-      })
+      const clientToggle = await findByTestId("use firebase")
+      userEvent.click(clientToggle)
 
       const eventName = await findByTestId(Label.EventName)
       const enInput = within(eventName).getByRole("combobox")
