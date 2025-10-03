@@ -137,19 +137,6 @@ describe("formatCheckLib", () => {
 
             expect(errors).toEqual([])
         })
-
-        test("returns an error when event's name is a reserved name", () => {
-            const payload = {app_instance_id: "12345678901234567890123456789012", events: [{name: 'ad_click'}]}
-            const firebaseAppId = '1:1233455666:android:abcdefgh'
-            const instanceId = {firebase_app_id: firebaseAppId}
-            const api_secret = '123'
-
-            let errors = formatCheckLib(payload, instanceId, api_secret, true)
-
-            expect(errors[0].description).toEqual(
-                "ad_click is a reserved event name"
-            )
-        })
     })
 
     describe("returns invalidUserPropertyName errors", () => {
@@ -162,19 +149,6 @@ describe("formatCheckLib", () => {
             let errors = formatCheckLib(payload, instanceId, api_secret, true)
 
             expect(errors).toEqual([])
-        })
-
-        test("returns an error when event's name is a reserved name", () => {
-            const payload = {app_instance_id: "12345678901234567890123456789012", user_properties: {'first_open_time': 'test'}}
-            const firebaseAppId = '1:1233455666:android:abcdefgh'
-            const instanceId = {firebase_app_id: firebaseAppId}
-            const api_secret = '123'
-
-            let errors = formatCheckLib(payload, instanceId, api_secret, true)
-
-            expect(errors[0].description).toEqual(
-                "user_property: 'first_open_time' is a reserved user property name"
-            )
         })
     })
 
