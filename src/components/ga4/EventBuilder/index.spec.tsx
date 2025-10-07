@@ -176,13 +176,11 @@ describe("Event Builder", () => {
           // event categories so if it's broken, it's probably fine to just
           // change the expected values.
           const ecInput = within(eventCategory).getByRole("combobox")
-          //eventCategory.focus()
           renderer.fireEvent.change(ecInput, {
             target: { value: "All apps" },
           })
 
           const enInput = within(eventName).getByRole("combobox")
-          //eventCategory.focus()
           renderer.fireEvent.change(enInput, {
             target: { value: "campaign_details" },
           })
