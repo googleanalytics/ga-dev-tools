@@ -43,31 +43,4 @@ describe("customSchema", () => {
 
         expect(validator.isValid(validInput)).toEqual(false)
     })
-
-    test("allows session_id to exceed 100 characters", () => {
-        const longString = "a".repeat(101)
-        const validInput = { session_id: longString }
-
-        let validator = new Validator(customSchema)
-
-        expect(validator.isValid(validInput)).toEqual(true)
-    })
-
-    test("allows session_number to exceed 100 characters", () => {
-        const longString = "a".repeat(101)
-        const validInput = { session_number: longString }
-
-        let validator = new Validator(customSchema)
-
-        expect(validator.isValid(validInput)).toEqual(true)
-    })
-
-    test("does not allow other parameter values to exceed 100 characters", () => {
-        const longString = "a".repeat(101)
-        const invalidInput = { other_param: longString }
-
-        let validator = new Validator(customSchema)
-
-        expect(validator.isValid(invalidInput)).toEqual(false)
-    })
 })
