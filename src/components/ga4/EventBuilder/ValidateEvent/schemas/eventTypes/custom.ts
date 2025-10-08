@@ -13,11 +13,6 @@ export const customSchema = {
     "type": "object",
     "required": [],
     "maxProperties": 25,
-    "patternProperties": {
-        ".": {
-            "maxLength": 100
-        }
-    },
     "propertyNames": {
         "pattern": "^(?!ga_|google_|firebase_)[A-Za-z][A-Za-z0-9_]*$",
         "maxLength": 40

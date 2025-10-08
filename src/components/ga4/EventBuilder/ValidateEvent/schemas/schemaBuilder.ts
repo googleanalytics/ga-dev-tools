@@ -37,11 +37,6 @@ export const buildEvents = () => {
                                 "^(?!ga_|google_|firebase_)[A-Za-z][A-Za-z0-9_]*$",
                             "maxLength":
                                 40
-                        },
-                        "patternProperties": {
-                            ".": {
-                                "maxLength": 100
-                            }
                         }
                     }
                 }
