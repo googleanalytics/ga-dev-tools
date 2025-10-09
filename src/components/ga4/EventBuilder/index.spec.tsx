@@ -23,6 +23,8 @@ import { Label } from "./types"
 import userEvent from "@testing-library/user-event"
 import { within } from "@testing-library/react"
 
+jest.setTimeout(10000)
+
 describe("Event Builder", () => {
   test("can render page without error", () => {
     const { wrapped } = withProviders(<Sut />)

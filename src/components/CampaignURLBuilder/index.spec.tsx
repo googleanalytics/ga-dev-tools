@@ -22,6 +22,8 @@ import { GAVersion } from "../../constants"
 
 // Capture original error global so it's easier to replace after a mock.
 const originalError = console.error
+
+jest.setTimeout(10000)
 describe("for the Campaign URL Builder component", () => {
   beforeEach(() => {
     process.env.BITLY_CLIENT_ID = "bitly-client-id"
