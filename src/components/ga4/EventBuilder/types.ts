@@ -60,6 +60,7 @@ export enum EventType {
   ViewItemList = "view_item_list",
   ViewPromotion = "view_promotion",
   ViewSearchResults = "view_search_results",
+  InAppPurchase = "in_app_purchase",
 }
 
 export interface NumberParameter {

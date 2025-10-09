@@ -201,6 +201,22 @@ const generate_lead = eventFor(
   [stringParam("currency", "USD"), numberParam("value", 99.99)]
 )
 
+const in_app_purchase = eventFor(
+  EventType.InAppPurchase,
+  [Category.AllApps],
+  [
+    stringParam("currency", "USD"),
+    numberParam("value", 30.03),
+    numberParam("quantity", 3),
+    stringParam("product_id", "ABC123456789"),
+    stringParam("subscription", "true"),
+    stringParam("free_trial", "false"),
+    stringParam("price_is_discounted", "false"),
+  ],
+  undefined,
+  ["app"]
+)
+
 const join_group = eventFor(
   EventType.JoinGroup,
   [Category.AllApps],
@@ -548,6 +564,8 @@ export const suggestedEventFor = (eventType: EventType): Event2 => {
       return earn_virtual_currency
     case EventType.GenerateLead:
       return generate_lead
+    case EventType.InAppPurchase:
+      return in_app_purchase
     case EventType.JoinGroup:
       return join_group
     case EventType.LevelUp:
