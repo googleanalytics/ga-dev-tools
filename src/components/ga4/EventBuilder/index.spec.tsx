@@ -23,6 +23,8 @@ import { Label } from "./types"
 import userEvent from "@testing-library/user-event"
 import { within } from "@testing-library/react"
 
+// Increase the timeout for this test suite. The userEvent.type calls can
+// be slow, and the default 5s timeout is not always enough.
 jest.setTimeout(10000)
 
 describe("Event Builder", () => {
