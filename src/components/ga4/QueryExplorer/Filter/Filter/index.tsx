@@ -174,10 +174,10 @@ const Filter: React.FC<{
                 }
                 const value = {} as { operation?: OperationType, matchType?: MatchType}
                 if (nu.value === "numericFilter") {
-                  value["operation"] = OperationType.Equal
+                  value["operation"] = "EQUAL"
                 }
                 if (nu.value === "stringFilter") {
-                  value["matchType"] = MatchType.Exact
+                  value["matchType"] = "EXACT"
                 }
                 updateFilter(path, old => ({
                   fieldName: old.fieldName,
