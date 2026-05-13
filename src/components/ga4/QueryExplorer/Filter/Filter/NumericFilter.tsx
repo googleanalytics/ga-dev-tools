@@ -13,30 +13,18 @@ interface NumericFilterProps {
   path: ExpressionPath
 }
 
-export enum OperationType {
-  Equal = "EQUAL",
-  LessThan = "LESS_THAN",
-  LessThanOrEqual = "LESS_THAN_OR_EQUAL",
-  GreaterThan = "GREATER_THAN",
-  GreaterThanOrEqual = "GREATER_THAN_OR_EQUAL",
+export type OperationType = "EQUAL" | "LESS_THAN" | "LESS_THAN_OR_EQUAL" | "GREATER_THAN" | "GREATER_THAN_OR_EQUAL"
+
+const operationTypeOptions: Record<OperationType, SelectOption> = {
+  "EQUAL": { value: "EQUAL", displayName: "==" },
+  "LESS_THAN": { value: "LESS_THAN", displayName: "<" },
+  "LESS_THAN_OR_EQUAL": { value: "LESS_THAN_OR_EQUAL", displayName: "<=" },
+  "GREATER_THAN": { value: "GREATER_THAN", displayName: ">" },
+  "GREATER_THAN_OR_EQUAL": { value: "GREATER_THAN_OR_EQUAL", displayName: ">=" },
 }
 
-const optionFor = (type: OperationType | undefined): SelectOption => {
-  switch (type) {
-    case OperationType.GreaterThan:
-      return { value: type, displayName: ">" }
-    case OperationType.GreaterThanOrEqual:
-      return { value: type, displayName: ">=" }
-    case OperationType.Equal:
-      return { value: type, displayName: "==" }
-    case OperationType.LessThan:
-      return { value: type, displayName: "<" }
-    case OperationType.LessThanOrEqual:
-      return { value: type, displayName: "<=" }
-    default:
-      return { value: "", displayName: "" }
-  }
-}
+const optionFor = (type: OperationType | undefined): SelectOption =>
+  type === undefined ? { value: "", displayName: "" } : operationTypeOptions[type]
 
 type NumericValue = gapi.client.analyticsdata.NumericValue
 
@@ -67,7 +55,7 @@ export const toNumericValue = (s: string) => {
   return nuVal
 }
 
-const operationOptions = Object.values(OperationType).map(optionFor)
+const operationOptions = Object.values(operationTypeOptions)
 
 // TODO instead of having a filter type drop down, include `between` here and do
 // the smarts to choose the right subtype correctly.
@@ -106,7 +94,10 @@ const NumericFilter: React.FC<NumericFilterProps> = ({
         value={optionFor(numericFilter.operation as OperationType | undefined)}
         label="operation"
         onChange={option => {
-          updateNumericFilter(old => ({ ...old, operation: option?.value }))
+          updateNumericFilter(old => ({
+            ...old,
+            operation: option?.value as OperationType | undefined,
+          }))
         }}
         options={operationOptions}
       />

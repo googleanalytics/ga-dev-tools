@@ -6,14 +6,7 @@ import Select, { SelectOption } from "@/components/Select"
 import LabeledCheckbox from "@/components/LabeledCheckbox"
 import { UpdateFilterFn, ExpressionPath } from "../index"
 
-export enum MatchType {
-  Exact = "EXACT",
-  BeginsWith = "BEGINS_WITH",
-  EndsWith = "ENDS_WITH",
-  Contains = "CONTAINS",
-  FullRegexp = "FULL_REGEXP",
-  PartialRegexp = "PARTIAL_REGEXP",
-}
+export type MatchType = "EXACT" | "BEGINS_WITH" | "ENDS_WITH" | "CONTAINS" | "FULL_REGEXP" | "PARTIAL_REGEXP"
 
 type SFilter = gapi.client.analyticsdata.StringFilter
 
@@ -23,26 +16,19 @@ interface StringFilterProps {
   path: ExpressionPath
 }
 
-const optionFor = (type: MatchType | undefined): SelectOption => {
-  switch (type) {
-    case MatchType.Exact:
-      return { value: type, displayName: "exact" }
-    case MatchType.BeginsWith:
-      return { value: type, displayName: "begins with" }
-    case MatchType.EndsWith:
-      return { value: type, displayName: "ends with" }
-    case MatchType.Contains:
-      return { value: type, displayName: "contains" }
-    case MatchType.FullRegexp:
-      return { value: type, displayName: "regexp" }
-    case MatchType.PartialRegexp:
-      return { value: type, displayName: "partial regexp" }
-    default:
-      return { value: "", displayName: "" }
-  }
+const matchTypeOptions: Record<MatchType, SelectOption> = {
+  "EXACT": { value: "EXACT", displayName: "exact" },
+  "BEGINS_WITH": { value: "BEGINS_WITH", displayName: "begins with" },
+  "ENDS_WITH": { value: "ENDS_WITH", displayName: "ends with" },
+  "CONTAINS": { value: "CONTAINS", displayName: "contains" },
+  "FULL_REGEXP": { value: "FULL_REGEXP", displayName: "regexp" },
+  "PARTIAL_REGEXP": { value: "PARTIAL_REGEXP", displayName: "partial regexp" },
 }
 
-const matchOptions = Object.values(MatchType).map(optionFor)
+const optionFor = (type: MatchType | undefined): SelectOption =>
+  type === undefined ? { value: "", displayName: "" } : matchTypeOptions[type]
+
+const matchOptions = Object.values(matchTypeOptions)
 
 const StringFilter: React.FC<StringFilterProps> = ({
   stringFilter,
@@ -68,7 +54,10 @@ const StringFilter: React.FC<StringFilterProps> = ({
         label="match type"
         value={matchValue}
         onChange={nu => {
-          updateStringFilter(old => ({ ...old, matchType: nu?.value }))
+          updateStringFilter(old => ({
+            ...old,
+            matchType: nu?.value as MatchType | undefined,
+          }))
         }}
         options={matchOptions}
       />
@@ -79,7 +68,7 @@ const StringFilter: React.FC<StringFilterProps> = ({
         label="value"
         onChange={e => {
           const nu = e.target.value
-          updateStringFilter(old => ({ ...old, value: nu }))
+          updateStringFilter((old: any) => ({ ...old, value: nu }))
         }}
       />
       <LabeledCheckbox

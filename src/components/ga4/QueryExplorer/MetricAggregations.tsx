@@ -24,34 +24,31 @@ const StyledWithHelpText = styled(WithHelpText)((
   }
 }));
 
-export enum MetricAggregation {
-  Total = "TOTAL",
-  Minimum = "MINIMUM",
-  Maximum = "MAXIMUM",
-  Count = "COUNT",
-}
+export type MetricAggregation = "TOTAL" | "MINIMUM" | "MAXIMUM" | "COUNT" 
 
-const totalOption = { value: MetricAggregation.Total, displayName: "total" }
+const totalOption = { value: "TOTAL", displayName: "total" }
 const minimumOption = {
-  value: MetricAggregation.Minimum,
+  value: "MINIMUM",
   displayName: "minimum",
 }
 const maximumOption = {
-  value: MetricAggregation.Maximum,
+  value: "MAXIMUM",
   displayName: "maximum",
 }
-const countOption = { value: MetricAggregation.Count, displayName: "count" }
+const countOption = { value: "COUNT", displayName: "count" }
 
 const metricAggregationFor = (aggregation: MetricAggregation): SelectOption => {
   switch (aggregation) {
-    case MetricAggregation.Total:
+    case "TOTAL":
       return totalOption
-    case MetricAggregation.Minimum:
+    case "MINIMUM":
       return minimumOption
-    case MetricAggregation.Maximum:
+    case "MAXIMUM":
       return maximumOption
-    case MetricAggregation.Count:
+    case "COUNT":
       return countOption
+    default:
+      return { value: "", displayName: "" }
   }
 }
 
