@@ -96,9 +96,9 @@ export const linkData: LinkData[] = [
   },
   {
     text: "Spreadsheet Add-on",
-    href: "/spreadsheet-add-on/",
+    href: "/ga4/spreadsheet-add-on/",
     type: "link",
-    versions: [GAVersion.UniversalAnalytics],
+    versions: [GAVersion.GoogleAnalytics4],
   },
   {
     text: "Tag Assistant",
