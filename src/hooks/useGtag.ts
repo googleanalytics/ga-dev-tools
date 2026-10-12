@@ -14,6 +14,13 @@ const defaultSnippet = (): Gtag.Gtag => {
 
   ;(window as any).gtag = gtag
   ;(gtag as Gtag.Gtag)("js", new Date())
+
+  // Without a measurement ID there is nothing to report to, so skip loading
+  // gtag.js entirely.
+  if (!process.env.GA_MEASUREMENT_ID) {
+    return gtag as Gtag.Gtag
+  }
+
   // We don't send a page view because that's being entirely managed through
   // the 'usePageView' hook.
   ;(gtag as Gtag.Gtag)("config", process.env.GA_MEASUREMENT_ID!, {
