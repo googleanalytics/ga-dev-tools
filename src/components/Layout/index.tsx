@@ -96,7 +96,8 @@ const classes = {
   subHeading: `${PREFIX}-subHeading`,
   homeIcon: `${PREFIX}-homeIcon`,
   mobileHeading: `${PREFIX}-mobileHeading`,
-  mobileMenu: `${PREFIX}-mobileMenu`
+  mobileMenu: `${PREFIX}-mobileMenu`,
+  disableNav: `${PREFIX}-disableNav`,
 };
 
 
@@ -152,7 +153,7 @@ const Template: React.FC<PropsWithChildren<LayoutProps & TemplateProps>> = ({
   }, [])
 
   return (
-      <div className={classes.root}>
+      <StyledTemplate className={classes.root}>
         <Helmet
             htmlAttributes={{
               lang: "en",
@@ -163,7 +164,12 @@ const Template: React.FC<PropsWithChildren<LayoutProps & TemplateProps>> = ({
           <link rel="canonical" href="https://ga-dev-tools.google/" />
           <title>{title}</title>
         </Helmet>
-        <AppBar position="static" className={classes.appBarNav}>
+        <AppBar
+          position="static"
+          className={clsx(classes.appBarNav, {
+            [classes.disableNav]: disableNav,
+          })}
+        >
           <IconButton
               edge="start"
               onClick={() => setOpen(true)}
@@ -183,7 +189,7 @@ const Template: React.FC<PropsWithChildren<LayoutProps & TemplateProps>> = ({
                   userStatus={userStatus!}
               />
           )}
-          <Drawer open={open} onClose={() => setOpen(false)}>
+          <StyledDrawer open={open} onClose={() => setOpen(false)}>
             <List className={classes.mobileNav}>
               <Link
                   to={gaVersion === GAVersion.UniversalAnalytics ? "/" : "/ga4/"}
@@ -223,7 +229,7 @@ const Template: React.FC<PropsWithChildren<LayoutProps & TemplateProps>> = ({
                 )
               })}
             </List>
-          </Drawer>
+          </StyledDrawer>
         </AppBar>
         <nav className={classes.nav}>
           <ol>
@@ -326,9 +332,73 @@ const Template: React.FC<PropsWithChildren<LayoutProps & TemplateProps>> = ({
             <BugReport />
           </footer>
         </main>
-      </div>
+      </StyledTemplate>
   )
 }
+
+const navItemStyles = (theme: Theme) => ({
+  [`& .${classes.noColor}`]: {
+    color: "unset",
+  },
+
+  [`& .${classes.innerNav}`]: {
+    padding: theme.spacing(1),
+    paddingLeft: theme.spacing(4),
+    [mobile(theme)]: {
+      paddingLeft: theme.spacing(2),
+      paddingRight: theme.spacing(2),
+    },
+  },
+
+  [`& .${classes.navLinkBackgroundHover}`]: {
+    "&:hover": {
+      backgroundColor: theme.palette.grey[100],
+      color: theme.palette.getContrastText(theme.palette.grey[100]),
+    },
+  },
+
+  [`& .${classes.home}`]: {
+    margin: "unset",
+    color: "unset",
+    display: "flex",
+    alignItems: "center",
+    paddingLeft: theme.spacing(2),
+    [notMobile(theme)]: {
+      "&:hover": {
+        color: theme.palette.primary.main,
+      },
+    },
+  },
+
+  [`& .${classes.subHeading}`]: {
+    width: "100%",
+    borderTop: `1px solid ${theme.palette.grey[600]}`,
+    marginTop: theme.spacing(2),
+    paddingTop: theme.spacing(2),
+    marginBottom: theme.spacing(1),
+    paddingLeft: theme.spacing(4),
+    [mobile(theme)]: {
+      paddingLeft: theme.spacing(2),
+    },
+  },
+
+  [`& .${classes.homeIcon}`]: {
+    marginLeft: theme.spacing(-0.5),
+    paddingRight: theme.spacing(1),
+    fontSize: "1.5em",
+  },
+})
+
+// The Drawer renders in a portal outside of StyledTemplate, so it needs its own
+// styles.
+const StyledDrawer = styled(Drawer)(({ theme }) => ({
+  [`& .${classes.mobileNav}`]: {
+    color: theme.palette.getContrastText(theme.palette.grey[800]),
+    backgroundColor: theme.palette.grey[800],
+    minHeight: "100%",
+  },
+  ...navItemStyles(theme),
+}))
 
 const StyledTemplate = styled('div')((
   {
@@ -357,7 +427,7 @@ const StyledTemplate = styled('div')((
     alignItems: "center",
   },
 
-  [`& .${classes.root}`]: {
+  [`&.${classes.root}`]: {
     display: "flex",
     minHeight: "100%",
     [notMobile(theme)]: {
@@ -421,7 +491,7 @@ const StyledTemplate = styled('div')((
 
   [`& .${classes.appBarNav}`]: {
 
-    [theme.breakpoints.up("md")]:
+    [notMobile(theme)]:
         {
           display: "none",
         },
@@ -430,10 +500,8 @@ const StyledTemplate = styled('div')((
             paddingLeft: theme.spacing(1),
           },
 
-  [`& .${classes.mobileNav}`]: {
-    color: theme.palette.getContrastText(theme.palette.grey[800]),
-    backgroundColor: theme.palette.grey[800],
-    minHeight: "100%",
+  [`& .${classes.appBarNav}.${classes.disableNav}`]: {
+    display: "none",
   },
 
   [`& .${classes.nav}`]: {
@@ -462,56 +530,7 @@ const StyledTemplate = styled('div')((
     },
   },
 
-  [`& .${classes.noColor}`]: {
-    color: "unset",
-  },
-
-  [`& .${classes.innerNav}`]: {
-    padding: theme.spacing(1),
-    paddingLeft: theme.spacing(4),
-    [mobile(theme)]: {
-      paddingLeft: theme.spacing(2),
-      paddingRight: theme.spacing(2),
-    },
-  },
-
-  [`& .${classes.navLinkBackgroundHover}`]: {
-    "&:hover": {
-      backgroundColor: theme.palette.grey[100],
-      color: theme.palette.getContrastText(theme.palette.grey[100]),
-    },
-  },
-
-  [`& .${classes.home}`]: {
-    margin: "unset",
-    color: "unset",
-    display: "flex",
-    alignItems: "center",
-    paddingLeft: theme.spacing(2),
-    [notMobile(theme)]: {
-      "&:hover": {
-        color: theme.palette.primary.main,
-      },
-    },
-  },
-
-  [`& .${classes.subHeading}`]: {
-    width: "100%",
-    borderTop: `1px solid ${theme.palette.grey[600]}`,
-    marginTop: theme.spacing(2),
-    paddingTop: theme.spacing(2),
-    marginBottom: theme.spacing(1),
-    paddingLeft: theme.spacing(4),
-    [mobile(theme)]: {
-      paddingLeft: theme.spacing(2),
-    },
-  },
-
-  [`& .${classes.homeIcon}`]: {
-    marginLeft: theme.spacing(-0.5),
-    paddingRight: theme.spacing(1),
-    fontSize: "1.5em",
-  },
+  ...navItemStyles(theme),
 
   [`& .${classes.mobileHeading}`]: {
     color: theme.palette.getContrastText(theme.palette.primary.main),
@@ -530,10 +549,10 @@ const Layout2: React.FC<PropsWithChildren<LayoutProps>> = props => {
   return (
     <Loadable
       request={request}
-      renderNotStarted={() =>  <StyledTemplate><Template {...props} notStarted /></StyledTemplate>}
-      renderInProgress={() =>  <StyledTemplate><Template {...props} inProgress /></StyledTemplate>}
+      renderNotStarted={() => <Template {...props} notStarted />}
+      renderInProgress={() => <Template {...props} inProgress />}
       renderSuccessful={successProps => (
-          <StyledTemplate><Template {...props} {...successProps} successful /></StyledTemplate>
+        <Template {...props} {...successProps} successful />
       )}
       renderFailed={() => <Template {...props} failed />}
     />

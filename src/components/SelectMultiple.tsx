@@ -36,6 +36,7 @@ const Select: React.FC<SelectProps> = ({
     <Autocomplete<SelectOption, true, true, false>
       multiple
       className={className}
+      sx={{ minWidth: "15ch" }}
       autoHighlight
       autoSelect
       options={options}

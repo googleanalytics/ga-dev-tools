@@ -37,6 +37,7 @@ const Select: React.FC<SelectProps> = ({
     <Autocomplete<SelectOption, false, true, false>
       disableClearable
       className={className}
+      sx={{ minWidth: "15ch" }}
       autoHighlight
       autoSelect
       options={options}

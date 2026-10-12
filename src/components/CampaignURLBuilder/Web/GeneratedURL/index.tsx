@@ -35,7 +35,7 @@ const StyledPaper = styled(Paper)((
     wordBreak: "break-all",
   },
 
-  [`& .${classes.form}`]: {
+  [`&.${classes.form}`]: {
     maxWidth: "80ch",
   },
 

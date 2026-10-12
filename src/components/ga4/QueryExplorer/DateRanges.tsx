@@ -3,6 +3,7 @@ import * as React from "react"
 import { styled } from '@mui/material/styles';
 
 import { v4 as uuid } from "uuid"
+import clsx from "classnames"
 import TextField from "@mui/material/TextField"
 import Delete from "@mui/icons-material/Delete"
 
@@ -20,8 +21,9 @@ const classes = {
   dateRanges: `${PREFIX}-dateRanges`,
   dateRange: `${PREFIX}-dateRange`,
   name: `${PREFIX}-name`,
-  from: `${PREFIX}-from`
-};
+  from: `${PREFIX}-from`,
+  advanced: `${PREFIX}-advanced`,
+}
 
 const StyledWithHelpText = styled(WithHelpText)((
   {
@@ -48,9 +50,10 @@ const StyledWithHelpText = styled(WithHelpText)((
   },
 
   [`& .${classes.dateRange}`]: {
-    // marginLeft: theme.spacing(2),
-    marginBottom: theme.spacing(1),
     display: "flex",
+  },
+  [`& .${classes.dateRange}.${classes.advanced}`]: {
+    marginBottom: theme.spacing(1),
   },
   [`& .${classes.name}`]: {
     width: "45ch",
@@ -207,7 +210,12 @@ const DateRanges: React.FC<{
     >
       <section className={classes.dateRanges}>
         {dateRanges?.map(dateRange => (
-          <section key={dateRange.id} className={classes.dateRange}>
+          <section
+            key={dateRange.id}
+            className={clsx(classes.dateRange, {
+              [classes.advanced]: showAdvanced,
+            })}
+          >
             {showAdvanced && (
               <TooltipIconButton
                 tooltip="remove daterange"

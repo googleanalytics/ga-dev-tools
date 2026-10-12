@@ -21,11 +21,7 @@ const classes = {
   reports: `${PREFIX}-reports`
 };
 
-const Root = styled('div')((
-  {
-    theme
-  }
-) => ({
+const Root = styled("section")(({ theme }) => ({
   [`& .${classes.container}`]: {
     maxHeight: 440,
   },
@@ -35,7 +31,7 @@ const Root = styled('div')((
     marginBottom: theme.spacing(2),
   },
 
-  [`& .${classes.reports}`]: {
+  [`&.${classes.reports}`]: {
     marginTop: theme.spacing(2),
   }
 }));
@@ -104,7 +100,7 @@ const Response: React.FC<ReportsTableProps> = ({
   // TODO: Add button to save table response as a CSV & saving json response as
   // a json file.
   return (
-    <section className={classes.reports}>
+    <Root className={classes.reports}>
       <Typography variant="h3">Response</Typography>
       <Tabs
         value={tab}
@@ -131,7 +127,7 @@ const Response: React.FC<ReportsTableProps> = ({
           shouldCollapse={shouldCollapse}
         />
       </TabPanel>
-    </section>
+    </Root>
   )
 }
 
@@ -222,13 +218,13 @@ const Aggregations: React.FC<{ response: RunReportResponse }> = ({
   }
 
   return (
-    (<Root>
+    <>
       <Typography variant="h4">Metric aggregations</Typography>
       <div style={{ height: 600, width: "100%" }}>
         <DataGrid rows={rows} columns={columns} autoPageSize />
       </div>
-    </Root>)
-  );
+    </>
+  )
 }
 
 const ResponseTable: React.FC<{ response: RunReportResponse }> = ({

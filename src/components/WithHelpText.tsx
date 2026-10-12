@@ -1,10 +1,10 @@
 import * as React from "react"
-import { styled } from '@mui/material/styles';
+import { styled } from "@mui/material/styles"
 import clsx from "classnames"
 import Typography from "@mui/material/Typography"
-import {PropsWithChildren} from 'react';
+import { PropsWithChildren } from "react"
 
-const PREFIX = 'WithHelpText';
+const PREFIX = "WithHelpText"
 
 const classes = {
   withHelpText: `${PREFIX}-withHelpText`,
@@ -17,16 +17,17 @@ const classes = {
   notchedChild: `${PREFIX}-notchedChild`,
   hr: `${PREFIX}-hr`,
   hrChildren: `${PREFIX}-hrChildren`,
-  verticalHr: `${PREFIX}-verticalHr`
-};
+  verticalHr: `${PREFIX}-verticalHr`,
+  notched: `${PREFIX}-notched`,
+  shrink: `${PREFIX}-shrink`,
+}
 
-const Root = styled('div')((
-  {
-    theme
-  }
-) => ({
-  [`& .${classes.withHelpText}`]: {
+const Root = styled("div")(({ theme }) => ({
+  // Leave room for the notched outline's legend, which sits above the box.
+  [`&.${classes.withHelpText}.${classes.notched}`]: {
     marginTop: theme.spacing(1.5),
+  },
+  [`&.${classes.withHelpText}.${classes.shrink}`]: {
     display: "flex",
   },
 
@@ -45,6 +46,8 @@ const Root = styled('div')((
 
   [`& .${classes.notchedContainer}`]: {
     position: "relative",
+  },
+  [`&:not(.${classes.shrink}) .${classes.notchedContainer}`]: {
     width: "100%",
   },
   [`& .${classes.label}`]: {
@@ -89,15 +92,15 @@ const Root = styled('div')((
       flexGrow: 1,
     },
   },
-  [`&.${classes.hr}`]: {
+  [`&.${classes.hr}:not(.${classes.shrink})`]: {
     width: "100%",
   },
   [`& .${classes.hrChildren}`]: {
     "&> :last-child": {
       paddingBottom: theme.spacing(2),
     },
-  }
-}));
+  },
+}))
 
 interface WithHelpTextProps {
   label?: string | JSX.Element | undefined
@@ -118,10 +121,11 @@ const WithHelpText: React.FC<PropsWithChildren<WithHelpTextProps>> = ({
   className,
   hrGroup,
 }) => {
-
   if (hrGroup) {
     return (
-      <Root className={clsx(classes.hr, className)}>
+      <Root
+        className={clsx(classes.hr, { [classes.shrink]: shrink }, className)}
+      >
         <div className={classes.verticalHr}>
           <hr />
           <div>
@@ -140,10 +144,16 @@ const WithHelpText: React.FC<PropsWithChildren<WithHelpTextProps>> = ({
           </div>
         </div>
       </Root>
-    );
+    )
   }
   return (
-    <Root className={clsx(classes.withHelpText, className)}>
+    <Root
+      className={clsx(
+        classes.withHelpText,
+        { [classes.notched]: notched, [classes.shrink]: shrink },
+        className
+      )}
+    >
       <div
         className={clsx({
           [classes.notchedContainer]: notched,

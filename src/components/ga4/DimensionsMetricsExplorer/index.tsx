@@ -248,7 +248,7 @@ const DimensionsMetricsExplorer: React.FC = () => {
   // </Typography>
 
   return (
-    <>
+    <Root>
       <section>
         <ScrollToTop />
         <Typography>
@@ -269,7 +269,7 @@ const DimensionsMetricsExplorer: React.FC = () => {
           inProgressText="Loading dimensions and metrics"
         />
       </section>
-    </>
+    </Root>
   )
 }
 

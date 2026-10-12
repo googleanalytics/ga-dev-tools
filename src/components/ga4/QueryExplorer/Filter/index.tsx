@@ -1,6 +1,7 @@
 import * as React from "react"
 import { styled } from '@mui/material/styles';
 import { useCallback } from "react"
+import clsx from "classnames"
 
 import Typography from "@mui/material/Typography"
 
@@ -14,30 +15,22 @@ import {
 import Expression, { ExpressionType } from "./Expression"
 import useFilter, { UseFilterContext } from "./useFilter"
 
-const PREFIX = 'Filter';
+const PREFIX = "QueryFilter"
 
 const classes = {
   filter: `${PREFIX}-filter`,
-  title: `${PREFIX}-title`
-};
+  title: `${PREFIX}-title`,
+  notched: `${PREFIX}-notched`,
+}
 
-const StyledUseFilterContextProvider = styled(UseFilterContext.Provider)((
-  {
-    theme
-  }
-) => ({
-  [`& .${classes.filter}`]: ({ notched }: Props) => ({
-    marginTop: notched ? theme.spacing(1) : "unset",
-  }),
-
+const Root = styled("section")(({ theme }) => ({
+  [`&.${classes.filter}.${classes.notched}`]: {
+    marginTop: theme.spacing(1),
+  },
   [`& .${classes.title}`]: {
     margin: theme.spacing(1, 0),
-  }
-}));
-
-interface Props {
-  notched: boolean
-}
+  },
+}))
 
 export enum FilterType {
   Metric = "metric",
@@ -116,8 +109,10 @@ const Filter: React.FC<FilterProps> = ({
   }, [expression])
 
   return (
-    <StyledUseFilterContextProvider value={{ ...useFilterValue }}>
-      <section className={classes.filter}>
+    <UseFilterContext.Provider value={{ ...useFilterValue }}>
+      <Root
+        className={clsx(classes.filter, { [classes.notched]: showAdvanced })}
+      >
         {noFiltersConfigured}
         <Expression
           type={type}
@@ -130,9 +125,9 @@ const Filter: React.FC<FilterProps> = ({
           expression={expression || {}}
           nesting={-1}
         />
-      </section>
-    </StyledUseFilterContextProvider>
-  );
+      </Root>
+    </UseFilterContext.Provider>
+  )
 }
 
 export default Filter

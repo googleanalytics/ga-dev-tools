@@ -9,8 +9,9 @@ const PREFIX = 'Parameters';
 
 const classes = {
   buttonRow: `${PREFIX}-buttonRow`,
-  parameters: `${PREFIX}-parameters`
-};
+  parameters: `${PREFIX}-parameters`,
+  grow: `${PREFIX}-grow`,
+}
 
 const Root = styled('section')((
   {
@@ -28,8 +29,11 @@ const Root = styled('section')((
     "&> *:not(:last-child)": {
       marginRight: theme.spacing(1),
     },
-  }
-}));
+  },
+  [`& .${classes.grow}`]: {
+    flexGrow: 1,
+  },
+}))
 
 interface Props {
   parameters: ParameterT[]
@@ -105,7 +109,7 @@ const Parameters: React.FC<Props> = ({
         )}
         {removeItem !== undefined && (
           <>
-            <div /* className={formClasses.grow} *//>
+            <div className={classes.grow} />
             <DAB delete small title="remove item" onClick={removeItem}>
               item
             </DAB>

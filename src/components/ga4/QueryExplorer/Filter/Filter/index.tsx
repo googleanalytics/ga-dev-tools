@@ -28,7 +28,7 @@ import BetweenFilter from "./BetweenFilter"
 
 const PREFIX = 'Filter';
 
-const classes = {
+export const classes = {
   caseSensitive: `${PREFIX}-caseSensitive`,
   button: `${PREFIX}-button`,
   filter: `${PREFIX}-filter`
@@ -56,8 +56,6 @@ const Root = styled('div')((
     },
   }
 }));
-
-export {};
 
 const Filter: React.FC<{
   filter: BaseFilter

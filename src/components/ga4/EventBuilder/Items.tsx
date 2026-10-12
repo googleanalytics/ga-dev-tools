@@ -12,8 +12,9 @@ const PREFIX = 'Items';
 
 const classes = {
   items: `${PREFIX}-items`,
-  buttonRow: `${PREFIX}-buttonRow`
-};
+  buttonRow: `${PREFIX}-buttonRow`,
+  grow: `${PREFIX}-grow`,
+}
 
 const Root = styled('section')((
   {
@@ -33,8 +34,11 @@ const Root = styled('section')((
     "&> *:not(:last-child)": {
       marginRight: theme.spacing(1),
     },
-  }
-}));
+  },
+  [`& .${classes.grow}`]: {
+    flexGrow: 1,
+  },
+}))
 
 interface Props {
   items: Parameter[][]
@@ -91,7 +95,7 @@ const Items: React.FC<Props> = ({
         <SAB add title="add item" small onClick={addItem}>
           item
         </SAB>
-        <div /* className={formClasses.grow} */ />
+        <div className={classes.grow} />
         {showAdvanced && (
           <DAB delete title="remove item parameter" small onClick={removeItems}>
             item

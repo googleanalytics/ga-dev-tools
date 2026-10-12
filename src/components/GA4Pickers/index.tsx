@@ -32,10 +32,10 @@ const classes = {
   left: `${PREFIX}-left`
 };
 
-const StyledTextField
- = styled(TextField
-)(() => ({
-  [`& .${classes.option}`]: {
+// Styled on the option element itself, since options render inside the
+// Autocomplete popper (outside of the TextField).
+const ColumnRoot = styled("div")({
+  [`&.${classes.option}`]: {
     display: "flex",
     width: "100%",
   },
@@ -44,8 +44,8 @@ const StyledTextField
     flexGrow: 1,
     display: "flex",
     flexDirection: "column",
-  }
-}));
+  },
+})
 
 export type GA4Dimension = gapi.client.analyticsdata.DimensionMetadata
 export type GA4Dimensions = GA4Dimension[] | undefined
@@ -55,7 +55,7 @@ type GA4Column = GA4Dimension | GA4Metric
 
 const Column: React.FC<{ column: GA4Column }> = ({ column }) => {
   return (
-    <div className={classes.option}>
+    <ColumnRoot className={classes.option}>
       <div className={classes.left}>
         <Typography variant="body1" component="div">
           {column.uiName}
@@ -65,7 +65,7 @@ const Column: React.FC<{ column: GA4Column }> = ({ column }) => {
         </Typography>
       </div>
       <Typography variant="subtitle1" color="textSecondary"></Typography>
-    </div>
+    </ColumnRoot>
   )
 }
 
@@ -126,7 +126,7 @@ export const DimensionsPicker: React.FC<{
           </li>
       )}
       renderInput={params => (
-        <StyledTextField
+        <TextField
           {...params}
           required={required}
           label={label}
@@ -198,7 +198,7 @@ export const MetricsPicker: React.FC<{
           </li>
       )}
       renderInput={params => (
-        <StyledTextField
+        <TextField
           {...params}
           required={required}
           label={label}
@@ -292,7 +292,7 @@ export const DimensionPicker: React.FC<{
         </li>
       )}
       renderInput={params => (
-        <StyledTextField
+        <TextField
           {...params}
           required={required}
           label={label}
@@ -383,7 +383,7 @@ export const MetricPicker: React.FC<{
         </li>
       )}
       renderInput={params => (
-        <StyledTextField
+        <TextField
           {...params}
           required={required}
           label={label}

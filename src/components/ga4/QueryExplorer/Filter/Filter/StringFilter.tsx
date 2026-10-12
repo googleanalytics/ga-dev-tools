@@ -4,6 +4,7 @@ import TextField from "@mui/material/TextField"
 
 import Select, { SelectOption } from "@/components/Select"
 import LabeledCheckbox from "@/components/LabeledCheckbox"
+import { classes } from "./index"
 import { UpdateFilterFn, ExpressionPath } from "../index"
 
 export enum MatchType {
@@ -83,6 +84,7 @@ const StringFilter: React.FC<StringFilterProps> = ({
         }}
       />
       <LabeledCheckbox
+        className={classes.caseSensitive}
         checked={stringFilter.caseSensitive || false}
         onChange={(checked: boolean) => {
           updateStringFilter(old => ({ ...old, caseSensitive: checked }))

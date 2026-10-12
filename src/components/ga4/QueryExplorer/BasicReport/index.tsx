@@ -37,11 +37,7 @@ const classes = {
   form: `${PREFIX}-form`
 };
 
-const StyledDimensionsAndMetricsRequestCtxProvider = styled(DimensionsAndMetricsRequestCtx.Provider)((
-  {
-    theme
-  }
-) => ({
+const Root = styled("div")(({ theme }) => ({
   [`& .${classes.showRequestJSON}`]: {
     marginLeft: theme.spacing(1),
   },
@@ -185,173 +181,182 @@ const BasicReport = () => {
   }, [metrics, dimensions])
 
   return (
-    <StyledDimensionsAndMetricsRequestCtxProvider value={dimensionsAndMetricsRequest}>
+    <DimensionsAndMetricsRequestCtx.Provider
+      value={dimensionsAndMetricsRequest}
+    >
       <ShowAdvancedCtx.Provider value={showAdvanced}>
-        <Typography>
-          Returns a customized report of your Google Analytics event data.
-          Reports contain statistics derived from data collected by the Google
-          Analytics measurement code. Basic Report uses the {runReportLink} API
-          endpoint.
-        </Typography>
-        <section className={classes.form}>
-          <Typography variant="h3">Select property</Typography>
-          <StreamPicker autoFill {...aps} />
-          <Typography variant="h3">Set parameters</Typography>
-          <LabeledCheckbox checked={showAdvanced} setChecked={setShowAdvanced}>
-            Show advanced options
-          </LabeledCheckbox>
-          <DateRanges
-            setDateRanges={setDateRanges}
-            dateRanges={dateRanges}
-            showAdvanced={showAdvanced}
-          />
-          <MetricsPicker
-            required={!metricOrDimensionSelected}
-            setMetricIDs={setMetricIDs}
-            metrics={metrics}
-            helperText={
-              <>
-                The metrics to include in the request. See {metricsLink} on
-                devsite.
-              </>
-            }
-          />
-          <DimensionsPicker
-            required={!metricOrDimensionSelected}
-            setDimensionIDs={setDimensionIDs}
-            dimensions={dimensions}
-            helperText={
-              <>
-                The dimensions to include in the request. See {dimensionsLink}{" "}
-                on devsite.
-              </>
-            }
-          />
-
-          <OrderBys
-            metric
-            metricOptions={metrics}
-            dimension
-            dimensionOptions={dimensions}
-            orderBys={orderBys}
-            setOrderBys={setOrderBys}
-          />
-          <MetricAggregations
-            metricAggregations={metricAggregations}
-            setMetricAggregations={setMetricAggregations}
-          />
-          <WithHelpText
-            notched={!showAdvanced}
-            label={showAdvanced ? "dimension filters" : "dimension filter"}
-            helpText={
-              <>
-                The {showAdvanced ? "filters" : "filter"} to use for the
-                dimensions in the request. See {dimensionFiltersLink} on
-                devsite.
-              </>
-            }
-          >
-            <Filter
-              showAdvanced={showAdvanced}
-              storageKey={StorageKey.ga4RequestComposerBasicDimensionFilter}
-              type={FilterType.Dimension}
-              fields={dimensions}
-              setFilterExpression={setDimensionFilter}
-            />
-          </WithHelpText>
-          <WithHelpText
-            notched={!showAdvanced}
-            label={showAdvanced ? "metric filters" : "metric filter"}
-            helpText={
-              <>
-                The {showAdvanced ? "filters" : "filter"} to use for the metrics
-                in the request. See {metricFiltersLink} on devsite.
-              </>
-            }
-          >
-            <Filter
-              showAdvanced={showAdvanced}
-              storageKey={StorageKey.ga4RequestComposerBasicMetricFilter}
-              type={FilterType.Metric}
-              fields={metrics}
-              setFilterExpression={setMetricFilter}
-            />
-          </WithHelpText>
-          <LinkedTextField
-            href={Url.ga4RequestComposerBasicRunReportLimit}
-            linkTitle="See limit on devsite."
-            label="limit"
-            value={limit}
-            helperText="The maximum number of rows to return."
-            onChange={setLimit}
-          />
-          {showAdvanced && (
-            <LinkedTextField
-              href={Url.ga4RequestComposerBasicRunReportOffset}
-              linkTitle="See offset on devsite."
-              label="offset"
-              value={offset}
-              helperText="The row count of the start row. The first row is row 0."
-              onChange={setOffset}
-            />
-          )}
-          {showAdvanced && (
-            <CohortSpec
-              cohortSpec={cohortSpec}
-              setCohortSpec={setCohortSpec}
-              dimensions={dimensions}
-              addFirstSessionDate={addFirstSessionDate}
-              dateRanges={dateRanges}
-              removeDateRanges={removeDateRanges}
-            />
-          )}
-          <WithHelpText
-            helpText={
-              <>
-                Return rows with all metrics equal to 0 separately. See{" "}
-                {keepEmptyRowsLink} on devsite.
-              </>
-            }
-          >
+        <Root>
+          <Typography>
+            Returns a customized report of your Google Analytics event data.
+            Reports contain statistics derived from data collected by the Google
+            Analytics measurement code. Basic Report uses the {runReportLink}{" "}
+            API endpoint.
+          </Typography>
+          <section className={classes.form}>
+            <Typography variant="h3">Select property</Typography>
+            <StreamPicker autoFill {...aps} />
+            <Typography variant="h3">Set parameters</Typography>
             <LabeledCheckbox
-              checked={keepEmptyRows}
-              setChecked={setKeepEmptyRows}
+              checked={showAdvanced}
+              setChecked={setShowAdvanced}
             >
-              keep empty rows.
+              Show advanced options
             </LabeledCheckbox>
-          </WithHelpText>
+            <DateRanges
+              setDateRanges={setDateRanges}
+              dateRanges={dateRanges}
+              showAdvanced={showAdvanced}
+            />
+            <MetricsPicker
+              required={!metricOrDimensionSelected}
+              setMetricIDs={setMetricIDs}
+              metrics={metrics}
+              helperText={
+                <>
+                  The metrics to include in the request. See {metricsLink} on
+                  devsite.
+                </>
+              }
+            />
+            <DimensionsPicker
+              required={!metricOrDimensionSelected}
+              setDimensionIDs={setDimensionIDs}
+              dimensions={dimensions}
+              helperText={
+                <>
+                  The dimensions to include in the request. See {dimensionsLink}{" "}
+                  on devsite.
+                </>
+              }
+            />
 
-          <PAB onClick={makeRequest} disabled={!validRequest}>
-            Make Request
-          </PAB>
-          <LabeledCheckbox
-            className={classes.showRequestJSON}
-            checked={showRequestJSON}
-            setChecked={setShowRequestJSON}
-          >
-            Show request JSON
-          </LabeledCheckbox>
-        </section>
+            <OrderBys
+              metric
+              metricOptions={metrics}
+              dimension
+              dimensionOptions={dimensions}
+              orderBys={orderBys}
+              setOrderBys={setOrderBys}
+            />
+            <MetricAggregations
+              metricAggregations={metricAggregations}
+              setMetricAggregations={setMetricAggregations}
+            />
+            <WithHelpText
+              notched={!showAdvanced}
+              label={showAdvanced ? "dimension filters" : "dimension filter"}
+              helpText={
+                <>
+                  The {showAdvanced ? "filters" : "filter"} to use for the
+                  dimensions in the request. See {dimensionFiltersLink} on
+                  devsite.
+                </>
+              }
+            >
+              <Filter
+                showAdvanced={showAdvanced}
+                storageKey={StorageKey.ga4RequestComposerBasicDimensionFilter}
+                type={FilterType.Dimension}
+                fields={dimensions}
+                setFilterExpression={setDimensionFilter}
+              />
+            </WithHelpText>
+            <WithHelpText
+              notched={!showAdvanced}
+              label={showAdvanced ? "metric filters" : "metric filter"}
+              helpText={
+                <>
+                  The {showAdvanced ? "filters" : "filter"} to use for the
+                  metrics in the request. See {metricFiltersLink} on devsite.
+                </>
+              }
+            >
+              <Filter
+                showAdvanced={showAdvanced}
+                storageKey={StorageKey.ga4RequestComposerBasicMetricFilter}
+                type={FilterType.Metric}
+                fields={metrics}
+                setFilterExpression={setMetricFilter}
+              />
+            </WithHelpText>
+            <LinkedTextField
+              href={Url.ga4RequestComposerBasicRunReportLimit}
+              linkTitle="See limit on devsite."
+              label="limit"
+              value={limit}
+              helperText="The maximum number of rows to return."
+              onChange={setLimit}
+            />
+            {showAdvanced && (
+              <LinkedTextField
+                href={Url.ga4RequestComposerBasicRunReportOffset}
+                linkTitle="See offset on devsite."
+                label="offset"
+                value={offset}
+                helperText="The row count of the start row. The first row is row 0."
+                onChange={setOffset}
+              />
+            )}
+            {showAdvanced && (
+              <CohortSpec
+                cohortSpec={cohortSpec}
+                setCohortSpec={setCohortSpec}
+                dimensions={dimensions}
+                addFirstSessionDate={addFirstSessionDate}
+                dateRanges={dateRanges}
+                removeDateRanges={removeDateRanges}
+              />
+            )}
+            <WithHelpText
+              helpText={
+                <>
+                  Return rows with all metrics equal to 0 separately. See{" "}
+                  {keepEmptyRowsLink} on devsite.
+                </>
+              }
+            >
+              <LabeledCheckbox
+                checked={keepEmptyRows}
+                setChecked={setKeepEmptyRows}
+              >
+                keep empty rows.
+              </LabeledCheckbox>
+            </WithHelpText>
 
-        {showRequestJSON && (
-          <PrettyJson
-            tooltipText="copy request"
-            className={classes.requestJSON}
-            object={request}
+            <PAB onClick={makeRequest} disabled={!validRequest}>
+              Make Request
+            </PAB>
+            <LabeledCheckbox
+              className={classes.showRequestJSON}
+              checked={showRequestJSON}
+              setChecked={setShowRequestJSON}
+            >
+              Show request JSON
+            </LabeledCheckbox>
+          </section>
+
+          {showRequestJSON && (
+            <PrettyJson
+              tooltipText="copy request"
+              className={classes.requestJSON}
+              object={request}
+              shouldCollapse={shouldCollapseRequest}
+            />
+          )}
+          <Response
+            response={response}
+            error={
+              useMake.status === RequestStatus.Failed
+                ? useMake.error
+                : undefined
+            }
+            requestStatus={requestStatus}
             shouldCollapse={shouldCollapseRequest}
           />
-        )}
-        <Response
-          response={response}
-          error={
-            useMake.status === RequestStatus.Failed ? useMake.error : undefined
-          }
-          requestStatus={requestStatus}
-          shouldCollapse={shouldCollapseRequest}
-        />
+        </Root>
       </ShowAdvancedCtx.Provider>
-    </StyledDimensionsAndMetricsRequestCtxProvider>
-  );
+    </DimensionsAndMetricsRequestCtx.Provider>
+  )
 }
 
 export default BasicReport

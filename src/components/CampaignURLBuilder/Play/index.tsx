@@ -94,7 +94,7 @@ const Root = styled('section')((
     },
   },
 
-  [`& .${classes.form}`]: {
+  [`&.${classes.form}`]: {
     maxWidth: "80ch",
   }
 }));

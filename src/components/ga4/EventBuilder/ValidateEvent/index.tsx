@@ -71,6 +71,8 @@ const classes = {
   payloadTitle: `${PREFIX}-payloadTitle`,
   headers: `${PREFIX}-headers`,
   heading: `${PREFIX}-heading`,
+  headingError: `${PREFIX}-headingError`,
+  headingValid: `${PREFIX}-headingValid`,
   payload: `${PREFIX}-payload`,
   form: `${PREFIX}-form`,
   buttonRow: `${PREFIX}-buttonRow`
@@ -94,13 +96,7 @@ const Root = styled('div')((
     fontFamily: "monospace",
   },
 
-  [`& .${classes.heading}`]: ({ error, valid }: StyleProps) => ({
-    backgroundColor: error ? red[300] : valid ? green[300] : "inherit",
-    color: error
-      ? theme.palette.getContrastText(red[300])
-      : valid
-      ? theme.palette.getContrastText(green[300])
-      : "inherit",
+  [`& .${classes.heading}`]: {
     margin: theme.spacing(-2),
     padding: theme.spacing(2),
     display: "flex",
@@ -109,9 +105,19 @@ const Root = styled('div')((
       marginRight: theme.spacing(1),
     },
     marginBottom: theme.spacing(2),
-  }),
+  },
 
-  [`& .${classes.form}`]: {
+  [`& .${classes.heading}.${classes.headingError}`]: {
+    backgroundColor: red[300],
+    color: theme.palette.getContrastText(red[300]),
+  },
+
+  [`& .${classes.heading}.${classes.headingValid}`]: {
+    backgroundColor: green[300],
+    color: theme.palette.getContrastText(green[300]),
+  },
+
+  [`&.${classes.form}, & .${classes.form}`]: {
     maxWidth: "80ch",
   },
 
@@ -126,12 +132,6 @@ const Root = styled('div')((
     fontSize: theme.typography.caption.fontSize,
   }
 }));
-
-interface StyleProps {
-  error?: boolean
-  valid?: boolean
-}
-
 
 const focusFor = (message: ValidationMessage, useTextBox: boolean) => {
   const { fieldPath } = message
@@ -179,7 +179,13 @@ const Template: React.FC<TemplateProps> = ({
   const payload = usePayload()
   return (
     <>
-      <Typography className={classes.heading} variant="h3">
+      <Typography
+        className={clsx(classes.heading, {
+          [classes.headingError]: error,
+          [classes.headingValid]: !error && valid,
+        })}
+        variant="h3"
+      >
         {headingIcon}
         {heading}
       </Typography>

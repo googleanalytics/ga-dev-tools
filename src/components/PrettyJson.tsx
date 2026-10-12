@@ -14,26 +14,28 @@ const classes = {
   json: `${PREFIX}-json`
 };
 
-const StyledPaper = styled(Paper)((
-  {
-    theme
-  }
-) => ({
-  [`& .${classes.jsonWrapper}`]: {
+const jsonStyles = {
+  [`& .${classes.json}`]: {
+    flexGrow: 1,
+  },
+}
+
+const StyledDiv = styled("div")({
+  [`&.${classes.jsonWrapper}`]: {
     display: "flex",
     alignItems: "flex-start",
   },
+  ...jsonStyles,
+})
 
+const StyledPaper = styled(Paper)(({ theme }) => ({
   [`&.${classes.jsonPaper}`]: {
     padding: theme.spacing(2),
     display: "flex",
     alignItems: "flex-start",
   },
-
-  [`& .${classes.json}`]: {
-    "flex-grow": "1",
-  }
-}));
+  ...jsonStyles,
+}))
 
 interface PrettyJsonProps {
   object: object | undefined
@@ -125,7 +127,11 @@ const PrettyJson: React.FC<PrettyJsonProps> = ({
   }
 
   if (noPaper) {
-    return <div className={clsx(classes.jsonWrapper, className)}>{inner}</div>
+    return (
+      <StyledDiv className={clsx(classes.jsonWrapper, className)}>
+        {inner}
+      </StyledDiv>
+    )
   } else {
     return <StyledPaper className={clsx(classes.jsonPaper, className)}>{inner}</StyledPaper>;
   }
