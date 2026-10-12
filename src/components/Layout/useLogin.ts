@@ -12,6 +12,7 @@ export enum UserStatus {
 interface Successful {
   userStatus: UserStatus
   user: any
+  profile?: Profile
   logout: () => void
   login: () => void
 }
@@ -25,6 +26,7 @@ const useLogin = (): Requestable<Successful, {}, InProgress, Failed> => {
   const gapi = useSelector((state: AppState) => state.gapi)
   const gapiStatus = useSelector((state: AppState) => state.gapiStatus)
   const tokenClient = useSelector((state: AppState) => state.tokenClient)
+  const profile = useSelector((state: AppState) => state.profile)
   const dispatch = useDispatch()
   const userStatus = token ? UserStatus.SignedIn : UserStatus.SignedOut
 
@@ -65,7 +67,14 @@ const useLogin = (): Requestable<Successful, {}, InProgress, Failed> => {
   }, [gapi, requestStatus, gapiStatus])
 
   if (requestStatus === RequestStatus.Successful) {
-    return { status: requestStatus, userStatus, user: token, login, logout }
+    return {
+      status: requestStatus,
+      userStatus,
+      user: token,
+      profile,
+      login,
+      logout,
+    }
   }
   if (requestStatus === RequestStatus.Failed) {
     return { status: requestStatus, message: gapiStatus || "unknown" }

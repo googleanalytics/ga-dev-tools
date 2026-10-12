@@ -70,6 +70,7 @@ interface TemplateProps {
   login?: () => void
   logout?: () => void
   user?: any
+  profile?: Profile
 }
 
 const PREFIX = 'Layout2';
@@ -115,6 +116,7 @@ const Template: React.FC<PropsWithChildren<LayoutProps & TemplateProps>> = ({
                                                                               login,
                                                                               logout,
                                                                               user,
+                                                                              profile,
                                                                             }) => {
   usePageView(title)
   const { gaVersion, setGAVersion } = useGAVersion(pathname)
@@ -178,6 +180,7 @@ const Template: React.FC<PropsWithChildren<LayoutProps & TemplateProps>> = ({
           {successful && (
               <Login
                   user={user!}
+                  profile={profile}
                   login={login!}
                   logout={logout!}
                   userStatus={userStatus!}
@@ -277,7 +280,9 @@ const Template: React.FC<PropsWithChildren<LayoutProps & TemplateProps>> = ({
               <BugReport />
               {!disableNav && successful && (
                   <Login
+                      showDetails
                       user={user!}
+                      profile={profile}
                       login={login!}
                       logout={logout!}
                       userStatus={userStatus!}

@@ -23,6 +23,7 @@ type State =
       tokenClient?: any,
       toast?: string,
       gapiStatus?: string
+      profile?: Profile
     }
 
 type Action =
@@ -30,11 +31,15 @@ type Action =
     | { type: 'setGapi', gapi: PartialDeep<typeof gapi>  | undefined }
     | { type: 'setTokenClient', tokenClient: any }
     | { type: 'setToast', toast: string | undefined }
-    | { type: 'gapiStatus', status: string | undefined };
+    | { type: 'gapiStatus', status: string | undefined }
+    | { type: 'setProfile', profile: Profile | undefined };
 const reducer = (state: State = {}, action: Action) => {
   switch (action.type) {
     case "setToken":
-      return { ...state, token: action.token }
+      // Signing out also clears the profile.
+      return action.token
+        ? { ...state, token: action.token }
+        : { ...state, token: undefined, profile: undefined }
     case "setGapi":
       return { ...state, gapi: action.gapi }
     case "setTokenClient":
@@ -43,6 +48,8 @@ const reducer = (state: State = {}, action: Action) => {
       return { ...state, toast: action.toast }
     case "gapiStatus":
       return { ...state, gapiStatus: action.status }
+    case "setProfile":
+      return { ...state, profile: action.profile }
 
     default:
       return state

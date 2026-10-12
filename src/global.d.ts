@@ -28,4 +28,11 @@ declare interface AppState {
   gapiStatus?: string
   measurementID: string
   tokenClient?: any
+  profile?: Profile
+}
+
+declare interface Profile {
+  name?: string
+  email?: string
+  picture?: string
 }

@@ -1,6 +1,28 @@
 import loadScript from "load-script"
 import { store } from "./wrapRootElement"
 
+// Fetches the signed-in user's name, email & photo. Tokens granted before the
+// profile scopes were added get a 401 here, so the profile is just left empty.
+const fetchProfile = token => {
+  fetch("https://www.googleapis.com/oauth2/v3/userinfo", {
+    headers: { Authorization: `Bearer ${token.access_token}` },
+  })
+    .then(response => (response.ok ? response.json() : undefined))
+    .then(profile => {
+      if (profile) {
+        store.dispatch({
+          type: "setProfile",
+          profile: {
+            name: profile.name,
+            email: profile.email,
+            picture: profile.picture,
+          },
+        })
+      }
+    })
+    .catch(e => console.error("Unable to load the user's profile:", e))
+}
+
 export const onInitialClientRender = () => {
   const gapiPromise = new Promise((resolve, reject) => {
     loadScript("https://apis.google.com/js/api.js", err => {
@@ -24,7 +46,12 @@ export const onInitialClientRender = () => {
 
   Promise.all([gapiPromise, gisPromise])
     .then(([gapi, google]) => {
-      const SCOPES = ["https://www.googleapis.com/auth/analytics.readonly"]
+      const SCOPES = [
+        "https://www.googleapis.com/auth/analytics.readonly",
+        "openid",
+        "email",
+        "profile",
+      ]
       const clientId = process.env.GAPI_CLIENT_ID
 
       if (!clientId) {
@@ -44,6 +71,7 @@ export const onInitialClientRender = () => {
           if (storedToken.expires_at > Date.now()) {
             gapi.client.setToken(storedToken)
             store.dispatch({ type: "setToken", token: storedToken })
+            fetchProfile(storedToken)
           } else {
             localStorage.removeItem("google_token")
           }
@@ -75,6 +103,7 @@ export const onInitialClientRender = () => {
                 localStorage.setItem("google_token", JSON.stringify(tokenWithExpiry))
                 gapi.client.setToken(tokenResponse)
                 store.dispatch({ type: "setToken", token: tokenResponse })
+                fetchProfile(tokenResponse)
               } else {
                 store.dispatch({ type: "setToken", token: undefined })
               }
